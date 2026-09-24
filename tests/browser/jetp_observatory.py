@@ -541,9 +541,8 @@ def check_paper_trail(page, url):
     """Walk the paper trail both ways on the organisation of ticket 0881.
 
     The navigation reads the paper trail, The tallies and About (Glossary,
-    Methods, Who we are in About's sub-bar) — earlier: Glossary and How we
-    did this, each at its label's slug, and the addresses of earlier previews
-    forward there (author's cold read, 2026-09-23). From Bac Ai, each step
+    Methods, Who we are in About's sub-bar), each page at its label's slug
+    (author's cold read, 2026-09-23). From Bac Ai, each step
     toward the documents lands one step
     down — what is on the record for Viet Nam, its entries, the Documents
     page — and each step toward the projects climbs back. A Viet Nam count
@@ -553,35 +552,6 @@ def check_paper_trail(page, url):
     page.wait_for_selector('.country-grid')
     labels = page.locator('header nav a[data-section]').all_text_contents()
     assert labels == ['The paper trail', 'The tallies', 'About'], labels
-    # Old addresses forward in place, deep links and tabs included, and the
-    # back button does not bounce between the two names.
-    for old, new, ready in (
-        ('countries', 'funding', '.country-grid'),
-        ('country/IDN', 'funding/IDN', '.markdown h2'),
-        ('evidence', 'statements', '[data-reviewed-evidence-id]'),
-        ('comparison?country=IDN', 'non-jetp-energy-operations?country=IDN', '#history-table'),
-        ('how-we-did-this', 'methods', '.method-list'),
-        ('numbers', 'counts', 'table.counts'),
-        ('by-the-numbers', 'counts', 'table.counts'),
-        ('the-tallies', 'counts', 'table.counts'),
-        ('historical-comparison', 'non-jetp-energy-operations', '#history-table'),
-        ('comparisons?country=IDN', 'non-jetp-energy-operations?country=IDN', '#history-table'),
-        ('on-the-record/VNM', 'statements/VNM', '#observations-filters'),
-        ('entries/VNM?row=22', 'document-rows/VNM?row=22', '[data-inventory-focus="22"]'),
-        ('whos-who?country=SEN', 'organisations?country=SEN', '#parties-filters'),
-        ('inventory/VNM?tab=record', 'statements/VNM', '#observations-filters'),
-        ('inventory/VNM?row=22', 'document-rows/VNM?row=22', '[data-inventory-focus="22"]'),
-    ):
-        page.goto(url + '/#overview')
-        page.wait_for_selector('.country-grid')
-        page.goto(url + '/#' + old)
-        page.wait_for_selector(ready)
-        assert page.url.endswith('#' + new), (old, page.url)
-        page.go_back()
-        page.wait_for_selector('.country-grid')
-        assert page.url.endswith('#overview'), (old, page.url)
-    assert page.evaluate('location.hash') == '#overview'
-
     # The step bar is the position indicator: the current step is marked, its
     # neighbours are links, the country rides along as a removable chip, and
     # the header keeps the paper trail's tab selected throughout.
@@ -771,7 +741,7 @@ def check_glossary(page, url):
     page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-results')
     assert page.locator('#observations-results a[data-term-link="money/signed"]').count() > 0
-    page.goto(url + '/#entries/ZAF')
+    page.goto(url + '/#document-rows/ZAF')
     status = page.locator('a[data-term-link="delivery/finalisation"]:visible').first
     status.wait_for()
     assert status.inner_text() == 'D. Completed'
@@ -964,9 +934,10 @@ def check_site(url, output, ticket_0902_only=False):
         assert page.evaluate('document.activeElement.tagName') == 'A'
         page.set_viewport_size({'width': 390, 'height': 844})
         for route in ('overview', 'the-paper-trail', 'funding', 'documents', 'projects',
-                      'comparisons', 'documents?country=VNM', 'whos-who?country=SEN',
-                      'entries/SEN', 'funding/VNM', 'entries', 'on-the-record',
-                      'on-the-record/ZAF', 'whos-who', 'counts', 'glossary', 'about',
+                      'non-jetp-energy-operations', 'documents?country=VNM',
+                      'organisations?country=SEN', 'document-rows/SEN', 'funding/VNM',
+                      'document-rows', 'statements', 'statements/ZAF', 'organisations',
+                      'counts', 'glossary', 'about',
                       'who-we-are',
                       'release-history', 'project/vnm-project-bac-ai-pumped-hydro',
                       'methods'):

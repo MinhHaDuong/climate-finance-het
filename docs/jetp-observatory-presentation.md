@@ -86,14 +86,7 @@ goes unmarked.
 `#who-we-are`, and the landing pages `#the-paper-trail` and `#about`; the
 release history is `#release-history`. A country's page nests under its step
 (`#funding/<CODE>`, `#document-rows/<CODE>`, `#statements/<CODE>`); a project is
-`#project/<project_id>`. The addresses of earlier previews forward in place,
-in one hop, to the new ones: `#countries`, `#country/<CODE>`, `#evidence`,
-`#entries`, `#on-the-record`, `#whos-who`, `#comparisons` (including their
-country filters and deep links),
-`#numbers`, `#by-the-numbers`, `#the-tallies`, `#comparison`,
-`#historical-comparison`, `#how-we-did-this`, `#editions`, and
-`#inventory/<CODE>` with its `?row=` and `?tab=record`. The pages emit only
-the new names. The full table is in the observatory's
+`#project/<project_id>`. The full table is in the observatory's
 [README](../deliverables/jetp-observatory/README.md).
 
 - **Glossary.** Grouped by theme, alphabetical within each group: what the

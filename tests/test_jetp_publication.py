@@ -12,10 +12,10 @@ def test_display_ids_are_unique_and_reverse_evidence_traversal_keeps_every_use()
             {'display_id': 'overview-idn-headline', 'route': '#overview',
              'payload': 'data/IDN.json', 'pointer': '/country/headline',
              'role': 'reported_position', 'evidence': ['idn-report']},
-            {'display_id': 'country-idn-headline', 'route': '#country/IDN',
+            {'display_id': 'country-idn-headline', 'route': '#funding/IDN',
              'payload': 'data/IDN.json', 'pointer': '/country/headline',
              'role': 'reported_position', 'evidence': ['idn-report']},
-            {'display_id': 'country-idn-headline-context', 'route': '#country/IDN',
+            {'display_id': 'country-idn-headline-context', 'route': '#funding/IDN',
              'payload': 'data/IDN.json', 'pointer': '/country/headline',
              'role': 'reported_position', 'evidence': ['idn-report']},
         ],
@@ -33,7 +33,7 @@ def test_display_ids_are_unique_and_reverse_evidence_traversal_keeps_every_use()
 def test_partial_or_duplicate_owned_reconciled_financial_combination_cannot_publish():
     from jetp._publication import publish
 
-    display = {'display_id': 'idn-account', 'route': '#country/IDN',
+    display = {'display_id': 'idn-account', 'route': '#funding/IDN',
                'payload': 'data/IDN.json', 'pointer': '/account',
                'role': 'gross_disbursement_account', 'evidence': ['account-review']}
     partial = {'subject': 'IDN', 'measure': 'gross_disbursement',
@@ -69,7 +69,7 @@ def test_real_sidecar_traces_each_visible_country_headline():
         displays = [row for row in result['displays'] if row['display_id'] in country]
         assert len(displays) == 8, code
         assert {row['pointer'] for row in displays} == expected
-        assert {row['route'] for row in displays} == {'#overview', '#country/' + displays[0]['payload'][5:8]}
+        assert {row['route'] for row in displays} == {'#overview', '#funding/' + displays[0]['payload'][5:8]}
 
 
 def test_candidate_bundle_keeps_provenance_sidecar_with_matching_release_bytes(tmp_path):

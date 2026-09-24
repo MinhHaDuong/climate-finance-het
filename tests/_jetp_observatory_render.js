@@ -78,12 +78,9 @@ const document = {
   title: "",
 };
 const location = { hash: "#" + route };
-// replaceState moves the address as a browser would, so an old route that
-// forwards to its new name (ticket 0881) is read back under the new one.
 const window = {
   addEventListener() {},
   scrollTo() {},
-  history: { replaceState(state, title, url) { location.hash = url; } },
 };
 // The staged copies' index (ticket 0915) is never read from <site-dir>: a
 // checkout with documents/ staged would otherwise render differently from
