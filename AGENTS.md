@@ -22,6 +22,7 @@ directly when the task needs it before you touch those files.
 - Deliverables layout, `DOC_VARS`, `paths.mk`: `deliverables.md`. Data location,
   DVC cache, `data/` tree: `data-location.md`. Also `openalex-corpus.md`,
   `null-model.md`, `worktree-setup.md`, `ticket-filing.md`, `rules-editing.md`.
+- Observatory navigation, page structure and labels: `jetp-observatory.md`.
 - Filing tickets with `erg` loads no file rule, so read `ticket-filing.md` first:
   scan each open PR's files for your ID (`gh pr list --json files` is empty),
   renumber well clear of the frontier, and run `erg check` on `origin/main` after merging.
