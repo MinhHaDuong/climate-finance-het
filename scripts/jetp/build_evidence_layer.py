@@ -421,13 +421,16 @@ def refresh_collection(ledger_dir, output_dir, schema=None):
     retrievals, snapshots = _retrievals_and_snapshots(manifest)
     produced = {r['retrieval_id'] for r in retrievals}
     fingerprints = {s['sha256'] for s in snapshots}
+    kept = [r for r in _read(table_path(ledger_dir, 'retrievals'))
+            if r['retrieval_id'] not in produced]
+    # A kept snapshot is one a kept retrieval yields: a row no retrieval
+    # cites any more (bytes dropped from the manifest) goes, never lingers.
+    cited = {r['sha256'] for r in kept if r['sha256']}
     tables = {
-        'retrievals': retrievals + [
-            r for r in _read(table_path(ledger_dir, 'retrievals'))
-            if r['retrieval_id'] not in produced],
+        'retrievals': retrievals + kept,
         'snapshots': snapshots + [
             s for s in _read(table_path(ledger_dir, 'snapshots'))
-            if s['sha256'] not in fingerprints],
+            if s['sha256'] in cited - fingerprints],
     }
     written = []
     for table, rows in tables.items():

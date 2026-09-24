@@ -111,8 +111,14 @@ def load_cookies(profile: Path, hosts: set[str]) -> http.cookiejar.CookieJar:
         if not _host_matches(host, wanted):
             continue
         # Firefox stores expiry in seconds on older profiles, milliseconds on
-        # newer ones; http.cookiejar wants seconds.
-        expires = int(expiry) // 1000 if expiry and int(expiry) > 10**11 else expiry
+        # newer ones; http.cookiejar wants seconds. A session cookie has no
+        # expiry (0 or NULL): it is kept, with none, not dropped as expired.
+        if not expiry:
+            expires = None
+        elif int(expiry) > 10**11:
+            expires = int(expiry) // 1000
+        else:
+            expires = int(expiry)
         jar.set_cookie(http.cookiejar.Cookie(
             version=0, name=name, value=value, port=None, port_specified=False,
             domain=host, domain_specified=host.startswith("."),

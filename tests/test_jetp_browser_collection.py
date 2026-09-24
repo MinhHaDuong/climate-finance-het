@@ -139,6 +139,19 @@ def test_cookies_are_loaded_for_the_contacted_hosts_only(tmp_path):
     assert cookies[0].expires == 4102444800  # milliseconds read as seconds
 
 
+def test_a_session_cookie_is_kept_without_expiry(tmp_path):
+    # Firefox writes expiry 0 for a cookie that lives as long as the browser
+    # session; read as a timestamp it would be long expired and never sent.
+    profile = _cookie_profile(tmp_path)
+    db = sqlite3.connect(profile / "cookies.sqlite")
+    db.execute("INSERT INTO moz_cookies VALUES ('walled.example.test', 'sid', 'x', '/', 0, 1)")
+    db.commit()
+    db.close()
+    jar = _firefox.load_cookies(profile, {"walled.example.test"})
+    session = next(c for c in jar if c.name == "sid")
+    assert session.expires is None and not session.is_expired()
+
+
 def test_the_browser_session_never_logs_a_cookie(tmp_path, caplog):
     profile = _cookie_profile(tmp_path)
     # The pipeline logger does not propagate to the root, so listen on it.
@@ -259,6 +272,30 @@ def test_a_new_manifest_row_reaches_the_retrievals_table(tmp_path):
     assert (rows[-3]["document_id"], rows[-3]["collection_method"]) == (
         "idn-cipp-portal", "browser-manual")
     assert [r["collection_method"] for r in rows[-2:]] == ["local-record"] * 2
+
+
+def test_a_snapshot_no_retrieval_cites_is_dropped_by_the_refresh(tmp_path):
+    # The 0926 run first recorded dgMarket's login page, then withdrew that
+    # manifest row; its snapshot must not outlive it in the ledger.
+    ledger = tmp_path / "ledger"
+    ledger.mkdir()
+    for name in ("manifest.csv", "retrievals.csv", "snapshots.csv"):
+        (ledger / name).write_bytes((ROOT / "data/jetp" / name).read_bytes())
+    orphan = "f" * 64
+    with (ledger / "snapshots.csv").open("a", encoding="utf-8") as stream:
+        stream.write(f"{orphan},objects/ff/{orphan}.html,10,text/html\n")
+    refresh_collection(ledger, ledger)
+    assert orphan not in (ledger / "snapshots.csv").read_text(encoding="utf-8")
+    assert (ledger / "snapshots.csv").read_bytes() == (
+        ROOT / "data/jetp/snapshots.csv").read_bytes()
+
+
+def test_every_committed_snapshot_is_yielded_by_a_retrieval():
+    with (ROOT / "data/jetp/retrievals.csv").open(newline="", encoding="utf-8") as stream:
+        cited = {r["sha256"] for r in csv.DictReader(stream) if r["sha256"]}
+    with (ROOT / "data/jetp/snapshots.csv").open(newline="", encoding="utf-8") as stream:
+        snapshots = {r["sha256"] for r in csv.DictReader(stream)}
+    assert snapshots - cited == set()
 
 
 def test_the_committed_registry_records_how_every_collected_row_was_obtained():
