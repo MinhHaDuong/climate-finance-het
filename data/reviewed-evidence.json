@@ -1,0 +1,69 @@
+{
+  "analytical_snapshot": {
+    "status": "not_deployed"
+  },
+  "evidence_depth": {
+    "canonical_named_records": 383,
+    "frozen_source_documents": 301,
+    "reviewed_canonical_records": 3,
+    "structured_atomic_observations": {
+      "by_country": {
+        "IDN": 1148,
+        "SEN": 10,
+        "VNM": 325,
+        "ZAF": 257
+      },
+      "status": "not_deployed",
+      "total": 1740,
+      "vnm_rmp_positions": 279
+    }
+  },
+  "format_version": "jetp-reviewed-evidence/1",
+  "records": [
+    {
+      "aggregation": "non_aggregate",
+      "country": "IDN",
+      "evidence": [
+        {
+          "locator": "National headline as reported in the frozen progress report",
+          "sha256": "74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162",
+          "source_id": "idn-jetp-progress-report-2025"
+        }
+      ],
+      "id": "canonical-IDN-national-headline",
+      "label": "Indonesia reported national position",
+      "notes": "A country headline reproduced from its named source; it is not a reconciled payment total.",
+      "status": "reviewed_fact"
+    },
+    {
+      "aggregation": "non_aggregate",
+      "country": "SEN",
+      "evidence": [
+        {
+          "locator": "National headline as reported in the frozen investment-plan mirror",
+          "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
+          "source_id": "sen-investment-plan-l4-mirror"
+        }
+      ],
+      "id": "canonical-SEN-national-headline",
+      "label": "Senegal reported national position",
+      "notes": "A country headline reproduced from its named source; it is not a reconciled payment total.",
+      "status": "reviewed_fact"
+    },
+    {
+      "aggregation": "non_aggregate",
+      "country": "ZAF",
+      "evidence": [
+        {
+          "locator": "National headline as reported in the frozen quarterly progress report",
+          "sha256": "1b62a65fd70c70b0234379fcc4fcda064e9175fc9aee21a37c97b283e1b8dc13",
+          "source_id": "zaf-jet-quarterly-2026-q1"
+        }
+      ],
+      "id": "canonical-ZAF-national-headline",
+      "label": "South Africa reported national position",
+      "notes": "A country headline reproduced from its named source; it is not a reconciled payment total.",
+      "status": "reviewed_fact"
+    }
+  ]
+}

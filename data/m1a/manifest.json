@@ -1,0 +1,172 @@
+{
+  "countries": {
+    "IDN": {
+      "file": "IDN.csv",
+      "row_count": 1579,
+      "sha256": "5e3557891ce495a4047b51800736e406ccfd1ea7e45756ea6daf8dac6ec94f5a",
+      "sublayers": [
+        {
+          "cutoff": "2023-11-21",
+          "edition": "CIPP 2023",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
+          "input_path": "data/jetp/plan-projects.csv",
+          "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
+          "row_count": 437,
+          "source_id": "idn-cipp-2023-cpr-mirror",
+          "source_sha256": "747283facac512780ad757313c493d1080c39705824e72c4b231e87ecb4102b5",
+          "sublayer_id": "cipp-2023-priority-projects",
+          "unknowns": {
+            "field_values": 28,
+            "identity_rows": 0,
+            "unavailable_source_rows": 0
+          }
+        },
+        {
+          "cutoff": "2025-11-30",
+          "edition": "Progress Report 2025",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
+          "input_path": "data/jetp/plan-projects.csv",
+          "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
+          "row_count": 1142,
+          "source_id": "idn-jetp-progress-report-2025",
+          "source_sha256": "74fb460fd09e76607e3cff308f5ba2754f2ebd91b0c9b7613c1a041e7b361162",
+          "sublayer_id": "progress-2025-priority-projects",
+          "unknowns": {
+            "field_values": 27,
+            "identity_rows": 0,
+            "unavailable_source_rows": 0
+          }
+        }
+      ],
+      "unknowns": {
+        "field_values": 55,
+        "identity_rows": 0,
+        "unavailable_source_rows": 0
+      }
+    },
+    "SEN": {
+      "file": "SEN.csv",
+      "row_count": 49,
+      "sha256": "d01a364f79fe799bf7d03b2bcf13282c17202f0d67ee30950073dc93041479b8",
+      "sublayers": [
+        {
+          "cutoff": "2025-03-17",
+          "edition": "Investment Plan Annexes 2025",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
+          "input_path": "data/jetp/plan-projects.csv",
+          "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
+          "row_count": 38,
+          "source_id": "sen-investment-plan-annexes-mirror",
+          "source_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
+          "sublayer_id": "investment-plan-annex-submissions",
+          "unknowns": {
+            "field_values": 0,
+            "identity_rows": 0,
+            "unavailable_source_rows": 0
+          }
+        },
+        {
+          "cutoff": "2025-04-02",
+          "edition": "Investment Plan 2025",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
+          "input_path": "data/jetp/plan-projects.csv",
+          "input_sha256": "723b24f1e67da7420122bede26a997b002d2ff9683f3e7623da8c74f372ba5ca",
+          "row_count": 11,
+          "source_id": "sen-investment-plan-l4-mirror",
+          "source_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
+          "sublayer_id": "investment-plan-quick-wins",
+          "unknowns": {
+            "field_values": 0,
+            "identity_rows": 0,
+            "unavailable_source_rows": 0
+          }
+        }
+      ],
+      "unknowns": {
+        "field_values": 0,
+        "identity_rows": 0,
+        "unavailable_source_rows": 0
+      }
+    },
+    "VNM": {
+      "file": "VNM.csv",
+      "row_count": 279,
+      "sha256": "28abcff9ae2cabdf7bff634af99d8023f480711e8e3146b45da7387b17696415",
+      "sublayers": [
+        {
+          "cutoff": "2023-12-01",
+          "edition": "Resource Mobilisation Plan 2023",
+          "excluded_source_rows": [],
+          "fields_input_path": "",
+          "fields_input_sha256": "",
+          "input_path": "data/jetp/releases/vnm-migration-0764.json",
+          "input_sha256": "ef7538d2af534d31877634bd42f28c5fae1c20b192e6647fc030146a7492eb34",
+          "row_count": 279,
+          "source_id": "vnm-rmp-2023",
+          "source_sha256": "b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c",
+          "sublayer_id": "rmp-2023-inventory",
+          "unknowns": {
+            "field_values": 104,
+            "identity_rows": 181,
+            "unavailable_source_rows": 0
+          }
+        }
+      ],
+      "unknowns": {
+        "field_values": 104,
+        "identity_rows": 181,
+        "unavailable_source_rows": 0
+      }
+    },
+    "ZAF": {
+      "file": "ZAF.csv",
+      "row_count": 257,
+      "sha256": "b102d32bb97757001cbce209bc73bf73b0c53137718cc3b77167e273afc5daed",
+      "sublayers": [
+        {
+          "cutoff": "2026-03-31",
+          "edition": "Q1 2026",
+          "excluded_source_rows": [
+            {
+              "amount_reported_usd_raw": 3953240805.08088,
+              "amount_reported_zar_raw": 69917380338.46097,
+              "ordinal": 258,
+              "portfolios_raw": null,
+              "project_name_raw": null,
+              "raw_index": 257,
+              "unique_id_raw": 248
+            }
+          ],
+          "fields_input_path": "docs/jetp-study/0818-zaf-q1-2026-fields.csv",
+          "fields_input_sha256": "78ab407c06752ef502dccfa83e6bcf736a597e760e65d52553a1eba8d755fb14",
+          "input_path": "docs/jetp-study/0818-zaf-q1-2026-rows.csv",
+          "input_sha256": "f2ababa6b9c006a133aea32dad73e50c4bfa05f03d9b1b9575a94ffcd596273f",
+          "row_count": 257,
+          "source_id": "zaf-jet-investment-register-q1-2026",
+          "source_sha256": "5b5d6442da4e9e57b3c83b7bfc04a19135b2c5bf750c2480685d9d084dc093f4",
+          "sublayer_id": "register-q1-2026",
+          "unknowns": {
+            "field_values": 955,
+            "identity_rows": 0,
+            "unavailable_source_rows": 0
+          }
+        }
+      ],
+      "unknowns": {
+        "field_values": 955,
+        "identity_rows": 0,
+        "unavailable_source_rows": 0
+      }
+    }
+  },
+  "schema_version": "jetp-m1a-frozen-inventories/1",
+  "scope": "frozen extraction sub-layer inventories; no identity reconciliation or live refresh"
+}
