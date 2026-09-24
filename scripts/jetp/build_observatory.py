@@ -269,6 +269,15 @@ def edition_history(root):
     return release_history(root / 'data/jetp/releases')
 
 
+def coverage_data(root):
+    """Serve the ledger coverage table without reviving either legacy reader."""
+    schema = load_schema()
+    rows, errors = read_table(root / 'data/jetp', 'coverage', schema)
+    if errors:
+        raise ValueError(errors[0])
+    return {'coverage': [dict(zip(schema.header('coverage'), row)) for row in rows]}
+
+
 def provenance(root, config):
     """Hash every input and record the code checkout; make file bytes authoritative."""
     paths = [(root / LEGACY_PROJECTS
@@ -316,7 +325,7 @@ def overview(root, config, tables):
 def main():
     """Write one requested JSON view deterministically."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--view', choices=['overview', 'comparison', 'documents', 'editions',
+    parser.add_argument('--view', choices=['overview', 'comparison', 'coverage', 'documents', 'editions',
                                            'ZAF', 'IDN', 'VNM', 'SEN'], required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
@@ -326,6 +335,8 @@ def main():
         result = overview(ROOT, config, read_inputs(ROOT))
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
+    elif args.view == 'coverage':
+        result = coverage_data(ROOT)
     elif args.view == 'documents':
         result = documents_data(ROOT, {'manifest': retrieval_registry(ROOT / 'data/jetp')})
     elif args.view == 'editions':

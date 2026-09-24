@@ -1,0 +1,55 @@
+source_table,old_id,disposition,detail
+project-coverage.csv,idn-fin-muara-laboh-2,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-fin-rbl-sreap,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-grant-ietf,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-grant-jetp-etp,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-monitor-cihaur-talaga-micro-hydro,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-monitor-gde-pipeline-2025,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-dediesel-east-phase1,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-dieng-3-4,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-e-taxi,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-green-corridors-sulawesi,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-hijaunesia-2,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-hydro-quota-sulawesi,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-hydro-quota-sumatra,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-nagajaya-micro-hydro,no_referent,0875 has no resolved identity
+project-coverage.csv,idn-pipe-rscm-energy-efficiency,no_referent,0875 has no resolved identity
+project-coverage.csv,vnm-project-binh-duong-dong-nai-transmission,no_referent,0875 has no resolved identity
+project-coverage.csv,vnm-project-tri-an-expansion,no_referent,0875 has no resolved identity
+authority-coverage.csv,zaf-presidency,no_referent,no matching party name
+authority-coverage.csv,zaf-france-afd,no_referent,no matching party name
+authority-coverage.csv,zaf-germany-kfw,no_referent,no matching party name
+authority-coverage.csv,zaf-uk,no_referent,no matching party name
+authority-coverage.csv,zaf-eu-eib,no_referent,no matching party name
+authority-coverage.csv,zaf-netherlands,no_referent,no matching party name
+authority-coverage.csv,zaf-denmark,no_referent,no matching party name
+authority-coverage.csv,zaf-spain,no_referent,no matching party name
+authority-coverage.csv,zaf-switzerland,no_referent,no matching party name
+authority-coverage.csv,zaf-canada,no_referent,no matching party name
+authority-coverage.csv,zaf-cif,no_referent,no matching party name
+authority-coverage.csv,zaf-idc,no_referent,no matching party name
+authority-coverage.csv,idn-cmea-task-force,no_referent,no matching party name
+authority-coverage.csv,idn-memr,no_referent,no matching party name
+authority-coverage.csv,idn-pln,no_referent,no matching party name
+authority-coverage.csv,idn-gfanz,no_referent,no matching party name
+authority-coverage.csv,idn-canada,no_referent,no matching party name
+authority-coverage.csv,idn-denmark,no_referent,no matching party name
+authority-coverage.csv,idn-france,no_referent,no matching party name
+authority-coverage.csv,idn-germany,no_referent,no matching party name
+authority-coverage.csv,idn-italy,no_referent,no matching party name
+authority-coverage.csv,idn-japan,no_referent,no matching party name
+authority-coverage.csv,idn-norway,no_referent,no matching party name
+authority-coverage.csv,idn-us-historical,no_referent,no matching party name
+authority-coverage.csv,idn-world-bank-group,no_referent,no matching party name
+authority-coverage.csv,idn-afd,no_referent,no matching party name
+authority-coverage.csv,idn-jbic,no_referent,no matching party name
+authority-coverage.csv,idn-cif-act-etm,no_referent,no matching party name
+authority-coverage.csv,idn-norfund,no_referent,no matching party name
+authority-coverage.csv,idn-eifo-dsif-ifu,no_referent,no matching party name
+authority-coverage.csv,idn-pidg-guarantco,no_referent,no matching party name
+authority-coverage.csv,idn-deg-proparco,no_referent,no matching party name
+authority-coverage.csv,sen-jetp-secretariat,no_referent,no matching party name
+authority-coverage.csv,sen-france-afd,no_referent,no matching party name
+authority-coverage.csv,sen-germany-kfw,no_referent,no matching party name
+authority-coverage.csv,sen-canada,no_referent,no matching party name
+authority-coverage.csv,sen-world-bank-group,no_referent,no matching party name

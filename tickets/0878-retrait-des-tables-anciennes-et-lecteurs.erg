@@ -4,7 +4,6 @@ Created: 2026-09-22
 Author: HDMX-coding-agent
 Blocked-by: 0890
 Blocked-by: 0879
-Blocked-by: 0884
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -16,6 +15,7 @@ Blocked-by: 0884
 2026-09-23T15:30Z HDMX-coding-agent note décision de l'auteur, 2026-09-23 : la question posée en plan (raid prep) sur le make check complet est tranchée par la décision d'autonomie du train — portes étroites (tests ciblés, make check-fast, make lint), balayage grep et recette navigateur restent le critère de sortie de ce ticket ; la suite complète tourne une fois sur padme à la revue d'intégration de [[0870]], jamais comme critère de sortie bloquant de ce ticket
 2026-09-24T14:05Z HDMX-coding-agent note blocker 0887 closed — Blocked-by removed.
 2026-09-24T14:05Z HDMX-coding-agent note blocker 0888 closed — Blocked-by removed.
+2026-09-24T18:56Z HDMX-coding-agent note blocker 0884 closed — Blocked-by removed.
 --- body ---
 ## Context
 

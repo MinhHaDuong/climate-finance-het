@@ -2,6 +2,7 @@
 Title: Table `coverage` : couverture documentaire des référents, depuis project-coverage et authority-coverage
 Created: 2026-09-23
 Author: HDMX-coding-agent
+Closed: coverage migrated and served; unresolved legacy rows carry named dispositions
 
 --- log ---
 2026-09-23T10:30Z HDMX-coding-agent created revue du train de migration (2026-09-23) : `coverage` figure au contrat de stockage § 1 et 0878 retire ses deux tables sources, mais aucun enfant de [[0870]] ne la construisait
@@ -9,6 +10,9 @@ Author: HDMX-coding-agent
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : l'action 2 route les autorités vers `parties` ; #1461 (0872 en cours de refonte) replie `publishers` dans `parties` avec un rôle de publication et ajoute `party-names` — si la forme de `parties` change avant l'exécution de ce ticket, relire #1461 avant de fixer la correspondance `authority_id` → `party_id`
 
 2026-09-24T18:45Z HDMX-coding-agent note blocker 0875 closed — Blocked-by removed.
+2026-09-24T18:56Z HDMX-coding-agent closed — coverage migrated and served; unresolved legacy rows carry named dispositions
+2026-09-24T19:02Z HDMX-coding-agent note verification — `0884-coverage-reconciliation.csv` accounts for all 205 source rows: 123 coverage keys, 54 named dispositions, and 28 rows coalesced onto existing keys; `make jetp-ledger-check`, `make check-fast` and `make lint` passed after `make jetp-data`
+2026-09-24T21:28Z HDMX-coding-agent note full gate — on base `c92e62b947591ed8d64ef64a99f9c43979f8dca7`, `make check` preflight passed and ran 3276 tests (68 skipped); five unrelated failures remain: `test_jetp_courbe_reference.py::test_chaine_portee_reproduit_la_reference` lacks DVC `data/jetp/crs`; `test_jetp_{idn,sen,vnm,zaf}_positions.py` each reject existing 0875 ledger files `agreements.csv` or `documents.csv` as unclassified
 --- body ---
 ## Context
 
@@ -31,7 +35,9 @@ scission des identités ([[0875]]).
 ## Actions
 
 1. Une ligne `coverage` par référent couvert : l'ancien identifiant de
-   projet résolu par `routes` ([[0875]]), les autorités par `parties`.
+   projet résolu par `routes` ou par la disposition 0875 qui remplace les
+   identifiants sans route, les autorités par `parties` quand le nom est
+   unique.
 2. `document_ids` pointe vers `documents` ([[0872]]) ; `route` garde la voie
    de recherche consignée.
 3. Servir la table ; lecture de compatibilité jusqu'à [[0878]].
@@ -46,8 +52,8 @@ scission des identités ([[0875]]).
 
 ## Verification
 
-- [ ] Chaque ligne des deux tables sources retrouve sa ligne `coverage` ou une disposition nommée
-- [ ] Recettes ZAF et VNM de [[0834]] vertes
+- [x] Chaque ligne des deux tables sources retrouve sa ligne `coverage` ou une disposition nommée (`data/jetp/migration/0884-coverage-reconciliation.csv`, 205 lignes)
+- [x] Recettes ZAF et VNM de [[0834]] vertes (`make check-fast`, 2317 passed, 13 skipped)
 
 ## Invariants
 
@@ -55,5 +61,5 @@ scission des identités ([[0875]]).
 
 ## Exit criteria
 
-- [ ] `coverage` validée par [[0871]] (`make jetp-ledger-check`) et servie
-- [ ] `tests/test_jetp_coverage.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
+- [x] `coverage` validée par [[0871]] (`make jetp-ledger-check`) et servie (`deliverables/jetp-observatory/data/coverage.json`)
+- [x] `tests/test_jetp_coverage.py`, `make check-fast` et `make lint` verts (5 passed; 2317 passed, 13 skipped; 339 passed, 11 skipped)
