@@ -556,7 +556,8 @@ def check_paper_trail(page, url):
     # Removing the chip opens the same step for the whole site.
     page.locator('#step-bar [data-scope-remove="VNM"]').click()
     at_step('Projects', 'projects')
-    assert page.locator('#step-bar .scope-chip').count() == 0
+    # The hash changes before the step bar is redrawn: wait for the chip to go.
+    page.wait_for_selector('#step-bar .scope-chip', state='detached')
     assert page.locator('#country-filter').input_value() == ''
     # The longer explanation is folded under the one-sentence lede.
     page.goto(url + '/#documents')
