@@ -47,10 +47,28 @@ def test_the_ledger_record_replays_from_the_pinned_extracts(ingested, tmp_path):
     assert written
     for path in written:
         relative = path.relative_to(tmp_path)
-        assert path.read_bytes() == (LEDGER / relative).read_bytes(), relative
+        committed = LEDGER / relative
+        if relative.parts[0] == 'lines.d':
+            with path.open(encoding='utf-8', newline='') as handle:
+                replay = list(csv.DictReader(handle))
+            with committed.open(encoding='utf-8', newline='') as handle:
+                current = {row['line_id']: row for row in csv.DictReader(handle)}
+            # Ticket 0888 adds the publisher's verbatim sector to these same
+            # lines; the M1a ingestion still owns every other column.
+            assert replay == [dict(current[row['line_id']], own_sector='')
+                              for row in replay], relative
+        elif relative == Path('line-field-specs.csv'):
+            with path.open(encoding='utf-8', newline='') as handle:
+                replay = list(csv.DictReader(handle))
+            with committed.open(encoding='utf-8', newline='') as handle:
+                current = {row['document_id']: row for row in csv.DictReader(handle)}
+            assert replay == [current[row['document_id']] for row in replay]
+        else:
+            assert path.read_bytes() == committed.read_bytes(), relative
     committed = {p.relative_to(LEDGER) for p in (LEDGER / 'line-fields').glob('*.csv')}
     committed |= {p.relative_to(LEDGER) for p in (LEDGER / 'lines.d').glob('*.csv')}
-    assert committed <= {p.relative_to(tmp_path) for p in written}
+    assert {p.relative_to(tmp_path) for p in written} <= committed | {
+        Path('line-field-specs.csv'), Path('routes.csv')}
 
 
 def test_counts_are_those_of_the_tables_at_launch(ingested):

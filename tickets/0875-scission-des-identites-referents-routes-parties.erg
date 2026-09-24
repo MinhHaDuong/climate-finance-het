@@ -2,7 +2,6 @@
 Title: Scission des identités : référents, routes, projets, actifs, accords, parties, périmètres
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Blocked-by: 0874
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -11,6 +10,7 @@ Blocked-by: 0874
 2026-09-23T09:17Z HDMX-coding-agent note gaze/1457: 0871's LEGACY_FILES skips data/jetp/projects.csv by name in the ledger header check so the pre-migration file doesn't fail as 'projects' table header; remove that skip entry (scripts/jetp/_ledger_headers.py) once this ticket's split retires the file
 2026-09-23T14:59Z HDMX-coding-agent note décision de l'auteur (2026-09-23, interactive) : contrôle d'autorité des organisations. La table publishers est fondue dans parties (un publisher est une partie dans un rôle de publication) ; nouvelle table party-names (une ligne par forme imprimée, form_type, langue, justification, une seule forme preferred en vigueur). L'étape 4 de ce ticket part des parties et formes déjà frappées par 0872 (PR #1461) : palier 1 par external-ids (IATI org, ROR, LEI, Wikidata), variantes de casse fusionnées à la frappe, acronymes/traductions/anciens noms en candidats de palier 2. Action 4 réécrite en conséquence.
 2026-09-23T17:04Z HDMX-coding-agent note 0873 opened data/jetp/routes.csv with 1 907 rows of kind line (plan_project_id and VNM inventory_id); the 404 projects.csv identifiers of action 5 are appended to it, not written over it — no key overlaps (checked).
+2026-09-24T14:05Z HDMX-coding-agent note blocker 0874 closed — Blocked-by removed.
 --- body ---
 ## Context
 

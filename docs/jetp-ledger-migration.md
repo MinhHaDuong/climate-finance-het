@@ -13,7 +13,7 @@ What disappears: `sources.csv` (becomes `parties`, `party-names`,
 `plan-projects.csv` (lines), `events.csv` and `implementation-events.csv`
 (observations), `project-source-links.csv` (lines with classification
 `named_item` and a `refers_to` of basis `discovery`), `source-claims.csv`
-(lines of classification `envelope`, `count`, `absence` or `heading`, with
+(lines of classification `named_item`, `envelope`, `count`, `absence` or `heading`, with
 observations), `idn-portfolio-observations.csv`, `vnm-pilot-manifest.csv` and
 `vnm-pilot-observations.csv` (lines and observations of their documents),
 `project-coverage.csv` and `authority-coverage.csv` (`coverage`),
@@ -71,7 +71,18 @@ Order of work, each step a ticket with its own byte-level check:
    identifiers the export served; the eight exported files are unchanged byte
    for byte. The export's count of unknown field values is now taken over the
    columns each document prints, not over the extractor's bookkeeping columns.
-3. Lines for the remaining documents (plan-projects, portfolio, pilot, claims).
+3. Remaining lines (ticket 0874, 2026-09-24): the 1,628 plan lines from step 2
+   retain their printed columns, including `ruptl`; 46 Indonesia portfolio
+   rows, 66 Viet Nam pilot acquisition rows, 46 pilot observation rows and
+   146 source claims add 304 lines. Five claims lack a collected snapshot and
+   remain in `data/jetp/migration/0874-pending.csv`. The 304 legacy discovery
+   links are preserved in `0874-link-candidates.csv`; 35 documents without a
+   previous line get one minimal line with a specific locator. Nineteen links
+   lack snapshots and 31 have no precise locator, so those 50 remain pending.
+   The two local pilot CSVs are frozen byte for byte under
+   `data/jetp/ledger-snapshots/`; their lines cite those local records and
+   retain each original source identifier, locator and hash. No project or
+   `line-referents` row is minted in this step.
 4. Identity split: referents, routes, the five identity tables. Every old
    identifier resolves through `routes`. The party table, which step 1 starts
    with the publishers under authority control (decision 12 of the
@@ -84,9 +95,16 @@ Order of work, each step a ticket with its own byte-level check:
    lines are reviewed. A party is minted from a line like every other
    identity, so the table cannot grow ahead of its justification. Decided by the
    author on 2026-09-22.
-5. Observations and the status crosswalk, replacing events, implementation
-   events and event timing. The Observations tab and each record's justification
-   fold-out are the check.
+5. Observations and event timing replace the old event tables. Tickets 0887
+   and 0888 have already written the independent status and sector crosswalks:
+   four South African register status words and Indonesia's approval word,
+   plus four Indonesia technology groups with one clear CRS purpose. Broad
+   source labels remain verbatim without a forced CRS code: the Indonesia
+   solar and bioenergy groups include several technologies or grid contexts,
+   and South African portfolios span different interventions. The supposed
+   Viet Nam suspended retirement in ticket 0887 does not
+   occur in the current event table; the Indonesia Cirebon case stays unmapped
+   pending review. The Observations tab and each record's justification
+   fold-out are the check for the remaining observation step.
 6. Perimeter observations replace configured headlines.
 7. Remove the retired tables and the compatibility readers.
-

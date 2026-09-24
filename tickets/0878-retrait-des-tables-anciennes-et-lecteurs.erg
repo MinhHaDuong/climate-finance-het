@@ -2,8 +2,6 @@
 Title: Retrait des tables anciennes et des lecteurs de compatibilité
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Blocked-by: 0887
-Blocked-by: 0888
 Blocked-by: 0890
 Blocked-by: 0879
 Blocked-by: 0884
@@ -16,6 +14,8 @@ Blocked-by: 0884
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`scripts/analysis/jetp_observatory.mk` cite `data/jetp/plan-projects.csv` en prérequis, confirmé à mettre à jour ; `_contracts.py` et `schemas.py` présents) ; ce ticket clôt la vague et touche `scripts/`, les `.mk` et `tests/` sur tout le périmètre JETP, donc la portée de `make check` complet dépasse les autres enfants — narrowé ci-dessous aux passerelles étroites (tests ciblés, `make check-fast`, `make lint`) plus le balayage grep et la recette navigateur, qui sont les vérifications qui détectent réellement un lecteur oublié ; question pour l'auteur : garder `make check` complet comme un passage manuel avant de fusionner ce ticket précis (dernière vague, périmètre large), sans en faire un critère de sortie bloquant du train
 
 2026-09-23T15:30Z HDMX-coding-agent note décision de l'auteur, 2026-09-23 : la question posée en plan (raid prep) sur le make check complet est tranchée par la décision d'autonomie du train — portes étroites (tests ciblés, make check-fast, make lint), balayage grep et recette navigateur restent le critère de sortie de ce ticket ; la suite complète tourne une fois sur padme à la revue d'intégration de [[0870]], jamais comme critère de sortie bloquant de ce ticket
+2026-09-24T14:05Z HDMX-coding-agent note blocker 0887 closed — Blocked-by removed.
+2026-09-24T14:05Z HDMX-coding-agent note blocker 0888 closed — Blocked-by removed.
 --- body ---
 ## Context
 

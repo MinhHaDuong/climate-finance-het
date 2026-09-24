@@ -368,6 +368,7 @@ def build_existing_layers(
             line for line in lines
             if line["sha256"] == specification["source_sha256"]
             and str(line["line_id"]).startswith(f"{document_id}-")
+            and line["line_id"] in fields
         ]
         if len(layer_lines) != specification["expected_rows"]:
             raise ValueError(f"frozen layer row count changed: {specification['layer_id']}")

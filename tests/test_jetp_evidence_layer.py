@@ -326,8 +326,12 @@ def test_the_committed_layer_matches_its_inputs():
     snapshots, _ = ledger_headers.read_table(ledger, 'snapshots', schema)
     names, _ = ledger_headers.read_table(ledger, 'party_names', schema)
     publications, _ = ledger_headers.read_table(ledger, 'document_publishers', schema)
-    assert len(documents) == len(sources)
-    assert len(snapshots) == len({r['sha256'] for r in manifest if r['sha256']})
+    # Ticket 0874 registers two frozen local pilot tables in the same ledger;
+    # this compatibility check covers the original sources/manifest only.
+    source_ids = {r['source_id'] for r in sources}
+    assert {row[0] for row in documents if row[0] in source_ids} == source_ids
+    assert {row[0] for row in snapshots} >= {
+        r['sha256'] for r in manifest if r['sha256']}
     # Every publisher text is a name form, or a joint, "via" or "/" text whose
     # parties' parts are.
     forms = {row[2] for row in names}

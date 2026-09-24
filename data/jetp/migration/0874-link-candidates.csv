@@ -1,0 +1,305 @@
+link_id,source_id,line_id,old_project_id,relationship,review_status,locator,reason
+idn-link-aicet-adb-project,idn-adb-aicet-56140-001,,idn-fin-rbl-aicet,project_page,confirmed,project 56140-001,no snapshot
+idn-link-aicet-adb-news,idn-adb-aicet-news-2025,,idn-fin-rbl-aicet,approval_document,confirmed,press release,resolve to source line in 0875
+idn-link-aset-adb-project,idn-adb-aset-56368-001,,idn-fin-pbl-aset,project_page,confirmed,project 56368-001,no snapshot
+idn-link-aset-adb-news,idn-adb-aset-news-2024,,idn-fin-pbl-aset,approval_document,confirmed,press release,resolve to source line in 0875
+idn-link-muara-laboh-adb,idn-adb-muara-laboh-2-2025,,idn-fin-muara-laboh-2,approval_document,confirmed,press release,resolve to source line in 0875
+idn-link-eib-ptsmi,idn-eib-ptsmi-mou-2024,,idn-pipe-eib-sustainable-infrastructure,project_report,confirmed,whole announcement,resolve to source line in 0875
+idn-link-geapp-dediesel-east,idn-geapp-diesel-replacement-program,,idn-pipe-dediesel-east-phase1,possible_match,provisional,programme overview,resolve to source line in 0875
+idn-link-geapp-dediesel-west,idn-geapp-diesel-replacement-program,,idn-pipe-dediesel-west-phase1,possible_match,confirmed,programme overview,resolve to source line in 0875
+idn-link-saguling-gfanz,idn-gfanz-saguling-2025,,idn-fin-saguling-floating-solar,approval_document,confirmed,press release,resolve to source line in 0875
+idn-link-ibvogt-dediesel-west,idn-ibvogt-diesel-west-2023,,idn-pipe-dediesel-west-phase1,project_page,confirmed,whole announcement,resolve to source line in 0875
+idn-link-ieefa-dediesel-east,idn-ieefa-dediesel-update-2026,,idn-pipe-dediesel-east-phase1,possible_match,provisional,current programme assessment,no snapshot
+idn-link-ieefa-dediesel-west,idn-ieefa-dediesel-update-2026,,idn-pipe-dediesel-west-phase1,possible_match,confirmed,current programme assessment,no snapshot
+idn-link-monitor25-gecs,idn-jetp-progress-report-2025,,idn-pipe-green-corridors-sulawesi,cmea_selected_monitoring,confirmed,Appendix 2 row 1,resolve to source line in 0875
+idn-link-monitor25-dediesel-east,idn-jetp-progress-report-2025,,idn-pipe-dediesel-east-phase1,cmea_selected_monitoring,confirmed,Appendix 2 row 2,resolve to source line in 0875
+idn-link-monitor25-dediesel-west,idn-jetp-progress-report-2025,,idn-pipe-dediesel-west-phase1,cmea_selected_monitoring,confirmed,Appendix 2 row 3,resolve to source line in 0875
+idn-link-monitor25-singkarak,idn-jetp-progress-report-2025,,idn-pipe-singkarak-floating-solar,cmea_selected_monitoring,confirmed,Appendix 2 row 4a,resolve to source line in 0875
+idn-link-monitor25-saguling,idn-jetp-progress-report-2025,,idn-fin-saguling-floating-solar,cmea_selected_monitoring,confirmed,Appendix 2 row 4b,resolve to source line in 0875
+idn-link-monitor25-hijaunesia2,idn-jetp-progress-report-2025,,idn-pipe-hijaunesia-2,cmea_selected_monitoring,confirmed,Appendix 2 row 5,resolve to source line in 0875
+idn-link-monitor25-gde,idn-jetp-progress-report-2025,,idn-monitor-gde-pipeline-2025,cmea_selected_monitoring,confirmed,Appendix 2 row 6,resolve to source line in 0875
+idn-link-monitor25-karangkates,idn-jetp-progress-report-2025,,idn-pipe-sutami-floating-solar,cmea_selected_monitoring,confirmed,Appendix 2 row 7,resolve to source line in 0875
+idn-link-monitor25-cirebon,idn-jetp-progress-report-2025,,idn-pipe-cirebon-1-retirement,cmea_selected_monitoring,confirmed,Appendix 2 row 8,resolve to source line in 0875
+idn-link-monitor25-hululais,idn-jetp-progress-report-2025,,idn-pipe-hululais-1-2,cmea_selected_monitoring,confirmed,Appendix 2 row 9,resolve to source line in 0875
+idn-link-monitor25-seg,idn-jetp-progress-report-2025,,idn-pipe-solar-cell-manufacturing,cmea_selected_monitoring,confirmed,Appendix 2 row 10,resolve to source line in 0875
+idn-link-monitor25-rsud,idn-jetp-progress-report-2025,,idn-pipe-rsud-energy-efficiency,cmea_selected_monitoring,confirmed,Appendix 2 row 11,resolve to source line in 0875
+idn-link-monitor25-rscm,idn-jetp-progress-report-2025,,idn-pipe-rscm-energy-efficiency,cmea_selected_monitoring,confirmed,Appendix 2 row 12,resolve to source line in 0875
+idn-link-monitor25-cihaur-talaga,idn-jetp-progress-report-2025,,idn-monitor-cihaur-talaga-micro-hydro,cmea_selected_monitoring,confirmed,Appendix 2 row 13,resolve to source line in 0875
+idn-link-workplan-hijaunesia2,idn-jetp-work-plan-2024-presentation,,idn-pipe-hijaunesia-2,named_in,confirmed,Priority projects under procurement,resolve to source line in 0875
+idn-link-workplan-hydro-sulawesi,idn-jetp-work-plan-2024-presentation,,idn-pipe-hydro-quota-sulawesi,named_in,confirmed,Priority projects under procurement,resolve to source line in 0875
+idn-link-workplan-hydro-sumatra,idn-jetp-work-plan-2024-presentation,,idn-pipe-hydro-quota-sumatra,named_in,confirmed,Priority projects under procurement,resolve to source line in 0875
+idn-link-workplan-dediesel-east,idn-jetp-work-plan-2024-presentation,,idn-pipe-dediesel-east-phase1,possible_match,confirmed,Priority projects under procurement,resolve to source line in 0875
+idn-link-workplan-dediesel-west,idn-jetp-work-plan-2024-presentation,,idn-pipe-dediesel-west-phase1,possible_match,confirmed,Priority projects under procurement,resolve to source line in 0875
+idn-link-xurya-jetp,idn-jetp-xurya-equity-2024,,idn-fin-xurya-rooftop,approval_document,confirmed,official JETP news,resolve to source line in 0875
+idn-link-mrt-east-west-jica,idn-jica-mrt-east-west-2024,,idn-fin-mrt-east-west,approval_document,confirmed,press release,resolve to source line in 0875
+idn-link-mrt-north-south-jica,idn-jica-mrt-north-south-2023,,idn-fin-mrt-north-south,approval_document,confirmed,press release item 3,resolve to source line in 0875
+idn-link-cirebon-reuters,idn-news-cirebon-retirement-reuters-2025,,idn-pipe-cirebon-1-retirement,named_in,confirmed,ministerial statement,no snapshot
+idn-link-legok-antara,idn-news-legok-groundbreaking-antara-2026,,idn-pipe-legok-nangka-waste,named_in,confirmed,groundbreaking report,resolve to source line in 0875
+idn-link-portal-gecs,idn-portfolio-project-gecs,,idn-pipe-green-corridors-sulawesi,project_page,confirmed,whole profile,resolve to source line in 0875
+idn-link-portal-hululais,idn-portfolio-project-hululais,,idn-pipe-hululais-1-2,project_page,confirmed,whole profile,resolve to source line in 0875
+idn-link-portal-nagajaya,idn-portfolio-project-nagajaya,,idn-pipe-nagajaya-micro-hydro,project_page,confirmed,whole profile,resolve to source line in 0875
+idn-link-cirebon-marubeni,idn-project-cirebon-framework-marubeni,,idn-pipe-cirebon-1-retirement,project_report,confirmed,whole announcement,resolve to source line in 0875
+idn-link-dieng3-adb,idn-project-dieng3-adb,,idn-pipe-dieng-3-4,project_page,confirmed,ADB project 58342-001,no snapshot
+idn-link-legok-ut,idn-project-legok-agreement-ut-2024,,idn-pipe-legok-nangka-waste,project_report,confirmed,whole announcement,resolve to source line in 0875
+idn-link-rsud-c40,idn-project-rsud-retrofit-c40,,idn-pipe-rsud-energy-efficiency,project_report,confirmed,whole report,no snapshot
+idn-link-seg-construction,idn-project-seg-construction-2024,,idn-pipe-solar-cell-manufacturing,project_report,confirmed,whole announcement,resolve to source line in 0875
+idn-link-seg-operational,idn-project-seg-operational-2025,,idn-pipe-solar-cell-manufacturing,project_report,confirmed,whole announcement,resolve to source line in 0875
+idn-link-singkarak-acwa,idn-project-singkarak-acwa-2022,,idn-pipe-singkarak-floating-solar,project_page,confirmed,whole announcement,resolve to source line in 0875
+idn-link-sutami-plnnp,idn-project-sutami-construction-plnnp-2026,,idn-pipe-sutami-floating-solar,project_report,confirmed,whole announcement,resolve to source line in 0875
+idn-link-tanah-laut-profile,idn-project-tanah-laut-plnnp,,idn-pipe-tanah-laut-wind,project_page,confirmed,Tanah Laut WPP profile,resolve to source line in 0875
+idn-link-tanah-laut-ppa,idn-project-tanah-laut-ppa-ptplnnr,,idn-pipe-tanah-laut-wind,project_report,confirmed,whole announcement,resolve to source line in 0875
+idn-link-isle1-wb-news,idn-world-bank-isle1-2023,,idn-fin-isle-1,approval_document,confirmed,press release,resolve to source line in 0875
+idn-link-isle1-wb-assessment,idn-world-bank-isle1-technical-assessment-2022,,idn-fin-isle-1,project_report,confirmed,technical assessment,resolve to source line in 0875
+sen-project-annex-08-sen-aeme-project-08,sen-aeme-project-08,sen-aeme-project-08-discovery-1,sen-project-annex-08,project_page,confirmed,Project heading; details cross-checked against AEME annual report 2023,resolve to source line in 0875
+sen-project-annex-09-sen-aeme-project-09,sen-aeme-project-09,sen-aeme-project-09-discovery-1,sen-project-annex-09,project_page,confirmed,Project heading; details cross-checked against AEME annual report 2023,resolve to source line in 0875
+sen-project-annex-10-sen-aeme-project-10,sen-aeme-project-10,sen-aeme-project-10-discovery-1,sen-project-annex-10,project_page,confirmed,Project heading; details cross-checked against AEME annual report 2023,resolve to source line in 0875
+sen-project-annex-11-sen-aeme-project-11,sen-aeme-project-11,sen-aeme-project-11-discovery-1,sen-project-annex-11,project_page,confirmed,Project heading; details cross-checked against AEME annual report 2023,resolve to source line in 0875
+sen-project-annex-12-sen-aeme-project-12,sen-aeme-project-12,sen-aeme-project-12-discovery-1,sen-project-annex-12,project_page,confirmed,Project heading; details cross-checked against AEME annual report 2023,resolve to source line in 0875
+sen-project-annex-13-sen-aeme-project-13,sen-aeme-project-13,sen-aeme-project-13-discovery-1,sen-project-annex-13,project_page,confirmed,Project heading; details cross-checked against AEME annual report 2023,resolve to source line in 0875
+sen-project-annex-14-sen-aeme-project-14,sen-aeme-project-14,sen-aeme-project-14-discovery-1,sen-project-annex-14,project_page,confirmed,Project heading; details cross-checked against AEME annual report 2023,resolve to source line in 0875
+sen-project-annex-08-sen-aeme-report-2023,sen-aeme-report-2023,sen-aeme-report-2023-discovery-1,sen-project-annex-08,project_report,confirmed,2023 programme activities; named programme section,resolve to source line in 0875
+sen-project-annex-09-sen-aeme-report-2023,sen-aeme-report-2023,sen-aeme-report-2023-discovery-1,sen-project-annex-09,project_report,confirmed,2023 programme activities; named programme section,resolve to source line in 0875
+sen-project-annex-10-sen-aeme-report-2023,sen-aeme-report-2023,sen-aeme-report-2023-discovery-1,sen-project-annex-10,project_report,confirmed,2023 programme activities; named programme section,resolve to source line in 0875
+sen-project-annex-11-sen-aeme-report-2023,sen-aeme-report-2023,sen-aeme-report-2023-discovery-1,sen-project-annex-11,project_report,confirmed,2023 programme activities; named programme section,resolve to source line in 0875
+sen-project-annex-12-sen-aeme-report-2023,sen-aeme-report-2023,sen-aeme-report-2023-discovery-1,sen-project-annex-12,project_report,confirmed,2023 programme activities; named programme section,resolve to source line in 0875
+sen-project-annex-13-sen-aeme-report-2023,sen-aeme-report-2023,sen-aeme-report-2023-discovery-1,sen-project-annex-13,project_report,confirmed,2023 programme activities; named programme section,resolve to source line in 0875
+sen-project-annex-14-sen-aeme-report-2023,sen-aeme-report-2023,sen-aeme-report-2023-discovery-1,sen-project-annex-14,project_report,confirmed,2023 programme activities; named programme section,resolve to source line in 0875
+sen-resume-sen-project-annex-33-sen-afd-arescaleup-2025,sen-afd-arescaleup-2025,sen-afd-arescaleup-2025-discovery-1,sen-project-annex-33,possible_match,provisional,Smartgrid Senegal section,resolve to source line in 0875
+sen-resume-sen-project-qw-08-sen-afd-arescaleup-2025,sen-afd-arescaleup-2025,sen-afd-arescaleup-2025-discovery-1,sen-project-qw-08,possible_match,provisional,Smartgrid Senegal section,resolve to source line in 0875
+sen-project-qw-10-sen-afd-diass-storage,sen-afd-diass-storage,sen-afd-diass-storage-discovery-1,sen-project-qw-10,project_report,confirmed,"Single-page factsheet, Prochaines étapes / impacts",resolve to source line in 0875
+round2-sen-project-annex-35-sen-afd-irve-ami12-2026,sen-afd-irve-ami12-2026,,sen-project-annex-35,possible_match,provisional,"AMII12/2026, C_DEG_155; original body paragraph2",no snapshot
+round3-sen-project-annex-23-sen-aner-archive-agpm-2025,sen-aner-archive-agpm-2025,,sen-project-annex-23,possible_match,provisional,"One-page AGPM, consultant-services bullet",resolve to source line in 0875
+round3-sen-aner-archive-autonomisation-public-buildings,sen-aner-archive-autonomisation-public-buildings,,sen-project-annex-23,possible_match,provisional,Historical capture 2023-12-07T02:46:50Z,resolve to source line in 0875
+round3-sen-aner-archive-d2b,sen-aner-archive-d2b,,sen-project-annex-23,possible_match,provisional,Historical capture 2025-05-25T02:01:57Z,resolve to source line in 0875
+round3-sen-aner-archive-esipc,sen-aner-archive-esipc,,sen-project-annex-23,possible_match,provisional,Historical capture 2024-12-10T15:35:55Z,resolve to source line in 0875
+round3-sen-aner-archive-esipc-v4,sen-aner-archive-esipc-v4,,sen-project-annex-23,possible_match,provisional,Historical capture 2025-05-25T01:48:46Z,resolve to source line in 0875
+round3-sen-aner-archive-gandiaye,sen-aner-archive-gandiaye,,sen-project-annex-28,possible_match,provisional,Historical capture 2024-12-10T15:38:29Z,resolve to source line in 0875
+round3-aner-d2b-api,sen-aner-d2b-live-api,,sen-project-annex-23,possible_match,provisional,JSON id24 D2B17SN01,resolve to source line in 0875
+sen-resume-sen-project-annex-28-sen-aner-gandiaye-tender-2020,sen-aner-gandiaye-tender-2020,,sen-project-annex-28,possible_match,provisional,2020 tender route now returns HTML,no snapshot
+sen-project-annex-24-sen-aner-magazine-2026,sen-aner-magazine-2026,,sen-project-annex-24,project_report,confirmed,"pp. 32-37, CERER/PTB infrastructure quality programme",resolve to source line in 0875
+sen-project-annex-26-sen-aner-magazine-2026,sen-aner-magazine-2026,,sen-project-annex-26,project_report,confirmed,"p. 17, interview with ANER director: 300000 household solar kits",resolve to source line in 0875
+sen-resume-sen-project-annex-28-sen-aner-magazine-2026,sen-aner-magazine-2026,,sen-project-annex-28,possible_match,provisional,Printed p.15: Gandiaye pilot,resolve to source line in 0875
+sen-project-annex-20-sen-aner-project-20,sen-aner-project-20,sen-aner-project-20-discovery-1,sen-project-annex-20,project_page,confirmed,"Public API titleFr, objectiveFr and status; human page URL in source notes",resolve to source line in 0875
+sen-project-annex-22-sen-aner-project-22,sen-aner-project-22,sen-aner-project-22-discovery-1,sen-project-annex-22,project_page,confirmed,"Public API titleFr, objectiveFr and status; human page URL in source notes",resolve to source line in 0875
+sen-project-annex-27-sen-aner-project-27,sen-aner-project-27,sen-aner-project-27-discovery-1,sen-project-annex-27,project_page,confirmed,"Public API titleFr, objectiveFr and status; human page URL in source notes",resolve to source line in 0875
+sen-project-annex-29-sen-aner-project-29,sen-aner-project-29,,sen-project-annex-29,project_page,confirmed,"Public API titleFr, objectiveFr and status; human page URL in source notes",resolve to source line in 0875
+sen-project-annex-31-sen-aner-project-31,sen-aner-project-31,sen-aner-project-31-discovery-1,sen-project-annex-31,project_page,confirmed,"Public API titleFr, objectiveFr and status; human page URL in source notes",resolve to source line in 0875
+sen-project-annex-23-sen-aner-project-api,sen-aner-project-api,,sen-project-annex-23,possible_match,provisional,Related programme or geographic lead,no precise locator
+sen-project-annex-25-sen-aner-project-api,sen-aner-project-api,,sen-project-annex-25,possible_match,provisional,Related programme or geographic lead,no precise locator
+sen-project-annex-28-sen-aner-project-api,sen-aner-project-api,,sen-project-annex-28,possible_match,provisional,Related programme or geographic lead,no precise locator
+sen-project-annex-30-sen-aner-project-api,sen-aner-project-api,,sen-project-annex-30,possible_match,provisional,Related programme or geographic lead,no precise locator
+docfollow-aner-psd-23,sen-aner-psd-2025-2029,,sen-project-annex-23,project_report,confirmed,"PDF pp.22 and48, named institutional-autonomy project",resolve to source line in 0875
+docfollow-aner-rooftop-23,sen-aner-rooftop-preliminary-report,,sen-project-annex-23,possible_match,provisional,"Printed pp.3,12-13,19-20; tables2 and8",resolve to source line in 0875
+docfollow-aner-wp2-28,sen-aner-wp2-productive-use,,sen-project-annex-28,possible_match,provisional,Gandiaye desalination case,resolve to source line in 0875
+round3-sen-project-annex-28-sen-annex8-project-analysis,sen-annex8-project-analysis,,sen-project-annex-28,project_report,confirmed,"Printed p.172, section 8.5.2.4; received-project table pp.4-5",resolve to source line in 0875
+round3-sen-project-annex-30-sen-annex8-project-analysis,sen-annex8-project-analysis,,sen-project-annex-30,project_report,confirmed,"Printed pp.58-61, section 8.4.2.9 and prioritisation; received-project table pp.4-5",resolve to source line in 0875
+round2-sen-project-qw-04-sen-arcop-aser-audit-2023,sen-arcop-aser-audit-2023,,sen-project-qw-04,project_report,confirmed,"PDF/printed pp.55-56, T_ASER_003, lots T0038/T0039",resolve to source line in 0875
+sen-dig-sen-artelia-thiestouba-gbif,sen-artelia-thiestouba-gbif,sen-artelia-thiestouba-gbif-discovery-1,sen-project-annex-15,project_report,confirmed,"project.abstract, project.funding; DOI 10.15468/r5fqf9",resolve to source line in 0875
+sen-resume-sen-project-annex-05-sen-aser-www-retry,sen-aser-www-retry,,sen-project-annex-05,possible_match,provisional,Connection refused,no snapshot
+sen-resume-sen-project-annex-06-sen-aser-www-retry,sen-aser-www-retry,,sen-project-annex-06,possible_match,provisional,Connection refused,no snapshot
+sen-resume-sen-project-annex-07-sen-aser-www-retry,sen-aser-www-retry,,sen-project-annex-07,possible_match,provisional,Connection refused,no snapshot
+sen-resume-sen-project-qw-04-sen-aser-www-retry,sen-aser-www-retry,,sen-project-qw-04,possible_match,provisional,Connection refused,no snapshot
+sen-project-annex-21-sen-bmn-energy-programme,sen-bmn-energy-programme,,sen-project-annex-21,possible_match,provisional,Related programme or geographic lead,no precise locator
+round4-boad-linguere,sen-boad-linguere-loan-2026,,sen-project-qw-02,possible_match,provisional,"PDF pp.2-3, board25-26March2026",resolve to source line in 0875
+sen-dig-sen-boad-ouarkhokh-esia,sen-boad-ouarkhokh-esia,sen-boad-ouarkhokh-esia-discovery-1,sen-project-qw-02,possible_match,provisional,Printed p.16; cover February 2026 provisional; consultation pp.346-347,resolve to source line in 0875
+sen-resume-sen-project-annex-25-sen-caa-aner-capacity-065,sen-caa-aner-capacity-065,,sen-project-annex-25,possible_match,provisional,ANER climate-finance assistance; archive HTTP403,no snapshot
+sen-project-annex-19-sen-cetud-biognv-2021,sen-cetud-biognv-2021,,sen-project-annex-19,possible_match,provisional,Related programme or geographic lead,no precise locator
+sen-resume-sen-project-qw-10-sen-diass-groundbreaking-2026,sen-diass-groundbreaking-2026,,sen-project-qw-10,project_report,confirmed,20 April 2026 notice; ceremony and funding paragraphs,resolve to source line in 0875
+round2-sen-project-qw-02-sen-genertec-ouarkhokh-chinese-2026,sen-genertec-ouarkhokh-chinese-2026,,sen-project-qw-02,possible_match,provisional,Published26May2026; opening paragraphs,resolve to source line in 0875
+sen-resume-sen-project-annex-25-sen-giz-ped2-2024,sen-giz-ped2-2024,sen-giz-ped2-2024-discovery-1,sen-project-annex-25,possible_match,provisional,PED II partner list and 2022-2025 period,resolve to source line in 0875
+sen-resume-sen-project-annex-05-sen-gov-access-project-fiches,sen-gov-access-project-fiches,,sen-project-annex-05,possible_match,provisional,TLS validation failure,no snapshot
+sen-resume-sen-project-annex-19-sen-ifc-biogas-609428,sen-ifc-biogas-609428,,sen-project-annex-19,project_report,confirmed,"Summary of Advisory Services: approval date, project description, budget",resolve to source line in 0875
+sen-resume-sen-project-annex-19-sen-ifc-cetud-ppp-2025,sen-ifc-cetud-ppp-2025,sen-ifc-cetud-ppp-2025-discovery-1,sen-project-annex-19,project_report,confirmed,8 May 2025; first project and transaction-advisor role,resolve to source line in 0875
+sen-project-annex-01-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-01,named_in,confirmed,"Annex 2, p. 13, row 1",resolve to source line in 0875
+sen-project-annex-02-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-02,named_in,confirmed,"Annex 2, p. 13, row 2",resolve to source line in 0875
+sen-project-annex-03-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-03,named_in,confirmed,"Annex 2, p. 13, row 3",resolve to source line in 0875
+sen-project-annex-04-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-04,named_in,confirmed,"Annex 2, p. 13, row 4",resolve to source line in 0875
+sen-project-annex-05-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-05,named_in,confirmed,"Annex 2, p. 13, row 5",resolve to source line in 0875
+sen-project-annex-06-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-06,named_in,confirmed,"Annex 2, p. 13, row 6",resolve to source line in 0875
+sen-project-annex-07-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-07,named_in,confirmed,"Annex 2, p. 13, row 7",resolve to source line in 0875
+sen-project-annex-08-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-08,named_in,confirmed,"Annex 2, p. 13, row 8",resolve to source line in 0875
+sen-project-annex-09-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-09,named_in,confirmed,"Annex 2, p. 13, row 9",resolve to source line in 0875
+sen-project-annex-10-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-10,named_in,confirmed,"Annex 2, p. 13, row 10",resolve to source line in 0875
+sen-project-annex-11-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-11,named_in,confirmed,"Annex 2, p. 13, row 11",resolve to source line in 0875
+sen-project-annex-12-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-12,named_in,confirmed,"Annex 2, p. 13, row 12",resolve to source line in 0875
+sen-project-annex-13-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-13,named_in,confirmed,"Annex 2, p. 13, row 13",resolve to source line in 0875
+sen-project-annex-14-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-14,named_in,confirmed,"Annex 2, p. 14, row 14",resolve to source line in 0875
+sen-project-annex-15-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-15,named_in,confirmed,"Annex 2, p. 14, row 15",resolve to source line in 0875
+sen-project-annex-16-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-16,named_in,confirmed,"Annex 2, p. 14, row 16",resolve to source line in 0875
+sen-project-annex-17-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-17,named_in,confirmed,"Annex 2, p. 14, row 17",resolve to source line in 0875
+sen-project-annex-18-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-18,named_in,confirmed,"Annex 2, p. 14, row 18",resolve to source line in 0875
+sen-project-annex-19-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-19,named_in,confirmed,"Annex 2, p. 14, row 19",resolve to source line in 0875
+sen-project-annex-20-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-20,named_in,confirmed,"Annex 2, p. 14, row 20",resolve to source line in 0875
+sen-project-annex-21-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-21,named_in,confirmed,"Annex 2, p. 14, row 21",resolve to source line in 0875
+sen-project-annex-22-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-22,named_in,confirmed,"Annex 2, p. 14, row 22",resolve to source line in 0875
+sen-project-annex-23-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-23,named_in,confirmed,"Annex 2, p. 14, row 23",resolve to source line in 0875
+sen-project-annex-24-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-24,named_in,confirmed,"Annex 2, p. 14, row 24",resolve to source line in 0875
+sen-project-annex-25-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-25,named_in,confirmed,"Annex 2, p. 14, row 25",resolve to source line in 0875
+sen-project-annex-26-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-26,named_in,confirmed,"Annex 2, p. 14, row 26",resolve to source line in 0875
+sen-project-annex-27-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-27,named_in,confirmed,"Annex 2, p. 15, row 27",resolve to source line in 0875
+sen-project-annex-28-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-28,named_in,confirmed,"Annex 2, p. 15, row 28",resolve to source line in 0875
+sen-project-annex-29-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-29,named_in,confirmed,"Annex 2, p. 15, row 29",resolve to source line in 0875
+sen-project-annex-30-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-30,named_in,confirmed,"Annex 2, p. 15, row 30",resolve to source line in 0875
+sen-project-annex-31-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-31,named_in,confirmed,"Annex 2, p. 15, row 31",resolve to source line in 0875
+sen-project-annex-32-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-32,named_in,confirmed,"Annex 2, p. 15, row 32",resolve to source line in 0875
+sen-project-annex-33-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-33,named_in,confirmed,"Annex 2, p. 15, row 33",resolve to source line in 0875
+sen-project-annex-34-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-34,named_in,confirmed,"Annex 2, p. 15, row 34",resolve to source line in 0875
+sen-project-annex-35-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-35,named_in,confirmed,"Annex 2, p. 15, row 35",resolve to source line in 0875
+sen-project-annex-36-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-36,named_in,confirmed,"Annex 2, p. 15, row 36",resolve to source line in 0875
+sen-project-annex-37-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-37,named_in,confirmed,"Annex 2, p. 15, row 37",resolve to source line in 0875
+sen-project-annex-38-sen-investment-plan-annexes-mirror,sen-investment-plan-annexes-mirror,,sen-project-annex-38,named_in,confirmed,"Annex 2, p. 15, row 38",resolve to source line in 0875
+sen-project-annex-11-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-11,named_in,confirmed,"p. 33, QW5; main plan crosswalk",resolve to source line in 0875
+sen-project-annex-15-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-15,named_in,confirmed,"p. 33, QW1; main plan crosswalk",resolve to source line in 0875
+sen-project-annex-16-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-16,named_in,confirmed,"p. 33, QW9; main plan crosswalk",resolve to source line in 0875
+sen-project-annex-17-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-17,named_in,confirmed,"p. 33, QW6; main plan crosswalk",resolve to source line in 0875
+sen-project-annex-19-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-19,named_in,confirmed,"p. 33, QW7; main plan crosswalk",resolve to source line in 0875
+sen-project-annex-20-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-20,named_in,confirmed,"p. 33, QW11; main plan crosswalk",resolve to source line in 0875
+sen-project-qw-02-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-qw-02,named_in,confirmed,"p. 33, QW2",resolve to source line in 0875
+sen-project-qw-03-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-qw-03,named_in,confirmed,"p. 33, QW3",resolve to source line in 0875
+sen-project-qw-04-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-qw-04,named_in,confirmed,"p. 33, QW4",resolve to source line in 0875
+sen-project-qw-08-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-qw-08,named_in,confirmed,"p. 33, QW8",resolve to source line in 0875
+sen-project-qw-10-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-qw-10,named_in,confirmed,"p. 33, QW10",resolve to source line in 0875
+sen-resume-sen-project-annex-03-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-03,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-05-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-05,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-06-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-06,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-07-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-07,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-08-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-08,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-09-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-09,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-10-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-10,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-11-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-11,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-12-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-12,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-13-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-13,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-14-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-14,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-15-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-15,project_report,confirmed,"Printed p.41, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-16-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-16,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-17-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-17,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-19-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-19,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-20-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-20,project_report,confirmed,"Printed p.44, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-21-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-21,project_report,confirmed,"Printed p.44, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-22-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-22,project_report,confirmed,"Printed p.44, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-23-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-23,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-24-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-24,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-25-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-25,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-26-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-26,project_report,confirmed,"Printed p.42, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-27-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-27,project_report,confirmed,"Printed p.44, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-28-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-28,project_report,confirmed,"Printed p.44, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-29-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-29,project_report,confirmed,"Printed p.44, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-31-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-31,project_report,confirmed,"Printed p.43, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-33-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-33,project_report,confirmed,"Printed p.41, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-36-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-36,project_report,confirmed,"Printed p.44, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-37-sen-investment-plan-l4-mirror,sen-investment-plan-l4-mirror,,sen-project-annex-37,project_report,confirmed,"Printed p.44, named project cost",resolve to source line in 0875
+sen-resume-sen-project-annex-35-sen-irve-framework-tender-2026,sen-irve-framework-tender-2026,,sen-project-annex-35,possible_match,provisional,Notice 107072743; archive HTTP403,no snapshot
+sen-resume-sen-project-annex-02-sen-kasofor-afd,sen-kasofor-afd,sen-kasofor-afd-discovery-1,sen-project-annex-02,possible_match,provisional,Project purpose and beneficiaries,resolve to source line in 0875
+sen-resume-sen-project-annex-02-sen-kasofor-fondem,sen-kasofor-fondem,sen-kasofor-fondem-discovery-1,sen-project-annex-02,possible_match,provisional,Consortium and project perimeter,resolve to source line in 0875
+round2-sen-project-qw-02-sen-mepm-cntic-huawei-contracts-2025,sen-mepm-cntic-huawei-contracts-2025,,sen-project-qw-02,possible_match,provisional,28 July2025 mission and two-contract paragraphs,resolve to source line in 0875
+round2-sen-project-qw-02-sen-mepm-huawei-sites-mou-2026,sen-mepm-huawei-sites-mou-2026,,sen-project-qw-02,possible_match,provisional,Published13August2026; visit began11August; final paragraph,resolve to source line in 0875
+round2-sen-project-qw-02-sen-mepm-ouarkhokh-groundbreaking-2026,sen-mepm-ouarkhokh-groundbreaking-2026,,sen-project-qw-02,possible_match,provisional,Published10April2026; opening plant description and ceremony,resolve to source line in 0875
+sen-project-annex-38-sen-mha-sambangalou,sen-mha-sambangalou,,sen-project-annex-38,possible_match,provisional,Related programme or geographic lead,no precise locator
+sen-resume-sen-project-annex-37-sen-mha-water-compact-2026,sen-mha-water-compact-2026,sen-mha-water-compact-2026-discovery-1,sen-project-annex-37,possible_match,provisional,April 2026 water compact; borehole solarisation targets,resolve to source line in 0875
+sen-dig-sen-mrv-350-villages,sen-mrv-350-villages,sen-mrv-350-villages-discovery-1,sen-project-annex-05,possible_match,provisional,2025 Senegal catalogue entry: 10MW mini-grids in 350 villages,resolve to source line in 0875
+sen-resume-sen-project-annex-18-sen-offgrid-africool-mou-2025,sen-offgrid-africool-mou-2025,sen-offgrid-africool-mou-2025-discovery-1,sen-project-annex-18,possible_match,provisional,9 October 2025 memorandum,resolve to source line in 0875
+sen-resume-sen-project-annex-18-sen-offgrid-muchcooler-eoi-2026,sen-offgrid-muchcooler-eoi-2026,sen-offgrid-muchcooler-eoi-2026-discovery-1,sen-project-annex-18,possible_match,provisional,4 February 2026 expression of interest,resolve to source line in 0875
+sen-resume-sen-project-annex-18-sen-offgrid-muchcooler-product,sen-offgrid-muchcooler-product,,sen-project-annex-18,possible_match,provisional,Podor first deployment; technical specifications,resolve to source line in 0875
+sen-resume-sen-project-annex-38-sen-omvg-energy-portal,sen-omvg-energy-portal,sen-omvg-energy-portal-discovery-1,sen-project-annex-38,possible_match,provisional,Conventional dam project definition,resolve to source line in 0875
+sen-resume-sen-project-annex-38-sen-omvg-portal-retry,sen-omvg-portal-retry,,sen-project-annex-38,possible_match,provisional,Connection aborted,no snapshot
+sen-resume-sen-project-annex-17-sen-pnb-biogas-model,sen-pnb-biogas-model,sen-pnb-biogas-model-discovery-1,sen-project-annex-17,possible_match,provisional,Programme credit model,resolve to source line in 0875
+sen-resume-sen-project-annex-17-sen-pnb-financing-partners,sen-pnb-financing-partners,sen-pnb-financing-partners-discovery-1,sen-project-annex-17,possible_match,provisional,FONGIP guarantees,resolve to source line in 0875
+sen-project-annex-17-sen-pnb-programme,sen-pnb-programme,,sen-project-annex-17,possible_match,provisional,Related programme or geographic lead,no precise locator
+sen-dig-sen-rts-huawei-mou-2026,sen-rts-huawei-mou-2026,sen-rts-huawei-mou-2026-discovery-1,sen-project-qw-02,possible_match,provisional,12 August 2026 report of 11 August visit and MoU,resolve to source line in 0875
+sen-scout-sen-project-annex-23-sen-scout-aner-fiches-ice,sen-scout-aner-fiches-ice,,sen-project-annex-23,possible_match,provisional,PDF p.19: D2B17SN01 context and 192 health facilities,resolve to source line in 0875
+sen-scout-sen-project-annex-28-sen-scout-cesag-aner-thesis,sen-scout-cesag-aner-thesis,,sen-project-annex-28,possible_match,provisional,"PDF p.52 / printed p.43, footnote 31",resolve to source line in 0875
+sen-scout-sen-project-annex-30-sen-scout-cesag-aner-thesis,sen-scout-cesag-aner-thesis,,sen-project-annex-30,possible_match,provisional,"PDF p.50 / printed p.41, footnote 28",resolve to source line in 0875
+sen-scout-sen-project-annex-17-sen-scout-clean-cooking-strategy,sen-scout-clean-cooking-strategy,,sen-project-annex-17,possible_match,provisional,"Table 3, printed p.25: PNB baseline and 2030 target",resolve to source line in 0875
+sen-scout-sen-project-qw-04-sen-scout-energy-policy-evaluation,sen-scout-energy-policy-evaluation,sen-scout-energy-policy-evaluation-discovery-1,sen-project-qw-04,project_report,confirmed,PUELEC phase 1 paragraph,resolve to source line in 0875
+sen-scout-sen-project-qw-02-sen-scout-genertec-ouarkhokh,sen-scout-genertec-ouarkhokh,,sen-project-qw-02,possible_match,provisional,Groundbreaking narrative; publication URL dated 16 June 2026,resolve to source line in 0875
+sen-scout-sen-project-annex-05-sen-scout-giz-ped2-project,sen-scout-giz-ped2-project,,sen-project-annex-05,possible_match,provisional,Project 2020.2099.8; GFA participant,resolve to source line in 0875
+sen-scout-sen-project-qw-02-sen-scout-ouarkhokh-par,sen-scout-ouarkhokh-par,,sen-project-qw-02,possible_match,provisional,Printed pp.18 and 59: CNTIC EPC contract,resolve to source line in 0875
+sen-scout-sen-project-qw-02-sen-scout-ouarkhokh-pepp,sen-scout-ouarkhokh-pepp,,sen-project-qw-02,possible_match,provisional,Printed p.6: Huawei memorandum,resolve to source line in 0875
+sen-scout-sen-project-qw-04-sen-scout-puelec-pip-2026,sen-scout-puelec-pip-2026,,sen-project-qw-04,possible_match,provisional,PUELEC 1 / Sagemcom indexed investment-programming row,no snapshot
+sen-project-qw-08-sen-semis-storage-study,sen-semis-storage-study,sen-semis-storage-study-discovery-1,sen-project-qw-08,possible_match,provisional,Two-site feasibility description,resolve to source line in 0875
+sen-project-annex-33-sen-senelec-annual-report-2024,sen-senelec-annual-report-2024,,sen-project-annex-33,possible_match,provisional,Related programme or geographic lead,no precise locator
+sen-dig-sen-senelec-huawei-mou-social,sen-senelec-huawei-mou-social,sen-senelec-huawei-mou-social-discovery-1,sen-project-qw-02,possible_match,provisional,"Operator post: Linguere, Koungheul and Shenzhen",resolve to source line in 0875
+round2-sen-project-annex-35-sen-senelec-ppm-2026-v2,sen-senelec-ppm-2026-v2,,sen-project-annex-35,possible_match,provisional,"PDF p.13, C_DEG_155, P_SENELEC_2026_2",resolve to source line in 0875
+round2-sen-project-qw-02-sen-senelec-ppm-2026-v2,sen-senelec-ppm-2026-v2,,sen-project-qw-02,possible_match,provisional,PDF p.5 C_DQSE_273; contrast p.19 T_DPE_019,resolve to source line in 0875
+sen-project-annex-35-sen-senelec-procurement-2026,sen-senelec-procurement-2026,,sen-project-annex-35,possible_match,provisional,Related programme or geographic lead,no precise locator
+sen-project-annex-16-sen-senelec-saloum-tender-2026,sen-senelec-saloum-tender-2026,,sen-project-annex-16,project_page,confirmed,"AAO 30/2026, pp. 1-2; indexed by Senelec on 9 September 2026",resolve to source line in 0875
+sen-project-annex-15-sen-senelec-thies-touba-par,sen-senelec-thies-touba-par,sen-senelec-thies-touba-par-discovery-1,sen-project-annex-15,project_page,confirmed,"AMI 52/2024, publication 18 October 2024, project description",resolve to source line in 0875
+sen-resume-sen-project-annex-19-sen-swedfund-biofuels,sen-swedfund-biofuels,sen-swedfund-biofuels-discovery-1,sen-project-annex-19,project_report,confirmed,Roadmap for biogas in Dakar transport,resolve to source line in 0875
+sen-project-annex-32-sen-vemar-fass-ngom,sen-vemar-fass-ngom,,sen-project-annex-32,possible_match,provisional,Related programme or geographic lead,no precise locator
+vnm-link-eib-bac-ai,vnm-eib-bac-ai-package-2025,,vnm-project-bac-ai-pumped-hydro,named_in,confirmed,Team Europe package announcement,no precise locator
+vnm-link-evn-afd-transmission,vnm-evn-afd-transmission-2025,,vnm-project-binh-duong-dong-nai-transmission,named_in,confirmed,financing agreement announcement,no precise locator
+vnm-link-evn-cdp-bac-ai,vnm-evn-cdp-bac-ai-2025,vnm-evn-cdp-bac-ai-2025-discovery-1,vnm-project-bac-ai-pumped-hydro,named_in,confirmed,term sheet and letter of intent,resolve to source line in 0875
+vnm-link-evn-kfw-tri-an,vnm-evn-kfw-tri-an-2025,,vnm-project-tri-an-expansion,named_in,confirmed,loan agreement announcement,no precise locator
+vnm-link-moit-bac-ai,vnm-moit-project-bac-ai,,vnm-project-bac-ai-pumped-hydro,project_page,confirmed,project profile,no precise locator
+vnm-link-moit-transmission,vnm-moit-project-binh-duong-dong-nai,,vnm-project-binh-duong-dong-nai-transmission,project_page,confirmed,project profile,no precise locator
+vnm-link-moit-tri-an,vnm-moit-project-tri-an,,vnm-project-tri-an-expansion,project_page,confirmed,project profile,no precise locator
+zaf-link-dtic-parliament-nev,zaf-dtic-parliament-nev-2025,,zaf-uk-nev-support,project_page,confirmed,reply paragraph 1(d),resolve to source line in 0875
+zaf-link-eepbip-giz,zaf-eepbip-giz-profile-2023,,zaf-eepbip,project_report,confirmed,whole report,resolve to source line in 0875
+zaf-link-eepbip-maf,zaf-eepbip-maf,,zaf-eepbip,project_page,confirmed,whole profile,resolve to source line in 0875
+zaf-link-eepbip-portal,zaf-eepbip-portal,,zaf-eepbip,data_portal,confirmed,whole portal,no precise locator
+zaf-link-growth-gateway-devtracker,zaf-growth-gateway-devtracker-300812,,zaf-growth-gateway-smme-accelerator,data_portal,confirmed,whole record,no precise locator
+zaf-link-growth-gateway-report,zaf-growth-gateway-report-2026,,zaf-growth-gateway-smme-accelerator,project_report,confirmed,whole report,resolve to source line in 0875
+zaf-link-annex25-gr039,zaf-jetp-leaders-2025-annex,,zaf-register-gr039,named_in,confirmed,Electricity - DPO III,resolve to source line in 0875
+zaf-link-annex25-gr025,zaf-jetp-leaders-2025-annex,,zaf-register-gr025,named_in,confirmed,Electricity - DBSA facility,resolve to source line in 0875
+zaf-link-annex25-gr026,zaf-jetp-leaders-2025-annex,,zaf-register-gr026,named_in,confirmed,Electricity - Cape Town loan,resolve to source line in 0875
+zaf-link-annex25-gr026b,zaf-jetp-leaders-2025-annex,,zaf-register-gr026b,named_in,confirmed,Electricity - Cape Town grant,resolve to source line in 0875
+zaf-link-annex25-uk056,zaf-jetp-leaders-2025-annex,,zaf-register-uk056,named_in,confirmed,Electricity - Etana,resolve to source line in 0875
+zaf-link-annex25-uk065,zaf-jetp-leaders-2025-annex,,zaf-register-uk065,named_in,confirmed,Electricity - Red Sands,resolve to source line in 0875
+zaf-link-annex25-dk001,zaf-jetp-leaders-2025-annex,,zaf-register-dk001,named_in,confirmed,Electricity - Danish capacity programme,resolve to source line in 0875
+zaf-link-annex25-dk002,zaf-jetp-leaders-2025-annex,,zaf-register-dk002,named_in,confirmed,Electricity - Danish capacity programme,resolve to source line in 0875
+zaf-link-annex25-uk059,zaf-jetp-leaders-2025-annex,,zaf-register-uk059,named_in,confirmed,Electricity - Energy Council,resolve to source line in 0875
+zaf-link-annex25-gr003,zaf-jetp-leaders-2025-annex,,zaf-register-gr003,named_in,provisional,Electricity and Municipalities - GIZ,resolve to source line in 0875
+zaf-link-annex25-eu011,zaf-jetp-leaders-2025-annex,,zaf-register-eu011,named_in,confirmed,Electricity - EU TA facility,resolve to source line in 0875
+zaf-link-annex25-gr035,zaf-jetp-leaders-2025-annex,,zaf-register-gr035,named_in,confirmed,Electricity - German TA,resolve to source line in 0875
+zaf-link-annex25-gr030,zaf-jetp-leaders-2025-annex,,zaf-register-gr030,named_in,confirmed,Green hydrogen - KfW IDC,resolve to source line in 0875
+zaf-link-annex25-eu021,zaf-jetp-leaders-2025-annex,,zaf-register-eu021,named_in,provisional,Green hydrogen - EU technical support,resolve to source line in 0875
+zaf-link-annex25-gr034,zaf-jetp-leaders-2025-annex,,zaf-register-gr034,named_in,confirmed,Green hydrogen - German technical support,resolve to source line in 0875
+zaf-link-annex25-eu020,zaf-jetp-leaders-2025-annex,,zaf-register-eu020,named_in,provisional,Green hydrogen - Hive and CI3,resolve to source line in 0875
+zaf-link-annex25-nl004,zaf-jetp-leaders-2025-annex,,zaf-register-nl004,named_in,provisional,Green hydrogen - Dutch fund support,resolve to source line in 0875
+zaf-link-annex25-gr036,zaf-jetp-leaders-2025-annex,,zaf-register-gr036,named_in,confirmed,New energy vehicles - German TA,resolve to source line in 0875
+zaf-link-annex25-gr029,zaf-jetp-leaders-2025-annex,,zaf-register-gr029,named_in,provisional,Municipalities - Metro Trading Services,resolve to source line in 0875
+zaf-link-annex25-uk068,zaf-jetp-leaders-2025-annex,,zaf-register-uk068,named_in,confirmed,Municipalities - embedded generation,resolve to source line in 0875
+zaf-link-annex25-nl012,zaf-jetp-leaders-2025-annex,,zaf-register-nl012,named_in,confirmed,Municipalities - Johannesburg waste,resolve to source line in 0875
+zaf-link-annex25-uk061,zaf-jetp-leaders-2025-annex,,zaf-register-uk061,named_in,provisional,Just - agribusiness facility,resolve to source line in 0875
+zaf-link-annex25-gr007,zaf-jetp-leaders-2025-annex,,zaf-register-gr007,named_in,provisional,Just - German SMME support,resolve to source line in 0875
+zaf-link-annex25-uk008,zaf-jetp-leaders-2025-annex,,zaf-register-uk008,named_in,provisional,Just - Climate Finance Accelerator,resolve to source line in 0875
+zaf-link-annex25-uk072,zaf-jetp-leaders-2025-annex,,zaf-register-uk072,named_in,provisional,Just - Wetility,resolve to source line in 0875
+zaf-link-annex25-gr033,zaf-jetp-leaders-2025-annex,,zaf-register-gr033,named_in,confirmed,Just - societal participation,resolve to source line in 0875
+zaf-link-annex25-nl001-5,zaf-jetp-leaders-2025-annex,,zaf-register-nl001-5,named_in,confirmed,Just - Grootvlei,resolve to source line in 0875
+zaf-link-annex25-nl001-6,zaf-jetp-leaders-2025-annex,,zaf-register-nl001-6,named_in,confirmed,Just - Grootvlei,resolve to source line in 0875
+zaf-link-annex25-nl001-7,zaf-jetp-leaders-2025-annex,,zaf-register-nl001-7,named_in,confirmed,Just - Grootvlei,resolve to source line in 0875
+zaf-link-annex25-nl001-8,zaf-jetp-leaders-2025-annex,,zaf-register-nl001-8,named_in,confirmed,Just - Grootvlei,resolve to source line in 0875
+zaf-link-annex25-dk012,zaf-jetp-leaders-2025-annex,,zaf-register-dk012,named_in,confirmed,Just - Transforming Youth Skills,resolve to source line in 0875
+zaf-link-annex25-eu012,zaf-jetp-leaders-2025-annex,,zaf-register-eu012,named_in,confirmed,Skills - multidonor portfolio,resolve to source line in 0875
+zaf-link-annex25-gr015,zaf-jetp-leaders-2025-annex,,zaf-register-gr015,named_in,confirmed,Skills - multidonor portfolio,resolve to source line in 0875
+zaf-link-annex25-sw004,zaf-jetp-leaders-2025-annex,,zaf-register-sw004,named_in,confirmed,Skills - multidonor portfolio,resolve to source line in 0875
+zaf-link-annex25-uk074,zaf-jetp-leaders-2025-annex,,zaf-register-uk074,named_in,confirmed,Skills - PowerUp and SAREM,resolve to source line in 0875
+zaf-link-annex25-eu019,zaf-jetp-leaders-2025-annex,,zaf-register-eu019,named_in,provisional,Road to Rail - Transnet,resolve to source line in 0875
+zaf-link-annex25-dk013,zaf-jetp-leaders-2025-annex,,zaf-register-dk013,named_in,confirmed,Energy Efficiency - public buildings,resolve to source line in 0875
+zaf-link-annex25-uk030,zaf-jetp-leaders-2025-annex,,zaf-register-uk030,named_in,confirmed,Energy Efficiency - MAGC,resolve to source line in 0875
+zaf-link-annex25-uk048,zaf-jetp-leaders-2025-annex,,zaf-register-uk048,named_in,confirmed,Energy Efficiency - MAGC,resolve to source line in 0875
+zaf-link-annex25-uk049,zaf-jetp-leaders-2025-annex,,zaf-register-uk049,named_in,confirmed,Energy Efficiency - MAGC,resolve to source line in 0875
+zaf-link-annex25-uk063,zaf-jetp-leaders-2025-annex,,zaf-register-uk063,named_in,confirmed,Energy Efficiency - MAGC,resolve to source line in 0875
+zaf-link-annex25-uk064,zaf-jetp-leaders-2025-annex,,zaf-register-uk064,named_in,confirmed,Energy Efficiency - MAGC,resolve to source line in 0875
+zaf-link-annex25-uk069,zaf-jetp-leaders-2025-annex,,zaf-register-uk069,named_in,confirmed,Energy Efficiency - MAGC,resolve to source line in 0875
+zaf-link-annex25-uk070,zaf-jetp-leaders-2025-annex,,zaf-register-uk070,named_in,confirmed,Energy Efficiency - MAGC,resolve to source line in 0875
+zaf-link-annex25-zandkopsdrift,zaf-jetp-leaders-2025-annex,,zaf-annex-zandkopsdrift,named_in,confirmed,Green hydrogen - Zandkopsdrift,resolve to source line in 0875
+zaf-link-annex25-growth-gateway,zaf-jetp-leaders-2025-annex,,zaf-growth-gateway-smme-accelerator,named_in,confirmed,Just - Growth Gateway,resolve to source line in 0875
+zaf-link-annex25-murp,zaf-jetp-leaders-2025-annex,,zaf-murp,named_in,confirmed,Municipalities - utility reform,resolve to source line in 0875
+zaf-link-annex25-eepbip,zaf-jetp-leaders-2025-annex,,zaf-eepbip,named_in,confirmed,Energy Efficiency - Mitigation Action Facility,resolve to source line in 0875
+zaf-link-annex25-uk-nev,zaf-jetp-leaders-2025-annex,,zaf-uk-nev-support,named_in,confirmed,New energy vehicles - UK technical support,resolve to source line in 0875
+zaf-link-annex25-eu-cso-grants,zaf-jetp-leaders-2025-annex,,zaf-eu-cso-green-economy-grants,named_in,confirmed,Just - three civil-society grants,resolve to source line in 0875
+zaf-link-murp-afdb,zaf-murp-afdb-2026,,zaf-murp,named_in,confirmed,official announcement,no snapshot
+zaf-link-pmu-uk003,zaf-project-cape-town-grid-uk-pact,,zaf-register-uk003,project_page,confirmed,project narrative,no precise locator
+zaf-link-pmu-eu012,zaf-project-cpd4e-germany,zaf-project-cpd4e-germany-discovery-1,zaf-register-eu012,possible_match,provisional,co-funding sentence,resolve to source line in 0875
+zaf-link-pmu-uk005,zaf-project-energy-one-stop-shop-uk-pact,,zaf-register-uk005,project_page,confirmed,project narrative,no precise locator
+zaf-link-pmu-gr007,zaf-project-just-sa-germany,,zaf-register-gr007,project_page,confirmed,project narrative,no precise locator
+zaf-link-pmu-fr011,zaf-project-just-transition-framework-france,,zaf-register-fr011,project_page,confirmed,project narrative,no precise locator
+zaf-link-pmu-uk011,zaf-project-lessons-best-practices-uk,,zaf-register-uk011,project_page,confirmed,project narrative,no precise locator
+zaf-link-pmu-fr010,zaf-project-mining-ghost-towns-france,,zaf-register-fr010,project_page,confirmed,project narrative,no precise locator
+zaf-link-pmu-uk006,zaf-project-mpumalanga-pathways-uk,,zaf-register-uk006,project_page,confirmed,project narrative,no precise locator
+zaf-link-report-nomzamo-fr005,zaf-project-report-nomzamo-2025,,zaf-register-fr005,project_report,confirmed,whole report,no precise locator
+zaf-link-report-nomzamo-dk004,zaf-project-report-nomzamo-2025,,zaf-register-dk004,project_report,confirmed,whole report,no precise locator
+zaf-link-pmu-fr009,zaf-project-social-policies-france,,zaf-register-fr009,project_page,confirmed,project narrative,no precise locator
+zaf-link-zandkopsdrift-eu,zaf-zandkopsdrift-eu-2025,,zaf-annex-zandkopsdrift,approval_document,confirmed,whole record,no precise locator
+zaf-link-zandkopsdrift-operator,zaf-zandkopsdrift-operator,,zaf-annex-zandkopsdrift,project_page,confirmed,whole page,no precise locator

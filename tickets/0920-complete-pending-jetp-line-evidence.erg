@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Complete pending JETP line evidence after 0874
+Created: 2026-09-24
+Author: Codex
+
+--- log ---
+2026-09-24T15:45Z Codex created — follow-up to [[0874]], after the author chose to keep unavailable evidence pending
+
+--- body ---
+## Context
+
+Ticket [[0874]] migrated 339 lines and deposited all 304 discovery link
+candidates in `data/jetp/migration/0874-link-candidates.csv`. The 55 records
+in `data/jetp/migration/0874-pending.csv` cannot yet name one place in a
+collected source snapshot: five source claims and 19 links have no collected
+snapshot; 31 links have a snapshot but no precise locator. The author chose
+on 2026-09-24 to leave missing snapshots pending until acquisition.
+
+## Work
+
+- Acquire each missing source through the established JETP collection path,
+  preserving a retrieval and its byte-addressed snapshot.
+- Inspect each vague locator against its stored bytes and record a page,
+  section, heading or sentence that identifies the assertion. Never use the
+  whole document as a locator.
+- Re-run `scripts/jetp/build_lines.py`, inspect every newly minted line, and
+  update the pending and candidate files. Preserve M1a served view bytes.
+
+## Exit criteria
+
+- [ ] Every pending claim and link has a traceable line or an explicit,
+  documented absence of available source bytes.
+- [ ] `make jetp-ledger-check`, M1a byte comparison, `make check-fast`, and
+  `make lint` pass.

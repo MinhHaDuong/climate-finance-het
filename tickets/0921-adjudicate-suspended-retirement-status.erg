@@ -1,0 +1,24 @@
+%erg 0.1
+Title: Adjudicate suspended retirement status in JETP crosswalk
+Created: 2026-09-24
+Author: Codex
+
+--- log ---
+2026-09-24T15:45Z Codex created — follow-up to [[0887]], author requested Cirebon remain unmapped pending review
+
+--- body ---
+## Context
+
+Ticket [[0887]] mentions a Viet Nam retirement marked `suspended`, but the
+current `data/jetp/implementation-events.csv` has suspended rows only for
+Indonesia: Singkarak floating solar and Cirebon 1 coal retirement. The author
+chose on 2026-09-24 to leave Cirebon unmapped pending review. A suspended
+retirement proposal does not by itself establish the coal plant's asset state.
+
+## Exit criteria
+
+- [ ] Reconcile the ticket wording with the source line and country.
+- [ ] Decide whether an asset-state term applies to Cirebon, with a cited
+  line, date and reason; if no term applies, document that explicitly.
+- [ ] Add any warranted crosswalk revision by supersession and verify the
+  ledger and the served Glossary.

@@ -690,9 +690,8 @@ def check_header_menus(page, url):
 
 def check_glossary(page, url):
     """The generated Glossary (ticket 0882): one entry per term in force, and a
-    link to a term opens its entry, marked and scrolled into view. The click
-    from a publisher's status word needs status-crosswalk rows, which ticket
-    0876 writes; its live check is recorded there."""
+    link to a term opens its entry, marked and scrolled into view. The ZAF
+    register's own completion word follows ticket 0887's status crosswalk."""
     terms = page.request.get(url + '/data/ontology/terms.json').json()
     page.goto(url + '/#glossary')
     page.wait_for_selector('[data-glossary-group]')
@@ -709,6 +708,15 @@ def check_glossary(page, url):
     page.goto(url + '/#on-the-record/ZAF')
     page.wait_for_selector('#observations-results')
     assert page.locator('#observations-results a[data-term-link="money/signed"]').count() > 0
+    page.goto(url + '/#entries/ZAF')
+    status = page.locator('a[data-term-link="delivery/finalisation"]:visible').first
+    status.wait_for()
+    assert status.inner_text() == 'D. Completed'
+    status.click()
+    page.wait_for_selector('dt[data-term="delivery/finalisation"][data-targeted]')
+    entry = page.locator('dt[data-term="delivery/finalisation"] + dd')
+    assert 'IATI' in entry.locator('.term-mapping').inner_text()
+    assert 'D. Completed' in entry.locator('[data-crosswalk]').inner_text()
 
 
 def check_projects(page, url):

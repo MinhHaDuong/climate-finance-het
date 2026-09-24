@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Review broad JETP sector labels against CRS and markers
+Created: 2026-09-24
+Author: Codex
+
+--- log ---
+2026-09-24T15:45Z Codex created — follow-up to [[0888]], broad labels remain verbatim without a forced CRS code
+
+--- body ---
+## Context
+
+Ticket [[0888]] writes four defensible one-to-one CRS purpose mappings.
+`data/jetp/ontology/sector-crosswalk.csv` has one `purpose_code` per
+publisher label. South African portfolio labels such as `Skills`,
+`JT-Mpumalanga` and `Municipalities`, and Indonesian groups
+`solar`, `bioenergy`, `energy_efficiency`, `other_dispatchable` and
+`supply_chain`, can cover several purposes or grid contexts. The
+author asked whether the marker system is flexible: markers can describe
+policy objectives when reported, but do not determine one CRS purpose for a
+broad source label. These words remain verbatim in `own_sector`.
+The CIPP mirror currently has a host party but no author party in
+`document-publishers.csv`, so its group words cannot yet be keyed to a
+publishing authority in `sector-crosswalk`.
+
+## Exit criteria
+
+- [ ] Review each unmapped label at the line level against the publisher's
+  description and determine whether a single CRS purpose is justified.
+- [ ] Establish the CIPP document's publishing party before adding a
+  publisher-keyed crosswalk for its appendix groups.
+- [ ] Record any source-reported policy markers on observations without
+  inferring them from a portfolio label.
+- [ ] Keep ambiguous labels unmapped or propose an ontology/storage change
+  for author decision; do not assign a broad code silently.
