@@ -1,15 +1,13 @@
 ---
 paths:
   - "tickets/**"
-  - ".claude/hooks/check-reviews.sh"
-  - "tests/test_check_reviews.py"
 ---
 
 # Ticket filing (project-specific)
 
 Split from `git.md`: the fast path for tickets-only PRs and the ID-collision scan that is its gate.
 
-- **Ticket-filing PRs take the fast path.** A PR whose diff is only `tickets/*.erg` merges on `erg check` plus an ID-collision scan: no draft, no `/verify`, no review request. `main` is unprotected and there is no CI, so nothing gates such a PR and `allow_auto_merge` would wait on an empty requirement set — the friction was procedural, not a check. Use `Ticket-ref:` so the filing PR does not close the ticket it files. The merge gate (`.claude/hooks/check-reviews.sh`) honours this path: a PR whose changed files are all `.erg` under `tickets/` (rename sources included) is exempt from the review-cycle count — no `review:trivial` label, no self-review needed. Code PRs keep the full gate.
+- **Ticket-filing PRs take the fast path.** A PR whose diff is only `tickets/*.erg` merges on `erg check` plus an ID-collision scan: no draft, no `/verify`, no review request. `main` is unprotected and there is no CI, so nothing gates such a PR and `allow_auto_merge` would wait on an empty requirement set. Use `Ticket-ref:` so the filing PR does not close the ticket it files. Code PRs follow the checks and review requirements in `AGENTS.md`.
 - **The ID-collision scan is the one real risk on that fast path, and it has three failure modes worth naming** (all three fired on 2026-07-27: one filing collided three times, and `origin/main` failed `erg check` on a duplicate ID twice).
   - *Scanning open PRs with `gh pr list --json files` is not scanning.* `gh pr list` does not populate `files`, so a list-plus-filter returns empty regardless of content — "no collision" and "I never looked" are the same output. Enumerate, then query each PR:
     ```bash

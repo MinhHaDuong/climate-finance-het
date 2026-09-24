@@ -49,8 +49,7 @@ Before merging, decide which checks the change needs and state them on the PR:
 - **Code, pipeline, analysis**: tests for the changed behaviour, and the full `make check` when the pipeline surface moved.
 
 Anything beyond tickets gets at least one reviewer on a model other than the
-coder's (`/review-pr`, scoped to the risk); the merge hook counts review cycles,
-not independence, so that choice is yours. Then `/verify-gate`: every ticket exit
+coder's (`/review-pr`, scoped to the risk). Then `/verify-gate`: every ticket exit
 criterion needs concrete evidence (commit SHA + file:line, or a test id). Two
 review rounds at most, then escalate. The merge is the author's call when
 interactive, the raid's when autonomous.

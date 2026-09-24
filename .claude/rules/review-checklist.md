@@ -18,7 +18,5 @@ When `/review-pr` triggers doc propagation, trace references in these project fi
 - config files
 
 Also:
-- On first review cycle, add a risk label to the PR:
-  - Trivial → `review:trivial` (merge gate requires 1 cycle)
-  - Standard or above → `review:standard` (merge gate requires 2 cycles)
+- On first review cycle, record the risk level in the PR review.
 - After build: run `make manuscript` if prose changed.
