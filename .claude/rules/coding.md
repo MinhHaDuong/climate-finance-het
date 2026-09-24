@@ -10,7 +10,7 @@ paths:
 
 # Coding Rules (project-specific)
 
-Generic coding rules are in `~/.claude/rules/coding.md`. This file adds project-specific conventions.
+Generic Python rules are in the harness `~/.claude/rules/coding-python.md`. This file adds project-specific conventions.
 
 ## Python
 
@@ -19,7 +19,6 @@ Generic coding rules are in `~/.claude/rules/coding.md`. This file adds project-
 - Torch extras: `--extra cpu` (doudou) or `--extra cu130` (padme).
 - **Always `uv run`**: never bare `python3`, never `.venv/bin/python`. In Makefiles: inline `uv run python`. Deps in `pyproject.toml`.
 - **Direct script runs need the source roots** (ticket 0253). `uv run python scripts/x.py` outside `make` only resolves `from utils import …` / `import openalex_corpus` when the two source roots are on `PYTHONPATH` — `make` exports them, a bare shell does not. Run scripts via `make`, or set `PYTHONPATH=scripts:libs/openalex-corpus/src` for the invocation. The rule: source roots (`scripts` + `libs/openalex-corpus/src`) are placed on the path in every execution context — pytest (pythonpath), make (export), test subprocesses (explicit env), containers (ENV), archive scripts/Makefiles — never assumed ambient.
-- **Formatter strips unused imports**: add an import AND its first usage in the same Edit call. If split across calls, Read the file after adding the import to verify it survived the formatter. A PostToolUse warning "formatter modified the file" means check the import immediately.
 
 ## Testing
 

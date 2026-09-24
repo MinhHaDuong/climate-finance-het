@@ -6,7 +6,7 @@ paths:
 
 # STATE.md and ROADMAP.md (project-specific)
 
-Generic STATE/ROADMAP discipline is in `~/.claude/rules/state-roadmap.md`. This file adds project-specific sections.
+Generic STATE.md discipline is in the harness `~/.claude/rules/state.md`; the harness has no ROADMAP rule, so ROADMAP.md conventions are this repo's own. This file adds project-specific sections.
 
 ## Additional STATE.md sections
 
