@@ -115,6 +115,56 @@ def observations_by_country(tables, registry):
     return {code: country_observations(tables, registry, code) for code in COUNTRIES}
 
 
+def append_event_timings(event_id, observation_id, line_id, source_rows, timings, pending):
+    """Translate supported dates while preserving unmapped source roles."""
+    for ordinal, row in enumerate(source_rows, start=1):
+        role = TIMING_ROLES.get(row['date_role'])
+        if role is None:
+            pending.append({
+                'legacy_table': 'event-timing', 'legacy_event_id': event_id,
+                'legacy_project_id': '', 'source_id': '', 'locator': '',
+                'reason': f"unmapped_date_role_{row['date_role']}",
+            })
+            continue
+        if role in ('register_date', 'report_date'):
+            day = row['reported_on']
+            precision, lower, upper = 'day', day, day
+        elif role == 'reporting_cutoff':
+            day = row['observed_on']
+            precision, lower, upper = 'day', day, day
+        else:
+            lower, upper = row['event_start'], row['event_end']
+            precision = row['event_precision']
+            day = lower if precision == 'day' and lower == upper else ''
+        if not lower or not upper:
+            raise ValueError(f'{event_id}: {role} has no supported date bounds')
+        timings.append({
+            'timing_id': f'timing-{event_id}-{ordinal}',
+            'observation_id': observation_id,
+            'date_role': role,
+            'date': day or None,
+            'date_precision': precision,
+            'lower_bound': lower,
+            'upper_bound': upper,
+            'line_id': line_id,
+            'recorded_at': RECORDED_AT,
+        })
+        if role == 'reporting_cutoff' and row['event_start']:
+            if not row['event_end'] or row['event_precision'] != 'year':
+                raise ValueError(f'{event_id}: approval year lacks bounds')
+            timings.append({
+                'timing_id': f'timing-{event_id}-{ordinal}-approval',
+                'observation_id': observation_id,
+                'date_role': 'approval',
+                'date': None,
+                'date_precision': 'year',
+                'lower_bound': row['event_start'],
+                'upper_bound': row['event_end'],
+                'line_id': line_id,
+                'recorded_at': RECORDED_AT,
+            })
+
+
 def normalize_event_tables(events, implementation_events, event_timings, dispositions):
     """Return the valid v2 event observations, timings, and explicit gaps.
 
@@ -140,54 +190,6 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
             'locator': row['locator'],
             'reason': reason,
         })
-
-    def append_timing(event_id, observation_id, line_id):
-        for ordinal, row in enumerate(timing_by_event.get(event_id, ()), start=1):
-            role = TIMING_ROLES.get(row['date_role'])
-            if role is None:
-                pending.append({
-                    'legacy_table': 'event-timing', 'legacy_event_id': event_id,
-                    'legacy_project_id': '', 'source_id': '', 'locator': '',
-                    'reason': f"unmapped_date_role_{row['date_role']}",
-                })
-                continue
-            if role == 'register_date' or role == 'report_date':
-                day = row['reported_on']
-                precision, lower, upper = 'day', day, day
-            elif role == 'reporting_cutoff':
-                day = row['observed_on']
-                precision, lower, upper = 'day', day, day
-            else:
-                lower, upper = row['event_start'], row['event_end']
-                precision = row['event_precision']
-                day = lower if precision == 'day' and lower == upper else ''
-            if not lower or not upper:
-                raise ValueError(f'{event_id}: {role} has no supported date bounds')
-            timings.append({
-                'timing_id': f'timing-{event_id}-{ordinal}',
-                'observation_id': observation_id,
-                'date_role': role,
-                'date': day or None,
-                'date_precision': precision,
-                'lower_bound': lower,
-                'upper_bound': upper,
-                'line_id': line_id,
-                'recorded_at': RECORDED_AT,
-            })
-            if role == 'reporting_cutoff' and row['event_start']:
-                if not row['event_end'] or row['event_precision'] != 'year':
-                    raise ValueError(f'{event_id}: approval year lacks bounds')
-                timings.append({
-                    'timing_id': f'timing-{event_id}-{ordinal}-approval',
-                    'observation_id': observation_id,
-                    'date_role': 'approval',
-                    'date': None,
-                    'date_precision': 'year',
-                    'lower_bound': row['event_start'],
-                    'upper_bound': row['event_end'],
-                    'line_id': line_id,
-                    'recorded_at': RECORDED_AT,
-                })
 
     def target(row, event_id, table):
         disposition = disposition_by_old_id.get(row['project_id'])
@@ -232,7 +234,8 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
             'supersedes': None,
             'notes': f"Legacy event {event_id}; source={row['source_id']}; locator={row['locator']}",
         })
-        append_timing(event_id, observation_id, disposition['line_id'])
+        append_event_timings(event_id, observation_id, disposition['line_id'],
+                             timing_by_event.get(event_id, ()), timings, pending)
 
     for row in implementation_events:
         event_id = row['implementation_event_id']
@@ -263,7 +266,8 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
             'supersedes': None,
             'notes': f"Legacy implementation event {event_id}; source={row['source_id']}; locator={row['locator']}",
         })
-        append_timing(event_id, observation_id, disposition['line_id'])
+        append_event_timings(event_id, observation_id, disposition['line_id'],
+                             timing_by_event.get(event_id, ()), timings, pending)
     return observations, timings, pending
 
 
