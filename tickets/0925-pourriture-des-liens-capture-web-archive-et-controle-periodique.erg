@@ -8,6 +8,8 @@ Author: HDMX-coding-agent
 2026-09-24T15:00Z HDMX-coding-agent decision Suite de [[0915]] demandée par l'auteur (session interactive du 2026-09-24).
 
 2026-09-24T15:17Z HDMX-coding-agent note blocker 0915 closed — Blocked-by removed.
+2026-09-25T01:20Z HDMX-coding-agent decision Captures et contrôles en tables propres (data/jetp/web-archive-captures.csv, data/jetp/publisher-link-checks.csv), pas en colonnes de manifest.csv : forme normale, jointure à la lecture (consigne de la session de l'auteur, PR #1497).
+2026-09-25T01:20Z HDMX-coding-agent note Critères cochés avec preuves, PR #1497 ; SPN anonyme refusé (401) le 2026-09-24, captures faites avec le compte IA.
 --- body ---
 ## Context
 
@@ -40,11 +42,11 @@ l'empreinte SHA-256 continue de prouver quel octet a été lu.
 
 ## Exit criteria
 
-- [ ] Le registre porte, pour chaque document collecté, l'adresse et la date de sa capture Web Archive, ou la raison de l'échec
-- [ ] Le site public affiche les deux liens, et la mention d'identité adaptée au type (PDF / HTML)
-- [ ] La cible de contrôle consigne l'état des liens ; un lien mort est signalé à l'écran avec sa date, sans réécrire l'adresse d'origine
-- [ ] Contrôle positif : un lien volontairement mort dans un jeu d'essai déclenche l'affichage « dead since »
-- [ ] `make check-fast` et `make lint` verts
+- [x] Le registre porte, pour chaque document collecté, l'adresse et la date de sa capture Web Archive, ou la raison de l'échec — `data/jetp/web-archive-captures.csv` (265 paires : 113 capturées, 115 réutilisées, 6 sans objet, 31 échecs motivés) ; `tests/test_jetp_link_rot.py::test_every_collected_document_has_a_capture_row`
+- [x] Le site public affiche les deux liens, et la mention d'identité adaptée au type (PDF / HTML) — `sourceLinks`/`identityMark` dans `app.js` ; recette navigateur `check_web_archive` passée sur l'aperçu et sur le bundle public (2026-09-25) ; `test_the_shipped_site_shows_both_links_and_the_identity_note_by_type`
+- [x] La cible de contrôle consigne l'état des liens ; un lien mort est signalé à l'écran avec sa date, sans réécrire l'adresse d'origine — `make jetp-link-check` → `data/jetp/publisher-link-checks.csv` (294 adresses : 256 vivantes, 1 morte, 37 injoignables) ; `deadNote` dans `app.js`
+- [x] Contrôle positif : un lien volontairement mort dans un jeu d'essai déclenche l'affichage « dead since » — `test_positive_control_a_dead_publisher_link_shows_dead_since_and_the_copy_first`, `test_positive_control_reaches_the_documents_page` (serveur local 404, rouges si `deadSince` est muté)
+- [x] `make check-fast` et `make lint` verts — 2343 passed / 339 passed sur la branche rebasée (2026-09-25)
 
 ## Hors périmètre
 
