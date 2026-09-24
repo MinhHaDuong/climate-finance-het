@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Publier l'observatoire JETP sur GitHub Pages, bascule publique après la démonstration à Christophe
+Created: 2026-09-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-24T14:00Z HDMX-coding-agent created
+2026-09-24T14:00Z HDMX-coding-agent decision Hébergement GitHub Pages depuis ce dépôt public ; mise en ligne après la démonstration à Christophe Cassen (décision de l'auteur, session interactive du 2026-09-24).
+
+--- body ---
+## Context
+
+[[0727]] devait construire *et publier* l'observatoire. La PR #1389 l'a fermé
+automatiquement alors qu'aucun critère de sortie n'était coché et que son
+propre corps notait que cette livraison « ne ferme pas le ticket du site
+public ». Le site n'a jamais été publié : STATE dit « No deployment ».
+
+Décisions de l'auteur du 2026-09-24 :
+
+1. **Hébergement** : GitHub Pages, servi depuis ce dépôt (public, Pages
+   désactivé aujourd'hui). Adresse par défaut
+   `https://minhhaduong.github.io/climate-finance-het/` ; un sous-domaine
+   personnalisé reste possible plus tard.
+2. **Calendrier** : tout est préparé maintenant ; l'activation de Pages, qui
+   rend le site public, attend la démonstration à Christophe et un feu vert
+   explicite de l'auteur.
+
+## Le défaut à lever avant publication
+
+Le paquet public exclut `documents/` (copies archivées de documents de tiers,
+aperçu local seulement, `deliverables/jetp-observatory/README.md`). Les pages
+servent pourtant des liens « Open archived copy » vers `documents/objects/…`
+(`archivedCopyLink`, `documentHref` dans `app.js`). Publié tel quel, chacun de
+ces liens rend 404. La version publique doit renvoyer à l'URL d'origine du
+document (colonne `url` de `data/documents.json`), en gardant l'empreinte
+SHA-256 visible comme preuve de l'octet lu, et dire honnêtement qu'aucune copie
+n'est servie. L'ancre de page PDF (`#page=N`) se reporte sur l'URL d'origine
+quand celle-ci est un PDF.
+
+L'aperçu local, lui, garde ses liens vers les copies archivées : la bascule
+dépend de la présence de `documents/`, ou d'un drapeau de construction, au
+choix de l'exécutant, pourvu que le paquet public ne puisse pas contenir
+`documents/`.
+
+## Actions
+
+- Rendre les liens de document conditionnels : copie archivée en aperçu local,
+  URL d'origine dans le paquet public.
+- Une cible `make jetp-observatory-bundle` qui assemble le paquet public dans
+  un répertoire ignoré par git, sans `documents/`, et échoue s'il y en a un.
+- Une cible ou un script de publication qui pousse ce paquet sur la branche
+  `gh-pages` (pas de CI dans ce dépôt, ticket 0321 : pas de workflow Actions).
+  Pousser la branche ne publie rien tant que Pages est désactivé.
+- Documenter dans le README de l'observatoire la commande de publication et
+  l'étape d'activation de Pages, réservée à l'auteur.
+
+## Exit criteria
+
+- [ ] Dans le paquet public, aucun lien ne pointe vers `documents/` ; chaque document collecté renvoie à son URL d'origine, avec son empreinte affichée
+- [ ] L'aperçu local ouvre toujours les copies archivées (recette navigateur `tests/browser/jetp_observatory.py` verte sur l'aperçu)
+- [ ] Le paquet public se construit sans réseau ni DVC, et la recette navigateur, adaptée au mode public, passe sur lui
+- [ ] La branche `gh-pages` porte le paquet ; `documents/` y est absent
+- [ ] Feu vert de l'auteur après la démonstration ; Pages activé ; l'adresse publique vérifiée dans un navigateur, avec les métadonnées de version
+- [ ] `make check-fast` et `make lint` verts
+
+## Hors périmètre
+
+Les nombres servis continuent de bouger avec la migration [[0870]], menée en
+parallèle par une session Codex : ce ticket publie l'état de `main`, il ne
+touche ni au ledger ni aux vues servies. Le sous-domaine personnalisé.
