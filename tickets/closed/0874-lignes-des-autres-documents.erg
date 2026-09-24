@@ -2,6 +2,7 @@
 Title: Lignes des autres documents : plan-projects, portefeuille, pilote, claims, liens
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Closed: 339 validated lines; 55 evidence gaps tracked in 0920
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -10,6 +11,8 @@ Author: HDMX-coding-agent
 2026-09-23T16:00Z HDMX-coding-agent question (raid prep) : l'action 3 frappait des `line-referents` dont le `referent_id` est l'identifiant `project_id` actuel de `projects.csv` ; ce n'est pas une identité valide de la nouvelle `projects` tant que [[0875]] (vague 4, après ce ticket en vague 3) n'a pas frappé les identités et rempli `routes` — `violation_typed_reference` refuserait la ligne dès son écriture. De plus, chaque `source_id` cité par ces 304 liens (hors les 11 `project_page_component`) est un document (page projet, rapport), pas encore une `lines` row : aucune action de ce ticket n'en extrait une. Reformulé ci-dessous pour ne pas frapper ces `line-referents` ici ; question pour l'auteur, à trancher avant l'exécution : soit ce ticket mine une ligne minimale par document cité (classification `named_item`, locator le plus court disponible) et dépose les 304 décisions en candidates référençant l'ancien `project_id` dans `notes` pour re-résolution par [[0875]], soit [[0875]] absorbe cette action une fois les identités et `routes` en place. Les 11 `project_page_component` restent comme prévu à [[0875]] (relations, pas ce ticket).
 
 2026-09-23T18:56Z HDMX-coding-agent note blocker 0873 closed — Blocked-by removed.
+2026-09-24T15:55Z Codex note les claims liés à un seul identifiant de projet décrivent un élément nommé : classification `named_item` (terme existant), pas `heading` ; les agrégats restent `envelope`, les décomptes `count`, les absences `absence`, les claims de contexte ou de plusieurs éléments `heading`. L'auteur a choisi de laisser 55 cas sans instantané ou locator précis en attente dans [[0920]].
+2026-09-24T14:05Z HDMX-coding-agent closed — 339 validated lines; 55 evidence gaps tracked in 0920
 --- body ---
 ## Context
 
@@ -18,8 +21,9 @@ ligne : les 1 628 lignes de plan (déjà lues en [[0873]] pour IDN et SEN, ici
 leurs colonnes propres et le drapeau `ruptl` marqué pour un `member_of`
 d'un périmètre RUPTL frappé par [[0877]]), les 46 observations de
 portefeuille IDN, les 66 tentatives et 46 observations du pilote VN, les
-151 `source-claims` (classification `envelope`, `count`, `absence`,
-`heading`), et les 315 `project-source-links` : les 11
+151 `source-claims` (classification `named_item` pour un élément, `envelope`
+pour les totaux, `count`, `absence`, ou `heading` pour le contexte), et les
+315 `project-source-links` : les 11
 `project_page_component` deviennent des `component_of` en [[0875]] ; les
 304 autres reçoivent ici une ligne minimale par document cité (quand il
 n'en a pas déjà une) et sont déposés pour que [[0875]] les frappe en
@@ -46,8 +50,8 @@ pas encore une identité valide avant [[0875]]).
    entier »). Ne pas frapper les `line-referents` ici — voir la question du
    journal ci-dessus ; noter l'ancien `project_id`, la `relationship` et le
    `review_status` (confirmed/provisional) dans les `notes` de la ligne
-   pour que [[0875]] les reprenne, avec méthode `legacy_link` et la date du
-   lien.
+   pour que [[0875]] les reprenne, avec méthode `legacy_link` et la date de
+   migration (la table des liens ne porte pas de date de création du lien).
 4. Marquer les 230 lignes `plan_only` à `ruptl = YES` (`notes`, ou une
    colonne du fichier de champs propre à la ligne) ; le `member_of` vers le
    périmètre RUPTL est frappé par [[0877]] (son action 1 mine ce périmètre
@@ -56,22 +60,18 @@ pas encore une identité valide avant [[0875]]).
 
 ## Test
 
-- `tests/test_jetp_lines_rest.py` : une fixture avec un claim agrégé, un
-  lien confirmé sur un document sans ligne encore extraite, un lien
-  provisoire sur un document qui en a déjà une, et une ligne de plan
-  `ruptl` ; la reconstruction donne une ligne `envelope`, une ligne
-  `named_item` minée pour le document sans ligne (et aucune ligne
-  dupliquée pour celui qui en avait déjà une), une ligne de plan marquée
-  `ruptl` sans `member_of` frappé ; aucun `line-referents` et aucune
-  identité ne sont frappés par ce ticket ; un test négatif vérifie qu'écrire
-  un `line-referents` avec un `referent_id` d'ancien `projects.csv` est
-  refusé par `violation_typed_reference` (ce que ce ticket évite précisément).
+- `tests/test_jetp_lines_rest.py` : reconstruction complète dans un
+  répertoire témoin ; comptes, candidatures, cas en attente, rejeu au bit près,
+  snapshot local, agrégat `envelope`, totaux `count`, lignes de plan `ruptl`,
+  absence de `projects` et de `line-referents`. Un test négatif vérifie qu'un
+  ancien identifiant de `projects.csv` est refusé par
+  `violation_typed_reference`.
 
 ## Verification
 
-- [ ] Comptes des tables au dépôt (2026-09-23) : 46 + 66 + 46 + 151 = 309 lignes nouvelles ; les 1 628 lignes de plan de [[0873]] enrichies de leurs colonnes, sans ligne ajoutée ; jusqu'à 304 lignes minimales nouvelles pour les documents de `project-source-links.csv` qui n'en avaient pas (315 liens moins les 11 `project_page_component` de [[0875]], moins ceux dont le document a déjà une ligne)
-- [ ] Aucune ligne de `projects.csv` créée ou modifiée
-- [ ] Aucun `line-referents` frappé par ce ticket (validé par l'absence de lignes dans `data/jetp/line-referents.csv` attribuables à sa méthode)
+- [x] Comptes au 2026-09-24 : 46 + 66 + 46 + 146 = 304 lignes des tables sources, cinq claims en attente de snapshot dans [[0920]] ; les 1 628 lignes de plan de [[0873]] gardent leurs colonnes et les 230 `plan_only` marqués `ruptl = YES` ; 35 lignes minimales nouvelles, 304 décisions de liens candidates, 50 liens en attente de snapshot ou de locator précis dans [[0920]].
+- [x] Aucune ligne de `projects.csv` créée ou modifiée
+- [x] Aucun `line-referents` frappé par ce ticket (validé par l'absence de lignes dans `data/jetp/line-referents.csv` attribuables à sa méthode)
 
 ## Invariants
 
@@ -79,5 +79,5 @@ pas encore une identité valide avant [[0875]]).
 
 ## Exit criteria
 
-- [ ] Toutes les assertions publiées sont des lignes validées par [[0871]] (`make jetp-ledger-check`)
-- [ ] `tests/test_jetp_lines_rest.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
+- [x] Toutes les assertions ayant un instantané et un locator précis sont des lignes validées par [[0871]] (`make jetp-ledger-check`) ; les 55 autres sont explicitement suivies par [[0920]].
+- [x] `tests/test_jetp_lines_rest.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)

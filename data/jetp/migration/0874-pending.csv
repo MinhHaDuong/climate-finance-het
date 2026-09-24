@@ -1,0 +1,56 @@
+kind,old_id,source_id,reason,old_project_id,relationship,review_status,locator
+claim,idn-cmea-mar25-approved-aggregate,idn-cmea-progress-march-2025,no snapshot,,,,Financing progress
+claim,idn-dieng3-adb-status,idn-project-dieng3-adb,no snapshot,,,,Project overview
+claim,idn-cirebon-reuters-policy,idn-news-cirebon-retirement-reuters-2025,no snapshot,,,,Ministerial statement
+claim,idn-rsud-c40-assessment,idn-project-rsud-retrofit-c40,no snapshot,,,,Preliminary results
+claim,idn-ieefa-dediesel-delay,idn-ieefa-dediesel-update-2026,no snapshot,,,,Implementation constraints
+link,idn-link-aicet-adb-project,idn-adb-aicet-56140-001,no snapshot,idn-fin-rbl-aicet,project_page,confirmed,project 56140-001
+link,idn-link-aset-adb-project,idn-adb-aset-56368-001,no snapshot,idn-fin-pbl-aset,project_page,confirmed,project 56368-001
+link,idn-link-ieefa-dediesel-east,idn-ieefa-dediesel-update-2026,no snapshot,idn-pipe-dediesel-east-phase1,possible_match,provisional,current programme assessment
+link,idn-link-ieefa-dediesel-west,idn-ieefa-dediesel-update-2026,no snapshot,idn-pipe-dediesel-west-phase1,possible_match,confirmed,current programme assessment
+link,idn-link-cirebon-reuters,idn-news-cirebon-retirement-reuters-2025,no snapshot,idn-pipe-cirebon-1-retirement,named_in,confirmed,ministerial statement
+link,idn-link-dieng3-adb,idn-project-dieng3-adb,no snapshot,idn-pipe-dieng-3-4,project_page,confirmed,ADB project 58342-001
+link,idn-link-rsud-c40,idn-project-rsud-retrofit-c40,no snapshot,idn-pipe-rsud-energy-efficiency,project_report,confirmed,whole report
+link,round2-sen-project-annex-35-sen-afd-irve-ami12-2026,sen-afd-irve-ami12-2026,no snapshot,sen-project-annex-35,possible_match,provisional,"AMII12/2026, C_DEG_155; original body paragraph2"
+link,sen-resume-sen-project-annex-28-sen-aner-gandiaye-tender-2020,sen-aner-gandiaye-tender-2020,no snapshot,sen-project-annex-28,possible_match,provisional,2020 tender route now returns HTML
+link,sen-project-annex-23-sen-aner-project-api,sen-aner-project-api,no precise locator,sen-project-annex-23,possible_match,provisional,Related programme or geographic lead
+link,sen-project-annex-25-sen-aner-project-api,sen-aner-project-api,no precise locator,sen-project-annex-25,possible_match,provisional,Related programme or geographic lead
+link,sen-project-annex-28-sen-aner-project-api,sen-aner-project-api,no precise locator,sen-project-annex-28,possible_match,provisional,Related programme or geographic lead
+link,sen-project-annex-30-sen-aner-project-api,sen-aner-project-api,no precise locator,sen-project-annex-30,possible_match,provisional,Related programme or geographic lead
+link,sen-resume-sen-project-annex-05-sen-aser-www-retry,sen-aser-www-retry,no snapshot,sen-project-annex-05,possible_match,provisional,Connection refused
+link,sen-resume-sen-project-annex-06-sen-aser-www-retry,sen-aser-www-retry,no snapshot,sen-project-annex-06,possible_match,provisional,Connection refused
+link,sen-resume-sen-project-annex-07-sen-aser-www-retry,sen-aser-www-retry,no snapshot,sen-project-annex-07,possible_match,provisional,Connection refused
+link,sen-resume-sen-project-qw-04-sen-aser-www-retry,sen-aser-www-retry,no snapshot,sen-project-qw-04,possible_match,provisional,Connection refused
+link,sen-project-annex-21-sen-bmn-energy-programme,sen-bmn-energy-programme,no precise locator,sen-project-annex-21,possible_match,provisional,Related programme or geographic lead
+link,sen-resume-sen-project-annex-25-sen-caa-aner-capacity-065,sen-caa-aner-capacity-065,no snapshot,sen-project-annex-25,possible_match,provisional,ANER climate-finance assistance; archive HTTP403
+link,sen-project-annex-19-sen-cetud-biognv-2021,sen-cetud-biognv-2021,no precise locator,sen-project-annex-19,possible_match,provisional,Related programme or geographic lead
+link,sen-resume-sen-project-annex-05-sen-gov-access-project-fiches,sen-gov-access-project-fiches,no snapshot,sen-project-annex-05,possible_match,provisional,TLS validation failure
+link,sen-resume-sen-project-annex-35-sen-irve-framework-tender-2026,sen-irve-framework-tender-2026,no snapshot,sen-project-annex-35,possible_match,provisional,Notice 107072743; archive HTTP403
+link,sen-project-annex-38-sen-mha-sambangalou,sen-mha-sambangalou,no precise locator,sen-project-annex-38,possible_match,provisional,Related programme or geographic lead
+link,sen-resume-sen-project-annex-38-sen-omvg-portal-retry,sen-omvg-portal-retry,no snapshot,sen-project-annex-38,possible_match,provisional,Connection aborted
+link,sen-project-annex-17-sen-pnb-programme,sen-pnb-programme,no precise locator,sen-project-annex-17,possible_match,provisional,Related programme or geographic lead
+link,sen-scout-sen-project-qw-04-sen-scout-puelec-pip-2026,sen-scout-puelec-pip-2026,no snapshot,sen-project-qw-04,possible_match,provisional,PUELEC 1 / Sagemcom indexed investment-programming row
+link,sen-project-annex-33-sen-senelec-annual-report-2024,sen-senelec-annual-report-2024,no precise locator,sen-project-annex-33,possible_match,provisional,Related programme or geographic lead
+link,sen-project-annex-35-sen-senelec-procurement-2026,sen-senelec-procurement-2026,no precise locator,sen-project-annex-35,possible_match,provisional,Related programme or geographic lead
+link,sen-project-annex-32-sen-vemar-fass-ngom,sen-vemar-fass-ngom,no precise locator,sen-project-annex-32,possible_match,provisional,Related programme or geographic lead
+link,vnm-link-eib-bac-ai,vnm-eib-bac-ai-package-2025,no precise locator,vnm-project-bac-ai-pumped-hydro,named_in,confirmed,Team Europe package announcement
+link,vnm-link-evn-afd-transmission,vnm-evn-afd-transmission-2025,no precise locator,vnm-project-binh-duong-dong-nai-transmission,named_in,confirmed,financing agreement announcement
+link,vnm-link-evn-kfw-tri-an,vnm-evn-kfw-tri-an-2025,no precise locator,vnm-project-tri-an-expansion,named_in,confirmed,loan agreement announcement
+link,vnm-link-moit-bac-ai,vnm-moit-project-bac-ai,no precise locator,vnm-project-bac-ai-pumped-hydro,project_page,confirmed,project profile
+link,vnm-link-moit-transmission,vnm-moit-project-binh-duong-dong-nai,no precise locator,vnm-project-binh-duong-dong-nai-transmission,project_page,confirmed,project profile
+link,vnm-link-moit-tri-an,vnm-moit-project-tri-an,no precise locator,vnm-project-tri-an-expansion,project_page,confirmed,project profile
+link,zaf-link-eepbip-portal,zaf-eepbip-portal,no precise locator,zaf-eepbip,data_portal,confirmed,whole portal
+link,zaf-link-growth-gateway-devtracker,zaf-growth-gateway-devtracker-300812,no precise locator,zaf-growth-gateway-smme-accelerator,data_portal,confirmed,whole record
+link,zaf-link-murp-afdb,zaf-murp-afdb-2026,no snapshot,zaf-murp,named_in,confirmed,official announcement
+link,zaf-link-pmu-uk003,zaf-project-cape-town-grid-uk-pact,no precise locator,zaf-register-uk003,project_page,confirmed,project narrative
+link,zaf-link-pmu-uk005,zaf-project-energy-one-stop-shop-uk-pact,no precise locator,zaf-register-uk005,project_page,confirmed,project narrative
+link,zaf-link-pmu-gr007,zaf-project-just-sa-germany,no precise locator,zaf-register-gr007,project_page,confirmed,project narrative
+link,zaf-link-pmu-fr011,zaf-project-just-transition-framework-france,no precise locator,zaf-register-fr011,project_page,confirmed,project narrative
+link,zaf-link-pmu-uk011,zaf-project-lessons-best-practices-uk,no precise locator,zaf-register-uk011,project_page,confirmed,project narrative
+link,zaf-link-pmu-fr010,zaf-project-mining-ghost-towns-france,no precise locator,zaf-register-fr010,project_page,confirmed,project narrative
+link,zaf-link-pmu-uk006,zaf-project-mpumalanga-pathways-uk,no precise locator,zaf-register-uk006,project_page,confirmed,project narrative
+link,zaf-link-report-nomzamo-fr005,zaf-project-report-nomzamo-2025,no precise locator,zaf-register-fr005,project_report,confirmed,whole report
+link,zaf-link-report-nomzamo-dk004,zaf-project-report-nomzamo-2025,no precise locator,zaf-register-dk004,project_report,confirmed,whole report
+link,zaf-link-pmu-fr009,zaf-project-social-policies-france,no precise locator,zaf-register-fr009,project_page,confirmed,project narrative
+link,zaf-link-zandkopsdrift-eu,zaf-zandkopsdrift-eu-2025,no precise locator,zaf-annex-zandkopsdrift,approval_document,confirmed,whole record
+link,zaf-link-zandkopsdrift-operator,zaf-zandkopsdrift-operator,no precise locator,zaf-annex-zandkopsdrift,project_page,confirmed,whole page

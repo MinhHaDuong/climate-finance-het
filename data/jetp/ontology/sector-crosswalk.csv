@@ -1,0 +1,5 @@
+crosswalk_row_id,publisher_id,own_sector,purpose_code,recorded_at,decided_by,status,supersedes,notes
+jetp-indonesia-secretariat.sector.1,jetp-indonesia-secretariat,geothermal,23260,2026-09-24,"migration 0887/0888, reviewed source fields",accepted,,IDN M1a technology_group; OECD DAC CRS purpose code
+jetp-indonesia-secretariat.sector.2,jetp-indonesia-secretariat,hydro,23220,2026-09-24,"migration 0887/0888, reviewed source fields",accepted,,IDN M1a technology_group; OECD DAC CRS purpose code
+jetp-indonesia-secretariat.sector.3,jetp-indonesia-secretariat,transmission,23630,2026-09-24,"migration 0887/0888, reviewed source fields",accepted,,IDN M1a technology_group; OECD DAC CRS purpose code
+jetp-indonesia-secretariat.sector.4,jetp-indonesia-secretariat,wind,23240,2026-09-24,"migration 0887/0888, reviewed source fields",accepted,,IDN M1a technology_group; OECD DAC CRS purpose code
