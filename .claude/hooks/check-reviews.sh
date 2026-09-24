@@ -272,7 +272,7 @@ case "$STATUS" in
         ;;
 esac
 
-# Tickets-only fast path (rules/git.md, "Ticket-filing PRs take the fast
+# Tickets-only fast path (rules/ticket-filing.md, "Ticket-filing PRs take the fast
 # path"): a PR whose diff is only .erg files under tickets/ merges on
 # `erg check` plus an ID-collision scan — review ceremony would be a
 # self-posted label plus a self-review, pure procedure with no content, so
@@ -299,7 +299,7 @@ print('yes' if ok else 'no')
 " 2>/dev/null) || TICKETS_ONLY="no"
 
 if [ "$TICKETS_ONLY" = "yes" ]; then
-    echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":"Tickets-only diff — fast path per rules/git.md; erg check + ID-collision scan are the gate, no review cycles required."}}'
+    echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"allow","permissionDecisionReason":"Tickets-only diff — fast path per rules/ticket-filing.md; erg check + ID-collision scan are the gate, no review cycles required."}}'
     exit 0
 fi
 

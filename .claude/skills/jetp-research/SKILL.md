@@ -1,6 +1,12 @@
+---
+name: jetp-research
+description: "Brief a JETP source search before launching it. Use when starting a scout, a delegated search or a new solo research round on Just Energy Transition Partnership (JETP) projects: names the identity to resolve, acceptance criteria, stop condition and what to return."
+argument-hint: "[project or identity to resolve]"
+---
+
 # JETP research briefs
 
-For JETP source searches, use the [scout brief](../../docs/jetp-scout-brief.md)
+For JETP source searches, use the [scout brief](../../../docs/jetp-scout-brief.md)
 before launching a scout or a new research round. This applies to solo work
 as well as delegated searches; it does not itself authorize delegation.
 
