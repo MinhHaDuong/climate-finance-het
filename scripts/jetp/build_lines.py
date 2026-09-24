@@ -164,7 +164,7 @@ def _register_local(ledger_dir, tables, retrieval_sha, write):
         if doc_id not in retrieval_sha:
             tables['retrievals'].append(dict(retrieval_id=f'{doc_id}:1', document_id=doc_id,
                 retrieved_at='2026-09-24T00:00:00Z', status='collected',
-                content_type='text/csv', sha256=sha))
+                content_type='text/csv', sha256=sha, collection_method='local-record'))
             retrieval_sha[doc_id] = sha
     return local
 

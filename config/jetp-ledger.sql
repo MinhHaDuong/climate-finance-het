@@ -205,7 +205,12 @@ CREATE TABLE retrievals (
     last_modified TEXT,
     final_url TEXT,
     error TEXT,
-    sha256 TEXT REFERENCES snapshots (sha256)
+    sha256 TEXT REFERENCES snapshots (sha256),
+    -- How the bytes were sought (ticket 0926): the collector under its own
+    -- name, the collector replaying the author's browser session, a file the
+    -- author saved in the browser, or a research record written locally.
+    collection_method TEXT NOT NULL CHECK (collection_method IN
+        ('script', 'browser-session', 'browser-manual', 'local-record'))
 );
 
 -- ---------------------------------------------------------------------------

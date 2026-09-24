@@ -544,8 +544,20 @@ const identityMark = (entry) =>
   `<span class="note" data-identity="${identityKind(entry)}" title="${esc(identityNote(entry))}">(${esc(IDENTITY_SHORT[identityKind(entry)])})</span>`;
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
+/* How the bytes were sought (ticket 0926): the registry's collection_method,
+ * in words. */
+const COLLECTION_METHODS = {
+  script: "by the collector",
+  "browser-session": "through the author's browser session",
+  "browser-manual": "saved by hand in a browser",
+  "local-record": "research record written here",
+};
+const collectionMethod = (entry) =>
+  COLLECTION_METHODS[entry.collection_method] || entry.collection_method || "";
 function collectedFacts(entry, separator = " · ") {
-  const when = entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded";
+  const method = collectionMethod(entry);
+  const when = (entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded") +
+    (method ? ` <span data-collection-method="${esc(entry.collection_method)}">${esc(method)}</span>` : "");
   return entry.sha256
     ? `${when}${separator}SHA-256 <code data-sha256="${esc(entry.sha256)}" title="${esc(entry.sha256)}">${esc(entry.sha256.slice(0, 12))}…</code>`
     : `${when}${separator}${collectionFailure(entry.error)}`;
@@ -793,6 +805,13 @@ function documentsPage(params) {
         label: "Collection status",
         all: "All collection outcomes",
         options: values("status"),
+      },
+      {
+        key: "collection_method",
+        label: "Collection method",
+        all: "All collection methods",
+        options: values("collection_method").map((value) => ({
+          value, label: COLLECTION_METHODS[value] || value })),
       },
       {
         key: "content_type",

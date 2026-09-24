@@ -1195,3 +1195,20 @@ def test_an_unfingerprinted_row_reaches_the_publisher_but_no_other_attempts_byte
     # shown; with no fingerprint pinned, it claims no SHA-256 check.
     if web_copy(rmp, 156):
         assert 'data-identity="pdf-unpinned"' in html and "Our SHA-256" not in html, html
+
+
+def test_the_documents_page_says_how_each_copy_was_sought() -> None:
+    # Ticket 0926: the registry's collection_method reaches the page, in words,
+    # for a copy taken through the author's browser session and for one taken
+    # by the collector under its own name; and it is a facet of the table.
+    session = next(d for d in registry() if d["collection_method"] == "browser-session"
+                   and d["status"] == "collected")
+    script = next(d for d in registry() if d["collection_method"] == "script"
+                  and d["status"] == "collected")
+    for entry, words in ((session, "through the author's browser session"),
+                         (script, "by the collector")):
+        page = render("documents", {"documents-search": entry["id"]})["elements"]
+        html = page["documents-results"]["innerHTML"]
+        assert f'data-collection-method="{entry["collection_method"]}"' in html, entry["id"]
+        assert words in unescape(html), entry["id"]
+    assert "All collection methods" in json.dumps(render("documents")["elements"])

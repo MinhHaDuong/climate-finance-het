@@ -98,7 +98,7 @@ from jetp._evidence_layer_rules import (
     slug,
     split_label,
 )
-from jetp._ledger_headers import LEDGER_DIR, load_schema, write_table
+from jetp._ledger_headers import LEDGER_DIR, load_schema, table_path, write_table
 
 log = get_logger('jetp.build_evidence_layer')
 
@@ -301,7 +301,7 @@ def _retrievals_and_snapshots(manifest):
             'content_type': row['content_type'] or None, 'etag': row['etag'] or None,
             'last_modified': row['last_modified'] or None,
             'final_url': row['final_url'] or None, 'error': row['error'] or None,
-            'sha256': sha,
+            'sha256': sha, 'collection_method': row['collection_method'],
         })
         if sha is None:
             continue
@@ -407,6 +407,34 @@ def _read(path):
         return list(csv.DictReader(handle))
 
 
+def refresh_collection(ledger_dir, output_dir, schema=None):
+    """Bring ``retrievals`` and ``snapshots`` level with the manifest (ticket 0926).
+
+    The other tables of the layer have been edited since the rebuild, so a
+    new collection round refreshes only these two: every manifest row is one
+    retrieval, as in ``reconstruct``, and the rows that do not come from the
+    manifest (the local research records of ticket 0874) are kept after them,
+    unchanged. On an unchanged manifest the two files come out byte-identical.
+    """
+    schema = schema or load_schema()
+    manifest = _read(Path(ledger_dir) / 'manifest.csv')
+    retrievals, snapshots = _retrievals_and_snapshots(manifest)
+    produced = {r['retrieval_id'] for r in retrievals}
+    fingerprints = {s['sha256'] for s in snapshots}
+    tables = {
+        'retrievals': retrievals + [
+            r for r in _read(table_path(ledger_dir, 'retrievals'))
+            if r['retrieval_id'] not in produced],
+        'snapshots': snapshots + [
+            s for s in _read(table_path(ledger_dir, 'snapshots'))
+            if s['sha256'] not in fingerprints],
+    }
+    written = []
+    for table, rows in tables.items():
+        written += write_table(output_dir, table, rows, schema=schema)
+    return written
+
+
 def main(argv=None):
     # Deliberate script-io exception: this writes seven named tables into one
     # directory, not one file to one path, so the single --output contract of
@@ -420,7 +448,14 @@ def main(argv=None):
                              'rewrite the committed record)')
     parser.add_argument('--documents-root', type=Path,
                         help='snapshot store to read languages from (data/jetp/documents)')
+    parser.add_argument('--collection-only', action='store_true',
+                        help='refresh retrievals and snapshots from the manifest '
+                             'after a collection round, leaving the other tables')
     args = parser.parse_args(argv)
+    if args.collection_only:
+        for path in refresh_collection(args.ledger_dir, args.output_dir):
+            log.info('%s: refreshed', path)
+        return 0
     sources = _read(args.ledger_dir / 'sources.csv')
     manifest = _read(args.ledger_dir / 'manifest.csv')
     languages = detect_languages(manifest, args.documents_root) if args.documents_root else {}
