@@ -205,9 +205,7 @@ def test_a_failed_attempt_shows_a_short_label_with_the_full_message_in_its_title
     assert unescape(label.group(2)) == failed["error"].split(":")[0].strip()[:24]
     head = render("documents")["elements"]["documents-results"]["innerHTML"].split("</thead>")[0]
     assert [(w, unescape(t)) for w, t in re.findall(r'<th class="col-(\w+)">([^<]+)</th>', head)] == [
-        ("short", "Size"), ("wide", "Entries and items on the record · relied on by")]
-    # One column carries the publisher's page, what was read and, where
-    # served, the archived copy (ticket 0915): it wraps, so it fits at 1280 px.
+        ("short", "Size"), ("wide", "Document rows and statements · relied on by")]
     assert "<th>Publisher&#39;s page · what we read</th>" in head, head
 
 
@@ -307,7 +305,7 @@ def test_the_rmp_opens_at_its_first_extracted_page_and_each_position_at_its_own(
     items = re.findall(r"<li>.*?</li>", row, re.DOTALL)
     assert len(items) == len(linked["m1a"])
     assert anchors(items[21]) == [
-        ("#entries/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
+        ("#document-rows/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
         (rmp["url"] + "#page=156", "publisher's page ↗"),
         (rmp["local_path"] + "#page=156", "archived copy ↗"),
     ], anchors(items[21])
@@ -326,7 +324,7 @@ def test_the_public_site_links_the_rmp_to_its_publisher_at_the_same_pages() -> N
         rmp["url"] + "#page=155"]
     items = re.findall(r"<li>.*?</li>", row, re.DOTALL)
     assert anchors(items[21]) == [
-        ("#entries/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
+        ("#document-rows/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
         (rmp["url"] + "#page=156", "publisher's page ↗"),
     ], anchors(items[21])
     # The fingerprint of the bytes read stays on the row.
@@ -375,7 +373,7 @@ def test_the_inventory_page_opens_on_the_row_the_documents_page_cites() -> None:
     assert 'data-inventory-row="vnm-rmp-2023:annex-I.1:022"' in results
     assert "<details open>" in results
     # The way back to the whole export is one link away.
-    assert 'href="#entries/VNM"' in rendered["main"]
+    assert 'href="#document-rows/VNM"' in rendered["main"]
 
 
 def test_a_fact_page_lists_the_observations_view_rows_addressed_to_it() -> None:
@@ -432,9 +430,9 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
 # siblings, and About's pages in the same bar as plain siblings.
 NAVIGATION = ["The paper trail", "The tallies", "About"]
 ABOUT = ["Glossary", "Methods", "Who we are"]
-STEPS = ["Documents", "Entries", "On the record", "Projects", "Funding", "Who's who"]
-TRAIL_ROUTES = ("documents", "entries", "entries/VNM", "on-the-record", "on-the-record/ZAF",
-                "projects", "project/" + BAC_AI, "funding", "funding/VNM", "whos-who")
+STEPS = ["Documents", "Document rows", "Statements", "Projects", "Funding", "Organisations"]
+TRAIL_ROUTES = ("documents", "document-rows", "document-rows/VNM", "statements", "statements/ZAF",
+                "projects", "project/" + BAC_AI, "funding", "funding/VNM", "organisations")
 
 # The framework's names, the retired terms of docs/jetp-language.md and the
 # words docs/jetp-observatory-presentation.md keeps off the pages.  A word
@@ -445,10 +443,10 @@ FORBIDDEN = re.compile(
     r"|\bfacts?\b|\bclaims?\b|\bdeals?\b|\bplayers?\b|\bsources\b|\bentities\b|\brecords\b",
     re.IGNORECASE,
 )
-ROUTES = ("overview", "the-paper-trail", "about", "who-we-are", "glossary", "documents", "entries", "on-the-record", "projects",
-          "funding", "whos-who", "counts", "methods", "release-history",
-          "comparisons", *(f"funding/{code}" for code in COUNTRIES),
-          "entries/VNM", "on-the-record/ZAF", "project/" + BAC_AI)
+ROUTES = ("overview", "the-paper-trail", "about", "who-we-are", "glossary", "documents", "document-rows", "statements", "projects",
+          "funding", "organisations", "counts", "methods", "release-history",
+          "non-jetp-energy-operations", *(f"funding/{code}" for code in COUNTRIES),
+          "document-rows/VNM", "statements/ZAF", "project/" + BAC_AI)
 
 
 def text_of(html):
@@ -512,9 +510,9 @@ def nav_html():
 LANDINGS = {"The paper trail": "the-paper-trail", "The tallies": "counts", "About": "about"}
 SECTION_KEYS = ("the-paper-trail", "the-tallies", "about")
 SUB_PAGES = {
-    "the-paper-trail": list(zip(STEPS, ["#documents", "#entries", "#on-the-record", "#projects",
-                                        "#funding", "#whos-who"])),
-    "the-tallies": [("Counts", "#counts"), ("Comparisons", "#comparisons")],
+    "the-paper-trail": list(zip(STEPS, ["#documents", "#document-rows", "#statements", "#projects",
+                                        "#funding", "#organisations"])),
+    "the-tallies": [("Counts", "#counts"), ("Non-JETP energy operations", "#non-jetp-energy-operations")],
     "about": [("Glossary", "#glossary"), ("Methods", "#methods"), ("Who we are", "#who-we-are")],
 }
 
@@ -569,22 +567,29 @@ def test_a_header_disclosure_toggles_aria_expanded_and_one_menu_is_open_at_a_tim
 FORWARDS = {
     "countries": "funding",
     "country/VNM": "funding/VNM",
-    "evidence": "on-the-record",
+    "evidence": "statements",
+    "entries": "document-rows",
+    "entries/VNM?row=22": "document-rows/VNM?row=22",
+    "on-the-record": "statements",
+    "on-the-record/ZAF": "statements/ZAF",
+    "whos-who": "organisations",
+    "comparisons": "non-jetp-energy-operations",
     "numbers": "counts",
     "by-the-numbers": "counts",
     "counts-and-totals": "counts",
     "the-tallies": "counts",
-    "comparison": "comparisons",
-    "historical-comparison": "comparisons",
-    "comparison?country=IDN": "comparisons?country=IDN",
+    "comparison": "non-jetp-energy-operations",
+    "historical-comparison": "non-jetp-energy-operations",
+    "comparison?country=IDN": "non-jetp-energy-operations?country=IDN",
     "how-we-did-this": "methods",
     "editions": "release-history",
-    "inventory/VNM": "entries/VNM",
-    "inventory/VNM?row=22": "entries/VNM?row=22",
-    "inventory/ZAF?tab=record": "on-the-record/ZAF",
+    "inventory/VNM": "document-rows/VNM",
+    "inventory/VNM?row=22": "document-rows/VNM?row=22",
+    "inventory/ZAF?tab=record": "statements/ZAF",
 }
-OLD_ADDRESS = re.compile(r'href="#(?:(?:countries|evidence|numbers|by-the-numbers|counts-and-totals'
-                         r'|the-tallies|comparison|historical-comparison|how-we-did-this|editions)'
+OLD_ADDRESS = re.compile(r'href="#(?:(?:countries|evidence|entries|on-the-record|whos-who|comparisons'
+                         r'|numbers|by-the-numbers|counts-and-totals|the-tallies|comparison'
+                         r'|historical-comparison|how-we-did-this|editions)'
                          r'(?=["?])|(?:country|inventory)/)')
 
 
@@ -677,7 +682,7 @@ def test_an_old_address_forwards_to_its_new_name(old, new) -> None:
 
 
 @pytest.mark.parametrize("route", ["projects?country=IDN", "project/" + BAC_AI, "documents",
-                                   "overview", "entries/SEN?row=1", "methods",
+                                   "overview", "document-rows/SEN?row=1", "methods",
                                    "glossary", "release-history", "about", "who-we-are"])
 def test_an_address_that_kept_its_name_does_not_move(route) -> None:
     assert render(route, {}, "location.hash")["eval"] == "#" + route
@@ -702,15 +707,15 @@ def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() 
     links = re.findall(r'<li><a href="([^"]+)" data-sub="[^"]+" data-step="(D\d)"'
                        r'( aria-current="page")?>([^<]+)</a></li>', bar)
     assert [unescape(label) for *_, label in links] == STEPS, links
-    assert [(href, step) for href, step, current, _ in links if current] == [("#entries/VNM", "D2")]
+    assert [(href, step) for href, step, current, _ in links if current] == [("#document-rows/VNM", "D2")]
     hrefs = {unescape(label): href for href, _, _, label in links}
     assert hrefs["Documents"] == "#documents?country=VNM"
-    assert hrefs["On the record"] == "#on-the-record/VNM"
+    assert hrefs["Statements"] == "#statements/VNM"
     # Six plain sibling tabs: no separator, no grouping of the last three.
     assert "›" not in bar and "siblings" not in bar and bar.count("<li>") == 6
     # The scope is a chip; removing it opens the same step, unscoped.
     chip = re.search(r'<span class="scope-chip">([^<]+)<a href="([^"]+)"', bar)
-    assert chip and chip.group(1).strip() == "Viet Nam" and chip.group(2) == "#entries", bar
+    assert chip and chip.group(1).strip() == "Viet Nam" and chip.group(2) == "#document-rows", bar
 
 
 @pytest.mark.parametrize("route", TRAIL_ROUTES)
@@ -813,7 +818,7 @@ def test_a_country_read_from_the_address_cannot_inject_markup_into_the_step_bar(
     bar = step_bar("projects?country=" + payload)
     assert "<img" not in bar, bar
     # An unknown country is no country: the bar falls back to the whole site.
-    assert 'href="#entries"' in bar and 'href="#on-the-record"' in bar, bar
+    assert 'href="#document-rows"' in bar and 'href="#statements"' in bar, bar
     assert "scope-chip" not in bar
     # And the links are escaped even for a code the site knows, so the guard
     # is not the escaping's only line of defence (round 2 of the review).
@@ -1040,6 +1045,94 @@ def test_no_hand_written_definition_remains_on_the_glossary() -> None:
     assert main.count('class="term-definition"') == len(glossary_entries(main))
 
 
+def test_funding_shows_financial_statements_instead_of_project_preview() -> None:
+    rendered = render("funding/SEN")
+    main = rendered["main"]
+    table = rendered["elements"]["funding-statements-results"]["innerHTML"]
+    assert "Inside the portfolio" not in main
+    assert "Financing statements in the documents" in main
+    assert "Financing needs stated in the documents" in main
+    for heading in ("Reported milestone", "Original amount", "Funder · instrument",
+                    "Date and its role", "Document and location"):
+        assert f"<th>{heading}</th>" in table
+    assert 'id="funding-statements-filter-status"' in main
+    assert 'id="funding-statements-filter-funder"' in main
+    assert "Document published" in table or "Event " in table
+    assert "Publisher's document" in unescape(table)
+
+
+def test_organisation_combines_roles_and_discloses_more_project_names() -> None:
+    expression = """(() => {
+      projects.splice(0, projects.length, ...[1,2,3,4,5].map(n => ({
+        id: 'p' + n, name: 'Project ' + n, country: 'SEN',
+        funders: ['Same Name'], operator: 'Same Name'
+      })));
+      partyNames.names = [];
+      const rows = organisationIndex();
+      return { length: rows.length, roles: rows[0].roles,
+        projects: rows[0].projects.length, html: organisationProjects(rows[0]) };
+    })()"""
+    result = render("organisations", expression=expression)["eval"]
+    assert result["length"] == 1
+    assert result["roles"] == ["Funder", "Operator"]
+    assert result["projects"] == 5
+    assert result["html"].count('href="#project/') == 5
+    assert "and 2 more" in result["html"]
+    assert result["html"].index("Project 3") < result["html"].index("<details>")
+
+
+def test_document_description_links_urls_without_interpreting_markup() -> None:
+    actual = render("document-rows/ZAF?row=1")["elements"]["inventory-results"]["innerHTML"]
+    assert 'target="_blank" rel="noopener noreferrer"' in actual
+    assert "w05.international.gc.ca" in actual
+    html = render("overview", expression="linkedDescription('Go https://example.org/a, then http://example.net/b. <img src=x onerror=alert(1)> javascript:evil')")["eval"]
+    assert html.count('target="_blank" rel="noopener noreferrer"') == 2
+    assert '</a>,' in html and '</a>.' in html
+    assert '&lt;img src=x onerror=alert(1)&gt;' in html
+    assert 'href="javascript:' not in html
+
+
+def test_funding_keeps_a_disbursed_event_even_if_current_view_has_none() -> None:
+    expression = """(() => {
+      const project = countries.SEN.projects.find(p => p.events.length);
+      project.events.push({...project.events[0], status: 'Disbursed', event_id: 'test-payment'});
+      const table = fundingStatements(countries.SEN, 'SEN');
+      main.innerHTML = table.head;
+      table.mount();
+      return document.getElementById('funding-statements-results').innerHTML;
+    })()"""
+    assert "Disbursed" in render("funding/SEN", expression=expression)["eval"]
+
+
+def test_rejected_successor_retracts_reviewed_alias(tmp_path: Path) -> None:
+    ledger = tmp_path / "ledger"
+    ledger.mkdir()
+    (ledger / "parties.csv").write_text("party_id,country\np1,SEN\n")
+    (ledger / "party-names.csv").write_text(
+        "name_row_id,party_id,name,form_type,status,supersedes,document_id,line_id,recorded_at\n"
+        "n1,p1,Preferred,preferred,accepted,,,,\n"
+        "n2,p1,Old alias,alias,accepted,,,,\n"
+        "n3,p1,Withdrawn,alias,rejected,n2,,,\n"
+    )
+    output = tmp_path / "names.json"
+    subprocess.run(["python3", str(ROOT / "scripts/jetp/build_party_names_view.py"),
+                    "--ledger", str(ledger), "--output", str(output)], check=True)
+    assert [row["name"] for row in json.loads(output.read_text())["names"]] == ["Preferred"]
+
+
+def test_country_specific_reviewed_name_is_not_applied_elsewhere() -> None:
+    expression = """(() => {
+      projects.splice(0, projects.length, {
+        id: 'p1', name: 'Project 1', country: 'SEN', funders: ['Local label'], operator: ''
+      });
+      partyNames.names = [
+        {party_id: 'zaf-party', country: 'ZAF', name: 'Local label', form_type: 'alias'},
+        {party_id: 'zaf-party', country: 'ZAF', name: 'Another organisation', form_type: 'preferred'}
+      ];
+      return organisationIndex().map(row => ({name: row.name, aliases: row.aliases}));
+    })()"""
+    assert render("organisations", expression=expression)["eval"] == [
+        {"name": "Local label", "aliases": []}]
 # Ticket 0915: one site, two audiences. The public bundle is the tracked tree,
 # which cannot hold documents/; the local preview is the same tree with the
 # archived copies staged and their index served. Links are additive: the
