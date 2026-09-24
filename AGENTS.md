@@ -8,8 +8,9 @@ cover. This file holds only what every session here needs.
 
 ## Credentials
 
-`.env` holds no secret: values live in `~/.config/keys/`, selected by the `KEYS=`
-line. Never write a credential into `.env` (details: `.claude/rules/keystore.md`).
+`.env` holds machine settings and public Git identity only. Credentials live in
+`~/.config/keys/`; each tool reads only its own value immediately before use.
+Never write a credential into `.env` (details: `.claude/rules/keystore.md`).
 
 ## Merge gate
 

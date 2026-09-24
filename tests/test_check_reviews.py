@@ -63,7 +63,6 @@ def run_hook(
     env["CLAUDE_PROJECT_DIR"] = str(project_dir)
     env["PATH"] = f"{mock_dir}:{env['PATH']}"
     env["GH_TOKEN"] = "fake-token"
-    env["AGENT_GH_TOKEN"] = "fake-token"
     env["AGENT_GIT_NAME"] = "HDMX-coding-agent"
 
     result = subprocess.run(

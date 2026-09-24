@@ -24,12 +24,12 @@ import xml.etree.ElementTree as ET
 
 import pandas as pd
 import requests
+from pipeline_keystore import read_credential
 from pipeline_text import normalize_text
 from utils import (
     CATALOGS_DIR,
     CONSECUTIVE_FAIL_LIMIT,
     MAILTO,
-    OPENALEX_API_KEY,
     RAW_DIR,
     RateLimitExhausted,
     WatchedProgress,
@@ -41,6 +41,8 @@ from utils import (
     retry_get,
     save_run_report,
 )
+
+OPENALEX_API_KEY = read_credential("openalex", "OPENALEX_API_KEY")
 
 log = get_logger("enrich_abstracts")
 

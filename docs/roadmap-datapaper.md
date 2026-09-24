@@ -23,7 +23,7 @@ Format: Data paper, max 2,500 words, diamond OA
 ### 1a. Semantic Scholar (~2 hours on Padme)
 
 - Uncomment 8 lines in `dvc.yaml`
-- Put `S2_API_KEY` in `~/.config/keys/semanticscholar.env` and select it from the `KEYS=` line in `.env` (ticket 0343 — never a literal in `.env`)
+- Put `S2_API_KEY` in `~/.config/keys/semanticscholar.env`; the Semantic Scholar harvester reads it directly at startup (never put it in `.env`)
 - Run: `dvc repro catalog_semanticscholar`
 - Script exists and is tested. Expected yield: 500–2,000 unique works.
 - Ticket #254 (updated scope)

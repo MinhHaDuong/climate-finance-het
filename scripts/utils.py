@@ -112,7 +112,6 @@ from openalex_corpus.text import normalize_doi, reconstruct_abstract
 from pipeline_io import (
     CONSECUTIVE_FAIL_LIMIT,
     MAILTO,
-    OPENALEX_API_KEY,
     POLITE_MAX_RETRIES,
     RETRY_MAX_RETRIES,
     RateLimitExhausted,

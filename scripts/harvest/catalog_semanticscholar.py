@@ -29,6 +29,7 @@ import re
 
 import pandas as pd
 import yaml
+from pipeline_keystore import read_credential
 from utils import (
     CATALOGS_DIR,
     CONFIG_DIR,
@@ -47,6 +48,7 @@ from utils import (
 log = get_logger("catalog_semanticscholar")
 
 S2_API = "https://api.semanticscholar.org/graph/v1/paper/search"
+S2_API_KEY = read_credential("semanticscholar", "S2_API_KEY")
 
 # Fields to request from S2
 S2_FIELDS = ",".join([
@@ -86,9 +88,8 @@ def s2_get(url, params, delay=1.0, max_retries=5):
     Thin wrapper around retry_get that adds the S2 API key header.
     """
     headers = {}
-    api_key = os.environ.get("S2_API_KEY", "")
-    if api_key:
-        headers["x-api-key"] = api_key
+    if S2_API_KEY:
+        headers["x-api-key"] = S2_API_KEY
     return retry_get(url, params=params, headers=headers,
                      delay=delay, max_retries=max_retries, timeout=30)
 

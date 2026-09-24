@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Query Scopus API for climate finance literature.
 
-Requires SCOPUS_API_KEY environment variable (free for institutional users).
+Reads SCOPUS_API_KEY from ~/.config/keys/scopus.env (free for institutional users).
 Produces: data/catalogs/scopus_works.csv
 
 Usage:
-    export SCOPUS_API_KEY="your-key"
     python scripts/catalog_scopus.py [--limit N]
 """
 
@@ -15,6 +14,7 @@ import time
 
 import pandas as pd
 import requests
+from pipeline_keystore import read_credential
 from utils import (
     CATALOGS_DIR,
     WORKS_COLUMNS,
@@ -39,13 +39,12 @@ def main():
     year_max = collect_cfg["year_max"]
     log.info("Year bounds from corpus_collect.yaml: %d–%d", year_min, year_max)
 
-    api_key = os.environ.get("SCOPUS_API_KEY", "")
+    api_key = read_credential("scopus", "SCOPUS_API_KEY")
     if not api_key:
         log.warning("Scopus API key not found. To use this script:\n"
                     "1. Register at https://dev.elsevier.com/\n"
                     "2. Create an API key (free for CNRS institutional users)\n"
-                    "3. Set environment variable:\n"
-                    "       export SCOPUS_API_KEY=\"your-key-here\"\n"
+                    "3. Store SCOPUS_API_KEY in ~/.config/keys/scopus.env\n"
                     "4. Ensure you are on your institutional network (or VPN)\n"
                     "5. Re-run this script\n\n"
                     "Skipping Scopus catalog (this is optional).")

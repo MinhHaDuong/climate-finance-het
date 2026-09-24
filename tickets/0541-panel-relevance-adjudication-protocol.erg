@@ -55,8 +55,8 @@ counts.
 - `data/catalogs/reranker_hitl_review.csv` — bridge sample with human labels
 - `deliverables/data-paper/revision-rdj26561/flag6-language-bias/` — the
   study that motivates this (ablation + paired-query experiment)
-- `.env` KEYS= line — the two non-Anthropic seats need their providers
-  named there (default-deny; see AGENTS.md Credentials)
+- `~/.config/keys/<provider>.env` — each non-Anthropic seat reads its own
+  project-scoped value at call time (see AGENTS.md Credentials)
 
 ## Actions
 

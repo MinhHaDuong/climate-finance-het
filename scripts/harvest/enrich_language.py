@@ -22,11 +22,11 @@ import os
 import time
 
 import pandas as pd
+from pipeline_keystore import read_credential
 from utils import (
     CATALOGS_DIR,
     CONSECUTIVE_FAIL_LIMIT,
     MAILTO,
-    OPENALEX_API_KEY,
     RateLimitExhausted,
     check_rate_limit,
     detect_language,
@@ -38,6 +38,8 @@ from utils import (
     retry_get,
     save_run_report,
 )
+
+OPENALEX_API_KEY = read_credential("openalex", "OPENALEX_API_KEY")
 
 log = get_logger("enrich_language")
 
