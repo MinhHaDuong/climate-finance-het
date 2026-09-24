@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Capturer sur padme les dix objets collectés par la session navigateur de 0926
+Created: 2026-09-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-24T21:20Z HDMX-coding-agent created Suite de [[0926]] (PR #1506).
+
+--- body ---
+## Context
+
+[[0926]] a relancé le 2026-09-24, depuis doudou, les 16 sources `blocked`
+avec la session Firefox de l'auteur ; dix sont désormais `collected`
+(`collection_method = browser-session` dans `data/jetp/manifest.csv`). Leurs
+octets ont été copiés dans `data/jetp/documents/objects/` de la copie
+principale sur padme (empreintes sha256 revérifiées sur padme), mais ils ne
+sont pas encore dans `documents.dvc` : une machine neuve ne peut pas les
+obtenir, alors que le registre, dans git, les dit collectés.
+
+Les dix chemins : lignes `browser-session` avec `storage_path` non vide du
+manifeste.
+
+## Actions
+
+Sur padme, dans une branche : `make jetp-documents-track`, `uv run dvc push`,
+commit du `data/jetp/documents.dvc` mis à jour, PR.
+
+Attention : le 2026-09-24, le répertoire `data/jetp/documents/objects/` de la
+copie principale de padme ne compte que 228 fichiers (dix nouveaux compris)
+alors que `documents.dvc` en déclare 266. Un `dvc add` sur ce répertoire
+retirerait les objets absents du pointeur. Compléter d'abord le répertoire
+depuis le cache DVC (sans écraser les dix nouveaux), vérifier le compte, puis
+seulement capturer.
+
+## Exit criteria
+
+- [ ] `documents.dvc` sur `main` couvre les dix objets (`nfiles` passe de 266 à 276)
+- [ ] `dvc status -c data/jetp/documents.dvc` sur padme ne signale aucun objet à pousser
+- [ ] `make jetp-data` sur doudou matérialise les dix objets
