@@ -6,6 +6,7 @@ Blocked-by: 0876
 
 --- log ---
 2026-09-24T21:00Z claude created — author's review of the local preview, 2026-09-24; UX structure, not cosmetic (cosmetic findings: 0955)
+2026-09-24T21:20Z claude note author decisions: menu follows pipeline and ontology; no codes in labels; paper trail is a CSV viewer, Agreements included; tallies one page per country and per theme
 
 --- body ---
 ## Context
@@ -60,7 +61,7 @@ The paper trail follows the Data steps and reads the migrated tables:
 | D1 Register | Documents | `documents`, `retrievals`, `snapshots` | each document, its fetch status, and what was drawn from it: its lines, its observations, or "nothing drawn yet" (raw counts) |
 | D2 Lines | Lines, from tables and from text | `lines`, `line-fields`, `line-field-specs` | each line verbatim, at its locator |
 | D3 Observations | Observations | `observations`, `timings` | each typed statement, with the line it cites |
-| D4 Referents | Projects, Organisations (and Agreements if the author wants them) | `projects`, `parties`, `agreements`, `line-referents`, `relations` | each identity and the lines matched to it |
+| D4 Referents | Projects, Organisations, Agreements | `projects`, `parties`, `agreements`, `line-referents`, `relations` | each identity and the lines matched to it |
 
 - Every paper-trail page is one table, with country as a facet, the way
   Documents, Projects and Organisations work today. Landing pages that exist
@@ -76,17 +77,18 @@ The paper trail follows the Data steps and reads the migrated tables:
 - `docs/jetp-observatory-presentation.md` (ticket 0881) is amended to match
   before the code changes.
 
-## Decisions for the author
+## Author's decisions (2026-09-24)
 
-1. Labels: ontology words alone ("Lines", "Observations", "Referents"), or
-   plain words with the step code beside them ("Lines · D2").
-2. Whether Agreements gets a D4 page now.
-3. The tallies' page tree: one page per country and one per theme, or one
-   page with both axes as filters.
+Principle: **the navigation menu follows the data pipeline and the ontology.**
+
+1. Labels are the ontology's words, with no step codes in them.
+2. The paper trail is a viewer on the CSVs: one page per table the pipeline
+   serves, Agreements included.
+3. The tallies have one page for each country and one page for each theme.
 
 ## Exit criteria
-- [ ] `docs/jetp-observatory-presentation.md` states the D/E split and the
-      page tree above, with the author's answers to the three decisions
+- [ ] `docs/jetp-observatory-presentation.md` states the principle, the D/E
+      split and the page tree above
 - [ ] Each paper-trail page reads a migrated table, not a legacy one
       (tested on the served view's inputs)
 - [ ] No `computedMetric()` and no chart on a paper-trail page (a test on the
@@ -96,5 +98,7 @@ The paper trail follows the Data steps and reads the migrated tables:
       observations it yielded, or that nothing was drawn yet
 - [ ] Country is a facet on every paper-trail page and survives a change of
       page
-- [ ] The tallies hold every "Our calculation", by country and by theme
+- [ ] The tallies hold every "Our calculation", on one page per country
+      and one page per theme
+- [ ] No menu label carries a step code
 - [ ] The author has read the preview and accepted it
