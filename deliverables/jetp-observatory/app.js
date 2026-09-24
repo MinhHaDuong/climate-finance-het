@@ -1793,7 +1793,7 @@ function pageTitle(page, id) {
       ? name || "Country"
       : (page === "entries" || page === "on-the-record") && id
         ? `${name || "Country"}: ${page === "on-the-record" ? "statements" : "document rows"}`
-        : TITLES[page] || TITLES.methods) + " · JETP Observatory"
+        : TITLES[page] || "Page not found") + " · JETP Observatory"
   );
 }
 /* The section's own page: what each step holds, one line each. */
@@ -1838,7 +1838,8 @@ function render() {
   else if (page === "glossary") glossaryPage(params.get("term"));
   else if (page === "about") aboutPage();
   else if (page === "who-we-are") whoWeArePage();
-  else methodsPage();
+  else if (page === "methods") methodsPage();
+  else notFound();
   document.title = pageTitle(page, id);
   window.scrollTo(0, 0);
   // A link to one term opens the Glossary at its entry.
