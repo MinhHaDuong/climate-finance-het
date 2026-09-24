@@ -1,0 +1,47 @@
+%erg 0.1
+Title: Resolve Indonesia event source rows and identities pending in 0876
+Created: 2026-09-24
+Author: Codex
+
+--- log ---
+2026-09-24T19:50Z Codex created — 0876 snapshot audit found source-backed event rows whose 0875 identity dispositions remain blank
+
+--- body ---
+## Context
+
+Ticket [[0876]] has 27 events with collected snapshots but no acceptable
+source-line/subject pair. The bounded audit in
+`docs/jetp-0876-evidence-gap-audit.md` identifies 24 Progress Report 2025
+rows and three official-portal assertions. The 0875 dispositions leave their
+target identities blank. Several grant labels recur across distinct source
+rows; a generic project or programme name cannot stand in for each agreement.
+The report's in-process financing table does not by itself establish a
+physical implementation state.
+
+This ticket handles the source-row and identity decision. The separate AfDB
+event with no snapshot follows the collection path in [[0926]].
+
+## Work
+
+- Extract exact printed rows from Progress Report Tables 4.3-2/3/4/6/7/11
+  into ledger lines, with snapshot hash and specific row locators. Reuse the
+  already collected portal claim lines where their text supports the event.
+- Review each proposed agreement/project identity against its source row and
+  the 0875 split; keep ETP and IETF grants distinct by source row and funder.
+- For each of the nine implementation assertions, record whether the printed
+  text supports the claimed physical state, a weaker claim, or only financial
+  pipeline status. Never infer construction or completion from financing.
+- Rebuild the 0876 pending register and record one disposition per original
+  event without altering its served legacy view before its own acceptance gate.
+
+## Exit criteria
+
+- [ ] All 27 source-backed events have a precise source row, a justified
+  referent (or an explicit unresolved identity decision), and a recorded
+  financial/physical support verdict.
+- [ ] No two distinct ETP or IETF grant rows collapse into one agreement.
+- [ ] M1a served inventory bytes and the current country observation views
+  remain identical until 0876 replaces them.
+- [ ] `make jetp-ledger-check`, focused reconciliation tests,
+  `make check-fast`, `make lint`, and full `make check` are run; inherited
+  failures are identified separately.
