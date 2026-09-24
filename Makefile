@@ -29,7 +29,7 @@
 -include paths.mk
 
 # ── Paths ─────────────────────────────────────────────────
-# data/ is split by dataflow phase (see .claude/rules/architecture.md § Data location):
+# data/ is split by dataflow phase (see .claude/rules/data-location.md):
 #   data/catalogs/ (+ pool/ exports/ syllabi/) = Phase-1 corpus, DVC-managed.
 #   data/derived/  = Phase-2 derived data, gitignored + regenerable.
 # Python scripts resolve the same paths via utils.py (CATALOGS_DIR / DERIVED_TABLES_DIR).

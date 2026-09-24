@@ -14,7 +14,7 @@ When `/review-pr` triggers doc propagation, trace references in these project fi
 - `deliverables/*/*-vars.yml`
 - `docs/`
 - `README.md`, `STATE.md`, `ROADMAP.md`
-- `.claude/rules/architecture.md`
+- `.claude/rules/architecture.md` and its scoped siblings (`deliverables.md`, `data-location.md`, `openalex-corpus.md`, `null-model.md`)
 - config files
 
 Also:

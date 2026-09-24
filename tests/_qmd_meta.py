@@ -149,7 +149,7 @@ def source_files(qmd: Path) -> tuple[list[Path], list[str]]:
     resolves against the **root document's** directory, not against the file
     that contains it. Joining each include against its own directory is the
     natural implementation and it is wrong: it misses every nested include
-    (`.claude/rules/architecture.md`, ticket 0359, where writing it that way
+    (`.claude/rules/deliverables.md`, ticket 0359, where writing it that way
     produced 13 confident false positives).
 
     Some generated tables under `_shared/tables/` are gitignored — others are

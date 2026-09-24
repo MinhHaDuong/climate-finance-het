@@ -125,7 +125,7 @@ def test_no_pinned_document_is_also_generated():
 REGISTRY_PROSE = [
     "README.md",
     "docs/ncc-pipeline-audit.md",
-    ".claude/rules/architecture.md",
+    ".claude/rules/deliverables.md",
 ]
 
 #: Where `DOC_VARS` is actually defined. `compute_vars` re-exports it, so an
