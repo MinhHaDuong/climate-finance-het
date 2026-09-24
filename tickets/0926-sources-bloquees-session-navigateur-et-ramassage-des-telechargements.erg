@@ -1,0 +1,54 @@
+%erg 0.1
+Title: Sources bloquées par les robots : rejouer la session navigateur, puis ramasser les téléchargements manuels
+Created: 2026-09-24
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-24T15:00Z HDMX-coding-agent created
+2026-09-24T15:00Z HDMX-coding-agent decision Suite de [[0915]] demandée par l'auteur (session interactive du 2026-09-24).
+
+--- body ---
+## Context
+
+Suite de [[0915]]. Le registre `data/jetp/manifest.csv` compte, au
+2026-09-24, 316 tentatives : 271 collectées, 19 `blocked` (le site refuse le
+script mais s'ouvre dans le navigateur de l'auteur), 14 `fetch_error`, 4
+`http_error`, 2 `missing`, 2 `invalid_content`, 4 `not_modified`. Les
+documents bloqués manquent à la couverture et, sur le site public, n'ont que
+le lien éditeur.
+
+## Actions, par échelon
+
+1. **Rejouer la session de l'auteur.** Le collecteur relance les sources
+   `blocked` avec les cookies du profil Firefox de l'auteur (`cf_clearance`
+   pour Cloudflare) et un User-Agent Firefox assorti, à 2-3 s d'intervalle.
+   Méthode éprouvée le 2026-07-24 sur l'OCDE (plus de 100 PDF, zéro échec).
+   Copier `cookies.sqlite` avant lecture ; ne jamais journaliser un cookie.
+2. **Ramassage des téléchargements manuels.** Pour ce qui résiste, l'auteur
+   ouvre et enregistre le document dans son navigateur. Une commande scanne le
+   répertoire de téléchargement (`xdg-user-dir DOWNLOAD` : `~/Téléchargements`
+   sur padme), lit dans `places.sqlite` de Firefox l'adresse d'origine de
+   chaque téléchargement, apparie chaque fichier à sa ligne bloquée par cette
+   adresse, calcule l'empreinte et marque la ligne collectée. Aucun renommage
+   ni appariement à la main.
+3. **Provenance.** Le registre gagne une colonne de méthode de collecte
+   (`script`, `browser-session`, `browser-manual`) ; le site l'affiche.
+
+## Contraintes
+
+- Les objets DVC se poussent depuis padme seulement (données padme → doudou) :
+  un fichier téléchargé sur doudou passe sur padme avant `dvc add`.
+- Accès de l'auteur, à sa demande : pas de contournement d'un mur payant ni
+  d'une authentification que l'auteur n'a pas.
+
+## Exit criteria
+
+- [ ] Les 19 sources `blocked` ont été relancées avec la session navigateur ; le registre dit, pour chacune, le résultat
+- [ ] Contrôle positif du ramassage : un fichier téléchargé depuis une URL d'essai connue est apparié à sa ligne et marqué collecté ; un fichier sans ligne correspondante est signalé, pas ingéré
+- [ ] La colonne de méthode de collecte est remplie pour toutes les lignes collectées et affichée sur le site
+- [ ] Aucun cookie ni jeton n'apparaît dans un log, un commit ou un ticket
+- [ ] `make check-fast` et `make lint` verts
+
+## Hors périmètre
+
+Les captures Web Archive et le contrôle des liens ([[0925]]).
