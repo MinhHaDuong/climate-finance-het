@@ -81,9 +81,18 @@ $(JETP_OBSERVATORY_PROVENANCE): $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_INPU
 # The staged copy is initialized once, not tracked: after a `dvc checkout` moves
 # data/jetp/documents to another revision, `make jetp-observatory-refresh`
 # restages it. A reflink copy would otherwise keep serving the old bytes.
+# Objects are named by their hash, so differing file lists mean a stale copy:
+# say so rather than exit silently (two VNM sources 404'd on 2026-09-24).
 jetp-observatory-documents:
 	@set -eu; \
-	if [ -e $(JETP_OBSERVATORY)/documents ] || [ -L $(JETP_OBSERVATORY)/documents ]; then exit 0; fi; \
+	if [ -e $(JETP_OBSERVATORY)/documents ] || [ -L $(JETP_OBSERVATORY)/documents ]; then \
+	    if [ ! -L $(JETP_OBSERVATORY)/documents ] && [ -d data/jetp/documents ] && \
+	        ! cmp -s <(cd data/jetp/documents && find . -type f | sort) \
+	                 <(cd $(JETP_OBSERVATORY)/documents && find . -type f | sort); then \
+	        echo 'Staged JETP documents differ from data/jetp/documents; run make jetp-observatory-refresh.' >&2; \
+	    fi; \
+	    exit 0; \
+	fi; \
 	if [ ! -d data/jetp/documents ]; then \
 	    echo 'JETP snapshots absent; run make jetp-data to read documents locally.' >&2; \
 	    exit 0; \
