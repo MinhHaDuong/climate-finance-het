@@ -16,6 +16,15 @@ timelines and totals are generated from a pinned release, not hand-maintained he
 This directory is shared by the observatory and academic work; it is not a website
 backend. Existing registries and DVC objects have not been moved.
 
+Link rot (ticket 0925) has two tables of its own, never columns of the
+collection registry: `web-archive-captures.csv`, the public Web Archive copy
+of each collected document's address (or why there is none), and
+`publisher-link-checks.csv`, the latest periodic check of each publisher
+address, with the date a dead run began. Their scripts, schedule and served
+views are described in
+[`deliverables/jetp-observatory/README.md`](../../deliverables/jetp-observatory/README.md)
+§ Web Archive copies and link checks.
+
 The evidence layer of the ledger (ticket 0872, migration step 1 of
 [`jetp-ledger-migration.md`](../../docs/jetp-ledger-migration.md)) is
 `parties.csv`, `party-names.csv`, `documents.csv`, `document-publishers.csv`,
