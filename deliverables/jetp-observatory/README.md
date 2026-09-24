@@ -63,11 +63,17 @@ nothing else: the other views and their input hashes do not move.
 **Capture** (`scripts/jetp/corpus_web_archive_capture.py`). `make jetp-harvest` runs
 it after collecting; `make jetp-web-archive` runs it on everything. For each
 collected document it reuses a Wayback snapshot taken within a year of the
-collection date (`reused`), else asks Save Page Now, anonymously, for a new
-one (`captured`); a failure is recorded with its reason (`failed`) and never
-blocks; a Common Crawl WARC record is `not_applicable`. It is paced (15 s
-between capture requests), backs off on rate limits, and resumes: what is
-captured or reused is skipped, what failed is tried again. After five
+collection date (`reused`), else asks Save Page Now for a new one
+(`captured`); a failure is recorded with its reason (`failed`) and never
+blocks; a Common Crawl WARC record is `not_applicable`. Save Page Now is
+asked with the project's Internet Archive account when
+`~/.config/keys/archive.env` holds `IA_S3_ACCESS_KEY` and `IA_S3_SECRET_KEY`
+(read just before each request, sent only as its `Authorization` header,
+never logged or recorded): three documents in flight, submissions 5 s apart.
+Without that file it runs anonymously, one at a time, 15 s apart; anonymous
+capture has been refused with HTTP 401 since 2026-09-24, so `--no-save` then
+looks up existing snapshots only. It backs off on rate limits and resumes:
+what is captured or reused is skipped, what failed is tried again. After five
 consecutive connection failures to Save Page Now it stops requesting captures
 for that run, still reusing existing snapshots, and marks the rest
 `wayback_unreachable` for the next run.

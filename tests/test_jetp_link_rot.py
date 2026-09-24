@@ -64,10 +64,12 @@ class FakeHttp:
     def __init__(self, routes):
         self.routes = {k: list(v) for k, v in routes.items()}
         self.calls = []
+        self.sent_headers = []
         self.headers = {}
 
     def request(self, method, url, **kwargs):
         self.calls.append((method, url, kwargs.get("params") or kwargs.get("data")))
+        self.sent_headers.append((method, url, dict(kwargs.get("headers") or {})))
         for (m, prefix), queue in self.routes.items():
             if m == method and url.startswith(prefix):
                 answer = queue.pop(0) if len(queue) > 1 else queue[0]
@@ -92,6 +94,23 @@ def closest(timestamp, status="200"):
 NONE = Response(payload={"archived_snapshots": {}})
 DOC = {"source_id": "doc-a", "url": "https://publisher.example/a.pdf",
        "collected_at": "2026-09-12T08:35:00Z"}
+
+
+@pytest.fixture(autouse=True)
+def _no_ambient_archive_keys(monkeypatch, tmp_path_factory):
+    """No test reads the machine's keystore: an absent directory unless a test
+    writes its own, and no key in the environment."""
+    for name in corpus_web_archive_capture.KEY_NAMES:
+        monkeypatch.delenv(name, raising=False)
+    empty = tmp_path_factory.mktemp("no-keys")
+    monkeypatch.setattr(corpus_web_archive_capture, "read_credential",
+                        _keystore_in(empty, corpus_web_archive_capture.read_credential))
+
+
+def _keystore_in(default_dir, read):
+    def reader(provider, source, keys_dir=None):
+        return read(provider, source, keys_dir=keys_dir or str(default_dir))
+    return reader
 
 
 def wayback(routes, **kwargs):
@@ -200,11 +219,94 @@ def test_any_answer_from_save_page_now_resets_the_breaker(tmp_path) -> None:
     service, _ = wayback({
         ("GET", corpus_web_archive_capture.AVAILABILITY): [NONE],
         ("POST", corpus_web_archive_capture.SAVE): [down, Response(429), down, down],
-    }, backoff=())
+    }, backoff=(), submit_backoff=())
 
     corpus_web_archive_capture.run(documents, tmp_path / "c.csv", service, breaker=2)
 
     assert sum(c[0] == "POST" for c in service.http.calls) == 4
+
+
+def test_lookup_only_reuses_snapshots_and_keeps_the_recorded_refusal(tmp_path) -> None:
+    output = tmp_path / "c.csv"
+    refused = dict(source_id="doc-0", url="https://p.example/0", outcome="failed",
+                   capture_url="", captured_at="", attempted_at="2026-09-24T00:00:00Z",
+                   error="save_http_401")
+    corpus_web_archive_capture.write_captures({("doc-0", refused["url"]): refused}, output)
+    documents = [dict(source_id=f"doc-{n}", url=f"https://p.example/{n}",
+                      collected_at="2026-09-12T00:00:00Z") for n in range(2)]
+    service, _ = wayback({("GET", corpus_web_archive_capture.AVAILABILITY): [NONE]})
+
+    rows = corpus_web_archive_capture.run(documents, output, service, request_captures=False)
+
+    assert not any(c[0] == "POST" for c in service.http.calls)
+    assert rows[("doc-0", "https://p.example/0")]["error"] == "save_http_401"
+    assert rows[("doc-1", "https://p.example/1")]["error"] == "save_not_requested"
+
+
+ACCESS, SECRET = "AKfixture0925access", "SKfixture0925secret"
+SAVE_ROUTES = {
+    ("GET", corpus_web_archive_capture.AVAILABILITY): [NONE],
+    ("POST", corpus_web_archive_capture.SAVE): [Response(payload={"job_id": "spn2-" + "c" * 32})],
+    ("GET", corpus_web_archive_capture.STATUS): [
+        Response(payload={"status": "success", "timestamp": "20260924210000"})],
+}
+
+
+def test_without_the_key_file_the_capture_is_anonymous(tmp_path) -> None:
+    service, _ = wayback(SAVE_ROUTES, keys_dir=str(tmp_path / "absent"))
+    row = corpus_web_archive_capture.capture_one(DOC, service, 365)
+    assert row["outcome"] == "captured"
+    assert not service.authenticated
+    assert all("Authorization" not in headers for _, _, headers in service.http.sent_headers)
+
+
+def test_with_the_key_file_save_and_status_are_authenticated_and_the_keys_leak_nowhere(
+        tmp_path, caplog) -> None:
+    keys = tmp_path / "keys"
+    keys.mkdir()
+    (keys / "archive.env").write_text(f"IA_S3_ACCESS_KEY={ACCESS}\nIA_S3_SECRET_KEY={SECRET}\n")
+    service, _ = wayback(SAVE_ROUTES, keys_dir=str(keys))
+    output = tmp_path / "captures.csv"
+
+    with caplog.at_level("DEBUG"):
+        rows = corpus_web_archive_capture.run([DOC], output, service, workers=3)
+
+    assert rows[(DOC["source_id"], DOC["url"])]["outcome"] == "captured"
+    sent = {(m, u.split("/save")[0] if "/save" in u else u): h.get("Authorization")
+            for m, u, h in service.http.sent_headers}
+    assert sent[("POST", "https://web.archive.org")] == f"LOW {ACCESS}:{SECRET}"
+    assert sent[("GET", "https://web.archive.org")] == f"LOW {ACCESS}:{SECRET}"
+    # The availability lookup needs no account and is not sent one.
+    assert sent[("GET", corpus_web_archive_capture.AVAILABILITY)] is None
+    written = output.read_text() + caplog.text
+    assert ACCESS not in written and SECRET not in written
+
+
+def test_a_row_save_page_now_refused_goes_straight_to_the_capture(tmp_path) -> None:
+    # Its lookup ran in the attempt that was refused and found nothing;
+    # repeating it only drew rate limits (2026-09-24).
+    output = tmp_path / "c.csv"
+    refused = dict(source_id=DOC["source_id"], url=DOC["url"], outcome="failed",
+                   capture_url="", captured_at="", attempted_at="2026-09-24T00:00:00Z",
+                   error="save_http_401")
+    corpus_web_archive_capture.write_captures({(DOC["source_id"], DOC["url"]): refused}, output)
+    service, _ = wayback(SAVE_ROUTES)
+
+    rows = corpus_web_archive_capture.run([DOC], output, service)
+
+    assert rows[(DOC["source_id"], DOC["url"])]["outcome"] == "captured"
+    assert not any(url == corpus_web_archive_capture.AVAILABILITY
+                   for _, url, _ in service.http.calls)
+
+
+def test_authenticated_runs_keep_three_documents_in_flight(tmp_path) -> None:
+    documents = [dict(DOC, source_id=f"doc-{n}", url=f"https://p.example/{n}.pdf")
+                 for n in range(6)]
+    service, _ = wayback(SAVE_ROUTES)
+    rows = corpus_web_archive_capture.run(documents, tmp_path / "c.csv", service, workers=3)
+    assert sorted(r["outcome"] for r in rows.values()) == ["captured"] * 6
+    table = _read(tmp_path / "c.csv")
+    assert [r["source_id"] for r in table] == [f"doc-{n}" for n in range(6)]
 
 
 def test_an_unreachable_lookup_still_asks_for_a_capture() -> None:
