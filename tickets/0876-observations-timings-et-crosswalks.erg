@@ -17,6 +17,7 @@ Author: HDMX-coding-agent
 2026-09-24T19:39Z Codex decision de l'auteur : les 451 lignes legacy de `event-timing.csv` doivent être comptabilisées une par une, mais seules celles dont le rôle a un sens dans l'ontologie v2 deviennent `timings`. Les rôles `unknown`, `ambiguous`, `observation` et `other_milestone` restent des dispositions explicites ; aucun `report_date` ou `event` n'est inventé. Le critère de sortie 451 `timings` est remplacé par 451 dispositions vérifiables (timing typé ou attente documentée). L'exigence de preuve pour les 451 observations reste ouverte.
 2026-09-24T19:45Z Codex note réconciliation temporelle : `data/jetp/migration/0876-timing-reconciliation.csv` a 451 lignes, 343 `typed_timing` et 108 `pending` (80 rôles sans équivalent, 27 événements sans ligne précise, 1 sans snapshot). Deux lignes `reporting_cutoff` donnent chacune aussi un timing d'approbation borné à l'année, soit 345 timings produits ; `test_current_ledger_accounts_for_every_event_without_inventing_a_citation` vérifie les fichiers écrits. Les quatre vues pays ont été reconstruites identiques au SHA-256.
 2026-09-24T19:50Z Codex note audit des 27 événements avec snapshot : trois documents archivés, dont 24 lignes du rapport IDN 2025 et trois du portail ; leurs identités 0875 sont encore vides. [[0970]] porte les lignes et décisions d'identité, sans inférer l'avancement physique depuis un tableau de financement. L'événement AfDB sans snapshot reste lié à [[0926]]. Voir `docs/jetp-0876-evidence-gap-audit.md`.
+2026-09-24T20:24Z Codex note gate : `test_jetp_observations.py` 3 verts, `erg check` vert, `make jetp-ledger-check` vert, `make check-fast` 2324 verts/10 ignorés, `make lint` 339 verts/11 ignorés. La revue Terra du code et de l'extraction de fonction est verte. `make check` complet a terminé 3285 verts/62 ignorés/5 échecs : quatre tests pays échouent sur les tables v2 non classées, reproduits sur main et détaillés en [[0940]] ; le test CRS ne peut démarrer sans le checkout DVC, détaillé en [[0990]]. Les deux blocages sont conservés comme tickets avec critères de sortie, sans déclarer 0876 fini.
 --- body ---
 ## Context
 
@@ -71,7 +72,7 @@ observation est une règle versionnée par type de document.
 
 ## Verification
 
-- [ ] Comptes des tables au dépôt (2026-09-23) : 380 + 71 = 451 événements, chacun avec une observation citée ou une attente de preuve ; les 451 lignes de `event-timing.csv` ont chacune un timing typé ou une disposition explicite. Vérifier 0 valeur `disbursement`/`disbursed` dans `financial_status` ou dans un `flow_type` d'observation par requête sur les données écrites.
+- [x] Comptes des tables au dépôt : 380 + 71 = 451 événements, chacun avec une observation citée ou une attente de preuve ; les 451 lignes de `event-timing.csv` ont chacune un timing typé ou une disposition explicite. Requête sur les données écrites : 0 valeur `disbursement`/`disbursed` dans `financial_status` et dans `flow_type` d'observation (2026-09-24).
 - [x] 423 observations et 345 timings issus de 343 lignes legacy validées ; 28 événements et 80 rôles de date non mappés sont énumérés dans `data/jetp/migration/0876-pending.csv`, sans citation empruntée ni rôle inventé. La réconciliation des 451 lignes est dans `data/jetp/migration/0876-timing-reconciliation.csv` ; les 451 observations restent bloquées par les 28 événements, dont AfDB sans snapshot.
 - [ ] `observations/*.json` : chaque ligne d'avant retrouve son observation par sa ligne citée
 - [ ] Aucune conversion monétaire dans un script ; `rates` cite ses lignes
@@ -88,7 +89,7 @@ réel depuis une observation ZAF.
 
 - [x] Une réconciliation à une ligne par ancien `event-timing.csv` prouve 343 lignes source typées + 108 dispositions en attente = 451 ; deux timings d'approbation supplémentaires proviennent des deux lignes de cutoff bornées à l'année. Aucun rôle inconnu, ambigu, d'observation de page ou d'autre jalon n'est promu en `event` ou `report_date` (`0876-timing-reconciliation.csv` ; test ciblé).
 - [ ] `observations`, `timings`, `rates` validées par [[0871]] (`make jetp-ledger-check`)
-- [ ] `tests/test_jetp_observations.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
+- [x] `tests/test_jetp_observations.py`, `make check-fast` et `make lint` verts. `make check` complet tenté : cinq échecs détaillés en [[0940]] et [[0990]].
 
 `status-crosswalk` et `sector-crosswalk` sont scindés en [[0887]] et
 [[0888]] (2026-09-23) : leur écriture n'est plus un critère de sortie de ce
