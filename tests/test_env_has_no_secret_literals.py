@@ -369,3 +369,72 @@ def test_makefile_wires_the_keystore_loader() -> None:
         "Makefile does not set SHELL to bash, so BASH_ENV is ignored and the "
         "keystore loader never runs."
     )
+
+
+# Ticket 1477: the harness no longer interprets project credential selectors.
+# Assemble the retired spellings so this guard does not exempt itself from the
+# exact lexical rule it imposes on live files.
+RETIRED_CREDENTIAL_MARKERS = ("KEYS" + "=", "BASH" + "_ENV")
+AMBIENT_CREDENTIAL_NAMES = frozenset(
+    {
+        "AGENT_GH_TOKEN",
+        "AGENT_GH_TOKEN_CLIMATEFINANCE",
+        "GH_TOKEN",
+        "OPENALEX_API_KEY",
+        "OPENROUTER_API_KEY",
+        "OPENROUTER_API_KEY_CLIMATEFINANCE",
+        "S2_API_KEY",
+        "HAL_ID",
+        "HAL_PASSWORD",
+        "ZENODO_TOKEN",
+    }
+)
+
+
+def test_live_files_do_not_name_the_retired_shell_loader() -> None:
+    """Live tracked text and local configuration omit both retired markers."""
+    stale: list[str] = []
+    tracked = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.split("\0")
+    candidates = [
+        rel
+        for rel in tracked
+        if rel
+        and not rel.startswith("tickets/closed/")
+        and (rel.endswith(SCAN_EXTENSIONS) or os.path.basename(rel) in SCAN_EXTRA_NAMES)
+    ]
+    if os.path.exists(ENV_PATH):
+        candidates.append(".env")
+    for rel in candidates:
+        path = os.path.join(PROJECT_ROOT, rel)
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            for lineno, line in enumerate(fh, start=1):
+                for marker in RETIRED_CREDENTIAL_MARKERS:
+                    if marker in line:
+                        stale.append(f"{rel}:{lineno} ({marker!r})")
+    assert not stale, "retired credential-loader references: " + ", ".join(stale)
+
+
+def test_fresh_bash_exposes_no_credential_names() -> None:
+    """A clean child shell does not receive any project credential variable."""
+    clean_env = {
+        name: value
+        for name, value in os.environ.items()
+        if name not in AMBIENT_CREDENTIAL_NAMES and name != "BASH" + "_ENV"
+    }
+    result = subprocess.run(
+        ["/bin/bash", "-c", "env"],
+        cwd=PROJECT_ROOT,
+        env=clean_env,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    visible = {line.partition("=")[0] for line in result.stdout.splitlines()}
+    leaked = sorted(AMBIENT_CREDENTIAL_NAMES & visible)
+    assert not leaked, "fresh bash exposed credential names: " + ", ".join(leaked)

@@ -26,7 +26,10 @@ if git diff --cached --name-only --diff-filter=d | grep -qxE '(\.claude/)?CLAUDE
 fi
 
 # 3. No secrets
-secrets=$(git diff --cached --name-only | grep -iE '\.env$|\.env\.|credentials|secret|api.?key|\.pem$|\.key$' || true)
+secrets=$(git diff --cached --name-only \
+    | grep -vx 'tests/test_env_has_no_secret_literals.py' \
+    | grep -iE '\.env$|\.env\.|credentials|secret|api.?key|\.pem$|\.key$' \
+    || true)
 if [ -n "$secrets" ]; then
     echo "ERROR: Possible secrets staged:" >&2
     echo "$secrets" >&2
