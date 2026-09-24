@@ -658,6 +658,17 @@ def test_an_internal_page_key_is_not_an_address() -> None:
         assert render(key)["main"] == unknown, key
 
 
+def test_an_unknown_address_says_so_and_every_page_still_opens() -> None:
+    # Author, 2026-09-24: an unknown address opened Methods, so a reader who
+    # followed a stale link landed on a real page with no sign of the miss.
+    unknown = render("no-such-page", {}, "document.title")
+    assert "This page is not in the snapshot." in unknown["main"]
+    assert unknown["eval"].startswith("Page not found")
+    for route in ROUTES:
+        assert "This page is not in the snapshot." not in render(route)["main"], route
+    assert '<div class="method-list">' in render("methods")["main"]
+
+
 def test_the_pages_link_to_no_internal_key() -> None:
     keys = set(internal_keys())
     for html, where in [((SITE / "index.html").read_text(), "index.html"),
