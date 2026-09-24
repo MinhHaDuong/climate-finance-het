@@ -15,9 +15,26 @@ make jetp-observatory-preview
 ```
 
 Open <http://127.0.0.1:8765>. The build reads local snapshots only; it does not
-collect documents or access DVC. A static host can serve this directory as-is.
+collect documents or access DVC. A static host can serve this directory as-is;
+the public site is its tracked tree, see [Publish on GitHub Pages](#publish-on-github-pages).
 Use `PYTHON=.venv/bin/python` on the make commands to reuse the installed
 interpreter when the machine's uv cache is unavailable.
+
+## Links to documents: the publisher's page, and the archived copy where served
+
+Every document the pages name links to the page it was collected from — the
+`url` of `data/documents.json` — labelled "Publisher's page — <host>", with the
+collection date and the SHA-256 of the bytes read. Where a locator names a PDF
+page and the origin served a PDF, the link carries `#page=N`; the page number
+refers to the bytes read, and the publisher's current file may differ. A failed
+collection keeps its publisher link and says it failed.
+
+The archived copy is an extra link, never a replacement. The pages draw it only
+for a copy listed in `documents/index.json`, which `make
+jetp-observatory-documents` (and `-refresh`) writes beside the staged copies,
+and which the pages fetch once at load. `documents/` is git-ignored, so the
+public bundle, the tracked tree, has no index and shows no archived link: there
+is one `app.js`, one set of served views and no build flag (ticket 0915).
 
 ## How the pages are organised
 
@@ -108,10 +125,11 @@ names `#country/<CODE>` routes — and those forward like any other.
 - A Documents page listing every collection attempt in `data/jetp/manifest.csv`
   with its status, content type, size and origin URL. The archived copies
   themselves are staged locally by `make jetp-observatory-documents` into
-  `documents/`. That staging happens once; after a `dvc checkout` moves the
-  snapshot to another revision, `make jetp-observatory-refresh` restages it.
-  `documents/` is local-preview only: it is excluded from the bundle and
-  from any public release, which carry the registry and the origin URL alone.
+  `documents/`, with the index of what was staged. That staging happens once;
+  after a `dvc checkout` moves the snapshot to another revision, `make
+  jetp-observatory-refresh` restages it. `documents/` is local-preview only:
+  it is git-ignored, so the public bundle never holds it, and any public
+  release carries the registry and the origin URL alone.
   `scripts/jetp/_public_release.py` copies the whole tree at a pinned commit and
   does not go through that exclusion; it is out of scope until the next release.
 - The entries of ZAF, IDN, VNM and SEN (the frozen M1a inventories). These
@@ -126,8 +144,9 @@ names `#country/<CODE>` routes — and those forward like any other.
   artefact, while the page reads the `<CODE>.json` companion the same build
   writes from the same rows — column names once, then one array of values per
   row, so the browser parses no CSV text and the file stays under the
-  repository's committed-file ceiling. Each row opens its archived document, at
-  its PDF page where the document gives one. The export width is per country,
+  repository's committed-file ceiling. Each row links to its document's page on
+  the publisher's site, at its PDF page where the document gives one and the
+  origin is a PDF, and to the archived copy where the preview serves it. The export width is per country,
   so the page wires only the five facets every country carries and shows every
   other column in the row detail.
 - What is on the record for the same four countries, at
@@ -146,7 +165,8 @@ names `#country/<CODE>` routes — and those forward like any other.
   carries a review-state badge and an "On the record about this project"
   fold-out: the items addressed to that identity, read from
   `data/observations/<CODE>.json` — the view `#on-the-record/<CODE>` loads —
-  and filtered on `project_id` in the browser, each opening its archived
+  and filtered on `project_id` in the browser, each linking to the publisher's
+  page and, in the local preview, to the archived
   document where the collection holds one. The country view carries no copy
   of them: `ZAF.json` has a publication cap of 512 000 bytes
   (`config/jetp-zaf-migration.json`), and the 338 ZAF rows copied into it put
@@ -165,11 +185,11 @@ names `#country/<CODE>` routes — and those forward like any other.
   name it and the reviewed items one of whose proofs does. Each entry in that
   fold-out links to its own row (`#entries/<CODE>?row=N`, `N` the row's rank
   in the export) and, where its locator names a PDF page, to that page of the
-  archived copy — the page read by the same port of `_m1a_document_links.py`
-  the entries page uses; the copy's own link opens at the first page the
+  publisher's PDF and of the archived copy where served — the page read by the same port of `_m1a_document_links.py`
+  the entries page uses; the document's own links open at the first page the
   extracted rows name, when every extraction that names one agrees, and at its
   own first page otherwise — no page is ever fabricated (ticket 0857). A
-  reviewed item's pedigree opens the bytes its fingerprint pins. The Viet Nam
+  reviewed item's pedigree links to the bytes its fingerprint pins. The Viet Nam
   page shows the 279 positions of the RMP 2023 table and the 24 projects of
   the 2025 portfolio side by side; no link between them is established here.
 
@@ -177,6 +197,35 @@ This is a preview, not the complete public release of 0726 or deployment of 0727
 There is no pooled disbursement rate or causal acceleration estimate. Headline
 national amounts come from attributed reports; repeated project events are not
 summed. Historical financing windows are not construction durations.
+
+## Publish on GitHub Pages
+
+The public site is the tracked tree of this directory at one commit — nothing
+added, nothing rewritten — served from the `gh-pages` branch of this public
+repository (ticket 0915). There is no CI (ticket 0321); the commands below are
+the whole path. They publish the local `origin/main` by default; set
+`JETP_PAGES_REF=<ref>` to publish another commit.
+
+```bash
+git fetch origin
+make jetp-observatory-bundle          # extract the public tree into data/derived/jetp/observatory-pages
+.venv/bin/python -m http.server 8773 --bind 127.0.0.1 --directory data/derived/jetp/observatory-pages
+.venv/bin/python tests/browser/jetp_observatory.py --url http://127.0.0.1:8773
+bash scripts/jetp/publish_observatory_pages.sh   # dry run: builds the gh-pages commit, pushes nothing
+make jetp-observatory-publish         # push that commit to origin/gh-pages
+```
+
+The bundle and the push use the same tree object, so what was previewed is what
+goes out. Both refuse a tree holding `documents/`. The push is not forced: if
+`gh-pages` moved meanwhile, it is refused rather than overwritten.
+
+**Pushing `gh-pages` publishes nothing while GitHub Pages is disabled.**
+Enabling it is the author's step, taken after the demonstration and his
+explicit go-ahead: in the repository's Settings → Pages, set *Source* to
+*Deploy from a branch*, branch `gh-pages`, folder `/ (root)`. The site then
+serves at <https://minhhaduong.github.io/climate-finance-het/>. Check that
+address in a browser, including the release and input revision shown on the
+Methods page. `.nojekyll` keeps GitHub from running Jekyll over the tree.
 
 ## Validation
 
@@ -187,7 +236,9 @@ Manual Chromium checks live in `tests/browser/jetp_observatory.py` and cover
 navigation, the paper trail walked both ways, filtering, document access,
 download payloads and mobile overflow.
 Playwright is a development dependency; its browser is installed once per
-machine. Start the preview, then run:
+machine. The recipe runs the same checks on the local preview and on the
+public bundle; only its archived-copy checks depend on `documents/index.json`
+being served. Start the preview, then run:
 
 ```bash
 uv sync && uv run playwright install chromium

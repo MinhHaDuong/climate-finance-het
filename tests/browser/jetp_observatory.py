@@ -2,6 +2,12 @@
 
 Run with Playwright installed and Chromium available. This is deliberately not
 collected by the Python unit suite: browser installation is a developer tool.
+
+The same checks run on the local preview and on the public bundle (ticket
+0915). Every document link to the publisher's page is checked on both; the
+archived-copy checks follow ``documents/index.json``: where the server serves
+it, each listed copy must be linked and open, and where it does not, no page
+may link into ``documents/``.
 """
 
 import argparse
@@ -35,6 +41,38 @@ def download_matches(page, url, href):
 COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
 
 
+def staged_copies(page, url):
+    """The archived copies this server says it holds; empty on the public site."""
+    response = page.request.get(url + '/documents/index.json')
+    return set(response.json()['objects']) if response.ok else set()
+
+
+def publisher(selector):
+    return selector + '[data-link="publisher"]'
+
+
+def archived(selector):
+    return selector + '[data-link="archived"]'
+
+
+def check_archived(page, url, locator, entry, staged, suffix='', exact=True, opens=True):
+    """The archived link of one document: present, right and opening where the
+    copy is served; absent everywhere else."""
+    if entry['local_path'] not in staged:
+        assert locator.count() == 0, locator
+        return
+    href = locator.get_attribute('href')
+    if exact:
+        assert href == entry['local_path'] + suffix, href
+    else:
+        assert href.startswith(entry['local_path']), href
+    if opens:
+        with page.expect_popup() as popup:
+            locator.click()
+        assert popup.value is not None
+        popup.value.close()
+
+
 def served_tables(page, url):
     """The tables the Documents page joins at read time (ticket 0858)."""
     m1a = {}
@@ -64,8 +102,8 @@ def climb(tables, source_id, code):
     }
 
 
-def check_documents(page, url):
-    """Exercise the registry page: full count, a filter, and an archived copy."""
+def check_documents(page, url, staged):
+    """Exercise the registry page: full count, a filter, and each document's links."""
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     page.goto(url + '/#documents')
     page.wait_for_selector('#documents-filters')
@@ -87,9 +125,12 @@ def check_documents(page, url):
     entry = next(row for row in registry
                  if row['id'] == 'zaf-jet-investment-register-q1-2026')
     # Addressed by the row key, not the source id: 21 identifiers carry more
-    # than one collection attempt, so the id alone is not a selector.
-    link = page.locator(f'a[data-document-id="{entry["row_key"]}"]')
-    assert entry['local_path'], 'Archived ZAF register absent; run make jetp-observatory-documents'
+    # than one collection attempt, so the id alone is not a selector. The
+    # publisher's page is always linked; the register is an HTML page, so it
+    # takes no page fragment.
+    link = page.locator(publisher(f'a[data-document-id="{entry["row_key"]}"]'))
+    assert link.get_attribute('href') == entry['url'], link.get_attribute('href')
+    assert entry['local_path'], 'The registry names no archived copy of the ZAF register'
     # Ticket 0856: the register was read twice, once per stage-two product,
     # and the two readings are shown as two counts, never added (257 + 257
     # is not 514 rows). The counts come from the served views the page joins
@@ -107,15 +148,21 @@ def check_documents(page, url):
     assert str(sum(per_product.values())) not in ' '.join(
         row.locator('details > summary').all_inner_texts()
     )
-    with page.expect_popup() as popup:
-        link.click()
-    opened = popup.value
-    opened.wait_for_load_state()
-    assert opened.url.endswith(entry['local_path'])
-    assert hashlib.sha256(
-        page.request.get(url + '/' + entry['local_path']).body()
-    ).hexdigest() == entry['sha256']
-    opened.close()
+    # The fingerprint of the bytes read is on the row, on both sites.
+    assert row.locator(f'[data-sha256="{entry["sha256"]}"]').count() == 1
+    copy = page.locator(archived(f'a[data-document-id="{entry["row_key"]}"]'))
+    if entry['local_path'] in staged:
+        with page.expect_popup() as popup:
+            copy.click()
+        opened = popup.value
+        opened.wait_for_load_state()
+        assert opened.url.endswith(entry['local_path'])
+        assert hashlib.sha256(
+            page.request.get(url + '/' + entry['local_path']).body()
+        ).hexdigest() == entry['sha256']
+        opened.close()
+    else:
+        assert copy.count() == 0
 
     # Ticket 0857, recipe VN step 1: from this page the RMP 2023 opens at
     # printed page 139 — PDF page 155, the first page its extracted positions
@@ -124,32 +171,30 @@ def check_documents(page, url):
     page.locator('#documents-filter-country').select_option('')
     page.locator('#documents-search').fill('vnm-rmp-2023')
     rmp = next(row for row in registry if row['id'] == 'vnm-rmp-2023' and row['local_path'])
-    link = page.locator(f'a[data-document-id="{rmp["row_key"]}"]')
+    link = page.locator(publisher(f'a[data-document-id="{rmp["row_key"]}"]'))
     row = page.locator('#documents-results tbody tr').filter(has=link).first
     fold = row.locator('details[data-extracted-product="m1a"]')
-    # The page is set on the link once the VNM views have loaded, just before
-    # the fold-outs land (ticket 0858): wait for those, then read the link.
+    # The page is set on the links once the VNM views have loaded, just before
+    # the fold-outs land (ticket 0858): wait for those, then read the links.
+    # The RMP's origin is a PDF, so the publisher's page takes the fragment.
     fold.wait_for()
-    assert link.get_attribute('href') == rmp['local_path'] + '#page=155', link.get_attribute('href')
-    with page.expect_popup() as popup:
-        link.click()
-    assert popup.value is not None
-    popup.value.close()
+    assert link.get_attribute('href') == rmp['url'] + '#page=155', link.get_attribute('href')
+    check_archived(page, url, page.locator(archived(f'a[data-document-id="{rmp["row_key"]}"]')),
+                   rmp, staged, '#page=155')
     fold.locator('summary').click()
     position = fold.locator('li').nth(21)
     assert 'KN Tri An' in position.inner_text(), position.inner_text()
-    pdf = position.locator('a[data-extracted-page="vnm-rmp-2023:annex-I.1:022"]')
-    assert pdf.get_attribute('href') == rmp['local_path'] + '#page=156', pdf.get_attribute('href')
-    with page.expect_popup() as popup:
-        pdf.click()
-    assert popup.value is not None
-    popup.value.close()
+    key = 'a[data-extracted-page="vnm-rmp-2023:annex-I.1:022"]'
+    pdf = position.locator(publisher(key))
+    assert pdf.get_attribute('href') == rmp['url'] + '#page=156', pdf.get_attribute('href')
+    check_archived(page, url, position.locator(archived(key)), rmp, staged, '#page=156')
     # The climb lands on the one row, not on the 279.
     position.locator('a[href="#entries/VNM?row=22"]').click()
     page.wait_for_selector('[data-inventory-focus="22"]')
     assert page.locator('#inventory-count').inner_text().startswith('1 of 1 ')
-    focused = page.locator('a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]')
-    assert focused.get_attribute('href') == rmp['local_path'] + '#page=156'
+    key = 'a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]'
+    assert page.locator(publisher(key)).get_attribute('href') == rmp['url'] + '#page=156'
+    check_archived(page, url, page.locator(archived(key)), rmp, staged, '#page=156', opens=False)
     assert page.locator('#inventory-results details[open]').count() == 1
 
 
@@ -158,9 +203,13 @@ def check_documents_row_height(page, url):
 
     Measured at 1280 px before the fix: the fold-out column was squeezed to
     101 px, wrapped at every word and set every row's height (median 255 px,
-    max 276 px). Now a row is at most one line per fold-out: 120 px bounds
-    three fold-outs and the cell padding. A failed attempt shows a short label
-    with the collector's full message in its title, never a broken URL.
+    max 276 px). Now a row is at most one line per fold-out, and the links
+    cell of ticket 0915 is a fixed block: the publisher's page (two lines at
+    this width), the collection date and fingerprint, and the archived copy
+    where served — 126 px on the public site, 146 px in the preview. 150 px
+    bounds that block and the cell padding, well under the word-by-word wrap
+    it guards against. A failed attempt shows a short label with the
+    collector's full message in its title, never a broken URL.
     """
     page.set_viewport_size({'width': 1280, 'height': 1000})
     page.goto(url + '/#documents')
@@ -169,7 +218,7 @@ def check_documents_row_height(page, url):
         "!document.querySelector('#documents-results').textContent.includes('Loading what')")
     heights = page.evaluate("[...document.querySelectorAll('#documents-results tbody tr')]"
                             ".map((r) => r.getBoundingClientRect().height)")
-    assert max(heights) <= 120, sorted(heights)[-5:]
+    assert max(heights) <= 150, sorted(heights)[-5:]
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     failed = next(row for row in registry
                   if row['error'] and len(row['error']) > 100 and not row['local_path'])
@@ -181,7 +230,7 @@ def check_documents_row_height(page, url):
     page.set_viewport_size({'width': 1440, 'height': 1100})
 
 
-def check_inventory(page, url):
+def check_inventory(page, url, staged):
     """Exercise an M1a inventory page: a filter, and a row opening its document.
 
     The two recipes of ticket 0834: Viet Nam annex I.1 holds 37 rows, and its
@@ -200,21 +249,19 @@ def check_inventory(page, url):
     assert page.locator('#inventory-results tbody tr').count() == len(annex)
 
     page.locator('#inventory-search').fill('Tri An')
-    link = page.locator('a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]')
+    key = 'a[data-inventory-row="vnm-rmp-2023:annex-I.1:022"]'
+    link = page.locator(publisher(key))
     link.wait_for()
     entry = next(row for row in registry
                  if row['id'] == 'vnm-rmp-2023' and row['local_path'])
-    assert entry['local_path'], 'Archived RMP absent; run make jetp-observatory-documents'
     # The address the row resolves to, then the fact that it really opens. The
     # target is a 30 MB PDF handed to the browser's own viewer, which reports
     # neither a load state nor a URL back to the driver, so the assertion is on
-    # the href and the popup is only checked to exist.
-    assert link.get_attribute('href') == entry['local_path'] + '#page=156', \
+    # the href and the popup is only checked to exist. The publisher's copy is
+    # never opened: the recipe makes no request off this server.
+    assert link.get_attribute('href') == entry['url'] + '#page=156', \
         link.get_attribute('href')
-    with page.expect_popup() as popup:
-        link.click()
-    assert popup.value is not None
-    popup.value.close()
+    check_archived(page, url, page.locator(archived(key)), entry, staged, '#page=156')
 
     # A per-country column set must not need a renderer change: the 21 ZAF
     # pass-through columns appear in the row detail, in the export's own order.
@@ -238,7 +285,7 @@ def check_inventory(page, url):
     assert sublayers[0]['sublayer_id'] in unknowns.first.inner_text()
 
 
-def check_senegal_and_indonesia(page, url):
+def check_senegal_and_indonesia(page, url, staged):
     """Walk the two countries the recipe had never reached (ticket 0861).
 
     Senegal: row 1 of Annex 2 opens the archived annexes at PDF page 13 — on
@@ -252,13 +299,11 @@ def check_senegal_and_indonesia(page, url):
                    if row['id'] == 'sen-investment-plan-annexes-mirror' and row['local_path'])
     page.goto(url + '/#entries/SEN?row=1')
     page.wait_for_selector('[data-inventory-focus="1"]')
-    link = page.locator('a[data-inventory-row="sen-annex-received-01"]')
-    assert link.get_attribute('href') == annexes['local_path'] + '#page=13', \
+    key = 'a[data-inventory-row="sen-annex-received-01"]'
+    link = page.locator(publisher(key))
+    assert link.get_attribute('href') == annexes['url'] + '#page=13', \
         link.get_attribute('href')
-    with page.expect_popup() as popup:
-        link.click()
-    assert popup.value is not None
-    popup.value.close()
+    check_archived(page, url, page.locator(archived(key)), annexes, staged, '#page=13')
 
     report_id = 'idn-jetp-progress-report-2025'
     report = next(row for row in registry if row['id'] == report_id and row['local_path'])
@@ -277,17 +322,15 @@ def check_senegal_and_indonesia(page, url):
     assert fold.get_attribute('data-evidence-count') == str(len(served))
     fold.locator('> summary').click()
     assert page.locator('#project-evidence tbody tr').count() == len(served)
-    link = page.locator(f'#project-evidence a[data-observation-id="{row_id}"]')
+    key = f'#project-evidence a[data-observation-id="{row_id}"]'
+    link = page.locator(publisher(key))
     link.wait_for()
-    assert link.get_attribute('href').startswith(report['local_path']), \
-        link.get_attribute('href')
-    with page.expect_popup() as popup:
-        link.click()
-    assert popup.value is not None
-    popup.value.close()
+    # A download link, not a PDF page: the origin takes no fragment.
+    assert link.get_attribute('href') == report['url'], link.get_attribute('href')
+    check_archived(page, url, page.locator(archived(key)), report, staged, exact=False)
 
 
-def check_observations(page, url):
+def check_observations(page, url, staged):
     """Exercise the ledger observations tab: the counts, a facet, and a search.
 
     Recipe VN of ticket 0834, adjusted to what the ledger holds: Viet Nam's
@@ -344,14 +387,15 @@ def check_observations(page, url):
                  if row['id'] == register['source_id'] and row['local_path'])
     assert register['sha256'] == entry['sha256']
     page.locator('#observations-search').fill(register['source_id'])
-    link = page.locator(
-        f'a[data-observation-id="{register.get("event_id") or register.get("link_id")}"]'
-    ).first
+    key = f'a[data-observation-id="{register.get("event_id") or register.get("link_id")}"]'
+    link = page.locator(publisher(key)).first
     link.wait_for()
-    assert link.get_attribute('href').startswith(entry['local_path'])
+    assert link.get_attribute('href').startswith(entry['url'])
+    check_archived(page, url, page.locator(archived(key)).first, entry, staged,
+                   exact=False, opens=False)
 
 
-def check_facts(page, url):
+def check_facts(page, url, staged):
     """Exercise stage three: a fact's fold-out, its descent, and a document's climb.
 
     Recipe VN of ticket 0834: from Bac Ai, the fold-out lists its ledger rows
@@ -385,23 +429,32 @@ def check_facts(page, url):
     assert page.locator('#project-evidence tbody .pill').all_inner_texts() == [
         row['verification'] for row in served
     ]
-    # A ledger row links to its document only when the collection archived
-    # its source; a row whose source was never archived shows its locator as
-    # text, so the count of links says exactly how many were.
-    assert page.locator('#project-evidence a[data-observation-id]').count() == sum(
-        1 for row in served if row['sha256']
+    # Every ledger row whose document the registry knows links to the
+    # publisher's page — by fingerprint, or by source id where the collection
+    # kept no bytes; an archived link joins it only where this server holds
+    # the copy those bytes name.
+    by_sha = {row['sha256']: row for row in documents if row['sha256']}
+    ids = {row['id'] for row in documents}
+    assert page.locator(publisher('#project-evidence a[data-observation-id]')).count() == sum(
+        1 for row in served
+        if (row['sha256'] in by_sha if row['sha256'] else row['source_id'] in ids)
+    )
+    assert page.locator(archived('#project-evidence a[data-observation-id]')).count() == sum(
+        1 for row in served
+        if row['sha256'] and by_sha.get(row['sha256'], {}).get('local_path') in staged
     )
     # The bulletin is reached through the source card, the one place the
-    # record names it; it opens the archived PDF.
+    # record names it: its host and fingerprint, and the archived PDF where
+    # this server holds it.
     assert page.locator('.sources > li').count() == len(bac_ai['sources'])
     bulletin = next(row for row in documents
                     if row['id'] == 'vnm-moit-newsletter-05-2025-07' and row['local_path'])
-    link = page.locator('a[data-archived-source="vnm-moit-newsletter-05-2025-07"]')
-    assert link.get_attribute('href') == bulletin['local_path'], link.get_attribute('href')
-    with page.expect_popup() as popup:
-        link.click()
-    assert popup.value is not None
-    popup.value.close()
+    facts = page.locator('[data-document-facts="vnm-moit-newsletter-05-2025-07"]')
+    assert 'jetp.moit.gov.vn' in facts.inner_text(), facts.inner_text()
+    assert facts.locator(f'[data-sha256="{bulletin["sha256"]}"]').count() == 1
+    check_archived(page, url,
+                   page.locator('a[data-archived-source="vnm-moit-newsletter-05-2025-07"]'),
+                   bulletin, staged)
 
     # Side by side, no link: the two figures come from the M1a manifest and the
     # country view, and the page counts stay 3 named + 21 unpublished.
@@ -427,17 +480,21 @@ def check_facts(page, url):
     page.goto(url + '/#project/' + register['project_id'])
     page.wait_for_selector('#project-evidence details[data-evidence-count]')
     page.locator('#project-evidence details[data-evidence-count] > summary').click()
-    link = page.locator(
-        f'#project-evidence a[data-observation-id="{register["event_id"]}"]'
-    )
+    key = f'#project-evidence a[data-observation-id="{register["event_id"]}"]'
+    link = page.locator(publisher(key))
     link.wait_for()
-    assert link.get_attribute('href').startswith(entry['local_path'])
-    with page.expect_popup() as popup:
-        link.click()
-    opened = popup.value
-    opened.wait_for_load_state()
-    assert opened.url.endswith(entry['local_path'])
-    opened.close()
+    assert link.get_attribute('href') == entry['url'], link.get_attribute('href')
+    copy = page.locator(archived(key))
+    if entry['local_path'] in staged:
+        assert copy.get_attribute('href').startswith(entry['local_path'])
+        with page.expect_popup() as popup:
+            copy.click()
+        opened = popup.value
+        opened.wait_for_load_state()
+        assert opened.url.endswith(entry['local_path'])
+        opened.close()
+    else:
+        assert copy.count() == 0
 
     # The climb: the RMP lists its 279 positions and no fact of 2025, joined
     # at read time from the served VNM views (ticket 0858).
@@ -451,7 +508,7 @@ def check_facts(page, url):
     # source identifier: the RMP has two attempts, and either row climbs.
     rmp = next(row for row in documents if row['id'] == 'vnm-rmp-2023' and row['local_path'])
     row = page.locator('#documents-results tbody tr').filter(
-        has=page.locator(f'a[data-document-id="{rmp["row_key"]}"]')
+        has=page.locator(publisher(f'a[data-document-id="{rmp["row_key"]}"]'))
     ).first
     extracted = row.locator('details[data-extracted-count]')
     assert extracted.get_attribute('data-extracted-count') == '279'
@@ -467,14 +524,17 @@ def check_facts(page, url):
     # The note lands once the row's country views have loaded.
     page.locator(f'[data-uncited="{uncited["id"]}"]').first.wait_for()
 
-    # A reviewed record's pedigree opens the archived bytes it pins.
+    # A reviewed record's pedigree links to the publisher's page of the bytes
+    # it pins, and opens those bytes where this server holds them.
     page.goto(url + '/#on-the-record')
     page.wait_for_selector('[data-reviewed-evidence-id]')
     evidence = page.request.get(url + '/data/reviewed-evidence.json').json()
-    archived = {row['sha256'] for row in documents if row['local_path']}
-    expected = sum(1 for record in evidence['records'] for proof in record['evidence']
-                   if proof['sha256'] in archived)
-    assert page.locator('a[data-reviewed-source]').count() == expected
+    proofs = [proof for record in evidence['records'] for proof in record['evidence']]
+    assert page.locator(publisher('a[data-reviewed-source]')).count() == sum(
+        1 for proof in proofs if proof['sha256'] in by_sha)
+    assert page.locator(archived('a[data-reviewed-source]')).count() == sum(
+        1 for proof in proofs
+        if by_sha.get(proof['sha256'], {}).get('local_path') in staged)
 
 
 def check_paper_trail(page, url):
@@ -758,6 +818,9 @@ def check_site(url, output):
         count = len(response.value.json()['projects'])
         page.wait_for_selector('.country-grid')
         page.screenshot(path=str(output), full_page=True)
+        staged = staged_copies(page, url)
+        print(f'Archived copies served: {len(staged)}'
+              + ('' if staged else ' (public site: publisher links only)'))
         check_projects(page, url)
         page.goto(url + '/#comparisons')
         page.wait_for_selector('#history-country')
@@ -779,12 +842,12 @@ def check_site(url, output):
         for code in ('ZAF', 'IDN', 'VNM', 'SEN'):
             download_matches(page, url, f'data/m1a/{code}.csv')
         download_matches(page, url, 'data/m1a/manifest.json')
-        check_documents(page, url)
+        check_documents(page, url, staged)
         check_documents_row_height(page, url)
-        check_inventory(page, url)
-        check_senegal_and_indonesia(page, url)
-        check_observations(page, url)
-        check_facts(page, url)
+        check_inventory(page, url, staged)
+        check_senegal_and_indonesia(page, url, staged)
+        check_observations(page, url, staged)
+        check_facts(page, url, staged)
         check_paper_trail(page, url)
         check_sections(page, url)
         check_header_menus(page, url)
@@ -820,6 +883,9 @@ def check_site(url, output):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), route
+            # Without the index, no page may point into documents/ (ticket 0915).
+            if not staged:
+                assert page.locator('a[href^="documents/"], a[data-link="archived"]').count() == 0, route
         assert not errors, errors
         assert not external_requests, external_requests
         browser.close()

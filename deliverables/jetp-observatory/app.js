@@ -192,7 +192,7 @@ function overviewPage() {
   main.innerHTML = `<section class="hero"><div><p class="eyebrow">From promise to progress</p><h1>Where do the<br><em>JETPs stand?</em></h1><p class="lede">Four partnerships to support a just energy transition. Explore what has been planned, financed and documented — and what remains to be seen.</p><div class="actions"><a class="button" href="#funding">Explore the four partnerships ↗</a><a class="text-link" href="#documents">Follow the paper trail →</a></div></div><aside class="evidence-box"><p class="eyebrow">The tallies</p><div class="stat-grid">${headlineCounts("stat")}</div><div class="box-foot">Documents collected through ${date(overview.provenance.cutoff)}.<br>Each publisher's report keeps its own date. <a href="#counts">The tallies</a> · <a href="#methods">Methods</a></div></aside></section>
 <section class="section"><div class="section-head"><div><p class="eyebrow">Country snapshot</p><h2>A shared ambition.<br>Four different trajectories.</h2></div><p>Each national figure is shown as its publisher reported it, with its own date and definition.<br>Allocation, approval and payment are different milestones.</p></div><div class="country-grid">${overview.countries.map(card).join("")}</div></section>
 <section class="section"><div class="section-head"><div><p class="eyebrow">Reading across the documents</p><h2>What the documents tell us</h2></div></div><div class="insight-grid"><article class="insight"><span class="number">01</span><h3>Financing moves through different channels</h3><p>South Africa reports substantial allocations; Indonesia identifies approved programmes, investments and grants. Their headline figures measure different milestones, so there is no single comparable “delivery rate”.</p><a class="text-link" href="#funding">Read the four partnerships →</a></article><article class="insight"><span class="number">02</span><h3>A plan is not yet a transaction</h3><p>Senegal's portfolio mixes investment needs, programmes and components. Viet Nam's 2025 portfolio leaves most project identities unnamed. These gaps matter when interpreting totals.</p><a class="text-link" href="#funding/SEN">Explore the Senegal portfolio →</a></article><article class="insight"><span class="number">03</span><h3>Speed needs a historical reference</h3><p>${overview.historical_count} closed energy-related World Bank operations provide context from the same countries. Compare instruments and vintages before interpreting their financing windows as a benchmark.</p><a class="text-link" href="#comparisons">Explore the comparison pool →</a></article></div></section>
-<section class="section"><div class="section-head"><div><p class="eyebrow">The paper trail</p><h2>From a figure back to its page</h2></div><p>Every project on these pages can be followed to the document it comes from, and every document to what relies on it.</p></div><ol class="trail-intro"><li><a href="#documents"><strong>Documents</strong></a> Each report, register and plan we tried to retrieve, with an archived copy where we have one.</li><li><a href="#entries"><strong>Entries</strong></a> Rows of a register, lines of a plan annex, as the document prints them.</li><li><a href="#on-the-record"><strong>On the record</strong></a> What a publisher said in one document, read as a date, a status or an amount, according to that publisher.</li><li><a href="#projects"><strong>Projects</strong></a>, <a href="#funding"><strong>Funding</strong></a> and <a href="#whos-who"><strong>Who's who</strong></a> The projects, the partnerships and the organisations those statements are about.</li></ol><p class="note">The words are defined in the <a href="#glossary">Glossary</a>. Numbers we counted, rather than read in a document, are gathered in <a href="#counts">The tallies</a>.</p></section>
+<section class="section"><div class="section-head"><div><p class="eyebrow">The paper trail</p><h2>From a figure back to its page</h2></div><p>Every project on these pages can be followed to the document it comes from, and every document to what relies on it.</p></div><ol class="trail-intro"><li><a href="#documents"><strong>Documents</strong></a> Each report, register and plan we tried to retrieve, linked to the page we collected it from, with the fingerprint of what we read.</li><li><a href="#entries"><strong>Entries</strong></a> Rows of a register, lines of a plan annex, as the document prints them.</li><li><a href="#on-the-record"><strong>On the record</strong></a> What a publisher said in one document, read as a date, a status or an amount, according to that publisher.</li><li><a href="#projects"><strong>Projects</strong></a>, <a href="#funding"><strong>Funding</strong></a> and <a href="#whos-who"><strong>Who's who</strong></a> The projects, the partnerships and the organisations those statements are about.</li></ol><p class="note">The words are defined in the <a href="#glossary">Glossary</a>. Numbers we counted, rather than read in a document, are gathered in <a href="#counts">The tallies</a>.</p></section>
 <div class="comparison-banner"><div><p class="eyebrow">A longer view</p><h2>What did ordinary energy<br>projects look like?</h2><p>Browse the historical pool by country, instrument and approval year. See the distribution behind a typical financing window, not just an average.</p></div><div><p class="note">Administrative closure is not a measure of physical completion. This first pool is descriptive; the separate lifecycle research programme is a separate research task.</p><a class="button" href="#comparisons">Explore ${overview.historical_count} closed operations ↗</a></div></div>`;
 }
 function countriesPage() {
@@ -362,8 +362,51 @@ function filterTable(id, rows, opts) {
   };
   return { head, mount };
 }
+/* Ticket 0915: one site for the local preview and the public one. Every
+ * document reference links to the page it was collected from — the address
+ * the registry records — with the collection date and the SHA-256 of the
+ * bytes read. The archived copy is an extra link, drawn only where this
+ * server holds it: which copies it holds is read once, at load, from
+ * documents/index.json, which `make jetp-observatory-documents` writes beside
+ * the staged copies. documents/ is untracked, so the public bundle (the
+ * tracked tree) cannot carry the index, and its pages cannot draw a link to
+ * a copy they do not serve. No flag, no second build: the data decides. */
+let stagedCopies = new Set();
+const archiveServed = (entry) => Boolean(entry?.local_path && stagedCopies.has(entry.local_path));
 const documentHref = (entry, page) =>
-  entry.local_path ? entry.local_path + (page ? "#page=" + page : "") : null;
+  archiveServed(entry) ? entry.local_path + (page ? "#page=" + page : "") : null;
+const ORIGIN = /^https?:\/\/([^/?#]+)/i;
+const hostOf = (url) => (ORIGIN.exec(url || "") || [])[1] || "";
+/* A PDF page travels to the origin only when the origin served a PDF — the
+ * content type the collector recorded, or a .pdf path where it recorded none
+ * — since a fragment on an HTML page names nothing. */
+const originIsPdf = (entry) =>
+  /pdf/i.test(entry.content_type || "") || /\.pdf$/i.test((entry.url || "").split(/[?#]/)[0]);
+function publisherHref(entry, page) {
+  if (!ORIGIN.test(entry?.url || "")) return null;
+  const base = entry.url.split("#")[0];
+  return page && originIsPdf(entry) ? base + "#page=" + page : base;
+}
+function publisherLink(entry, page, attrs = "", label) {
+  const href = publisherHref(entry, page);
+  return href
+    ? `<a href="${esc(href)}"${attrs} data-link="publisher" target="_blank" rel="noopener">${label || "Publisher's page — " + esc(hostOf(entry.url))} ↗</a>`
+    : `<span class="note"${attrs} data-link="publisher">No publisher address recorded</span>`;
+}
+function archivedLink(entry, page, attrs = "", label = "Open archived copy") {
+  const href = documentHref(entry, page);
+  return href
+    ? `<a href="${esc(href)}"${attrs} data-link="archived" target="_blank" rel="noopener">${esc(label)} ↗</a>`
+    : "";
+}
+/* What was read, and when: the collection date and the fingerprint of the
+ * bytes, or the failure the collector recorded where no bytes were kept. */
+function collectedFacts(entry, separator = " · ") {
+  const when = entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded";
+  return entry.sha256
+    ? `${when}${separator}SHA-256 <code data-sha256="${esc(entry.sha256)}" title="${esc(entry.sha256)}">${esc(entry.sha256.slice(0, 12))}…</code>`
+    : `${when}${separator}${collectionFailure(entry.error)}`;
+}
 /* Hand-written port of scripts/jetp/_m1a_document_links.py. The two are kept in
  * step by tests/test_jetp_observatory_inventories.py, never generated from one
  * another. The Viet Nam and Senegal locators publish a PDF page (Senegal's
@@ -443,10 +486,10 @@ const byteSize = (n) =>
  * ledger row gets the same page link when it carries one. No page named, no
  * link: an absent page is not page 1. */
 function extractedPageLink(row, entry, key) {
-  const href = row.pdf_page ? documentHref(entry, row.pdf_page) : null;
-  return href
-    ? ` · <a href="${esc(href)}" data-extracted-page="${esc(key)}" target="_blank" rel="noopener">PDF page ${row.pdf_page} ↗</a>`
-    : "";
+  if (!row.pdf_page) return "";
+  const attrs = ` data-extracted-page="${esc(key)}"`;
+  const archived = archivedLink(entry, row.pdf_page, attrs, "archived copy");
+  return ` · PDF page ${Number(row.pdf_page)}: ${publisherLink(entry, row.pdf_page, attrs, "publisher's page")}${archived ? " · " + archived : ""}`;
 }
 function extractedItem(row, entry) {
   if (row.product === "m1a")
@@ -533,8 +576,7 @@ function factsRelyingOn(sourceId) {
       country: record.country, status: record.status }));
   return [...named, ...reviewed];
 }
-const archivedCopyLink = (entry, page) =>
-  `<a href="${esc(documentHref(entry, page))}" data-document-id="${esc(entry.row_key)}" target="_blank" rel="noopener">Open archived copy ↗</a>`;
+const documentAttrs = (entry) => ` data-document-id="${esc(entry.row_key)}"`;
 /* Drawn with the page as a placeholder, filled once the attempt's country has
  * its two stage-two views — one load per country per session, shared with
  * the inventory page — so a reader filtering one country loads that
@@ -552,9 +594,10 @@ function extractionCell(entry) {
       const extracted = extractedRows(entry.id, views);
       const relying = factsRelyingOn(entry.id);
       const page = firstPdfPage(extracted);
+      const publisher = document.getElementById("publisher-" + entry.row_key);
       const archived = document.getElementById("archived-" + entry.row_key);
-      if (archived && entry.local_path && page)
-        archived.innerHTML = archivedCopyLink(entry, page);
+      if (page && publisher) publisher.innerHTML = publisherLink(entry, page, documentAttrs(entry));
+      if (page && archived) archived.innerHTML = archivedLink(entry, page, documentAttrs(entry));
       cell.innerHTML =
         !extracted.length && !relying.length
           ? `<span class="note" data-uncited="${esc(entry.id)}">Nothing was extracted from this document, and nothing on these pages relies on it, in this release.</span>`
@@ -574,7 +617,7 @@ function extractionCell(entry) {
  * run to 300 characters of host names and URLs, which broke mid-token and
  * set the Documents rows' height (PR #1459, author's cold read). */
 function collectionFailure(error) {
-  if (!error) return '<span class="note">Not in the local snapshot</span>';
+  if (!error) return '<span class="note">No copy collected</span>';
   const short = error.split(":")[0].trim().slice(0, 24);
   return `<span class="note" data-collection-error title="${esc(error)}">${esc(short)}</span>`;
 }
@@ -582,13 +625,13 @@ function documentsPage(params) {
   const rows = documentsData.documents;
   const values = (key) =>
     [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
-  // Opens at the file's own first page until the join says otherwise: the
-  // link sits in a placeholder extractionCell() refills with the first page
-  // the extracted rows agree on (ticket 0857), never with a page of its own.
-  const archived = (r) =>
-    r.local_path
-      ? `<span id="archived-${esc(r.row_key)}">${archivedCopyLink(r)}</span>`
-      : collectionFailure(r.error);
+  // Both links open at the file's own first page until the join says
+  // otherwise: each sits in a placeholder extractionCell() refills with the
+  // first page the extracted rows agree on (ticket 0857), never with a page
+  // of its own. The publisher's page is always there; the archived copy only
+  // where this server holds it (ticket 0915).
+  const links = (r) =>
+    `<span id="publisher-${esc(r.row_key)}">${publisherLink(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>`;
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -629,16 +672,8 @@ function documentsPage(params) {
       { label: "Collection", cell: (r) => pill(r.status) },
       { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
       { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)), width: "short" },
-      { label: "Archived copy", cell: archived, width: "short" },
+      { label: "Publisher's page · what we read", cell: links },
       { label: "Entries and items on the record · relied on by", cell: extractionCell, width: "wide" },
-      {
-        label: "Origin",
-        cell: (r) =>
-          r.url
-            ? `<a href="${esc(cleanURL(r.url))}" target="_blank" rel="noopener">Publisher ↗</a>`
-            : '<span class="note">No address recorded</span>',
-        width: "short",
-      },
     ],
     empty: "No documents match these filters.",
     resultNoun: "documents",
@@ -649,7 +684,7 @@ function documentsPage(params) {
       "Every collection attempt, kept on file",
       "The collection registry lists each document we tried to retrieve, with the outcome recorded at the time. A blocked or failed attempt stays listed; it does not show that the document does not exist.",
     ) +
-    `<div class="callout"><strong>Archived copies open locally only.</strong> The preview serves them from <code>documents/</code> after <code>make jetp-observatory-documents</code>. A published release carries this registry and the publisher's address, never the archived bytes; documents retain their publishers' rights.</div>` +
+    copiesCallout() +
     table.head +
     `<div class="downloads"><a class="button light" href="data/documents.json" download>Download the collection registry ↓</a></div>`;
   table.mount();
@@ -727,18 +762,19 @@ function rowDetail(row, summary, open) {
 function inventoryRowDetail(row, open) {
   return rowDetail(row, esc(row.label || "Identity not published"), open);
 }
-/* One evidence cell for both stage-two tables: the locator as a link into the
- * archived copy when the snapshot holds one, as text otherwise. The callers
+/* One evidence cell for every stage-two table: the locator as text, then the
+ * document's page on the publisher's site — at the PDF page, where the
+ * locator names one and the origin is a PDF — with what was collected, and
+ * the archived copy where this server holds it (ticket 0915). The callers
  * differ only in how they find the document entry and what they say when
  * there is none. */
 function evidenceLink(locator, entry, pdfPage, dataAttr, dataValue, noEntry) {
-  const text = esc(locator || "No locator recorded");
+  const text = esc(locator || "No locator recorded") + (pdfPage ? " · PDF page " + Number(pdfPage) : "");
   if (!entry)
     return `<span class="note">${text}${noEntry ? "<br>" + noEntry : ""}</span>`;
-  const href = documentHref(entry, pdfPage);
-  return href
-    ? `<a href="${esc(href)}" ${dataAttr}="${esc(dataValue)}" target="_blank" rel="noopener">${text}${pdfPage ? " · PDF page " + pdfPage : ""} ↗</a>`
-    : `<span class="note">${text}<br>${esc(entry.error || "Not in the local snapshot")}</span>`;
+  const attrs = ` ${dataAttr}="${esc(dataValue)}"`;
+  const archived = archivedLink(entry, pdfPage, attrs, "archived copy");
+  return `<span class="document-ref">${text}<br>${publisherLink(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<small>${collectedFacts(entry)}</small></span>`;
 }
 function inventoryEvidence(row) {
   const entry = documentIndex[row.source_id];
@@ -798,14 +834,18 @@ function observationDetail(row) {
 /* The fingerprint is resolved once, in the generator, so the row addresses its
  * document directly. A document the collection never archived keeps its locator
  * as text, exactly as an unresolved inventory row does. */
+/* A row whose document was never collected has no fingerprint; it still
+ * reaches the publisher's page through its source identifier, but pins no
+ * bytes, so it shows no other attempt's fingerprint or archived copy. */
+const unpinned = (entry) => entry && { ...entry, sha256: null, local_path: null };
 function observationEvidence(row) {
   return evidenceLink(
     row.locator,
-    row.sha256 ? documentsBySha[row.sha256] : null,
+    row.sha256 ? documentsBySha[row.sha256] : unpinned(documentIndex[row.source_id]),
     row.pdf_page,
     "data-observation-id",
     observationId(row),
-    "No archived copy of this document",
+    "This document is not in the collection registry",
   );
 }
 /* A facet's option list is the values a column actually carries, sorted and
@@ -960,7 +1000,7 @@ function renderInventory(code, rows, observations, focus, tab) {
     `<div class="page-head"><h1>${name}: entries</h1>${titleBlock("Each entry is one row of this country's documents, as the document prints it. The entries and the items on the record of the same documents are two separate readings: they are not comparable, and never added together.")}</div>` +
     `<section id="panel-inventory">` +
     inventoryUnknowns(details) +
-    `<div class="callout">Each entry opens its archived document, at its PDF page where the document gives one. Archived copies open locally only; a published release carries the registry and the publisher's address.</div>` +
+    copiesCallout("Each entry links to its document on the publisher's site, at its PDF page where the document gives one and the publisher serves a PDF.") +
     note +
     table.head +
     `<div class="downloads"><a class="button light" href="data/m1a/${code}.csv" download>Download the ${code} entries (CSV) ↓</a></div></section>`;
@@ -1076,15 +1116,17 @@ function fillProjectEvidence(p) {
       section().innerHTML = emptyNote("evidence-count", "unavailable", `The ${esc(p.country)} items on the record could not load (${esc(error.message)}). They are the items <a href="#on-the-record/${esc(p.country)}">on the record for this country</a> addressed to <code>${esc(p.id)}</code>.`);
     });
 }
-/* A source card opens the archived copy where the registry holds one. Resolved
- * by source identifier through the same ranked index as an inventory row: the
- * card names a source, not a fingerprint. Text only where nothing is archived,
- * the expected case of the public edition. */
-function archivedCopy(id) {
-  const href = documentIndex[id] ? documentHref(documentIndex[id]) : null;
-  return href
-    ? `<small><a href="${esc(href)}" data-archived-source="${esc(id)}" target="_blank" rel="noopener">Open archived copy ↗</a></small>`
-    : "";
+/* A source card's title already links to the publisher's page; under it, the
+ * host of that very link (the country view's address, which can differ from
+ * the registry's, e.g. a byte range on a Common Crawl record), what was
+ * collected and, where this server holds it, the archived copy. Resolved by
+ * source identifier through the same ranked index as an inventory row: the
+ * card names a source, not a fingerprint. */
+function archivedCopy(id, source) {
+  const entry = documentIndex[id];
+  if (!entry) return "";
+  const archived = archivedLink(entry, null, ` data-archived-source="${esc(id)}"`);
+  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(source.url) || "no address recorded")} · ${collectedFacts(entry)}</small>${archived ? `<small>${archived}</small>` : ""}`;
 }
 function projectPage(id) {
   const p = projects.find((p) => p.id === id);
@@ -1095,7 +1137,7 @@ function projectPage(id) {
     .map((id) => {
       const s = sources[id];
       return s
-        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id)}${sourceAdjudication(p, id)}</li>`
+        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id, s)}${sourceAdjudication(p, id)}</li>`
         : "";
     })
     .join(
@@ -1219,14 +1261,15 @@ function editionHistoryPage() {
  * by sha256, as a ledger observation is, through the same evidence cell. Text
  * where the snapshot holds no such copy. The record itself gains no field. */
 function reviewedProof(proof, code) {
+  const entry = documentsBySha[proof.sha256] || null;
   return `${according(documentOf(code, proof.source_id))} · <code>${esc(proof.source_id)}</code> · ${evidenceLink(
     proof.locator,
-    documentsBySha[proof.sha256] || null,
+    entry,
     null,
     "data-reviewed-source",
     proof.source_id,
-    "No archived copy of this document",
-  )} · <code>${esc(proof.sha256.slice(0, 12))}…</code>`;
+    "No collected document carries this fingerprint",
+  )}${entry ? "" : ` · <code>${esc(proof.sha256.slice(0, 12))}…</code>`}`;
 }
 function evidencePage() {
   const records = evidence.records || [];
@@ -1682,7 +1725,7 @@ function paperTrailPage() {
     `<p class="note">The words are defined in the <a href="#glossary">Glossary</a>.</p>`;
 }
 const STEP_NOTES = {
-  documents: "Each report, register and plan we tried to retrieve, with an archived copy where we have one.",
+  documents: "Each report, register and plan we tried to retrieve, linked to the page we collected it from, with the fingerprint of what we read.",
   entries: "Rows of a register, lines of a plan annex, as the document prints them.",
   "on-the-record": "What a publisher said in one document, read as a date, a status or an amount, according to that publisher.",
   projects: "The projects, programmes and components the documents name.",
@@ -1724,6 +1767,20 @@ function render() {
   if (page === "glossary" && params.get("term"))
     document.getElementById("term-" + params.get("term"))?.scrollIntoView?.();
 }
+/* The staged copies' index, where this server has one (see archiveServed).
+ * Its absence is the public site's normal state, not an error. */
+const stagedIndex = () =>
+  fetch("documents/index.json")
+    .then((response) => (response.ok ? response.json() : null))
+    .catch(() => null);
+/* Said once per page that lists documents: what the links are, and whether
+ * this server also holds copies. */
+function copiesCallout(lead) {
+  const held = stagedCopies.size
+    ? " This local preview also opens the archived copies staged in <code>documents/</code> by <code>make jetp-observatory-documents</code>; the public site serves none."
+    : " This site serves no copy of the documents.";
+  return `<div class="callout" data-staged-copies="${stagedCopies.size}">${lead ? esc(lead) + " " : ""}Each document links to the page we collected it from, with the collection date and the SHA-256 fingerprint of the bytes we read. Page numbers refer to those bytes; the publisher's current file may differ.${held} Documents retain their publishers' rights.</div>`;
+}
 const load = async (file) => {
   const response = await fetch("data/" + file + ".json");
   if (!response.ok) throw Error(`${file}: ${response.status}`);
@@ -1731,8 +1788,8 @@ const load = async (file) => {
 };
 async function start() {
   try {
-    let termsView, statusCrosswalkView;
-    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView] = await Promise.all([
+    let termsView, statusCrosswalkView, staged;
+    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, staged] = await Promise.all([
       load("overview"),
       load("comparison"),
       load("documents"),
@@ -1741,7 +1798,9 @@ async function start() {
       load("m1a/manifest"),
       load("ontology/terms"),
       load("ontology/status-crosswalk"),
+      stagedIndex(),
     ]);
+    stagedCopies = new Set(staged?.objects || []);
     ontology = readOntology(termsView, statusCrosswalkView);
     countries = Object.fromEntries(
       await Promise.all(
