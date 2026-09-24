@@ -86,29 +86,26 @@ none.
 
 ### Addresses
 
-Each page's address is its label's slug. The addresses of earlier previews
-forward to the new ones in place, in one hop (`history.replaceState`, no
-reload), query and deep link included. The pages emit only the new names.
+Each page's address is its label's slug. The site was never published, so
+no earlier address is kept, and an internal page key is not an address.
 
-| Page | Address | Earlier address, forwarded |
-|---|---|---|
-| Landing page | `#overview` | |
-| The paper trail | `#the-paper-trail` | |
-| Documents | `#documents`, `#documents?country=<CODE>` | |
-| Document rows | `#document-rows`, `#document-rows/<CODE>`, `#document-rows/<CODE>?row=N` | `#entries`, `#entries/<CODE>`, `#inventory/<CODE>`, with `?row=N` |
-| Statements | `#statements`, `#statements/<CODE>` | `#on-the-record`, `#on-the-record/<CODE>`, `#evidence`, `#inventory/<CODE>?tab=record` |
-| Projects | `#projects`, `#projects?country=<CODE>`, `#project/<project_id>` | |
-| Funding | `#funding`, `#funding/<CODE>` | `#countries`, `#country/<CODE>` |
-| Organisations | `#organisations`, `#organisations?country=<CODE>` | `#whos-who`, with country filter |
-| Counts | `#counts` | `#numbers`, `#by-the-numbers`, `#the-tallies` |
-| Non-JETP energy operations | `#non-jetp-energy-operations`, with `?country=<CODE>` | `#comparisons`, `#comparison`, `#historical-comparison`, with country filter |
-| About | `#about` | |
-| Glossary | `#glossary` | |
-| Methods | `#methods` | `#how-we-did-this` |
-| Who we are | `#who-we-are` | |
-| Release history | `#release-history` | `#editions` |
-The served views keep the addresses they were built with — `provenance.json`
-names `#country/<CODE>` routes — and those forward like any other.
+| Page | Address |
+|---|---|
+| Landing page | `#overview` |
+| The paper trail | `#the-paper-trail` |
+| Documents | `#documents`, `#documents?country=<CODE>` |
+| Document rows | `#document-rows`, `#document-rows/<CODE>`, `#document-rows/<CODE>?row=N` |
+| Statements | `#statements`, `#statements/<CODE>` |
+| Projects | `#projects`, `#projects?country=<CODE>`, `#project/<project_id>` |
+| Funding | `#funding`, `#funding/<CODE>` |
+| Organisations | `#organisations`, `#organisations?country=<CODE>` |
+| Counts | `#counts` |
+| Non-JETP energy operations | `#non-jetp-energy-operations`, with `?country=<CODE>` |
+| About | `#about` |
+| Glossary | `#glossary` |
+| Methods | `#methods` |
+| Who we are | `#who-we-are` |
+| Release history | `#release-history` |
 
 ## What is included
 

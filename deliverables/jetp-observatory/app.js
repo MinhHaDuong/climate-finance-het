@@ -93,6 +93,8 @@ const SUB_PAGES = {
  * history under Methods, which links to it. */
 const CURRENT = { project: "projects", "release-history": "methods" };
 // Internal page keys stay stable while public addresses follow their labels.
+// An internal key is not itself an address, and no earlier address is kept:
+// the site was never published (author, 2026-09-24).
 const CANONICAL = {
   entries: "document-rows", "on-the-record": "statements",
   "whos-who": "organisations", comparisons: "non-jetp-energy-operations",
@@ -1667,46 +1669,6 @@ function notFound() {
       "Return to the projects to explore what is available.",
     ) + '<a class="button" href="#projects">Open the projects</a>';
 }
-/* Addresses match labels (author's cold read, 2026-09-23): each page's hash is
- * its label's slug. The addresses of earlier previews — and every deep link
- * under them, query included — forward to the new ones by replaceState, so
- * the site emits only the new names and an old bookmark still opens. An
- * entries page's old ?tab=record becomes its own address, #statements/<CODE>. */
-const RENAMED = {
-  countries: "funding",
-  country: "funding",
-  evidence: "statements",
-  entries: "document-rows",
-  "on-the-record": "statements",
-  "whos-who": "organisations",
-  comparisons: "non-jetp-energy-operations",
-  // Every value is a final address, so a forward is one hop and never a
-  // circle (tested). #the-tallies was the section's page before it had two.
-  numbers: "counts",
-  "by-the-numbers": "counts",
-  "counts-and-totals": "counts",
-  "the-tallies": "counts",
-  comparison: "non-jetp-energy-operations",
-  "historical-comparison": "non-jetp-energy-operations",
-  // #methods was renamed #how-we-did-this and is canonical again (fourth
-  // batch): the later name forwards to it, and #methods is not in this table,
-  // so nothing forwards in a circle.
-  "how-we-did-this": "methods",
-  editions: "release-history",
-};
-function forwardOf(raw) {
-  const [path, query] = raw.split("?");
-  const [page, ...rest] = path.split("/");
-  const params = new URLSearchParams(query || "");
-  let target;
-  if (page === "inventory") {
-    target = params.get("tab") === "record" ? "statements" : "document-rows";
-    params.delete("tab");
-  } else if (Object.hasOwn(RENAMED, page)) target = RENAMED[page];
-  else return null;
-  const rest_ = params.toString();
-  return [target, ...rest].join("/") + (rest_ ? "?" + rest_ : "");
-}
 const TITLES = {
   overview: "From promise to progress",
   "the-paper-trail": "The paper trail",
@@ -1853,16 +1815,11 @@ const STEP_NOTES = {
   "whos-who": "Funders and operators named by project documents, with reviewed alternative names.",
 };
 function render() {
-  let raw = location.hash.slice(1) || "overview";
-  const forward = forwardOf(raw);
-  if (forward !== null) {
-    window.history?.replaceState(null, "", "#" + forward);
-    raw = forward;
-  }
+  const raw = location.hash.slice(1) || "overview";
   const [path, query] = raw.split("?"),
     params = new URLSearchParams(query || "");
   const [publicPage, id] = path.split("/");
-  const page = INTERNAL[publicPage] || publicPage;
+  const page = INTERNAL[publicPage] || (Object.hasOwn(CANONICAL, publicPage) ? "" : publicPage);
   markNav(page);
   closeMenus();
   drawStepBar(page, id, params);

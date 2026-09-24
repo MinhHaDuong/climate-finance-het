@@ -366,7 +366,7 @@ def test_the_inventory_page_opens_on_the_row_the_documents_page_cites() -> None:
     rows = [dict(zip(payload["fields"], values)) for values in payload["rows"]]
     assert rows[21]["source_row_id"] == "vnm-rmp-2023:annex-I.1:022"
 
-    rendered = render("entries/VNM?row=22")
+    rendered = render("document-rows/VNM?row=22")
 
     assert rendered["elements"]["inventory-count"]["textContent"].startswith("1 of 1 ")
     results = rendered["elements"]["inventory-results"]["innerHTML"]
@@ -401,12 +401,12 @@ def test_a_senegal_annex_row_opens_the_archived_annexes_at_its_own_page() -> Non
     assert rows[0]["source_row_id"] == "sen-annex-received-01"
     annexes = entry_of("sen-investment-plan-annexes-mirror:1")
 
-    rendered = render("entries/SEN?row=1", staged=every_copy())
+    rendered = render("document-rows/SEN?row=1", staged=every_copy())
 
     results = rendered["elements"]["inventory-results"]["innerHTML"]
     hrefs = [href for href, _ in anchors(results) if href.startswith(annexes["local_path"])]
     assert hrefs == [annexes["local_path"] + "#page=13"], hrefs
-    public = render("entries/SEN?row=1")["elements"]["inventory-results"]["innerHTML"]
+    public = render("document-rows/SEN?row=1")["elements"]["inventory-results"]["innerHTML"]
     assert [href for href, _ in anchors(public) if href.startswith(annexes["url"])] == [
         annexes["url"] + "#page=13"]
     assert not [href for href, _ in anchors(public) if href.startswith("documents/")]
@@ -562,37 +562,6 @@ def test_a_header_disclosure_toggles_aria_expanded_and_one_menu_is_open_at_a_tim
     assert closed == [["false", ""], ["false", ""], ["false", ""]], closed
 
 
-# Author's cold read, 2026-09-23: addresses match labels, and the addresses of
-# earlier previews — deep links and queries included — forward to them.
-FORWARDS = {
-    "countries": "funding",
-    "country/VNM": "funding/VNM",
-    "evidence": "statements",
-    "entries": "document-rows",
-    "entries/VNM?row=22": "document-rows/VNM?row=22",
-    "on-the-record": "statements",
-    "on-the-record/ZAF": "statements/ZAF",
-    "whos-who": "organisations",
-    "comparisons": "non-jetp-energy-operations",
-    "numbers": "counts",
-    "by-the-numbers": "counts",
-    "counts-and-totals": "counts",
-    "the-tallies": "counts",
-    "comparison": "non-jetp-energy-operations",
-    "historical-comparison": "non-jetp-energy-operations",
-    "comparison?country=IDN": "non-jetp-energy-operations?country=IDN",
-    "how-we-did-this": "methods",
-    "editions": "release-history",
-    "inventory/VNM": "document-rows/VNM",
-    "inventory/VNM?row=22": "document-rows/VNM?row=22",
-    "inventory/ZAF?tab=record": "statements/ZAF",
-}
-OLD_ADDRESS = re.compile(r'href="#(?:(?:countries|evidence|entries|on-the-record|whos-who|comparisons'
-                         r'|numbers|by-the-numbers|counts-and-totals|the-tallies|comparison'
-                         r'|historical-comparison|how-we-did-this|editions)'
-                         r'(?=["?])|(?:country|inventory)/)')
-
-
 # Author's cold read, third batch (2026-09-23), as revised: "The tallies" is
 # one table, a row per computed figure, grouped by country, then two
 # numbered figures; it no longer repeats the landing page's stat grid.
@@ -600,7 +569,7 @@ TALLY_COLUMNS = ["What it is", "Value", "Unit", "What it covers", "As of", "Comp
 
 
 def test_the_tallies_are_one_table_grouped_by_country_then_numbered_figures() -> None:
-    main = render("the-tallies")["main"]
+    main = render("counts")["main"]
     assert main.count("<table") == 1
     table = re.search(r'<table class="counts">.*?</table>', main, re.DOTALL).group(0)
     head = re.search(r"<thead>(.*?)</thead>", table, re.DOTALL).group(1)
@@ -636,7 +605,7 @@ def test_the_homepage_keeps_its_stat_grid_under_the_tallies() -> None:
     assert aside.count('class="stat computed"') == 4
 
 
-@pytest.mark.parametrize("route", ["whos-who", "documents", "project/" + BAC_AI])
+@pytest.mark.parametrize("route", ["organisations", "documents", "project/" + BAC_AI])
 def test_no_fold_out_summary_repeats_its_count(route) -> None:
     html = "".join(el["innerHTML"] for el in render(route)["elements"].values())
     summaries_ = [unescape(s) for s in re.findall(r"<summary>([^<]*)</summary>", html)]
@@ -674,25 +643,28 @@ def test_the_glossary_is_grouped_by_theme_and_alphabetical_within_each_group() -
         assert len(labels) >= 3 and labels == sorted(labels, key=str.casefold), (group, labels)
 
 
-@pytest.mark.parametrize(("old", "new"), FORWARDS.items())
-def test_an_old_address_forwards_to_its_new_name(old, new) -> None:
-    forwarded = render(old, {}, "location.hash")
-    assert forwarded["eval"] == "#" + new
-    assert forwarded["main"] == render(new)["main"]
+@cache
+def internal_keys():
+    """The page keys app.js keeps apart from their public addresses."""
+    return tuple(render("overview", {}, "Object.keys(CANONICAL)")["eval"])
 
 
-@pytest.mark.parametrize("route", ["projects?country=IDN", "project/" + BAC_AI, "documents",
-                                   "overview", "document-rows/SEN?row=1", "methods",
-                                   "glossary", "release-history", "about", "who-we-are"])
-def test_an_address_that_kept_its_name_does_not_move(route) -> None:
-    assert render(route, {}, "location.hash")["eval"] == "#" + route
+def test_an_internal_page_key_is_not_an_address() -> None:
+    # The site was never published, so no earlier address is kept (author,
+    # 2026-09-24): an internal key opens what any unknown address opens.
+    unknown = render("no-such-page")["main"]
+    assert internal_keys()
+    for key in internal_keys():
+        assert render(key)["main"] == unknown, key
 
 
-def test_the_pages_emit_only_the_new_addresses() -> None:
-    assert not OLD_ADDRESS.search((SITE / "index.html").read_text())
-    for route in ROUTES:
-        html = "".join(el["innerHTML"] for el in render(route)["elements"].values())
-        assert not OLD_ADDRESS.search(html), (route, OLD_ADDRESS.search(html).group(0))
+def test_the_pages_link_to_no_internal_key() -> None:
+    keys = set(internal_keys())
+    for html, where in [((SITE / "index.html").read_text(), "index.html"),
+                        *(("".join(el["innerHTML"] for el in render(r)["elements"].values()), r)
+                          for r in ROUTES)]:
+        targets = {re.split(r"[/?]", href, maxsplit=1)[0] for href in re.findall(r'href="#([^"]*)"', html)}
+        assert not targets & keys, (where, targets & keys)
 
 
 def step_bar(route):
@@ -703,7 +675,7 @@ def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() 
     # The sub-bar is the position indicator (ticket 0881's test, as the
     # author reshaped it on 2026-09-23): the selected tab is the step, and the
     # tabs beside it are the neighbouring steps, each keeping the country.
-    bar = step_bar("entries/VNM")
+    bar = step_bar("document-rows/VNM")
     links = re.findall(r'<li><a href="([^"]+)" data-sub="[^"]+" data-step="(D\d)"'
                        r'( aria-current="page")?>([^<]+)</a></li>', bar)
     assert [unescape(label) for *_, label in links] == STEPS, links
@@ -729,7 +701,7 @@ def test_a_trail_page_carries_no_second_position_indicator(route) -> None:
 
 @pytest.mark.parametrize(("route", "section"), [
     ("documents", "the-paper-trail"), ("project/" + BAC_AI, "the-paper-trail"),
-    ("counts", "the-tallies"), ("comparisons", "the-tallies"), ("glossary", "about")])
+    ("counts", "the-tallies"), ("non-jetp-energy-operations", "the-tallies"), ("glossary", "about")])
 def test_every_sub_bar_is_the_same_component(route, section) -> None:
     # Sixth batch: one markup and one class for the three sections' sub-bars,
     # plain tabs, no separators; the country chip is the paper trail's alone.
@@ -766,15 +738,6 @@ def test_about_pages_show_the_about_sub_bar_as_plain_siblings(route, current) ->
     assert "release-history" not in bar
 
 
-def test_methods_is_canonical_and_nothing_forwards_in_a_circle() -> None:
-    assert render("methods", {}, "location.hash")["eval"] == "#methods"
-    for old in ("methods", "how-we-did-this", *FORWARDS):
-        chain = render("overview", {}, f"(() => {{ let h = {json.dumps(old)}, seen = []; "
-                                       "while (h !== null && seen.length < 5) { seen.push(h); h = forwardOf(h); } "
-                                       "return seen; })()")["eval"]
-        assert len(chain) <= 2, (old, chain)
-
-
 # The author's own text for Who we are (supplied 2026-09-23, from his
 # homepage bio), kept as written: the page carries these paragraphs, these
 # two links, and nothing else about him — no phone, postal or e-mail address.
@@ -802,8 +765,8 @@ def test_who_we_are_is_the_authors_text_and_nothing_else() -> None:
     assert "placeholder" not in main and "@" not in text_of(main)
 
 
-@pytest.mark.parametrize("route", ["documents", "on-the-record", "entries", "whos-who",
-                                   "the-tallies", "methods"])
+@pytest.mark.parametrize("route", ["documents", "statements", "document-rows", "organisations",
+                                   "counts", "methods"])
 def test_the_title_block_is_one_sentence_with_the_rest_folded(route) -> None:
     head = re.search(r'<div class="page-head">(.*?)</div>', render(route)["main"], re.DOTALL).group(1)
     lede = re.search(r'<p class="lede">(.*?)</p>', head, re.DOTALL).group(1)
@@ -829,7 +792,7 @@ def test_a_country_read_from_the_address_cannot_inject_markup_into_the_step_bar(
 
 
 def test_an_item_on_the_record_reads_according_to_its_publisher_with_the_date() -> None:
-    rendered = render("on-the-record/VNM")
+    rendered = render("statements/VNM")
     results = rendered["elements"]["observations-results"]["innerHTML"]
     sources = served("VNM")["sources"]
     row = next(r for r in observations("VNM")
@@ -1004,7 +967,7 @@ def test_an_external_mapping_shows_its_scheme_and_skos_relation() -> None:
 
 
 def test_a_zaf_status_links_to_its_definition_through_the_crosswalk() -> None:
-    rendered = render("entries/ZAF", site=glossary_site())
+    rendered = render("document-rows/ZAF", site=glossary_site())
     results = rendered["elements"]["inventory-results"]["innerHTML"]
     assert re.search(r'<a href="#glossary\?term=delivery%2Fclosed"[^>]*>(<span class="pill">)?'
                      r"D\. Completed", results), results[:2000]
@@ -1019,7 +982,7 @@ def test_a_zaf_status_links_to_its_definition_through_the_crosswalk() -> None:
 
 
 def test_a_status_on_the_record_links_to_its_term() -> None:
-    rendered = render("on-the-record/ZAF")
+    rendered = render("statements/ZAF")
     results = rendered["elements"]["observations-results"]["innerHTML"]
     assert re.search(r'<dt>financial_status</dt><dd><a href="#glossary\?term=money%2Fsigned"',
                      results), results[:2000]
@@ -1161,8 +1124,8 @@ def test_every_registry_row_links_to_its_publisher_with_what_was_read() -> None:
         assert archived == "", entry["row_key"]
 
 
-PUBLIC_ROUTES = ("documents", "entries/ZAF", "entries/IDN", "entries/VNM", "entries/SEN",
-                 "on-the-record", "on-the-record/ZAF", "on-the-record/IDN",
+PUBLIC_ROUTES = ("documents", "document-rows/ZAF", "document-rows/IDN", "document-rows/VNM",
+                 "document-rows/SEN", "statements", "statements/ZAF", "statements/IDN",
                  "project/" + BAC_AI)
 
 

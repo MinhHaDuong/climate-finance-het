@@ -553,35 +553,6 @@ def check_paper_trail(page, url):
     page.wait_for_selector('.country-grid')
     labels = page.locator('header nav a[data-section]').all_text_contents()
     assert labels == ['The paper trail', 'The tallies', 'About'], labels
-    # Old addresses forward in place, deep links and tabs included, and the
-    # back button does not bounce between the two names.
-    for old, new, ready in (
-        ('countries', 'funding', '.country-grid'),
-        ('country/IDN', 'funding/IDN', '.markdown h2'),
-        ('evidence', 'statements', '[data-reviewed-evidence-id]'),
-        ('comparison?country=IDN', 'non-jetp-energy-operations?country=IDN', '#history-table'),
-        ('how-we-did-this', 'methods', '.method-list'),
-        ('numbers', 'counts', 'table.counts'),
-        ('by-the-numbers', 'counts', 'table.counts'),
-        ('the-tallies', 'counts', 'table.counts'),
-        ('historical-comparison', 'non-jetp-energy-operations', '#history-table'),
-        ('comparisons?country=IDN', 'non-jetp-energy-operations?country=IDN', '#history-table'),
-        ('on-the-record/VNM', 'statements/VNM', '#observations-filters'),
-        ('entries/VNM?row=22', 'document-rows/VNM?row=22', '[data-inventory-focus="22"]'),
-        ('whos-who?country=SEN', 'organisations?country=SEN', '#parties-filters'),
-        ('inventory/VNM?tab=record', 'statements/VNM', '#observations-filters'),
-        ('inventory/VNM?row=22', 'document-rows/VNM?row=22', '[data-inventory-focus="22"]'),
-    ):
-        page.goto(url + '/#overview')
-        page.wait_for_selector('.country-grid')
-        page.goto(url + '/#' + old)
-        page.wait_for_selector(ready)
-        assert page.url.endswith('#' + new), (old, page.url)
-        page.go_back()
-        page.wait_for_selector('.country-grid')
-        assert page.url.endswith('#overview'), (old, page.url)
-    assert page.evaluate('location.hash') == '#overview'
-
     # The step bar is the position indicator: the current step is marked, its
     # neighbours are links, the country rides along as a removable chip, and
     # the header keeps the paper trail's tab selected throughout.
@@ -771,7 +742,7 @@ def check_glossary(page, url):
     page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-results')
     assert page.locator('#observations-results a[data-term-link="money/signed"]').count() > 0
-    page.goto(url + '/#entries/ZAF')
+    page.goto(url + '/#document-rows/ZAF')
     status = page.locator('a[data-term-link="delivery/finalisation"]:visible').first
     status.wait_for()
     assert status.inner_text() == 'D. Completed'

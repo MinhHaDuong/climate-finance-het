@@ -91,7 +91,7 @@ def reported_position_sidecar(config, countries):
         # They deliberately receive distinct display identities even when they
         # point to the same country payload and evidence record.
         for field in ('headline', 'headline_detail', 'stage_label', 'headline_date'):
-            for route, prefix in (('#overview', 'overview'), (f'#country/{code}', 'country')):
+            for route, prefix in (('#overview', 'overview'), (f'#funding/{code}', 'country')):
                 displays.append({'display_id': f'{prefix}-{code}-{field}', 'route': route,
                                  'payload': f'data/{code}.json', 'pointer': f'/country/{field}',
                                  'role': 'reported_position', 'evidence': [source]})
