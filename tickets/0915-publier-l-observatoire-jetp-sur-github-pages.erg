@@ -7,7 +7,7 @@ Author: HDMX-coding-agent
 2026-09-24T14:00Z HDMX-coding-agent created
 2026-09-24T14:00Z HDMX-coding-agent decision Hébergement GitHub Pages depuis ce dépôt public ; mise en ligne après la démonstration à Christophe Cassen (décision de l'auteur, session interactive du 2026-09-24).
 2026-09-24T15:45Z HDMX-coding-agent decision Liens additifs, sans drapeau ni mode : page de l'éditeur partout, copie archivée en plus selon documents/index.json (décision de l'auteur relayée le 2026-09-24).
-
+2026-09-24T15:17Z HDMX-coding-agent note mise en ligne sur feu vert de l'auteur (« Go ahead », session interactive du 2026-09-24). Paquet construit depuis origin/main 1b957ca3 (arbre de site c4c9ff2b, 34 fichiers, sans documents/) ; recette navigateur verte sur le paquet local puis sur l'adresse publique ; branche gh-pages poussée (e5e17cf9, première publication, sans force) ; Pages activé automatiquement par GitHub à la création de la branche, source gh-pages/ ; https://minhhaduong.github.io/climate-finance-het/ servi, statut built, overview.json 200, documents/index.json 404 (aucune copie archivée en ligne), release 2026-09-preview, cutoff 2026-09-14. Vérifié dans Chromium (sans tête, et par l'auteur). Firefox de l'auteur reste sans réponse sur cet hôte alors qu'IPv4 répond en 0,7 s : état local du navigateur, pas du site. Aperçu local avec copies archivées : recette verte sur la PR #1488 (266 copies) et sur la copie de démonstration a370cedd. check-fast et lint verts sur #1488, #1492, #1494.
 --- body ---
 ## Context
 
@@ -70,12 +70,12 @@ local est ce même arbre plus `documents/`.
 
 ## Exit criteria
 
-- [ ] Dans le paquet public, aucun lien ne pointe vers `documents/` ; chaque document collecté renvoie à son URL d'origine, avec son empreinte affichée
-- [ ] L'aperçu local ouvre toujours les copies archivées (recette navigateur `tests/browser/jetp_observatory.py` verte sur l'aperçu)
-- [ ] Le paquet public se construit sans réseau ni DVC, et la recette navigateur, adaptée au mode public, passe sur lui
-- [ ] La branche `gh-pages` porte le paquet ; `documents/` y est absent
-- [ ] Feu vert de l'auteur après la démonstration ; Pages activé ; l'adresse publique vérifiée dans un navigateur, avec les métadonnées de version
-- [ ] `make check-fast` et `make lint` verts
+- [x] Dans le paquet public, aucun lien ne pointe vers `documents/` ; chaque document collecté renvoie à son URL d'origine, avec son empreinte affichée
+- [x] L'aperçu local ouvre toujours les copies archivées (recette navigateur `tests/browser/jetp_observatory.py` verte sur l'aperçu)
+- [x] Le paquet public se construit sans réseau ni DVC, et la recette navigateur, adaptée au mode public, passe sur lui
+- [x] La branche `gh-pages` porte le paquet ; `documents/` y est absent
+- [x] Feu vert de l'auteur après la démonstration ; Pages activé ; l'adresse publique vérifiée dans un navigateur, avec les métadonnées de version
+- [x] `make check-fast` et `make lint` verts
 
 ## Hors périmètre
 
