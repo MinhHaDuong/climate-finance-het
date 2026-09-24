@@ -1054,7 +1054,9 @@ def test_every_registry_row_links_to_its_publisher_with_what_was_read() -> None:
 
     assert len(rendered) == len(registry())
     for entry, (publisher, facts, archived) in zip(registry(), rendered, strict=True):
-        host = re.match(r"https?://([^/?#]+)", entry["url"]).group(1)
+        origin = re.match(r"https?://([^/?#]+)", entry["url"] or "")
+        assert origin, (entry["row_key"], "no http(s) address recorded")
+        host = origin.group(1)
         assert [(unescape(href), text) for href, text in anchors(publisher)] == [
             (entry["url"], f"Publisher's page — {host} ↗")], (entry["row_key"], publisher)
         if entry["sha256"]:
@@ -1090,3 +1092,19 @@ def test_the_preview_links_only_the_copies_its_index_lists() -> None:
                       % (json.dumps(rmp), json.dumps(register)), staged=staged)
 
     assert rendered["eval"] == [rmp["local_path"], None]
+
+
+def test_an_unfingerprinted_row_reaches_the_publisher_but_no_other_attempts_bytes() -> None:
+    # Review of PR #1488: a ledger row with no sha256 resolves through its
+    # source id for the publisher's link only; even with every copy staged it
+    # shows neither an archived link nor another attempt's fingerprint.
+    rmp = entry_of(RMP + ":1")
+    row = {"locator": "Annex I.1", "source_id": RMP, "sha256": None, "pdf_page": 156,
+           "event_id": "fixture"}
+
+    html = render("documents", {}, f"observationEvidence({json.dumps(row)})",
+                  staged=every_copy())["eval"]
+
+    assert [(unescape(h), t) for h, t in anchors(html)] == [
+        (rmp["url"] + "#page=156", f"Publisher's page — {rmp['url'].split('/')[2]} ↗")], html
+    assert "data-sha256" not in html and 'data-link="archived"' not in html

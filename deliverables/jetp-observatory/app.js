@@ -835,12 +835,13 @@ function observationDetail(row) {
  * document directly. A document the collection never archived keeps its locator
  * as text, exactly as an unresolved inventory row does. */
 /* A row whose document was never collected has no fingerprint; it still
- * reaches the publisher's page through its source identifier, which then says
- * the collection failed. */
+ * reaches the publisher's page through its source identifier, but pins no
+ * bytes, so it shows no other attempt's fingerprint or archived copy. */
+const unpinned = (entry) => entry && { ...entry, sha256: null, local_path: null };
 function observationEvidence(row) {
   return evidenceLink(
     row.locator,
-    row.sha256 ? documentsBySha[row.sha256] : documentIndex[row.source_id],
+    row.sha256 ? documentsBySha[row.sha256] : unpinned(documentIndex[row.source_id]),
     row.pdf_page,
     "data-observation-id",
     observationId(row),
@@ -1116,14 +1117,16 @@ function fillProjectEvidence(p) {
     });
 }
 /* A source card's title already links to the publisher's page; under it, the
- * host, what was collected and, where this server holds it, the archived copy.
- * Resolved by source identifier through the same ranked index as an inventory
- * row: the card names a source, not a fingerprint. */
-function archivedCopy(id) {
+ * host of that very link (the country view's address, which can differ from
+ * the registry's, e.g. a byte range on a Common Crawl record), what was
+ * collected and, where this server holds it, the archived copy. Resolved by
+ * source identifier through the same ranked index as an inventory row: the
+ * card names a source, not a fingerprint. */
+function archivedCopy(id, source) {
   const entry = documentIndex[id];
   if (!entry) return "";
   const archived = archivedLink(entry, null, ` data-archived-source="${esc(id)}"`);
-  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(entry.url) || "no address recorded")} · ${collectedFacts(entry)}</small>${archived ? `<small>${archived}</small>` : ""}`;
+  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(source.url) || "no address recorded")} · ${collectedFacts(entry)}</small>${archived ? `<small>${archived}</small>` : ""}`;
 }
 function projectPage(id) {
   const p = projects.find((p) => p.id === id);
@@ -1134,7 +1137,7 @@ function projectPage(id) {
     .map((id) => {
       const s = sources[id];
       return s
-        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id)}${sourceAdjudication(p, id)}</li>`
+        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id, s)}${sourceAdjudication(p, id)}</li>`
         : "";
     })
     .join(
