@@ -1,0 +1,46 @@
+%erg 0.1
+Title: Materialize pinned CRS inputs before the JETP full gate in fresh worktrees
+Created: 2026-09-24
+Author: Codex
+
+--- log ---
+2026-09-24T20:22Z Codex created from full `make check` on 0876 draft head 5a1f6da4: reference-chain integration test fails at its explicit CRS-directory assertion; 5 failed, 3285 passed, 62 skipped overall.
+
+--- body ---
+## Failure
+
+`tests/test_jetp_courbe_reference.py::test_chaine_portee_reproduit_la_reference`
+fails at line 68 because `data/jetp/crs` is absent in a fresh 0876 worktree.
+The test intentionally fails rather than skipping: it needs the archived
+80 `*_micro.csv.gz` files to replay the pinned CRS calculation and compare
+the output cell by cell with
+`conception/jetp/papier-court-mesure/courbe-reference-decaissement-2026-09-08.csv`.
+The test never reached the comparison, so the result establishes missing
+test data, not a successful or failed numerical reproduction.
+
+`make jetp-data` only checks out JETP documents and a VNM release
+(`Makefile:234-237`); it does not fetch CRS. The dedicated
+`jetp-crs-data` target at `Makefile:150-151` runs `dvc pull data/jetp/crs`.
+This full-gate prerequisite was not run in the worktree. The four separate
+country-scan failures in the same full suite are tracked in [[0940]].
+
+## Work
+
+- Verify that the pinned CRS DVC object is available from the configured
+  remote and that `make jetp-crs-data` materializes exactly 80 archived
+  `*_micro.csv.gz` inputs in a fresh worktree. If retrieval fails, capture
+  the concrete remote/cache error and restore the missing pinned object.
+- Make the full-gate setup state the CRS prerequisite before starting the
+  14-minute suite, or materialize it as part of the documented full-gate
+  workflow. Keep the test's fail-when-absent behavior.
+- Rerun the named integration test and compare every output row with the
+  versioned reference; retain the pinned 98.56% and 37.35% central figures.
+
+## Exit criteria
+
+- [ ] `make jetp-crs-data` succeeds in a fresh worktree and exactly 80
+  `*_micro.csv.gz` files are present under `data/jetp/crs`.
+- [ ] The named reference-chain integration test passes and its output is
+  byte/cell equivalent to the versioned reference as asserted by the test.
+- [ ] The full-gate workflow catches missing CRS inputs before the main test
+  suite, with an actionable command; it never silently skips this test.
