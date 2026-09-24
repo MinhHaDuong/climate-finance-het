@@ -205,8 +205,10 @@ def test_a_failed_attempt_shows_a_short_label_with_the_full_message_in_its_title
     assert unescape(label.group(2)) == failed["error"].split(":")[0].strip()[:24]
     head = render("documents")["elements"]["documents-results"]["innerHTML"].split("</thead>")[0]
     assert [(w, unescape(t)) for w, t in re.findall(r'<th class="col-(\w+)">([^<]+)</th>', head)] == [
-        ("short", "Size"), ("short", "Publisher's page"), ("short", "What we read"),
-        ("wide", "Entries and items on the record · relied on by")]
+        ("short", "Size"), ("wide", "Entries and items on the record · relied on by")]
+    # One column carries the publisher's page, what was read and, where
+    # served, the archived copy (ticket 0915): it wraps, so it fits at 1280 px.
+    assert "<th>Publisher&#39;s page · what we read</th>" in head, head
 
 
 def test_a_document_with_one_product_gets_one_fold_out() -> None:

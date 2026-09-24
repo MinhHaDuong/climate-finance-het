@@ -401,11 +401,11 @@ function archivedLink(entry, page, attrs = "", label = "Open archived copy") {
 }
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
-function collectedFacts(entry) {
+function collectedFacts(entry, separator = " · ") {
   const when = entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded";
   return entry.sha256
-    ? `${when} · SHA-256 <code data-sha256="${esc(entry.sha256)}" title="${esc(entry.sha256)}">${esc(entry.sha256.slice(0, 12))}…</code>`
-    : `${when} · ${collectionFailure(entry.error)}`;
+    ? `${when}${separator}SHA-256 <code data-sha256="${esc(entry.sha256)}" title="${esc(entry.sha256)}">${esc(entry.sha256.slice(0, 12))}…</code>`
+    : `${when}${separator}${collectionFailure(entry.error)}`;
 }
 /* Hand-written port of scripts/jetp/_m1a_document_links.py. The two are kept in
  * step by tests/test_jetp_observatory_inventories.py, never generated from one
@@ -597,8 +597,7 @@ function extractionCell(entry) {
       const publisher = document.getElementById("publisher-" + entry.row_key);
       const archived = document.getElementById("archived-" + entry.row_key);
       if (page && publisher) publisher.innerHTML = publisherLink(entry, page, documentAttrs(entry));
-      if (page && archived && archiveServed(entry))
-        archived.innerHTML = "<br>" + archivedLink(entry, page, documentAttrs(entry));
+      if (page && archived) archived.innerHTML = archivedLink(entry, page, documentAttrs(entry));
       cell.innerHTML =
         !extracted.length && !relying.length
           ? `<span class="note" data-uncited="${esc(entry.id)}">Nothing was extracted from this document, and nothing on these pages relies on it, in this release.</span>`
@@ -631,10 +630,8 @@ function documentsPage(params) {
   // first page the extracted rows agree on (ticket 0857), never with a page
   // of its own. The publisher's page is always there; the archived copy only
   // where this server holds it (ticket 0915).
-  const publisher = (r) =>
-    `<span id="publisher-${esc(r.row_key)}">${publisherLink(r, null, documentAttrs(r))}</span>`;
-  const copy = (r) =>
-    `${collectedFacts(r)}<span id="archived-${esc(r.row_key)}">${archiveServed(r) ? "<br>" + archivedLink(r, null, documentAttrs(r)) : ""}</span>`;
+  const links = (r) =>
+    `<span id="publisher-${esc(r.row_key)}">${publisherLink(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>`;
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -675,8 +672,7 @@ function documentsPage(params) {
       { label: "Collection", cell: (r) => pill(r.status) },
       { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
       { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)), width: "short" },
-      { label: "Publisher's page", cell: publisher, width: "short" },
-      { label: "What we read", cell: copy, width: "short" },
+      { label: "Publisher's page · what we read", cell: links },
       { label: "Entries and items on the record · relied on by", cell: extractionCell, width: "wide" },
     ],
     empty: "No documents match these filters.",
@@ -778,7 +774,7 @@ function evidenceLink(locator, entry, pdfPage, dataAttr, dataValue, noEntry) {
     return `<span class="note">${text}${noEntry ? "<br>" + noEntry : ""}</span>`;
   const attrs = ` ${dataAttr}="${esc(dataValue)}"`;
   const archived = archivedLink(entry, pdfPage, attrs, "archived copy");
-  return `<span class="document-ref">${text}<br>${publisherLink(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<br><small>${collectedFacts(entry)}</small></span>`;
+  return `<span class="document-ref">${text}<br>${publisherLink(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<small>${collectedFacts(entry)}</small></span>`;
 }
 function inventoryEvidence(row) {
   const entry = documentIndex[row.source_id];
