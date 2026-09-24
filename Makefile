@@ -164,8 +164,12 @@ JETP_DOCUMENTS := data/jetp/documents
 JETP_EVENTS    := data/jetp/events.csv
 JETP_SOURCE_ID_ARG := $(if $(JETP_SOURCE_ID),--source-id $(JETP_SOURCE_ID),)
 
+# After collecting, ask for a public Web Archive copy while the page still
+# exists (ticket 0925); a failed capture is recorded in its own table and
+# never fails the harvest.
 jetp-harvest: $(JETP_SOURCES) scripts/jetp/corpus_harvest_documents.py scripts/jetp/schemas.py config/jetp_tracking.yaml
 	$(PYTHON) scripts/jetp/corpus_harvest_documents.py --input $(JETP_SOURCES) --output $(JETP_MANIFEST) --storage-root $(JETP_DOCUMENTS) $(JETP_SOURCE_ID_ARG)
+	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
 
 jetp-zaf-news-leads: $(JETP_MANIFEST) scripts/jetp/build_zaf_news_leads.py
 	$(PYTHON) scripts/jetp/build_zaf_news_leads.py --input $(JETP_MANIFEST) --output data/jetp/news-leads.csv --storage-root $(JETP_DOCUMENTS)
