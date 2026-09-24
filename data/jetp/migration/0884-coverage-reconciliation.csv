@@ -1,0 +1,206 @@
+source_table,old_id,outcome,referent_kind,referent_id,detail
+project-coverage.csv,idn-fin-isle-1,coverage,agreement,agreement-idn-fin-isle-1,
+project-coverage.csv,idn-fin-mrt-east-west,coverage,agreement,agreement-idn-fin-mrt-east-west,
+project-coverage.csv,idn-fin-mrt-north-south,coverage,agreement,agreement-idn-fin-mrt-north-south,
+project-coverage.csv,idn-fin-muara-laboh-2,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-fin-pbl-aset,coverage,agreement,agreement-idn-fin-pbl-aset,
+project-coverage.csv,idn-fin-rbl-aicet,coverage,agreement,agreement-idn-fin-rbl-aicet,
+project-coverage.csv,idn-fin-rbl-sreap,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-fin-saguling-floating-solar,coverage,agreement,agreement-idn-fin-saguling-floating-solar,
+project-coverage.csv,idn-fin-xurya-rooftop,coverage,agreement,agreement-idn-fin-xurya-rooftop,
+project-coverage.csv,idn-grant-asia-low-carbon-buildings,coverage,agreement,agreement-idn-grant-asia-low-carbon-buildings,
+project-coverage.csv,idn-grant-candi-umbul-telomoyo,coverage,agreement,agreement-idn-grant-candi-umbul-telomoyo,
+project-coverage.csv,idn-grant-carbon-monetization,coverage,agreement,agreement-idn-grant-carbon-monetization,
+project-coverage.csv,idn-grant-case,coverage,agreement,agreement-idn-grant-case,
+project-coverage.csv,idn-grant-cefim,coverage,agreement,agreement-idn-grant-cefim,
+project-coverage.csv,idn-grant-cetp,coverage,agreement,agreement-idn-grant-cetp,
+project-coverage.csv,idn-grant-cfpp-site-repurposing,coverage,agreement,agreement-idn-grant-cfpp-site-repurposing,
+project-coverage.csv,idn-grant-efsd-energy-preparation,coverage,agreement,agreement-idn-grant-efsd-energy-preparation,
+project-coverage.csv,idn-grant-energy-hub,coverage,agreement,agreement-idn-grant-energy-hub,
+project-coverage.csv,idn-grant-enerkey,coverage,agreement,agreement-idn-grant-enerkey,
+project-coverage.csv,idn-grant-entri,coverage,agreement,agreement-idn-grant-entri,
+project-coverage.csv,idn-grant-esmap-canada,coverage,agreement,agreement-idn-grant-esmap-canada,
+project-coverage.csv,idn-grant-esmap-uk,coverage,agreement,agreement-idn-grant-esmap-uk,
+project-coverage.csv,idn-grant-etap,coverage,agreement,agreement-idn-grant-etap,
+project-coverage.csv,idn-grant-etmptf,coverage,agreement,agreement-idn-grant-etmptf,
+project-coverage.csv,idn-grant-eu-indonesia-cooperation-facility,coverage,agreement,agreement-idn-grant-eu-indonesia-cooperation-facility,
+project-coverage.csv,idn-grant-explore,coverage,agreement,agreement-idn-grant-explore,
+project-coverage.csv,idn-grant-gesit,coverage,agreement,agreement-idn-grant-gesit,
+project-coverage.csv,idn-grant-green-energy-transition-indonesia,coverage,agreement,agreement-idn-grant-green-energy-transition-indonesia,
+project-coverage.csv,idn-grant-growth-gateway,coverage,agreement,agreement-idn-grant-growth-gateway,
+project-coverage.csv,idn-grant-ietf,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-grant-iki-flex-jetp,coverage,agreement,agreement-idn-grant-iki-flex-jetp,
+project-coverage.csv,idn-grant-iki-jet,coverage,agreement,agreement-idn-grant-iki-jet,
+project-coverage.csv,idn-grant-ipdf,coverage,agreement,agreement-idn-grant-ipdf,
+project-coverage.csv,idn-grant-jetp-esia-study,coverage,agreement,agreement-idn-grant-jetp-esia-study,
+project-coverage.csv,idn-grant-jetp-etp,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-grant-jetp-financing-facilitation,coverage,agreement,agreement-idn-grant-jetp-financing-facilitation,
+project-coverage.csv,idn-grant-jetp-secretariat-capacity,coverage,agreement,agreement-idn-grant-jetp-secretariat-capacity,
+project-coverage.csv,idn-grant-jt-framework-phase-2,coverage,agreement,agreement-idn-grant-jt-framework-phase-2,
+project-coverage.csv,idn-grant-just-transition-coal-regions,coverage,agreement,agreement-idn-grant-just-transition-coal-regions,
+project-coverage.csv,idn-grant-mentari-policy,coverage,agreement,agreement-idn-grant-mentari-policy,
+project-coverage.csv,idn-grant-mentari-vgf,coverage,agreement,agreement-idn-grant-mentari-vgf,
+project-coverage.csv,idn-grant-patuha-2,coverage,agreement,agreement-idn-grant-patuha-2,
+project-coverage.csv,idn-grant-perform,coverage,agreement,agreement-idn-grant-perform,
+project-coverage.csv,idn-grant-pt-smi-early-retirement,coverage,agreement,agreement-idn-grant-pt-smi-early-retirement,
+project-coverage.csv,idn-grant-re2cool,coverage,agreement,agreement-idn-grant-re2cool,
+project-coverage.csv,idn-grant-re2grid,coverage,agreement,agreement-idn-grant-re2grid,
+project-coverage.csv,idn-grant-reep2,coverage,agreement,agreement-idn-grant-reep2,
+project-coverage.csv,idn-grant-s4i,coverage,agreement,agreement-idn-grant-s4i,
+project-coverage.csv,idn-grant-sdg-indonesia-one,coverage,agreement,agreement-idn-grant-sdg-indonesia-one,
+project-coverage.csv,idn-grant-seti,coverage,agreement,agreement-idn-grant-seti,
+project-coverage.csv,idn-grant-sustainable-hydropower-2,coverage,agreement,agreement-idn-grant-sustainable-hydropower-2,
+project-coverage.csv,idn-grant-uk-pact,coverage,agreement,agreement-idn-grant-uk-pact,
+project-coverage.csv,idn-grant-wolcot,coverage,agreement,agreement-idn-grant-wolcot,
+project-coverage.csv,idn-monitor-cihaur-talaga-micro-hydro,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-monitor-gde-pipeline-2025,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-cirebon-1-retirement,coverage,asset,asset-idn-pipe-cirebon-1-retirement,
+project-coverage.csv,idn-pipe-dediesel-east-phase1,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-dediesel-west-phase1,coverage,project,project-idn-pipe-dediesel-west-phase1,
+project-coverage.csv,idn-pipe-dieng-3-4,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-e-taxi,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-eib-sustainable-infrastructure,coverage,project,project-idn-pipe-eib-sustainable-infrastructure,
+project-coverage.csv,idn-pipe-green-corridors-sulawesi,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-hijaunesia-2,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-hululais-1-2,coverage,project,project-idn-pipe-hululais-1-2,
+project-coverage.csv,idn-pipe-hydro-quota-sulawesi,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-hydro-quota-sumatra,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-legok-nangka-waste,coverage,project,project-idn-pipe-legok-nangka-waste,
+project-coverage.csv,idn-pipe-nagajaya-micro-hydro,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-rscm-energy-efficiency,disposition,,,0875 has no resolved identity
+project-coverage.csv,idn-pipe-rsud-energy-efficiency,coverage,project,project-idn-pipe-rsud-energy-efficiency,
+project-coverage.csv,idn-pipe-singkarak-floating-solar,coverage,project,project-idn-pipe-singkarak-floating-solar,
+project-coverage.csv,idn-pipe-solar-cell-manufacturing,coverage,project,project-idn-pipe-solar-cell-manufacturing,
+project-coverage.csv,idn-pipe-sutami-floating-solar,coverage,project,project-idn-pipe-sutami-floating-solar,
+project-coverage.csv,idn-pipe-tanah-laut-wind,coverage,project,project-idn-pipe-tanah-laut-wind,
+project-coverage.csv,vnm-project-bac-ai-pumped-hydro,coverage,project,project-vnm-project-bac-ai-pumped-hydro,
+project-coverage.csv,vnm-project-binh-duong-dong-nai-transmission,disposition,,,0875 has no resolved identity
+project-coverage.csv,vnm-project-tri-an-expansion,disposition,,,0875 has no resolved identity
+project-coverage.csv,vnm-project-initial-undisclosed-04,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-initial-undisclosed-05,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-initial-undisclosed-06,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-initial-undisclosed-07,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-01,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-02,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-03,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-04,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-05,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-06,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-07,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-08,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-09,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-10,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-11,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-12,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-13,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-14,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-15,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-16,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,vnm-project-screened-undisclosed-17,coverage,perimeter,vnm-jetp-portfolio-2025,
+project-coverage.csv,sen-project-annex-01,coverage,project,project-sen-project-annex-01,
+project-coverage.csv,sen-project-annex-02,coverage,project,project-sen-project-annex-02,
+project-coverage.csv,sen-project-annex-03,coverage,project,project-sen-project-annex-03,
+project-coverage.csv,sen-project-annex-04,coverage,project,project-sen-project-annex-04,
+project-coverage.csv,sen-project-annex-05,coverage,project,project-sen-project-annex-05,
+project-coverage.csv,sen-project-annex-06,coverage,project,project-sen-project-annex-06,
+project-coverage.csv,sen-project-annex-07,coverage,project,project-sen-project-annex-07,
+project-coverage.csv,sen-project-annex-08,coverage,project,project-sen-project-annex-08,
+project-coverage.csv,sen-project-annex-09,coverage,project,project-sen-project-annex-09,
+project-coverage.csv,sen-project-annex-10,coverage,project,project-sen-project-annex-10,
+project-coverage.csv,sen-project-annex-11,coverage,project,project-sen-project-annex-11,
+project-coverage.csv,sen-project-annex-12,coverage,project,project-sen-project-annex-12,
+project-coverage.csv,sen-project-annex-13,coverage,project,project-sen-project-annex-13,
+project-coverage.csv,sen-project-annex-14,coverage,project,project-sen-project-annex-14,
+project-coverage.csv,sen-project-annex-15,coverage,project,project-sen-project-annex-15,
+project-coverage.csv,sen-project-annex-16,coverage,project,project-sen-project-annex-16,
+project-coverage.csv,sen-project-annex-17,coverage,project,project-sen-project-annex-17,
+project-coverage.csv,sen-project-annex-18,coverage,project,project-sen-project-annex-18,
+project-coverage.csv,sen-project-annex-19,coverage,project,project-sen-project-annex-19,
+project-coverage.csv,sen-project-annex-20,coverage,project,project-sen-project-annex-20,
+project-coverage.csv,sen-project-annex-21,coverage,project,project-sen-project-annex-21,
+project-coverage.csv,sen-project-annex-22,coverage,project,project-sen-project-annex-22,
+project-coverage.csv,sen-project-annex-23,coverage,project,project-sen-project-annex-23,
+project-coverage.csv,sen-project-annex-24,coverage,project,project-sen-project-annex-24,
+project-coverage.csv,sen-project-annex-25,coverage,project,project-sen-project-annex-25,
+project-coverage.csv,sen-project-annex-26,coverage,project,project-sen-project-annex-26,
+project-coverage.csv,sen-project-annex-27,coverage,project,project-sen-project-annex-27,
+project-coverage.csv,sen-project-annex-28,coverage,project,project-sen-project-annex-28,
+project-coverage.csv,sen-project-annex-29,coverage,project,project-sen-project-annex-29,
+project-coverage.csv,sen-project-annex-30,coverage,project,project-sen-project-annex-30,
+project-coverage.csv,sen-project-annex-31,coverage,project,project-sen-project-annex-31,
+project-coverage.csv,sen-project-annex-32,coverage,project,project-sen-project-annex-32,
+project-coverage.csv,sen-project-annex-33,coverage,project,project-sen-project-annex-33,
+project-coverage.csv,sen-project-annex-34,coverage,project,project-sen-project-annex-34,
+project-coverage.csv,sen-project-annex-35,coverage,project,project-sen-project-annex-35,
+project-coverage.csv,sen-project-annex-36,coverage,project,project-sen-project-annex-36,
+project-coverage.csv,sen-project-annex-37,coverage,project,project-sen-project-annex-37,
+project-coverage.csv,sen-project-annex-38,coverage,project,project-sen-project-annex-38,
+project-coverage.csv,sen-project-qw-02,coverage,project,project-sen-project-qw-02,
+project-coverage.csv,sen-project-qw-03,coverage,project,project-sen-project-qw-03,
+project-coverage.csv,sen-project-qw-04,coverage,project,project-sen-project-qw-04,
+project-coverage.csv,sen-project-qw-08,coverage,project,project-sen-project-qw-08,
+project-coverage.csv,sen-project-qw-10,coverage,project,project-sen-project-qw-10,
+authority-coverage.csv,zaf-presidency,disposition,,,no matching party name
+authority-coverage.csv,zaf-pcc,coverage,party,presidential-climate-commission,
+authority-coverage.csv,zaf-jet-pmu,coverage,party,jet-project-management-unit,
+authority-coverage.csv,zaf-ipg,coverage,party,international-partners-group,
+authority-coverage.csv,zaf-france-afd,disposition,,,no matching party name
+authority-coverage.csv,zaf-germany-kfw,disposition,,,no matching party name
+authority-coverage.csv,zaf-uk,disposition,,,no matching party name
+authority-coverage.csv,zaf-eu-eib,disposition,,,no matching party name
+authority-coverage.csv,zaf-us,coverage,party,united-states,
+authority-coverage.csv,zaf-netherlands,disposition,,,no matching party name
+authority-coverage.csv,zaf-denmark,disposition,,,no matching party name
+authority-coverage.csv,zaf-spain,disposition,,,no matching party name
+authority-coverage.csv,zaf-switzerland,disposition,,,no matching party name
+authority-coverage.csv,zaf-canada,disposition,,,no matching party name
+authority-coverage.csv,zaf-cif,disposition,,,no matching party name
+authority-coverage.csv,zaf-world-bank,coverage,party,world-bank,
+authority-coverage.csv,zaf-afdb,coverage,party,african-development-bank,
+authority-coverage.csv,zaf-dbsa,coverage,party,development-bank-of-southern-africa,
+authority-coverage.csv,zaf-idc,disposition,,,no matching party name
+authority-coverage.csv,zaf-eskom,coverage,party,eskom,
+authority-coverage.csv,zaf-ntcsa,coverage,party,national-transmission-company-south-africa,
+authority-coverage.csv,idn-cmea-task-force,disposition,,,no matching party name
+authority-coverage.csv,idn-jetp-secretariat,coverage,party,jetp-indonesia-secretariat,
+authority-coverage.csv,idn-memr,disposition,,,no matching party name
+authority-coverage.csv,idn-pln,disposition,,,no matching party name
+authority-coverage.csv,idn-ipg,coverage,party,international-partners-group,
+authority-coverage.csv,idn-gfanz,disposition,,,no matching party name
+authority-coverage.csv,idn-canada,disposition,,,no matching party name
+authority-coverage.csv,idn-denmark,disposition,,,no matching party name
+authority-coverage.csv,idn-eu,coverage,party,european-union,
+authority-coverage.csv,idn-france,disposition,,,no matching party name
+authority-coverage.csv,idn-germany,disposition,,,no matching party name
+authority-coverage.csv,idn-italy,disposition,,,no matching party name
+authority-coverage.csv,idn-japan,disposition,,,no matching party name
+authority-coverage.csv,idn-norway,disposition,,,no matching party name
+authority-coverage.csv,idn-uk,coverage,party,government-of-the-united-kingdom,
+authority-coverage.csv,idn-us-historical,disposition,,,no matching party name
+authority-coverage.csv,idn-adb,coverage,party,asian-development-bank,
+authority-coverage.csv,idn-world-bank-group,disposition,,,no matching party name
+authority-coverage.csv,idn-afd,disposition,,,no matching party name
+authority-coverage.csv,idn-kfw,coverage,party,kfw-development-bank,
+authority-coverage.csv,idn-jica,coverage,party,japan-international-cooperation-agency,
+authority-coverage.csv,idn-jbic,disposition,,,no matching party name
+authority-coverage.csv,idn-eib,coverage,party,european-investment-bank,
+authority-coverage.csv,idn-cif-act-etm,disposition,,,no matching party name
+authority-coverage.csv,idn-bii,coverage,party,british-international-investment,
+authority-coverage.csv,idn-norfund,disposition,,,no matching party name
+authority-coverage.csv,idn-eifo-dsif-ifu,disposition,,,no matching party name
+authority-coverage.csv,idn-pidg-guarantco,disposition,,,no matching party name
+authority-coverage.csv,idn-deg-proparco,disposition,,,no matching party name
+authority-coverage.csv,vnm-adb,coverage,party,asian-development-bank,
+authority-coverage.csv,vnm-bii,coverage,party,british-international-investment,
+authority-coverage.csv,sen-mepm,coverage,party,ministry-of-energy-petroleum-and-mines,
+authority-coverage.csv,sen-jetp-secretariat,disposition,,,no matching party name
+authority-coverage.csv,sen-ipg,coverage,party,international-partners-group,
+authority-coverage.csv,sen-france-afd,disposition,,,no matching party name
+authority-coverage.csv,sen-germany-kfw,disposition,,,no matching party name
+authority-coverage.csv,sen-eu,coverage,party,european-union,
+authority-coverage.csv,sen-uk,coverage,party,government-of-the-united-kingdom,
+authority-coverage.csv,sen-canada,disposition,,,no matching party name
+authority-coverage.csv,sen-afdb,coverage,party,african-development-bank,
+authority-coverage.csv,sen-world-bank-group,disposition,,,no matching party name
+authority-coverage.csv,sen-eib,coverage,party,european-investment-bank,
+authority-coverage.csv,sen-senelec,coverage,party,senelec,

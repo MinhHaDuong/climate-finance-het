@@ -1,6 +1,6 @@
 # Static observatory handoffs: one invocation, one JSON output; no collection.
 JETP_OBSERVATORY := deliverables/jetp-observatory
-JETP_OBSERVATORY_VIEWS := overview comparison documents ZAF IDN VNM SEN
+JETP_OBSERVATORY_VIEWS := overview comparison coverage documents ZAF IDN VNM SEN
 JETP_OBSERVATORY_EDITION_HISTORY := $(JETP_OBSERVATORY)/data/editions.json
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
 JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
@@ -16,7 +16,7 @@ JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inven
     scripts/jetp/_ledger_headers.py config/jetp-ledger.sql .githooks/pre-commit \
     $(wildcard data/jetp/lines.csv data/jetp/lines.d/*.csv data/jetp/line-fields/*.csv) \
     data/jetp/line-field-specs.csv data/jetp/routes.csv
-JETP_OBSERVATORY_INPUTS := data/jetp/migration/0875-projects-legacy.csv $(addprefix data/jetp/,$(addsuffix .csv,events implementation-events sources source-claims project-source-links project-coverage manifest event-timing documents retrievals snapshots)) \
+JETP_OBSERVATORY_INPUTS := data/jetp/migration/0875-projects-legacy.csv $(addprefix data/jetp/,$(addsuffix .csv,coverage events implementation-events sources source-claims project-source-links project-coverage manifest event-timing documents retrievals snapshots)) \
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) $(wildcard data/jetp/releases/*/release.json) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \
