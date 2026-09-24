@@ -11,7 +11,8 @@ the address it records are never touched.
 An address is asked with HEAD, then with GET (body never read) when HEAD is
 refused or unanswered. The outcome is one of
 
-- ``alive``: a 2xx or 3xx answer, redirects followed;
+- ``alive``: a 2xx answer once redirects are followed (a 3xx only where the
+  redirect could not be followed further);
 - ``dead``: HTTP 404 or 410, or the page's own host name no longer resolves — the
   publisher says the page is gone, or the publisher is gone;
 - ``unreachable``: anything else (403 to robots, 5xx, timeout, TLS error).

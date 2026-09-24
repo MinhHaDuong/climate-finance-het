@@ -191,6 +191,22 @@ def test_the_run_resumes_retries_failures_and_trips_its_breaker(tmp_path) -> Non
     assert all(table[d]["outcome"] == "failed" for d in ("doc-1", "doc-2", "doc-3"))
 
 
+def test_any_answer_from_save_page_now_resets_the_breaker(tmp_path) -> None:
+    # Review of PR #1497: a rate limit proves the host answers, so it must not
+    # let two non-consecutive connection failures trip a breaker of two.
+    documents = [dict(source_id=f"doc-{n}", url=f"https://p.example/{n}",
+                      collected_at="2026-09-12T00:00:00Z") for n in range(4)]
+    down = requests.ConnectTimeout("down")
+    service, _ = wayback({
+        ("GET", corpus_web_archive_capture.AVAILABILITY): [NONE],
+        ("POST", corpus_web_archive_capture.SAVE): [down, Response(429), down, down],
+    }, backoff=())
+
+    corpus_web_archive_capture.run(documents, tmp_path / "c.csv", service, breaker=2)
+
+    assert sum(c[0] == "POST" for c in service.http.calls) == 4
+
+
 def test_an_unreachable_lookup_still_asks_for_a_capture() -> None:
     service, _ = wayback({
         ("GET", corpus_web_archive_capture.AVAILABILITY): [requests.ConnectionError("x")],

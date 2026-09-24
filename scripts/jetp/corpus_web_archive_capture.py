@@ -100,7 +100,8 @@ def collected_documents(ledger_dir=LEDGER):
     found = {}
     for row in _read(Path(ledger_dir) / 'retrievals.csv'):
         if row.get('sha256') and row.get('final_url'):
-            found.setdefault((row['document_id'], row['final_url']), row['retrieved_at'])
+            key = (row['document_id'], row['final_url'])
+            found[key] = min(found.get(key, row['retrieved_at']), row['retrieved_at'])
     for row in _read(Path(ledger_dir) / 'manifest.csv'):
         if row.get('sha256') and row.get('final_url'):
             key = (row['source_id'], row['final_url'])
@@ -275,9 +276,15 @@ def run(documents, output, wayback, reuse_window_days=365, breaker=5, limit=None
             row = dict(source_id=key[0], url=key[1], outcome='failed', capture_url='',
                        captured_at='', attempted_at=now(),
                        error=f'{type(exc).__name__}: {exc}'[:160])
+        # Only a capture request tells whether Save Page Now answers: a reused
+        # snapshot or a Common Crawl row asked it nothing, and a row the
+        # tripped breaker skipped says only 'wayback_unreachable'. Any other
+        # answer -- a capture, a refusal, a rate limit, an unreadable reply --
+        # proves the host is up.
         if row['error'].startswith('wayback_unreachable ('):
             unreachable += 1
-        elif row['outcome'] in ('captured',) or row['error'].startswith('save_'):
+        elif row['outcome'] == 'captured' or (
+                row['outcome'] == 'failed' and not row['error'].startswith('wayback_unreachable')):
             unreachable = 0
         rows[key] = row
         write_captures(rows, output)

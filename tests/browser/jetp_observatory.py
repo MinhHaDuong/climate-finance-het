@@ -210,6 +210,9 @@ def check_web_archive(page, url):
     checks = {c['url']: c for c in page.request.get(url + '/data/publisher-links.json').json()['checks']}
     dead = [row for row in registry if checks.get(row['url'], {}).get('outcome') == 'dead']
     shown = [row for row in registry if row['url'] in captures][:12]
+    # Not a silent pass: the served views must name copies and checks at all.
+    assert shown, 'data/web-archive.json names no Web Archive copy of any document'
+    assert checks, 'data/publisher-links.json records no link check'
     page.goto(url + '/#documents')
     page.wait_for_selector('#documents-filters')
     for row in shown + dead:
