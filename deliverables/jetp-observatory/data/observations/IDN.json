@@ -2442,7 +2442,7 @@
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "secondary_news",
-    "sha256": null,
+    "sha256": "9803416b0403f306f9d91b12346f7e702de57d338479419b9bf0667a320f5766",
     "pdf_page": null
   },
   {
@@ -2961,7 +2961,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "9803416b0403f306f9d91b12346f7e702de57d338479419b9bf0667a320f5766",
     "pdf_page": null
   },
   {
@@ -3246,7 +3246,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "provisional",
-    "sha256": null,
+    "sha256": "420b776cb72eb5813716346818855a6a0dd9d8a5253d064f8bff8a72f58b3ec1",
     "pdf_page": null
   },
   {
@@ -3261,7 +3261,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "confirmed",
-    "sha256": null,
+    "sha256": "420b776cb72eb5813716346818855a6a0dd9d8a5253d064f8bff8a72f58b3ec1",
     "pdf_page": null
   }
 ]

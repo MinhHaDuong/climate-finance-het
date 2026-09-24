@@ -254,7 +254,9 @@ def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> No
     # Twenty-one, not the twenty-two measured before the registry rule stopped
     # ranking on disk state: sen-arcop-aser-audit-2023 has a recorded digest
     # and only looked archive-less because its bytes were absent here.
-    assert len(unarchived) == 21
+    # Thirteen since ticket 0926 replayed the author's browser session on the
+    # blocked sources: eight of these rows cite a source it then collected.
+    assert len(unarchived) == 13
     assert all(registry[source_id]["sha256"] is None for _, _, source_id in unarchived)
 
 
