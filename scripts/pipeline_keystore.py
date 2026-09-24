@@ -15,6 +15,7 @@ call and restore the process environment afterwards.
 import logging
 import os
 import re
+import threading
 from collections.abc import Iterator
 from contextlib import contextmanager
 
@@ -86,6 +87,13 @@ def read_credential(
     return stored[source]
 
 
+# Destinations this module has set, with the number of contexts relying on
+# each. os.environ is process-global and LLM calls run in thread pools, so the
+# first context to exit must not pop a value another call still uses.
+_ENV_LOCK = threading.Lock()
+_ENV_HOLDERS: dict[str, int] = {}
+
+
 @contextmanager
 def credential_environment(
     provider: str,
@@ -94,22 +102,35 @@ def credential_environment(
     *,
     keys_dir: str | None = None,
 ) -> Iterator[None]:
-    """Expose one credential under ``destination`` only inside the context."""
+    """Expose one credential under ``destination`` only inside the context.
+
+    Overlapping contexts share the value: it is set by the first entrant and
+    removed when the last one exits. A value the caller supplied before any
+    context is never touched.
+    """
     if not _IDENTIFIER_RE.match(destination):
         _log.warning("ignoring invalid credential destination: %r", destination)
         yield
         return
-    if os.environ.get(destination):
-        yield
-        return
 
-    value = read_credential(provider, source, keys_dir=keys_dir)
-    if not value:
-        yield
-        return
-
-    os.environ[destination] = value
+    with _ENV_LOCK:
+        if destination in _ENV_HOLDERS:
+            _ENV_HOLDERS[destination] += 1
+            held = True
+        elif os.environ.get(destination):
+            held = False
+        else:
+            value = read_credential(provider, source, keys_dir=keys_dir)
+            held = bool(value)
+            if held:
+                os.environ[destination] = value
+                _ENV_HOLDERS[destination] = 1
     try:
         yield
     finally:
-        os.environ.pop(destination, None)
+        if held:
+            with _ENV_LOCK:
+                _ENV_HOLDERS[destination] -= 1
+                if not _ENV_HOLDERS[destination]:
+                    del _ENV_HOLDERS[destination]
+                    os.environ.pop(destination, None)

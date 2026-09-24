@@ -36,7 +36,15 @@ _project_gh() {
     local key_file="${CLIMATE_FINANCE_KEYS_DIR:-$HOME/.config/keys}/github.env"
     local token=""
     if [ -r "$key_file" ]; then
-        token="$(set +u; . "$key_file"; printf '%s' "${AGENT_GH_TOKEN_CLIMATEFINANCE:-}")"
+        # Parse, never source: the file is data. Last assignment wins, an
+        # optional `export `, CRLF and one matching quote pair are tolerated,
+        # as in scripts/pipeline_keystore.py.
+        token="$(sed -n -E 's/^[[:space:]]*(export[[:space:]]+)?AGENT_GH_TOKEN_CLIMATEFINANCE=//p' "$key_file" | tail -n 1)"
+        token="${token%$'\r'}"
+        case "$token" in
+            \"*\") token="${token:1:${#token}-2}" ;;
+            \'*\') token="${token:1:${#token}-2}" ;;
+        esac
     fi
     if [ -n "$token" ]; then
         GH_TOKEN="$token" gh "$@"

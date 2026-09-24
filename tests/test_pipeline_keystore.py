@@ -108,3 +108,27 @@ def test_missing_provider_file_degrades_quietly(tmp_path):
         )
         == ""
     )
+
+
+def test_overlapping_contexts_keep_the_value_until_the_last_exit(keystore):
+    """Concurrent LLM calls share one process environment (syllabi_process
+    runs llm_call in a 20-worker pool): the first caller to leave must not
+    pop the key out from under a call still in flight."""
+    first = credential_environment(
+        "openrouter",
+        "OPENROUTER_API_KEY_CLIMATEFINANCE",
+        "OPENROUTER_API_KEY",
+        keys_dir=keystore,
+    )
+    second = credential_environment(
+        "openrouter",
+        "OPENROUTER_API_KEY_CLIMATEFINANCE",
+        "OPENROUTER_API_KEY",
+        keys_dir=keystore,
+    )
+    first.__enter__()
+    second.__enter__()
+    first.__exit__(None, None, None)
+    assert os.environ.get("OPENROUTER_API_KEY") == "tok-openrouter"
+    second.__exit__(None, None, None)
+    assert "OPENROUTER_API_KEY" not in os.environ
