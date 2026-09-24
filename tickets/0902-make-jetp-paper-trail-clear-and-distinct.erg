@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-24T12:45Z HDMX-coding-agent created from the author's cold read of the local demo: Entries versus On the record was unclear, Funding repeated the Projects table, and Who's who duplicated organisations by role and hid project names behind a count.
 2026-09-24T12:52Z HDMX-coding-agent added the author's fourth request: The tallies' “Comparisons” label misleadingly suggests a comparison between JETP countries; the page holds non-JETP World Bank operations.
+2026-09-24T13:04Z HDMX-coding-agent added the author's Entries request: URLs embedded in `raw_project_description` should open as links from “Label and document columns.”
 
 --- body ---
 ## Context
@@ -20,6 +21,9 @@ column shows a count behind a fold-out rather than the names. These are three
 parts of one task: each step of The paper trail should answer a different
 reader question, in ordinary language, without overstating what the sources
 establish.
+The Entries detail currently escapes every non-term field as plain text, so
+URLs embedded in `raw_project_description` of South Africa register rows
+cannot be opened from the row.
 
 ## Proposed public copy for author review
 
@@ -99,6 +103,20 @@ records. Update the header menu, section sub-bar, page title, internal links,
 README and presentation document together. Preserve `#comparisons` and its
 earlier aliases as forwarding addresses, including the country filter.
 
+## Entries: links embedded in document text
+
+In the “Label and document columns” fold-out, render valid `http://` and
+`https://` URLs inside `raw_project_description` as clickable external links.
+Keep the surrounding description exactly as printed and keep the CSV/JSON
+value unchanged. Treat the field as untrusted text: escape ordinary
+characters and the destination attribute, accept only HTTP(S), trim
+sentence-ending punctuation from the link, and use `target="_blank"
+rel="noopener noreferrer"`. Handle more than one URL in a description.
+An invalid or unsupported URL stays visible as text. Restrict this behavior
+to fields intended to contain document text; do not turn every field value
+into HTML. Include a browser check using an actual ZAF row such as ACTIP001
+or CAN001, plus a malicious or malformed value that must remain inert.
+
 ## Relevant files
 
 - `deliverables/jetp-observatory/app.js`, `styles.css` — page copy and tables
@@ -114,4 +132,5 @@ earlier aliases as forwarding addresses, including the country filter.
 - [ ] One same-name funder/operator within a country appears once with both roles and no duplicate project links; each role filter still finds it. Reviewed aliases are visible by mouse and keyboard without accepting unreviewed identity matches.
 - [ ] Up to three project names are directly visible in each organisation row; the rest open through an “and X more” disclosure with working project links.
 - [ ] The tallies labels the historical World Bank pool as non-JETP energy operations; no navigation text implies a country-to-country JETP comparison, and old addresses still forward with their filters.
+- [ ] URLs embedded in an Entries `raw_project_description` open the intended HTTP(S) page; prose and punctuation remain readable, multiple URLs work, and unsafe text cannot become executable markup or a non-HTTP(S) link.
 - [ ] Desktop and phone browser checks cover the copy, table width, filters, links and disclosures. Existing URLs forward if labels change. Run the checks required by AGENTS.md for a site/code change and record them on the PR.
