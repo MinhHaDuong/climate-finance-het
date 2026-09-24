@@ -26,12 +26,15 @@ JETP_OBSERVATORY_INPUTS := data/jetp/migration/0875-projects-legacy.csv $(addpre
 
 JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
 JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
+JETP_V2_EVENT_FILES := data/jetp/observations.csv data/jetp/timings.csv data/jetp/rates.csv \
+    data/jetp/migration/0876-pending.csv
 # Every table, not only the three served: build_observations.py goes through
 # read_inputs, which loads and cross-validates all nine. No DVC pointer, and
 # that is a property of the build rather than an omission: the registry is
 # collapsed on the recorded digest, so the four views are identical whether or
 # not the document snapshot is checked out.
 JETP_OBSERVATIONS_INPUTS := $(filter data/jetp/%.csv,$(JETP_OBSERVATORY_INPUTS)) \
+    data/jetp/migration/0875-dispositions.csv \
     scripts/jetp/build_observations.py scripts/jetp/build_observatory.py \
     scripts/jetp/_observatory_data.py scripts/jetp/_m1a_document_links.py
 
@@ -55,10 +58,10 @@ $(JETP_M1A_FILES) &: $(JETP_M1A_INPUTS)
 
 # Independent of jetp-observatory, as jetp-m1a already is: the four views are a
 # second reading of the same ledger, not an input of the country JSON.
-jetp-observations: $(JETP_OBSERVATIONS_FILES)
+jetp-observations: $(JETP_OBSERVATIONS_FILES) $(JETP_V2_EVENT_FILES)
 
-$(JETP_OBSERVATIONS_FILES) &: $(JETP_OBSERVATIONS_INPUTS)
-	$(PYTHON) scripts/jetp/build_observations.py --output-dir $(JETP_OBSERVATIONS_DIR)
+$(JETP_OBSERVATIONS_FILES) $(JETP_V2_EVENT_FILES) &: $(JETP_OBSERVATIONS_INPUTS)
+	$(PYTHON) scripts/jetp/build_observations.py --write-normalized --output-dir $(JETP_OBSERVATIONS_DIR)
 
 jetp-ontology-views: $(JETP_ONTOLOGY_VIEWS)
 
