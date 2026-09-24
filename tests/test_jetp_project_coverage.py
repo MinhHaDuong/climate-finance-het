@@ -94,7 +94,7 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 def test_every_indonesian_project_has_a_followup_row() -> None:
     project_ids = {
         row["project_id"]
-        for row in read_csv(DATA / "projects.csv")
+        for row in read_csv(DATA / "migration/0875-projects-legacy.csv")
         if row["country"] == "IDN"
     }
     coverage = [
@@ -207,7 +207,7 @@ def test_direct_approved_finance_sources_are_adjudicated_and_summarized() -> Non
 def test_indonesian_grants_link_the_direct_official_portfolio() -> None:
     grant_projects = {
         row["project_id"]
-        for row in read_csv(DATA / "projects.csv")
+        for row in read_csv(DATA / "migration/0875-projects-legacy.csv")
         if row["country"] == "IDN" and row["project_id"].startswith("idn-grant-")
     }
     coverage = {
@@ -348,7 +348,7 @@ def test_the_vietnamese_count_slot_sources_have_a_recorded_collection_attempt() 
     """
     slot_ids = {
         row["project_id"]
-        for row in read_csv(DATA / "projects.csv")
+        for row in read_csv(DATA / "migration/0875-projects-legacy.csv")
         if row["country"] == "VNM" and row["verification_status"] == "official_count_slot"
     }
     assert len(slot_ids) == 21

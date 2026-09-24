@@ -16,7 +16,7 @@ JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inven
     scripts/jetp/_ledger_headers.py config/jetp-ledger.sql .githooks/pre-commit \
     $(wildcard data/jetp/lines.csv data/jetp/lines.d/*.csv data/jetp/line-fields/*.csv) \
     data/jetp/line-field-specs.csv data/jetp/routes.csv
-JETP_OBSERVATORY_INPUTS := $(addprefix data/jetp/,$(addsuffix .csv,projects events implementation-events sources source-claims project-source-links project-coverage manifest event-timing documents retrievals snapshots)) \
+JETP_OBSERVATORY_INPUTS := data/jetp/migration/0875-projects-legacy.csv $(addprefix data/jetp/,$(addsuffix .csv,events implementation-events sources source-claims project-source-links project-coverage manifest event-timing documents retrievals snapshots)) \
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) $(wildcard data/jetp/releases/*/release.json) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \

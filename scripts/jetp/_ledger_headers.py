@@ -34,13 +34,10 @@ LEDGER_DIR = ROOT / 'data' / 'jetp'
 ONTOLOGY_TABLES = ('terms', 'status_crosswalk', 'sector_crosswalk', 'perimeters',
                    'marker_coefficients')
 
-# Files of the current ledger that share a path with a table of the new one
-# and are not yet replaced. Skipped only in the real data/jetp/ directory; the
-# ticket that writes the new table removes its entry.
-LEGACY_FILES = {
-    'projects': 'legacy identity registry, replaced by the identity split '
-                '(migration step 4, ticket 0875)',
-}
+# Files of the current ledger that share a path with a table of the new one.
+# Ticket 0875 replaced projects.csv; its old rows are retained under
+# migration/0875-projects-legacy.csv for compatibility readers until 0878.
+LEGACY_FILES = {}
 
 CHUNK_NAME = re.compile(r'^(?P<country>[A-Z]{3})-(?P<year>\d{4})\.csv$')
 
@@ -279,4 +276,3 @@ def _remove_stale_chunks(directory, keep=()):
             path.unlink()
     if not any(directory.iterdir()):
         directory.rmdir()
-

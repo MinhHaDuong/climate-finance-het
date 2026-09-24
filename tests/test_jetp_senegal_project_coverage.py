@@ -35,7 +35,7 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
 def test_plan_lines_resolve_to_43_distinct_project_or_programme_records() -> None:
     projects = [
-        row for row in read_csv(DATA / "projects.csv") if row["country"] == "SEN"
+        row for row in read_csv(DATA / "migration/0875-projects-legacy.csv") if row["country"] == "SEN"
     ]
     project_ids = {row["project_id"] for row in projects}
     plan_rows = [
@@ -75,7 +75,7 @@ def test_quick_win_crosswalk_uses_only_plan_demonstrated_matches() -> None:
 def test_every_senegal_project_has_a_terminal_followup_verdict() -> None:
     project_ids = {
         row["project_id"]
-        for row in read_csv(DATA / "projects.csv")
+        for row in read_csv(DATA / "migration/0875-projects-legacy.csv")
         if row["country"] == "SEN"
     }
     coverage = [
@@ -213,7 +213,7 @@ def test_biognv_advisory_approval_is_not_plant_capital_finance() -> None:
 
 def test_senegal_completion_report_covers_every_project_and_its_limits() -> None:
     report = (ROOT / "docs" / "jetp-senegal-review-2026-09-13.md").read_text()
-    for row in read_csv(DATA / "projects.csv"):
+    for row in read_csv(DATA / "migration/0875-projects-legacy.csv"):
         if row["country"] == "SEN":
             assert row["project_id"] in report
     assert "central_only" in report

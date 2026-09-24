@@ -32,7 +32,7 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 
 def test_july_2025_portfolio_has_24_source_bounded_project_records() -> None:
     projects = [
-        row for row in read_csv(DATA / "projects.csv") if row["country"] == "VNM"
+        row for row in read_csv(DATA / "migration/0875-projects-legacy.csv") if row["country"] == "VNM"
     ]
     project_ids = {row["project_id"] for row in projects}
     initial_slots = {
@@ -57,7 +57,7 @@ def test_july_2025_portfolio_has_24_source_bounded_project_records() -> None:
 def test_undisclosed_slots_do_not_invent_project_identities() -> None:
     projects = [
         row
-        for row in read_csv(DATA / "projects.csv")
+        for row in read_csv(DATA / "migration/0875-projects-legacy.csv")
         if row["country"] == "VNM" and "-undisclosed-" in row["project_id"]
     ]
 
@@ -75,7 +75,7 @@ def test_undisclosed_slots_do_not_invent_project_identities() -> None:
 def test_every_vietnamese_project_has_a_terminal_followup_verdict() -> None:
     project_ids = {
         row["project_id"]
-        for row in read_csv(DATA / "projects.csv")
+        for row in read_csv(DATA / "migration/0875-projects-legacy.csv")
         if row["country"] == "VNM"
     }
     coverage = [

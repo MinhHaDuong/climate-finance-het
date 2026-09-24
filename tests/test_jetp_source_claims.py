@@ -25,7 +25,7 @@ def split_ids(value: str) -> set[str]:
 def test_source_claims_reference_known_sources_and_projects() -> None:
     claims = read_csv(CLAIMS)
     source_ids = {row["source_id"] for row in read_csv(DATA / "sources.csv")}
-    project_ids = {row["project_id"] for row in read_csv(DATA / "projects.csv")}
+    project_ids = {row["project_id"] for row in read_csv(DATA / "migration/0875-projects-legacy.csv")}
 
     assert claims
     assert len({row["claim_id"] for row in claims}) == len(claims)

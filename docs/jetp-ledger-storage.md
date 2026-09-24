@@ -126,8 +126,10 @@ Rules that the validator enforces:
   `status-crosswalk`.
 - No column holds a semicolon-separated list; a list is rows in a relation
   table.
-- `routes` maps every identifier the observatory has ever served to its new
-  kind and identifier, so no public route breaks.
+- `routes` maps identifiers from a published edition to their new kind and
+  identifier, so no public route breaks. The prepublication preview IDs were
+  never public and are dispositions in the migration report, not redirects
+  (author decision, 2026-09-24; PR #1492 removed the browser forwards).
 - Every count exported names its unit: lines of a document, referents of a
   kind, or a perimeter observation.
 

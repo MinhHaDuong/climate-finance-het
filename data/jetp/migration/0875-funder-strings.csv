@@ -1,0 +1,61 @@
+funder_text,event_count,disposition,party_id,note
+ACT-IP,2,name_resolved_role_pending,act-ip,Event-specific source line and role follow in step 5
+AFD,2,name_resolved_role_pending,afd,Event-specific source line and role follow in step 5
+AfDB,4,name_resolved_role_pending,afdb,Event-specific source line and role follow in step 5
+African Development Bank,1,name_resolved_role_pending,african-development-bank,Event-specific source line and role follow in step 5
+Agence française de développement,2,name_resolved_role_pending,agence-francaise-de-developpement,Event-specific source line and role follow in step 5
+Asian Development Bank,1,name_resolved_role_pending,asian-development-bank,Event-specific source line and role follow in step 5
+British International Investment,1,name_resolved_role_pending,british-international-investment,Event-specific source line and role follow in step 5
+Canada,9,name_resolved_role_pending,canada,Event-specific source line and role follow in step 5
+Canada Clean Energy and Forest Climate Facility,1,composite_pending,,Event-specific source line and role follow in step 5
+Canada via IEA,1,composite_pending,,Event-specific source line and role follow in step 5
+Canada via IISD,1,composite_pending,,Event-specific source line and role follow in step 5
+Canada via UNOPS,1,composite_pending,,Event-specific source line and role follow in step 5
+Canada via World Bank,1,composite_pending,,Event-specific source line and role follow in step 5
+Canada via World Bank and ADB,1,composite_pending,,Event-specific source line and role follow in step 5
+CIF-ACT and MDB cofinance via ADB,1,composite_pending,,Event-specific source line and role follow in step 5
+Climate Investment Funds via ADB,1,composite_pending,,Event-specific source line and role follow in step 5
+Climate Investment Funds via World Bank,2,composite_pending,,Event-specific source line and role follow in step 5
+DEG / Proparco / Standard Chartered,1,composite_pending,,Event-specific source line and role follow in step 5
+Denmark,17,name_resolved_role_pending,denmark,Event-specific source line and role follow in step 5
+European Investment Bank,1,name_resolved_role_pending,european-investment-bank,Event-specific source line and role follow in step 5
+European Union,21,name_resolved_role_pending,european-union,Event-specific source line and role follow in step 5
+European Union via ADB ACGF,1,composite_pending,,Event-specific source line and role follow in step 5
+European Union via AFD,2,composite_pending,,Event-specific source line and role follow in step 5
+European Union via KfW,3,composite_pending,,Event-specific source line and role follow in step 5
+Financier to be confirmed,4,not_a_named_party,,Event-specific source line and role follow in step 5
+France,20,name_resolved_role_pending,france,Event-specific source line and role follow in step 5
+France via AFD,1,composite_pending,,Event-specific source line and role follow in step 5
+German financial cooperation / KfW,1,composite_pending,,Event-specific source line and role follow in step 5
+Germany,43,name_resolved_role_pending,germany,Event-specific source line and role follow in step 5
+Germany via BMZ,5,composite_pending,,Event-specific source line and role follow in step 5
+Germany via BMZ and GIZ,3,composite_pending,,Event-specific source line and role follow in step 5
+Germany via BMZ and KfW,4,composite_pending,,Event-specific source line and role follow in step 5
+Germany via IKI and ADB,1,composite_pending,,Event-specific source line and role follow in step 5
+Germany via IKI and GGGI,1,composite_pending,,Event-specific source line and role follow in step 5
+Germany via IKI and GIZ,1,composite_pending,,Event-specific source line and role follow in step 5
+Germany via IKI BMWK,4,composite_pending,,Event-specific source line and role follow in step 5
+Germany via KfW,1,composite_pending,,Event-specific source line and role follow in step 5
+IDC,3,name_resolved_role_pending,idc,Event-specific source line and role follow in step 5
+Japan Bank for International Cooperation,1,authority_candidate_pending,,Event-specific source line and role follow in step 5
+Japan via ADB,2,composite_pending,,Event-specific source line and role follow in step 5
+JET Funding Platform,5,name_resolved_role_pending,jet-funding-platform,Event-specific source line and role follow in step 5
+JICA,4,authority_candidate_pending,,Event-specific source line and role follow in step 5
+KfW,7,name_resolved_role_pending,kfw,Event-specific source line and role follow in step 5
+Mitigation Action Facility,1,name_resolved_role_pending,mitigation-action-facility,Event-specific source line and role follow in step 5
+Netherlands,20,name_resolved_role_pending,netherlands,Event-specific source line and role follow in step 5
+Norfund,3,authority_candidate_pending,,Event-specific source line and role follow in step 5
+Proposed financing mix,2,not_a_named_party,,Event-specific source line and role follow in step 5
+Spain,1,name_resolved_role_pending,spain,Event-specific source line and role follow in step 5
+Switzerland,9,name_resolved_role_pending,switzerland,Event-specific source line and role follow in step 5
+Undisclosed Japanese financier,1,not_a_named_party,,Event-specific source line and role follow in step 5
+Undisclosed private financier,5,not_a_named_party,,Event-specific source line and role follow in step 5
+Undisclosed private financiers,3,not_a_named_party,,Event-specific source line and role follow in step 5
+United Kingdom,72,name_resolved_role_pending,united-kingdom,Event-specific source line and role follow in step 5
+United Kingdom via ADB,1,composite_pending,,Event-specific source line and role follow in step 5
+United Kingdom via ETP and UNOPS,1,composite_pending,,Event-specific source line and role follow in step 5
+United Kingdom via FCDO,2,composite_pending,,Event-specific source line and role follow in step 5
+United Kingdom via MENTARI,1,composite_pending,,Event-specific source line and role follow in step 5
+United Kingdom via UNOPS and ETP,1,composite_pending,,Event-specific source line and role follow in step 5
+United Kingdom via World Bank,1,composite_pending,,Event-specific source line and role follow in step 5
+United States,35,name_resolved_role_pending,united-states,Event-specific source line and role follow in step 5

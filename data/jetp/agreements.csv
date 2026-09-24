@@ -1,0 +1,307 @@
+agreement_id,country,instrument,modality,sector,currency,tranche_of,notes
+agreement-zaf-register-actip001,ZAF,Grants,unknown,Skills,USD,,Legacy zaf-register-actip001; Skills Research Programme
+agreement-zaf-register-actip002,ZAF,Grants,unknown,JT-Mpumalanga,USD,,Legacy zaf-register-actip002; JT-Mpumalanga Community Development: Organisational Development
+agreement-zaf-register-can001,ZAF,Grants,unknown,Skills,CAD,,Legacy zaf-register-can001; Skills Research Programme
+agreement-zaf-register-can002,ZAF,Grants,unknown,Skills,CAD,,Legacy zaf-register-can002; Just Transition Support Programme
+agreement-zaf-register-can003,ZAF,Grants,unknown,Skills,CAD,,Legacy zaf-register-can003; Just Transition Support Programme
+agreement-zaf-register-can004,ZAF,Grants,unknown,Skills,CAD,,Legacy zaf-register-can004; Just Transition Support Programme
+agreement-zaf-register-can005,ZAF,Grants,unknown,Skills,CAD,,Legacy zaf-register-can005; JET SEP Skills Planning & Data Systems
+agreement-zaf-register-can006,ZAF,Grants,unknown,Skills,CAD,,Legacy zaf-register-can006; JET SEP Working Group Facilitation
+agreement-zaf-register-can007,ZAF,Grants,unknown,Skills,CAD,,Legacy zaf-register-can007; JET SEP TVET Lecturer Development
+agreement-zaf-register-can008,ZAF,Grants,unknown,Skills,CAD,,Legacy zaf-register-can008; JET SEP Workplace-Based Learning Expansion
+agreement-zaf-register-dk001,ZAF,Grants,unknown,Electricity,DKK,,Legacy zaf-register-dk001; Electricity Grid Infrastructure Programme
+agreement-zaf-register-dk002,ZAF,Grants,unknown,Electricity,DKK,,Legacy zaf-register-dk002; Electricity Grid Infrastructure Programme
+agreement-zaf-register-dk003,ZAF,Grants,unknown,JT-Mpumalanga,DKK,,Legacy zaf-register-dk003; JT-Mpumalanga Wind Energy: Mining Rights Mapping
+agreement-zaf-register-dk004,ZAF,Grants,unknown,JT-Mpumalanga,DKK,,Legacy zaf-register-dk004; Municipal Climate Resilience Programme: Alternative Service Delivery in Nomzamo
+agreement-zaf-register-dk005,ZAF,Grants,unknown,JT-Mpumalanga,DKK,,Legacy zaf-register-dk005; JT-Mpumalanga Wind Energy: Mpumalanga Wind Atlas
+agreement-zaf-register-dk006,ZAF,Grants,unknown,Electricity,DKK,,Legacy zaf-register-dk006; Just Transition Support Programme
+agreement-zaf-register-dk008,ZAF,Grants,unknown,Skills,DKK,,Legacy zaf-register-dk008; Skills Research Programme
+agreement-zaf-register-dk009,ZAF,Grants,unknown,Skills,DKK,,Legacy zaf-register-dk009; Skills Research Programme
+agreement-zaf-register-dk010,ZAF,Grants,unknown,Skills,DKK,,Legacy zaf-register-dk010; Skills Research Programme
+agreement-zaf-register-dk011,ZAF,Grants,unknown,Skills,DKK,,Legacy zaf-register-dk011; Skills Capacity Development Initiative
+agreement-zaf-register-dk012,ZAF,Grants,unknown,JT-Mpumalanga,DKK,,Legacy zaf-register-dk012; JT-Mpumalanga Skills Development: Green Entrepreneurship Skills
+agreement-zaf-register-dk013,ZAF,Grants,unknown,Electricity,DKK,,Legacy zaf-register-dk013; Electricity Infrastructure Development
+agreement-zaf-register-dk014,ZAF,Grants,unknown,Electricity,DKK,,Legacy zaf-register-dk014; Electricity Wind Energy Project
+agreement-zaf-register-dk015,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Electricity,USD,,Legacy zaf-register-dk015; Sturdee Energy Equity Investment
+agreement-zaf-register-dk018,ZAF,Grants,unknown,Electricity,DKK,,Legacy zaf-register-dk018; SADEPP
+agreement-zaf-register-dk019,ZAF,Grants,unknown,Skills,DKK,,Legacy zaf-register-dk019; JET Youth seminar
+agreement-zaf-register-dk020,ZAF,Grants,unknown,JT-Mpumalanga,DKK,,Legacy zaf-register-dk020; Reducing Food Loss and Waste (FLW) and Building Climate Resilience Among Smallholder Farmers in South Africa
+agreement-zaf-register-eu001,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-eu001; PCC Energy Modelling Support
+agreement-zaf-register-eu002,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-eu002; Climate Champions CSO Programme
+agreement-zaf-register-eu003,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-eu003; PCC Stakeholder and Community Engagement Support
+agreement-zaf-register-eu004,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-eu004; PCC Energy Modelling Support
+agreement-zaf-register-eu005,ZAF,Grants,unknown,Municipalities,EUR,,Legacy zaf-register-eu005; Municipal Climate Resilience Programme
+agreement-zaf-register-eu006,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-eu006; Skills Research Programme
+agreement-zaf-register-eu007,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-eu007; Skills Research Programme
+agreement-zaf-register-eu008,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-eu008; Green Hydrogen Infrastructure Development
+agreement-zaf-register-eu010,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-eu010; Skills Research Programme
+agreement-zaf-register-eu011,ZAF,Grants,unknown,Energy Efficiency,EUR,,Legacy zaf-register-eu011; Technical Assistance Facility Support to South Africa's Just Energy Transition
+agreement-zaf-register-eu012,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-eu012; Green Hydrogen Development Programme
+agreement-zaf-register-eu013,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-eu013; JT-Mpumalanga Solar Energy: MSME Green Energy Finance Support
+agreement-zaf-register-eu014,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-eu014; Electricity Technical Assistance Programme
+agreement-zaf-register-eu015,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-eu015; Green Hydrogen Development Programme
+agreement-zaf-register-eu016,ZAF,"Commercial Debt, Equity & Guarantees",unknown,NEVs,EUR,,Legacy zaf-register-eu016; Green Hydrogen Infrastructure Development
+agreement-zaf-register-eu017,ZAF,Grants,unknown,Electricity,EUR,,"Legacy zaf-register-eu017; For audits for Skills, MSME and TA Facility"
+agreement-zaf-register-eu018,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-eu018; Municipal Climate Resilience Programme
+agreement-zaf-register-eu019,ZAF,Grants,unknown,Road to Rail,EUR,,Legacy zaf-register-eu019; IIPSA Grant - EIB- JETP
+agreement-zaf-register-eu020,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-eu020; Support to Southern Africa's green hydrogen value chain — implemented by Climate Investor 3
+agreement-zaf-register-eu021,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-eu021; PtX Blended Facility
+agreement-zaf-register-fr001,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-fr001; Electricity Technical Assistance Programme
+agreement-zaf-register-fr002,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-fr002; Electricity Solar Energy Project
+agreement-zaf-register-fr003,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr003; Municipal Climate Resilience Programme: Steve Tshwete Diversification Support
+agreement-zaf-register-fr004,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr004; Municipal Climate Resilience Programme: Steve Tshwete Community Explorer
+agreement-zaf-register-fr005,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr005; Mpumalanga Just Transition Programme: Participatory Energy Transition Co-design
+agreement-zaf-register-fr006,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr006; Municipal Climate Resilience Programme: Emalahleni Energy Poverty Study
+agreement-zaf-register-fr007,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-fr007; Electricity Solar Energy Project
+agreement-zaf-register-fr009,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr009; Mpumalanga Just Transition Programme: Steve Tshwete Social Policy Mapping
+agreement-zaf-register-fr010,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr010; Mpumalanga Just Transition Programme: Mining Ghost Town Revitalisation Study
+agreement-zaf-register-fr011,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr011; PCC Just Transition Partnering Implementation Model
+agreement-zaf-register-fr012,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-fr012; Just Transition Support Programme
+agreement-zaf-register-fr013,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-fr013; Skills Communication Initiative
+agreement-zaf-register-fr014,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-fr014; Just Transition Support Programme
+agreement-zaf-register-fr015,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr015; Mpumalanga Just Transition Programme: Social Protection Financing Study
+agreement-zaf-register-fr016,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr016; Mpumalanga Just Transition Programme: Nkangala Skills Ecosystem Mapping
+agreement-zaf-register-fr017,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-fr017; Municipal Climate Resilience Programme
+agreement-zaf-register-fr019,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-fr019; Skills Technical Assistance Programme
+agreement-zaf-register-fr020,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr020; JT-Mpumalanga Community Development: JET Funding Platform Operationalisation
+agreement-zaf-register-fr021,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr021; JT-Mpumalanga Community Development: Komati Socio-economic Support
+agreement-zaf-register-fr022,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-fr022; JT-Mpumalanga Community Development: Gender Mainstreaming Support
+agreement-zaf-register-fp001-1,ZAF,Grants,unknown,JT-Mpumalanga,ZAR,,Legacy zaf-register-fp001-1; Social Employment Fund -Komati
+agreement-zaf-register-fp001-2,ZAF,Grants,unknown,Skills,ZAR,,Legacy zaf-register-fp001-2; TIPs: Just Transition Labour Centre
+agreement-zaf-register-fp001-3,ZAF,Grants,unknown,Skills,ZAR,,Legacy zaf-register-fp001-3; JET-Skilling for Employment in Action
+agreement-zaf-register-fp001-4,ZAF,Grants,unknown,JT-Mpumalanga,ZAR,,Legacy zaf-register-fp001-4; Dipaleseng Just Energy Transition Indalopreneur project (D JET-IP)
+agreement-zaf-register-fp001-5,ZAF,Grants,unknown,NEVs,EUR,,Legacy zaf-register-fp001-5; Electrifying the South African Minibus Taxi
+agreement-zaf-register-gr001,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr001; Electricity Technical Assistance Programme
+agreement-zaf-register-gr002,ZAF,Grants,unknown,Electricity,EUR,,"Legacy zaf-register-gr002; SAGEN CET ""“ Capacities for the Energy Transition"
+agreement-zaf-register-gr003,ZAF,Grants,unknown,Electricity,EUR,,"Legacy zaf-register-gr003; SAGEN ""“ South African-German Energy Programme IV"
+agreement-zaf-register-gr004,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr004; PtX Hub
+agreement-zaf-register-gr006,ZAF,Grants,unknown,Electricity,EUR,,"Legacy zaf-register-gr006; SAGEN CET II ""“ Capacities for the Energy Transition"
+agreement-zaf-register-gr007,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-gr007; Just Transition to a Decarbonised Economy (JUST SA)
+agreement-zaf-register-gr008,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr008; Electricity Community Development Initiative
+agreement-zaf-register-gr009,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr009; Electricity Infrastructure Development
+agreement-zaf-register-gr011,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr011; Green Hydrogen Infrastructure Development
+agreement-zaf-register-gr012,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr012; H2.SA Promoting a South African green and sustainable hydrogen economy.
+agreement-zaf-register-gr013,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-gr013; Skills Development Programme
+agreement-zaf-register-gr014,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-gr014; Skills Development Programme
+agreement-zaf-register-gr014b,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-gr014b; Skills4Jet II
+agreement-zaf-register-gr015,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-gr015; Career Path Development for Employment (CPD4E)
+agreement-zaf-register-gr016,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-gr016; Support to the Presidential Youth Employment Intervention - S2PYEI
+agreement-zaf-register-gr017,ZAF,Grants,unknown,Municipalities,EUR,,Legacy zaf-register-gr017; Climate Support Programme (CSP 4)
+agreement-zaf-register-gr018,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-gr018; Green Economy Transition (GET)
+agreement-zaf-register-gr019,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-gr019; JT-Mpumalanga Community Development: Peer Learning Exchange
+agreement-zaf-register-gr020,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-gr020; JT-Mpumalanga Capacity Development: Subnational JET Capacity Building
+agreement-zaf-register-gr021,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr021; Green Hydrogen Research Programme
+agreement-zaf-register-gr022,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr022; Green Hydrogen Technical Assistance Programme
+agreement-zaf-register-gr023,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-gr023; Skills Research Programme
+agreement-zaf-register-gr024,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-gr024; Skills Research Programme
+agreement-zaf-register-gr025,ZAF,Concessional loans,unknown,Electricity,EUR,,Legacy zaf-register-gr025; Power Sector Reform Programme
+agreement-zaf-register-gr026,ZAF,Concessional loans,unknown,Electricity,EUR,,Legacy zaf-register-gr026; Renewable Energy & Green Hydrogen Financing Facility (REGHF)
+agreement-zaf-register-gr026b,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr026b; Renewable Energy & Green Hydrogen Financing Facility (REGHF) - Accompanying measure
+agreement-zaf-register-gr027,ZAF,Concessional loans,unknown,Municipalities,EUR,,Legacy zaf-register-gr027; Climate-friendly and energy-efficient Urban Development in South Africa
+agreement-zaf-register-gr028,ZAF,Concessional loans,unknown,Electricity,EUR,,Legacy zaf-register-gr028; Support Programme for the Just Energy Transition (JET)
+agreement-zaf-register-gr028b,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr028b; Support Programme for the Just Energy Transition (JET) - Accompanying measure
+agreement-zaf-register-gr029,ZAF,Concessional loans,unknown,Electricity,EUR,,Legacy zaf-register-gr029; Support Programme for the Just Energy Transition (JET) II
+agreement-zaf-register-gr029b,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr029b; Support Programme for the Just Energy Transition (JET) II - Accompanying measure
+agreement-zaf-register-gr030,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr030; Funding Programme Green Hydrogen South Africa II
+agreement-zaf-register-gr031,ZAF,Policy Loans,unknown,Electricity,EUR,,Legacy zaf-register-gr031; Policy-based loan I and II
+agreement-zaf-register-gr032,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-gr032; Skills & Employment Program (IRM) II
+agreement-zaf-register-gr033,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr033; Strengthening Societal Participation in SA's Energy Transition
+agreement-zaf-register-gr034,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr034; Promotion of the energy value chains green hydrogen and battery production (H2.SA II plus)
+agreement-zaf-register-gr035,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr035; South African-German Energy Programme 5 (SAGEN 5)
+agreement-zaf-register-gr036,ZAF,Grants,unknown,NEVs,EUR,,Legacy zaf-register-gr036; Leapfrogging to Zero Emission Transport in Sub Saharan Africa
+agreement-zaf-register-gr037,ZAF,Grants,unknown,Electricity,EUR,,Legacy zaf-register-gr037; Integrated NDC Implementation Support in South Africa
+agreement-zaf-register-gr038,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr038; Hydrogen Ramp-Up Programme (H2Uppp)
+agreement-zaf-register-gr039,ZAF,Policy Loans,unknown,Electricity,EUR,,Legacy zaf-register-gr039; Policy-based loan III
+agreement-zaf-register-gr040,ZAF,Concessional loans,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr040; Support Programme for the Just Energy Transition (JET) III
+agreement-zaf-register-gr041,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-gr041; Support Programme for the Just Energy Transition (JET) III - Accompanying measure
+agreement-zaf-register-nl001-1,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl001-1; (CERF23ZA1O) Water catchment in Grootvlei area
+agreement-zaf-register-nl001-2,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl001-2; (CERF24ZA1I) Waterstudy Horticulture Grootvlei
+agreement-zaf-register-nl001-3,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,"Legacy zaf-register-nl001-3; ""Study: Repurposing Grootvlei power station into a sustainable and agriculture area"
+agreement-zaf-register-nl001-4,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl001-4; Community Engagement Grootvlei
+agreement-zaf-register-nl001-5,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl001-5; Grootvlei Horticulture Expertise Facility Training Impact Cluster
+agreement-zaf-register-nl001-6,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl001-6; Subsidy Greenhouse EARN
+agreement-zaf-register-nl001-7,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl001-7; Grootvlei Horticulture Demonstration Facility Development
+agreement-zaf-register-nl001-8,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,"Legacy zaf-register-nl001-8; ""Grootvlei Horticulture Demonstration Facility Development 2"
+agreement-zaf-register-nl001-9,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl001-9; Exchange programme on just transition and agricultural developments
+agreement-zaf-register-nl002,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl002; JT-Mpumalanga Community Development: Youth in Action
+agreement-zaf-register-nl003,ZAF,Grants,unknown,Municipalities,EUR,,Legacy zaf-register-nl003; Municipalities Technical Assistance Programme
+agreement-zaf-register-nl004,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-nl004; Green Hydrogen Development Programme
+agreement-zaf-register-nl005,ZAF,Grants,unknown,Green hydrogen,EUR,,Legacy zaf-register-nl005; Green Hydrogen Development Programme
+agreement-zaf-register-nl006,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl006; JT-Mpumalanga Skills Development: Mining Sector Social Dialogue Skills
+agreement-zaf-register-nl007,ZAF,Grants,unknown,Skills,EUR,,Legacy zaf-register-nl007; Sustainable Solar Job Creation
+agreement-zaf-register-nl008,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,"Legacy zaf-register-nl008; GIS based, sparial overview Grootvlei Catchment aea"
+agreement-zaf-register-nl009,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl009; Economic Drivers Study
+agreement-zaf-register-nl010,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl010; Baseline study Grootvlei
+agreement-zaf-register-nl011,ZAF,Grants,unknown,JT-Mpumalanga,EUR,,Legacy zaf-register-nl011; Liaison Grootvlei
+agreement-zaf-register-nl012,ZAF,Grants,unknown,Municipalities,EUR,,Legacy zaf-register-nl012; Alternative Waste Treatment Technology Johannesburg
+agreement-zaf-register-sw001,ZAF,Grants,unknown,Municipalities,CHF,,Legacy zaf-register-sw001; Municipal Climate Resilience Programme
+agreement-zaf-register-sw002,ZAF,Grants,unknown,Municipalities,CHF,,Legacy zaf-register-sw002; Municipalities Project Preparation Initiative
+agreement-zaf-register-sw003,ZAF,Grants,unknown,Municipalities,CHF,,Legacy zaf-register-sw003; Municipal Climate Resilience Programme
+agreement-zaf-register-sw004,ZAF,Grants,unknown,Skills,CHF,,Legacy zaf-register-sw004; Skills Capacity Development Initiative
+agreement-zaf-register-sw005,ZAF,Grants,unknown,Electricity,CHF,,Legacy zaf-register-sw005; Municipal Climate Resilience Programme
+agreement-zaf-register-sw006,ZAF,Grants,unknown,Municipalities,CHF,,Legacy zaf-register-sw006; Municipalities Infrastructure Development
+agreement-zaf-register-sw007,ZAF,Grants,unknown,Electricity,CHF,,Legacy zaf-register-sw007; Electricity Energy Storage Project
+agreement-zaf-register-sw008,ZAF,Grants,unknown,Electricity,CHF,,Legacy zaf-register-sw008; Electricity Technical Assistance Programme
+agreement-zaf-register-sw009,ZAF,Grants,unknown,Municipalities,CHF,,Legacy zaf-register-sw009; Municipalities Infrastructure Development
+agreement-zaf-register-uk001,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-uk001; Electricity Technical Assistance Programme
+agreement-zaf-register-uk002,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-uk002; Electricity Technical Assistance Programme
+agreement-zaf-register-uk003,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk003; Electricity Grid Infrastructure Programme
+agreement-zaf-register-uk005,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk005; Municipal Climate Resilience Programme
+agreement-zaf-register-uk006,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk006; Mpumalanga Just Transition Programme: Sector Job Resilience Pathways
+agreement-zaf-register-uk007,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk007; Mpumalanga Just Transition Programme: Private Sector Transition Pathways
+agreement-zaf-register-uk008,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk008; Climate Finance Accelerator
+agreement-zaf-register-uk009,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk009; JT-Mpumalanga Research: Green Economy Cluster and SAREM Support
+agreement-zaf-register-uk011,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk011; Municipal Climate Resilience Programme: Coal Municipality Diversification Opportunities
+agreement-zaf-register-uk012,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk012; Electricity Capacity Development Initiative
+agreement-zaf-register-uk013,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk013; Electricity Capacity Development Initiative
+agreement-zaf-register-uk014,ZAF,Grants,unknown,Municipalities,GBP,,Legacy zaf-register-uk014; Municipal Climate Resilience Programme
+agreement-zaf-register-uk015,ZAF,Grants,unknown,Municipalities,GBP,,Legacy zaf-register-uk015; Green Hydrogen Development Programme
+agreement-zaf-register-uk016,ZAF,Grants,unknown,Municipalities,GBP,,Legacy zaf-register-uk016; Municipalities Technical Assistance Programme
+agreement-zaf-register-uk017,ZAF,Grants,unknown,Municipalities,GBP,,Legacy zaf-register-uk017; Municipalities Infrastructure Development
+agreement-zaf-register-uk018,ZAF,Grants,unknown,Municipalities,GBP,,Legacy zaf-register-uk018; Municipalities Infrastructure Development
+agreement-zaf-register-uk019,ZAF,Grants,unknown,NEVs,GBP,,Legacy zaf-register-uk019; NEVs Technical Assistance Programme
+agreement-zaf-register-uk020,ZAF,Grants,unknown,NEVs,GBP,,Legacy zaf-register-uk020; NEVs Technical Assistance Programme
+agreement-zaf-register-uk021,ZAF,Grants,unknown,Green hydrogen,GBP,,Legacy zaf-register-uk021; Green Hydrogen Development Programme
+agreement-zaf-register-uk022,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk022; Green Hydrogen Development Programme
+agreement-zaf-register-uk023,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk023; Skills Research Programme
+agreement-zaf-register-uk024,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk024; Skills Development Programme
+agreement-zaf-register-uk025,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk025; Electricity Research Programme
+agreement-zaf-register-uk026,ZAF,Grants,unknown,Skills,ZAR,,Legacy zaf-register-uk026; PCC Energy Modelling Support
+agreement-zaf-register-uk027,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk027; Skills Research Programme
+agreement-zaf-register-uk028,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk028; Skills Infrastructure Development
+agreement-zaf-register-uk029,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk029; PCC Energy Modelling Support
+agreement-zaf-register-uk030,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk030; Skills Development Programme
+agreement-zaf-register-uk031,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk031; Skills Capacity Development Initiative
+agreement-zaf-register-uk033,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk033; Municipal Climate Resilience Programme: Municipal Project Pipeline Development
+agreement-zaf-register-uk034,ZAF,Grants,unknown,Municipalities,GBP,,Legacy zaf-register-uk034; Municipal Climate Resilience Programme
+agreement-zaf-register-uk035,ZAF,Grants,unknown,Municipalities,GBP,,Legacy zaf-register-uk035; PCC Energy Modelling Support
+agreement-zaf-register-uk037,ZAF,Grants,unknown,Green hydrogen,GBP,,Legacy zaf-register-uk037; Green Hydrogen Development Programme
+agreement-zaf-register-uk039,ZAF,Grants,unknown,Green hydrogen,GBP,,Legacy zaf-register-uk039; Green Hydrogen Technical Assistance Programme
+agreement-zaf-register-uk042,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk042; JT-Mpumalanga Research: Coal Power Health Impacts Study
+agreement-zaf-register-uk043,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk043; JT-Mpumalanga Technical Assistance: SME Investment Pipeline Support
+agreement-zaf-register-uk044,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk044; JT-Mpumalanga Technical Assistance: Agribusiness Investment Support
+agreement-zaf-register-uk045,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk045; Mpumalanga Just Transition Programme: Responsible Land Investment Governance
+agreement-zaf-register-uk046,ZAF,Grants,unknown,Municipalities,GBP,,Legacy zaf-register-uk046; Municipalities Capacity Development Initiative
+agreement-zaf-register-uk047,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk047; PCC Energy Modelling Support
+agreement-zaf-register-uk048,ZAF,Grants,unknown,Energy Efficiency,USD,,Legacy zaf-register-uk048; Energy Efficiency Infrastructure Development
+agreement-zaf-register-uk049,ZAF,Grants,unknown,Energy Efficiency,USD,,Legacy zaf-register-uk049; Energy Efficiency Capacity Development Initiative
+agreement-zaf-register-uk050,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk050; South Africa Energy Transition Roadmap (ETR) Development Project
+agreement-zaf-register-uk051,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk051; JT-Mpumalanga Solar Energy: Water and Energy Project Preparation
+agreement-zaf-register-uk052,ZAF,Grants,unknown,Road to Rail,GBP,,Legacy zaf-register-uk052; Municipal Climate Resilience Programme
+agreement-zaf-register-uk053,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk053; Electricity Infrastructure Development
+agreement-zaf-register-uk054,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Electricity,USD,,Legacy zaf-register-uk054; PIDG GuarantCo guarantee facility for Africa GreenCo for energy trading
+agreement-zaf-register-uk055,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Electricity,USD,,Legacy zaf-register-uk055; Sustainable Power Solutions Limited
+agreement-zaf-register-uk056,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Electricity,USD,,Legacy zaf-register-uk056; Etana Liquidity Guarantee
+agreement-zaf-register-uk057,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Electricity,ZAR,,Legacy zaf-register-uk057; Phezukomoya and San Kraal Wind Projects
+agreement-zaf-register-uk058,ZAF,"Commercial Debt, Equity & Guarantees",unknown,JT-Mpumalanga,USD,,Legacy zaf-register-uk058; Agristar Holdings (Pty) Limited
+agreement-zaf-register-uk059,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk059; Energy Council Tariffs and Project Bankability in South Africa Wholesale Market
+agreement-zaf-register-uk060,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk060; TEA@SUNRISE
+agreement-zaf-register-uk061,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk061; JT-Mpumalanga Capacity Development: Agribusiness Blended Finance Support
+agreement-zaf-register-uk062,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Municipalities,ZAR,,Legacy zaf-register-uk062; Subnational Finance to City of Johannesburg for Resilient Urban Development
+agreement-zaf-register-uk063,ZAF,Grants,unknown,Energy Efficiency,USD,,Legacy zaf-register-uk063; Energy Efficiency Infrastructure Development
+agreement-zaf-register-uk064,ZAF,Grants,unknown,Energy Efficiency,USD,,Legacy zaf-register-uk064; Energy Efficiency Infrastructure Development
+agreement-zaf-register-uk065,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Electricity,USD,,Legacy zaf-register-uk065; Red Sands BESS
+agreement-zaf-register-uk066,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk066; DTIC Energy One Stop Shop (EOSS)
+agreement-zaf-register-uk067,ZAF,Grants,unknown,JT-Mpumalanga,GBP,,Legacy zaf-register-uk067; Developing Scenarios for Climate-informed Economic Pathways through Stakeholder Dialogues
+agreement-zaf-register-uk068,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk068; Just Municipal Embedded Generation (JMEG)
+agreement-zaf-register-uk069,ZAF,Grants,unknown,Energy Efficiency,USD,,"Legacy zaf-register-uk069; Standard Bank Green Building Finance Expansion (MAGC ""“ South Africa)"
+agreement-zaf-register-uk070,ZAF,Grants,unknown,Energy Efficiency,USD,,"Legacy zaf-register-uk070; Nedbank Green Building Finance Expansion (MAGC ""“ South Africa)"
+agreement-zaf-register-uk071,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk071; Renewable Energy and Green Hydrogen for Health Clinics in South Africa
+agreement-zaf-register-uk072,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Electricity,USD,,"Legacy zaf-register-uk072; BII's investment through fund investments in NOA Group, SolarAfrica Energy and Wetility"
+agreement-zaf-register-uk073,ZAF,Grants,unknown,Electricity,GBP,,Legacy zaf-register-uk073; Feasibility Study for an Integrated Waste to Energy Complex in eThekwini
+agreement-zaf-register-uk074,ZAF,Grants,unknown,Skills,GBP,,Legacy zaf-register-uk074; Strengthening South Africa's renewable energy transition
+agreement-zaf-register-uk075,ZAF,"Commercial Debt, Equity & Guarantees",unknown,Electricity,USD,,Legacy zaf-register-uk075; Revego
+agreement-zaf-register-uk076,ZAF,Grants,unknown,Municipalities,GBP,,"Legacy zaf-register-uk076; Accelerating Climate Action in Johannesburg: CAP Review, Stakeholder engagement and Dashboard development"
+agreement-zaf-register-uk077,ZAF,Grants,unknown,Electricity,,,Legacy zaf-register-uk077; Advancing Sodium-Ion Battery Technology for South Africa's Sustainable Energy
+agreement-zaf-register-us001,ZAF,Grants,unknown,JT-Mpumalanga,USD,,Legacy zaf-register-us001; JT-Mpumalanga Community Development: SME Blended Finance Support
+agreement-zaf-register-us002,ZAF,Grants,unknown,JT-Mpumalanga,USD,,Legacy zaf-register-us002; JT-Mpumalanga Skills Development: TVET Reskilling Support
+agreement-zaf-register-us003,ZAF,Grants,unknown,JT-Mpumalanga,USD,,Legacy zaf-register-us003; JT-Mpumalanga Community Development: Civic Engagement in Mpumalanga
+agreement-zaf-register-us004,ZAF,Grants,unknown,JT-Mpumalanga,USD,,Legacy zaf-register-us004; JT-Mpumalanga Skills Development: Electricity Sector Skills Strengthening
+agreement-zaf-register-us006,ZAF,Grants,unknown,JT-Mpumalanga,USD,,Legacy zaf-register-us006; JT-Mpumalanga Research: Coal Ash Beneficiation and Land Repurposing
+agreement-zaf-register-us007,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us007; Electricity Research Programme
+agreement-zaf-register-us008,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us008; Electricity Grid Infrastructure Programme
+agreement-zaf-register-us009,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us009; Electricity Technical Assistance Programme
+agreement-zaf-register-us010,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us010; Municipal Climate Resilience Programme
+agreement-zaf-register-us011,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us011; Municipal Climate Resilience Programme
+agreement-zaf-register-us012,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us012; Electricity Grid Infrastructure Programme
+agreement-zaf-register-us013,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us013; Electricity Energy Storage Project
+agreement-zaf-register-us014,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us014; Green Hydrogen Development Programme
+agreement-zaf-register-us015,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us015; Green Hydrogen Infrastructure Development
+agreement-zaf-register-us017,ZAF,Grants,unknown,JT-Mpumalanga,USD,,Legacy zaf-register-us017; JT-Mpumalanga Community Development: Social Ownership Pilot
+agreement-zaf-register-us018,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us018; Municipalities Technical Assistance Programme
+agreement-zaf-register-us019,ZAF,Grants,unknown,Green hydrogen,USD,,Legacy zaf-register-us019; Green Hydrogen Infrastructure Development
+agreement-zaf-register-us020,ZAF,Grants,unknown,Skills,USD,,Legacy zaf-register-us020; Skills Research Programme
+agreement-zaf-register-us021,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us021; Electricity Technical Assistance Programme
+agreement-zaf-register-us022,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us022; Electricity Grid Infrastructure Programme
+agreement-zaf-register-us023,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us023; Municipal Climate Resilience Programme
+agreement-zaf-register-us024,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us024; Electricity Solar Energy Project
+agreement-zaf-register-us026,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us026; Municipal Climate Resilience Programme
+agreement-zaf-register-us027,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us027; Municipal Climate Resilience Programme
+agreement-zaf-register-us028,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us028; Municipal Climate Resilience Programme
+agreement-zaf-register-us029,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us029; Municipal Climate Resilience Programme
+agreement-zaf-register-us030,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us030; Municipalities Solar Energy Project
+agreement-zaf-register-us031,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us031; Municipal Climate Resilience Programme
+agreement-zaf-register-us032,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us032; Municipalities Technical Assistance Programme
+agreement-zaf-register-us033,ZAF,Grants,unknown,Skills,USD,,Legacy zaf-register-us033; Skills Infrastructure Development
+agreement-zaf-register-us034,ZAF,Grants,unknown,Skills,USD,,Legacy zaf-register-us034; Skills Capacity Development Initiative
+agreement-zaf-register-us035,ZAF,Grants,unknown,Municipalities,USD,,Legacy zaf-register-us035; Municipal Climate Resilience Programme
+agreement-zaf-register-us037,ZAF,Grants,unknown,Electricity,USD,,Legacy zaf-register-us037; Municipal Climate Resilience Programme
+agreement-zaf-register-us038,ZAF,Grants,unknown,Skills,USD,,Legacy zaf-register-us038; Municipal Climate Resilience Programme
+agreement-zaf-register-us039,ZAF,Grants,unknown,Skills,USD,,Legacy zaf-register-us039; Skills Development Programme
+agreement-zaf-register-afdb001,ZAF,Grants,unknown,Skills,USD,,Legacy zaf-register-afdb001; South Africa - Just Energy Transition Skilling for Employment (JET SEP) Programme -Technical Assistance
+agreement-zaf-register-afdb002,ZAF,Grants,unknown,JT-Mpumalanga,USD,,Legacy zaf-register-afdb002; South Africa - Just Energy Transition (Jet) Jobs First: Gender and Social Inclusion
+agreement-zaf-register-afdb003,ZAF,Grants,unknown,JT-Mpumalanga,USD,,"Legacy zaf-register-afdb003; South Africa - Support to the creation of a jet funding platform to promote inclusion, transparency and enterprise"
+agreement-zaf-register-afdb004,ZAF,Policy Loans,unknown,Electricity,USD,,Legacy zaf-register-afdb004; SOUTH AFRICA - Infrastructure Governance and Green Growth Programme (IGGGP)
+agreement-zaf-register-sp001,ZAF,Grants,unknown,Electricity,USD,,"Legacy zaf-register-sp001; In 2024, Spain approved two feasibility studies related to the energy sector"
+agreement-zaf-register-idc001,ZAF,Grants,unknown,NEVs,ZAR,,Legacy zaf-register-idc001; Salary Sacrifice (Salsac) Diagnostic Assessment for NEV Uptake
+agreement-zaf-register-idc002,ZAF,Grants,unknown,NEVs,ZAR,,Legacy zaf-register-idc002; NEV Skills Stock Take Assessment (2020-2025)
+agreement-zaf-register-idc003,ZAF,Grants,unknown,NEVs,ZAR,,Legacy zaf-register-idc003; NEV Mobility Ecosystem Study: TOWARDS UNLOCKING THE NEV VALUE CHAIN FOR AFRICA
+agreement-idn-fin-isle-1,IDN,,unknown,,,,Legacy idn-fin-isle-1; Sustainable Least-cost Electrification 1 (ISLE-1)
+agreement-idn-fin-xurya-rooftop,IDN,,unknown,,,,Legacy idn-fin-xurya-rooftop; Xurya Solar Rooftop
+agreement-idn-fin-pbl-aset,IDN,,unknown,,,,Legacy idn-fin-pbl-aset; Affordable and Sustainable Energy Transition Policy Based Lending (PBL ASET)
+agreement-idn-fin-rbl-aicet,IDN,,unknown,,,,Legacy idn-fin-rbl-aicet; Accelerating Indonesia Clean Energy Transition (RBL AICET)
+agreement-idn-fin-saguling-floating-solar,IDN,,unknown,,,,Legacy idn-fin-saguling-floating-solar; Saguling floating solar PV
+agreement-idn-fin-mrt-north-south,IDN,,unknown,,,,Legacy idn-fin-mrt-north-south; MRT Jakarta North-South Line Phase 2
+agreement-idn-fin-mrt-east-west,IDN,,unknown,energy_efficiency,,,Legacy idn-fin-mrt-east-west; MRT Jakarta East-West Line Phase 1
+agreement-idn-grant-wolcot,IDN,,unknown,,,,Legacy idn-grant-wolcot; Women-Led Coal Transition Mechanism (WOLCOT)
+agreement-idn-grant-esmap-canada,IDN,,unknown,,,,Legacy idn-grant-esmap-canada; Energy Sector Management Assistance Program (ESMAP) - Canada contribution
+agreement-idn-grant-cefim,IDN,,unknown,,,,Legacy idn-grant-cefim; Clean Energy Finance and Investment Mobilisation (CEFIM) Programme
+agreement-idn-grant-cetp,IDN,,unknown,,,,Legacy idn-grant-cetp; Clean Energy Transitions Programme (CETP)
+agreement-idn-grant-enerkey,IDN,,unknown,,,,Legacy idn-grant-enerkey; EnerKey Project
+agreement-idn-grant-eu-indonesia-cooperation-facility,IDN,,unknown,,,,Legacy idn-grant-eu-indonesia-cooperation-facility; EU-Indonesia Cooperation Facility
+agreement-idn-grant-s4i,IDN,,unknown,,,,Legacy idn-grant-s4i; Support for Infrastructure Investments in Indonesia (S4I)
+agreement-idn-grant-sdg-indonesia-one,IDN,,unknown,,,,Legacy idn-grant-sdg-indonesia-one; SDG Indonesia One
+agreement-idn-grant-ipdf,IDN,,unknown,,,,Legacy idn-grant-ipdf; Indonesia Policy Development Fund for JETP
+agreement-idn-grant-efsd-energy-preparation,IDN,,unknown,,,,Legacy idn-grant-efsd-energy-preparation; European Fund for Sustainable Development Plus energy project preparation
+agreement-idn-grant-etmptf,IDN,,unknown,,,,Legacy idn-grant-etmptf; Energy Transition Mechanism Partnership Trust Fund for early coal retirement
+agreement-idn-grant-seti,IDN,,unknown,,,,Legacy idn-grant-seti; Sustainable Energy Transition in Indonesia (SETI)
+agreement-idn-grant-etap,IDN,,unknown,,,,Legacy idn-grant-etap; Energy Transition Acceleration Programme (ETAP)
+agreement-idn-grant-iki-jet,IDN,,unknown,,,,Legacy idn-grant-iki-jet; Innovation Regions for a Just Energy Transition (IKI JET)
+agreement-idn-grant-asia-low-carbon-buildings,IDN,,unknown,,,,Legacy idn-grant-asia-low-carbon-buildings; Asia Low Carbon Building Transition
+agreement-idn-grant-gesit,IDN,,unknown,,,,Legacy idn-grant-gesit; Green Jobs for Social Inclusion and Sustainable Transformation (GESIT)
+agreement-idn-grant-reep2,IDN,,unknown,,,,Legacy idn-grant-reep2; 1000 Islands - Renewable Energy for Electrification Program Phase II (REEP2)
+agreement-idn-grant-case,IDN,,unknown,,,,Legacy idn-grant-case; Clean Affordable and Secure Energy for Southeast Asia (CASE)
+agreement-idn-grant-entri,IDN,,unknown,,,,Legacy idn-grant-entri; Renewable Energy Mini-Grids Triangular Cooperation (ENTRI)
+agreement-idn-grant-explore,IDN,,unknown,,,,Legacy idn-grant-explore; Strategic Exploration of Economic Mitigation Potentials through Renewables (ExploRE)
+agreement-idn-grant-candi-umbul-telomoyo,IDN,,unknown,,,,Legacy idn-grant-candi-umbul-telomoyo; Candi Umbul Telomoyo Geothermal Project
+agreement-idn-grant-sustainable-hydropower-2,IDN,,unknown,,,,Legacy idn-grant-sustainable-hydropower-2; Accompanying Measure for Sustainable Hydropower Program II
+agreement-idn-grant-jetp-esia-study,IDN,,unknown,,,,Legacy idn-grant-jetp-esia-study; Facilitating Financing for Indonesia JETP - ESIA study
+agreement-idn-grant-perform,IDN,,unknown,,,,Legacy idn-grant-perform; Performing Energy Transition through Fiscal Reform in Indonesia (PERFORM)
+agreement-idn-grant-jetp-financing-facilitation,IDN,,unknown,,,,Legacy idn-grant-jetp-financing-facilitation; Facilitating Financing for Indonesia Just Energy Transition Partnership
+agreement-idn-grant-re2grid,IDN,,unknown,,,,Legacy idn-grant-re2grid; RE2Grid
+agreement-idn-grant-re2cool,IDN,,unknown,,,,Legacy idn-grant-re2cool; RE2Cool
+agreement-idn-grant-carbon-monetization,IDN,,unknown,,,,Legacy idn-grant-carbon-monetization; Carbon Monetization
+agreement-idn-grant-energy-hub,IDN,,unknown,,,,Legacy idn-grant-energy-hub; Energy Hub
+agreement-idn-grant-iki-flex-jetp,IDN,,unknown,,,,Legacy idn-grant-iki-flex-jetp; IKI-Flex JETP Support Package
+agreement-idn-grant-jetp-secretariat-capacity,IDN,,unknown,,,,Legacy idn-grant-jetp-secretariat-capacity; Institutional and Capacity Building Support for the JETP Secretariat
+agreement-idn-grant-patuha-2,IDN,,unknown,,,,Legacy idn-grant-patuha-2; Patuha Unit 2 55 MW Geothermal Power Generation Project
+agreement-idn-grant-mentari-policy,IDN,,unknown,,,,Legacy idn-grant-mentari-policy; MENTARI Programme - Policy
+agreement-idn-grant-green-energy-transition-indonesia,IDN,,unknown,,,,Legacy idn-grant-green-energy-transition-indonesia; Green Energy Transition Indonesia
+agreement-idn-grant-uk-pact,IDN,,unknown,,,,Legacy idn-grant-uk-pact; UK PACT Indonesia
+agreement-idn-grant-jt-framework-phase-2,IDN,,unknown,,,,Legacy idn-grant-jt-framework-phase-2; Operationalization of the Just Transition Framework in JETP Indonesia Phase 2
+agreement-idn-grant-mentari-vgf,IDN,,unknown,,,,Legacy idn-grant-mentari-vgf; MENTARI Programme - Viability Gap Fund
+agreement-idn-grant-growth-gateway,IDN,,unknown,,,,Legacy idn-grant-growth-gateway; Growth Gateway Indonesia
+agreement-idn-grant-esmap-uk,IDN,,unknown,,,,Legacy idn-grant-esmap-uk; Energy Sector Management Assistance Program (ESMAP) - UK contribution
+agreement-idn-grant-pt-smi-early-retirement,IDN,,unknown,,,,Legacy idn-grant-pt-smi-early-retirement; PT SMI Early Retirement Program
+agreement-idn-grant-cfpp-site-repurposing,IDN,,unknown,,,,Legacy idn-grant-cfpp-site-repurposing; Coal-fired Power Plant Site Repurposing
+agreement-idn-grant-just-transition-coal-regions,IDN,,unknown,,,,Legacy idn-grant-just-transition-coal-regions; Just Transition in Coal Regions
