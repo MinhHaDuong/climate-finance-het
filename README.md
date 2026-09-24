@@ -149,7 +149,7 @@ Errata 1 (Figure 2 label fix) archived in `papiers/actif/Oeconomia_Inventing_Cli
 
 ## Project documentation
 
-See `STATE.md` for current status, `ROADMAP.md` for milestones, `AGENTS.md` for AI workflow. Pipeline architecture is documented in `.claude/rules/architecture.md`.
+See `STATE.md` for current status, `ROADMAP.md` for milestones, `AGENTS.md` for AI workflow. Pipeline architecture is documented in `.claude/rules/architecture.md` and its path-scoped siblings (`deliverables.md`, `data-location.md`, `openalex-corpus.md`, `null-model.md`).
 
 ## AI agent configuration
 

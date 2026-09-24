@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-07-27T18:32Z HDMX-coding-agent created
 2026-07-27T18:36Z HDMX-coding-agent note raised by the review-pr panel on PR #1179 and reproduced there; filed rather than fixed in that PR because a guard is a different change from the hook fix
+2026-09-24T09:14Z HDMX-coding-agent note § Data location moved from .claude/rules/architecture.md to .claude/rules/data-location.md (resident-context split); body references updated
 
 --- body ---
 ## Context
@@ -28,7 +29,7 @@ pointers were deliberately kept.
 
 ## Why prose is not enough
 
-0360 documented the hazard in `.claude/rules/architecture.md` § Data location
+0360 documented the hazard in `.claude/rules/data-location.md` § Data location
 and in the hook comment. That is the right place for the explanation, but a
 comment does not stop a data-destroying command, and the loss is silent until
 someone needs a blob that is gone. The remote (`padme`) makes it recoverable,
@@ -37,7 +38,7 @@ which lowers the severity — it does not make it a non-event.
 ## Relevant files
 
 - `.githooks/post-checkout` — creates the shared-cache symlink
-- `.claude/rules/architecture.md` § Data location — where the hazard is written down
+- `.claude/rules/data-location.md` § Data location — where the hazard is written down
 - `Makefile` — where a wrapper target would live
 - `tickets/closed/0252-*.erg` — the earlier encounter with the caveat
 
@@ -50,7 +51,7 @@ which lowers the severity — it does not make it a non-event.
    - the same check as a guard script, so it also catches a bare `dvc gc`;
    - `--workspace` scoping conventions documented and enforced in the target.
 2. Implement the chosen guard.
-3. Point the architecture.md note at it, so the prose describes a mechanism
+3. Point the data-location.md note at it, so the prose describes a mechanism
    rather than asking for care.
 
 ## Known limit of the Makefile-refusal design
@@ -88,5 +89,5 @@ blob that must survive).
 ## Exit criteria
 
 - [ ] A worktree cannot prune the shared cache without an explicit, deliberate
-      override, and the architecture.md note points at the mechanism instead of
+      override, and the data-location.md note points at the mechanism instead of
       asking the reader to remember.

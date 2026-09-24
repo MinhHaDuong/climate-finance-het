@@ -1,11 +1,11 @@
 # Repository layout — target state and migration
 
 > **Status (2026-07-10, author-adjudicated).** Canonical rules live in
-> `.claude/rules/architecture.md`, governed by tracker `0221`. This note covers
+> `.claude/rules/architecture.md` (and its scoped siblings), governed by tracker `0221`. This note covers
 > the **code + prose** axis (tracker `0223`, deferred to post-Œconomia-resubmit).
 > Decisions:
 > - **`deliverables/` per-paper Quarto — RATIFIED.** Replaces the one-`content/`
->   multi-doc project; update `architecture.md` § Project structure when it lands.
+>   multi-doc project; update `deliverables.md` § Project structure when it lands.
 > - **`src/climatefinance/` — DECLINED.** The existing library convention stands:
 >   `_`-private modules + `pipeline_*` loaders in `scripts/`, and `libs/` for
 >   cross-repo sharing. No top-level package, no `python -m` flip.

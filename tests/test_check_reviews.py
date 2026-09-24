@@ -227,7 +227,7 @@ class TestMergeGate:
         assert decision == "deny"
 
 
-# --- Tickets-only fast path (rules/git.md) ---
+# --- Tickets-only fast path (rules/ticket-filing.md) ---
 
 
 def make_files_response(*files: str | tuple[str, str]) -> str:
@@ -249,7 +249,7 @@ def make_files_response(*files: str | tuple[str, str]) -> str:
 class TestTicketsOnlyFastPath:
     """A diff that is only tickets/*.erg is exempt from the review count.
 
-    rules/git.md ("Ticket-filing PRs take the fast path") says such a PR
+    rules/ticket-filing.md ("Ticket-filing PRs take the fast path") says such a PR
     merges on `erg check` plus an ID-collision scan, with no review ceremony.
     The gate honours that: zero reviews, no label, still allowed — but only
     when every changed file (and every rename source) is a .erg under

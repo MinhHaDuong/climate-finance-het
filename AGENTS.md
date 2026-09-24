@@ -12,6 +12,22 @@ cover. This file holds only what every session here needs.
 `~/.config/keys/`; each tool reads only its own value immediately before use.
 Never write a credential into `.env` (details: `.claude/rules/keystore.md`).
 
+## Where the scoped rules are
+
+Most project rules load only when you touch the files they govern; open one
+directly when the task needs it before you touch those files.
+
+- Pipeline phases, Phase-2 rules, artifact homes: `.claude/rules/architecture.md`.
+  Never let a later phase trigger an earlier one.
+- Deliverables layout, `DOC_VARS`, `paths.mk`: `deliverables.md`. Data location,
+  DVC cache, `data/` tree: `data-location.md`. Also `openalex-corpus.md`,
+  `null-model.md`, `worktree-setup.md`, `ticket-filing.md`, `rules-editing.md`.
+- Filing tickets with `erg` loads no file rule, so read `ticket-filing.md` first:
+  scan each open PR's files for your ID (`gh pr list --json files` is empty),
+  renumber well clear of the frontier, and run `erg check` on `origin/main` after merging.
+- A fresh worktree has no bulk corpus: `make data` (JETP documents: `make jetp-data`).
+- Before any JETP source search, scout or research round: the `jetp-research` skill.
+
 ## Merge gate
 
 `make check-fast` + `make lint` (~40 s), then push and open a PR. Run the full
@@ -26,7 +42,7 @@ proof that main is green; failures your branch did not cause get their own ticke
 
 Before merging, decide which checks the change needs and state them on the PR:
 
-- **Tickets only**: `erg check` plus the ID-collision scan (`.claude/rules/git.md`).
+- **Tickets only**: `erg check` plus the ID-collision scan (`.claude/rules/ticket-filing.md`).
 - **Docs, config, STATE**: the merge gate, and a read of the loaded or rendered result.
 - **Prose**: recompile the artifact; `/review-pr-prose` for manuscript text.
 - **Data**: byte-compare the served views, build twice for determinism, check counts.

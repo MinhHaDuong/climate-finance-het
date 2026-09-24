@@ -911,7 +911,7 @@ class TestMarkerDiscipline:
 class TestNoWrongNamespacePatch:
     """Forbid patching constants on the ``utils`` re-export facade in tests.
 
-    ``utils`` is a re-export facade (architecture.md): every constant it
+    ``utils`` is a re-export facade (data-location.md): every constant it
     exposes (CATALOGS_DIR, DATA_DIR, ...) is bound BY VALUE into consuming
     scripts at import time (``from utils import CATALOGS_DIR``). A test that
     patches the constant on ``utils`` therefore never reaches a consuming
@@ -1099,7 +1099,7 @@ class TestRulesIntentOnly:
 
     def test_coding_no_architecture_sections(self):
         """coding.md must not contain project architecture docs
-        (those live in architecture.md)."""
+        (those live in architecture.md and its scoped siblings)."""
         content = self._read_rule("coding.md")
         arch_headers = [
             "## Data location",
@@ -1109,7 +1109,7 @@ class TestRulesIntentOnly:
         found = [h for h in arch_headers if h in content]
         assert not found, (
             f"coding.md contains architecture sections {found} — "
-            f"these belong in architecture.md"
+            f"these belong in architecture.md or its scoped siblings"
         )
 
 

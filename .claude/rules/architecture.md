@@ -1,77 +1,23 @@
 ---
 paths:
-  - "**/*"
+  - "scripts/**"
+  - "build/**"
+  - "config/**"
+  - "Makefile"
+  - "**/*.mk"
+  - "dvc.yaml"
+  - "enrich_cache/**"
+  - "data/derived/**"
+  - "data/catalogs/**"
+  - "tests/test_arch_compliance.py"
+  - "tests/test_phase_layout.py"
+  - "tests/test_layering.py"
+  - "tests/test_doc_contract_consistency.py"
 ---
 
 # Architecture
 
-## Project structure
-
-Each deliverable is its own Quarto project under `deliverables/<x>/` with its own
-`_quarto.yml`, so `quarto render deliverables/<x>` selects it directly — no
-exclusion-mask profile files (ticket 0226). Quarto's single-file render writes
-the PDF/DOCX **next to the source** (`deliverables/<x>/<doc>.pdf`), so the Make
-render target equals the output file and Make verifies it; the top-level
-`output/` directory was retired. Shared assets (bibliography, `_includes/`,
-generated `figures/` and `tables/`, `technical-report-vars.yml`) live in
-`deliverables/_shared/` and are referenced by `../_shared/...` from each doc;
-includes resolve relative to the top rendering doc, and every deliverable folder
-sits one level under `deliverables/`, so the prefix is uniform.
-
-**Consequence for anything that walks this graph.** A nested include's path is
-resolved against the *root document's* directory, not against the file that
-contains it — so a resolver must carry the root's directory as base through
-every level of recursion. Joining each include against its own directory is the
-natural implementation and it is wrong: it misses every nested include and
-reports it as unreachable. A 2026-07-27 orphan sweep written that way returned
-13 confident false positives, all of `_includes/zoo/*.md`, which
-`_includes/techrep-zoo.md` reaches as `../_shared/_includes/zoo/…` from the zoo
-deliverable's folder. Knowing the rule above did not prevent it, so it is
-written here as the consequence rather than left to be re-derived (ticket 0359,
-whose reachability guard depends on getting this right).
-
-**`DOC_VARS` is the per-document variable contract, and `DOC_VARS_FILE` says
-which metadata file each document loads.** Both live in
-`scripts/analysis/_vars_registry.py` and are re-exported by `compute_vars`, so
-`from compute_vars import DOC_VARS` still resolves but the file to edit is the
-registry. Four documents
-share `_shared/technical-report-vars.yml`, so that file is written with the
-union of their declared keys. The registry states the sharing rather than
-leaving the render to discover it, because an unregistered document does not
-fail: Quarto resolves whatever the shared file happens to carry, writes
-`?meta:key` for the rest, and exits 0. corpus-report sat outside the registry
-that way and rendered 12 placeholders. `tests/test_doc_vars_completeness.py`
-now discovers documents from disk, so the next unregistered one fails instead
-of being skipped; a document whose vars file is hand-maintained goes in that
-test's `PINNED_DOCS` (ticket 0357).
-
-**`paths.mk` is the per-deliverable artifact contract.** Each document owns a
-`*_INCLUDES` list (the shared files it composes) and a `*_FIGS` list (the
-figures it embeds); its render rule takes both as prerequisites. Both answer
-"which artifacts does this deliverable need?", and both drift silently — a
-prose cut orphans a figure, a rewrite drops includes the list keeps. Two
-markers carry the deliberate exceptions: a `# not-embedded: <file> — <reason>`
-comment in `paths.mk` for a figure built on purpose and embedded nowhere, and
-`config/unrendered-artifacts.txt` for a shared include or table no document
-composes. `tests/test_deliverable_artifacts.py` diffs every list against the
-real include closure in both directions and rejects a stale marker, so an
-allowlist entry cannot rot into a mute skip (ticket 0359).
-
-The 11 documents across 9 folders:
-
-- `deliverables/manuscript/` — `manuscript.qmd` (main Œconomia article) +
-  `manuscript-Gide.qmd` (Charles Gide conference variant); `manuscript-vars.yml`
-  (pinned) and `manuscript.mk` (Phase-3 clean-room render) live here.
-- `deliverables/corpus-report/corpus-report.qmd` — corpus construction, data quality, contents
-- `deliverables/technical-report/technical-report.qmd` — analysis methods and results (composed of includes)
-- `deliverables/data-paper/data-paper.qmd` — corpus data paper (RDJ4HSS submission)
-- `deliverables/multilayer/` — `multilayer-detection.qmd` + `multilayer-detection-techrep.qmd`
-- `deliverables/agentic/agentic-paper.qmd` — the agentic-workflow paper
-- `deliverables/zoo/breakpoint-detect-method-zoo.qmd` — the breakpoint-detection method zoo
-- `deliverables/slides-gide/`, `deliverables/slides-eshet/` — conference slide decks (deliverables, not papers)
-
-(The former `companion-paper.qmd` no longer exists; the method paper is now the
-`multilayer/` pair.)
+Pipeline phases, Phase-2 rules and artifact homes. Scoped siblings: `deliverables.md` (project structure, `DOC_VARS`, `paths.mk`), `data-location.md`, `openalex-corpus.md`, `null-model.md`.
 
 ## Pipeline phases
 
@@ -104,15 +50,6 @@ The pipeline has four phases. Each phase's scripts follow a naming convention an
 8. **Dispatcher pattern.** When multiple methods share data loading and output contract, use a single dispatch script with `--method X` (e.g., `compute_divergence.py`). Method implementations live in private modules (`_divergence_semantic.py`, etc.). Shared I/O helpers in `_divergence_io.py`.
 9. **Corpus access through loaders only.** Never call `pd.read_csv()` / `np.load()` / `pd.read_feather()` on contract files (`refined_works`, `refined_embeddings`, `refined_citations`) directly. Use `pipeline_loaders`: `load_refined_works()` (thin read + type coercion), `load_analysis_corpus()` (filtered + optional embeddings), `load_refined_embeddings()`, `load_refined_citations()`. Direct reads bypass Feather acceleration, type coercion, and error hints — and create coupling points that break when the corpus format changes. (Legacy scripts are migrated as touched.)
 
-### Null model acceleration
-
-The permutation null models in `scripts/compute_null_model.py` use three complementary acceleration strategies, all in `scripts/_permutation_accel.py`:
-
-- **GPU-vectorized permutations** for `S2_energy` and `S1_MMD`: the pairwise distance / kernel matrix is computed once on GPU, then all permutation statistics are batched in a single matmul (`stats = -((C @ D) * C).sum(dim=1)`). Auto-detected when CUDA is available.
-- **Precomputed TF-IDF** for `L1`: the vectorizer runs once per window; permutations only reshuffle row indices into the sparse matrix — eliminating redundant `vectorizer.transform()` calls per (year, window).
-- **CPU parallel via joblib** across (year, window) pairs for `G2_spectral`, `G9_community`, and `L2`. Default `n_jobs=1` at the API boundary preserves test determinism; the CLI exposes `--n-jobs` (`-1` = all cores) for production runs.
-
-The Makefile knob is `NJOBS` (in `scripts/analysis/divergence.mk`). Default `-1` uses all cores — fine for a single method, oversubscribes under `make -jN`. When composing with `-j`, pass `NJOBS ≈ cores/N` (e.g. on 24 cores: `make -j4 NJOBS=6 null-model`). End-to-end on padme: ~3h → ~7min.
 
 **Phase 3 — Render** (Quarto → PDF/DOCX):
 - Reads Phase 2 outputs. Each deliverable's PDF/DOCX renders next to its `.qmd` under `deliverables/<x>/` (gitignored).
@@ -124,113 +61,6 @@ The Makefile knob is `NJOBS` (in `scripts/analysis/divergence.mk`). Default `-1`
 
 Submission *records* (cover/decision letters, frozen PDFs, deposit archives) are
 not engine — they live outside the repo under `papiers/<state>/<track>/` (0159).
-
-## Shared conventions package (`libs/openalex-corpus`)
-
-The model-agnostic OpenAlex conventions — `retry_get` (polite HTTP with
-backoff, `mailto` injected by the caller), `reconstruct_abstract`,
-`normalize_doi`, `build_text`, `is_boilerplate_abstract` — live in a standalone
-path package `libs/openalex-corpus`, this repo's source of truth for them
-(ticket 0170). It ships no deployment config (`MAILTO`/API keys are injected as
-parameters) and no embedding model choice.
-
-This repo **imports the package as source** via the relative source root
-`libs/openalex-corpus/src` on `PYTHONPATH` (ticket 0253). The single rule:
-**the source roots (`scripts` + `libs/openalex-corpus/src`) are placed on the
-path in every execution context — pytest (`pythonpath`), make (`export`), test
-subprocesses (explicit env via `tests/_source_roots.py`), containers (Dockerfile
-`ENV`), and archive scripts/Makefiles — never assumed ambient.** Concretely:
-pytest gets them from `[tool.pytest.ini_options] pythonpath`, every Make/`.mk`
-invocation from the top-level `export PYTHONPATH`, each test that launches a
-script subprocess from `source_root_env()`, and the reproducibility archives
-carry both the bundled `libs/openalex-corpus/` and the `PYTHONPATH` env/export.
-The former non-editable `[tool.uv.sources]` wheel
-install is retired; `libs/openalex-corpus/pyproject.toml` is kept so git-source
-consumers (AEDIST, ticket 0229) still depend on it. Call sites import
-`normalize_doi`, `reconstruct_abstract`, `build_text`, `is_boilerplate_abstract`
-from `openalex_corpus.*` directly (the `utils` facade re-exposes the first two
-from the package, unchanged for `from utils import …`). Two project-owned
-adapters remain and are **not** pure pass-throughs: `pipeline_io.retry_get`
-injects this repo's `MAILTO` and User-Agent, and `enrich_embeddings` re-exports
-`build_text` / `is_boilerplate_abstract` where its own pipeline uses them.
-Behavioural parity is pinned by `tests/test_openalex_corpus_equivalence.py`;
-symbol resolution by `tests/test_shim_resolution.py`.
-
-The package has no external consumers today. It was extracted so a sibling
-paper's pipeline could share these conventions rather than reach into this
-repo's `scripts/`; the concrete case — the embedding-based citation-overlap
-figure for "Un théorème, sept costumes" (`polycentric_activity`) — was retired
-when that paper moved to its own embedding-free swim-lane figure, and its
-`het_*.py` scripts were deleted here (ticket 0170, Move B). A future sibling
-repo would consume the package by git source. `data/het/seeds.csv` is kept:
-`polycentric_activity`'s `conception/het_indirect_citations.py` still reads it
-by path.
-
-## Data location
-
-`DATA_DIR` defaults to `<repo>/data` and can be relocated onto another disk by
-setting `CLIMATE_FINANCE_DATA` in `.env`. `scripts/utils.py` re-exports `DATA_DIR`,
-`CATALOGS_DIR`, `DERIVED_TABLES_DIR`, `EMBEDDINGS_PATH` from `pipeline_loaders`.
-Resolve paths through those constants — never hardcode `data/catalogs/` in a script.
-
-**A worktree needs `make data` for the bulk corpus.** DVC-managed data is
-normally absent in a fresh worktree. The exception is JETP documents: the hook
-attempts a private reflink from the primary checkout when `documents.dvc`
-matches; otherwise use `make jetp-data` (see `docs/jetp-storage.md`).
-`.githooks/post-checkout` symlinks the
-worktree's `.dvc/cache` at the primary checkout's cache, which is what lets
-`make data` (a `dvc checkout`, no network) populate `data/` from local blobs.
-Corpus work therefore belongs in a worktree like any other work. Running Phase 1
-in the primary checkout gives up git isolation and skips the `dvc commit` /
-`dvc push` that a normal PR carries, which is how ticket 0347 left `dvc.lock`
-pointing at a superseded corpus (ticket 0360).
-
-On this machine that costs almost no disk. `cache.type` is unset, so DVC tries
-its default chain, reflink then copy, and the repo sits on btrfs: a checked-out
-file shares its physical extents with the cache blob and gets its own copy only
-on write. Measured, because inode identity cannot tell reflink from copy — after
-a full `make data` in a probe worktree, `filefrag` reported the same extents
-flagged `shared` for workspace file and cache blob, and free space was unchanged.
-On a filesystem without reflink DVC falls back to a real copy, and there the same
-checkout costs the full 2.2 GB.
-
-Leave `cache.type` unset, and never set `hardlink` or `symlink`. Reflink is
-safe because a write breaks the sharing; hardlinked files share one inode, so a
-writer that opens the target in place writes straight into the cache blob and
-corrupts it for every checkout at once. Phase 1 has both kinds of writer:
-`pipeline_io.save_csv()` writes a temp file and `os.replace()`s it, an atomic
-rename onto a fresh inode that would survive even a hardlinked cache, but
-`np.savez_compressed(path, …)` in `enrich_embeddings` and `corpus_align` opens
-the embeddings `.npz` directly and truncates it. One in-place writer is enough.
-`tests/test_post_checkout_hook.py::test_dvc_cache_type_is_not_an_aliasing_type`
-enforces this, because the setting can live in the gitignored
-`.dvc/config.local` where no diff would show it.
-
-**One cache, every checkout: think before `dvc gc`.** Sharing the cache widens
-that command's blast radius. It prunes by reachability computed from whichever
-checkout invokes it, so a stale worktree pinned to an old `dvc.lock`, or one
-mid-rebuild that has not pushed, can delete blobs the primary still needs. Run
-it from the primary checkout on a current `dvc.lock`, or not at all — ticket
-0252 kept 8 orphan pointers for this reason.
-
-`data/` is split by dataflow phase, so the directory names which phase owns a file:
-
-```
-data/
-├── catalogs/     Phase-1 corpus (contract: refined_works/embeddings/citations)   DVC (dvc.yaml outs)
-│   └── run_reports/  Phase-1 QA run summaries (pipeline_io.save_run_report)      DVC (run_reports.dvc)
-├── pool/         Phase-1 raw source pulls                                         DVC (data/pool.dvc)
-├── exports/      Phase-1 exports                                                  DVC (data/exports.dvc)
-├── syllabi/      Phase-1 teaching sources                                         DVC (data/syllabi.dvc)
-├── het/          seed lists (small, stable)                                       git-tracked
-├── raw/          Phase-1 scratch                                                  gitignored
-└── derived/      Phase-2 derived data (intermediates + derived tables)            gitignored, regenerable
-```
-
-The load-bearing rule: **`data/catalogs/` = corpus (Phase 1, DVC-managed);
-`data/derived/` = analysis outputs (Phase 2, regenerable, gitignored).** No Phase-2
-output belongs under `data/catalogs/` — guard `tests/test_phase_layout.py` fails if
-a script or Make constant resolves one there.
 
 ## Artifact homes by phase
 
