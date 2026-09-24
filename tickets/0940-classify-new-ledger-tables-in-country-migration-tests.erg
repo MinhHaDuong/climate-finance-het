@@ -1,0 +1,36 @@
+%erg 0.1
+Title: Classify ontology-v2 ledger tables in legacy country migration input scan
+Created: 2026-09-24
+Author: Codex
+
+--- log ---
+2026-09-24T19:30Z Codex created — ex-post full make check on 0876/0884 worktrees found inherited country-migration failures after 0875
+
+--- body ---
+## Context
+
+The full `make check` after the 0875 identity-split merge fails four existing
+country migration tests. `scripts/jetp/_country_migration.py:87`
+(`legacy_dispositions`) raises `ValueError: Unclassified country input:
+agreements.csv` or `documents.csv` while scanning `data/jetp/`. Both files
+already exist on main at `c92e62b9`; neither the 0876 nor 0884 branch adds
+them. The temporary country migration readers should distinguish their own
+legacy inputs from the ontology-v2 ledger tables introduced by the train.
+
+The separate `test_jetp_courbe_reference` failure in these fresh worktrees is
+an absent `data/jetp/crs` DVC checkout, not this code defect.
+
+## Work
+
+- Reproduce the four country migration failures on main with the required
+  local data present.
+- Make the legacy-input scanner classify the new ledger tables explicitly,
+  without hiding an unknown country-specific file.
+- Keep the country staging outputs and served views byte-identical.
+
+## Exit criteria
+
+- [ ] IDN, SEN, VNM and ZAF migration tests pass with the ontology-v2 tables present.
+- [ ] An unknown extra input still fails with a named error.
+- [ ] Country staging outputs and served views are byte-identical before and after.
+- [ ] `make check-fast`, `make lint` and full `make check` pass with the CRS DVC dataset materialized.
