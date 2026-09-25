@@ -35,11 +35,11 @@ directly when the task needs it before you touch those files.
 `make check` first only when the diff touches the pipeline surface (`scripts/`,
 `libs/`, `dvc.yaml`, the Makefiles, or slow/integration tests).
 
-Run the full `make check` on padme (`ssh padme`), in a clean checkout of your
+When you do, run it on padme (`ssh padme`), in a clean checkout of your
 branch with the corpus and JETP documents in place (`make data`,
 `make jetp-data`; a fresh worktree may need `dvc checkout --force`, ticket
 1060). padme's `.env` sets `PYTEST_WORKERS=16`, about 2.5 min for
-the suite. A doudou worktree lacks those data, so its data-bound tests fail or
+the suite. A doudou worktree lacks those data by default, so its data-bound tests fail or
 skip and prove nothing: that is how the failures of ticket 0940 surfaced only
 after merging.
 
