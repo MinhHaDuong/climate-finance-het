@@ -44,9 +44,12 @@ def test_rebuild_counts_pending_and_repeat_bytes(tmp_path):
     # bytes, and seven records leave the pending list (146/35/55 before).
     # Ticket 1160 adds reviewed lines for seven source snapshots that otherwise
     # needed generic discovery lines. The replay must preserve those citations.
+    # The author then saved three ADB project pages by hand (0926 follow-up):
+    # one more claim and two more discoveries cite archived bytes, and four
+    # records leave the pending list (148/30/47 before).
     assert dict(counts) == {'pilot_manifest': 66, 'pilot_observation': 46,
-                            'portfolio': 46, 'claim': 148, 'discovery': 30}
-    assert len(pending) == 47  # The AfDB MURP source was collected by 0926.
+                            'portfolio': 46, 'claim': 149, 'discovery': 32}
+    assert len(pending) == 43  # The AfDB MURP source was collected by 0926.
     assert len(candidates) == 304
     paths = sorted((ledger / 'lines.d').glob('*.csv'))
     paths += sorted((ledger / 'migration').glob('*.csv'))

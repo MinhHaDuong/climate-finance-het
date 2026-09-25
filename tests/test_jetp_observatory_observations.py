@@ -331,7 +331,9 @@ def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> No
     # and only looked archive-less because its bytes were absent here.
     # Thirteen since ticket 0926 replayed the author's browser session on the
     # blocked sources: eight of these rows cite a source it then collected.
-    assert len(unarchived) == 13
+    # Ten since the author saved three ADB project pages by hand
+    # (browser-manual): three more rows now carry a digest.
+    assert len(unarchived) == 10
     assert all(registry[source_id]["sha256"] is None for _, _, source_id in unarchived)
 
 
