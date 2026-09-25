@@ -165,7 +165,25 @@ def append_event_timings(event_id, observation_id, line_id, source_rows, timings
             })
 
 
-def normalize_event_tables(events, implementation_events, event_timings, dispositions):
+def index_adjudications(adjudications):
+    """Validate and index the event-specific 0970 identity decisions."""
+    indexed = {}
+    for adjudication in adjudications:
+        key = (adjudication['legacy_table'], adjudication['legacy_event_id'])
+        if key in indexed:
+            raise ValueError(f'duplicate event adjudication: {key}')
+        if adjudication['promotion'] not in {'accept', 'hold'}:
+            raise ValueError(f'{key}: unsupported promotion {adjudication["promotion"]}')
+        if adjudication['referent_kind'] not in {'agreement', 'project', 'line'}:
+            raise ValueError(f'{key}: unsupported referent kind {adjudication["referent_kind"]}')
+        if not all(adjudication[field] for field in ('source_id', 'line_id', 'referent_id')):
+            raise ValueError(f'{key}: incomplete adjudication target')
+        indexed[key] = adjudication
+    return indexed
+
+
+def normalize_event_tables(events, implementation_events, event_timings, dispositions,
+                           adjudications=()):
     """Return the valid v2 event observations, timings, and explicit gaps.
 
     A legacy event can enter v2 only when ticket 0875 resolved both its subject
@@ -175,23 +193,39 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
     a citation.  The caller writes that pending register beside the tables.
     """
     disposition_by_old_id = {row['old_id']: row for row in dispositions}
+    adjudication_by_event = index_adjudications(adjudications)
     timing_by_event = {}
     for row in event_timings:
         timing_by_event.setdefault(row['event_id'], []).append(row)
 
     observations, timings, pending = [], [], []
 
-    def append_pending(row, event_id, table, reason):
+    def append_pending(row, event_id, table, reason, locator=None):
         pending.append({
             'legacy_table': table,
             'legacy_event_id': event_id,
             'legacy_project_id': row['project_id'],
             'source_id': row['source_id'],
-            'locator': row['locator'],
+            'locator': locator or row['locator'],
             'reason': reason,
         })
 
     def target(row, event_id, table):
+        adjudication = adjudication_by_event.get((table, event_id))
+        if adjudication is not None:
+            if (adjudication['legacy_project_id'] != row['project_id']
+                    or adjudication['source_id'] != row['source_id']):
+                raise ValueError(f'{event_id}: adjudication does not match legacy row')
+            if adjudication['promotion'] == 'hold':
+                append_pending(
+                    row, event_id, table, '0970_physical_state_hold',
+                    f"{row['locator']}; line_id={adjudication['line_id']}")
+                return None
+            return {
+                'disposition': adjudication['referent_kind'],
+                'new_id': adjudication['referent_id'],
+                'line_id': adjudication['line_id'],
+            }
         disposition = disposition_by_old_id.get(row['project_id'])
         if disposition is None:
             append_pending(row, event_id, table, 'no_0875_disposition')
@@ -318,8 +352,11 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
     with (ledger_dir / 'migration' / '0875-dispositions.csv').open(
             encoding='utf-8', newline='') as handle:
         dispositions = list(csv.DictReader(handle))
+    with (ledger_dir / 'migration' / '0970-event-adjudications.csv').open(
+            encoding='utf-8', newline='') as handle:
+        adjudications = list(csv.DictReader(handle))
     observations, timings, pending = normalize_event_tables(
-        events, implementation_events, event_timings, dispositions)
+        events, implementation_events, event_timings, dispositions, adjudications)
     # A blocked retrieval is an acquisition gap; a collected document with no
     # resolved event line needs line-level review.  Keep those remedies apart.
     with (ledger_dir / 'retrievals.csv').open(encoding='utf-8', newline='') as handle:
@@ -344,7 +381,8 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
     pending_path = ledger_dir / 'migration' / '0876-pending.csv'
     with pending_path.open('w', encoding='utf-8', newline='') as handle:
         writer = csv.DictWriter(handle, fieldnames=(
-            'legacy_table', 'legacy_event_id', 'legacy_project_id', 'source_id', 'locator', 'reason'))
+            'legacy_table', 'legacy_event_id', 'legacy_project_id', 'source_id', 'locator', 'reason'),
+            lineterminator='\n')
         writer.writeheader()
         writer.writerows(pending)
     reconciliation_path = ledger_dir / 'migration' / '0876-timing-reconciliation.csv'

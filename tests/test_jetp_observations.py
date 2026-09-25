@@ -69,6 +69,39 @@ def test_missing_resolved_line_is_explicitly_pending_not_an_observation():
     }]
 
 
+def test_0970_accepts_event_specific_targets_and_holds_physical_claims():
+    observations, timings, pending = normalize_event_tables(
+        [_financial('finance-1', 'legacy-finance', 'approved')],
+        [_implementation('physical-1', 'legacy-physical')],
+        [{'event_id': 'finance-1', 'date_role': 'reporting_cutoff',
+          'event_precision': 'unknown', 'event_start': '', 'event_end': '',
+          'observed_on': '2025-11-30'},
+         {'event_id': 'physical-1', 'date_role': 'reporting_cutoff',
+          'event_precision': 'unknown', 'event_start': '', 'event_end': '',
+          'observed_on': '2025-11-30'}],
+        [_disposition('legacy-finance', new_id='', line_id=''),
+         _disposition('legacy-physical', new_id='', line_id='')],
+        [{'legacy_table': 'events', 'legacy_event_id': 'finance-1',
+          'legacy_project_id': 'legacy-finance', 'source_id': 'doc-1',
+          'line_id': 'exact-finance-row', 'referent_kind': 'line',
+          'referent_id': 'exact-finance-row', 'promotion': 'accept'},
+         {'legacy_table': 'implementation-events', 'legacy_event_id': 'physical-1',
+          'legacy_project_id': 'legacy-physical', 'source_id': 'doc-2',
+          'line_id': 'exact-physical-row', 'referent_kind': 'project',
+          'referent_id': 'project-physical', 'promotion': 'hold'}],
+    )
+    assert [(row['subject_kind'], row['subject_id'], row['line_id']) for row in observations] == [
+        ('line', 'exact-finance-row', 'exact-finance-row')]
+    assert [(row['observation_id'], row['date_role']) for row in timings] == [
+        ('observation-finance-1', 'reporting_cutoff')]
+    assert pending == [{
+        'legacy_table': 'implementation-events', 'legacy_event_id': 'physical-1',
+        'legacy_project_id': 'legacy-physical', 'source_id': 'doc-2',
+        'locator': 'row 2; line_id=exact-physical-row',
+        'reason': '0970_physical_state_hold',
+    }]
+
+
 def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
     root = Path(__file__).resolve().parents[1]
     import csv
@@ -81,15 +114,16 @@ def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
     event_timings = rows(ledger / 'event-timing.csv')
     observations, timings, pending = normalize_event_tables(
         rows(ledger / 'events.csv'), rows(ledger / 'implementation-events.csv'),
-        event_timings, rows(ledger / 'migration' / '0875-dispositions.csv'))
-    assert len(observations) == 423
-    assert len(timings) == 345
-    assert len(pending) == 108
+        event_timings, rows(ledger / 'migration' / '0875-dispositions.csv'),
+        rows(ledger / 'migration' / '0970-event-adjudications.csv'))
+    assert len(observations) == 447
+    assert len(timings) == 367
+    assert len(pending) == 86
     event_pending = [row for row in pending if row['legacy_table'] != 'event-timing']
     assert len(observations) + len(event_pending) == 451
     reconciliation = reconcile_timing_rows(event_timings, observations, timings, pending)
     assert len(reconciliation) == 451
-    assert sum(row['outcome'] == 'typed_timing' for row in reconciliation) == 343
+    assert sum(row['outcome'] == 'typed_timing' for row in reconciliation) == 365
     assert sum(bool(row['approval_timing_id']) for row in reconciliation) == 2
     assert all(row['lower_bound'] and row['upper_bound'] for row in timings)
     assert all(row['date'] == row['lower_bound'] == row['upper_bound']
@@ -100,10 +134,8 @@ def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
             for row in committed_reconciliation] == [
         {key: str(value) for key, value in row.items() if key != 'reason'}
         for row in reconciliation]
-    assert sum(row['reason'] == 'missing_precise_cited_line'
-               for row in committed_reconciliation) == 27
-    assert sum(row['reason'] == 'missing_snapshot'
-               for row in committed_reconciliation) == 1
+    assert sum(row['reason'] == '0970_physical_state_hold'
+               for row in committed_reconciliation) == 3
     committed_timings = rows(ledger / 'timings.csv')
     assert {row['timing_id']: (row['date_role'], row['date_precision'],
                                row['lower_bound'], row['upper_bound'])
@@ -113,7 +145,17 @@ def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
         for row in timings}
     assert all(row['lower_bound'] and row['upper_bound'] for row in committed_timings)
     assert sum(row['reason'].startswith('unmapped_date_role_')
-               for row in reconciliation) == 80
-    assert sum(row['reason'] == 'no_resolved_subject_and_cited_line'
-               for row in reconciliation) == 28
+               for row in reconciliation) == 82
+    assert {row['legacy_event_id'] for row in pending
+            if row['reason'] == '0970_physical_state_hold'} == {
+                'idn-impl-green-corridors-2025', 'idn-impl-dieng34-2025',
+                'idn-impl-nagajaya-portal-2026'}
+    # Ticket 0926 later acquired the AfDB source, but it still supplies no
+    # precise cited row for the legacy event and therefore remains pending.
+    assert {row['legacy_event_id'] for row in pending
+            if row['reason'] == 'no_resolved_subject_and_cited_line'} == {
+                'zaf-murp-afdb-approved-2026'}
+    assert {row['legacy_event_id'] for row in committed_reconciliation
+            if row['reason'] == 'missing_precise_cited_line'} == {
+                'zaf-murp-afdb-approved-2026'}
     assert {row['legacy_event_id'] for row in pending} >= {'zaf-murp-afdb-approved-2026'}

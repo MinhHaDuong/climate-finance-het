@@ -1,23 +1,8 @@
 legacy_table,legacy_event_id,legacy_project_id,source_id,locator,reason
-events,zaf-murp-afdb-approved-2026,zaf-murp,zaf-murp-afdb-2026,official announcement,missing_snapshot
+events,zaf-murp-afdb-approved-2026,zaf-murp,zaf-murp-afdb-2026,official announcement,missing_precise_cited_line
 event-timing,zaf-eepbip-maf-approved-2018,,,,unmapped_date_role_other_milestone
-events,idn-approved-sreap-kfw-2025,idn-fin-rbl-sreap,idn-jetp-progress-report-2025,Table 4.3-2 p.72,missing_precise_cited_line
-events,idn-approved-muara-laboh-jbic-2025,idn-fin-muara-laboh-2,idn-jetp-progress-report-2025,Table 4.3-2 p.72,missing_precise_cited_line
-events,idn-approved-etp-canada-2025,idn-grant-jetp-etp,idn-jetp-progress-report-2025,Table 4.3-4 p.73,missing_precise_cited_line
-events,idn-approved-ietf-eu-2025,idn-grant-ietf,idn-jetp-progress-report-2025,Table 4.3-6 p.74,missing_precise_cited_line
-events,idn-approved-ietf-france-2025,idn-grant-ietf,idn-jetp-progress-report-2025,Table 4.3-7 p.74,missing_precise_cited_line
-events,idn-approved-etp-uk-2025,idn-grant-jetp-etp,idn-jetp-progress-report-2025,Table 4.3-11 pp.75-76,missing_precise_cited_line
-events,idn-pipeline-green-corridors-kfw-2025,idn-pipe-green-corridors-sulawesi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-pipeline-nagajaya-norfund-2025,idn-pipe-nagajaya-micro-hydro,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-pipeline-dediesel-east-private-2025,idn-pipe-dediesel-east-phase1,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-pipeline-e-taxi-private-2025,idn-pipe-e-taxi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-pipeline-hijaunesia2-private-2025,idn-pipe-hijaunesia-2,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-pipeline-hydro-sumatra-private-2025,idn-pipe-hydro-quota-sumatra,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-pipeline-hydro-sulawesi-private-2025,idn-pipe-hydro-quota-sulawesi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-pipeline-dieng34-adb-2025,idn-pipe-dieng-3-4,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-pipeline-rscm-private-2025,idn-pipe-rscm-energy-efficiency,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-events,idn-portal-gecs-kfw-2026,idn-pipe-green-corridors-sulawesi,idn-portfolio-project-gecs,Financial Information Modality A,missing_precise_cited_line
-events,idn-portal-nagajaya-norfund-2026,idn-pipe-nagajaya-micro-hydro,idn-portfolio-project-nagajaya,Financial Information Modality A,missing_precise_cited_line
+event-timing,idn-portal-gecs-kfw-2026,,,,unmapped_date_role_observation
+event-timing,idn-portal-nagajaya-norfund-2026,,,,unmapped_date_role_observation
 event-timing,idn-portal-hululais-jica-2026,,,,unmapped_date_role_observation
 event-timing,sen-qw2-plan-need-2025,,,,unmapped_date_role_unknown
 event-timing,sen-qw3-plan-need-2025,,,,unmapped_date_role_unknown
@@ -55,16 +40,9 @@ event-timing,sen-plan-cost-annex-37,,,,unmapped_date_role_unknown
 event-timing,sen-plan-allocation-qw-04,,,,unmapped_date_role_unknown
 event-timing,sen-plan-allocation-qw-08,,,,unmapped_date_role_unknown
 event-timing,sen-plan-allocation-qw-10,,,,unmapped_date_role_unknown
-implementation-events,idn-impl-green-corridors-2025,idn-pipe-green-corridors-sulawesi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-nagajaya-2025,idn-pipe-nagajaya-micro-hydro,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-dediesel-east-2025,idn-pipe-dediesel-east-phase1,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-e-taxi-2025,idn-pipe-e-taxi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-hijaunesia2-2025,idn-pipe-hijaunesia-2,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-hydro-sumatra-2025,idn-pipe-hydro-quota-sumatra,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-hydro-sulawesi-2025,idn-pipe-hydro-quota-sulawesi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-dieng34-2025,idn-pipe-dieng-3-4,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-rscm-2025,idn-pipe-rscm-energy-efficiency,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73,missing_precise_cited_line
-implementation-events,idn-impl-nagajaya-portal-2026,idn-pipe-nagajaya-micro-hydro,idn-portfolio-project-nagajaya,General Information description,missing_precise_cited_line
+implementation-events,idn-impl-green-corridors-2025,idn-pipe-green-corridors-sulawesi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73; line_id=idn-progress25-t4-3-3-gecs,0970_physical_state_hold
+implementation-events,idn-impl-dieng34-2025,idn-pipe-dieng-3-4,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73; line_id=idn-progress25-t4-3-3-dieng34,0970_physical_state_hold
+implementation-events,idn-impl-nagajaya-portal-2026,idn-pipe-nagajaya-micro-hydro,idn-portfolio-project-nagajaya,General Information description; line_id=idn-portfolio-project-nagajaya-claim-79,0970_physical_state_hold
 event-timing,sen-project-qw-02-proposed-2025-04-02,,,,unmapped_date_role_unknown
 event-timing,sen-project-qw-03-proposed-2025-04-02,,,,unmapped_date_role_unknown
 event-timing,sen-project-annex-16-procurement-2026-09-09,,,,unmapped_date_role_ambiguous
