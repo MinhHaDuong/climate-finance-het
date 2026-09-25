@@ -46,6 +46,13 @@ are `need` estimates, not secured financing. The plan's p. 33 Quick Win list
 supports three proposed project baselines; their issue dates remain unresolved
 in the pending timing register.
 
+The plan repeats the energy-efficiency programme (`sen-plan-cost-annex-11`)
+inconsistently: the cited summary row on p. 43 and the detailed Quick Win 6
+allocation on p. 45 both give EUR 132 million, while the later summary on
+p. 93 gives EUR 6.3 million. The observation records the specifically cited
+p. 43 estimate; this discrepancy prevents treating the plan as a single
+unambiguous programme total.
+
 For the smaller sources, the AFD Diass factsheet's “Prochaines étapes / impacts”
 paragraph gives KfW EUR 18 million and AFD EUR 8 million. Senelec's 20 April
 2026 Diass article separately reports KfW EUR 28 million and AFD EUR 8 million

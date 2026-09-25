@@ -258,6 +258,13 @@ def test_1160_every_mismatch_has_source_evidence_or_a_named_hold():
                     amount, currency = match[1], match[2]
                 assert Decimal(amount) * 1_000_000 == int(decision['source_value'])
                 assert currency == decision['source_currency']
+            elif decision['source_currency'] == 'JPY':
+                match = re.search(r'JPY (\d+(?:\.\d+)?) billion', line['label'])
+                assert match is not None
+                assert Decimal(match[1]) * 1_000_000_000 == int(
+                    decision['source_value'])
+            else:
+                raise AssertionError(f'{event_id}: no numeric source value in cited line')
         key = (decision['source_id'], decision['source_sha256'])
         if key not in checked_snapshots:
             archived = ledger / 'documents' / snapshot_by_source[key]
