@@ -51,7 +51,7 @@ before the current tables are removed. Counts below are from the tables on
 | `data/jetp/comparison/*.json` | 1 119 records, 97 in the reference pool | lines of World Bank API snapshots, external identifiers, comparator status crosswalk | the reference pool is a perimeter whose members are those lines |
 | `config/jetp_tracking.yaml` vocabularies and the value lists of the ontology's sections 2 to 4 | about 98 lines of YAML | `terms` rows under `data/jetp/ontology/`, each with a definition and, where one exists, an external mapping | the YAML keeps display choices only |
 | `news-leads.csv` | 18 | kept as today: a working file of the watch, not a ledger table | named as not served, with that reason, on the observatory's How we did this page |
-| figure scripts' inline exchange rates | 1 known (`2500 * 1.09`) | `rates` rows citing their source line | a script never carries a rate |
+| figure scripts' inline exchange rates | 1 unsupported (`2500 * 1.09`) | `rates` rows citing their source line | the Senegal package percentage is withdrawn until a cited EUR/USD rate is selected; the script carries no rate |
 
 Order of work, each step a ticket with its own byte-level check:
 

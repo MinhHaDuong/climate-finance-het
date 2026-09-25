@@ -238,7 +238,7 @@ Le RMP le concède lui-même un an après : « *impossible de déterminer quelle
 | | Afrique du Sud | Indonésie | Vietnam | Sénégal |
 |---|---|---|---|---|
 | Signature | 2 nov. 2021 | 15 nov. 2022 | 14 déc. 2022 | 22 juin 2023 |
-| Paquet | 8,5 Md$ | 20 Md$ | 15,5 Md$ | 2,5 Md€ (≈2,71 Md$) |
+| Paquet | 8,5 Md$ | 20 Md$ | 15,5 Md$ | 2,5 Md€ (conversion USD non sourcée) |
 | Paquet / PIB | **2,02 %** | **1,52 %** | **3,75-3,80 %** | **9,46-9,75 %** |
 | Paquet / dette externe totale | 5,02-5,30 % | 5,04-5,05 % | 10,68 % | 7,62 % |
 | Dette publique déclarée à la signature (gouv. central) | 69,9-70,7 % PIB | 39,7-42,9 % PIB | 34,7-38 % PIB | 68,2 % PIB |
