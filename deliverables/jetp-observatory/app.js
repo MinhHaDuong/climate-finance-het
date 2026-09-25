@@ -486,10 +486,34 @@ const webArchiveOf = (entry) => {
   const capture = webArchive[entry?.url];
   return capture?.capture_url && ["captured", "reused"].includes(capture.outcome) ? capture : null;
 };
+/* Ticket 1210 (author's decision, 2026-09-25): "dead since" is the earliest
+ * evidence, not the first check. Our own retrieval attempts are evidence
+ * too: the earliest attempt of the address that got a 404 or a 410 after the
+ * last attempt that got the file, joined here on the address, like the
+ * checks. Only the check says whether the link is dead now: a link it found
+ * alive, or could not reach, is never dead, whatever an older attempt got. */
+const GONE = /^HTTP (404|410)\b/;
+const RETRIEVED = new Set(["collected", "not_modified"]);
+let goneAttempts = {};
+function indexGone(entries) {
+  const gone = {};
+  [...entries].sort(attemptOrder).forEach((entry) => {
+    if (!entry.url) return;
+    if (RETRIEVED.has(entry.status)) delete gone[entry.url];
+    else if (GONE.test(entry.error || "") && !gone[entry.url]) gone[entry.url] = entry;
+  });
+  return gone;
+}
 const deadSince = (entry) => {
   const check = linkChecks[entry?.url];
-  return check?.outcome === "dead" ? check.dead_since || (check.checked_at || "").slice(0, 10) : null;
+  if (check?.outcome !== "dead") return null;
+  const checked = check.dead_since || (check.checked_at || "").slice(0, 10);
+  const tried = (goneAttempts[entry.url]?.collected_on || "").slice(0, 10);
+  return tried && (!checked || tried < checked) ? tried : checked;
 };
+/* The HTTP status that said so: the check's, else our attempt's. */
+const deadStatus = (entry) =>
+  linkChecks[entry?.url]?.http_status || (GONE.exec(goneAttempts[entry?.url]?.error || "") || [])[1] || "";
 /* A PDF opens as the archived bytes themselves (Wayback's id_ form), at the
  * page, so its SHA-256 can be compared with ours; a web page opens in the
  * Wayback replay, which rewrites it and so is never byte-identical. */
@@ -526,8 +550,9 @@ function webArchiveLink(entry, page, attrs = "", label) {
 }
 function deadNote(entry) {
   const since = deadSince(entry);
+  const status = deadStatus(entry);
   return since
-    ? ` <span class="note dead-link" data-dead-since="${esc(since)}">publisher link dead since ${esc(date(since))}</span>`
+    ? ` <span class="note dead-link" data-dead-since="${esc(since)}">publisher link dead${status ? ` (${esc(status)})` : ""} since ${esc(date(since))}</span>`
     : "";
 }
 /* The publisher's page and its Web Archive copy side by side, the copy first
@@ -590,6 +615,18 @@ function attemptsFold(doc) {
     return `<li data-attempt="${esc(a.row_key)}">${esc(attemptTime(a, true))} UTC · ${esc((a.status || "").replaceAll("_", " "))} · ${read}${method ? " · " + esc(method) : ""}</li>`;
   };
   return `<details class="attempts" data-attempts="${doc.attempts.length}"><summary>${esc(summary)}</summary><ul class="citing">${doc.attempts.map(item).join("")}</ul></details>`;
+}
+/* A document never collected says so plainly (ticket 1210), and why: gone
+ * when we came (404/410), or the failure recorded. A single attempt keeps its
+ * date and method here, having no fold to hold them. */
+function noCopy(doc) {
+  const tries = doc.attempts.length;
+  const reason = GONE.test(doc.error || "")
+    ? "the file was already gone when we tried to collect it."
+    : `${tries > 1 ? `none of our ${tries} attempts could collect it` : "our attempt to collect it failed"} (${doc.error ? collectionFailure(doc.error) : esc((doc.status || "").replaceAll("_", " "))}).`;
+  const method = collectionMethod(doc);
+  const when = tries > 1 ? "" : `<br>Tried ${esc(date((doc.collected_on || "").slice(0, 10) || null))}${method ? ` <span data-collection-method="${esc(doc.collection_method)}">${esc(method)}</span>` : ""}`;
+  return `<span data-no-copy>No copy: ${reason}</span>${when}`;
 }
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
@@ -837,7 +874,7 @@ function documentsPage(params) {
   // of its own. The publisher's page is always there; the archived copy only
   // where this server holds it (ticket 0915).
   const links = (r) =>
-    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>${attemptsFold(r)}`;
+    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${r.sha256 ? collectedFacts(r, "<br>") : noCopy(r)}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>${attemptsFold(r)}`;
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -2028,6 +2065,7 @@ async function start() {
     stagedCopies = new Set(staged?.objects || []);
     webArchive = indexBy(captures.captures, "url");
     linkChecks = indexBy(checks.checks, "url");
+    goneAttempts = indexGone(documentsData.documents);
     ontology = readOntology(termsView, statusCrosswalkView);
     countries = Object.fromEntries(
       await Promise.all(

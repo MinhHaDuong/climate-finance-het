@@ -309,6 +309,73 @@ def test_the_status_filter_counts_documents_on_their_best_attempt() -> None:
     assert "idn-cipp-2023" not in shown
 
 
+def test_a_document_gone_before_collection_says_so_and_is_dead_since_the_first_404() -> None:
+    # The author's mock: the publisher link is dead since our own first 404
+    # (13 Sep), not since the link check that confirmed it (24 Sep); no copy,
+    # said plainly; both attempts folded.
+    source_id = "sen-offgrid-mini-grid-2025"
+    best, attempts = attempts_by_document()[source_id]
+    assert [a["error"] for a in attempts] == ["HTTP 404", "HTTP 404"]
+    checks = {c["url"]: c for c in served("publisher-links")["checks"]}
+    assert checks[best["url"]]["outcome"] == "dead"
+    assert checks[best["url"]]["dead_since"] > "2026-09-13"
+
+    results = render("documents", {"documents-search": source_id})["elements"][
+        "documents-results"]["innerHTML"]
+
+    rows = document_rows(results, source_id)
+    assert len(rows) == 1, len(rows)
+    row = rows[0]
+    text = unescape(re.sub(r"<[^>]+>", "", row))
+    assert 'data-dead-since="2026-09-13"' in row
+    assert "publisher link dead (404) since 13 Sept 2026" in text
+    assert "No copy: the file was already gone when we tried to collect it." in text
+    assert "Collected " not in text
+    assert attempts_summary(row) == "2 attempts: 404 on 13 Sept 08:46, 404 on 13 Sept 09:14"
+
+
+DEAD_SINCE = """(() => {
+  const url = "https://p.example/x.pdf";
+  const attempt = (n, at, status, error, sha256 = null) =>
+    ({ id: "x", row_key: "x:" + n, url, collected_on: at, status, error, sha256 });
+  const cases = {
+    earlier_404: [[attempt(1, "2026-09-13T08:46:00Z", "missing", "HTTP 404")],
+                  { outcome: "dead", dead_since: "2026-09-24", http_status: "404" }],
+    earlier_check: [[attempt(1, "2026-09-13T08:46:00Z", "missing", "HTTP 410")],
+                    { outcome: "dead", dead_since: "2026-09-10", http_status: "410" }],
+    reset_by_success: [[attempt(1, "2026-09-01T00:00:00Z", "missing", "HTTP 404"),
+                        attempt(2, "2026-09-05T00:00:00Z", "collected", null, "aa"),
+                        attempt(3, "2026-09-20T00:00:00Z", "missing", "HTTP 404")],
+                       { outcome: "dead", dead_since: "2026-09-24", http_status: "404" }],
+    forbidden_is_not_gone: [[attempt(1, "2026-09-13T08:46:00Z", "blocked", "HTTP 403")],
+                            { outcome: "dead", dead_since: "2026-09-24", http_status: "404" }],
+    unreachable: [[attempt(1, "2026-09-13T08:46:00Z", "missing", "HTTP 404")],
+                  { outcome: "unreachable", dead_since: null, http_status: null }],
+    alive: [[attempt(1, "2026-09-13T08:46:00Z", "missing", "HTTP 404")],
+            { outcome: "alive", dead_since: null, http_status: "200" }],
+  };
+  return Object.fromEntries(Object.entries(cases).map(([name, [attempts, check]]) => {
+    linkChecks = { [url]: { url, checked_at: "2026-09-24T15:00:00Z", ...check } };
+    goneAttempts = indexGone(attempts);
+    return [name, deadSince({ url })];
+  }));
+})()"""
+
+
+def test_dead_since_is_the_earliest_evidence_and_unreachable_is_never_dead() -> None:
+    assert render("documents", {}, DEAD_SINCE)["eval"] == {
+        "earlier_404": "2026-09-13",
+        "earlier_check": "2026-09-10",
+        # A later collection proves the file was back: the run restarts.
+        "reset_by_success": "2026-09-20",
+        "forbidden_is_not_gone": "2026-09-24",
+        # Our own 404s never make a link dead that the check could not reach
+        # or found alive: the check states the link's present condition.
+        "unreachable": None,
+        "alive": None,
+    }
+
+
 def test_a_document_with_one_product_gets_one_fold_out() -> None:
     linked = climb(RMP, "VNM")
     assert linked["m1a"] and not linked["ledger"]

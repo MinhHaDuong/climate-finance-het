@@ -88,6 +88,22 @@ def best_attempts(registry):
             for source_id, attempts in grouped.items()}, grouped
 
 
+GONE = ('HTTP 404', 'HTTP 410')
+
+
+def expected_dead_since(registry, check):
+    """The earliest evidence: the check's dead_since, or our first 404/410 of
+    the address after its last successful retrieval, whichever is earlier."""
+    gone = None
+    for row in sorted((r for r in registry if r['url'] == check['url']), key=attempt_order):
+        if row['status'] in ('collected', 'not_modified'):
+            gone = None
+        elif (row['error'] or '').startswith(GONE) and gone is None:
+            gone = row['collected_on'][:10]
+    checked = check['dead_since'] or check['checked_at'][:10]
+    return min(d for d in (gone, checked) if d)
+
+
 def served_tables(page, url):
     """The tables the Documents page joins at read time (ticket 0858)."""
     m1a = {}
@@ -235,9 +251,9 @@ def check_documents(page, url, staged):
 def check_web_archive(page, url):
     """Ticket 0925: each document's Web Archive copy sits beside its publisher's
     page, dated, with the identity note its type allows; a publisher link the
-    periodic check found dead says since when and comes second. The publisher's
-    address is never rewritten. Both tables are served views joined on the
-    address."""
+    periodic check found dead says since when — the earliest evidence, ticket
+    1210 — and comes second. The publisher's address is never rewritten. Both
+    tables are served views joined on the address."""
     documents = page.request.get(url + '/data/documents.json').json()['documents']
     registry = list(best_attempts(documents)[0].values())
     captures = {c['url']: c for c in page.request.get(url + '/data/web-archive.json').json()['captures']
@@ -274,7 +290,11 @@ def check_web_archive(page, url):
             note = cell.locator('[data-identity]').get_attribute('data-identity')
             assert note == ('pdf' if pdf else 'html'), row['row_key']
         if row in dead:
-            assert 'publisher link dead since' in cell.inner_text(), row['row_key']
+            assert 'publisher link dead' in cell.inner_text(), row['row_key']
+            since = cell.locator('[data-dead-since]').first.get_attribute('data-dead-since')
+            assert since == expected_dead_since(documents, checks[row['url']]), (row['row_key'], since)
+            if not row['sha256']:
+                assert 'No copy: ' in cell.inner_text(), row['row_key']
             if capture:
                 links = cell.locator('a[data-link="web-archive"], a[data-link="publisher"]')
                 assert links.first.get_attribute('data-link') == 'web-archive', row['row_key']
