@@ -148,7 +148,7 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
 # jetp_pull est frozen à dessein (API à débit limité, millésimes révisés par
 # l'OCDE), donc le tirage ne se rejoue jamais tout seul.
 jetp-crs-data:
-	dvc pull data/jetp/crs
+	$(UV_RUN) dvc pull data/jetp/crs
 
 jetp-crs: jetp-crs-data
 	dvc repro jetp_cohortes jetp_livrable jetp_synthese
