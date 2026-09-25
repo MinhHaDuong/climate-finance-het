@@ -1,0 +1,52 @@
+%erg 0.1
+Title: zaf-ntcsa-transmission-plans: one page collected twice, two fingerprints shown to readers
+Created: 2026-09-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-25T13:30Z HDMX-coding-agent created — author, 2026-09-25: "Ticket the suspect doc"; found by the review of PR #1529 (ticket [[1210]])
+
+--- body ---
+## Context
+
+`data/jetp/manifest.csv` holds two `collected` attempts of
+`zaf-ntcsa-transmission-plans` (National Transmission Company South Africa,
+"Transmission Development Plans", `https://www.ntcsa.co.za/transmission-development-plans-tdp/`),
+nine seconds apart on 2026-09-12:
+
+| Attempt | retrieved_at | SHA-256 | Size | Type |
+|---|---|---|---|---|
+| 1 | 05:55:43Z | `218f5f97…3e97c` | 185 974 B | text/html |
+| 2 | 05:55:52Z | `69ebf776…0a198` | 185 974 B | text/html |
+
+Same address, same final URL, same size, different bytes. The likely cause
+is content that changes on every load (a nonce, CSRF token or timestamp in
+the HTML); not yet established.
+
+Since [[1210]] (PR #1529) the public Documents page shows a document's
+latest collected attempt, while every other page (`documentIndex` in
+`deliverables/jetp-observatory/app.js`) keeps the first. A reader following
+this document from a statement to the Documents page meets two different
+SHA-256 values for "the file we read". It is the only document of 294 with
+two collected attempts of different bytes (checked 2026-09-25).
+
+## Actions
+
+1. On padme, diff the two stored objects
+   (`data/jetp/documents/objects/21/218f5f97….html`,
+   `objects/69/69ebf776….html`) and record what differs.
+2. Decide from the diff: if only per-load tokens differ, the two attempts are
+   one document and the second is a re-fetch, not a new version; otherwise
+   they are two versions and both stay, dated.
+3. Make every page pick the same attempt for a document (one selection rule
+   shared by the Documents page and `documentIndex`), with a test on this
+   document.
+4. Say whether the harvester should skip or mark a re-fetch of an unchanged
+   HTML page (a follow-up only if the diff shows per-load noise is common).
+
+## Exit criteria
+
+- [ ] The diff of the two objects is recorded in this ticket
+- [ ] Every page shows the same attempt and fingerprint for a document; a test pins it on `zaf-ntcsa-transmission-plans`
+- [ ] The decision (one document re-fetched, or two versions) is stated where a reader of the Methods page can find the rule
+- [ ] `make check-fast` and `make lint` pass
