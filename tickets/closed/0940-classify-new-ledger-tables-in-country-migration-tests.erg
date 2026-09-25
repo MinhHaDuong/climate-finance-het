@@ -2,6 +2,7 @@
 Title: Classify ontology-v2 ledger tables in legacy country migration input scan
 Created: 2026-09-24
 Author: Codex
+Closed: PR #1512 merged at e85013ee; targeted padme tests, make check-fast, and make lint passed. Full main suite remains ex-post after 0990.
 
 --- log ---
 2026-09-24T19:30Z Codex created — ex-post full make check on 0876/0884 worktrees found inherited country-migration failures after 0875
@@ -14,7 +15,9 @@ Author: Codex
 2026-09-25T05:47Z Codex note main advanced to 16e3ff69 (PR #1509): [[0970]] adds four reviewed IDN project identities, so the IDN legacy count pin is now 2233. The other three country inputs are unchanged; IDN alone is selected for another padme probe.
 2026-09-25T05:48Z Codex note IDN's named test passes on padme at 16e3ff69 with `pytest -n 16`; the other three country tests passed on f50a0748 and their inputs did not change in PR #1509. `git diff --exit-code origin/main -- data/jetp deliverables/jetp-observatory/data` is empty in the 0940 worktree; `erg check` and `git diff --check` pass.
 2026-09-25T05:57Z Codex note padme fast merge gates on the 0940 patch: `make check-fast` passed (25 package tests; 2365 project tests passed, 15 skipped) after `dvc checkout data/jetp/releases/vnm-migration-0764.json.dvc`; `make lint` passed (339 passed, 13 skipped). Full `make check` was not rerun, per the author's targeted-verification instruction; its separate CRS prerequisite remains [[0990]].
+2026-09-25T06:05Z Codex note PR #1512 merged at e85013ee; the author's dependency review found that waiting for a full green suite here while [[0990]] waits for the 0940 fix creates a circular close gate. PR #1514 handles the separate CRS prerequisite in [[0990]]. The full suite remains an ex-post main health check under AGENTS.md /lair step 9; [[1060]] tracks its automation. All 0940-specific checks and fast merge gates are green.
 
+2026-09-25T06:07Z HDMX-coding-agent closed — PR #1512 merged at e85013ee; targeted padme tests, make check-fast, and make lint passed. Full main suite remains ex-post after 0990.
 --- body ---
 ## Context
 
@@ -65,4 +68,8 @@ in 42.05s` on main; this is a direct reproduction, not a branch attribution.
 - [x] The four named IDN, SEN, VNM and ZAF pytest nodes pass with v2 tables present (padme, `-n 16`, 2026-09-25).
 - [x] An unknown extra input still fails with a named error (`test_ontology_v2_rows_are_excluded_from_legacy_country_dispositions`).
 - [x] Country staging outputs and served views are byte-identical before and after (no diff under `data/jetp` or `deliverables/jetp-observatory/data`).
-- [ ] `make check-fast` and `make lint` pass; full `make check` passes once [[0990]] supplies its separate CRS data prerequisite.
+- [x] `make check-fast` and `make lint` pass on padme (25 package + 2365 fast tests; 339 adherence tests, 2026-09-25).
+
+The full `make check` on main remains an ex-post health check after the CRS
+prerequisite in [[0990]] lands. [[1060]] tracks automating that check; its
+result is not a prerequisite for closing this merged country-scan fix.
