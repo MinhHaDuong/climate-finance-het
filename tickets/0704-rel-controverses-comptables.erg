@@ -8,6 +8,7 @@ Blocked-by: 0702
 2026-08-21T12:00Z haduong created
 2026-09-11T16:01Z haduong note materiau amont reuni hors depot pendant l'audit Gavard & Schoch — note de source + lot de 14 articles sur l'efficacite emissions, voir section Materiau amont
 2026-09-23T08:01Z HDMX-coding-agent note Audit Gavard & Schoch etendu le 2026-09-23 : rupture de declaration 2013 (BMD, FEM), ponderation 40 % annoncee non appliquee, composition sectorielle ; voir section Materiau amont (suite)
+2026-09-25T09:01Z Codex note Le corpus de travail est degele pour v3. La collecte Gavard & Schoch est candidate a sa revue de couverture ; la mesure des controverses attend la concordance Zotero/PDF/corpus et la revision analytique REL de 0700/0702.
 --- body ---
 ## Contexte
 
@@ -28,10 +29,12 @@ Les quatre, telles qu'annoncées :
 
 ## Matériau amont déjà réuni (hors dépôt)
 
-Réuni le 2026-09-11 pendant l'audit Gavard & Schoch, et directement utile à la
-controverse 2 (crédibilité des marqueurs) comme à la question d'efficacité qui
-la sous-tend. Discipline EDM : les PDF restent en staging, Zotero est le
-système de référence, rien de tout cela n'entre dans ce dépôt.
+Réuni depuis le 2026-09-11 pendant l'audit Gavard & Schoch, et directement
+utile à la controverse 2 (crédibilité des marqueurs) comme à la question
+d'efficacité qui la sous-tend. Discipline EDM : les PDF restent en staging,
+Zotero est le système de référence. Les notices pertinentes peuvent entrer
+dans le corpus bibliométrique v3 par son pipeline ; les PDF ne sont pas copiés
+dans ce dépôt.
 
 **Note de source.** `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance
 counterproductive/audit/research-note-gavard-schoch-2026.md` — note d'audit
@@ -56,14 +59,20 @@ sur les émissions : Apergis–Pinar–Ünlü 2024, Aquilas–Atemnkeng 2022, Ba
 Li–Rishi–Bae 2021 (+ supplément), Li et al. 2022, Lin et al. 2023, Mahalik
 et al. 2021, Ming et al. 2025, Nghiem et al. 2026, Pinar 2023, Wu–Pan–She 2021.
 
-Trois textes manquants, suivis dans `docs/missing-papers.html` : Gavard &
-Schoch (2026) version publiée (10.1017/S1355770X26100679), Wang & Tang (2026)
-(10.1002/sd.70738), Zeng et al. (2022) (10.1007/s11356-022-21185-y).
+La liste ci-dessus décrit le lot initial. Au 2026-09-25, `docs/` contient
+28 PDF, dont les suppléments, et la bibliothèque Zotero locale a 28 notices
+bibliographiques dans les deux collections de l'audit et du commentaire.
+Quatorze DOI se retrouvent dans `refined_works.csv`, quatorze non ; parmi les
+24 notices datées au plus tard de 2024, douze ne correspondent pas par DOI.
+Le rapprochement par titre et la décision de périmètre restent à faire : ces
+douze absences de DOI ne prouvent pas douze œuvres absentes. La version publiée
+de Gavard & Schoch et Zeng et al. sont désormais dans `docs/` ; Wang & Tang
+reste signalé dans `docs/missing-papers.html` sans PDF local.
 
-**Ce que ce lot n'est pas.** Un échantillon de lecture réuni par recherche
-ciblée, pas une mesure sur le corpus v2. L'invariant ci-dessous s'applique sans
-réserve : ce matériau peut nourrir la lecture de la controverse 2, il ne peut
-pas étayer un constat de présence ou d'absence dans la littérature.
+**Statut du lot.** Il résulte d'une recherche ciblée : son contenu ne mesure
+pas à lui seul la présence ou l'absence d'un thème dans la littérature. Il
+sert à détecter et instruire les lacunes de couverture du corpus v3 avant la
+mesure sur une révision REL documentée (0700/0702).
 
 ## Matériau amont (suite, 2026-09-23)
 
@@ -92,13 +101,16 @@ lettre envoyée le 2026-09-23. La revue cite le schéma, pas les erreurs.
 
 ## Actions
 
-1. Pour chacune, mesurer la présence dans le corpus : volume, période, courants
-   qui la portent, lieux.
-2. Lire ce que la recherche en dit, et le distinguer de ce que le débat
+1. Faire traiter dans 0700/0702 la concordance des références réunies et les
+   lacunes pertinentes du corpus v3 ; distinguer les textes de contexte ou de
+   méthode hors périmètre et les textes postérieurs à la fenêtre REL.
+2. Pour chacune, mesurer la présence sur la révision REL du corpus : volume,
+   période, courants qui la portent, lieux.
+3. Lire ce que la recherche en dit, et le distinguer de ce que le débat
    politique en dit.
-3. Écrire le constat d'écart — y compris s'il est faible : un champ qui suit
+4. Écrire le constat d'écart — y compris s'il est faible : un champ qui suit
    l'agenda politique est un résultat, pas un échec de la mesure.
-4. Nommer les questions propres que la littérature développe hors de cet agenda.
+5. Nommer les questions propres que la littérature développe hors de cet agenda.
 
 ## Invariants
 

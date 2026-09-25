@@ -7,6 +7,7 @@ Author: haduong
 2026-08-21T11:00Z haduong created
 2026-08-21T11:40Z haduong note Réponse de l'éditeur reçue ; périmètre et calendrier agréés, étiquette needs-human levée
 2026-09-11T16:01Z haduong note 0704 documente un materiau amont reuni hors depot (audit Gavard & Schoch) : note de source + 14 articles sur l'efficacite emissions, en staging Zotero, hors mesure corpus
+2026-09-25T09:01Z Codex note Le data paper est publie et son v2 reste archive ; le corpus de travail est degele pour v3 (STATE.md). Les references de l'audit Gavard & Schoch entrent dans la revue de couverture du corpus courant avant la mesure REL ; 0702 et 0704 mis a jour.
 
 --- body ---
 ## Contexte
@@ -68,17 +69,20 @@ développe ses propres questions. C'est la partie qui distingue la proposition
 d'une revue bibliométrique ordinaire ; ne pas la laisser se réduire à un
 paragraphe.
 
-## Actifs disponibles — l'acquisition est déjà faite
+## Actifs disponibles
 
-Corpus v2 de ce dépôt, gelé le 2026-07-27 : 8 sources, 43 179 références
-unifiées → 33 344 raffinées, 38 736 × 1024 plongements, 1 087 209 citations
-raffinées, noyau (≥ 50 citations) de 2 644 œuvres, couverture de citation
-40/47/69 % par période. C'est ce qui rend l'échéance de quatre mois tenable.
+Le v2 publié du corpus reste archivé au tag `rdj26561-revision1` : 8 sources,
+43 179 références unifiées → 33 344 raffinées, 38 736 × 1024 plongements,
+1 087 209 citations raffinées, noyau (≥ 50 citations) de 2 644 œuvres,
+couverture de citation 40/47/69 % par période. Ces chiffres décrivent v2,
+pas nécessairement la version que REL analysera. Le corpus de travail est
+dégelé pour v3 ; ses références, dont celles réunies dans l'audit Gavard &
+Schoch, peuvent être intégrées après rapprochement et décision de périmètre.
+La passe REL fixe et cite sa propre révision du corpus avant les calculs.
 
-Le *data paper* du corpus (RDJ-26561) était annoncé à l'éditeur comme « to
-appear » ; il est en réalité en révision 1, décision attendue. **Vérifier son
-état avant soumission** et ajuster la formulation si la décision n'est pas
-tombée.
+Le *data paper* du corpus (RDJ-26561), annoncé à l'éditeur comme « to appear »,
+est publié ; citer sa version publiée et distinguer son v2 de la révision v3
+utilisée par REL.
 
 ## Invariants
 
@@ -94,6 +98,10 @@ tombée.
   c'est le genre où la discipline se relâche : chaque œuvre citée doit résoudre
   vers un plein texte local, garde `test_cited_works_available.py`, allowlist
   des inatteignables tenue à jour et purgée quand un texte arrive.
+- **Périmètre explicite.** Le projet v3 peut accueillir des références récentes,
+  mais la fenêtre bibliométrique annoncée à l'éditeur (1990–2024) reste une
+  décision distincte. Relever les années réellement présentes, fixer et
+  documenter la fenêtre de la mesure REL avant de produire ses chiffres.
 - Orthographe cohérente, variété fixée par les consignes de la revue.
 - Prose éditée en place avec l'auteur, pas derrière un worktree.
 
@@ -103,7 +111,7 @@ tombée.
 |---|---|
 | Manuscrit, analyses, figures | `deliverables/literature-review/` de ce dépôt |
 | Correspondance, kits de soumission | `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/` |
-| Corpus | v2 gelé, DOI de concept `10.5281/zenodo.19236129` |
+| Corpus | v3 de travail, révision et fenêtre à fixer pour REL ; v2 publié conservé au tag `rdj26561-revision1` et au DOI de concept `10.5281/zenodo.19236129` |
 | Découpe du travail | enfants 0701–0705 |
 
 ## Actions
@@ -113,10 +121,14 @@ tombée.
    déposer dans `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/`, dans un
    `instructions to authors/` comme le fait *Oeconomia — Joint production*.
 2. Plan détaillé des deux mouvements, validé par l'auteur avant rédaction.
-3. Analyse bibliométrique sur le corpus gelé — courants, lieux, lignées.
-4. Synthèse narrative par courant.
-5. Section sur les quatre controverses comptables.
-6. Passe d'édition d'auteur, puis lecteurs.
+3. Rapprocher les références Zotero et les PDF de l'audit Gavard & Schoch du
+   corpus courant (DOI puis titre), décider leur inclusion dans v3 et tracer
+   les absences, doublons et exclusions avant la passe bibliométrique.
+4. Fixer la révision et la fenêtre du corpus REL, puis analyser courants,
+   lieux et lignées de citation sur cette révision.
+5. Synthèse narrative par courant.
+6. Section sur les quatre controverses comptables.
+7. Passe d'édition d'auteur, puis lecteurs.
 
 ## Critères de sortie
 
@@ -124,6 +136,8 @@ tombée.
 - [ ] Plan validé par l'auteur
 - [ ] Zéro texte ou analyse partagés avec le manuscrit Œconomia, vérifié
 - [ ] Garde des pleins textes vert sur la bibliographie de la revue
+- [ ] Concordance Zotero/PDF/corpus auditée ; décisions d'inclusion et
+      d'exclusion tracées, version et fenêtre REL citées dans les résultats
 - [ ] Manuscrit soumis à REL au plus tard le 2026-12-06
 - [ ] Registres externes propagés : page perso `Ha-Duong.bib` **et** feuille de
       route CNRS — c'est un manuscrit, donc il y a une ligne

@@ -6,27 +6,32 @@ Blocked-by: 0701
 
 --- log ---
 2026-08-21T12:00Z haduong created
+2026-09-25T09:01Z Codex note Le gel v2 ne s'applique plus au corpus de travail v3 ; 0700 impose une concordance des references Gavard & Schoch et le gel de la revision analytique REL avant ce calcul.
 
 --- body ---
 ## Contexte
 
 Enfant de 0700, premier des deux mouvements promis à l'éditeur. Identifier les
 principaux courants de recherche du champ, leurs lieux de publication, et leurs
-lignées de citation, sur le corpus v2 gelé.
+lignées de citation, sur une révision identifiée du corpus de travail v3.
 
 C'est la partie qui porte l'argument de nouveauté : le champ n'avait été
 cartographié que sur des corpus de quelques centaines à quelques milliers de
-documents, celui-ci en compte 33 344 raffinés avec 1 087 209 citations.
+documents. Les 33 344 œuvres raffinées et 1 087 209 citations sont le repère
+du v2 publié ; relever les effectifs de la révision REL après les ajouts v3.
 
 ## Actions
 
-1. Détection des courants sur le corpus gelé — réutiliser ce qui existe
+1. Vérifier la concordance DOI puis titre des références Zotero/PDF de l'audit
+   Gavard & Schoch avec le corpus courant ; traiter les absences pertinentes
+   dans le pipeline v3 avant de fixer la révision REL (0700).
+2. Détection des courants sur la révision REL — réutiliser ce qui existe
    (`conception/clustering-comparison.md`, `clustering-validity-positioning.md`)
    plutôt que repartir de zéro.
-2. Lieux de publication par courant, et leur évolution par période.
-3. Lignées de citation : quelles œuvres fondent quel courant, et par quels
+3. Lieux de publication par courant, et leur évolution par période.
+4. Lignées de citation : quelles œuvres fondent quel courant, et par quels
    relais.
-4. Figures et tableaux dans `deliverables/_shared/`, engendrés, jamais tenus à
+5. Figures et tableaux dans `deliverables/_shared/`, engendrés, jamais tenus à
    la main.
 
 ## Test
@@ -35,14 +40,27 @@ Un courant détecté doit se reconnaître : contrôle sur pièce d'un échantill
 d'œuvres par courant, lu par l'auteur. Un partitionnement dont les classes ne
 se nomment pas est un partitionnement à refaire, pas un résultat.
 
+La concordance des références candidates doit attribuer à chaque notice Zotero
+un statut vérifiable : DOI présent, doublon établi par titre, incluse après
+reconstruction, exclue par règle de périmètre, ou à résoudre. Le test de
+reproduction REL recalcule effectifs, courants et tableaux depuis le commit,
+les pointeurs DVC et la fenêtre enregistrés, sans lire une version plus récente.
+
 ## Invariants
 
-- Corpus **gelé** : aucune reconstruction, sinon les chiffres du data paper et
-  ceux de la revue divergent.
+- Le corpus de travail v3 évolue ; les calculs REL citent un commit, les
+  pointeurs DVC et la fenêtre analytique. Le dépôt v2 du data paper reste
+  intact : des effectifs v3 différents ne sont pas une incohérence.
+- Une référence trouvée dans Zotero mais absente du corpus ne sert pas à
+  mesurer une présence ou une absence dans la littérature avant examen de sa
+  règle d'inclusion et reconstruction de la révision REL.
 - Aucune analyse reprise du manuscrit Œconomia — voir le garde de 0705.
 
 ## Critères de sortie
 
 - [ ] Courants identifiés, nommés, et validés sur pièce par l'auteur
 - [ ] Lieux et lignées produits, avec leurs figures engendrées
-- [ ] Chiffres cohérents avec ceux publiés du corpus
+- [ ] Concordance des références candidates vérifiée par DOI et titre, avec
+      exclusions motivées et absences pertinentes corrigées dans v3
+- [ ] Révision du corpus, fenêtre, effectifs et pointeurs DVC de REL consignés ;
+      figures et tableaux reproduits depuis ces entrées
