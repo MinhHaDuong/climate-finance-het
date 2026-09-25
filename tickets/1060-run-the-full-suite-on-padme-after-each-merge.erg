@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-25T07:45Z HDMX-coding-agent created — author asked whether moving the full suite from pre-merge to post-merge on padme would speed development; measured first, author said "Do it"
+2026-09-25T10:30Z HDMX-coding-agent note streamlined with the 1180 suite at the author's request: same runner pattern as [[1141]] / [[1184]] (persistent checkout, cron, report surfaced in `/lair`), in its own checkout
 
 --- body ---
 ## Context
@@ -61,6 +62,9 @@ still run before a merge.
   check stays only for diffs that write data or deposits (`dvc.yaml`, build
   and publish targets); other pipeline diffs go on `check-fast` + `lint`.
 - `/lair` step 9 then reads the runner's results instead of running the suite.
+- Same runner pattern as the collection passes of [[1141]] and [[1184]]
+  (suite [[1180]]): reuse their wrapper and run-report format, but keep a
+  separate checkout, so collection diffs never reach the test run.
 
 ## Exit criteria
 

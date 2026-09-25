@@ -6,6 +6,7 @@ Blocked-by: 0833
 
 --- log ---
 2026-09-25T08:30Z HDMX-coding-agent created — author, 2026-09-25: "file the periodic M2 linkrot check to the M2 train"; the scheduling left open by [[0925]] moves here
+2026-09-25T10:30Z HDMX-coding-agent note streamlined with the 1180 suite at the author's request: this is the frozen-documents pass of [[1184]] and builds the minimal runner that [[1184]] generalizes
 
 --- body ---
 ## Context
@@ -30,7 +31,12 @@ train (tracker [[0715]]), after M1b ([[0833]]).
 ## Design
 
 - A dedicated persistent checkout on padme outside `.claude/worktrees/` (so
-  `/molt` never reaps it), shared with the weekly source refresh of [[1140]].
+  `/molt` never reaps it). This is the minimal version of the pass runner
+  owned by [[1184]] (suite [[1180]]): the same checkout later hosts the
+  living-document and series passes of [[1184]] and the discovery pass of
+  [[1140]]. Build it so they plug in: one wrapper per pass, one run report
+  per pass in the format [[1184]] sets (flags without blocking, surfaced in
+  `/lair`).
 - A wrapper run by cron on the 1st of the month: skip and log when the last
   run's result is still uncommitted (never overwrite an unreviewed diff);
   otherwise fetch, move to `origin/main`, run the three targets, leave the
