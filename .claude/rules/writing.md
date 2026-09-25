@@ -45,6 +45,20 @@ This is not a policy paper or a technical report. It's intellectual history.
 - **Don't:** Assume categories are neutral or technical. **Do:** Analyze political implications of measurement choices.
 - **Don't:** Oversimplify North-South divides. **Do:** Show specific actors and their motivations.
 
+## Claims
+
+- **A falsifiable claim names its falsifier ex ante and lands once.** "Either
+  outcome confirms me" is not a test. Land the payoff in one place.
+- **A conclusion introduces no new facts:** anchor each claim at the level the
+  body already establishes.
+- **The efficiency–accountability axis is a continuum, not two camps** (ticket
+  0330: Hartigan dip p ≈ 1.0 in every period; the winning GMM's components are
+  < 2σ apart, one mode). Never cite ΔBIC alone as bimodality; it measures
+  non-normality. Keep Quarto `{{< meta >}}` outside inline math.
+- **KMeans cluster IDs reshuffle** with small corpus changes: never hardcode an
+  ID → theme map in code or captions. When clustering shows no structure,
+  change the representation (lexical, citation) before the method.
+
 ## Citation practices
 
 - Cite primary sources with dates
