@@ -6,10 +6,12 @@ Label: deferred
 Blocked-by: 1181
 Blocked-by: 1182
 Blocked-by: 1183
+Blocked-by: 1141
 
 --- log ---
 2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
 2026-09-25T09:10Z HDMX-coding-agent note Reporté à la semaine prochaine par l'auteur ; priorité du jour : finir la migration de l'ontologie (0870), main vert, republier le MVP.
+2026-09-25T10:30Z HDMX-coding-agent note le lanceur part de celui de [[1141]] (passe « figés ») ; [[1140]] est la passe « découverte » sur le même lanceur ; voir [[1180]] § Passes voisines
 
 --- body ---
 ## Context
@@ -45,6 +47,11 @@ branche, il ne le duplique pas.
    conditions d'usage, échec d'échelon. `/lair` et `/healthcheck` le
    remontent.
 4. Les objets sont capturés par DVC sur padme à chaque passe qui en ajoute.
+5. Le lanceur reprend celui de [[1141]] (checkout persistant, cron, refus
+   d'écraser un résultat non relu) et le généralise ; la vérification des
+   documents figés est la passe de [[1141]], non une seconde. La découverte
+   hors des sites connus est la passe de [[1140]] ; ses candidatures entrent
+   dans la même file.
 
 ## Exit criteria
 

@@ -7,6 +7,7 @@ Label: deferred
 --- log ---
 2026-09-25T09:00Z HDMX-coding-agent created Suivi des décisions de l'auteur (session interactive du 2026-09-25), après [[0926]] et [[1010]].
 2026-09-25T09:10Z HDMX-coding-agent note Reporté à la semaine prochaine par l'auteur ; priorité du jour : finir la migration de l'ontologie (0870), main vert, republier le MVP.
+2026-09-25T10:30Z HDMX-coding-agent note rapprochement demandé par l'auteur : [[1140]], [[1141]] et [[1060]] partagent le lanceur de passes de [[1184]] ; section « Passes voisines »
 
 --- body ---
 ## Context
@@ -47,6 +48,24 @@ trois ans de retard.
 - [[1183]] Navigateur piloté sur padme, méthodes de collecte renommées, pilote ADB
 - [[1184]] Suivi périodique sur padme : documents vivants et séries
 - [[1185]] Mesurer le retard des canaux structurés sur la source primaire
+
+## Passes voisines (train M2, suivi [[0715]])
+
+Le **lanceur de passes sur padme** appartient à [[1184]] : checkout persistant
+hors de la copie de l'auteur, planification, rapport de passe qui signale sans
+bloquer, supervision depuis doudou, remontée dans `/lair`. Trois tickets s'y
+branchent au lieu d'en bâtir chacun un :
+
+- [[1141]] contrôle mensuel des liens et relance des captures Web Archive :
+  c'est la passe « documents figés » de [[1184]]. Sa machine existe
+  ([[0925]]) ; elle pose la version minimale du lanceur, que [[1184]]
+  reprend et généralise.
+- [[1140]] veille par agent local : passe « découverte », hors des sites déjà
+  connus. Elle lit les fichiers de site de [[1182]] et dépose ses candidatures
+  dans la même file que [[1184]] (`_source_watch`), jamais admises d'office.
+- [[1060]] suite complète des tests après chaque fusion : même motif de
+  lanceur et même remontée dans `/lair`, mais dans son propre checkout, pour
+  que les diffs de collecte ne se mêlent jamais aux tests.
 
 ## Exit criteria
 

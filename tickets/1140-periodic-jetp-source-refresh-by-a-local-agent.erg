@@ -4,9 +4,11 @@ Created: 2026-09-25
 Author: HDMX-coding-agent
 Blocked-by: 0833
 Blocked-by: 0722
+Blocked-by: 1182
 
 --- log ---
 2026-09-25T08:30Z HDMX-coding-agent created — author, 2026-09-25: "we also want a more frequent websearch for new documents"; "File the periodic refresh ticket to the M2 train"; "We will try a LOCAL agent"
+2026-09-25T10:30Z HDMX-coding-agent note streamlined with the 1180 suite at the author's request: discovery pass on the runner of [[1184]]; reads the site files of [[1182]] (Blocked-by added); candidates join the same queue as [[1184]]
 
 --- body ---
 ## Context
@@ -37,8 +39,14 @@ What already exists:
 - Output: a source-sweep file in the existing contract, proposed as a PR
   for the author to triage. The agent never admits a document, never runs
   `dvc push`, never publishes (same invariant as [[0722]]).
-- Runs in a dedicated persistent checkout on padme, shared with the monthly
-  link check of [[1141]], never in the author's primary checkout.
+- Runs as the discovery pass of the runner owned by [[1184]] (suite
+  [[1180]]), in the persistent checkout that [[1141]] sets up, never in the
+  author's primary checkout.
+- Division of labour: [[1184]] recollects known sites (living documents,
+  series, link patterns from the site files of [[1182]]); this pass looks
+  beyond them, for sources and sites not yet in the registry. It reads the
+  site files first so it does not re-find what [[1184]] already watches, and
+  it proposes a site file when a new host reaches three documents.
 - Secrets per `.claude/rules/keystore.md`: read at use, never logged.
 
 ## Open questions for the pilot
