@@ -99,12 +99,14 @@ Order of work, each step a ticket with its own byte-level check:
 5. Observations and event timing replace the old event tables. The 451
    legacy timing rows must reconcile one for one to a typed timing or an
    explicit pending disposition; there is no target of 451 typed timings.
-   Ticket 0876 currently stages 423 cited observations and 345 typed timings
-   from 343 accepted source rows (two cutoff rows also provide a bounded
-   approval year); `0876-timing-reconciliation.csv` accounts for the other 108 legacy timing
-   rows (80 unsupported roles and 28 whose event lacks a cited line or
-   snapshot). The old served view remains authoritative
-   until its replacement passes the byte check. Tickets 0887
+   Ticket 0876 writes 443 cited observations and 362 timings from 360 typed
+   source rows (two cutoff rows also provide a bounded approval year);
+   `0876-timing-reconciliation.csv` accounts for the other 91 legacy timing
+   rows. The four served views project the accepted v2 events and their exact
+   cited lines into the browser contract. Eight unsupported physical claims
+   remain in the pending register and are absent from those views; all 315
+   project-source-links remain on their legacy reader until its own migration.
+   Tickets 0887
    and 0888 have already written the independent status and sector crosswalks:
    four South African register status words and Indonesia's approval word,
    plus four Indonesia technology groups with one clear CRS purpose. Broad

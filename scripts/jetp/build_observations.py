@@ -1,4 +1,4 @@
-"""Build the per-country ledger observation views for the observatory.
+"""Build cited v2 observations and the per-country observatory views.
 
 The second stage-two product.  The M1a inventories freeze what a source
 published about its own projects; these are the ledger rows analysts wrote from
@@ -6,9 +6,10 @@ those same documents, under a different schema.  Two extractions, served side
 by side and never added together: a row here and a row there can describe the
 same paragraph of the same PDF.
 
-One invocation writes all four countries, like the M1a writer and unlike the
-single ``--view`` of ``build_observatory.py``: the four files share one pass
-over the three tables and one collection registry.
+One invocation writes all four countries. Accepted event rows in those views
+come from v2 observations and their cited lines; unresolved event assertions
+remain in the pending register. Legacy project links and presentation fields
+stay until their separate migration.
 """
 
 import argparse
@@ -17,6 +18,7 @@ import json
 from pathlib import Path
 
 from jetp._ledger_headers import load_schema, write_table
+from jetp._m1a_document_links import pdf_page_of
 from jetp._observatory_data import observation_entry
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -113,6 +115,103 @@ def observations_by_country(tables, registry):
             if row['country'] not in COUNTRIES:
                 raise ValueError(f"Unsupported observation country: {row['country']}")
     return {code: country_observations(tables, registry, code) for code in COUNTRIES}
+
+
+def _served_event_entry(old, current, table, registry, line_by_id, event_id):
+    """Keep browser-only fields while taking the assertion and citation from v2."""
+    financial = table == 'events'
+    expected_method = 'legacy_event' if financial else 'legacy_implementation_event'
+    expected_axis = ('money' if financial else
+                     'asset_state' if current['subject_kind'] == 'asset' else 'delivery')
+    expected_measure = ('estimate' if old.get('financial_status') == 'need'
+                        else 'amount') if financial else 'state'
+    status_field = 'financial_status' if financial else 'implementation_status'
+    value_field = 'amount_original' if financial else 'capacity_mw'
+    old_currency = old['currency_original'] if financial else ''
+    if (current['method'] != expected_method or current['status'] != 'accepted'
+            or current['axis'] != expected_axis
+            or current['measure'] != expected_measure
+            or current['own_status'] != old[status_field]
+            or (current['value'] or '') != old[value_field]
+            or (current['currency'] or '') != old_currency):
+        raise ValueError(f'{event_id}: v2 assertion differs from legacy source row')
+    projected = dict(old)
+    projected[status_field] = current['own_status']
+    projected[value_field] = current['value'] or ''
+    if financial:
+        projected['currency_original'] = current['currency'] or ''
+    entry = observation_entry(projected, table, registry)
+    line = line_by_id.get(current['line_id'])
+    if line is None:
+        raise ValueError(f'{event_id}: cited line is absent')
+    entry.update(observation_id=current['observation_id'],
+                 line_id=current['line_id'],
+                 subject_kind=current['subject_kind'],
+                 subject_id=current['subject_id'],
+                 locator=line['locator'], sha256=line['sha256'])
+    entry['pdf_page'] = pdf_page_of(line['locator'])
+    return entry
+
+
+def served_observations_by_country(tables, registry, observations, timings, pending,
+                                   lines, retrievals, citation_decisions=()):
+    """Project reviewed v2 events into the existing public row contract.
+
+    The browser still addresses legacy project IDs and project-source-links.
+    Event membership and the asserted status/value now come from v2; the old
+    rows provide only presentation fields that v2 does not store. An event
+    without v2 evidence remains in the pending register and is absent from
+    the public observations view. Ticket 0878 retires this bridge with the
+    remaining legacy readers.
+    """
+    legacy = [(table, row, row['event_id' if table == 'events'
+                                else 'implementation_event_id'])
+              for table in ('events', 'implementation-events')
+              for row in tables[table]]
+    legacy_ids = {event_id for _, _, event_id in legacy}
+    if len(legacy_ids) != len(legacy):
+        raise ValueError('duplicate legacy event identifier in served view')
+    accepted = {row['observation_id'].removeprefix('observation-'): row
+                for row in observations}
+    if len(accepted) != len(observations) or set(accepted) - legacy_ids:
+        raise ValueError('v2 observation lacks a unique legacy event')
+    held = {row['legacy_event_id']: row for row in pending
+            if row['legacy_table'] != 'event-timing'}
+    if (len(held) != sum(row['legacy_table'] != 'event-timing' for row in pending)
+            or set(held) - legacy_ids):
+        raise ValueError('pending event lacks a unique legacy event')
+    errors = citation_provenance_errors(
+        tables['events'], tables['implementation-events'], observations,
+        pending, citation_decisions, lines, retrievals)
+    if errors:
+        raise ValueError('\n'.join(errors))
+    line_by_id = {row['line_id']: row for row in lines}
+    for timing in timings:
+        event_id = timing['observation_id'].removeprefix('observation-')
+        observation = accepted.get(event_id)
+        if observation is None or timing['line_id'] != observation['line_id']:
+            raise ValueError(f'{event_id}: timing lacks its cited observation line')
+
+    served = {code: [] for code in COUNTRIES}
+    for table, old, event_id in legacy:
+        if old['country'] not in served:
+            raise ValueError(f"Unsupported observation country: {old['country']}")
+        current = accepted.get(event_id)
+        hold = held.get(event_id)
+        if (current is None) == (hold is None):
+            raise ValueError(f'{event_id}: expected one accepted observation or named hold')
+        if hold is not None:
+            if (hold['legacy_table'] != table or hold['source_id'] != old['source_id']
+                    or hold['legacy_project_id'] != old['project_id'] or not hold['reason']):
+                raise ValueError(f'{event_id}: invalid pending event')
+            continue
+        served[old['country']].append(
+            _served_event_entry(old, current, table, registry, line_by_id, event_id))
+    for row in tables['project-source-links']:
+        if row['country'] not in served:
+            raise ValueError(f"Unsupported observation country: {row['country']}")
+        served[row['country']].append(observation_entry(row, 'project-source-links', registry))
+    return served
 
 
 def append_event_timings(event_id, observation_id, line_id, source_rows, timings, pending,
@@ -541,7 +640,20 @@ def main():
         write_normalized_event_tables(
             ROOT / 'data' / 'jetp', tables['events'], tables['implementation-events'],
             tables['event-timing'])
-    by_country = observations_by_country(tables, build_registry(tables))
+    ledger_dir = ROOT / 'data' / 'jetp'
+
+    def rows(path):
+        with path.open(encoding='utf-8', newline='') as handle:
+            return list(csv.DictReader(handle))
+
+    lines = [row for path in sorted((ledger_dir / 'lines.d').glob('*.csv'))
+             for row in rows(path)]
+    by_country = served_observations_by_country(
+        tables, build_registry(tables), rows(ledger_dir / 'observations.csv'),
+        rows(ledger_dir / 'timings.csv'),
+        rows(ledger_dir / 'migration/0876-pending.csv'), lines,
+        rows(ledger_dir / 'retrievals.csv'),
+        rows(ledger_dir / 'migration/1160-citation-decisions.csv'))
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for code, entries in by_country.items():
         (args.output_dir / f'{code}.json').write_text(

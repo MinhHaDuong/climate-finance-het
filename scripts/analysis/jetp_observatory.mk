@@ -86,8 +86,9 @@ jetp-m1a: $(JETP_M1A_FILES)
 $(JETP_M1A_FILES) &: $(JETP_M1A_INPUTS)
 	$(PYTHON) scripts/jetp/build_m1a_inventories.py --output-dir $(JETP_M1A_DIR)
 
-# Independent of jetp-observatory, as jetp-m1a already is: the four views are a
-# second reading of the same ledger, not an input of the country JSON.
+# The four views project accepted v2 events and cited lines into the browser's
+# existing row contract; project-source-links remain a separate legacy reader.
+# Country JSON does not read this view.
 jetp-observations: $(JETP_OBSERVATIONS_FILES) $(JETP_V2_EVENT_FILES)
 
 $(JETP_OBSERVATIONS_FILES) $(JETP_V2_EVENT_FILES) &: $(JETP_OBSERVATIONS_INPUTS)

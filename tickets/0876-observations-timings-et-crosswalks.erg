@@ -24,6 +24,7 @@ Author: HDMX-coding-agent
 2026-09-25T07:24Z Codex note rates : `rates.csv` est vide, mais `conception/jetp/papier-court-mesure/figure-distribution-decaissement.py:43` calcule encore `2500 * 1.09` sans date, base ni ligne citée ; [[1162]] porte la résolution sourcée ou le retrait de cette conversion. Le critère rates reste ouvert.
 2026-09-25T07:53Z HDMX-coding-agent note blocker 1120 closed — Blocked-by removed.
 2026-09-25T09:00Z Codex note intégration : [[1120]] et [[1160]] sont fusionnés dans la branche 0876 via PR #1520 et #1521 ; 443 observations acceptées et 8 événements en attente, avec 451 dispositions temporelles explicites. [[1162]] est fusionné sur main via PR #1522 puis intégré à la branche : la conversion EUR/USD non sourcée a été retirée de la figure SEN. Les trois tickets bloqueurs sont clos ; la bascule des vues servies reste à faire dans [[0876]].
+2026-09-25T11:00Z Codex note bascule : les quatre vues `observations/<CODE>.json` sont maintenant projetées depuis les 443 observations v2 acceptées et leur ligne citée, avec 315 liens projet-document conservés ; les huit assertions physiques en attente restent dans `0876-pending.csv` et sortent des vues publiques. La comparaison ancienne/nouvelle donne exactement huit suppressions, aucun ajout, aucun changement aux 315 liens, 173 locators rendus plus précis et 39 pages PDF ajustées. Deux reconstructions ont les mêmes SHA-256. La revue Terra de l'adaptateur ne relève pas de blocage sémantique ; les gates finaux restent à terminer.
 --- body ---
 ## Context
 
@@ -80,9 +81,9 @@ observation est une règle versionnée par type de document.
 ## Verification
 
 - [x] Comptes des tables au dépôt : 380 + 71 = 451 événements, chacun avec une observation citée ou une attente de preuve ; les 451 lignes de `event-timing.csv` ont chacune un timing typé ou une disposition explicite. Requête sur les données écrites : 0 valeur `disbursement`/`disbursed` dans `financial_status` et dans `flow_type` d'observation (2026-09-24).
-- [x] 447 observations et 367 timings sont écrits depuis 365 lignes legacy typées (deux cutoff produisent aussi un timing d'approbation) ; les 86 dispositions restantes sont 82 rôles de date non mappés, trois assertions physiques tenues par [[0970]] et AfDB sans ligne précise. La réconciliation des 451 lignes est dans `data/jetp/migration/0876-timing-reconciliation.csv`, sans citation ni rôle inventés.
-- [ ] `observations/*.json` : chaque ligne d'avant retrouve son observation par sa ligne citée
-- [ ] Aucune conversion monétaire dans un script ; `rates` cite ses lignes
+- [x] 443 observations et 362 timings sont écrits depuis 360 lignes legacy typées (deux cutoff produisent aussi un timing d'approbation) ; 91 dispositions temporelles restent en attente, dont huit événements physiques sans citation suffisante. La réconciliation des 451 lignes est dans `data/jetp/migration/0876-timing-reconciliation.csv`, sans citation ni rôle inventés.
+- [x] `observations/*.json` : chaque événement accepté retrouve son observation v2 et sa ligne citée ; les huit événements sans preuve suffisante sont explicitement pending et absents des vues. Les 315 liens projet-document restent identiques.
+- [x] La conversion monétaire non sourcée de la figure SEN est retirée par [[1162]] ; `rates.csv` reste vide jusqu'à la décision sourcée d'un taux.
 
 Déplacé vers [[0887]] (status-crosswalk) : la vérification du clic Glossary
 réel depuis une observation ZAF.
@@ -94,7 +95,7 @@ réel depuis une observation ZAF.
 
 ## Exit criteria
 
-- [x] Une réconciliation à une ligne par ancien `event-timing.csv` prouve 365 lignes source typées + 86 dispositions en attente = 451 ; deux timings d'approbation supplémentaires proviennent des deux lignes de cutoff bornées à l'année. Aucun rôle inconnu, ambigu, d'observation de page ou d'autre jalon n'est promu en `event` ou `report_date` (`0876-timing-reconciliation.csv` ; test ciblé).
+- [x] Une réconciliation à une ligne par ancien `event-timing.csv` prouve 360 lignes source typées + 91 dispositions en attente = 451 ; deux timings d'approbation supplémentaires proviennent des deux lignes de cutoff bornées à l'année. Aucun rôle inconnu, ambigu, d'observation de page ou d'autre jalon n'est promu en `event` ou `report_date` (`0876-timing-reconciliation.csv` ; test ciblé).
 - [x] `observations`, `timings`, `rates` validées par [[0871]] (`make jetp-ledger-check`)
 - [x] `tests/test_jetp_observations.py`, `make check-fast` et `make lint` verts. `make check PYTEST_WORKERS=16` sur padme : quatre échecs détaillés en [[0940]] ; le test CRS de [[0990]] passe avec ses entrées DVC.
 
