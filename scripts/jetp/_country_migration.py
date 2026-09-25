@@ -10,6 +10,12 @@ from jetp._source_crosswalk import _identity
 
 SCHEMA_VERSION = 'country-migration/1'
 
+# The country sidecars still describe legacy authority. These ontology-v2 rows
+# already have their own owners; revisit this boundary when 0878 retires the
+# legacy readers.
+ONTOLOGY_V2_TABLES = frozenset({'agreements.csv', 'assets.csv',
+                               'documents.csv', 'parties.csv'})
+
 
 def inventory_positions(country: str, rows: list[dict], projects: list[dict],
                         joins: dict) -> list[dict]:
@@ -59,6 +65,8 @@ def legacy_dispositions(crosswalk: dict, country: str, policies: dict) -> list[d
         original = originals[mapping['row_id']]
         row = original['row']
         name = Path(mapping['path']).name
+        if name in ONTOLOGY_V2_TABLES:
+            continue
         linked_timing = name == 'event-timing.csv' and row.get('event_id') in event_ids
         if row.get('country') != country and row.get('project_id') not in project_ids and not linked_timing:
             continue

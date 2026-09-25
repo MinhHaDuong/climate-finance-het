@@ -148,7 +148,7 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
 # jetp_pull est frozen à dessein (API à débit limité, millésimes révisés par
 # l'OCDE), donc le tirage ne se rejoue jamais tout seul.
 jetp-crs-data:
-	dvc pull data/jetp/crs
+	$(UV_RUN) dvc pull data/jetp/crs
 
 jetp-crs: jetp-crs-data
 	dvc repro jetp_cohortes jetp_livrable jetp_synthese
@@ -902,9 +902,10 @@ full-gate-preflight:
 	@# Use host Python: uv itself cannot start while its configured cache is read-only.
 	python3 scripts/qa_full_gate_preflight.py
 
-# Workers for the full suite, per machine: .env may set PYTEST_WORKERS (make
-# does not read .env itself). On padme's 24 cores, 16 ran the suite in 2 min 21 s
-# against 4 min 33 s at 4; 24 was slower, as some tests start their own processes.
+# Test workers, per machine: .env may set PYTEST_WORKERS (make does not read
+# .env itself). On padme's 24 cores, 16 ran the full suite in 2 min 21 s against
+# 4 min 33 s at 4 (24 was slower: some tests start their own processes);
+# check-fast went from 28 s to 19 s and lint from 15 s to 13 s, flat beyond 8.
 PYTEST_WORKERS ?= $(or $(shell sed -n 's/^\(export \)\{0,1\}PYTEST_WORKERS=//p' .env 2>/dev/null | tail -n 1 | tr -d "\"' \r"),4)
 
 check: full-gate-preflight check-package | venv-canonicalize
@@ -914,12 +915,12 @@ check: full-gate-preflight check-package | venv-canonicalize
 # heavy numerical dep / heavy compute), integration (subprocess / sleep), and
 # adherence (lint — ruff/mypy/hygiene, run via `make lint`). Ticket 0214.
 check-fast: check-package | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -q --tb=short -m "not slow and not integration and not adherence" -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -m "not slow and not integration and not adherence" -n $(PYTEST_WORKERS)
 
 # Lint / rule-enforcement tier (ruff, mypy, hygiene, contracts). Run alongside
 # tests, not inside the inner loop — a warm mypy cache makes it ~1s. Ticket 0214.
 lint: | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -q --tb=short -m adherence -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -m adherence -n $(PYTEST_WORKERS)
 
 # Record per-test durations for the fast-path ratchet (ticket 0216) into the
 # gitignored .test_durations.json. Serial (-n0) and opt-in so timings reflect

@@ -2,10 +2,13 @@
 Title: Materialize pinned CRS inputs before the JETP full gate in fresh worktrees
 Created: 2026-09-24
 Author: Codex
+Closed: Pinned CRS pull, reference replay, and full-gate preflight verified in a fresh worktree at 448c0f45
 
 --- log ---
 2026-09-24T20:22Z Codex created from full `make check` on 0876 draft head 5a1f6da4: reference-chain integration test fails at its explicit CRS-directory assertion; 5 failed, 3285 passed, 62 skipped overall.
+2026-09-25T06:03Z Codex note pinned DVC pull and reference replay passed in fresh worktree at 448c0f45; full gate now reserved for padme/main with 16 workers.
 
+2026-09-25T06:04Z HDMX-coding-agent closed — Pinned CRS pull, reference replay, and full-gate preflight verified in a fresh worktree at 448c0f45
 --- body ---
 ## Failure
 
@@ -38,9 +41,26 @@ country-scan failures in the same full suite are tracked in [[0940]].
 
 ## Exit criteria
 
-- [ ] `make jetp-crs-data` succeeds in a fresh worktree and exactly 80
+- [x] `make jetp-crs-data` succeeds in a fresh worktree and exactly 80
   `*_micro.csv.gz` files are present under `data/jetp/crs`.
-- [ ] The named reference-chain integration test passes and its output is
+- [x] The named reference-chain integration test passes and its output is
   byte/cell equivalent to the versioned reference as asserted by the test.
-- [ ] The full-gate workflow catches missing CRS inputs before the main test
+- [x] The full-gate workflow catches missing CRS inputs before the main test
   suite, with an actionable command; it never silently skips this test.
+
+## Verification
+
+- Commit `448c0f45` uses `uv` for the DVC pull (`Makefile:150-151`). A fresh
+  detached worktree at that commit had no `data/jetp/crs` before the pull;
+  `make jetp-crs-data` succeeded and 80 matching files were counted afterward.
+- In that fresh worktree, `pytest tests/test_jetp_courbe_reference.py
+  tests/test_full_gate_preflight.py -q` passed (5 tests). The named replay
+  compares every output row with the versioned reference and checks the
+  98.56% and 37.35% central figures (`tests/test_jetp_courbe_reference.py:68-102`).
+- The preflight check and its 0/79/80-file tests are at
+  `scripts/qa_full_gate_preflight.py:76-83` and
+  `tests/test_full_gate_preflight.py:54-84` in `448c0f45`. `make lint` passed
+  (339 passed, 11 skipped). The local `make check-fast` reached 2344 passes;
+  its two socket-restricted setup errors passed when rerun individually with
+  socket access. The local full gate was stopped following the current
+  padme/main-only workflow; no full-gate success is claimed here.

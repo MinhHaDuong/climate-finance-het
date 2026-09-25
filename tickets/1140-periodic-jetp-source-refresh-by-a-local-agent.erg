@@ -1,0 +1,67 @@
+%erg 0.1
+Title: M2: periodic JETP source refresh, run by a local agent on padme
+Created: 2026-09-25
+Author: HDMX-coding-agent
+Blocked-by: 0833
+Blocked-by: 0722
+
+--- log ---
+2026-09-25T08:30Z HDMX-coding-agent created — author, 2026-09-25: "we also want a more frequent websearch for new documents"; "File the periodic refresh ticket to the M2 train"; "We will try a LOCAL agent"
+
+--- body ---
+## Context
+
+The observatory's documents come from bounded collection rounds. New JETP
+documents (plans, progress reports, project pages, news) appear weekly, and
+nothing watches for them between rounds. Tracker [[0715]] puts source watching
+in M2, after M1b ([[0833]]); [[0722]] installs the skill and rules that the
+refresh follows. This ticket is the recurring run itself.
+
+What already exists:
+- `scripts/jetp/build_source_sweep.py` and `scripts/jetp/_source_watch.py`
+  record a sweep: checks, discoveries (`new_candidate`, `changed`,
+  `checked_no_change`, `blocked`, `error`, `partial`), acquisitions and a
+  change report. Every discovery stays an `unadmitted_candidate`; the module
+  has no publication operation and never edits the registry.
+- The `jetp-research` skill carries the search method and source hierarchy.
+
+## Author decisions (2026-09-25)
+
+- A **local agent** runs the search, not a hosted Claude or Codex session.
+- It belongs to the M2 train.
+
+## Design constraints
+
+- Frequency: weekly is the working assumption (JETP news moves by the week;
+  daily would mostly find nothing). The author may change it.
+- Output: a source-sweep file in the existing contract, proposed as a PR
+  for the author to triage. The agent never admits a document, never runs
+  `dvc push`, never publishes (same invariant as [[0722]]).
+- Runs in a dedicated persistent checkout on padme, shared with the monthly
+  link check of [[1141]], never in the author's primary checkout.
+- Secrets per `.claude/rules/keystore.md`: read at use, never logged.
+
+## Open questions for the pilot
+
+- Runtime and model: padme runs `llama-server.service` (llama.cpp, system
+  service, user haduong) serving Qwen3.8-27B Q4_K_M with its mmproj on
+  `127.0.0.1:8080`, context 131072, all layers on the GPUs (RTX A4000 16 GB +
+  RTX 3060 12 GB; 125 GB RAM). Checked 2026-09-25. Its command line shows no
+  `--jinja`, which llama.cpp needs for OpenAI-style tool calling: confirm, then
+  check that the model follows the skill's tool loop well enough. The agent
+  harness that drives the model (tool loop, fetch, file writes) is still to
+  choose.
+- Web search: a local model has no search of its own. Candidates: a
+  self-hosted metasearch (SearXNG), a search API with a key in the keystore,
+  or a fixed watch list of source pages (the source universe of [[0715]])
+  checked for changes, with open search only as a second pass.
+- Quality bar: the pilot compares one week of local-agent candidates for one
+  country against a hosted-agent run of the `jetp-research` skill on the same
+  week, and reports recall and false positives before the schedule is turned on.
+
+## Exit criteria
+
+- [ ] Pilot on one country: local-agent sweep vs hosted-agent sweep, recall and false positives reported, author accepts the bar
+- [ ] Weekly schedule on padme in the shared persistent checkout, output as a source-sweep PR, nothing admitted automatically
+- [ ] A run that finds nothing, or fails, says so in its log; a silent run is not an all-clear
+- [ ] Runbook in `deliverables/jetp-observatory/README.md` (or the refresh skill of [[0722]])
