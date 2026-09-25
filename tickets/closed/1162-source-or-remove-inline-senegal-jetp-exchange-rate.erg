@@ -2,10 +2,13 @@
 Title: Source or remove the inline Senegal JETP exchange rate
 Created: 2026-09-25
 Author: Codex
+Closed: Unsupported EUR/USD conversion withdrawn from Figure 1; cited-rate lookup and tests added
 
 --- log ---
 2026-09-25T07:30Z Codex created during the 0876 rates-contract review
 
+2026-09-25T07:42Z HDMX-coding-agent note With no cited EUR/USD ledger line, withdrew Senegal package bar (formerly 7.1901%); ledger rates table remains empty. Rebuild is deterministic; four focused tests pass; ledger SQLite validation passes. Standard make gates attempted but uv could not fetch missing dependencies because DNS is unavailable.
+2026-09-25T07:42Z HDMX-coding-agent closed — Unsupported EUR/USD conversion withdrawn from Figure 1; cited-rate lookup and tests added
 --- body ---
 ## Context
 

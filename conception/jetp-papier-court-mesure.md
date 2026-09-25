@@ -159,7 +159,9 @@ pays. Chaque panneau est lu au temps écoulé depuis la signature de son JETP, l
 norme du pays y étant prise au même horizon. Deux dénominateurs : la
 distribution rapporte le décaissé à l'engagement signé, la barre le rapporte au
 paquet annoncé — l'écart entre les deux mesure ce qui n'a jamais quitté
-l'annonce.](jetp/papier-court-mesure/figure-distribution-decaissement.pdf)
+l'annonce. Pour le Sénégal, la barre est retirée : le paquet annoncé est de
+2,5 Md€ (déclaration politique du 22 juin 2023), mais aucun taux €/$ sourcé
+ne permet de le comparer au décaissé CRS en USD.](jetp/papier-court-mesure/figure-distribution-decaissement.pdf)
 
 Voir Idée de recherche ci-dessus pour les chiffres — ils constituent déjà le
 cœur du papier, pas une collecte préparatoire. En synthèse, du plus solide au
