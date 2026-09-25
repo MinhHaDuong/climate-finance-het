@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Source or remove the inline Senegal JETP exchange rate
+Created: 2026-09-25
+Author: Codex
+
+--- log ---
+2026-09-25T07:30Z Codex created during the 0876 rates-contract review
+
+--- body ---
+## Context
+
+[[0876]] has a remaining exit condition: no currency conversion embedded in
+a script; a `rates` row must cite the line that reports the conversion. The
+four-country Figure 1 script currently sets Senegal's USD package denominator
+to `2500 * 1.09` at
+`conception/jetp/papier-court-mesure/figure-distribution-decaissement.py:43`.
+The 2,500 million euro package is labelled, but the `1.09` EUR-to-USD rate has
+no date, basis or cited line there. `data/jetp/rates.csv` currently has only
+its header. `docs/jetp-ledger-migration.md` already names this exact literal
+as the one known inline exchange rate.
+
+The figure divides CRS USD disbursement by that converted package amount, so
+the conversion changes a plotted percentage. This is an analytical input,
+not a formatting detail. The existing `rates` schema requires `currency`,
+`date`, `basis`, `rate_to_usd`, `line_id` and `recorded_at`.
+
+## Work
+
+1. Identify the source and date/basis for the rate used in the comparison,
+   and cite an exact ingested line. If no source supports `1.09`, replace it
+   with a documented, source-backed conversion or withdraw the USD-normalized
+   Senegal denominator until one exists; do not present `1.09` as sourced.
+2. Move any accepted conversion into `data/jetp/rates.csv`; make the figure
+   read the ledger rate by key and fail clearly when it is absent. Record the
+   chosen date/basis and the effect on the plotted Senegal percentage.
+3. Review the figure caption and provenance so a reader can follow the
+   package amount and the conversion separately.
+
+## Exit criteria
+
+- [ ] No literal FX multiplier remains in the figure script or its related
+      analysis path.
+- [ ] Every published conversion has a positive `rates.rate_to_usd`, date,
+      basis and a `line_id` whose source states that rate or equivalent; if
+      no such line exists, the figure visibly avoids the conversion.
+- [ ] A focused test catches a missing or mismatched rate, the ledger check
+      passes, and the changed figure is rebuilt and compared with its prior
+      output; pipeline gates run per `AGENTS.md`.
