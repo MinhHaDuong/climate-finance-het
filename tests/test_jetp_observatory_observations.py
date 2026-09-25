@@ -5,7 +5,9 @@ fast tier.  The three tables are two extractions apart from the M1a
 inventories, so nothing here is ever added to an inventory row count.
 """
 
+import csv
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -14,6 +16,7 @@ from jetp.build_observations import (
     COUNTRIES,
     build_registry,
     observations_by_country,
+    served_observations_by_country,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -208,19 +211,91 @@ def test_the_per_table_count_never_diverges_from_the_rows_it_summarises() -> Non
     assert sum(per_table.values()) == len(rows)
 
 
-def test_the_shipped_views_carry_every_ledger_row_once() -> None:
-    import csv
+def test_the_shipped_views_serve_only_cited_v2_events_and_all_legacy_links() -> None:
+    ledger = ROOT / "data/jetp"
 
-    served = 0
-    for code in COUNTRIES:
-        served += len(json.loads((OBSERVATIONS / f"{code}.json").read_text("utf-8")))
+    def rows(name):
+        with (ledger / name).open(encoding="utf-8") as stream:
+            return list(csv.DictReader(stream))
 
-    ledger = 0
-    for table in ("events", "implementation-events", "project-source-links"):
-        with (ROOT / "data/jetp" / f"{table}.csv").open(encoding="utf-8") as stream:
-            ledger += len(list(csv.DictReader(stream)))
+    accepted = {row["observation_id"]: row for row in rows("observations.csv")}
+    held = {row["legacy_event_id"] for row in rows("migration/0876-pending.csv")
+            if row["legacy_table"] != "event-timing"}
+    served = [row for code in COUNTRIES for row in json.loads(
+        (OBSERVATIONS / f"{code}.json").read_text("utf-8"))]
+    events = [row for row in served if row["table"] != "project-source-links"]
+    links = [row for row in served if row["table"] == "project-source-links"]
 
-    assert served == ledger == 766
+    assert len(accepted) == len(events) == 443
+    assert len(held) == 8
+    assert len(links) == len(rows("project-source-links.csv")) == 315
+    assert len(served) == 758
+    assert {row["observation_id"] for row in events} == set(accepted)
+    assert not {f"observation-{event_id}" for event_id in held} & set(accepted)
+    for entry in events:
+        observation = accepted[entry["observation_id"]]
+        assert entry["line_id"] == observation["line_id"]
+        assert entry["subject_kind"] == observation["subject_kind"]
+        assert entry["subject_id"] == observation["subject_id"]
+        assert entry["financial_status" if entry["table"] == "events"
+                     else "implementation_status"] == observation["own_status"]
+
+
+def migrated_fixture():
+    tables = fixture_tables()
+    observations = [
+        dict(observation_id="observation-e1", method="legacy_event", status="accepted",
+             axis="money", measure="amount", own_status="signed", value="12.5", currency="EUR",
+             line_id="line-e1", subject_kind="agreement", subject_id="agreement-e1"),
+        dict(observation_id="observation-i1", method="legacy_implementation_event",
+             status="accepted", axis="delivery", measure="state",
+             own_status="preparation", value="10",
+             currency="", line_id="line-i1", subject_kind="project", subject_id="project-i1"),
+    ]
+    pending = [dict(legacy_table="events", legacy_event_id="e2", legacy_project_id="p1",
+                    source_id="source-b", reason="source_line_unavailable")]
+    lines = [dict(line_id="line-e1", sha256="aa" * 32, locator="PDF pages 10"),
+             dict(line_id="line-i1", sha256="aa" * 32, locator="PDF pages 12")]
+    retrievals = [dict(document_id="source-a", sha256="aa" * 32)]
+    timings = [dict(observation_id="observation-e1", line_id="line-e1")]
+    return tables, observations, timings, pending, lines, retrievals
+
+
+def test_the_v2_projection_keeps_browser_fields_but_withholds_pending_claims() -> None:
+    tables, observations, timings, pending, lines, retrievals = migrated_fixture()
+    result = served_observations_by_country(
+        tables, REGISTRY, observations, timings, pending, lines, retrievals)
+    assert [row["table"] for row in result["ZAF"]] == [
+        "events", "implementation-events", "project-source-links"]
+    assert result["ZAF"][0]["event_id"] == "e1"
+    assert result["ZAF"][0]["amount_original"] == "12.5"
+    assert result["ZAF"][0]["line_id"] == "line-e1"
+    assert result["ZAF"][1]["locator"] == "PDF pages 12"
+    assert result["ZAF"][2] == observation_entry(PROJECT_SOURCE_LINK,
+                                                   "project-source-links", REGISTRY)
+
+
+def test_the_v2_projection_rejects_missing_or_conflicting_evidence() -> None:
+    fixture = migrated_fixture()
+    for mutation in ("missing", "extra", "status", "value", "source", "timing", "hold"):
+        tables, observations, timings, pending, lines, retrievals = deepcopy(fixture)
+        if mutation == "missing":
+            observations.pop()
+        elif mutation == "extra":
+            observations.append(dict(observations[0], observation_id="observation-absent"))
+        elif mutation == "status":
+            observations[0]["own_status"] = "approved"
+        elif mutation == "value":
+            observations[0]["value"] = "99"
+        elif mutation == "source":
+            lines[0]["sha256"] = "cc" * 32
+        elif mutation == "timing":
+            timings[0]["line_id"] = "line-i1"
+        elif mutation == "hold":
+            pending.clear()
+        with pytest.raises(ValueError):
+            served_observations_by_country(tables, REGISTRY, observations, timings,
+                                           pending, lines, retrievals)
 
 
 def test_a_row_without_a_fingerprint_is_one_of_two_named_collection_gaps() -> None:

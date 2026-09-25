@@ -1,0 +1,92 @@
+legacy_table,legacy_event_id,legacy_project_id,source_id,locator,reason
+event-timing,zaf-murp-afdb-approved-2026,,,,approval_day_unsupported_by_cited_article
+event-timing,zaf-eepbip-maf-approved-2018,,,,unmapped_date_role_other_milestone
+event-timing,idn-portal-gecs-kfw-2026,,,,unmapped_date_role_observation
+event-timing,idn-portal-nagajaya-norfund-2026,,,,unmapped_date_role_observation
+event-timing,idn-portal-hululais-jica-2026,,,,unmapped_date_role_observation
+event-timing,sen-qw2-plan-need-2025,,,,unmapped_date_role_unknown
+event-timing,sen-qw3-plan-need-2025,,,,unmapped_date_role_unknown
+event-timing,sen-diass-kfw-reported-funding,,,,unmapped_date_role_unknown
+event-timing,sen-diass-afd-reported-funding,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-03,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-05,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-06,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-07,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-08,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-09,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-10,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-11,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-12,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-13,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-14,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-15,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-16,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-17,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-19,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-20,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-21,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-22,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-23,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-24,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-25,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-26,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-27,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-28,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-29,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-31,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-33,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-36,,,,unmapped_date_role_unknown
+event-timing,sen-plan-cost-annex-37,,,,unmapped_date_role_unknown
+event-timing,sen-plan-allocation-qw-04,,,,unmapped_date_role_unknown
+event-timing,sen-plan-allocation-qw-08,,,,unmapped_date_role_unknown
+event-timing,sen-plan-allocation-qw-10,,,,unmapped_date_role_unknown
+implementation-events,idn-impl-green-corridors-2025,idn-pipe-green-corridors-sulawesi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73; line_id=idn-progress25-t4-3-3-gecs,0970_physical_state_hold
+implementation-events,idn-impl-aicet-2025,idn-fin-rbl-aicet,idn-jetp-progress-report-2025,"p.72–73, Table 4.3-3, row aicet",1160_financing_row_does_not_establish_physical_preparation
+implementation-events,idn-impl-hululais-2025,idn-pipe-hululais-1-2,idn-jetp-progress-report-2025,"p.72–73, Table 4.3-3, row hululais",1160_funding_back_on_track_does_not_establish_physical_preparation
+implementation-events,idn-impl-tanah-laut-2025,idn-pipe-tanah-laut-wind,idn-jetp-progress-report-2025,"p.72–73, Table 4.3-3, row tanah-laut",1160_signed_ppa_does_not_establish_physical_preparation
+implementation-events,idn-impl-eib-framework-2025,idn-pipe-eib-sustainable-infrastructure,idn-jetp-progress-report-2025,"p.72–73, Table 4.3-3, row eib-framework",1160_framework_mou_does_not_establish_physical_project
+implementation-events,idn-impl-dieng34-2025,idn-pipe-dieng-3-4,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73; line_id=idn-progress25-t4-3-3-dieng34,0970_physical_state_hold
+implementation-events,idn-impl-nagajaya-portal-2026,idn-pipe-nagajaya-micro-hydro,idn-portfolio-project-nagajaya,General Information description; line_id=idn-portfolio-project-nagajaya-claim-79,0970_physical_state_hold
+implementation-events,idn-impl-cirebon-suspended-2025,idn-pipe-cirebon-1-retirement,idn-news-cirebon-retirement-reuters-2025,Ministerial statement,1160_source_snapshot_unavailable
+event-timing,sen-project-qw-02-proposed-2025-04-02,,,,unmapped_date_role_unknown
+event-timing,sen-project-qw-03-proposed-2025-04-02,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-16-procurement-2026-09-09,,,,unmapped_date_role_ambiguous
+event-timing,sen-project-annex-20-proposed-2026-09-13,,,,unmapped_date_role_observation
+event-timing,sen-project-annex-22-proposed-2026-09-13,,,,unmapped_date_role_observation
+event-timing,sen-project-annex-27-proposed-2026-09-13,,,,unmapped_date_role_observation
+event-timing,sen-project-annex-31-proposed-2026-09-13,,,,unmapped_date_role_observation
+event-timing,sen-project-annex-01-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-02-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-03-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-04-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-05-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-06-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-07-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-08-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-09-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-10-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-11-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-12-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-13-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-14-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-17-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-18-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-19-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-21-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-23-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-24-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-25-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-26-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-28-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-29-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-30-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-32-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-33-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-34-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-35-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-36-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-37-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-annex-38-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-qw-04-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-qw-08-plan-proposal,,,,unmapped_date_role_unknown
+event-timing,sen-project-qw-10-plan-proposal,,,,unmapped_date_role_unknown

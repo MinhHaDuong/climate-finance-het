@@ -1,0 +1,106 @@
+%erg 0.1
+Title: Observations et timings
+Created: 2026-09-22
+Author: HDMX-coding-agent
+Closed: 443 cited v2 observations and 362 timings are written, the 451 legacy events and dates have explicit accepted or pending dispositions, and the accepted-only country views pass all gates at ff15db8b.
+
+--- log ---
+2026-09-22T17:30Z HDMX-coding-agent created
+2026-09-23T10:30Z HDMX-coding-agent note revue du train (2026-09-23) : les crosswalks sont des lignes dans les tables de 0880, pas des tables créées ici
+2026-09-23T15:10Z HDMX-coding-agent note reçoit de 0882 la vérification du clic réel statut → définition, qui demande les lignes de status-crosswalk écrites ici
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`build_observations.py`, `_observatory_data.py` avec `OBSERVATION_KINDS`/`VERIFICATION_COLUMNS` confirmés présents) ; comptes confirmés contre les tables au dépôt (2026-09-23) : events.csv 380 (`financial_status` : signed 235, approved 65, announced 45, need 34, mou 1), implementation-events.csv 71, event-timing.csv 451 ; 0 valeur `disbursement`/`disbursed` dans `financial_status` aujourd'hui, confirmé par lecture directe (pas seulement absent du dessin)
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : `status-crosswalk` et `sector-crosswalk` sont keyed sur `publisher_id` (DDL) ; #1461 (0872 en cours de refonte) replie `publishers` dans `parties` avec un rôle de publication — si `publisher_id` change de forme avant que ce ticket ne s'exécute, relire #1461 et adapter la clé du crosswalk en conséquence ; ne pas coder en dur la forme actuelle de `publishers` au-delà de cette écriture
+2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep), vérification monstre : ce ticket empile trois unités de signature indépendamment testables — (a) observations + timings depuis events/implementation-events/event-timing, (b) status-crosswalk (lettres ZAF, approbation IDN, retraite VNM), (c) sector-crosswalk (fenêtres ZAF, groupes IDN, libellés VNM → CRS 231-236) — chacune avec sa propre fixture et sa propre table cible ; proposition : scinder en 0876a (observations/timings), 0876b (status-crosswalk), 0876c (sector-crosswalk), 0876b bloquant la vérification navigateur de [[0882]] et 0876a bloquant [[0877]] et [[0884]] comme aujourd'hui. Non exécuté ici, signalé à l'auteur.
+2026-09-23T15:23Z HDMX-coding-agent note scission exécutée (raid, tickets-migration-prep) : status-crosswalk vers [[0887]], sector-crosswalk vers [[0888]], chacun Blocked-by [[0873]] (pas ce ticket) puisque les deux lisent des champs de ligne et les tables de [[0880]], jamais une observation — ce qui les laisse tourner en parallèle de [[0874]]–[[0876]]. Ce ticket garde observations, timings et rates ; la vérification du clic Glossary réel déplacée vers [[0887]].
+2026-09-24T19:00Z Codex note exécution : 423 événements ont un sujet résolu et une ligne citée dans les dispositions 0875 et deviennent observations valides. Les 28 autres restent dans `migration/0876-pending.csv` : leur source ou leur identité n'offre pas une ligne atomique citée. En particulier `zaf-murp-afdb-approved-2026` est une récupération AfDB bloquée (403, sans snapshot), donc aucune ligne ne peut être frappée sans inventer une citation. Parmi les 423, 343 timings ont un rôle sémantiquement supporté ; 80 rôles legacy ambigus, inconnus, d'observation ou d'autre jalon restent explicitement pending. Les vues servies conservent les 451 lignes legacy jusqu'à la résolution document-led ; le critère 451/451 reste ouvert.
+
+2026-09-24T18:45Z HDMX-coding-agent note blocker 0875 closed — Blocked-by removed.
+2026-09-24T19:39Z Codex decision de l'auteur : les 451 lignes legacy de `event-timing.csv` doivent être comptabilisées une par une, mais seules celles dont le rôle a un sens dans l'ontologie v2 deviennent `timings`. Les rôles `unknown`, `ambiguous`, `observation` et `other_milestone` restent des dispositions explicites ; aucun `report_date` ou `event` n'est inventé. Le critère de sortie 451 `timings` est remplacé par 451 dispositions vérifiables (timing typé ou attente documentée). L'exigence de preuve pour les 451 observations reste ouverte.
+2026-09-24T19:45Z Codex note réconciliation temporelle : `data/jetp/migration/0876-timing-reconciliation.csv` a 451 lignes, 343 `typed_timing` et 108 `pending` (80 rôles sans équivalent, 27 événements sans ligne précise, 1 sans snapshot). Deux lignes `reporting_cutoff` donnent chacune aussi un timing d'approbation borné à l'année, soit 345 timings produits ; `test_current_ledger_accounts_for_every_event_without_inventing_a_citation` vérifie les fichiers écrits. Les quatre vues pays ont été reconstruites identiques au SHA-256.
+2026-09-24T19:50Z Codex note audit des 27 événements avec snapshot : trois documents archivés, dont 24 lignes du rapport IDN 2025 et trois du portail ; leurs identités 0875 sont encore vides. [[0970]] porte les lignes et décisions d'identité, sans inférer l'avancement physique depuis un tableau de financement. L'événement AfDB sans snapshot reste lié à [[0926]]. Voir `docs/jetp-0876-evidence-gap-audit.md`.
+2026-09-24T20:24Z Codex note gate : `test_jetp_observations.py` 3 verts, `erg check` vert, `make jetp-ledger-check` vert, `make check-fast` 2324 verts/10 ignorés, `make lint` 339 verts/11 ignorés. La revue Terra du code et de l'extraction de fonction est verte. `make check` complet a terminé 3285 verts/62 ignorés/5 échecs : quatre tests pays échouent sur les tables v2 non classées, reproduits sur main et détaillés en [[0940]] ; le test CRS ne peut démarrer sans le checkout DVC, détaillé en [[0990]]. Les deux blocages sont conservés comme tickets avec critères de sortie, sans déclarer 0876 fini.
+2026-09-25T05:55Z Codex note intégration [[0970]] : les 24 décisions `accept` par événement alimentent 447 observations et 367 timings (365 lignes legacy typées, plus deux timings d'approbation). Trois assertions physiques restent pending avec leur `line_id` 0970 précis ; AfDB reste pending `missing_precise_cited_line` après que [[0926]] a collecté son snapshot ; [[1120]] porte la citation et la décision d’identité restantes. Les 451 lignes legacy de date se réconcilient en 365 timings typés et 86 dispositions. `tests/test_jetp_observations.py` et `test_jetp_0970_event_identities.py` (6 verts), `make jetp-ledger-check` et Ruff ciblé sont verts ; les quatre vues servies sont identiques au SHA-256 avant/après.
+2026-09-25T06:05Z Codex note gates : sur doudou, `make check-fast` 2371 verts/10 ignorés et `make lint` 339 verts/11 ignorés. Le contrôle complet a été exécuté sur padme avec `PYTEST_WORKERS=16`, après `make jetp-data`, `make data` et copie byte-identique du cache local de reranking : 3338 verts/52 ignorés/4 échecs, les quatre IDs et l'erreur `_country_migration.py:87` de [[0940]]. Le test CRS de [[0990]] passe après matérialisation DVC ; aucun nouvel échec n'a été observé.
+2026-09-25T07:19Z Codex note audit du basculement des vues ([[1160]]) : sur 447 observations `accepted`, 120 citent une `line_id` dont le SHA-256 appartient à un autre document que le `source_id` de l'événement legacy (74 IDN, 46 SEN ; 96 financiers, 24 physiques). Le rapprochement exhaustif `observation_id` → événement → `line_id` → `sha256` → `retrievals.document_id` est dans `docs/jetp-0876-citation-mismatches.csv`. Les 327 autres passent le contrôle de source, de pays, de statut et de montant/devise. Le premier exemple est `idn-approved-isle1-canada-2025` : source `idn-jetp-progress-report-2025`, ligne actuelle `idn-world-bank-isle1-technical-assessment-2022-claim-66`. Un adaptateur de vue qui exige la même ligne citée échoue donc sur les données actuelles. Remède : retrouver dans le document legacy une ligne qui porte exactement l'assertion, ou requalifier explicitement l'assertion comme issue de l'autre document ; ne pas valider par simple égalité de projet. Le travail de code de l'adaptateur a été remis de côté jusqu'à cette adjudication. Les vues publiques restent inchangées, PR #1500 reste draft.
+2026-09-25T07:24Z Codex note rates : `rates.csv` est vide, mais `conception/jetp/papier-court-mesure/figure-distribution-decaissement.py:43` calcule encore `2500 * 1.09` sans date, base ni ligne citée ; [[1162]] porte la résolution sourcée ou le retrait de cette conversion. Le critère rates reste ouvert.
+2026-09-25T07:53Z HDMX-coding-agent note blocker 1120 closed — Blocked-by removed.
+2026-09-25T09:00Z Codex note intégration : [[1120]] et [[1160]] sont fusionnés dans la branche 0876 via PR #1520 et #1521 ; 443 observations acceptées et 8 événements en attente, avec 451 dispositions temporelles explicites. [[1162]] est fusionné sur main via PR #1522 puis intégré à la branche : la conversion EUR/USD non sourcée a été retirée de la figure SEN. Les trois tickets bloqueurs sont clos ; la bascule des vues servies reste à faire dans [[0876]].
+2026-09-25T11:00Z Codex note bascule : les quatre vues `observations/<CODE>.json` sont maintenant projetées depuis les 443 observations v2 acceptées et leur ligne citée, avec 315 liens projet-document conservés ; les huit assertions physiques en attente restent dans `0876-pending.csv` et sortent des vues publiques. La comparaison ancienne/nouvelle donne exactement huit suppressions, aucun ajout, aucun changement aux 315 liens, 173 locators rendus plus précis et 39 pages PDF ajustées. Deux reconstructions ont les mêmes SHA-256. La revue Terra de l'adaptateur ne relève pas de blocage sémantique ; les gates finaux restent à terminer.
+2026-09-25T11:30Z Codex note vérification à ff15db8b : `tests/test_jetp_observatory_observations.py::test_the_shipped_views_serve_only_cited_v2_events_and_all_legacy_links` et les tests de refus d'une assertion sans preuve passent ; `make jetp-ledger-check` et `erg check tickets/` passent. `make check-fast` donne 2380 tests passés, 10 ignorés (plus 25 dans libs), `make lint` 339 passés et 11 ignorés ; le `make check PYTEST_WORKERS=16` complet sur padme donne 3353 passés, 52 ignorés (plus 25 dans libs). Revue indépendante Terra sans blocage sémantique. Tous les critères de sortie sont satisfaits.
+--- body ---
+## Context
+
+Étape 5 de la migration (`docs/jetp-ledger-migration.md`), décisions 3, 9 et 10. Les 380 événements
+financiers et les 71 événements physiques deviennent des observations
+typées par sujet et axe, avec mesure d'une liste close, `basis`,
+`flow_type`, `recorded_at`, statut et supplantation. Les 34 `need`
+deviennent des `estimate` sur leur ligne de plan. Les 451 lignes
+legacy de `event-timing.csv` sont comptabilisées une par une : seules les
+dates au rôle sémantiquement établi deviennent des `timings` ; les dates
+inconnues, ambiguës, d'observation de page ou d'un autre jalon restent des
+dispositions explicites, sans changement de sens (décision du 2026-09-24).
+Un flux a `period_start` et `period_end`, ou une date d'événement lorsque
+celle-ci est établie. Le mot du publisher reste ; `status-crosswalk` ([[0887]]) et `sector-crosswalk`
+([[0888]]) restent les seuls lieux d'un statut ou d'un secteur partagé,
+scindés de ce ticket (2026-09-23) car ils lisent des champs de ligne et
+les tables de [[0880]], jamais une observation. La lecture ligne →
+observation est une règle versionnée par type de document.
+
+## Relevant files
+
+- `data/jetp/events.csv`, `implementation-events.csv`, `event-timing.csv` — entrées
+- `scripts/jetp/build_observations.py` — devient la vue des observations depuis les nouvelles tables
+- `scripts/jetp/_observatory_data.py` — `VERIFICATION_COLUMNS`, `OBSERVATION_KINDS` à retirer
+- `config/jetp_tracking.yaml` — quatre axes, liste close des mesures, codes objet CRS
+- `deliverables/jetp-observatory/data/observations/<CODE>.json` — vues à comparer
+- `docs/jetp-0876-evidence-gap-audit.md` — vérification des 27 sources archivées et limites des preuves
+- `docs/jetp-0876-citation-mismatches.csv` — 120 lignes v2 dont la citation vient d'un autre document que la source de l'événement
+
+## Actions
+
+1. Règles d'ingestion par document pour les observations (registre ZAF :
+   `amount` + `flow` commitment ; rapport IDN : approbation ; plan SEN :
+   `estimate`), versionnées.
+2. `timings` depuis les seules lignes de `event-timing.csv` dont le rôle se
+   mappe directement sur l'ontologie v2 ; chaque autre ligne garde une
+   disposition vérifiable liée à son événement. L'approbation IDN bornée à
+   2022 et sa date de coupure 2025-11-30 deviennent deux lignes d'une
+   observation.
+3. Servir `observations/<CODE>.json` depuis les nouvelles tables ; même
+   contenu par ligne citée. `status-crosswalk` ([[0887]]) et
+   `sector-crosswalk` ([[0888]]) n'ont pas à avoir fusionné avant cette
+   action ; s'ils sont déjà en place, `build_observations.py` les utilise,
+   sinon la vue attend leurs lignes.
+
+## Test
+
+- `tests/test_jetp_observations.py` : une fixture d'un événement ZAF, d'un
+  IDN borné à l'année et d'un `need` SEN donne trois observations aux
+  mesures attendues, quatre timings, un `estimate` sans accord ; une
+  observation sans ligne citée est refusée ; un `measure` hors liste est
+  refusé.
+
+## Verification
+
+- [x] Comptes des tables au dépôt : 380 + 71 = 451 événements, chacun avec une observation citée ou une attente de preuve ; les 451 lignes de `event-timing.csv` ont chacune un timing typé ou une disposition explicite. Requête sur les données écrites : 0 valeur `disbursement`/`disbursed` dans `financial_status` et dans `flow_type` d'observation (2026-09-24).
+- [x] 443 observations et 362 timings sont écrits depuis 360 lignes legacy typées (deux cutoff produisent aussi un timing d'approbation) ; 91 dispositions temporelles restent en attente, dont huit événements physiques sans citation suffisante. La réconciliation des 451 lignes est dans `data/jetp/migration/0876-timing-reconciliation.csv`, sans citation ni rôle inventés.
+- [x] `observations/*.json` : chaque événement accepté retrouve son observation v2 et sa ligne citée ; les huit événements sans preuve suffisante sont explicitement pending et absents des vues. Les 315 liens projet-document restent identiques.
+- [x] La conversion monétaire non sourcée de la figure SEN est retirée par [[1162]] ; `rates.csv` reste vide jusqu'à la décision sourcée d'un taux.
+
+Déplacé vers [[0887]] (status-crosswalk) : la vérification du clic Glossary
+réel depuis une observation ZAF.
+
+## Invariants
+
+- Le mot du publisher n'est jamais normalisé dans `own_status`.
+- Recettes ZAF et VNM de [[0834]] vertes.
+
+## Exit criteria
+
+- [x] Une réconciliation à une ligne par ancien `event-timing.csv` prouve 360 lignes source typées + 91 dispositions en attente = 451 ; deux timings d'approbation supplémentaires proviennent des deux lignes de cutoff bornées à l'année. Aucun rôle inconnu, ambigu, d'observation de page ou d'autre jalon n'est promu en `event` ou `report_date` (`0876-timing-reconciliation.csv` ; test ciblé).
+- [x] `observations`, `timings`, `rates` validées par [[0871]] (`make jetp-ledger-check`)
+- [x] `tests/test_jetp_observations.py` et `tests/test_jetp_observatory_observations.py`, `make check-fast` et `make lint` verts ; `make check PYTEST_WORKERS=16` sur padme vert à ff15db8b (3353 passés, 52 ignorés). Les échecs historiques de [[0940]] et [[0990]] sont résolus.
+
+`status-crosswalk` et `sector-crosswalk` sont scindés en [[0887]] et
+[[0888]] (2026-09-23) : leur écriture n'est plus un critère de sortie de ce
+ticket.

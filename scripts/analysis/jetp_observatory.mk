@@ -26,12 +26,17 @@ JETP_OBSERVATORY_INPUTS := data/jetp/migration/0875-projects-legacy.csv $(addpre
 
 JETP_OBSERVATIONS_DIR := $(JETP_OBSERVATORY)/data/observations
 JETP_OBSERVATIONS_FILES := $(addprefix $(JETP_OBSERVATIONS_DIR)/,ZAF.json IDN.json VNM.json SEN.json)
+JETP_V2_EVENT_FILES := data/jetp/observations.csv data/jetp/timings.csv data/jetp/rates.csv \
+    data/jetp/migration/0876-pending.csv data/jetp/migration/0876-timing-reconciliation.csv
 # Every table, not only the three served: build_observations.py goes through
 # read_inputs, which loads and cross-validates all nine. No DVC pointer, and
 # that is a property of the build rather than an omission: the registry is
 # collapsed on the recorded digest, so the four views are identical whether or
 # not the document snapshot is checked out.
 JETP_OBSERVATIONS_INPUTS := $(filter data/jetp/%.csv,$(JETP_OBSERVATORY_INPUTS)) \
+    data/jetp/migration/0875-dispositions.csv data/jetp/migration/0970-event-adjudications.csv \
+    data/jetp/migration/1120-event-adjudications.csv \
+    data/jetp/migration/1160-citation-decisions.csv $(wildcard data/jetp/lines.d/*.csv) \
     scripts/jetp/build_observations.py scripts/jetp/build_observatory.py \
     scripts/jetp/_observatory_data.py scripts/jetp/_m1a_document_links.py
 
@@ -81,12 +86,13 @@ jetp-m1a: $(JETP_M1A_FILES)
 $(JETP_M1A_FILES) &: $(JETP_M1A_INPUTS)
 	$(PYTHON) scripts/jetp/build_m1a_inventories.py --output-dir $(JETP_M1A_DIR)
 
-# Independent of jetp-observatory, as jetp-m1a already is: the four views are a
-# second reading of the same ledger, not an input of the country JSON.
-jetp-observations: $(JETP_OBSERVATIONS_FILES)
+# The four views project accepted v2 events and cited lines into the browser's
+# existing row contract; project-source-links remain a separate legacy reader.
+# Country JSON does not read this view.
+jetp-observations: $(JETP_OBSERVATIONS_FILES) $(JETP_V2_EVENT_FILES)
 
-$(JETP_OBSERVATIONS_FILES) &: $(JETP_OBSERVATIONS_INPUTS)
-	$(PYTHON) scripts/jetp/build_observations.py --output-dir $(JETP_OBSERVATIONS_DIR)
+$(JETP_OBSERVATIONS_FILES) $(JETP_V2_EVENT_FILES) &: $(JETP_OBSERVATIONS_INPUTS)
+	$(PYTHON) scripts/jetp/build_observations.py --write-normalized --output-dir $(JETP_OBSERVATIONS_DIR)
 
 jetp-ontology-views: $(JETP_ONTOLOGY_VIEWS)
 
