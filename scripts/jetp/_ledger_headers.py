@@ -8,7 +8,8 @@ This module also knows where a table lives on disk, which the storage contract
 fixes: ``data/jetp/<table>.csv`` with underscores written as hyphens, ontology
 tables under ``data/jetp/ontology/``, and a table too large for the
 pre-commit file ceiling chunked by country and year into
-``<table>.d/<CODE>-<year>.csv``, which stays one table. The ``.d`` suffix is
+``<table>.d/<CODE>-<year>.csv`` (with ``-02``, ``-03`` shards when one year
+still exceeds the ceiling), which stays one table. The ``.d`` suffix is
 what keeps a chunk directory apart from a directory that merely shares a
 table's name: ``data/jetp/documents/`` is the DVC snapshot store, and the
 ``documents`` table must never read from, write to or clean it.
@@ -20,7 +21,9 @@ rows calls ``write_table`` so its file carries the generated header.
 import csv
 import io
 import re
+import shutil
 import sqlite3
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -39,7 +42,8 @@ ONTOLOGY_TABLES = ('terms', 'status_crosswalk', 'sector_crosswalk', 'perimeters'
 # migration/0875-projects-legacy.csv for compatibility readers until 0878.
 LEGACY_FILES = {}
 
-CHUNK_NAME = re.compile(r'^(?P<country>[A-Z]{3})-(?P<year>\d{4})\.csv$')
+CHUNK_NAME = re.compile(
+    r'^(?P<country>[A-Z]{3})-(?P<year>\d{4})(?:-(?P<part>0[2-9]|[1-9]\d))?\.csv$')
 
 
 @dataclass(frozen=True)
@@ -120,19 +124,30 @@ def table_files(ledger_dir, table):
     single = table_path(ledger_dir, table)
     directory = chunk_dir(ledger_dir, table)
     chunks, errors = [], []
+    if directory.with_suffix('.d.pending').exists():
+        errors.append(f'chunk: {_relative(directory, ledger_dir)}: interrupted publication')
     if directory.is_dir():
-        for path in sorted(directory.glob('*.csv')):
+        for path in directory.glob('*.csv'):
             match = CHUNK_NAME.match(path.name)
             if match is None:
                 errors.append(f'chunk: {_relative(path, ledger_dir)}: '
-                              'a chunk is named <CODE>-<year>.csv')
+                              'a chunk is named <CODE>-<year>[-NN].csv')
             else:
-                chunks.append((path, match['country'], match['year']))
+                chunks.append((path, match['country'], match['year'],
+                               int(match['part'] or 1)))
+        chunks.sort(key=lambda item: (item[1], item[2], item[3]))
+        parts_by_group = {}
+        for _, country, year, part in chunks:
+            parts_by_group.setdefault((country, year), []).append(part)
+        for (country, year), parts in sorted(parts_by_group.items()):
+            if parts != list(range(1, len(parts) + 1)):
+                errors.append(f'chunk: {country}-{year}: shards must be contiguous from '
+                              f'{country}-{year}.csv; found {parts}')
     if single.is_file():
         if chunks:
             errors.append(f'chunk: {file_stem(table)} is both a file and a chunk directory')
         return [(single, None, None)], errors
-    return chunks, errors
+    return [(path, country, year) for path, country, year, _ in chunks], errors
 
 
 def header_errors(found, expected, where):
@@ -224,14 +239,91 @@ def _render(header, rows):
     return buffer.getvalue()
 
 
+def _shard_texts(header, members, ceiling):
+    """Pack same-country/year rows in source order, counting encoded bytes."""
+    heading = _render(header, [])
+    heading_size = len(heading.encode('utf-8'))
+    shards, lines, size = [], [], heading_size
+    for row in members:
+        line = _render(header, [row])[len(heading):]
+        line_size = len(line.encode('utf-8'))
+        if heading_size + line_size > ceiling:
+            raise ValueError('one ledger row exceeds the file ceiling')
+        if size + line_size > ceiling:
+            shards.append(heading + ''.join(lines))
+            lines, size = [], heading_size
+        lines.append(line)
+        size += line_size
+    if lines:
+        shards.append(heading + ''.join(lines))
+    if len(shards) > 99:
+        raise ValueError('more than 99 shards in one country-year')
+    return shards
+
+
+def _publish_single(single, directory, text):
+    """Stage a single-file rewrite and flag any interrupted layout switch."""
+    single.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=single.parent) as temporary:
+        staged = Path(temporary) / single.name
+        staged.write_text(text, encoding='utf-8')
+        pending = directory.with_suffix('.d.pending')
+        pending.write_text('ledger publication in progress\n', encoding='utf-8')
+        published = False
+        try:
+            staged.replace(single)
+            published = True
+            _remove_stale_chunks(directory)
+        except BaseException:
+            if not published:
+                pending.unlink(missing_ok=True)
+            raise
+        pending.unlink()
+
+
+def _publish_chunks(single, directory, planned):
+    """Stage complete shard bytes before replacing the live directory."""
+    directory.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=directory.parent) as temporary:
+        temporary = Path(temporary)
+        staged = temporary / 'new-chunks'
+        backup = temporary / 'old-chunks'
+        staged.mkdir()
+        for path, piece in planned:
+            (staged / path.name).write_text(piece, encoding='utf-8')
+        if directory.is_dir():
+            for path in directory.iterdir():
+                if not CHUNK_NAME.match(path.name):
+                    if path.is_dir():
+                        shutil.copytree(path, staged / path.name)
+                    else:
+                        shutil.copy2(path, staged / path.name)
+        pending = directory.with_suffix('.d.pending')
+        pending.write_text('ledger publication in progress\n', encoding='utf-8')
+        try:
+            if directory.is_dir():
+                directory.rename(backup)
+            try:
+                staged.rename(directory)
+                single.unlink(missing_ok=True)
+            except BaseException:
+                if directory.is_dir():
+                    directory.rename(staged)
+                if backup.is_dir():
+                    backup.rename(directory)
+                raise
+            pending.unlink()
+        except BaseException:
+            pending.unlink(missing_ok=True)
+            raise
+
+
 def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
     """Write a table with its generated header, chunked when over the ceiling.
 
     ``rows`` are dicts keyed by column. Under the ceiling the table is one
-    file; over it, one file per country and year of ``recorded_at``. Returns
-    the paths written. A chunk that is still over the ceiling is written all
-    the same and reported by ``read_table``, which is where the hook's rule is
-    enforced.
+    file; over it, one or more files per country and year of ``recorded_at``.
+    Every shard stays within the ceiling. Returns the paths written.
     """
     schema = schema or load_schema()
     ceiling = file_ceiling() if ceiling is None else ceiling
@@ -239,9 +331,7 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
     single = table_path(ledger_dir, table)
     text = _render(header, rows)
     if len(text.encode('utf-8')) <= ceiling:
-        single.parent.mkdir(parents=True, exist_ok=True)
-        single.write_text(text, encoding='utf-8')
-        _remove_stale_chunks(chunk_dir(ledger_dir, table))
+        _publish_single(single, chunk_dir(ledger_dir, table), text)
         return [single]
     if 'country' not in header or 'recorded_at' not in header:
         raise ValueError(f'{table} is over {ceiling} bytes and has no country '
@@ -250,21 +340,19 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
     for row in rows:
         groups.setdefault((row['country'], str(row['recorded_at'])[:4]), []).append(row)
     directory = chunk_dir(ledger_dir, table)
-    directory.mkdir(parents=True, exist_ok=True)
-    written = []
+    planned = []
     for (country, year), members in sorted(groups.items()):
-        path = directory / f'{country}-{year}.csv'
-        path.write_text(_render(header, members), encoding='utf-8')
-        written.append(path)
-    _remove_stale_chunks(directory, keep=written)
-    single.unlink(missing_ok=True)
-    return written
+        for index, piece in enumerate(_shard_texts(header, members, ceiling), start=1):
+            suffix = '' if index == 1 else f'-{index:02d}'
+            planned.append((directory / f'{country}-{year}{suffix}.csv', piece))
+    _publish_chunks(single, directory, planned)
+    return [path for path, _ in planned]
 
 
 def _remove_stale_chunks(directory, keep=()):
     """Delete the chunk files of a table that the last write did not produce.
 
-    Only ``<CODE>-<year>.csv`` files directly in the table's own ``.d``
+    Only ``<CODE>-<year>[-NN].csv`` files directly in the table's own ``.d``
     directory are the writer's; anything else there is left alone, and the
     directory is removed only once it is empty.
     """
