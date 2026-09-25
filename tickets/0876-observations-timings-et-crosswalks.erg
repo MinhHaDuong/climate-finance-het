@@ -2,7 +2,6 @@
 Title: Observations et timings
 Created: 2026-09-22
 Author: HDMX-coding-agent
-Blocked-by: 1162
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -24,6 +23,7 @@ Blocked-by: 1162
 2026-09-25T07:19Z Codex note audit du basculement des vues ([[1160]]) : sur 447 observations `accepted`, 120 citent une `line_id` dont le SHA-256 appartient à un autre document que le `source_id` de l'événement legacy (74 IDN, 46 SEN ; 96 financiers, 24 physiques). Le rapprochement exhaustif `observation_id` → événement → `line_id` → `sha256` → `retrievals.document_id` est dans `docs/jetp-0876-citation-mismatches.csv`. Les 327 autres passent le contrôle de source, de pays, de statut et de montant/devise. Le premier exemple est `idn-approved-isle1-canada-2025` : source `idn-jetp-progress-report-2025`, ligne actuelle `idn-world-bank-isle1-technical-assessment-2022-claim-66`. Un adaptateur de vue qui exige la même ligne citée échoue donc sur les données actuelles. Remède : retrouver dans le document legacy une ligne qui porte exactement l'assertion, ou requalifier explicitement l'assertion comme issue de l'autre document ; ne pas valider par simple égalité de projet. Le travail de code de l'adaptateur a été remis de côté jusqu'à cette adjudication. Les vues publiques restent inchangées, PR #1500 reste draft.
 2026-09-25T07:24Z Codex note rates : `rates.csv` est vide, mais `conception/jetp/papier-court-mesure/figure-distribution-decaissement.py:43` calcule encore `2500 * 1.09` sans date, base ni ligne citée ; [[1162]] porte la résolution sourcée ou le retrait de cette conversion. Le critère rates reste ouvert.
 2026-09-25T07:53Z HDMX-coding-agent note blocker 1120 closed — Blocked-by removed.
+2026-09-25T09:00Z Codex note intégration : [[1120]] et [[1160]] sont fusionnés dans la branche 0876 via PR #1520 et #1521 ; 443 observations acceptées et 8 événements en attente, avec 451 dispositions temporelles explicites. [[1162]] est fusionné sur main via PR #1522 puis intégré à la branche : la conversion EUR/USD non sourcée a été retirée de la figure SEN. Les trois tickets bloqueurs sont clos ; la bascule des vues servies reste à faire dans [[0876]].
 --- body ---
 ## Context
 
