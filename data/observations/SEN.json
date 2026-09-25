@@ -15,14 +15,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p. 53, Emplois / Ressources, total MEUR",
+    "locator": "p. 33, QW2; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Total project financing need; no approved debt or equity inferred and no sum across status layers. Event date unresolved: mirror metadata conflicts with PDF revision chronology.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-qw2-plan-need-2025",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-2",
+    "subject_kind": "line",
+    "subject_id": "sen-investment-plan-l4-mirror-quick-win-2"
   },
   {
     "event_id": "sen-qw3-plan-need-2025",
@@ -40,14 +44,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p. 54, Emplois / Ressources, total MEUR",
+    "locator": "p. 33, QW3; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Total project financing need; no approved debt or equity inferred and no sum across status layers. Event date unresolved: mirror metadata conflicts with PDF revision chronology.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-qw3-plan-need-2025",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-3",
+    "subject_kind": "line",
+    "subject_id": "sen-investment-plan-l4-mirror-quick-win-3"
   },
   {
     "event_id": "sen-diass-kfw-reported-funding",
@@ -65,14 +73,18 @@
     "conversion_method": "",
     "source_id": "sen-afd-diass-storage",
     "document_sha256": "ff54ba565532a94ea477d96ea07ac85b5239dbfd00b3dd186467d92700109bf1",
-    "locator": "Single-page factsheet, Prochaines étapes / impacts",
+    "locator": "Single-page factsheet, Prochaines étapes / impacts, KfW contribution",
     "verification_status": "primary_source",
     "notes": "Undated reported funding contribution; event date left blank. No signed agreement or disbursement evidenced. The source does not explicitly attribute these contributions to JETP; extended perimeter only.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "ff54ba565532a94ea477d96ea07ac85b5239dbfd00b3dd186467d92700109bf1",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-diass-kfw-reported-funding",
+    "line_id": "line-1160-sen-diass-kfw-reported-funding",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-10"
   },
   {
     "event_id": "sen-diass-afd-reported-funding",
@@ -90,14 +102,18 @@
     "conversion_method": "",
     "source_id": "sen-afd-diass-storage",
     "document_sha256": "ff54ba565532a94ea477d96ea07ac85b5239dbfd00b3dd186467d92700109bf1",
-    "locator": "Single-page factsheet, Prochaines étapes / impacts",
+    "locator": "Single-page factsheet, Prochaines étapes / impacts, AFD contribution",
     "verification_status": "primary_source",
     "notes": "Undated reported funding contribution; event date left blank. No signed agreement or disbursement evidenced. The source does not explicitly attribute these contributions to JETP; extended perimeter only.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "ff54ba565532a94ea477d96ea07ac85b5239dbfd00b3dd186467d92700109bf1",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-diass-afd-reported-funding",
+    "line_id": "line-1160-sen-diass-afd-reported-funding",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-10"
   },
   {
     "event_id": "sen-saloum-reported-german-allocation-2026",
@@ -122,7 +138,11 @@
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "d7f2d451cb716eed8bd175f9bf2c5d8a79e76a39b2abf6cbf0c9024a45f8fbd0",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-saloum-reported-german-allocation-2026",
+    "line_id": "line-1160-sen-saloum-reported-german-allocation-2026",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-16"
   },
   {
     "event_id": "sen-plan-cost-annex-03",
@@ -140,14 +160,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Installation d’unités pilote de briquetage, pour la production de briquettes de charbon alternatives au charbon de bois comme solution de lutte contre la déforestation, à proximité des forêts classées de la Casamance",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-03",
+    "line_id": "line-1160-sen-plan-cost-annex-03",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-03"
   },
   {
     "event_id": "sen-plan-cost-annex-05",
@@ -165,14 +189,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Electrification de 350 Villages Par Mini-Centrales Solaires",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-05",
+    "line_id": "line-1160-sen-plan-cost-annex-05",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-05"
   },
   {
     "event_id": "sen-plan-cost-annex-06",
@@ -190,14 +218,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Electrification de Villages Par Mini-Centrales Solaires",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-06",
+    "line_id": "line-1160-sen-plan-cost-annex-06",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-06"
   },
   {
     "event_id": "sen-plan-cost-annex-07",
@@ -215,14 +247,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Projet d’intégration de centrales solaires au réseau dans 600 villages par injection",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-07",
+    "line_id": "line-1160-sen-plan-cost-annex-07",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-07"
   },
   {
     "event_id": "sen-plan-cost-annex-08",
@@ -240,14 +276,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Eclairage général efficace",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-08",
+    "line_id": "line-1160-sen-plan-cost-annex-08",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-08"
   },
   {
     "event_id": "sen-plan-cost-annex-09",
@@ -265,14 +305,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Eclairage public efficace",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-09",
+    "line_id": "line-1160-sen-plan-cost-annex-09",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-09"
   },
   {
     "event_id": "sen-plan-cost-annex-10",
@@ -290,14 +334,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Ecofridges",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-10",
+    "line_id": "line-1160-sen-plan-cost-annex-10",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-10"
   },
   {
     "event_id": "sen-plan-cost-annex-11",
@@ -315,14 +363,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Programme de réduction de la facture d’électricité de l’Etat par l’utilisation de sources d’énergies renouvelables et l’efficacité énergétique",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-11",
+    "line_id": "line-1160-sen-plan-cost-annex-11",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-11"
   },
   {
     "event_id": "sen-plan-cost-annex-12",
@@ -340,14 +392,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Projet d'amélioration des Performances énergétiques des Stades du Sénégal (PAPES)",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-12",
+    "line_id": "line-1160-sen-plan-cost-annex-12",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-12"
   },
   {
     "event_id": "sen-plan-cost-annex-13",
@@ -365,14 +421,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Extension des points d'information territorialisés (PIT) sur la maîtrise de l'énergie",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-13",
+    "line_id": "line-1160-sen-plan-cost-annex-13",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-13"
   },
   {
     "event_id": "sen-plan-cost-annex-14",
@@ -390,14 +450,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Programme SARDEL de réduction de la facture publique d'électricité par l'optimisation de la facturation et des installations électriques sur 9 000 polices d'abonnement",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-14",
+    "line_id": "line-1160-sen-plan-cost-annex-14",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-14"
   },
   {
     "event_id": "sen-plan-cost-annex-15",
@@ -415,14 +479,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.41, named project in summary cost table, M EUR",
+    "locator": "Printed p.41, named project in summary cost table, M EUR, Construction de 2 centrales solaires de 50MWc avec du stockage de 2x30MW/90MWh",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-15",
+    "line_id": "line-1160-sen-plan-cost-annex-15",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-15"
   },
   {
     "event_id": "sen-plan-cost-annex-16",
@@ -440,14 +508,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Construction de centrales Hybrides PV + BESS dans 18 îles du Saloum",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-16",
+    "line_id": "line-1160-sen-plan-cost-annex-16",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-16"
   },
   {
     "event_id": "sen-plan-cost-annex-17",
@@ -465,14 +537,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Projet d'installation de biodigesteurs pour une transition énergétique et une résilience des populations rurales et péri-urbaines face aux effets du changement climatique",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-17",
+    "line_id": "line-1160-sen-plan-cost-annex-17",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-17"
   },
   {
     "event_id": "sen-plan-cost-annex-19",
@@ -490,14 +566,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Mise en place d'une unité de production de BioGNV pour les autobus urbains à Dakar",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-19",
+    "line_id": "line-1160-sen-plan-cost-annex-19",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-19"
   },
   {
     "event_id": "sen-plan-cost-annex-20",
@@ -515,14 +595,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.44, named project in summary cost table, M EUR",
+    "locator": "Printed p.44, named project in summary cost table, M EUR, Hybridation de 2000 forages en milieu rural",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-20",
+    "line_id": "line-1160-sen-plan-cost-annex-20",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-20"
   },
   {
     "event_id": "sen-plan-cost-annex-21",
@@ -540,14 +624,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.44, named project in summary cost table, M EUR",
+    "locator": "Printed p.44, named project in summary cost table, M EUR, Promotion des énergies renouvelables dans les pôles de développement économique du Sénégal",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-21",
+    "line_id": "line-1160-sen-plan-cost-annex-21",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-21"
   },
   {
     "event_id": "sen-plan-cost-annex-22",
@@ -565,14 +653,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.44, named project in summary cost table, M EUR",
+    "locator": "Printed p.44, named project in summary cost table, M EUR, Utilisation du stockage froid solaire pour la conservation des produits agricoles, halieutiques et laitiers",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-22",
+    "line_id": "line-1160-sen-plan-cost-annex-22",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-22"
   },
   {
     "event_id": "sen-plan-cost-annex-23",
@@ -590,14 +682,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Autonomisation en énergie électrique des universités, hôpitaux et bâtiments abritant des institutions, ministères et autres services de l’administration",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-23",
+    "line_id": "line-1160-sen-plan-cost-annex-23",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-23"
   },
   {
     "event_id": "sen-plan-cost-annex-24",
@@ -615,14 +711,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Renforcement de l'Infrastructure Qualité pour des services énergétiques innovateurs",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-24",
+    "line_id": "line-1160-sen-plan-cost-annex-24",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-24"
   },
   {
     "event_id": "sen-plan-cost-annex-25",
@@ -640,14 +740,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Renforcement de capacités des agents de l’ANER et de ses partenaires",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-25",
+    "line_id": "line-1160-sen-plan-cost-annex-25",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-25"
   },
   {
     "event_id": "sen-plan-cost-annex-26",
@@ -665,14 +769,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.42, named project in summary cost table, M EUR",
+    "locator": "Printed p.42, named project in summary cost table, M EUR, Autoconsommation solaire dans 300.000 ménages urbains et périurbains",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-26",
+    "line_id": "line-1160-sen-plan-cost-annex-26",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-26"
   },
   {
     "event_id": "sen-plan-cost-annex-27",
@@ -690,14 +798,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.44, named project in summary cost table, M EUR",
+    "locator": "Printed p.44, named project in summary cost table, M EUR, Energie solaire pour l’autonomisation et le renforcement économique des femmes en milieu rural au Sénégal (ESAREF)",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-27",
+    "line_id": "line-1160-sen-plan-cost-annex-27",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-27"
   },
   {
     "event_id": "sen-plan-cost-annex-28",
@@ -715,14 +827,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.44, named project in summary cost table, M EUR",
+    "locator": "Printed p.44, named project in summary cost table, M EUR, Projet d’installation d’unités de dessalement de l’eau saumâtre fonctionnant à l’énergie solaire photovoltaïque",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-28",
+    "line_id": "line-1160-sen-plan-cost-annex-28",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-28"
   },
   {
     "event_id": "sen-plan-cost-annex-29",
@@ -740,14 +856,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.44, named project in summary cost table, M EUR",
+    "locator": "Printed p.44, named project in summary cost table, M EUR, Diffusion à grande échelle de pompes solaires pour des usages productifs au Sénégal",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-29",
+    "line_id": "line-1160-sen-plan-cost-annex-29",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-29"
   },
   {
     "event_id": "sen-plan-cost-annex-31",
@@ -765,14 +885,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.43, named project in summary cost table, M EUR",
+    "locator": "Printed p.43, named project in summary cost table, M EUR, Projet d’installation de 100 000 lampadaires solaires autonomes",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-31",
+    "line_id": "line-1160-sen-plan-cost-annex-31",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-31"
   },
   {
     "event_id": "sen-plan-cost-annex-33",
@@ -790,14 +914,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.41, named project in summary cost table, M EUR",
+    "locator": "Printed p.41, named project in summary cost table, M EUR, Infrastructures de réseaux modernes",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-33",
+    "line_id": "line-1160-sen-plan-cost-annex-33",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-33"
   },
   {
     "event_id": "sen-plan-cost-annex-36",
@@ -815,14 +943,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.44, named project in summary cost table, M EUR",
+    "locator": "Printed p.44, named project in summary cost table, M EUR, SUNU Agri-Solaire 2025 - 2027",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-36",
+    "line_id": "line-1160-sen-plan-cost-annex-36",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-36"
   },
   {
     "event_id": "sen-plan-cost-annex-37",
@@ -840,14 +972,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.44, named project in summary cost table, M EUR",
+    "locator": "Printed p.44, named project in summary cost table, M EUR, Forages solarisés",
     "verification_status": "primary_source",
     "notes": "Plan cost estimate, sometimes rounded; not secured funding. Date unresolved. Do not sum with quick-win allocations or parent programmes.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-plan-cost-annex-37",
+    "line_id": "line-1160-sen-plan-cost-annex-37",
+    "subject_kind": "line",
+    "subject_id": "line-1160-sen-plan-cost-annex-37"
   },
   {
     "event_id": "sen-plan-allocation-qw-04",
@@ -865,14 +1001,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.45, prospective resource allocation table",
+    "locator": "p. 33, QW4; PDF page 33",
     "verification_status": "primary_source",
     "notes": "901 concessional plus 173 private; parent programme overlaps components. Date unresolved; not additive to other observations.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-plan-allocation-qw-04",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-4",
+    "subject_kind": "line",
+    "subject_id": "sen-investment-plan-l4-mirror-quick-win-4"
   },
   {
     "event_id": "sen-plan-allocation-qw-08",
@@ -890,14 +1030,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.46, prospective resource allocation table",
+    "locator": "p. 33, QW8; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Prospective grant allocation for network study. Date unresolved; not additive to other observations.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-plan-allocation-qw-08",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-8",
+    "subject_kind": "line",
+    "subject_id": "sen-investment-plan-l4-mirror-quick-win-8"
   },
   {
     "event_id": "sen-plan-allocation-qw-10",
@@ -915,14 +1059,18 @@
     "conversion_method": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p.46, prospective resource allocation table",
+    "locator": "p. 33, QW10; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Prospective plan allocation, not the full battery cost or a new donor commitment. Date unresolved; not additive to other observations.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-plan-allocation-qw-10",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-10",
+    "subject_kind": "line",
+    "subject_id": "sen-investment-plan-l4-mirror-quick-win-10"
   },
   {
     "event_id": "sen-diass-kfw-reported-20260420",
@@ -940,14 +1088,18 @@
     "conversion_method": "",
     "source_id": "sen-diass-groundbreaking-2026",
     "document_sha256": "5e3bf0b0b647b6927bf7784ad33307ffed9ba7c74f0fc6cd35f8fc4eff4a8c25",
-    "locator": "Funding paragraph",
+    "locator": "Funding paragraph, KfW contribution",
     "verification_status": "primary_source",
     "notes": "Reported funding on publication date; no disbursement inferred. Retain earlier observation separately.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "5e3bf0b0b647b6927bf7784ad33307ffed9ba7c74f0fc6cd35f8fc4eff4a8c25",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-diass-kfw-reported-20260420",
+    "line_id": "line-1160-sen-diass-kfw-reported-20260420",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-10"
   },
   {
     "event_id": "sen-diass-afd-reported-20260420",
@@ -965,14 +1117,18 @@
     "conversion_method": "",
     "source_id": "sen-diass-groundbreaking-2026",
     "document_sha256": "5e3bf0b0b647b6927bf7784ad33307ffed9ba7c74f0fc6cd35f8fc4eff4a8c25",
-    "locator": "Funding paragraph",
+    "locator": "Funding paragraph, AFD contribution",
     "verification_status": "primary_source",
     "notes": "Reported funding on publication date; no disbursement inferred. Retain earlier observation separately.",
     "table": "events",
     "kind": "financial_event",
     "verification": "primary_source",
     "sha256": "5e3bf0b0b647b6927bf7784ad33307ffed9ba7c74f0fc6cd35f8fc4eff4a8c25",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-diass-afd-reported-20260420",
+    "line_id": "line-1160-sen-diass-afd-reported-20260420",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-10"
   },
   {
     "implementation_event_id": "sen-project-qw-02-proposed-2025-04-02",
@@ -983,14 +1139,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p. 53, financing model",
+    "locator": "p. 33, QW2; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Proposed IPP structure; neither executed financing nor built capacity is established. Event date unresolved: mirror metadata conflicts with PDF revision chronology.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-project-qw-02-proposed-2025-04-02",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-2",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-02"
   },
   {
     "implementation_event_id": "sen-project-qw-03-proposed-2025-04-02",
@@ -1001,14 +1161,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "Printed p. 54, financing model",
+    "locator": "p. 33, QW3; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Proposed IPP structure; neither executed financing nor built capacity is established. Event date unresolved: mirror metadata conflicts with PDF revision chronology.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-project-qw-03-proposed-2025-04-02",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-3",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-03"
   },
   {
     "implementation_event_id": "sen-project-annex-15-preparation-2024-10-18",
@@ -1026,7 +1190,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "a1360977d1a5cfaeb895073c7b899a70786b7a91eae60e0d1b88cdb5f94470f8",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-15-preparation-2024-10-18",
+    "line_id": "line-1160-sen-project-annex-15-preparation-2024-10-18",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-15"
   },
   {
     "implementation_event_id": "sen-project-annex-16-procurement-2026-09-09",
@@ -1044,7 +1212,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "d7f2d451cb716eed8bd175f9bf2c5d8a79e76a39b2abf6cbf0c9024a45f8fbd0",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-16-procurement-2026-09-09",
+    "line_id": "line-1160-sen-project-annex-16-procurement-2026-09-09",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-16"
   },
   {
     "implementation_event_id": "sen-project-annex-20-proposed-2026-09-13",
@@ -1062,7 +1234,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "e689b5ecd1e585cc8a1755df8750b552457405af932c28a29e568b19513b2b97",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-20-proposed-2026-09-13",
+    "line_id": "line-1160-sen-project-annex-20-proposed-2026-09-13",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-20"
   },
   {
     "implementation_event_id": "sen-project-annex-22-proposed-2026-09-13",
@@ -1080,7 +1256,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "623875df24848e24df309b1b8b7622fd0dbe8e83fb5bdf7c28b93845a58dc45e",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-22-proposed-2026-09-13",
+    "line_id": "line-1160-sen-project-annex-22-proposed-2026-09-13",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-22"
   },
   {
     "implementation_event_id": "sen-project-annex-27-proposed-2026-09-13",
@@ -1098,7 +1278,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "b174e0b88eead1d884a4d2e496c7351ae59991dc5da9bd9e62cf17a2a50463eb",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-27-proposed-2026-09-13",
+    "line_id": "line-1160-sen-project-annex-27-proposed-2026-09-13",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-27"
   },
   {
     "implementation_event_id": "sen-project-annex-31-proposed-2026-09-13",
@@ -1116,7 +1300,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "656aee48711dd1329791c22b2020c17c9336b5f1d3006e93fa14ed88c9435ec8",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-31-proposed-2026-09-13",
+    "line_id": "line-1160-sen-project-annex-31-proposed-2026-09-13",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-31"
   },
   {
     "implementation_event_id": "sen-diass-groundbreaking-20260331",
@@ -1134,7 +1322,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "5e3bf0b0b647b6927bf7784ad33307ffed9ba7c74f0fc6cd35f8fc4eff4a8c25",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-diass-groundbreaking-20260331",
+    "line_id": "line-1160-sen-diass-groundbreaking-20260331",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-10"
   },
   {
     "implementation_event_id": "sen-biognv-ppp-preparation-20250508",
@@ -1152,7 +1344,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "50297465b5e50f39268cb9543c2175289c72a7716331b45d4c10cd7108bdc75f",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-biognv-ppp-preparation-20250508",
+    "line_id": "line-1160-sen-biognv-ppp-preparation-20250508",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-19"
   },
   {
     "implementation_event_id": "sen-project-annex-01-plan-proposal",
@@ -1163,14 +1359,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 1",
+    "locator": "Annex 2, p. 13, row 1; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-01-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-1",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-01"
   },
   {
     "implementation_event_id": "sen-project-annex-02-plan-proposal",
@@ -1181,14 +1381,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 2",
+    "locator": "Annex 2, p. 13, row 2; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-02-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-2",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-02"
   },
   {
     "implementation_event_id": "sen-project-annex-03-plan-proposal",
@@ -1199,14 +1403,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 3",
+    "locator": "Annex 2, p. 13, row 3; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-03-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-3",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-03"
   },
   {
     "implementation_event_id": "sen-project-annex-04-plan-proposal",
@@ -1217,14 +1425,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 4",
+    "locator": "Annex 2, p. 13, row 4; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-04-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-4",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-04"
   },
   {
     "implementation_event_id": "sen-project-annex-05-plan-proposal",
@@ -1235,14 +1447,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 5",
+    "locator": "Annex 2, p. 13, row 5; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-05-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-5",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-05"
   },
   {
     "implementation_event_id": "sen-project-annex-06-plan-proposal",
@@ -1253,14 +1469,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 6",
+    "locator": "Annex 2, p. 13, row 6; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-06-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-6",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-06"
   },
   {
     "implementation_event_id": "sen-project-annex-07-plan-proposal",
@@ -1271,14 +1491,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 7",
+    "locator": "Annex 2, p. 13, row 7; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-07-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-7",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-07"
   },
   {
     "implementation_event_id": "sen-project-annex-08-plan-proposal",
@@ -1289,14 +1513,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 8",
+    "locator": "Annex 2, p. 13, row 8; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-08-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-8",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-08"
   },
   {
     "implementation_event_id": "sen-project-annex-09-plan-proposal",
@@ -1307,14 +1535,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 9",
+    "locator": "Annex 2, p. 13, row 9; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-09-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-9",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-09"
   },
   {
     "implementation_event_id": "sen-project-annex-10-plan-proposal",
@@ -1325,14 +1557,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 10",
+    "locator": "Annex 2, p. 13, row 10; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-10-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-10",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-10"
   },
   {
     "implementation_event_id": "sen-project-annex-11-plan-proposal",
@@ -1343,14 +1579,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "p. 33, QW5",
+    "locator": "p. 33, QW5, Programme de réduction de la facture d’électricité de l’Etat par l’utilisation de sources d’énergies renouvelables et l’efficacité énergétique",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-11-plan-proposal",
+    "line_id": "line-1160-sen-project-annex-11-plan-proposal",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-11"
   },
   {
     "implementation_event_id": "sen-project-annex-12-plan-proposal",
@@ -1361,14 +1601,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 12",
+    "locator": "Annex 2, p. 13, row 12; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-12-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-12",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-12"
   },
   {
     "implementation_event_id": "sen-project-annex-13-plan-proposal",
@@ -1379,14 +1623,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 13, row 13",
+    "locator": "Annex 2, p. 13, row 13; PDF page 13",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 13,
+    "observation_id": "observation-sen-project-annex-13-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-13",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-13"
   },
   {
     "implementation_event_id": "sen-project-annex-14-plan-proposal",
@@ -1397,14 +1645,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 14, row 14",
+    "locator": "Annex 2, p. 14, row 14; PDF page 14",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 14,
+    "observation_id": "observation-sen-project-annex-14-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-14",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-14"
   },
   {
     "implementation_event_id": "sen-project-annex-17-plan-proposal",
@@ -1415,14 +1667,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "p. 33, QW6",
+    "locator": "p. 33, QW6, Projet d'installation de biodigesteurs pour une transition énergétique et une résilience des populations rurales et péri-urbaines face aux effets du changement climatique",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-17-plan-proposal",
+    "line_id": "line-1160-sen-project-annex-17-plan-proposal",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-17"
   },
   {
     "implementation_event_id": "sen-project-annex-18-plan-proposal",
@@ -1433,14 +1689,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 14, row 18",
+    "locator": "Annex 2, p. 14, row 18; PDF page 14",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 14,
+    "observation_id": "observation-sen-project-annex-18-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-18",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-18"
   },
   {
     "implementation_event_id": "sen-project-annex-19-plan-proposal",
@@ -1451,14 +1711,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "p. 33, QW7",
+    "locator": "p. 33, QW7, Mise en place d'une unité de production de BioGNV pour les autobus urbains à Dakar",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-project-annex-19-plan-proposal",
+    "line_id": "line-1160-sen-project-annex-19-plan-proposal",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-19"
   },
   {
     "implementation_event_id": "sen-project-annex-21-plan-proposal",
@@ -1469,14 +1733,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 14, row 21",
+    "locator": "Annex 2, p. 14, row 21; PDF page 14",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 14,
+    "observation_id": "observation-sen-project-annex-21-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-21",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-21"
   },
   {
     "implementation_event_id": "sen-project-annex-23-plan-proposal",
@@ -1487,14 +1755,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 14, row 23",
+    "locator": "Annex 2, p. 14, row 23; PDF page 14",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 14,
+    "observation_id": "observation-sen-project-annex-23-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-23",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-23"
   },
   {
     "implementation_event_id": "sen-project-annex-24-plan-proposal",
@@ -1505,14 +1777,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 14, row 24",
+    "locator": "Annex 2, p. 14, row 24; PDF page 14",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 14,
+    "observation_id": "observation-sen-project-annex-24-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-24",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-24"
   },
   {
     "implementation_event_id": "sen-project-annex-25-plan-proposal",
@@ -1523,14 +1799,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 14, row 25",
+    "locator": "Annex 2, p. 14, row 25; PDF page 14",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 14,
+    "observation_id": "observation-sen-project-annex-25-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-25",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-25"
   },
   {
     "implementation_event_id": "sen-project-annex-26-plan-proposal",
@@ -1541,14 +1821,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 14, row 26",
+    "locator": "Annex 2, p. 14, row 26; PDF page 14",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 14,
+    "observation_id": "observation-sen-project-annex-26-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-26",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-26"
   },
   {
     "implementation_event_id": "sen-project-annex-28-plan-proposal",
@@ -1559,14 +1843,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 28",
+    "locator": "Annex 2, p. 15, row 28; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-28-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-28",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-28"
   },
   {
     "implementation_event_id": "sen-project-annex-29-plan-proposal",
@@ -1577,14 +1865,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 29",
+    "locator": "Annex 2, p. 15, row 29; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-29-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-29",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-29"
   },
   {
     "implementation_event_id": "sen-project-annex-30-plan-proposal",
@@ -1595,14 +1887,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 30",
+    "locator": "Annex 2, p. 15, row 30; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-30-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-30",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-30"
   },
   {
     "implementation_event_id": "sen-project-annex-32-plan-proposal",
@@ -1613,14 +1909,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 32",
+    "locator": "Annex 2, p. 15, row 32; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-32-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-32",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-32"
   },
   {
     "implementation_event_id": "sen-project-annex-33-plan-proposal",
@@ -1631,14 +1931,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 33",
+    "locator": "Annex 2, p. 15, row 33; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-33-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-33",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-33"
   },
   {
     "implementation_event_id": "sen-project-annex-34-plan-proposal",
@@ -1649,14 +1953,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 34",
+    "locator": "Annex 2, p. 15, row 34; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-34-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-34",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-34"
   },
   {
     "implementation_event_id": "sen-project-annex-35-plan-proposal",
@@ -1667,14 +1975,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 35",
+    "locator": "Annex 2, p. 15, row 35; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-35-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-35",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-35"
   },
   {
     "implementation_event_id": "sen-project-annex-36-plan-proposal",
@@ -1685,14 +1997,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 36",
+    "locator": "Annex 2, p. 15, row 36; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-36-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-36",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-36"
   },
   {
     "implementation_event_id": "sen-project-annex-37-plan-proposal",
@@ -1703,14 +2019,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 37",
+    "locator": "Annex 2, p. 15, row 37; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-37-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-37",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-37"
   },
   {
     "implementation_event_id": "sen-project-annex-38-plan-proposal",
@@ -1721,14 +2041,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-annexes-mirror",
     "document_sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "locator": "Annex 2, p. 15, row 38",
+    "locator": "Annex 2, p. 15, row 38; PDF page 15",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21",
-    "pdf_page": null
+    "pdf_page": 15,
+    "observation_id": "observation-sen-project-annex-38-plan-proposal",
+    "line_id": "sen-investment-plan-annexes-mirror-submitted-project-38",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-annex-38"
   },
   {
     "implementation_event_id": "sen-project-qw-04-plan-proposal",
@@ -1739,14 +2063,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "p. 33, QW4",
+    "locator": "p. 33, QW4; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-project-qw-04-plan-proposal",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-4",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-04"
   },
   {
     "implementation_event_id": "sen-project-qw-08-plan-proposal",
@@ -1757,14 +2085,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "p. 33, QW8",
+    "locator": "p. 33, QW8; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-project-qw-08-plan-proposal",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-8",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-08"
   },
   {
     "implementation_event_id": "sen-project-qw-10-plan-proposal",
@@ -1775,14 +2107,18 @@
     "capacity_mw": "",
     "source_id": "sen-investment-plan-l4-mirror",
     "document_sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "locator": "p. 33, QW10",
+    "locator": "p. 33, QW10; PDF page 33",
     "verification_status": "primary_source",
     "notes": "Plan proposal baseline with unresolved issue date; not a dated construction milestone or proof that no earlier activity exists.",
     "table": "implementation-events",
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca",
-    "pdf_page": null
+    "pdf_page": 33,
+    "observation_id": "observation-sen-project-qw-10-plan-proposal",
+    "line_id": "sen-investment-plan-l4-mirror-quick-win-10",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-10"
   },
   {
     "implementation_event_id": "sen-puelec-three-villages-reported-20251109",
@@ -1800,7 +2136,11 @@
     "kind": "implementation_event",
     "verification": "primary_source",
     "sha256": "2ee4f9b53b270aba145bf2972f07e31139f0b24cc999ba123b5be467dca5e50b",
-    "pdf_page": null
+    "pdf_page": null,
+    "observation_id": "observation-sen-puelec-three-villages-reported-20251109",
+    "line_id": "line-1160-sen-puelec-three-villages-reported-20251109",
+    "subject_kind": "project",
+    "subject_id": "project-sen-project-qw-04"
   },
   {
     "link_id": "sen-project-annex-01-sen-investment-plan-annexes-mirror",
@@ -3329,7 +3669,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "provisional",
-    "sha256": null,
+    "sha256": "ed60da9ddd628495bef83a65ff280db4db96659168b83b56702cfee6528aa8c7",
     "pdf_page": null
   },
   {
@@ -4184,7 +4524,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "provisional",
-    "sha256": null,
+    "sha256": "adfd03e13b9bd2d3034ee4ac54e227bcce7b50ebc9e3d76177efc4a64b56a96b",
     "pdf_page": null
   },
   {

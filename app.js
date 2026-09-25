@@ -470,10 +470,169 @@ function archivedLink(entry, page, attrs = "", label = "Open archived copy") {
     ? `<a href="${esc(href)}"${attrs} data-link="archived" target="_blank" rel="noopener">${esc(label)} ↗</a>`
     : "";
 }
+/* Ticket 0925: publisher pages rot. Two tables of their own, served beside
+ * the registry and joined to it here on the address the registry records
+ * (the entry's `url`): the Web Archive copy of that address
+ * (data/web-archive.json, from data/jetp/web-archive-captures.csv) and the
+ * last check of it (data/publisher-links.json, from
+ * data/jetp/publisher-link-checks.csv). Either may be missing or empty; a
+ * page then shows no copy and no dead link. The origin address is never
+ * rewritten: a dead publisher link stays the link we collected from, placed
+ * after the copy and marked with the date it was first found dead. */
+let webArchive = {};
+let linkChecks = {};
+const indexBy = (rows, key) => Object.fromEntries((rows || []).map((row) => [row[key], row]));
+/* Ticket 1290 (author's decision, 2026-09-25: "Titles now"): a document is
+ * named by its title, from the ledger's documents table served as its own
+ * view (data/ledger-documents.json) and joined here on the identifier. The
+ * identifier stays beneath it, since addresses and other pages use it; a
+ * document the view does not title is named by its identifier alone. */
+let documentTitles = {};
+const documentTitle = (entry) => documentTitles[entry.id]?.title || "";
+const documentName = (entry) =>
+  (documentTitle(entry) ? `<span data-document-title>${esc(documentTitle(entry))}</span><br>` : "") +
+  `<code>${esc(entry.id)}</code>`;
+const webArchiveOf = (entry) => {
+  const capture = webArchive[entry?.url];
+  return capture?.capture_url && ["captured", "reused"].includes(capture.outcome) ? capture : null;
+};
+/* Ticket 1210 (author's decision, 2026-09-25): "dead since" is the earliest
+ * evidence, not the first check. Our own retrieval attempts are evidence
+ * too: the earliest attempt of the address that got a 404 or a 410 after the
+ * last attempt that got the file, joined here on the address, like the
+ * checks. Only the check says whether the link is dead now: a link it found
+ * alive, or could not reach, is never dead, whatever an older attempt got. */
+const GONE = /^HTTP (404|410)\b/;
+const RETRIEVED = new Set(["collected", "not_modified"]);
+let goneAttempts = {};
+function indexGone(entries) {
+  const gone = {};
+  [...entries].sort(attemptOrder).forEach((entry) => {
+    if (!entry.url) return;
+    if (RETRIEVED.has(entry.status)) delete gone[entry.url];
+    else if (GONE.test(entry.error || "") && !gone[entry.url]) gone[entry.url] = entry;
+  });
+  return gone;
+}
+const deadSince = (entry) => {
+  const check = linkChecks[entry?.url];
+  if (check?.outcome !== "dead") return null;
+  const checked = check.dead_since || (check.checked_at || "").slice(0, 10);
+  const tried = (goneAttempts[entry.url]?.collected_on || "").slice(0, 10);
+  return tried && (!checked || tried < checked) ? tried : checked;
+};
+/* The HTTP status that said so: the check's, else our attempt's. */
+const deadStatus = (entry) =>
+  linkChecks[entry?.url]?.http_status || (GONE.exec(goneAttempts[entry?.url]?.error || "") || [])[1] || "";
+/* A PDF opens as the archived bytes themselves (Wayback's id_ form), at the
+ * page; a web page opens in the Wayback replay. What a reader can check
+ * against our SHA-256, and why a replayed page never matches it, is said once
+ * on the Methods page (ticket 1210), not beside every copy. */
+const WAYBACK_STAMP = /\/web\/([0-9]{14})\//;
+function webArchiveHref(entry, page) {
+  const capture = webArchiveOf(entry);
+  if (!capture) return null;
+  if (!originIsPdf(entry)) return capture.capture_url;
+  return capture.capture_url.replace(WAYBACK_STAMP, "/web/$1id_/") + (page ? "#page=" + page : "");
+}
+function webArchiveLink(entry, page, attrs = "", label) {
+  const href = webArchiveHref(entry, page);
+  if (!href) return "";
+  const when = (webArchiveOf(entry).captured_at || "").slice(0, 10);
+  return `<a href="${esc(href)}"${attrs} data-link="web-archive" target="_blank" rel="noopener">${esc(label || "Web Archive copy — " + date(when))} ↗</a>`;
+}
+function deadNote(entry) {
+  const since = deadSince(entry);
+  const status = deadStatus(entry);
+  return since
+    ? ` <span class="note dead-link" data-dead-since="${esc(since)}">publisher link dead${status ? ` (${esc(status)})` : ""} since ${esc(date(since))}</span>`
+    : "";
+}
+/* The publisher's page and its Web Archive copy side by side, the copy first
+ * once the publisher's link is dead. */
+function sourceLinks(entry, page, attrs = "", publisherLabel, archiveLabel) {
+  const publisher = publisherLink(entry, page, attrs, publisherLabel) + deadNote(entry);
+  const link = webArchiveLink(entry, page, attrs, archiveLabel);
+  if (!link) return publisher;
+  return deadSince(entry) ? `${link} · ${publisher}` : `${publisher} · ${link}`;
+}
+/* Ticket 1210 (author's decision, 2026-09-25): documents.json keeps one row
+ * per retrieval attempt, and the Documents page one row per document — its
+ * best attempt: the latest collected one if any, otherwise the latest — with
+ * every attempt listed under a fold. Grouped here, at read time: the served
+ * table stays the retrievals as recorded. Time order is the retrieval time,
+ * then the attempt number (row keys are not always in time order). */
+const attemptNumber = (entry) => Number(entry.row_key.slice(entry.row_key.lastIndexOf(":") + 1));
+const attemptOrder = (a, b) =>
+  (a.collected_on || "").localeCompare(b.collected_on || "") || attemptNumber(a) - attemptNumber(b);
+function documentRows(entries) {
+  const byId = new Map();
+  entries.forEach((entry) => {
+    if (!byId.has(entry.id)) byId.set(entry.id, []);
+    byId.get(entry.id).push(entry);
+  });
+  return [...byId.values()].map((attempts) => {
+    attempts.sort(attemptOrder);
+    const collected = attempts.filter((a) => a.status === "collected");
+    return { ...(collected.length ? collected : attempts).at(-1), attempts };
+  });
+}
+/* One attempt in a word or a status code, and its time to the minute (UTC). */
+const HTTP_CODE = /^HTTP ([0-9]{3})\b/;
+function attemptOutcome(entry) {
+  if (entry.status === "collected") return "collected";
+  const code = HTTP_CODE.exec(entry.error || "");
+  if (code) return code[1];
+  if (entry.error) return entry.error.split(":")[0].trim().slice(0, 24);
+  return (entry.status || "outcome not recorded").replaceAll("_", " ");
+}
+const attemptTime = (entry, year) =>
+  entry.collected_on
+    ? new Date(entry.collected_on).toLocaleDateString("en-GB", {
+        day: "numeric", month: "short", timeZone: "UTC", ...(year ? { year: "numeric" } : {}),
+      }) + " " + entry.collected_on.slice(11, 16)
+    : "date not recorded";
+function attemptsFold(doc) {
+  if (doc.attempts.length < 2) return "";
+  const summary = `${doc.attempts.length} attempts: ` +
+    doc.attempts.map((a) => `${attemptOutcome(a)} on ${attemptTime(a)}`).join(", ");
+  const item = (a) => {
+    const method = collectionMethod(a);
+    const read = a.sha256
+      ? `SHA-256 <code title="${esc(a.sha256)}">${esc(a.sha256.slice(0, 12))}…</code>`
+      : collectionFailure(a.error);
+    return `<li data-attempt="${esc(a.row_key)}">${esc(attemptTime(a, true))} UTC · ${esc((a.status || "").replaceAll("_", " "))} · ${read}${method ? " · " + esc(method) : ""}</li>`;
+  };
+  return `<details class="attempts" data-attempts="${doc.attempts.length}"><summary>${esc(summary)}</summary><ul class="citing">${doc.attempts.map(item).join("")}</ul></details>`;
+}
+/* A document never collected says so plainly (ticket 1210), and why: gone
+ * when we came (404/410), or the failure recorded. A single attempt keeps its
+ * date and method here, having no fold to hold them. */
+function noCopy(doc) {
+  const tries = doc.attempts.length;
+  const reason = GONE.test(doc.error || "")
+    ? "the file was already gone when we tried to collect it."
+    : `${tries > 1 ? `none of our ${tries} attempts could collect it` : "our attempt to collect it failed"} (${doc.error ? collectionFailure(doc.error) : esc((doc.status || "").replaceAll("_", " "))}).`;
+  const method = collectionMethod(doc);
+  const when = tries > 1 ? "" : `<br>Tried ${esc(date((doc.collected_on || "").slice(0, 10) || null))}${method ? ` <span data-collection-method="${esc(doc.collection_method)}">${esc(method)}</span>` : ""}`;
+  return `<span data-no-copy>No copy: ${reason}</span>${when}`;
+}
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
+/* How the bytes were sought (ticket 0926): the registry's collection_method,
+ * in words. */
+const COLLECTION_METHODS = {
+  script: "by the collector",
+  "browser-session": "through the author's browser session",
+  "browser-manual": "saved by hand in a browser",
+  "local-record": "research record written here",
+};
+const collectionMethod = (entry) =>
+  COLLECTION_METHODS[entry.collection_method] || entry.collection_method || "";
 function collectedFacts(entry, separator = " · ") {
-  const when = entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded";
+  const method = collectionMethod(entry);
+  const when = (entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded") +
+    (method ? ` <span data-collection-method="${esc(entry.collection_method)}">${esc(method)}</span>` : "");
   return entry.sha256
     ? `${when}${separator}SHA-256 <code data-sha256="${esc(entry.sha256)}" title="${esc(entry.sha256)}">${esc(entry.sha256.slice(0, 12))}…</code>`
     : `${when}${separator}${collectionFailure(entry.error)}`;
@@ -560,7 +719,7 @@ function extractedPageLink(row, entry, key) {
   if (!row.pdf_page) return "";
   const attrs = ` data-extracted-page="${esc(key)}"`;
   const archived = archivedLink(entry, row.pdf_page, attrs, "archived copy");
-  return ` · PDF page ${Number(row.pdf_page)}: ${publisherLink(entry, row.pdf_page, attrs, "publisher's page")}${archived ? " · " + archived : ""}`;
+  return ` · PDF page ${Number(row.pdf_page)}: ${sourceLinks(entry, row.pdf_page, attrs, "publisher's page", "Web Archive copy")}${archived ? " · " + archived : ""}`;
 }
 function extractedItem(row, entry) {
   if (row.product === "m1a")
@@ -667,7 +826,7 @@ function extractionCell(entry) {
       const page = firstPdfPage(extracted);
       const publisher = document.getElementById("publisher-" + entry.row_key);
       const archived = document.getElementById("archived-" + entry.row_key);
-      if (page && publisher) publisher.innerHTML = publisherLink(entry, page, documentAttrs(entry));
+      if (page && publisher) publisher.innerHTML = sourceLinks(entry, page, documentAttrs(entry));
       if (page && archived) archived.innerHTML = archivedLink(entry, page, documentAttrs(entry));
       cell.innerHTML =
         !extracted.length && !relying.length
@@ -693,7 +852,9 @@ function collectionFailure(error) {
   return `<span class="note" data-collection-error title="${esc(error)}">${esc(short)}</span>`;
 }
 function documentsPage(params) {
-  const rows = documentsData.documents;
+  // One row per document, on its best attempt (ticket 1210): the facets, the
+  // search and the count all read that attempt, so they count documents.
+  const rows = documentRows(documentsData.documents);
   const values = (key) =>
     [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
   // Both links open at the file's own first page until the join says
@@ -702,7 +863,7 @@ function documentsPage(params) {
   // of its own. The publisher's page is always there; the archived copy only
   // where this server holds it (ticket 0915).
   const links = (r) =>
-    `<span id="publisher-${esc(r.row_key)}">${publisherLink(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>`;
+    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${r.sha256 ? collectedFacts(r, "<br>") : noCopy(r)}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>${attemptsFold(r)}`;
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -723,6 +884,13 @@ function documentsPage(params) {
         options: values("status"),
       },
       {
+        key: "collection_method",
+        label: "Collection method",
+        all: "All collection methods",
+        options: values("collection_method").map((value) => ({
+          value, label: COLLECTION_METHODS[value] || value })),
+      },
+      {
         key: "content_type",
         label: "Content type",
         all: "All content types",
@@ -730,12 +898,12 @@ function documentsPage(params) {
       },
     ],
     search: {
-      label: "Search document identifiers and addresses",
-      placeholder: "Try jet-investment-register, .pdf…",
-      text: (r) => (r.id + " " + (r.url || "")).toLowerCase(),
+      label: "Search document titles, identifiers and addresses",
+      placeholder: "Try investment plan, jet-investment-register, .pdf…",
+      text: (r) => (documentTitle(r) + " " + r.id + " " + (r.url || "")).toLowerCase(),
     },
     columns: [
-      { label: "Document", cell: (r) => `<code>${esc(r.id)}</code>` },
+      { label: "Document", cell: documentName },
       {
         label: "Country",
         cell: (r) => esc(country(r.country)?.short || r.country),
@@ -869,7 +1037,7 @@ function evidenceLink(locator, entry, pdfPage, dataAttr, dataValue, noEntry) {
     return `<span class="note">${text}${noEntry ? "<br>" + noEntry : ""}</span>`;
   const attrs = ` ${dataAttr}="${esc(dataValue)}"`;
   const archived = archivedLink(entry, pdfPage, attrs, "archived copy");
-  return `<span class="document-ref">${text}<br>${publisherLink(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<small>${collectedFacts(entry)}</small></span>`;
+  return `<span class="document-ref">${text}<br>${sourceLinks(entry, pdfPage, attrs)}${archived ? " · " + archived : ""}<small>${collectedFacts(entry)}</small></span>`;
 }
 function inventoryEvidence(row) {
   const entry = documentIndex[row.source_id];
@@ -917,7 +1085,7 @@ function observationTotals(rows, code) {
           `<div class="metric computed" data-unit="items on the record" data-observation-table="${esc(table)}"><strong>${fmt(count)}</strong><span>${esc(table)}</span><small><span class="computed-tag">Our calculation</span> · items recorded for ${esc(c?.short || code)}</small></div>`,
       )
       .join("")}</div>` +
-    `<p class="note">Document rows and statements are two readings of some of the same publications. A row may support several statements, and statements may come from prose; their counts are never added together.</p>`
+    `<p class="note">Document rows and statements are two readings of some of the same publications. A row may support several statements, and statements may come from prose; their counts are never added together. Legacy event rows without a precise cited line are held for review and do not appear as observations here.</p>`
   );
 }
 function observationDetail(row) {
@@ -1221,7 +1389,8 @@ function archivedCopy(id, source) {
   const entry = documentIndex[id];
   if (!entry) return "";
   const archived = archivedLink(entry, null, ` data-archived-source="${esc(id)}"`);
-  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(source.url) || "no address recorded")} · ${collectedFacts(entry)}</small>${archived ? `<small>${archived}</small>` : ""}`;
+  const copy = webArchiveLink(entry, null, ` data-web-archive-source="${esc(id)}"`);
+  return `<small data-document-facts="${esc(id)}">Publisher's page: ${esc(hostOf(source.url) || "no address recorded")}${deadNote(entry)} · ${collectedFacts(entry)}</small>${copy ? `<small>${copy}</small>` : ""}${archived ? `<small>${archived}</small>` : ""}`;
 }
 function projectPage(id) {
   const p = projects.find((p) => p.id === id);
@@ -1660,7 +1829,7 @@ function methodsPage() {
       "Methods",
       "What we collected, how we read it, what we counted, and what this observatory does not do. Every figure can be followed back to its page.",
     ) +
-    `<div class="method-list"><h2>What this release contains</h2><p>${projects.length} named projects, ${undisclosedCount()} unpublished identities, ${overview.source_count} curated documents and ${comparison.projects.length} closed historical operations. The named projects include programmes and components; they are not ${projects.length} distinct physical assets. Knowledge cutoff: ${date(overview.provenance.cutoff)}. Each country's reports keep their own dates.</p><h2>The paper trail, step by step</h2><p>The <a href="#documents">Documents</a> page lists the publications sought and the outcome of each retrieval. The <a href="#document-rows">Document rows</a> page preserves selected rows and their document wording. The <a href="#statements">Statements</a> page shows reported amounts, dates and statuses with publisher and document location, and also lists project–document links. A row may support several statements, while statements may come from prose. <a href="#projects">Projects</a>, <a href="#funding">Funding</a> and <a href="#organisations">Organisations</a> show the undertakings, financing and named organisations those documents discuss.</p><h2>Words and numbers</h2><p>The <a href="#glossary">Glossary</a> defines the words these pages use. A number a publisher printed is marked “As published” and shown with its publisher and date. A number we counted is marked “Our calculation”, with its unit and what it covers, and links to what was counted; <a href="#counts">The tallies</a> gathers them.</p><h2>What this observatory does not do</h2><p>It does not explain. It tests no causal explanation of why a partnership moves fast or slow, and estimates no effect of the partnerships. It does not add amounts across documents, nor a project's amounts to a partnership's headline. It does not convert or deflate amounts. It does not treat a plan, an approval or a register line as a payment. It does not match a 2023 plan position to a 2025 portfolio project. Missing payment data is not a zero payment.</p><h2>Three different kinds of progress</h2><p>Financial items distinguish needs, announcements, memoranda, approvals, signatures and disbursements. Implementation items are a separate table. Documentary coverage describes what we could locate, not what a project achieved. Register-derived dates are not presented as verified signature dates.</p><h2>How the national figures work</h2><p>Headline financing amounts reproduce attributed national reports; they are not computed by adding project events. The milestones differ across countries, so headline amounts must not be pooled. Portfolio bars count each named project once, at the most advanced financing milestone on the record for it; tranches may be at different milestones. “Not coded in ledger” does not mean “no finance”. No project-level disbursement total is available in this release.</p><h2>Earlier energy operations: context, not an effect estimate</h2><p>${esc(comparison.method)} ${esc(comparison.date_note)} The API may contain older status snapshots; retrieval date is not the date of its latest substantive update. Energy-related includes mixed-sector operations, and additional-financing operations may refer to the same underlying investment. Comparisons of preparation speed require a credible causal design from the separate lifecycle research programme.</p><h2>Dates, conflicts and missing items</h2><p>Event dates, date intervals, dated status reports and collection dates remain distinct. Timing is adjudicated independently of the publisher's authority; unreviewed timing is labelled and cannot supply an event date. Document cards keep provisional, contextual and confirmed link decisions. Historical downloads preserve each acquisition date and query-page hash; the substantive update date is unknown unless separately documented. Conflicting values are preserved in notes; we do not average them. Unpublished identities appear in country disclosure counts rather than invented project pages. Original-currency amounts remain the reference. An extract's unknown field values count the cells its document prints but leaves blank or unreadable, not the empty columns of our own extraction.</p><h2>Download this snapshot</h2><div class="downloads">${overview.countries.map((c) => `<a class="button light" href="data/${c.code}.json" download>${esc(c.name)} ↓</a>`).join("")}<a class="button light" href="data/comparison.json" download>Historical cohort ↓</a><a class="button light" href="data/documents.json" download>Collection registry ↓</a><a class="button light" href="data/overview.json" download>Overview & input hashes ↓</a><a class="button light" href="data/provenance.json" download>Where each headline comes from ↓</a></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa document rows ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia document rows ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam document rows ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal document rows ↓</a><a class="button light" href="data/m1a/manifest.json" download>Document rows manifest ↓</a></div><p>JSON downloads include project data, document addresses and locators. Input SHA-256 hashes identify the files used to build this preview. This is a local preview, not yet a formally deposited monthly release; the <a href="#release-history">release history</a> lists what was prepared. Original documents retain their publishers' rights; their bulk redistribution is not implied.</p><h2>Reproducible, without a live database</h2><p>Markdown provides editorial context; CSV registries provide the structured data. The static website reads generated JSON. DVC preserves the research document archive, independently of the website. No visitor needs access to the archive or a database service.</p><p class="note">Input Git revision: <code>${esc(overview.provenance.input_git_sha || "Uncommitted preview inputs; use the file hashes")}</code><br>Release: ${esc(overview.provenance.edition)}</p></div>`;
+    `<div class="method-list"><h2>What this release contains</h2><p>${projects.length} named projects, ${undisclosedCount()} unpublished identities, ${overview.source_count} curated documents and ${comparison.projects.length} closed historical operations. The named projects include programmes and components; they are not ${projects.length} distinct physical assets. Knowledge cutoff: ${date(overview.provenance.cutoff)}. Each country's reports keep their own dates.</p><h2>The paper trail, step by step</h2><p>The <a href="#documents">Documents</a> page lists the publications sought and the outcome of each retrieval. The <a href="#document-rows">Document rows</a> page preserves selected rows and their document wording. The <a href="#statements">Statements</a> page shows reported amounts, dates and statuses with publisher and document location, and also lists project–document links. A row may support several statements, while statements may come from prose. <a href="#projects">Projects</a>, <a href="#funding">Funding</a> and <a href="#organisations">Organisations</a> show the undertakings, financing and named organisations those documents discuss.</p><h2>Words and numbers</h2><p>The <a href="#glossary">Glossary</a> defines the words these pages use. A number a publisher printed is marked “As published” and shown with its publisher and date. A number we counted is marked “Our calculation”, with its unit and what it covers, and links to what was counted; <a href="#counts">The tallies</a> gathers them.</p><h2>What this observatory does not do</h2><p>It does not explain. It tests no causal explanation of why a partnership moves fast or slow, and estimates no effect of the partnerships. It does not add amounts across documents, nor a project's amounts to a partnership's headline. It does not convert or deflate amounts. It does not treat a plan, an approval or a register line as a payment. It does not match a 2023 plan position to a 2025 portfolio project. Missing payment data is not a zero payment.</p><h2>Three different kinds of progress</h2><p>Financial items distinguish needs, announcements, memoranda, approvals, signatures and disbursements. Implementation items are a separate table. Documentary coverage describes what we could locate, not what a project achieved. Register-derived dates are not presented as verified signature dates.</p><h2>How the national figures work</h2><p>Headline financing amounts reproduce attributed national reports; they are not computed by adding project events. The milestones differ across countries, so headline amounts must not be pooled. Portfolio bars count each named project once, at the most advanced financing milestone on the record for it; tranches may be at different milestones. “Not coded in ledger” does not mean “no finance”. No project-level disbursement total is available in this release.</p><h2>Earlier energy operations: context, not an effect estimate</h2><p>${esc(comparison.method)} ${esc(comparison.date_note)} The API may contain older status snapshots; retrieval date is not the date of its latest substantive update. Energy-related includes mixed-sector operations, and additional-financing operations may refer to the same underlying investment. Comparisons of preparation speed require a credible causal design from the separate lifecycle research programme.</p><h2>Dates, conflicts and missing items</h2><p>Event dates, date intervals, dated status reports and collection dates remain distinct. Timing is adjudicated independently of the publisher's authority; unreviewed timing is labelled and cannot supply an event date. Document cards keep provisional, contextual and confirmed link decisions. Historical downloads preserve each acquisition date and query-page hash; the substantive update date is unknown unless separately documented. Conflicting values are preserved in notes; we do not average them. Unpublished identities appear in country disclosure counts rather than invented project pages. Original-currency amounts remain the reference. An extract's unknown field values count the cells its document prints but leaves blank or unreadable, not the empty columns of our own extraction.</p><section data-method="fingerprints"><h2>Fingerprints and archived copies</h2><p>Every document we collected is listed with the SHA-256 fingerprint of the bytes we read: a short code computed from the file, which changes if a single byte does. Compute it on any copy you obtain — from the publisher today, from a colleague, or from the Web Archive — and compare. The same fingerprint means exactly the file we read; a different one means a different file, even when it looks the same, because a publisher may replace a file at the same address. A PDF's “Web Archive copy” link opens the archived file itself, which can be checked this way. An archived web page cannot, and a mismatch there is expected: the Web Archive replays the page with its own banner and rewritten links, and a live page changes from one visit to the next, so its bytes never match what we read even when its text does.</p></section><h2>Download this snapshot</h2><div class="downloads">${overview.countries.map((c) => `<a class="button light" href="data/${c.code}.json" download>${esc(c.name)} ↓</a>`).join("")}<a class="button light" href="data/comparison.json" download>Historical cohort ↓</a><a class="button light" href="data/documents.json" download>Collection registry ↓</a><a class="button light" href="data/overview.json" download>Overview & input hashes ↓</a><a class="button light" href="data/provenance.json" download>Where each headline comes from ↓</a></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa document rows ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia document rows ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam document rows ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal document rows ↓</a><a class="button light" href="data/m1a/manifest.json" download>Document rows manifest ↓</a></div><p>JSON downloads include project data, document addresses and locators. Input SHA-256 hashes identify the files used to build this preview. This is a local preview, not yet a formally deposited monthly release; the <a href="#release-history">release history</a> lists what was prepared. Original documents retain their publishers' rights; their bulk redistribution is not implied.</p><h2>Reproducible, without a live database</h2><p>Markdown provides editorial context; CSV registries provide the structured data. The static website reads generated JSON. DVC preserves the research document archive, independently of the website. No visitor needs access to the archive or a database service.</p><p class="note">Input Git revision: <code>${esc(overview.provenance.input_git_sha || "Uncommitted preview inputs; use the file hashes")}</code><br>Release: ${esc(overview.provenance.edition)}</p></div>`;
 }
 function notFound() {
   main.innerHTML =
@@ -1858,7 +2027,7 @@ function copiesCallout(lead) {
   const held = stagedCopies.size
     ? " This local preview also opens the archived copies staged in <code>documents/</code> by <code>make jetp-observatory-documents</code>; the public site serves none."
     : " This site serves no copy of the documents.";
-  return `<div class="callout" data-staged-copies="${stagedCopies.size}">${lead ? esc(lead) + " " : ""}Each document links to the page we collected it from, with the collection date and the SHA-256 fingerprint of the bytes we read. Page numbers refer to those bytes; the publisher's current file may differ.${held} Documents retain their publishers' rights.</div>`;
+  return `<div class="callout" data-staged-copies="${stagedCopies.size}">${lead ? esc(lead) + " " : ""}Each document links to the page we collected it from, with the collection date and the SHA-256 fingerprint of the bytes we read. Page numbers refer to those bytes; the publisher's current file may differ.${held} Where the Internet Archive holds a copy of that page, a dated “Web Archive copy” link sits beside it; once a periodic check finds the publisher's link dead, the copy comes first. Documents retain their publishers' rights.</div>`;
 }
 const load = async (file) => {
   const response = await fetch("data/" + file + ".json");
@@ -1867,8 +2036,8 @@ const load = async (file) => {
 };
 async function start() {
   try {
-    let termsView, statusCrosswalkView, staged;
-    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged] = await Promise.all([
+    let termsView, statusCrosswalkView, staged, captures, checks, ledgerDocuments;
+    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks, ledgerDocuments] = await Promise.all([
       load("overview"),
       load("comparison"),
       load("documents"),
@@ -1879,8 +2048,15 @@ async function start() {
       load("ontology/status-crosswalk"),
       load("party-names"),
       stagedIndex(),
+      load("web-archive").catch(() => ({ captures: [] })),
+      load("publisher-links").catch(() => ({ checks: [] })),
+      load("ledger-documents").catch(() => ({ documents: [] })),
     ]);
     stagedCopies = new Set(staged?.objects || []);
+    webArchive = indexBy(captures.captures, "url");
+    linkChecks = indexBy(checks.checks, "url");
+    documentTitles = indexBy(ledgerDocuments.documents, "document_id");
+    goneAttempts = indexGone(documentsData.documents);
     ontology = readOntology(termsView, statusCrosswalkView);
     countries = Object.fromEntries(
       await Promise.all(
