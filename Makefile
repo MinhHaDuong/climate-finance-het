@@ -174,15 +174,18 @@ jetp-harvest: $(JETP_SOURCES) scripts/jetp/corpus_harvest_documents.py scripts/j
 
 # Ticket 0926: sources that refuse the collector but open in the author's
 # browser. The first rung replays the author's Firefox session; the second
-# picks up files the author saved by hand. See docs/jetp-tracking.md.
+# picks up files the author saved by hand. Both then ask for a Web Archive
+# copy, as jetp-harvest does (ticket 0925). See docs/jetp-tracking.md.
 JETP_COLLECTION_REFRESH = $(PYTHON) scripts/jetp/build_evidence_layer.py --collection-only --output-dir data/jetp
 
 jetp-harvest-blocked: $(JETP_SOURCES) scripts/jetp/corpus_harvest_documents.py scripts/jetp/_firefox.py
 	$(PYTHON) scripts/jetp/corpus_harvest_documents.py --input $(JETP_SOURCES) --output $(JETP_MANIFEST) --storage-root $(JETP_DOCUMENTS) --browser-session --only-status blocked $(JETP_SOURCE_ID_ARG)
+	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
 	$(JETP_COLLECTION_REFRESH)
 
 jetp-collect-downloads: $(JETP_SOURCES) scripts/jetp/corpus_collect_downloads.py scripts/jetp/_firefox.py
 	$(PYTHON) scripts/jetp/corpus_collect_downloads.py --input $(JETP_SOURCES) --output $(JETP_MANIFEST) --storage-root $(JETP_DOCUMENTS)
+	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
 	$(JETP_COLLECTION_REFRESH)
 
 jetp-zaf-news-leads: $(JETP_MANIFEST) scripts/jetp/build_zaf_news_leads.py
