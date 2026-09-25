@@ -73,6 +73,21 @@ def check_archived(page, url, locator, entry, staged, suffix='', exact=True, ope
         popup.value.close()
 
 
+def attempt_order(row):
+    return (row['collected_on'] or '', int(row['row_key'].rsplit(':', 1)[1]))
+
+
+def best_attempts(registry):
+    """Ticket 1210: the Documents page shows one row per document, on its best
+    attempt — the latest collected one, else the latest — here from the served
+    table, independently of the page."""
+    grouped = {}
+    for row in sorted(registry, key=attempt_order):
+        grouped.setdefault(row['id'], []).append(row)
+    return {source_id: ([r for r in attempts if r['status'] == 'collected'] or attempts)[-1]
+            for source_id, attempts in grouped.items()}, grouped
+
+
 def served_tables(page, url):
     """The tables the Documents page joins at read time (ticket 0858)."""
     m1a = {}
@@ -105,14 +120,33 @@ def climb(tables, source_id, code):
 def check_documents(page, url, staged):
     """Exercise the registry page: full count, a filter, and each document's links."""
     registry = page.request.get(url + '/data/documents.json').json()['documents']
+    best, attempts = best_attempts(registry)
     page.goto(url + '/#documents')
     page.wait_for_selector('#documents-filters')
-    assert str(len(registry)) in page.locator('#documents-count').inner_text()
-    page.locator('#documents-filter-country').select_option('SEN')
+    # One row per document (ticket 1210): the count and the filters count
+    # documents, each on its best attempt.
+    assert page.locator('#documents-count').inner_text().startswith(
+        f'{len(best)} of {len(best)} documents')
+    page.locator('#documents-filter-country').select_option('IDN')
     page.locator('#documents-filter-status').select_option('blocked')
-    blocked = [row for row in registry
-               if row['country'] == 'SEN' and row['status'] == 'blocked']
+    blocked = [row for row in best.values()
+               if row['country'] == 'IDN' and row['status'] == 'blocked']
+    assert blocked, 'no IDN document is blocked on its best attempt'
     assert page.locator('#documents-results tbody tr').count() == len(blocked)
+    # A document blocked twice then collected is one row, on the collected
+    # attempt, with its three attempts under a fold.
+    page.locator('#documents-filter-status').select_option('')
+    page.locator('#documents-search').fill('idn-cipp-2023')
+    cipp = best['idn-cipp-2023']
+    row = page.locator('#documents-results tbody tr').filter(
+        has=page.locator('code:text-is("idn-cipp-2023")'))
+    assert row.count() == 1
+    assert row.locator(publisher(f'a[data-document-id="{cipp["row_key"]}"]')).count() == 1
+    fold = row.locator('details.attempts')
+    assert fold.locator('summary').inner_text().startswith('3 attempts: 403 on ')
+    fold.locator('summary').click()
+    assert fold.locator('li[data-attempt]').count() == len(attempts['idn-cipp-2023']) == 3
+    page.locator('#documents-search').fill('')
     # The archived ZAF register must open from this page, byte-identical to the
     # snapshot the registry pins. A missing local copy is a provisioning gap
     # (make jetp-observatory-documents), not a renderer defect.
@@ -204,7 +238,8 @@ def check_web_archive(page, url):
     periodic check found dead says since when and comes second. The publisher's
     address is never rewritten. Both tables are served views joined on the
     address."""
-    registry = page.request.get(url + '/data/documents.json').json()['documents']
+    documents = page.request.get(url + '/data/documents.json').json()['documents']
+    registry = list(best_attempts(documents)[0].values())
     captures = {c['url']: c for c in page.request.get(url + '/data/web-archive.json').json()['captures']
                 if c['outcome'] in ('captured', 'reused')}
     checks = {c['url']: c for c in page.request.get(url + '/data/publisher-links.json').json()['checks']}
@@ -258,9 +293,12 @@ def check_documents_row_height(page, url):
     where served — 126 px on the public site, 146 px in the preview. Ticket
     0925 adds the Web Archive copy and its short identity mark beside the
     publisher's page, two more lines: 187 px at most in the preview
-    (measured 2026-09-24). 200 px bounds that block and the cell padding,
-    still under the word-by-word wrap it guards against. A failed attempt shows a short label with the
-    collector's full message in its title, never a broken URL.
+    (measured 2026-09-24). Ticket 1210 folds every attempt of a document into
+    one line under the row, set at the facts' 10 px: 215 px at most in the
+    preview, for a document tried three times whose copy is staged (measured
+    2026-09-25). 220 px bounds that block and the cell padding, still under the
+    word-by-word wrap it guards against. A failed attempt shows a short label
+    with the collector's full message in its title, never a broken URL.
     """
     page.set_viewport_size({'width': 1280, 'height': 1000})
     page.goto(url + '/#documents')
@@ -269,7 +307,7 @@ def check_documents_row_height(page, url):
         "!document.querySelector('#documents-results').textContent.includes('Loading what')")
     heights = page.evaluate("[...document.querySelectorAll('#documents-results tbody tr')]"
                             ".map((r) => r.getBoundingClientRect().height)")
-    assert max(heights) <= 200, sorted(heights)[-5:]
+    assert max(heights) <= 220, sorted(heights)[-5:]
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     failed = next(row for row in registry
                   if row['error'] and len(row['error']) > 100 and not row['local_path'])

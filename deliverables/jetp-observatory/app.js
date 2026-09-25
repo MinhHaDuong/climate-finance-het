@@ -542,6 +542,55 @@ function sourceLinks(entry, page, attrs = "", publisherLabel, archiveLabel) {
 /* Said beside every Web Archive copy: what it can prove, by type. */
 const identityMark = (entry) =>
   `<span class="note" data-identity="${identityKind(entry)}" title="${esc(identityNote(entry))}">(${esc(IDENTITY_SHORT[identityKind(entry)])})</span>`;
+/* Ticket 1210 (author's decision, 2026-09-25): documents.json keeps one row
+ * per retrieval attempt, and the Documents page one row per document — its
+ * best attempt: the latest collected one if any, otherwise the latest — with
+ * every attempt listed under a fold. Grouped here, at read time: the served
+ * table stays the retrievals as recorded. Time order is the retrieval time,
+ * then the attempt number (row keys are not always in time order). */
+const attemptNumber = (entry) => Number(entry.row_key.slice(entry.row_key.lastIndexOf(":") + 1));
+const attemptOrder = (a, b) =>
+  (a.collected_on || "").localeCompare(b.collected_on || "") || attemptNumber(a) - attemptNumber(b);
+function documentRows(entries) {
+  const byId = new Map();
+  entries.forEach((entry) => {
+    if (!byId.has(entry.id)) byId.set(entry.id, []);
+    byId.get(entry.id).push(entry);
+  });
+  return [...byId.values()].map((attempts) => {
+    attempts.sort(attemptOrder);
+    const collected = attempts.filter((a) => a.status === "collected");
+    return { ...(collected.length ? collected : attempts).at(-1), attempts };
+  });
+}
+/* One attempt in a word or a status code, and its time to the minute (UTC). */
+const HTTP_CODE = /^HTTP ([0-9]{3})\b/;
+function attemptOutcome(entry) {
+  if (entry.status === "collected") return "collected";
+  const code = HTTP_CODE.exec(entry.error || "");
+  if (code) return code[1];
+  if (entry.error) return entry.error.split(":")[0].trim().slice(0, 24);
+  return (entry.status || "outcome not recorded").replaceAll("_", " ");
+}
+const attemptTime = (entry, year) =>
+  entry.collected_on
+    ? new Date(entry.collected_on).toLocaleDateString("en-GB", {
+        day: "numeric", month: "short", timeZone: "UTC", ...(year ? { year: "numeric" } : {}),
+      }) + " " + entry.collected_on.slice(11, 16)
+    : "date not recorded";
+function attemptsFold(doc) {
+  if (doc.attempts.length < 2) return "";
+  const summary = `${doc.attempts.length} attempts: ` +
+    doc.attempts.map((a) => `${attemptOutcome(a)} on ${attemptTime(a)}`).join(", ");
+  const item = (a) => {
+    const method = collectionMethod(a);
+    const read = a.sha256
+      ? `SHA-256 <code title="${esc(a.sha256)}">${esc(a.sha256.slice(0, 12))}…</code>`
+      : collectionFailure(a.error);
+    return `<li data-attempt="${esc(a.row_key)}">${esc(attemptTime(a, true))} UTC · ${esc((a.status || "").replaceAll("_", " "))} · ${read}${method ? " · " + esc(method) : ""}</li>`;
+  };
+  return `<details class="attempts" data-attempts="${doc.attempts.length}"><summary>${esc(summary)}</summary><ul class="citing">${doc.attempts.map(item).join("")}</ul></details>`;
+}
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
 /* How the bytes were sought (ticket 0926): the registry's collection_method,
@@ -777,7 +826,9 @@ function collectionFailure(error) {
   return `<span class="note" data-collection-error title="${esc(error)}">${esc(short)}</span>`;
 }
 function documentsPage(params) {
-  const rows = documentsData.documents;
+  // One row per document, on its best attempt (ticket 1210): the facets, the
+  // search and the count all read that attempt, so they count documents.
+  const rows = documentRows(documentsData.documents);
   const values = (key) =>
     [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
   // Both links open at the file's own first page until the join says
@@ -786,7 +837,7 @@ function documentsPage(params) {
   // of its own. The publisher's page is always there; the archived copy only
   // where this server holds it (ticket 0915).
   const links = (r) =>
-    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>`;
+    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${collectedFacts(r, "<br>")}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>${attemptsFold(r)}`;
   const table = filterTable("documents", rows, {
     facets: [
       {

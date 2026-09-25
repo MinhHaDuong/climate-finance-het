@@ -530,6 +530,16 @@ td small {
   font-size: 10px;
   margin-top: 5px;
 }
+/* Every retrieval attempt of a document, folded under its row (ticket 1210):
+ * set like the collection facts above it, so the line costs a row little. */
+details.attempts {
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 5px;
+}
+details.attempts summary {
+  cursor: pointer;
+}
 .empty {
   padding: 35px;
   text-align: center;

@@ -198,8 +198,10 @@ no earlier address is kept, and an internal page key is not an address.
   with instrument, vintage, country, name and additional-finance filters.
 - Downloadable JSON and input SHA-256 hashes. Country prose lives in
   `data/jetp/editorial/countries/`; headline policy is in `config/jetp_observatory.yaml`.
-- A Documents page listing every collection attempt in `data/jetp/manifest.csv`
-  with its status, content type, size and origin URL. The archived copies
+- A Documents page with one row per document, on its best collection attempt
+  (the latest collected one, else the latest), with every attempt recorded in
+  `data/documents.json` listed under a fold (ticket 1210); status, content type,
+  size and origin URL, and filters and counts that count documents. The archived copies
   themselves are staged locally by `make jetp-observatory-documents` into
   `documents/`, with the index of what was staged. That staging happens once;
   after a `dvc checkout` moves the snapshot to another revision, `make

@@ -221,6 +221,94 @@ def test_a_failed_attempt_shows_a_short_label_with_the_full_message_in_its_title
     assert "<th>Publisher&#39;s page · what we read</th>" in head, head
 
 
+# Ticket 1210, author's decisions of 2026-09-25. documents.json stays one row
+# per retrieval attempt; the page groups them, one row per document.
+
+def attempts_by_document():
+    """Each document's attempts in time order, and its best one: the latest
+    collected attempt if any, otherwise the latest attempt — computed here from
+    the served table, independently of the renderer."""
+    grouped = {}
+    for entry in registry():
+        grouped.setdefault(entry["id"], []).append(entry)
+    out = {}
+    for source_id, attempts in grouped.items():
+        attempts.sort(key=lambda r: (r["collected_on"] or "", int(r["row_key"].rsplit(":", 1)[1])))
+        collected = [r for r in attempts if r["status"] == "collected"]
+        out[source_id] = ((collected or attempts)[-1], attempts)
+    return out
+
+
+def document_rows(results, source_id=None):
+    """The table rows of a Documents page, or those of one document: a search
+    also matches the documents whose identifier extends the one searched."""
+    return [chunk for chunk in re.split(r"(?=<tr>)", results) if chunk.startswith("<tr>")
+            and (source_id is None or f"<code>{source_id}</code>" in chunk)]
+
+
+def attempts_summary(row):
+    match = re.search(r'<details class="attempts"[^>]*><summary>([^<]*)</summary>', row)
+    return unescape(match.group(1)) if match else None
+
+
+def test_the_documents_page_shows_one_row_per_document_on_its_best_attempt() -> None:
+    expected = attempts_by_document()
+    assert any(len(a) > 1 for _, a in expected.values()), "no document has several attempts"
+
+    rendered = render("documents", {}, "documentRows(documentsData.documents)"
+                      ".map((r) => [r.id, r.row_key, r.attempts.map((a) => a.row_key)])")
+
+    assert rendered["eval"] == [
+        [source_id, best["row_key"], [a["row_key"] for a in attempts]]
+        for source_id, (best, attempts) in expected.items()]
+    # The count line counts documents, not attempts.
+    count = rendered["elements"]["documents-count"]["textContent"]
+    assert count.startswith(f"{len(expected)} of {len(expected)} documents"), count
+
+
+def test_a_blocked_then_collected_document_is_one_row_with_its_attempts_folded() -> None:
+    best, attempts = attempts_by_document()["idn-cipp-2023"]
+    assert [a["status"] for a in attempts] == ["blocked", "blocked", "collected"]
+
+    results = render("documents", {"documents-search": "idn-cipp-2023"})["elements"][
+        "documents-results"]["innerHTML"]
+
+    rows = document_rows(results, "idn-cipp-2023")
+    assert len(rows) == 1, len(rows)
+    row = rows[0]
+    assert f'data-document-id="{best["row_key"]}"' in row
+    assert f'data-sha256="{best["sha256"]}"' in row
+    assert attempts_summary(row) == (
+        "3 attempts: 403 on 11 Sept 20:39, 403 on 11 Sept 20:42, collected on 24 Sept 20:22")
+    # Nothing hidden: every attempt is listed under the fold, by its row key.
+    assert re.findall(r'data-attempt="([^"]+)"', row) == [a["row_key"] for a in attempts]
+
+
+def test_a_document_read_once_gets_no_attempts_fold() -> None:
+    once = next(best for best, attempts in attempts_by_document().values()
+                if len(attempts) == 1 and best["sha256"])
+    results = render("documents", {"documents-search": once["id"]})["elements"][
+        "documents-results"]["innerHTML"]
+    row = next(r for r in document_rows(results, once["id"]))
+    assert attempts_summary(row) is None
+
+
+def test_the_status_filter_counts_documents_on_their_best_attempt() -> None:
+    expected = attempts_by_document()
+    blocked = sorted(i for i, (best, _) in expected.items() if best["status"] == "blocked")
+    # The fixture only bites if some document was blocked before it was collected.
+    assert any(any(a["status"] == "blocked" for a in attempts) and best["status"] == "collected"
+               for best, attempts in expected.values())
+
+    elements = render("documents", {"documents-filter-status": "blocked"})["elements"]
+
+    count = elements["documents-count"]["textContent"]
+    assert count.startswith(f"{len(blocked)} of {len(expected)} documents"), count
+    shown = re.findall(r"<td><code>([^<]+)</code></td>", elements["documents-results"]["innerHTML"])
+    assert len(blocked) <= 50 and sorted(shown) == blocked
+    assert "idn-cipp-2023" not in shown
+
+
 def test_a_document_with_one_product_gets_one_fold_out() -> None:
     linked = climb(RMP, "VNM")
     assert linked["m1a"] and not linked["ledger"]
@@ -622,7 +710,9 @@ def test_the_homepage_keeps_its_stat_grid_under_the_tallies() -> None:
 @pytest.mark.parametrize("route", ["organisations", "documents", "project/" + BAC_AI])
 def test_no_fold_out_summary_repeats_its_count(route) -> None:
     html = "".join(el["innerHTML"] for el in render(route)["elements"].values())
-    summaries_ = [unescape(s) for s in re.findall(r"<summary>([^<]*)</summary>", html)]
+    # A counted fold-out, not the attempts line of ticket 1210: "2 attempts:
+    # 404 on 13 Sep 08:46, 404 on 13 Sep 09:14" repeats a status by design.
+    summaries_ = [unescape(s) for s in re.findall(r"<details(?! class=\"attempts\")[^>]*><summary>([^<]*)</summary>", html)]
     assert summaries_, route
     for summary in summaries_:
         numbers = re.findall(r"\d[\d,]*", summary)
