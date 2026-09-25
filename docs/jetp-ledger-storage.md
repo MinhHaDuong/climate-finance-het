@@ -14,11 +14,16 @@ One file is one table, joins happen at read time, nothing is materialised
 `data/jetp/ontology/` ([ontology](jetp-ontology.md) section 5), CSV, columns in this order.
 A table too large for the repository's file ceiling, 512 000 bytes per
 file in `.githooks/pre-commit`, is chunked by country and year into
-`<table>.d/<CODE>-<year>.csv`, which stays one table. The `.d` suffix keeps a
+`<table>.d/<CODE>-<year>.csv`, with numbered `-02`, `-03` shards when one
+country-year still exceeds the ceiling. Readers join those shards in numeric
+order, preserving row order within that country-year. The `.d` suffix keeps a
 chunk directory apart from a directory that shares a table's name:
 `data/jetp/documents/` is the snapshot store under DVC, not the chunks of the
-`documents` table, and the writer deletes only the `<CODE>-<year>.csv` files of
+`documents` table, and the writer deletes only its `<CODE>-<year>[-NN].csv` files of
 its own `.d` directory.
+The writer stages complete shard bytes before publishing them. A temporary
+`<table>.d.pending` marker makes an interrupted layout change a named ledger
+error; a missing first or numbered shard also fails validation.
 
 | Table | Key | Columns |
 |---|---|---|

@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Allow bounded same-year shards in the JETP lines ledger
+Created: 2026-09-25
+Author: Codex
+
+--- log ---
+2026-09-25T05:20Z Codex created: ticket [[0970]] needs 15 precise Indonesia source rows; adding them to `lines.d/IDN-2026.csv` raises its size from 509667 to 514977 bytes, above the 512000-byte repository ceiling. Ticket ID 1010 was found in open PR #1506, so this ticket was numbered clear of the frontier.
+2026-09-25T07:35Z Codex verified: 26 focused ledger tests passed; an actual 1689-row Indonesia fixture split into 511711-byte and 3389-byte shards with every row recovered. `make jetp-ledger-check` passed. A Terra cross-model review found no remaining blocker after continuity and interrupted-publish cases were added.
+2026-09-25T07:36Z Codex gates: `make check-fast` passed (2347 passed, 13 skipped); `make lint` passed (339 passed, 11 skipped). `make check` was run but stopped at preflight for absent DVC corpus artifacts and `llm_relevance_cache.csv` (the latter tracked by [[0592]]); `make data` was started to provision local corpus files.
+
+--- body ---
+## Context
+
+The ledger already chunks tables by country and `recorded_at` year. Its
+reader only accepts `<CODE>-<year>.csv`, and its writer emits one file per
+country-year even when that file exceeds the ceiling. Indonesia's 2026 line
+chunk is 509667 bytes before the 0970 rows. Backdating new decisions to
+another year, shortening citations until they are imprecise, or crossing the
+hook's ceiling would corrupt the storage contract.
+
+## Work
+
+- Permit ordered numeric shards `IDN-2026-02.csv`, `-03.csv` when one
+  country-year grows beyond the ceiling; preserve the original unsuffixed
+  name for its first shard and numeric read order for later shards.
+- Pack the writer's rows without splitting a CSV record; refuse a single
+  record that cannot fit with its header and leave unrelated files untouched.
+- Document the suffix and verify a split table produces the same SQLite
+  ledger as an unsplit table.
+
+## Exit criteria
+
+- [x] Reader rejoins same-year shards in source order and validates country,
+  year, header and 512000-byte per-file ceiling.
+- [x] Writer packs every shard within the ceiling and cleans only its own
+  obsolete shard files after a smaller rewrite.
+- [x] The split and unsplit fixtures build byte-identical SQLite ledgers;
+  an oversized single row fails before any output is written.
+- [x] Focused tests, `make check-fast`, `make lint`, and full `make check`
+  run, with any unrelated full-gate failures recorded by test ID.
