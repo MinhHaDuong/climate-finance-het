@@ -44,7 +44,7 @@ def test_rebuild_counts_pending_and_repeat_bytes(tmp_path):
     # bytes, and seven records leave the pending list (146/35/55 before).
     assert dict(counts) == {'pilot_manifest': 66, 'pilot_observation': 46,
                             'portfolio': 46, 'claim': 148, 'discovery': 37}
-    assert len(pending) == 48
+    assert len(pending) == 47  # The AfDB MURP source was collected by 0926.
     assert len(candidates) == 304
     paths = sorted((ledger / 'lines.d').glob('*.csv'))
     paths += sorted((ledger / 'migration').glob('*.csv'))

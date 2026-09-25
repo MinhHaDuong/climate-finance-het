@@ -256,7 +256,7 @@ legacy_row_number,legacy_event_id,legacy_date_role,outcome,timing_id,approval_ti
 256,zaf-register-idc001-2026-03-30,register,typed_timing,timing-zaf-register-idc001-2026-03-30-1,,
 257,zaf-register-idc002-2026-03-30,register,typed_timing,timing-zaf-register-idc002-2026-03-30-1,,
 258,zaf-register-idc003-2026-03-30,register,typed_timing,timing-zaf-register-idc003-2026-03-30-1,,
-259,zaf-murp-afdb-approved-2026,event,pending,,,missing_precise_cited_line
+259,zaf-murp-afdb-approved-2026,event,pending,,,approval_day_unsupported_by_cited_article
 260,zaf-eepbip-maf-approved-2018,other_milestone,pending,,,unmapped_date_role_other_milestone
 261,idn-approved-isle1-canada-2025,reporting_cutoff,typed_timing,timing-idn-approved-isle1-canada-2025-1,,
 262,idn-approved-sreap-kfw-2025,reporting_cutoff,typed_timing,timing-idn-approved-sreap-kfw-2025-1,,
