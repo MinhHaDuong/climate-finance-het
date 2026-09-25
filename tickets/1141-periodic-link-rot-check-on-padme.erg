@@ -1,0 +1,45 @@
+%erg 0.1
+Title: M2: monthly link-rot check and capture retry, scheduled on padme
+Created: 2026-09-25
+Author: HDMX-coding-agent
+Blocked-by: 0833
+
+--- log ---
+2026-09-25T08:30Z HDMX-coding-agent created — author, 2026-09-25: "file the periodic M2 linkrot check to the M2 train"; the scheduling left open by [[0925]] moves here
+
+--- body ---
+## Context
+
+[[0925]] built the machinery: `make jetp-link-check jetp-web-archive
+jetp-link-views` checks every publisher address, retries failed Web Archive
+captures and rebuilds `data/web-archive.json` and `data/publisher-links.json`.
+It left the schedule to the author. The author placed the schedule in the M2
+train (tracker [[0715]]), after M1b ([[0833]]).
+
+## Findings that shape the setup (2026-09-25)
+
+- The README's user timer would not fire reliably: padme has `Linger=no`, so a
+  systemd user timer runs only while a session is open. Cron needs no linger
+  and no sudo; the alternative is `sudo loginctl enable-linger haduong`.
+- Running in padme's primary checkout would mix the monthly diff with whatever
+  branch sits there (on 2026-09-25, a stale `explore-retired-keys-migration`).
+- The Internet Archive keys are on padme since 2026-09-25
+  (`~/.config/keys/archive.env`, mode 600; an authenticated status call returns
+  200, anonymous 401), so retries use the account, not anonymous capture.
+
+## Design
+
+- A dedicated persistent checkout on padme outside `.claude/worktrees/` (so
+  `/molt` never reaps it), shared with the weekly source refresh of [[1140]].
+- A wrapper run by cron on the 1st of the month: skip and log when the last
+  run's result is still uncommitted (never overwrite an unreviewed diff);
+  otherwise fetch, move to `origin/main`, run the three targets, leave the
+  result for review as a branch + PR; the author republishes after merge
+  (`make jetp-observatory-publish`).
+
+## Exit criteria
+
+- [ ] Monthly run on padme in the dedicated checkout, fires with no open session
+- [ ] An unreviewed previous result is never overwritten; a failed or empty run is logged as such
+- [ ] Result reaches the author as a reviewable diff; publication stays a manual step
+- [ ] `deliverables/jetp-observatory/README.md` describes the actual setup (the user-timer snippet is replaced)

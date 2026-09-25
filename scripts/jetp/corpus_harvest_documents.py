@@ -11,7 +11,9 @@ import argparse
 import csv
 import hashlib
 import os
+import re
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
@@ -22,6 +24,7 @@ from script_io_args import parse_io_args, validate_io
 from urllib3.util.retry import Retry
 from utils import get_logger
 
+from jetp import _firefox
 from jetp.schemas import (
     AUTHORITY_CATEGORIES,
     COUNTRIES,
@@ -60,6 +63,22 @@ MANIFEST_FIELDS = (
     "storage_path",
     "final_url",
     "error",
+    "collection_method",
+)
+
+# How the bytes of a manifest row were obtained (ticket 0926): by this script
+# under its own name, by this script replaying the author's browser session,
+# or saved by the author in the browser and picked up from the downloads.
+COLLECTION_METHODS = ("script", "browser-session", "browser-manual")
+BROWSER_DELAY_SECONDS = 2.5
+# A 200 answer can still be a gate: a login form or a bot challenge served in
+# place of the page. Replaying cookies makes this likelier, so the title of an
+# HTML answer is checked before its bytes are recorded as the document.
+HTML_TITLE = re.compile(rb"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
+GATE_TITLE = re.compile(
+    rb"\blog ?in\b|\bsign ?in\b|\bjust a moment\b|attention required"
+    rb"|access denied|verify you are human|captcha",
+    re.IGNORECASE,
 )
 
 EXPECTED_FORMATS = frozenset({"pdf", "html", "csv", "json", "xml", "other"})
@@ -200,6 +219,10 @@ def _valid_content(body: bytes, expected_format: str) -> tuple[bool, str]:
         (b"<!doctype html", b"<html")
     ):
         return False, "expected HTML document"
+    if expected_format == "html":
+        title = HTML_TITLE.search(body[:65536])
+        if title and GATE_TITLE.search(title.group(1)):
+            return False, "login or challenge page, not the document"
     if not body:
         return False, "empty response body"
     return True, ""
@@ -238,7 +261,11 @@ def _store_object(
     return digest, relative.as_posix()
 
 
-def _blank_manifest_row(source: dict[str, str], retrieved_at: str) -> dict[str, str]:
+def _blank_manifest_row(
+    source: dict[str, str], retrieved_at: str, collection_method: str = "script"
+) -> dict[str, str]:
+    if collection_method not in COLLECTION_METHODS:
+        raise ValueError(f"unknown collection method {collection_method!r}")
     return {
         "source_id": source["source_id"],
         "country": source["country"],
@@ -253,6 +280,7 @@ def _blank_manifest_row(source: dict[str, str], retrieved_at: str) -> dict[str, 
         "storage_path": "",
         "final_url": source["url"],
         "error": "",
+        "collection_method": collection_method,
     }
 
 
@@ -283,8 +311,9 @@ def _harvest_one(
     retrieved_at: str,
     session,
     max_bytes: int,
+    collection_method: str = "script",
 ) -> dict[str, str]:
-    row = _blank_manifest_row(source, retrieved_at)
+    row = _blank_manifest_row(source, retrieved_at, collection_method)
     response = None
     try:
         response = session.get(
@@ -355,7 +384,12 @@ def harvest_registry(
     source_ids: set[str] | None = None,
     retrieved_at: str | None = None,
     session=None,
+    session_factory=None,
     max_bytes: int = DEFAULT_MAX_BYTES,
+    statuses: set[str] | None = None,
+    collection_method: str = "script",
+    delay: float = 0.0,
+    sleep=time.sleep,
 ) -> list[dict[str, str]]:
     """Refresh every active source and append the observations to a manifest.
 
@@ -374,8 +408,20 @@ def harvest_registry(
         ISO timestamp supplied by deterministic tests; defaults to current UTC.
     session
         Requests-compatible session, injectable for tests.
+    session_factory
+        Called with the URLs about to be requested when no session is given,
+        so a browser session carries cookies for those hosts only.
     max_bytes
         Maximum accepted response size per document.
+    statuses
+        Optional statuses of a source's latest manifest row; only sources
+        whose latest attempt ended in one of them are retried.
+    collection_method
+        Value recorded in the ``collection_method`` column of every new row.
+    delay
+        Seconds to wait between two requests.
+    sleep
+        Wait function, injectable for tests.
 
     Returns
     -------
@@ -394,15 +440,23 @@ def harvest_registry(
     timestamp = retrieved_at or datetime.now(timezone.utc).replace(
         microsecond=0
     ).isoformat().replace("+00:00", "Z")
+    latest = {row["source_id"]: row["status"] for row in prior_rows}
+    selected = [
+        source for source in registry
+        if source["active"] == "true"
+        and (source_ids is None or source["source_id"] in source_ids)
+        and (statuses is None or latest.get(source["source_id"]) in statuses)
+    ]
+    if session is None and session_factory is not None:
+        session = session_factory([source["url"] for source in selected])
     http = session or make_session()
     new_rows = []
-    for source in registry:
-        if source["active"] != "true":
-            continue
-        if source_ids is not None and source["source_id"] not in source_ids:
-            continue
+    for index, source in enumerate(selected):
+        if index and delay:
+            sleep(delay)
         previous = _latest_material_row(prior_rows + new_rows, source["source_id"])
-        row = _harvest_one(source, previous, storage, timestamp, http, max_bytes)
+        row = _harvest_one(source, previous, storage, timestamp, http, max_bytes,
+                           collection_method)
         new_rows.append(row)
         log.info("%s: %s", source["source_id"], row["status"])
     _append_manifest(manifest, new_rows)
@@ -427,6 +481,27 @@ def make_session() -> requests.Session:
     return session
 
 
+def browser_session(profile: Path, urls: list[str]) -> requests.Session:
+    """Return a session replaying the author's Firefox cookies for these URLs.
+
+    The session carries the cookies of the hosts it will contact and nothing
+    else, and presents the User-Agent of the Firefox that set them, which is
+    what a Cloudflare clearance cookie is bound to. Cookie values are never
+    logged; only their count is.
+    """
+    session = make_session()
+    hosts = {urlparse(url).hostname or "" for url in urls} - {""}
+    jar = _firefox.load_cookies(profile, hosts)
+    session.cookies.update(jar)
+    session.headers["User-Agent"] = _firefox.user_agent(profile)
+    session.headers["Accept"] = (
+        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    )
+    session.headers["Accept-Language"] = "en-US,en;q=0.5"
+    log.info("browser session: %d cookies for %d hosts", len(jar), len(hosts))
+    return session
+
+
 def main(argv=None) -> None:
     """Run the document harvester from the command line."""
     io_args, extra = parse_io_args(argv)
@@ -435,17 +510,45 @@ def main(argv=None) -> None:
     parser.add_argument("--source-id", action="append")
     parser.add_argument("--retrieved-at")
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES)
+    parser.add_argument(
+        "--only-status", action="append",
+        help="retry only sources whose latest attempt ended in this status "
+             "(repeatable), e.g. blocked",
+    )
+    parser.add_argument(
+        "--browser-session", action="store_true",
+        help="replay the author's Firefox cookies and User-Agent (ticket 0926)",
+    )
+    parser.add_argument("--firefox-profile", type=Path,
+                        help="Firefox profile directory; the default profile if omitted")
+    parser.add_argument("--delay", type=float,
+                        help="seconds between requests (browser session: 2.5)")
     args = parser.parse_args(extra)
     if not io_args.input or len(io_args.input) != 1:
         parser.error("exactly one --input source registry is required")
     validate_io(output=io_args.output, inputs=io_args.input)
+    source_ids = set(args.source_id) if args.source_id else None
+    statuses = set(args.only_status) if args.only_status else None
+    factory, method, delay = None, "script", args.delay or 0.0
+    if args.browser_session:
+        profile = args.firefox_profile or _firefox.default_profile()
+
+        def factory(urls):
+            return browser_session(profile, urls)
+
+        method = "browser-session"
+        delay = BROWSER_DELAY_SECONDS if args.delay is None else args.delay
     harvest_registry(
         io_args.input[0],
         io_args.output,
         args.storage_root,
-        source_ids=set(args.source_id) if args.source_id else None,
+        source_ids=source_ids,
         retrieved_at=args.retrieved_at,
+        session_factory=factory,
         max_bytes=args.max_bytes,
+        statuses=statuses,
+        collection_method=method,
+        delay=delay,
     )
 
 

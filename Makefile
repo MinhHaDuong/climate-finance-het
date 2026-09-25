@@ -135,7 +135,7 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
             $(MULTILAYER_FIGS) $(SLIDES_FIGS) $(ORPHANED_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo jetp-mesure jetp-econpol jetp-vars jetp-crs jetp-crs-data figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize full-gate-preflight smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo jetp-mesure jetp-econpol jetp-vars jetp-crs jetp-crs-data figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize full-gate-preflight smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-harvest-blocked jetp-collect-downloads jetp-zaf-news-leads jetp-idn-portfolio jetp-documents-track
 
 .DEFAULT_GOAL := manuscript
 
@@ -170,6 +170,23 @@ JETP_SOURCE_ID_ARG := $(if $(JETP_SOURCE_ID),--source-id $(JETP_SOURCE_ID),)
 jetp-harvest: $(JETP_SOURCES) scripts/jetp/corpus_harvest_documents.py scripts/jetp/schemas.py config/jetp_tracking.yaml
 	$(PYTHON) scripts/jetp/corpus_harvest_documents.py --input $(JETP_SOURCES) --output $(JETP_MANIFEST) --storage-root $(JETP_DOCUMENTS) $(JETP_SOURCE_ID_ARG)
 	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
+	$(JETP_COLLECTION_REFRESH)
+
+# Ticket 0926: sources that refuse the collector but open in the author's
+# browser. The first rung replays the author's Firefox session; the second
+# picks up files the author saved by hand. Both then ask for a Web Archive
+# copy, as jetp-harvest does (ticket 0925). See docs/jetp-tracking.md.
+JETP_COLLECTION_REFRESH = $(PYTHON) scripts/jetp/build_evidence_layer.py --collection-only --output-dir data/jetp
+
+jetp-harvest-blocked: $(JETP_SOURCES) scripts/jetp/corpus_harvest_documents.py scripts/jetp/_firefox.py
+	$(PYTHON) scripts/jetp/corpus_harvest_documents.py --input $(JETP_SOURCES) --output $(JETP_MANIFEST) --storage-root $(JETP_DOCUMENTS) --browser-session --only-status blocked $(JETP_SOURCE_ID_ARG)
+	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
+	$(JETP_COLLECTION_REFRESH)
+
+jetp-collect-downloads: $(JETP_SOURCES) scripts/jetp/corpus_collect_downloads.py scripts/jetp/_firefox.py
+	$(PYTHON) scripts/jetp/corpus_collect_downloads.py --input $(JETP_SOURCES) --output $(JETP_MANIFEST) --storage-root $(JETP_DOCUMENTS)
+	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
+	$(JETP_COLLECTION_REFRESH)
 
 jetp-zaf-news-leads: $(JETP_MANIFEST) scripts/jetp/build_zaf_news_leads.py
 	$(PYTHON) scripts/jetp/build_zaf_news_leads.py --input $(JETP_MANIFEST) --output data/jetp/news-leads.csv --storage-root $(JETP_DOCUMENTS)
@@ -885,19 +902,25 @@ full-gate-preflight:
 	@# Use host Python: uv itself cannot start while its configured cache is read-only.
 	python3 scripts/qa_full_gate_preflight.py
 
+# Test workers, per machine: .env may set PYTEST_WORKERS (make does not read
+# .env itself). On padme's 24 cores, 16 ran the full suite in 2 min 21 s against
+# 4 min 33 s at 4 (24 was slower: some tests start their own processes);
+# check-fast went from 28 s to 19 s and lint from 15 s to 13 s, flat beyond 8.
+PYTEST_WORKERS ?= $(or $(shell sed -n 's/^\(export \)\{0,1\}PYTEST_WORKERS=//p' .env 2>/dev/null | tail -n 1 | tr -d "\"' \r"),4)
+
 check: full-gate-preflight check-package | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -q --tb=short -n 16
+	$(PYTHON) -m pytest tests/ -q --tb=short -n $(PYTEST_WORKERS)
 
 # Fast inner loop: pure-Python logic only. Deselects slow (network / real data /
 # heavy numerical dep / heavy compute), integration (subprocess / sleep), and
 # adherence (lint — ruff/mypy/hygiene, run via `make lint`). Ticket 0214.
 check-fast: check-package | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -q --tb=short -m "not slow and not integration and not adherence" -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -m "not slow and not integration and not adherence" -n $(PYTEST_WORKERS)
 
 # Lint / rule-enforcement tier (ruff, mypy, hygiene, contracts). Run alongside
 # tests, not inside the inner loop — a warm mypy cache makes it ~1s. Ticket 0214.
 lint: | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -q --tb=short -m adherence -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -m adherence -n $(PYTEST_WORKERS)
 
 # Record per-test durations for the fast-path ratchet (ticket 0216) into the
 # gitignored .test_durations.json. Serial (-n0) and opt-in so timings reflect

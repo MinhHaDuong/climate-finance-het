@@ -1,0 +1,70 @@
+%erg 0.1
+Title: Run the full test suite on padme after each merge to main
+Created: 2026-09-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-25T07:45Z HDMX-coding-agent created — author asked whether moving the full suite from pre-merge to post-merge on padme would speed development; measured first, author said "Do it"
+
+--- body ---
+## Context
+
+The merge gate is `make check-fast` + `make lint` (~40 s). The full
+`make check` runs before merging only when the diff touches the pipeline
+surface, and `/lair` step 9 runs it on main after the fact, by hand. This
+ticket makes that after-merge run automatic on padme and narrows what must
+still run before a merge.
+
+## Measurements (padme, main c32db6cf, 2026-09-25)
+
+| Workers | Wall time |
+|---|---|
+| 4 (`make check` as it stood) | 4 min 33 s (CPU 41 min) |
+| 8 | 3 min 31 s |
+| 16 | 2 min 21 s |
+| 24 | 2 min 34 s (load ~23: tests start their own processes) |
+
+- 15 of the last 40 merges on main (2026-09-23 to 09-25) touched the pipeline
+  surface; 11 were tickets only.
+- The same failures at every worker count: the four country-migration tests
+  of [[0940]] (real, on main) and a file-date artifact, below. No flake
+  appeared with more workers.
+- The worker count is now per machine: `PYTEST_WORKERS` in `.env` (PR adding
+  it, same branch as this ticket); padme sets 16.
+- Evidence that the after-merge run is where data-bound failures surface:
+  [[0940]] was found by an ex-post full check, not before merging. The four
+  tests need the pinned JETP documents, which doudou worktrees lack; whether
+  they skip there has not been verified.
+
+## Two traps for a runner in a fresh worktree
+
+1. `make data` in a brand-new worktree on padme refuses: `dvc checkout`
+   reports the JETP documents the checkout hook just placed as "unsaved
+   files" and asks for `--force`. Cause not established.
+2. After a forced `dvc checkout`, `test_refined_embeddings_freshness` and
+   `test_refined_citations_freshness` fail: the files are written a few ms
+   apart in an order the mtime comparison rejects. Main is not red; any fresh
+   checkout is. The runner therefore uses one persistent checkout, not a new
+   worktree per run.
+
+## Design
+
+- A persistent checkout on padme, separate from the author's primary
+  checkout, that fast-forwards to `origin/main` and runs `make check` for each
+  new merge commit (a user timer polling `origin/main` is enough; no forge
+  webhook).
+- A failure is reported against the merge commit that introduced it, with
+  the failing node ids, and only once per failure (compare with the previous
+  run's failure set). Reporting channel is the author's call: a ticket per
+  new failure, as `/lair` step 9 does, or a notification.
+- Once it runs, the merge gate in `AGENTS.md` narrows: the pre-merge full
+  check stays only for diffs that write data or deposits (`dvc.yaml`, build
+  and publish targets); other pipeline diffs go on `check-fast` + `lint`.
+- `/lair` step 9 then reads the runner's results instead of running the suite.
+
+## Exit criteria
+
+- [ ] The runner runs `make check` on padme for each new merge commit on main, in a persistent checkout, with `PYTEST_WORKERS=16`
+- [ ] A new failure is reported once, naming the merge commit and the failing test ids
+- [ ] The file-date artifact and the `make data` refusal do not affect the runner (persistent checkout, or fixed)
+- [ ] `AGENTS.md` § Merge gate and `/lair` step 9 describe the new split

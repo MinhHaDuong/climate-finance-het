@@ -19,20 +19,25 @@ def test_zaf_candidate_reconciles_inventory_legacy_and_current_views(tmp_path):
     assert _country_output(output)
     assert len(result['inventory_positions']) == 339
     assert len(result['reported_positions']) == 339
-    assert len(result['legacy_dispositions']) == 1087
+    # 0875 moved 259 project identities out of projects.csv; 0926 added 2
+    # acquisition rows. 0878 retires this legacy sidecar.
+    assert len(result['legacy_dispositions']) == 830
     assert result['comparison']['legacy_rows_by_table']['data/jetp/event-timing.csv'] == 259
     assert result['comparison']['legacy_rows_by_table']['data/jetp/dry-searches.csv'] == 10
     assert result['comparison']['legacy_rows_by_table']['data/jetp/source-claims.csv'] == 48
-    assert len(result['comparison']['existing_project_ids']) == 263
+    assert len(result['comparison']['existing_project_ids']) == 4
     assert result['comparison']['register_status_counts']['C. Implementation Phase'] == 128
     assert result['comparison']['register_status_counts']['D. Completed'] == 88
     assert result['comparison']['financial_event_additions'] == 0
     assert result['event_candidates'] == []
-    assert result['comparison']['public_payload_bytes']['ZAF'] == 509315
+    # 0926 refreshed the served ZAF view; the migration must still leave it untouched.
+    assert result['comparison']['public_payload_bytes']['ZAF'] == 509381
     assert result['writer_owner'] == result['publication_mode'] == 'legacy'
     register = [r for r in result['inventory_positions'] if r['inventory_id'] == 'Register']
-    assert all(len(row['entity_ids']) == 1 for row in register)
-    assert len({row['entity_ids'][0] for row in register}) == 257
+    assert len(register) == 257
+    # 0875 moved register identities to agreements; the old country sidecar
+    # cannot promote them to project identities. 0878 must migrate this test.
+    assert all(row['entity_ids'] == [] for row in register)
     for view in MVP_VIEWS:
         assert result['mvp_views'][view] == read_mvp_view(root, view, supported_versions={'mvp/1'})
     assert all(hashlib.sha256(p.read_bytes()).hexdigest() == digest for p, digest in before.items())

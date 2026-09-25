@@ -53,7 +53,10 @@ def test_real_candidate_covers_both_pinned_plan_inventories_and_legacy_rows():
     assert len(result["inventory_positions"]) == 1579
     assert len(result["plan_positions"]) == 1579
     assert len(result["approval_positions"]) == 62
-    assert len(result["legacy_dispositions"]) == 2285
+    # 0875 moved 65 project identities out of projects.csv; 0926 added 9
+    # acquisition rows; 0970 added 4 reviewed project identities. 0878
+    # retires this legacy sidecar.
+    assert len(result["legacy_dispositions"]) == 2233
     assert result["comparison"]["inventory_rows_by_source"] == {
         "idn-cipp-2023-cpr-mirror": 437,
         "idn-jetp-progress-report-2025": 1142,

@@ -2,10 +2,15 @@
 Title: Resolve Indonesia event source rows and identities pending in 0876
 Created: 2026-09-24
 Author: Codex
+Closed: All 27 source-backed event identities adjudicated in PR #1509; the 0876 pending register is rebuilt in draft PR #1500 at ed7e2892, with three physical holds and AfDB tracked by 1120.
 
 --- log ---
 2026-09-24T19:50Z Codex created — 0876 snapshot audit found source-backed event rows whose 0875 identity dispositions remain blank
+2026-09-25T05:38Z Codex adjudicated all 27 rows: 15 exact printed report lines and three reused portal claim lines; 24 source-supported promotions and three physical-state holds. Added eight agreement and four project identities, 13 accepted line-referent decisions, and the 27-row event register. Independent Terra factual review found no additional blocker.
+2026-09-25T05:39Z Codex verified: `make jetp-ledger-check` passed; 28 focused identity and shard tests passed; two fresh SQLite builds had identical SHA-256 `52fb5d7b2e2605adb881b3bb7796f6c5561fe8be7b91d2925ec0045167557bfd`. No served observation, timing, pending, or release view was changed. `make check` stopped at preflight because this fresh worktree lacks DVC corpus artifacts and the non-DVC `llm_relevance_cache.csv` tracked by [[0592]].
+2026-09-25T05:43Z Codex gates: `make check-fast` passed (2349 passed, 13 skipped) and `make lint` passed (339 passed, 11 skipped). The initial run exposed two 0875 baseline tests that assumed no later identity rows; both now check the unchanged 0875 prefix plus the exact 0970 additions. A new 0970 test found and fixed the Nagajaya portal claim-79 line-referent omission.
 
+2026-09-25T06:07Z HDMX-coding-agent closed — All 27 source-backed event identities adjudicated in PR #1509; the 0876 pending register is rebuilt in draft PR #1500 at ed7e2892, with three physical holds and AfDB tracked by 1120.
 --- body ---
 ## Context
 
@@ -36,12 +41,12 @@ event with no snapshot follows the collection path in [[0926]].
 
 ## Exit criteria
 
-- [ ] All 27 source-backed events have a precise source row, a justified
+- [x] All 27 source-backed events have a precise source row, a justified
   referent (or an explicit unresolved identity decision), and a recorded
   financial/physical support verdict.
-- [ ] No two distinct ETP or IETF grant rows collapse into one agreement.
-- [ ] M1a served inventory bytes and the current country observation views
+- [x] No two distinct ETP or IETF grant rows collapse into one agreement.
+- [x] M1a served inventory bytes and the current country observation views
   remain identical until 0876 replaces them.
-- [ ] `make jetp-ledger-check`, focused reconciliation tests,
+- [x] `make jetp-ledger-check`, focused reconciliation tests,
   `make check-fast`, `make lint`, and full `make check` are run; inherited
   failures are identified separately.
