@@ -6,6 +6,14 @@ Author: Codex
 --- log ---
 2026-09-24T19:30Z Codex created — ex-post full make check on 0876/0884 worktrees found inherited country-migration failures after 0875
 2026-09-24T20:22Z Codex reproduced on origin/main c1e42144 after `make jetp-data`: four named country tests fail at `_country_migration.py:87` with `agreements.csv` (IDN, ZAF) or `documents.csv` (SEN, VNM). Full 0876 gate at 5a1f6da4: 5 failed, 3285 passed, 62 skipped; the fifth CRS-data failure is tracked separately in [[0990]].
+2026-09-25T05:29Z Codex note focused scan on main c32db6cf found all four country-bearing v2 tables (agreements, assets, documents, parties); after explicit exclusion, the VNM real-candidate test reaches a stale 236-row legacy pin (current 213 after 0875). The 0878 handoff now names these transitional tests for later migration.
+2026-09-25T05:37Z Codex note rebased probe onto f50a0748 (PR #1506 merged): nine new IDN and two new ZAF manifest rows change the transitional legacy counts to 2229 and 830, respectively; VNM remains 213.
+2026-09-25T05:43Z Codex note four named tests on padme at f50a0748 with `pytest -n 16`: IDN, SEN, VNM pass; ZAF reaches its final served-payload byte pin and finds 509381, the current PR #1506 ZAF view, instead of the pre-0926 value 509315. Pin updated for a targeted rerun.
+2026-09-25T05:45Z Codex note targeted rerun finds ZAF's next stale assumption: 257 register positions were expected to have project `entity_ids`, but 0875 moved those identities to agreements. The transitional sidecar now keeps all 257 positions unadmitted and without project identity links; [[0878]] must migrate this test with the old reader.
+2026-09-25T05:46Z Codex note padme targeted verification on f50a0748 with the 0940 patch and `pytest -n 16`: the four named country tests pass across the first three-country run and the final ZAF rerun; `tests/test_jetp_country_migration.py` 5 passed, Ruff passed, `erg check` passed. No full suite was relaunched per the author's request.
+2026-09-25T05:47Z Codex note main advanced to 16e3ff69 (PR #1509): [[0970]] adds four reviewed IDN project identities, so the IDN legacy count pin is now 2233. The other three country inputs are unchanged; IDN alone is selected for another padme probe.
+2026-09-25T05:48Z Codex note IDN's named test passes on padme at 16e3ff69 with `pytest -n 16`; the other three country tests passed on f50a0748 and their inputs did not change in PR #1509. `git diff --exit-code origin/main -- data/jetp deliverables/jetp-observatory/data` is empty in the 0940 worktree; `erg check` and `git diff --check` pass.
+2026-09-25T05:57Z Codex note padme fast merge gates on the 0940 patch: `make check-fast` passed (25 package tests; 2365 project tests passed, 15 skipped) after `dvc checkout data/jetp/releases/vnm-migration-0764.json.dvc`; `make lint` passed (339 passed, 13 skipped). Full `make check` was not rerun, per the author's targeted-verification instruction; its separate CRS prerequisite remains [[0990]].
 
 --- body ---
 ## Context
@@ -44,6 +52,9 @@ in 42.05s` on main; this is a direct reproduction, not a branch attribution.
   `agreements.csv` or `documents.csv` error in each country. Decide explicitly
   whether each belongs to legacy retained inputs or should be excluded from
   this country migration scan.
+- Re-pin country tests that still count pre-0875 `projects.csv` identities;
+  keep the legacy-sidecar boundary explicit in a focused test and hand it to
+  [[0878]] for migration when compatibility readers are retired.
 - Make the scanner apply that disposition without hiding an unknown
   country-specific file. Preserve the country and source-row address.
 - Keep the country staging outputs and served views byte-identical.
@@ -51,7 +62,7 @@ in 42.05s` on main; this is a direct reproduction, not a branch attribution.
 ## Exit criteria
 
 - [x] Four test failures reproduced on main with pinned JETP documents present.
-- [ ] The four named IDN, SEN, VNM and ZAF pytest nodes pass with v2 tables present.
-- [ ] An unknown extra input still fails with a named error.
-- [ ] Country staging outputs and served views are byte-identical before and after.
+- [x] The four named IDN, SEN, VNM and ZAF pytest nodes pass with v2 tables present (padme, `-n 16`, 2026-09-25).
+- [x] An unknown extra input still fails with a named error (`test_ontology_v2_rows_are_excluded_from_legacy_country_dispositions`).
+- [x] Country staging outputs and served views are byte-identical before and after (no diff under `data/jetp` or `deliverables/jetp-observatory/data`).
 - [ ] `make check-fast` and `make lint` pass; full `make check` passes once [[0990]] supplies its separate CRS data prerequisite.
