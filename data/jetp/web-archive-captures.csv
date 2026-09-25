@@ -1,5 +1,7 @@
 source_id,url,outcome,capture_url,captured_at,attempted_at,error
+idn-adb-aicet-56140-001,https://www.adb.org/projects/56140-001/main,reused,https://web.archive.org/web/20251203211719/https://www.adb.org/projects/56140-001/main,2025-12-03T21:17:19Z,2026-09-25T09:29:12Z,
 idn-adb-aicet-news-2025,https://www.adb.org/news/adb-boosts-indonesias-clean-energy-transition,reused,https://web.archive.org/web/20260120104252/https://www.adb.org/news/adb-boosts-indonesias-clean-energy-transition,2026-01-20T10:42:52Z,2026-09-24T15:43:25Z,
+idn-adb-aset-56368-001,https://www.adb.org/projects/56368-001/main,failed,,,2026-09-25T09:29:12Z,save_error: error:no-request
 idn-adb-aset-news-2024,https://www.adb.org/news/adb-approves-policy-loan-support-indonesia-energy-transition,captured,https://web.archive.org/web/20260924195415/https://www.adb.org/news/adb-approves-policy-loan-support-indonesia-energy-transition,2026-09-24T19:54:15Z,2026-09-24T19:53:53Z,
 idn-adb-muara-laboh-2-2025,https://www.adb.org/news/adb-supports-indonesia-green-energy-transition-geothermal-expansion-project,reused,https://web.archive.org/web/20251231152013/https://www.adb.org/news/adb-supports-indonesia-green-energy-transition-geothermal-expansion-project,2025-12-31T15:20:13Z,2026-09-24T15:44:29Z,
 idn-cipp-2023,https://jetp-id.org/storage/official-jetp-cipp-2023-vshare_f_en-1700532655.pdf,reused,https://web.archive.org/web/20260219144041/https://jetp-id.org/storage/official-jetp-cipp-2023-vshare_f_en-1700532655.pdf,2026-02-19T14:40:41Z,2026-09-25T05:18:25Z,
@@ -74,6 +76,7 @@ idn-portfolio-sustainable-hydropower,https://portfolio.jetp.id/program/accompany
 idn-portfolio-uk-pact,https://portfolio.jetp.id/program/uk-pact-indonesia,failed,,,2026-09-24T21:08:42Z,save_error: error:job-failed
 idn-portfolio-wolcot,https://portfolio.jetp.id/program/women-led-coal-transition-mechanism-wolcot-1,captured,https://web.archive.org/web/20260924211341/https://portfolio.jetp.id/program/women-led-coal-transition-mechanism-wolcot-1,2026-09-24T21:13:41Z,2026-09-24T21:09:28Z,
 idn-project-cirebon-framework-marubeni,https://www.marubeni.com/en/news/2023/info/00037.html,reused,https://web.archive.org/web/20251014035242/https://www.marubeni.com/en/news/2023/info/00037.html,2025-10-14T03:52:42Z,2026-09-24T15:56:40Z,
+idn-project-dieng3-adb,https://www.adb.org/projects/58342-001/main,failed,,,2026-09-25T09:29:12Z,save_error: error:no-request
 idn-project-legok-agreement-ut-2024,https://www.unitedtractors.com/en/legok-nangka-project-cooperation-agreement-between-jabar-environmental-solutions-jes-and-the-west-java-provincial-government/,failed,,,2026-09-24T21:13:49Z,save_error: error:not-found
 idn-project-seg-construction-2024,https://www.segsolar.com/press/news/112,reused,https://web.archive.org/web/20260723024603/https://www.segsolar.com/press/news/112,2026-07-23T02:46:03Z,2026-09-24T15:57:05Z,
 idn-project-seg-operational-2025,https://www.segsolar.eu/press/news/128,reused,https://web.archive.org/web/20260209182447/https://www.segsolar.eu/press/news/128,2026-02-09T18:24:47Z,2026-09-24T15:57:18Z,
