@@ -30,3 +30,21 @@ Until then, the 27 events remain pending and the legacy served view remains
 authoritative. The blocked AfDB source belongs to the acquisition path of
 ticket 0926; a failed retrieval does not imply that the claimed approval is
 absent.
+
+## 1120 update (2026-09-25)
+
+Retrieval `zaf-murp-afdb-2026:2` now supplies the publisher HTML, SHA-256
+`a9385e879af5f88511324674b8b12345cea23bc3dd0fbc8eae3b02a11e57cf33`.
+Article `#node-95536`, body paragraph 1, states that AfDB approved a USD 400
+million loan to South Africa for the Mpumalanga Municipal Utility Reform
+Programme. Body paragraph 5 states the UK FCDO guarantee. The named borrower,
+programme and amount identify a distinct agreement from register AFDB004,
+which is the USD 474.64 million IGGGP policy loan.
+
+The article labels 16 July 2026 as its publication date and gives no approval
+day in the body. The [AfDB MapAfrica catalogue](https://new-mapafrica.afdb.org/en/projects)
+lists project `P-ZA-K00-009` with a 15 July 2026 approval date. This catalogue
+finding has not been archived as a ledger snapshot, so the legacy event's
+16 July event-day timing is
+held pending a collected, cited catalogue line. The accepted observation is
+approval only; neither signature nor disbursement is evidenced.

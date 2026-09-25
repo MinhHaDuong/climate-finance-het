@@ -1,5 +1,5 @@
 legacy_table,legacy_event_id,legacy_project_id,source_id,locator,reason
-events,zaf-murp-afdb-approved-2026,zaf-murp,zaf-murp-afdb-2026,official announcement,missing_precise_cited_line
+event-timing,zaf-murp-afdb-approved-2026,,,,approval_day_unsupported_by_cited_article
 event-timing,zaf-eepbip-maf-approved-2018,,,,unmapped_date_role_other_milestone
 event-timing,idn-portal-gecs-kfw-2026,,,,unmapped_date_role_observation
 event-timing,idn-portal-nagajaya-norfund-2026,,,,unmapped_date_role_observation

@@ -123,8 +123,9 @@ def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
     observations, timings, pending = normalize_event_tables(
         rows(ledger / 'events.csv'), rows(ledger / 'implementation-events.csv'),
         event_timings, rows(ledger / 'migration' / '0875-dispositions.csv'),
-        rows(ledger / 'migration' / '0970-event-adjudications.csv'), decisions)
-    assert len(observations) == 442
+        rows(ledger / 'migration' / '0970-event-adjudications.csv') +
+        rows(ledger / 'migration' / '1120-event-adjudications.csv'), decisions)
+    assert len(observations) == 443
     assert len(timings) == 362
     assert len(pending) == 91
     event_pending = [row for row in pending if row['legacy_table'] != 'event-timing']
@@ -158,13 +159,16 @@ def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
             if row['reason'] == '0970_physical_state_hold'} == {
                 'idn-impl-green-corridors-2025', 'idn-impl-dieng34-2025',
                 'idn-impl-nagajaya-portal-2026'}
-    # Ticket 0926 later acquired the AfDB source, but it still supplies no
-    # precise cited row for the legacy event and therefore remains pending.
+    # The article supports the approval but its date is publication; the
+    # legacy event-day timing remains pending after the 1120 review.
+    assert {row['observation_id'] for row in observations
+            if row['observation_id'] == 'observation-zaf-murp-afdb-approved-2026'} == {
+                'observation-zaf-murp-afdb-approved-2026'}
     assert {row['legacy_event_id'] for row in pending
-            if row['reason'] == 'no_resolved_subject_and_cited_line'} == {
+            if row['reason'] == 'approval_day_unsupported_by_cited_article'} == {
                 'zaf-murp-afdb-approved-2026'}
     assert {row['legacy_event_id'] for row in committed_reconciliation
-            if row['reason'] == 'missing_precise_cited_line'} == {
+            if row['reason'] == 'approval_day_unsupported_by_cited_article'} == {
                 'zaf-murp-afdb-approved-2026'}
     assert {row['legacy_event_id'] for row in pending} >= {'zaf-murp-afdb-approved-2026'}
 

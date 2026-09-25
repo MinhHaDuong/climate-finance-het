@@ -258,7 +258,7 @@ zaf-register-idc002,agreement,agreement-zaf-register-idc002,register_id,zaf-jet-
 zaf-register-idc003,agreement,agreement-zaf-register-idc003,register_id,zaf-jet-investment-register-q1-2026-overall-data-257
 zaf-annex-zandkopsdrift,project,,no_precise_line,
 zaf-growth-gateway-smme-accelerator,line,,no_precise_line,
-zaf-murp,project,,no_precise_line,
+zaf-murp,project,project-zaf-murp,confirmed_document_link,zaf-murp-afdb-2026-approval-paragraph-1
 zaf-eepbip,line,zaf-eepbip-maf-claim-49,confirmed_document_link,zaf-eepbip-maf-claim-49
 zaf-uk-nev-support,line,zaf-dtic-parliament-nev-2025-claim-50,confirmed_document_link,zaf-dtic-parliament-nev-2025-claim-50
 zaf-eu-cso-green-economy-grants,line,,no_precise_line,

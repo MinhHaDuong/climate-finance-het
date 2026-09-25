@@ -46,7 +46,7 @@ def test_rebuild_counts_pending_and_repeat_bytes(tmp_path):
     # needed generic discovery lines. The replay must preserve those citations.
     assert dict(counts) == {'pilot_manifest': 66, 'pilot_observation': 46,
                             'portfolio': 46, 'claim': 148, 'discovery': 30}
-    assert len(pending) == 48
+    assert len(pending) == 47  # The AfDB MURP source was collected by 0926.
     assert len(candidates) == 304
     paths = sorted((ledger / 'lines.d').glob('*.csv'))
     paths += sorted((ledger / 'migration').glob('*.csv'))

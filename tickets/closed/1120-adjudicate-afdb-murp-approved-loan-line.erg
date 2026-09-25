@@ -1,0 +1,81 @@
+%erg 0.1
+Title: Cite and adjudicate the collected AfDB Mpumalanga loan announcement
+Created: 2026-09-25
+Author: Codex
+Closed: Archived AfDB approval cited and reconciled at a20034c2; approval day remains explicitly pending; fast gate and lint pass, full-gate preflight obstacles recorded
+
+--- log ---
+2026-09-25T05:51Z Codex created: the 0876 rebuild leaves `zaf-murp-afdb-approved-2026` pending after the source was collected by [[0926]]. Open PR #1500 was scanned by its actual file list and does not use ID 1120; the ID is clear of the current ticket frontier.
+
+2026-09-25T07:53Z HDMX-coding-agent closed — Archived AfDB approval cited and reconciled at a20034c2; approval day remains explicitly pending; fast gate and lint pass, full-gate preflight obstacles recorded
+--- body ---
+## Evidence gap
+
+The legacy `events.csv` row `zaf-murp-afdb-approved-2026` records a USD 400
+million AfDB approval for Mpumalanga municipal utility reform, dated
+2026-07-16. Its `source_id` is `zaf-murp-afdb-2026`, but the legacy row has
+no `document_sha256` and only the broad locator “official announcement.”
+Ticket [[0926]] subsequently collected the publisher HTML: retrieval
+`zaf-murp-afdb-2026:2` at `data/jetp/retrievals.csv:321` is HTTP 200 via
+`browser-session`, with SHA-256
+`a9385e879af5f88511324674b8b12345cea23bc3dd0fbc8eae3b02a11e57cf33`.
+The corresponding `manifest.csv:321` entry names
+`objects/a9/a9385e879af5f88511324674b8b12345cea23bc3dd0fbc8eae3b02a11e57cf33.html`.
+Collection closed the snapshot gap; it did not supply a cited line or a
+reviewed agreement identity. The 0876 pending register therefore reports
+`missing_precise_cited_line`, and the event must not become an observation
+from the headline alone.
+
+## Work
+
+- Materialize the archived HTML with `make jetp-data`; inspect its rendered
+  article body and identify the exact approval statement, date, amount,
+  instrument, borrower/beneficiary, and any distinction between loan approval,
+  signature, and disbursement.
+- Add a ledger line with the archived SHA and a precise paragraph or heading
+  locator. Adjudicate the subject as a distinct agreement, an existing
+  agreement, or a source-row-only referent, documenting the identity basis.
+- Add the event-specific decision for 0876 and regenerate its pending and
+  reconciliation outputs. Preserve the legacy source view bytes and leave
+  unsupported financial stages pending.
+
+## Exit criteria
+
+- [x] The archived publisher statement, exact locator, snapshot hash, and
+  financial stage are recorded in a cited ledger line.
+- [x] The event has one reviewed subject decision with a line-referent, or
+  an explicit documented reason to keep it pending.
+- [x] The 0876 register and all 451 legacy timing rows reconcile after
+  rebuild; no approval is promoted to signature or disbursement.
+- [x] `make jetp-ledger-check`, focused source/reconciliation tests,
+  `make check-fast`, and `make lint` run; any full-gate obstacle is recorded
+  by test or preflight ID.
+
+## Verification (commit a20034c2)
+
+- `data/jetp/lines.d/ZAF-2026.csv:308` records the archived SHA-256,
+  article `#node-95536` body paragraph 1, and `approved` money stage.
+  The archived HTML byte hash was verified locally after `make jetp-data`
+  could not sync `pytest==9.0.2` in the network-restricted worktree; the
+  complete pinned 275-object DVC document set was reflink-copied from an
+  existing worktree with the same `documents.dvc` pointer.
+- `data/jetp/line-referents.csv:383` and
+  `data/jetp/migration/1120-event-adjudications.csv:2` review the distinct
+  MURP loan agreement. `data/jetp/observations.csv:259` accepts only the
+  USD 400 million approval. `data/jetp/migration/0876-pending.csv:2` holds
+  the unsupported 16 July event-day timing. The publisher page labels that
+  date as publication; the separate AfDB catalogue gives 15 July approval,
+  but its line has not yet been archived in the ledger.
+- `tests/test_jetp_1120_murp.py::test_1120_source_identity_stage_and_date_are_separate`
+  checks source digest, referent, amount, status and held timing.
+  `tests/test_jetp_observations.py::test_current_ledger_accounts_for_every_event_without_inventing_a_citation`
+  checks 448 accepted observations plus three held events and all 451
+  legacy timing rows. Two consecutive rebuilds produced identical hashes;
+  all four served legacy observation JSON files remained byte identical.
+- `make jetp-ledger-check` passed; focused replay checks passed (14 tests);
+  `make check-fast` passed with local socket access (2,370 passed, 13 skipped);
+  `make lint` passed (338 passed, 12 skipped). Independent reviewer found no
+  substantive issue. `make check` stopped at
+  `scripts/qa_full_gate_preflight.py`: missing bulk corpus, reranker cache
+  (ticket [[0592]]), and 80 JETP CRS inputs, plus local socket and Git
+  worktree administration restrictions in the sandbox.
