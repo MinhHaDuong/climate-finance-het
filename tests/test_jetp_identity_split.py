@@ -58,11 +58,14 @@ def test_committed_split_is_replayable_and_every_identity_has_a_line():
         '879905b883f5071536d90530f6ec7ab9f008ec1694687ceee766f3e3fe7fd371')
     assert len(rows('routes')) == 1907
     schema = load_schema()
+    additions_0970 = {'projects': 4, 'agreements': 8, 'line_referents': 13}
     for table in ('projects', 'assets', 'agreements', 'line_referents',
                   'relations', 'parties', 'party_names', 'perimeters'):
+        committed = rows(table)
         assert [{key: None if record.get(key) is None else str(record[key])
                  for key in schema.header(table)}
-                for record in generated[table]] == rows(table), table
+                for record in generated[table]] == committed[:len(generated[table])], table
+        assert len(committed) - len(generated[table]) == additions_0970.get(table, 0), table
     identities = {(kind, row[kind + '_id']) for kind in ('project', 'asset', 'agreement')
                   for row in generated[kind + 's']}
     accepted = {(row['referent_kind'], row['referent_id'])
@@ -108,7 +111,7 @@ def test_register_allocations_slots_and_component_links():
     old_slots = {row['old_id'] for row in disposition_rows
                  if row['disposition'] == 'perimeter'}
     assert not old_slots & {r['project_id'] for r in rows('projects')}
-    assert len(rows('projects')) == 59  # Source-defined project identities.
+    assert len(rows('projects')) == 59 + 4  # 0875 baseline plus 0970 adjudications.
     assert sum(r['relation'] == 'component_of' and r['relation_id'].startswith('0875.')
                for r in rows('relations')) == 11
     assert any(r['asset_id'] == 'asset-idn-pelabuhan-ratu' for r in rows('assets'))
