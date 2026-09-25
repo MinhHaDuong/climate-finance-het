@@ -12,6 +12,7 @@ Author: Minh
 
 2026-09-17T17:05Z HDMX-coding-agent note M1a redéfinie par l'auteur : exploration dans le MVP, pas téléchargement — suiveur 0834
 2026-09-22T11:05Z HDMX-coding-agent note M1a cochée par l'auteur le 2026-09-22 après la revue d'intégration finale de [[0834]] ; les quatre pays descendent jusqu'au document, la page PDF n'est ancrée qu'au Viet Nam ([[0861]]).
+2026-09-25T08:30Z HDMX-coding-agent note M2 gains two children at the author's request (2026-09-25): [[1140]] periodic source refresh by a local agent, [[1141]] monthly link-rot check on padme
 --- body ---
 
 ## Context
@@ -56,6 +57,10 @@ les quatre pays doivent être traités avec le même contrat de preuve.
    contrôles transversaux.
 6. **0722** — installer la skill, la veille et les règles de mise à jour.
 7. **0723** — joindre événements financiers, actifs et réalisations physiques.
+8. **1140** — veille périodique des nouvelles sources, conduite par un agent
+   local sur padme ; tout candidat reste non admis jusqu'au tri de l'auteur.
+9. **1141** — contrôle mensuel de la pourriture des liens et relance des
+   captures Web Archive, planifié sur padme.
 
 ## Invariants
 
