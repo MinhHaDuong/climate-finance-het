@@ -162,6 +162,16 @@ def check_documents(page, url, staged):
     assert fold.locator('summary').inner_text().startswith('3 attempts: 403 on ')
     fold.locator('summary').click()
     assert fold.locator('li[data-attempt]').count() == len(attempts['idn-cipp-2023']) == 3
+    # Named by its title, the identifier beneath (ticket 1290): the title is
+    # in no country view, only in the ledger's documents table.
+    titles = {r['document_id']: r['title'] for r in
+              page.request.get(url + '/data/ledger-documents.json').json()['documents']}
+    assert row.locator('[data-document-title]').inner_text() == titles['idn-cipp-2023']
+    # The search reads titles: this one is in neither its identifier nor its address.
+    page.locator('#documents-filter-country').select_option('')
+    page.locator('#documents-search').fill(titles['sen-offgrid-mini-grid-2025'])
+    assert page.locator('#documents-results tbody tr').filter(
+        has=page.locator('code:text-is("sen-offgrid-mini-grid-2025")')).count() == 1
     page.locator('#documents-search').fill('')
     # The archived ZAF register must open from this page, byte-identical to the
     # snapshot the registry pins. A missing local copy is a provisioning gap

@@ -304,9 +304,87 @@ def test_the_status_filter_counts_documents_on_their_best_attempt() -> None:
 
     count = elements["documents-count"]["textContent"]
     assert count.startswith(f"{len(blocked)} of {len(expected)} documents"), count
-    shown = re.findall(r"<td><code>([^<]+)</code></td>", elements["documents-results"]["innerHTML"])
+    shown = re.findall(r"<code>([^<]+)</code></td>", elements["documents-results"]["innerHTML"])
     assert len(blocked) <= 50 and sorted(shown) == blocked
     assert "idn-cipp-2023" not in shown
+
+
+# Ticket 1290, author's decision of 2026-09-25 ("Titles now"): a Documents row
+# names the document by its title, from the ledger's documents table served as
+# data/ledger-documents.json, with the identifier kept on a second line.
+
+def document_cell(row):
+    """The first cell of a Documents row: (title or None, identifier)."""
+    cell = re.match(r"<tr><td>(.*?)</td>", row, re.DOTALL).group(1)
+    title = re.search(r"<span data-document-title>([^<]*)</span>", cell)
+    ident = re.search(r"<code>([^<]*)</code>$", cell)
+    return (unescape(title.group(1)) if title else None, unescape(ident.group(1)))
+
+
+def test_a_document_titled_only_in_the_ledger_shows_its_title_above_its_identifier() -> None:
+    # Positive control: no country view names idn-cipp-2023, so only the
+    # ledger's documents table can title it.
+    assert not any("idn-cipp-2023" in served(code)["sources"] for code in COUNTRIES)
+    titles = {r["document_id"]: r["title"] for r in served("ledger-documents")["documents"]}
+    assert titles["idn-cipp-2023"] == "Comprehensive Investment and Policy Plan"
+
+    for source_id in ("idn-cipp-2023", "sen-offgrid-mini-grid-2025"):
+        results = render("documents", {"documents-search": source_id})["elements"][
+            "documents-results"]["innerHTML"]
+        rows = document_rows(results, source_id)
+        assert len(rows) == 1, len(rows)
+        assert document_cell(rows[0]) == (titles[source_id], source_id)
+
+
+def test_every_document_row_shows_its_ledger_title() -> None:
+    titles = {r["document_id"]: r["title"] for r in served("ledger-documents")["documents"]}
+    shown = render("documents", {}, "documentRows(documentsData.documents)"
+                   ".map((r) => documentName(r))")["eval"]
+    ids = list(attempts_by_document())
+    assert len(shown) == len(ids)
+    assert [document_cell(f"<tr><td>{cell}</td>") for cell in shown] == [
+        (titles[i], i) for i in ids]
+
+
+def test_the_search_matches_a_title() -> None:
+    elements = render("documents", {"documents-search": "solution mini-grid"})["elements"]
+    shown = re.findall(r"<code>([^<]+)</code></td>", elements["documents-results"]["innerHTML"])
+    assert "sen-offgrid-mini-grid-2025" in shown, shown
+    assert "Search document titles" in render("documents")["main"]
+
+
+def test_an_untitled_document_falls_back_to_its_identifier_and_titles_are_escaped(tmp_path) -> None:
+    site = tmp_path / "site"
+    shutil.copytree(SITE, site, ignore=shutil.ignore_patterns("documents"))
+    view = site / "data/ledger-documents.json"
+    payload = json.loads(view.read_text())
+    payload["documents"] = [
+        dict(r, title='<img src=x onerror="alert(1)"> & Co') if r["document_id"] == "idn-cipp-2023"
+        else r for r in payload["documents"] if r["document_id"] != "sen-offgrid-mini-grid-2025"]
+    view.write_text(json.dumps(payload))
+
+    def cell(source_id):
+        results = render("documents", {"documents-search": source_id}, site=site)["elements"][
+            "documents-results"]["innerHTML"]
+        row = document_rows(results, source_id)[0]
+        return re.match(r"<tr><td>(.*?)</td>", row, re.DOTALL).group(1)
+
+    assert cell("sen-offgrid-mini-grid-2025") == "<code>sen-offgrid-mini-grid-2025</code>"
+    escaped = cell("idn-cipp-2023")
+    assert "<img" not in escaped
+    assert document_cell(f"<tr><td>{escaped}</td>") == (
+        '<img src=x onerror="alert(1)"> & Co', "idn-cipp-2023")
+
+
+def test_the_documents_page_renders_without_the_titles_view(tmp_path) -> None:
+    # A site missing the view still lists every document, by identifier.
+    site = tmp_path / "site"
+    shutil.copytree(SITE, site, ignore=shutil.ignore_patterns("documents"))
+    (site / "data/ledger-documents.json").unlink()
+    elements = render("documents", {}, site=site)["elements"]
+    n = len(attempts_by_document())
+    assert elements["documents-count"]["textContent"].startswith(f"{n} of {n} documents")
+    assert "data-document-title" not in elements["documents-results"]["innerHTML"]
 
 
 def test_a_document_gone_before_collection_says_so_and_is_dead_since_the_first_404() -> None:

@@ -482,6 +482,16 @@ function archivedLink(entry, page, attrs = "", label = "Open archived copy") {
 let webArchive = {};
 let linkChecks = {};
 const indexBy = (rows, key) => Object.fromEntries((rows || []).map((row) => [row[key], row]));
+/* Ticket 1290 (author's decision, 2026-09-25: "Titles now"): a document is
+ * named by its title, from the ledger's documents table served as its own
+ * view (data/ledger-documents.json) and joined here on the identifier. The
+ * identifier stays beneath it, since addresses and other pages use it; a
+ * document the view does not title is named by its identifier alone. */
+let documentTitles = {};
+const documentTitle = (entry) => documentTitles[entry.id]?.title || "";
+const documentName = (entry) =>
+  (documentTitle(entry) ? `<span data-document-title>${esc(documentTitle(entry))}</span><br>` : "") +
+  `<code>${esc(entry.id)}</code>`;
 const webArchiveOf = (entry) => {
   const capture = webArchive[entry?.url];
   return capture?.capture_url && ["captured", "reused"].includes(capture.outcome) ? capture : null;
@@ -888,12 +898,12 @@ function documentsPage(params) {
       },
     ],
     search: {
-      label: "Search document identifiers and addresses",
-      placeholder: "Try jet-investment-register, .pdf…",
-      text: (r) => (r.id + " " + (r.url || "")).toLowerCase(),
+      label: "Search document titles, identifiers and addresses",
+      placeholder: "Try investment plan, jet-investment-register, .pdf…",
+      text: (r) => (documentTitle(r) + " " + r.id + " " + (r.url || "")).toLowerCase(),
     },
     columns: [
-      { label: "Document", cell: (r) => `<code>${esc(r.id)}</code>` },
+      { label: "Document", cell: documentName },
       {
         label: "Country",
         cell: (r) => esc(country(r.country)?.short || r.country),
@@ -2026,8 +2036,8 @@ const load = async (file) => {
 };
 async function start() {
   try {
-    let termsView, statusCrosswalkView, staged, captures, checks;
-    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks] = await Promise.all([
+    let termsView, statusCrosswalkView, staged, captures, checks, ledgerDocuments;
+    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks, ledgerDocuments] = await Promise.all([
       load("overview"),
       load("comparison"),
       load("documents"),
@@ -2040,10 +2050,12 @@ async function start() {
       stagedIndex(),
       load("web-archive").catch(() => ({ captures: [] })),
       load("publisher-links").catch(() => ({ checks: [] })),
+      load("ledger-documents").catch(() => ({ documents: [] })),
     ]);
     stagedCopies = new Set(staged?.objects || []);
     webArchive = indexBy(captures.captures, "url");
     linkChecks = indexBy(checks.checks, "url");
+    documentTitles = indexBy(ledgerDocuments.documents, "document_id");
     goneAttempts = indexGone(documentsData.documents);
     ontology = readOntology(termsView, statusCrosswalkView);
     countries = Object.fromEntries(
