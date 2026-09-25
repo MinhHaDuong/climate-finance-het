@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Observatory Documents page: show each document's title, identifier kept beside it
+Created: 2026-09-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-25T13:00Z HDMX-coding-agent created From the author's preview of the next public build; decision of 2026-09-25 quoted below.
+
+--- body ---
+## Context
+
+The Documents page ("document-rows"; `documentsPage` in
+`deliverables/jetp-observatory/app.js`) names each document by its identifier,
+`<code>sen-offgrid-mini-grid-2025</code>`, where the author expects its title
+("Solution Mini-Grid 2025"). Author's decision (2026-09-25): **"Titles now"**,
+before the next publish. The identifier stays visible, smaller or on a second
+line, since other pages and URLs use it; the search matches the title too.
+
+The title is not served for every document: `data/<CODE>.json → sources[id]`
+carries it only for the 203 of 294 documents a fact cites, and
+`data/documents.json` is deliberately the retrievals table alone (ticket
+0858). The ledger's `documents` table (`data/jetp/documents.csv`, the target
+of the migration that retires `sources.csv`; `docs/jetp-ledger-migration.md`)
+holds a title for every document. Served views stay in normal form: one file =
+one table, joined at read time.
+
+## Exit criteria
+
+- [ ] The ledger `documents` table is served as its own view, built by its own
+      script so no other view's bytes or recorded input hashes move; size well
+      under the pre-commit ceiling.
+- [ ] Each Documents row shows the title, escaped, with the identifier as a
+      second line; a document with no title falls back to the identifier.
+- [ ] The search matches titles as well as identifiers and addresses.
+- [ ] Render tests first; positive control: `idn-cipp-2023`, whose title is in
+      no country view, shows "Comprehensive Investment and Policy Plan".
+- [ ] Browser recipe green on the local preview and the public bundle, row
+      height limit held; `make check-fast`, `make lint`, full `make check` on
+      padme green.
