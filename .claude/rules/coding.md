@@ -59,6 +59,20 @@ Two guards keep the fast tier honest (ticket 0216, owned by `tests/test_fast_pat
 
 - Acceptance tests (e.g., `make corpus-validate`) are the top-level contract — never weaken without discussion.
 
+## Data traps
+
+- **Null DOIs.** `dropna(subset=["doi"])` before any `merge(on="doi")` or
+  `set_index("doi")`: pandas matches NaN to NaN, and ~7.7K null DOIs turned 31K
+  rows into 60M and OOM-killed padme twice.
+- **NaN is truthy.** `str(x or "")` and `row.get(k, "")` yield `"nan"` for a
+  pandas NaN; blank with `pd.isna(v)` once per function, and grep shipped
+  artifacts for `\bnan\b`.
+- **Human judgments never live in a regenerable file.** Grades, adjudications
+  and panel votes go in their own append-only artifact keyed by (item,
+  annotator), written by a writer that refuses to overwrite. A generator that
+  emits a fill-me-in column must abort when the target holds annotations: the
+  data paper's 100 validation labels were erased by a rerun (ticket 0372).
+
 ## Build (Make)
 
 - `make` builds all documents. `make manuscript` builds manuscript only. `make papers` builds the 3 companions. `make figures` regenerates all figures (byte-reproducible).
