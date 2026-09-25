@@ -97,6 +97,12 @@ markers = [
     "slow: network access, external/real data, a heavy numerical dependency (dcor/torch/ot/sentence_transformers), matplotlib rendering, or heavy compute (deselect with '-m \"not slow\"')",
     "integration: marks tests that spawn subprocesses or use sleep-based timing (deselect with '-m \"not integration\"')",
     "adherence: project rule enforcement (hygiene/discipline/contracts)",
+    "wp_library: bibliography, source texts, and citation availability",
+    "wp_corpus: bibliometric corpus construction and analysis",
+    "wp_finance: comparable financial-flow datasets and measurement",
+    "wp_jetp: JETP documentary ledger, analysis, and observatory",
+    "wp_writing: manuscript, report, and publication artifacts",
+    "wp_shared: repository-wide infrastructure and test discipline",
 ]
 
 [tool.fast_path_ratchet]

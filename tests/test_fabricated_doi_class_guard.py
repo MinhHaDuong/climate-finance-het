@@ -22,6 +22,8 @@ and ``...90024-v`` in the archived detector.
 import os
 from pathlib import Path
 
+import pytest
+
 REPO = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = REPO / "scripts"
 
@@ -33,6 +35,8 @@ FABRICATED_DOIS = [
     "10.1016/0301-4215(92)90024-V",
 ]
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _all_script_files():
     """Yield every .py file under scripts/, including archived subtrees.

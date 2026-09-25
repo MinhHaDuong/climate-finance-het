@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from jetp.build_0820_vietnam_availability import build_report, validate_report
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_retained_vietnam_corpus_invalidates_zero_extraction() -> None:
     """The local RMP candidate and 46 pilot rows are a nonempty staging corpus."""

@@ -24,7 +24,10 @@ import ast
 import pytest
 from _script_discovery import script_paths_by_stem
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.adherence,
+]
 
 # Tier-2 named libraries (no __main__; imported as a library surface).
 NAMED_LIBRARIES = {

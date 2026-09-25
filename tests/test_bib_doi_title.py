@@ -44,6 +44,8 @@ from qa_bib_doi import (
 KNOWN_WRONG_PAPER: dict[str, str] = {}
 
 
+pytestmark = pytest.mark.wp_library
+
 def test_subtitle_truncation_is_a_match():
     """Crossref dropping a subtitle must not read as a wrong paper."""
     bib = "Climate Finance Shadow Report 2023: Assessing the Delivery"

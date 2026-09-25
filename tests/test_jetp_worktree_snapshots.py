@@ -11,7 +11,10 @@ REPO = Path(__file__).resolve().parents[1]
 HOOK = REPO / ".githooks" / "post-checkout"
 DOCUMENTS = Path("data/jetp/documents")
 VNM_MIGRATION = Path("data/jetp/releases/vnm-migration-0764.json")
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.wp_jetp,
+    pytest.mark.integration,
+]
 
 
 def run(*args, cwd, env=None):

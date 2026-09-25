@@ -19,7 +19,10 @@ import pytest
 REPO = Path(__file__).resolve().parent.parent
 GATE = REPO / "scripts" / "dvc_lock_gate.sh"
 
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.integration,
+]
 
 
 def _git(repo: Path, *args: str) -> str:

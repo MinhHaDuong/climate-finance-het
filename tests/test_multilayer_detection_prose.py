@@ -7,9 +7,13 @@ placeholder, and includes key terms that the prose must cover.
 import os
 import re
 
+import pytest
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 COMPANION = os.path.join(ROOT, "deliverables", "multilayer", "multilayer-detection.qmd")
 
+
+pytestmark = pytest.mark.wp_writing
 
 def read(path):
     with open(path) as f:

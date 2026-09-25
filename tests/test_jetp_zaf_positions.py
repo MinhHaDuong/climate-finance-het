@@ -4,6 +4,7 @@ from decimal import Decimal
 
 import pytest
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_register_start_and_allocation_do_not_duplicate_a_separate_payment():
     from jetp._zaf_positions import migrate_positions

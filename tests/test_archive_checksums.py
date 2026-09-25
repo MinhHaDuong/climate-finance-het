@@ -10,6 +10,8 @@ Verifies the Makefile:
 import os
 import re
 
+import pytest
+
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 MAKEFILE = os.path.join(PROJECT_ROOT, "Makefile")
 DOCKERFILE = os.path.join(PROJECT_ROOT, "build", "templates", "Dockerfile.analysis")
@@ -30,6 +32,8 @@ EXPECTED_OUTPUTS = [
     "$(DERIVED)/cluster_labels.json",
 ]
 
+
+pytestmark = pytest.mark.wp_writing
 
 def _read_makefile():
     with open(MAKEFILE) as f:

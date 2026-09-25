@@ -2,8 +2,10 @@
 
 from copy import deepcopy
 
+import pytest
 from jetp._source_watch import freeze_sweep, record_check, summarize
 
+pytestmark = pytest.mark.wp_jetp
 
 def watch(source):
     return {'watch_id': source, 'watch_revision_id': 'watch-' + source,

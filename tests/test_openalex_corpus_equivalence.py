@@ -19,6 +19,8 @@ _pkg = pytest.importorskip("openalex_corpus")
 MAILTO = pipeline_io.MAILTO
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture(autouse=True)
 def _no_sleep(monkeypatch):
     monkeypatch.setattr("pipeline_io.time.sleep", lambda *_: None)

@@ -24,6 +24,7 @@ import glob
 import os
 import re
 
+import pytest
 from _mk_discovery import all_makefiles
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -59,6 +60,8 @@ _RENDER_TARGET = re.compile(r"^(?P<t>[\w./-]+\.(?:pdf|docx))\s*:")
 # relocated render .mk cannot slip out of coverage.
 _MAKEFILES = all_makefiles()
 
+
+pytestmark = pytest.mark.wp_writing
 
 def test_no_root_quarto_masks():
     """The root exclusion-mask profile files must be gone."""

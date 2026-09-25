@@ -15,6 +15,8 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.mark.integration
 class TestPoliteGetRobustness:
     """polite_get should survive transient 429s with exponential backoff."""

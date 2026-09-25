@@ -9,6 +9,7 @@ import pytest
 from jetp import build_source_crosswalk as builder
 from jetp._source_crosswalk import migrate_sources
 
+pytestmark = pytest.mark.wp_jetp
 
 def table(root, name, rows):
     path = root / 'data/jetp' / name

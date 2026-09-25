@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 VIEWS = ('overview', 'comparison', 'ZAF', 'IDN', 'VNM', 'SEN')
 
 
+pytestmark = pytest.mark.wp_jetp
+
 @pytest.mark.parametrize('versions', [(), ('mvp/2',)])
 def test_consumer_must_support_requested_version_before_reading(tmp_path, versions):
     with pytest.raises(ValueError, match='Consumer does not support'):

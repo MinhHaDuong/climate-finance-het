@@ -5,12 +5,15 @@ import hashlib
 from collections import Counter
 from pathlib import Path
 
+import pytest
 from jetp._ledger_headers import load_schema, read_table
 from jetp.build_ledger import build as validate_ledger
 from jetp.build_reconciliation import build, disposition
 
 LEDGER = Path(__file__).resolve().parents[1] / 'data/jetp'
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def rows(name):
     schema = load_schema()

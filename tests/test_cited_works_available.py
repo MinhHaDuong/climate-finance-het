@@ -13,6 +13,8 @@ When the harness is extracted, this test and the allowlist travel with it.
 import re
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parent.parent
 BIB = ROOT / "deliverables" / "_shared" / "bibliography" / "main.bib"
 ALLOWLIST = ROOT / "config" / "no-fulltext-allowlist.txt"
@@ -26,6 +28,8 @@ QMD_GLOBS = [
 CITE = re.compile(r"(?<!\w)@([\w][\w:.\-+/]*)")
 ENTRY_HEAD = re.compile(r"(?m)^@[a-zA-Z]+\{([^,]+),")
 
+
+pytestmark = pytest.mark.wp_library
 
 def _bib_keys_and_fulltext() -> tuple[set[str], set[str]]:
     text = BIB.read_text(encoding="utf-8")

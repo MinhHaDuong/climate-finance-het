@@ -18,6 +18,7 @@ from jetp._senelec_annual_review import (
     validate_editions,
 )
 
+pytestmark = pytest.mark.wp_jetp
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as handle:

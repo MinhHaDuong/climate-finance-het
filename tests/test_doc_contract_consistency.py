@@ -16,6 +16,8 @@ Docs must:
 import os
 import re
 
+import pytest
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 
 AGENTS_MD = os.path.join(ROOT, "AGENTS.md")
@@ -26,6 +28,8 @@ README_MD = os.path.join(ROOT, "README.md")
 CORPUS_CONSTRUCTION_MD = os.path.join(ROOT, "deliverables", "_shared", "_includes", "corpus-construction.md")
 REPRODUCIBILITY_MD = os.path.join(ROOT, "deliverables", "_shared", "_includes", "reproducibility.md")
 
+
+pytestmark = pytest.mark.wp_writing
 
 def read(path):
     with open(path) as f:

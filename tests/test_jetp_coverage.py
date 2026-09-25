@@ -2,10 +2,12 @@
 
 import csv
 
+import pytest
 from jetp._ledger_headers import load_schema, write_table
 from jetp.build_coverage import build
 from jetp.build_observatory import coverage_data
 
+pytestmark = pytest.mark.wp_jetp
 
 def _write(path, name, rows):
     write_table(path, name, rows, schema=load_schema())

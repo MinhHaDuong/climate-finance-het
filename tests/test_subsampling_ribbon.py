@@ -28,6 +28,8 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "figures"))  # 0255: moved figures 
 # ---------------------------------------------------------------------------
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _smoke_env():
     # source_root_env puts scripts/ + libs on the child's PYTHONPATH (ticket
     # 0253) — without it the subprocess only works when make's exported

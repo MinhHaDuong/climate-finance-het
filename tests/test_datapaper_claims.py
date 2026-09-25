@@ -45,6 +45,8 @@ QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
 TABLES = os.path.join(REPO, "deliverables", "_shared", "tables")
 
 
+pytestmark = pytest.mark.wp_writing
+
 def _paper() -> str:
     with open(QMD, encoding="utf-8") as f:
         return f.read()

@@ -10,11 +10,14 @@ Verifies that:
 import os
 import sys
 
+import pytest
 from pipeline_loaders import load_analysis_config
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def test_c2st_min_papers_override():
     """C2ST uses min_papers=50, not the global 30."""

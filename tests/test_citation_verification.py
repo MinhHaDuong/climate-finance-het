@@ -38,6 +38,8 @@ REPORT = {
 }
 
 
+pytestmark = pytest.mark.wp_library
+
 @pytest.fixture
 def metrics():
     df = compute_citation_verification(REPORT)

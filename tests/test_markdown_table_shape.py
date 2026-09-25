@@ -34,7 +34,10 @@ from _mk_discovery import (
 )
 
 # Mechanical contract gate (`make lint` / `pytest -m adherence`).
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_writing,
+    pytest.mark.adherence,
+]
 
 # Discovered once at import: ten rule targets today, five of them built on a
 # checkout without corpus data. Absent ones are skipped, not failed.

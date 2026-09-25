@@ -16,7 +16,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.wp_corpus,
+    pytest.mark.integration,
+]
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

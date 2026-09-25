@@ -36,6 +36,8 @@ EMITTERS = [
 ]
 
 
+pytestmark = pytest.mark.wp_writing
+
 class TestPlainTextEscaping:
     """`markdown_text_cell`: the value carries no markup intent."""
 

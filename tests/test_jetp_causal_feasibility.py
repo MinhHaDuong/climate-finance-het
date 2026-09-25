@@ -9,6 +9,7 @@ from jetp._causal_feasibility import (
     validate_country_quarter_observations,
 )
 
+pytestmark = pytest.mark.wp_jetp
 
 def valid_observation() -> dict[str, str | None]:
     return {

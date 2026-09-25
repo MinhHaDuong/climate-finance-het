@@ -7,9 +7,11 @@ function.  This test verifies behavioral equivalence on synthetic candidates.
 Functions are copied here to avoid importing compute_clusters.py (which pulls
 in numpy/sklearn). If the originals change, this test should be updated.
 """
-
+import pytest
 
 # --- Copied from compute_clusters.py (pure Python, no numpy) ---
+
+pytestmark = pytest.mark.wp_corpus
 
 def _word_count(terms):
     return sum(len(t.split()) for t in terms)

@@ -79,6 +79,8 @@ PROJECT_SOURCE_LINK = {
 }
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def fixture_tables():
     return {
         "events": [dict(EVENT_VERIFIED), dict(EVENT_SECONDARY)],

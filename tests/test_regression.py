@@ -42,6 +42,8 @@ sys.path.pop(0)
 ROOT_PATH = Path(ROOT).resolve()
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _load_golden() -> dict:
     with open(GOLDEN_PATH) as f:
         return json.load(f)

@@ -30,6 +30,8 @@ sys.path.insert(0, HARVEST_DIR)
 # ---------------------------------------------------------------------------
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def make_mini_works(tmp_path):
     """Create a minimal unified_works.csv for CLI smoke-tests."""
     df = pd.DataFrame(

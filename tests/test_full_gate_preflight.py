@@ -16,7 +16,10 @@ import pytest
 
 REPO = Path(__file__).resolve().parent.parent
 PREFLIGHT = REPO / "scripts" / "qa_full_gate_preflight.py"
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.integration,
+]
 
 
 def test_preflight_reports_missing_corpus_and_unwritable_configured_cache(tmp_path):

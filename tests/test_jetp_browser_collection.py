@@ -6,6 +6,7 @@ import os
 import sqlite3
 from pathlib import Path
 
+import pytest
 from jetp import _firefox
 from jetp.build_evidence_layer import refresh_collection
 from jetp.corpus_collect_downloads import collect_downloads
@@ -21,6 +22,8 @@ from test_jetp_documents import FakeResponse, FakeSession, _source, _write_regis
 ROOT = Path(__file__).resolve().parents[1]
 SECRET = "cookie-value-that-must-never-be-logged"
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def _manifest_row(source_id, status, url, **extra):
     row = dict.fromkeys(MANIFEST_FIELDS, "")

@@ -2,8 +2,12 @@
 
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 
+
+pytestmark = pytest.mark.wp_shared
 
 def test_routine_make_gates_use_quiet_pytest_output():
     lines = (ROOT / "Makefile").read_text().splitlines()

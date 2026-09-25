@@ -7,12 +7,15 @@ alters any of these outputs breaks a consuming pipeline and must be deliberate.
 """
 
 import pandas as pd
+import pytest
 from openalex_corpus import (
     build_text,
     is_boilerplate_abstract,
     normalize_doi,
     reconstruct_abstract,
 )
+
+pytestmark = pytest.mark.wp_corpus
 
 
 class TestReconstructAbstract:

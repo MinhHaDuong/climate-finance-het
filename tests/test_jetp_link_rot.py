@@ -39,6 +39,8 @@ RMP = "vnm-rmp-2023"
 # --- fakes -----------------------------------------------------------------
 
 
+pytestmark = pytest.mark.wp_jetp
+
 class Response:
     def __init__(self, status=200, payload=None, headers=None, text=""):
         self.status_code = status
@@ -492,6 +494,7 @@ def dead_site(tmp_path):
     return site, dead
 
 
+@pytest.mark.integration
 def test_positive_control_a_dead_publisher_link_shows_dead_since_and_the_copy_first(dead_site) -> None:
     site, dead = dead_site
     checks = json.loads((site / "data/publisher-links.json").read_text())["checks"]
@@ -508,6 +511,7 @@ def test_positive_control_a_dead_publisher_link_shows_dead_since_and_the_copy_fi
     assert links[1][0] == dead + "#page=12"
 
 
+@pytest.mark.integration
 def test_positive_control_reaches_the_documents_page(dead_site) -> None:
     site, dead = dead_site
     rendered = render("documents", {"documents-search": RMP}, site=site)

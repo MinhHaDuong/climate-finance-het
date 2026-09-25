@@ -44,6 +44,8 @@ _ALLOWLIST = {
 }
 
 
+pytestmark = pytest.mark.wp_shared
+
 @pytest.mark.adherence
 def test_no_handrolled_mk_enumeration():
     offenders = []

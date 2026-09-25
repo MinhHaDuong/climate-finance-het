@@ -1,5 +1,7 @@
 """TDD guard: LOW_N_LEXICAL_THRESHOLD must be defined in _divergence_lexical.py."""
+import pytest
 
+pytestmark = pytest.mark.wp_corpus
 
 def test_l1_has_low_n_lexical_threshold():
     """_divergence_lexical.py must define LOW_N_LEXICAL_THRESHOLD."""

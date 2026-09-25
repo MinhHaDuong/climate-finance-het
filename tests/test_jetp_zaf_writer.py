@@ -6,6 +6,7 @@ import pytest
 from jetp import build_zaf_positions as builder
 from jetp._compatibility import MVP_VIEWS
 
+pytestmark = pytest.mark.wp_jetp
 
 def candidate_fixture():
     """Small structurally complete candidate, without real-data extraction."""

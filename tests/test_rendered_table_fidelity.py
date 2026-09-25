@@ -38,6 +38,8 @@ format:
 """
 
 
+pytestmark = pytest.mark.wp_writing
+
 def _probe_document() -> str:
     emitted = [r"\begin{flushleft}"]
     emitted += ["EMIT " + latex_inline(describe(v)) + r"\\" for v in DEPOSIT_VARIABLES]

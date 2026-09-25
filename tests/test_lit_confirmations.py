@@ -13,6 +13,7 @@ prose exists in the committed CSV).
 import os
 
 import pandas as pd
+import pytest
 import yaml
 
 SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "scripts")
@@ -20,6 +21,8 @@ BASE = os.path.join(SCRIPTS, "..")
 CSV_PATH = os.path.join(
     BASE, "deliverables", "_shared", "tables", "tab_lit_confirmations.csv")
 
+
+pytestmark = pytest.mark.wp_library
 
 def _config():
     with open(os.path.join(BASE, "config", "analysis.yaml")) as fh:

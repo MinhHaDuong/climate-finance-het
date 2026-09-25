@@ -17,6 +17,8 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestSaveCsvAtomic:
     def test_save_csv_creates_file(self, tmp_path):
         """Baseline: save_csv creates the target file with correct contents."""

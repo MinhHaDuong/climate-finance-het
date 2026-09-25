@@ -43,6 +43,8 @@ GREY_YAML = os.path.join(REPO, "config", "grey_sources.yaml")
 _CODE_SPAN = re.compile(r"(`+)(?:(?!\1).)*?\1")
 
 
+pytestmark = pytest.mark.wp_library
+
 def _load(path):
     with open(path, encoding="utf-8") as fh:
         return yaml.safe_load(fh)

@@ -8,9 +8,13 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def test_zaf_q1_reconciliation_replays_all_material_rows_without_event_promotion(
     tmp_path: Path,

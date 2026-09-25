@@ -33,7 +33,10 @@ import pytest
 
 _PKG_DIR = Path(__file__).resolve().parent.parent / "libs" / "openalex-corpus"
 
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.integration,
+]
 
 
 def _uv() -> str:

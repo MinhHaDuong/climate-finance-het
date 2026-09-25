@@ -3,11 +3,14 @@
 import csv
 from pathlib import Path
 
+import pytest
 from jetp.build_observations import normalize_event_tables, reconcile_timing_rows
 
 DATA = Path(__file__).resolve().parents[1] / "data/jetp"
 EVENT = "zaf-murp-afdb-approved-2026"
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def rows(path):
     with path.open(encoding="utf-8", newline="") as handle:

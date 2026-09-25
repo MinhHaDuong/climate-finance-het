@@ -23,6 +23,8 @@ ZOO_RENDER_MK = (
 SCHEMATIC_SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts" / "figures"
 
 
+pytestmark = pytest.mark.wp_writing
+
 def _mk_list(name: str) -> list[str]:
     """`name`'s tokens from zoo-figures.mk, via the shared `.mk` parser (0248)."""
     constants = makefile_constants(files=[ZOO_MK])

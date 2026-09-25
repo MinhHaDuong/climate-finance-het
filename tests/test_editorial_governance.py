@@ -14,7 +14,10 @@ ROOT = os.path.join(os.path.dirname(__file__), "..")
 BRIEF = os.path.join(ROOT, "docs", "editorial-brief.md")
 WRITING_RULE = os.path.join(ROOT, ".claude", "rules", "writing.md")
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_writing,
+    pytest.mark.adherence,
+]
 
 
 def _read(path):

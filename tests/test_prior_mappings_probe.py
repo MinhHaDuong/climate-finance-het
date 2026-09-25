@@ -10,6 +10,8 @@ fixture lists; no network, no real corpus.
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parent.parent
 PROBE = (
     ROOT
@@ -19,6 +21,8 @@ PROBE = (
     / "probe_prior_mappings_overlap.py"
 )
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _load():
     spec = importlib.util.spec_from_file_location("probe_prior_mappings", PROBE)

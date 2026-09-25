@@ -7,11 +7,14 @@ read from the config file, not a literal integer.
 import ast
 import os
 
+import pytest
 import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), "..", "config")
 
+
+pytestmark = pytest.mark.wp_corpus
 
 class TestKFromConfig:
     """K parameter comes from config, not hardcoded."""

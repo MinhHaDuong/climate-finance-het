@@ -32,6 +32,8 @@ REFS = (
 )
 
 
+pytestmark = pytest.mark.wp_writing
+
 class TestStripReferences:
     def test_drops_everything_from_the_heading_on(self):
         assert qa_word_count.strip_references(BODY + REFS) == BODY

@@ -28,6 +28,8 @@ from filter_flags import (
 FIXTURE_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture
 def config():
     return _load_config(os.path.join(FIXTURE_DIR, "corpus_filter_test.yaml"))

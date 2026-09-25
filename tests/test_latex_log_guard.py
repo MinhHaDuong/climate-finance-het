@@ -15,6 +15,8 @@ REPO = Path(__file__).resolve().parents[1]
 TECTONIC = shutil.which("tectonic") or "/home/haduong/.local/bin/tectonic"
 
 
+pytestmark = pytest.mark.wp_writing
+
 @pytest.mark.parametrize(
     "warning",
     [

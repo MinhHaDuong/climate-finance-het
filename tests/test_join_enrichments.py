@@ -14,6 +14,8 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "harvest"))
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture
 def enrichment_dir(tmp_path):
     """Create a minimal enrichment environment with base CSV and caches."""

@@ -11,6 +11,8 @@ import os
 import sys
 from unittest.mock import MagicMock
 
+import pytest
+
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
@@ -26,6 +28,8 @@ from openalex_pool import (
 # ---------------------------------------------------------------------------
 # build_filter
 # ---------------------------------------------------------------------------
+
+pytestmark = pytest.mark.wp_corpus
 
 class TestBuildFilter:
     def test_no_date(self):

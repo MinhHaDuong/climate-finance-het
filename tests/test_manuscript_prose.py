@@ -42,7 +42,10 @@ import pytest
 import yaml
 from manuscript_source_qmd import REPO_ROOT, abstract, body, paragraphs, section
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_writing,
+    pytest.mark.adherence,
+]
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 AI_TELLS = REPO_ROOT / "config" / "ai-tells.yml"

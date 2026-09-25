@@ -14,10 +14,13 @@ import re
 
 import networkx as nx
 import pandas as pd
+import pytest
 import yaml
 
 SCRIPTS = os.path.join(os.path.dirname(__file__), "..", "scripts")
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _graph(authors_by_comm):
     """Graph + partition: {comm_id: [author, ...]} -> (G, partition)."""

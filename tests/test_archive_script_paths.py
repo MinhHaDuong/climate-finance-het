@@ -68,7 +68,10 @@ import re
 import pytest
 from _mk_discovery import all_makefiles, makefile_constants
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_writing,
+    pytest.mark.adherence,
+]
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 BUILD_DIR = os.path.join(REPO, "build")

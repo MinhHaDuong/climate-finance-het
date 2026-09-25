@@ -5,10 +5,13 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import pytest
 from jetp.build_zaf_news_leads import parse_secondary_news
 
 ROOT = Path(__file__).resolve().parents[1]
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def test_parser_keeps_media_coverage_as_non_evidentiary_leads() -> None:
     html = """

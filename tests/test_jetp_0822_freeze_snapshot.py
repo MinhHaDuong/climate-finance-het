@@ -20,6 +20,7 @@ from jetp.build_0822_freeze_snapshot import (
     validate_snapshot,
 )
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_freeze_preserves_denominators_without_mixed_stage_arithmetic() -> None:
     """Candidate, context, and staging rows cannot become a financial total."""

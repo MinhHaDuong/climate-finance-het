@@ -36,6 +36,8 @@ RENDERED = os.path.join("deliverables", "manuscript", "manuscript.pdf")
 MANUSCRIPT_MK = os.path.join("deliverables", "manuscript", "manuscript.mk")
 
 
+pytestmark = pytest.mark.wp_writing
+
 def _has_latex():
     """A LaTeX engine on PATH, or the TinyTeX distribution Quarto installs."""
     if shutil.which("xelatex"):

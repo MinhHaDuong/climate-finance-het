@@ -3,10 +3,13 @@
 import os
 import sys
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from pipeline_text import normalize_text
 
+pytestmark = pytest.mark.wp_corpus
 
 class TestNormalizeText:
     """normalize_text fixes encoding artifacts from upstream aggregator APIs."""

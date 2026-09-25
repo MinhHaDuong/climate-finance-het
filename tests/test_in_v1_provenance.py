@@ -28,6 +28,8 @@ from corpus_filter import add_in_v1_column, load_v1_identifiers
 # Unit tests: load_v1_identifiers
 # ---------------------------------------------------------------------------
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestLoadV1Identifiers:
     def test_loads_doi_identifiers(self, tmp_path):
         """Should return DOIs from the identifier file."""

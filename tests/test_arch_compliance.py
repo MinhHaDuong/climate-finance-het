@@ -29,6 +29,8 @@ MAKEFILE = os.path.join(REPO, "Makefile")
 # ---------------------------------------------------------------------------
 
 
+pytestmark = pytest.mark.wp_shared
+
 def _all_scripts():
     """Return sorted list of .py files in scripts/ (excluding archive/)."""
     result = []

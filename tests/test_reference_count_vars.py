@@ -10,6 +10,7 @@ import os
 import sys
 
 import pandas as pd
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(
@@ -33,6 +34,8 @@ REFS_KEYS = [
     "refs_max",
 ]
 
+
+pytestmark = pytest.mark.wp_writing
 
 def _metrics():
     df = pd.read_csv(ARTIFACT)

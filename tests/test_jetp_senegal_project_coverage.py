@@ -5,6 +5,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "jetp"
 
@@ -27,6 +29,8 @@ TERMINAL_VERDICTS = {
     "not_applicable",
 }
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as stream:

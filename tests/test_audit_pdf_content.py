@@ -12,6 +12,8 @@ key for *The Power of a Single Number* — the audit must score that pair LOW.
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 _SPEC = importlib.util.spec_from_file_location(
     "qa_pdf_content",
     Path(__file__).resolve().parent.parent / "scripts" / "qa" / "qa_pdf_content.py",
@@ -19,6 +21,8 @@ _SPEC = importlib.util.spec_from_file_location(
 audit = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(audit)
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def test_identical_title_scores_high():
     score = audit.match_score(

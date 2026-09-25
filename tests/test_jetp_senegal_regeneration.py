@@ -15,6 +15,7 @@ from jetp.build_sen_plan_projects import (
     write_csv,
 )
 
+pytestmark = pytest.mark.wp_jetp
 
 def _row(**overrides: str) -> dict[str, str]:
     row = dict.fromkeys(FIELDS, "")

@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysi
 
 from compute_crossyear_zscore import compute_crossyear_zscores
 
+pytestmark = pytest.mark.wp_corpus
 
 class TestRibbonZscores:
     """Unit tests for z_lo/z_hi derivation in compute_crossyear_zscores."""

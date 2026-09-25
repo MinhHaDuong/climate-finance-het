@@ -5,12 +5,15 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import pytest
 from jetp.build_vnm_pilot_migration import migrate_pilot
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "conception" / "jetp" / "papier-3-ledger" / "pilote-ledger-vn"
 DATA = ROOT / "data" / "jetp"
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as stream:

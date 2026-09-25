@@ -19,7 +19,10 @@ import sys
 
 import pytest
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_writing,
+    pytest.mark.adherence,
+]
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 BUILD_SCRIPT = os.path.join(REPO, "build", "build_datapaper_archive.sh")

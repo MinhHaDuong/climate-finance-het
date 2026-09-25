@@ -33,6 +33,8 @@ OPENALEX_COLS = [
 SENTINEL_REF_DOI = "__NO_REFS__"
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture
 def cache_dir(tmp_path):
     """Create an enrich_cache directory with sample crossref + openalex files."""

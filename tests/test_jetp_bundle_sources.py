@@ -6,6 +6,7 @@ import json
 import pytest
 from jetp._bundle_inventory import source_inventory
 
+pytestmark = pytest.mark.wp_jetp
 
 def cached_source(tmp_path):
     """Create a valid pinned DVC index with one locally cached source."""

@@ -12,7 +12,10 @@ from pathlib import Path
 
 import pytest
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.adherence,
+]
 
 REPO = Path(__file__).resolve().parent.parent
 ANALYSIS_MK_DIR = REPO / "scripts" / "analysis"

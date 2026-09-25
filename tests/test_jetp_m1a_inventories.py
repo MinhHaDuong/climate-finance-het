@@ -6,6 +6,7 @@ import csv
 import json
 from pathlib import Path
 
+import pytest
 from jetp.build_m1a_inventories import (
     FIELDS,
     FrozenLayer,
@@ -15,6 +16,8 @@ from jetp.build_m1a_inventories import (
 
 ROOT = Path(__file__).resolve().parents[1]
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def _row(
     row_id: str,

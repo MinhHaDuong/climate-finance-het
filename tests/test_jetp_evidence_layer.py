@@ -35,6 +35,8 @@ MANIFEST_COLUMNS = ['source_id', 'country', 'retrieved_at', 'status', 'http_stat
                     'storage_path', 'final_url', 'error', 'collection_method']
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def _source(source_id, country, category, publisher, kind, title):
     row = dict.fromkeys(SOURCE_COLUMNS, '')
     row.update(source_id=source_id, country=country, authority_category=category,

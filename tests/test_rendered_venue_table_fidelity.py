@@ -33,6 +33,8 @@ PIPE_VENUE = "International Development Policy | Revue internationale"
 NEEDLE = "International Development Policy"
 
 
+pytestmark = pytest.mark.wp_writing
+
 def _run_emitter(script: str, output: str, extra: list[str]) -> str:
     """Run a Phase-2 emitter and return the Markdown it wrote."""
     subprocess.run(

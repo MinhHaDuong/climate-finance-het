@@ -14,6 +14,8 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -41,6 +43,8 @@ SOURCE_KEYS = (
     "End Date",
 )
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def _material_row(unique_id: str, name: str, **overrides: object) -> dict:
     row = {key: f"{key} value" for key in SOURCE_KEYS}

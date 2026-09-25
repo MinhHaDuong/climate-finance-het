@@ -23,6 +23,8 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestExtractCacheKey:
     """_extract_cache_key must produce sha256(text):model keys."""
 

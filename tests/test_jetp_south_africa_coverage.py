@@ -5,6 +5,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 COVERAGE = ROOT / "data" / "jetp" / "authority-coverage.csv"
 SOURCES = ROOT / "data" / "jetp" / "sources.csv"
@@ -44,6 +46,8 @@ REQUIRED_ZAF_AUTHORITIES = {
     "zaf-ntcsa",
 }
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as stream:

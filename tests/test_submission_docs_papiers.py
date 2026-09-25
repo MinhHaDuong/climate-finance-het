@@ -13,6 +13,8 @@ forward-looking process docs — so they are allowlisted.
 
 from pathlib import Path
 
+import pytest
+
 REPO = Path(__file__).resolve().parent.parent
 SCOPE = [".agent", ".claude/skills", "docs"]
 ALLOWLIST = {
@@ -20,6 +22,8 @@ ALLOWLIST = {
     "docs/braindump-2026-03-28.md",
 }
 
+
+pytestmark = pytest.mark.wp_writing
 
 def _scoped_md_files():
     for top in SCOPE:

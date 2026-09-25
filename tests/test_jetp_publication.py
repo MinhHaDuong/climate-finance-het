@@ -2,6 +2,7 @@
 
 import pytest
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_display_ids_are_unique_and_reverse_evidence_traversal_keeps_every_use():
     from jetp._publication import publish

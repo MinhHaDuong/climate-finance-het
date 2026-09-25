@@ -1,7 +1,12 @@
 """Acceptance contracts for the AFD historical observation pilot."""
 
+import pytest
 from build_afd_pilot import payment_observation, reconcile
 
+pytestmark = [
+    pytest.mark.wp_finance,
+    pytest.mark.wp_jetp,
+]
 
 def test_cma123501_disappearance_is_not_an_outcome():
     row = {

@@ -22,7 +22,10 @@ import ast
 import pytest
 from _script_discovery import all_script_files
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.adherence,
+]
 
 # Known, pre-existing compute → plot violations awaiting their own relocation
 # ticket. Each entry MUST cite the tracking ticket. Remove an entry the moment

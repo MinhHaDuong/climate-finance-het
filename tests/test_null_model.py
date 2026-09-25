@@ -28,6 +28,8 @@ from conftest import smoke_env
 # ---------------------------------------------------------------------------
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _run_null_model(method, output_path, extra_args=None, timeout=300):
     """Run compute_null_model.py --method M --output P."""
     cmd = [

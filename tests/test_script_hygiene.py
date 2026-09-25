@@ -33,7 +33,10 @@ from _script_discovery import all_script_files
 # adherence tier (ticket 0215) so the fast inner loop (`-m "not adherence"`,
 # ticket 0214) deselects it — same convention as test_editorial_governance.py and
 # test_manuscript_prose.py.
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.adherence,
+]
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS_DIR = os.path.join(REPO, "scripts")
@@ -872,8 +875,8 @@ class TestMarkerDiscipline:
         loop. Detection is static (no subprocess): a file that spawns ruff or
         mypy (a quoted `"ruff"`/`"mypy"` command token alongside
         `import subprocess`) must declare a module-level
-        `pytestmark = pytest.mark.adherence`, matching the convention already
-        used by test_editorial_governance.py and test_manuscript_prose.py.
+        `pytestmark` containing `pytest.mark.adherence`, matching the convention
+        already used by test_editorial_governance.py and test_manuscript_prose.py.
         """
         violations = []
         for fname in sorted(os.listdir(TESTS_DIR)):
@@ -887,18 +890,17 @@ class TestMarkerDiscipline:
             )
             if not invokes_lint:
                 continue
+            module_marks = re.search(
+                r"^pytestmark\s*=(.*?)(?=^\S|\Z)", source, re.MULTILINE | re.DOTALL
+            )
             has_module_adherence = bool(
-                re.search(
-                    r"^pytestmark\s*=.*pytest\.mark\.adherence",
-                    source,
-                    re.MULTILINE,
-                )
+                module_marks and "pytest.mark.adherence" in module_marks.group(1)
             )
             if not has_module_adherence:
                 violations.append(fname)
         assert not violations, (
             "Files invoking ruff/mypy must declare module-level "
-            "`pytestmark = pytest.mark.adherence` so the fast loop deselects "
+            "`pytestmark` containing `pytest.mark.adherence` so the fast loop deselects "
             f"them (ticket 0215): {violations}"
         )
 

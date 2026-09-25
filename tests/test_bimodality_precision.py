@@ -16,6 +16,8 @@ from utils import BASE_DIR, DERIVED_TABLES_DIR
 TABLES_DIR = os.path.join(BASE_DIR, "deliverables", "_shared", "tables")
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _max_decimal_places(series):
     """Return the max number of decimal places in a float Series."""
     max_dp = 0
