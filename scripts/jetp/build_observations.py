@@ -182,8 +182,83 @@ def index_adjudications(adjudications):
     return indexed
 
 
+def index_citation_decisions(decisions):
+    """Index the event-level source review without losing an unresolved row."""
+    indexed = {}
+    for decision in decisions:
+        key = (decision['legacy_table'], decision['legacy_event_id'])
+        if key in indexed:
+            raise ValueError(f'duplicate citation decision: {key}')
+        if decision['decision'] not in {'accepted', 'pending'}:
+            raise ValueError(f'{key}: unknown citation decision')
+        if decision['decision'] == 'accepted' and not all(
+                decision[field] for field in ('line_id', 'locator', 'source_sha256',
+                                               'source_status')):
+            raise ValueError(f'{key}: incomplete accepted citation')
+        if decision['decision'] == 'pending' and (decision['line_id'] or not decision['reason']):
+            raise ValueError(f'{key}: pending citation needs a reason and no line')
+        indexed[key] = decision
+    return indexed
+
+
+def _pending_event(row, event_id, table, reason, locator=None):
+    return {
+        'legacy_table': table,
+        'legacy_event_id': event_id,
+        'legacy_project_id': row['project_id'],
+        'source_id': row['source_id'],
+        'locator': locator or row['locator'],
+        'reason': reason,
+    }
+
+
+def _target_event(row, event_id, table, dispositions, adjudications, citations, pending):
+    """Choose one event's reviewed line and subject, or record its evidence gap."""
+    citation = citations.get((table, event_id))
+    if citation is not None:
+        if citation['source_id'] != row['source_id']:
+            raise ValueError(f'{event_id}: citation source differs from legacy source')
+        source_value = row.get('amount_original', row.get('capacity_mw', ''))
+        source_status = row.get('financial_status', row.get('implementation_status', ''))
+        if citation['decision'] == 'accepted' and (
+                citation['source_value'] != source_value
+                or citation['source_currency'] != row.get('currency_original', '')
+                or citation['source_status'] != source_status):
+            raise ValueError(f'{event_id}: citation fields differ from legacy assertion')
+        if citation['decision'] == 'pending':
+            pending.append(_pending_event(row, event_id, table,
+                                          f"1160_{citation['reason']}", citation['locator']))
+            return None
+    adjudication = adjudications.get((table, event_id))
+    if adjudication is not None:
+        if (adjudication['legacy_project_id'] != row['project_id']
+                or adjudication['source_id'] != row['source_id']):
+            raise ValueError(f'{event_id}: adjudication does not match legacy row')
+        if adjudication['promotion'] == 'hold':
+            pending.append(_pending_event(
+                row, event_id, table, '0970_physical_state_hold',
+                f"{row['locator']}; line_id={adjudication['line_id']}"))
+            return None
+        return {
+            'disposition': adjudication['referent_kind'],
+            'new_id': adjudication['referent_id'],
+            'line_id': citation['line_id'] if citation else adjudication['line_id'],
+        }
+    disposition = dispositions.get(row['project_id'])
+    if disposition is None:
+        pending.append(_pending_event(row, event_id, table, 'no_0875_disposition'))
+        return None
+    if not disposition['new_id'] or not disposition['line_id']:
+        pending.append(_pending_event(row, event_id, table,
+                                      'no_resolved_subject_and_cited_line'))
+        return None
+    if citation is None:
+        return disposition
+    return {**disposition, 'line_id': citation['line_id']}
+
+
 def normalize_event_tables(events, implementation_events, event_timings, dispositions,
-                           adjudications=()):
+                           adjudications=(), citation_decisions=()):
     """Return the valid v2 event observations, timings, and explicit gaps.
 
     A legacy event can enter v2 only when ticket 0875 resolved both its subject
@@ -194,50 +269,17 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
     """
     disposition_by_old_id = {row['old_id']: row for row in dispositions}
     adjudication_by_event = index_adjudications(adjudications)
+    citation_by_event = index_citation_decisions(citation_decisions)
     timing_by_event = {}
     for row in event_timings:
         timing_by_event.setdefault(row['event_id'], []).append(row)
 
     observations, timings, pending = [], [], []
 
-    def append_pending(row, event_id, table, reason, locator=None):
-        pending.append({
-            'legacy_table': table,
-            'legacy_event_id': event_id,
-            'legacy_project_id': row['project_id'],
-            'source_id': row['source_id'],
-            'locator': locator or row['locator'],
-            'reason': reason,
-        })
-
-    def target(row, event_id, table):
-        adjudication = adjudication_by_event.get((table, event_id))
-        if adjudication is not None:
-            if (adjudication['legacy_project_id'] != row['project_id']
-                    or adjudication['source_id'] != row['source_id']):
-                raise ValueError(f'{event_id}: adjudication does not match legacy row')
-            if adjudication['promotion'] == 'hold':
-                append_pending(
-                    row, event_id, table, '0970_physical_state_hold',
-                    f"{row['locator']}; line_id={adjudication['line_id']}")
-                return None
-            return {
-                'disposition': adjudication['referent_kind'],
-                'new_id': adjudication['referent_id'],
-                'line_id': adjudication['line_id'],
-            }
-        disposition = disposition_by_old_id.get(row['project_id'])
-        if disposition is None:
-            append_pending(row, event_id, table, 'no_0875_disposition')
-            return None
-        if not disposition['new_id'] or not disposition['line_id']:
-            append_pending(row, event_id, table, 'no_resolved_subject_and_cited_line')
-            return None
-        return disposition
-
     for row in events:
         event_id = row['event_id']
-        disposition = target(row, event_id, 'events')
+        disposition = _target_event(row, event_id, 'events', disposition_by_old_id,
+                                    adjudication_by_event, citation_by_event, pending)
         if disposition is None:
             continue
         observation_id = f'observation-{event_id}'
@@ -273,7 +315,9 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
 
     for row in implementation_events:
         event_id = row['implementation_event_id']
-        disposition = target(row, event_id, 'implementation-events')
+        disposition = _target_event(row, event_id, 'implementation-events',
+                                    disposition_by_old_id, adjudication_by_event,
+                                    citation_by_event, pending)
         if disposition is None:
             continue
         observation_id = f'observation-{event_id}'
@@ -346,6 +390,53 @@ def reconcile_timing_rows(event_timings, observations, timings, pending):
     return reconciliation
 
 
+def citation_provenance_errors(events, implementation_events, observations, pending,
+                               decisions, lines, retrievals):
+    """Check each legacy event against an observation or an explicit hold."""
+    source_by_event = {row['event_id']: row['source_id'] for row in events}
+    source_by_event.update({row['implementation_event_id']: row['source_id']
+                            for row in implementation_events})
+    kind_by_event = {row['event_id']: 'events' for row in events}
+    kind_by_event.update({row['implementation_event_id']: 'implementation-events'
+                          for row in implementation_events})
+    line_by_id = {row['line_id']: row for row in lines}
+    source_digests = {}
+    for row in retrievals:
+        if row['sha256']:
+            source_digests.setdefault(row['document_id'], set()).add(row['sha256'])
+    decision_by_event = index_citation_decisions(decisions)
+    accepted = {row['observation_id'].removeprefix('observation-'): row
+                for row in observations}
+    held = {row['legacy_event_id'] for row in pending
+            if row['legacy_table'] != 'event-timing'}
+    errors = []
+    for event_id, source_id in source_by_event.items():
+        if (event_id in accepted) == (event_id in held):
+            errors.append(f'{event_id}: expected exactly one accepted or pending disposition')
+            continue
+        if event_id in held:
+            continue
+        line = line_by_id.get(accepted[event_id]['line_id'])
+        if line is None:
+            errors.append(f'{event_id}: cited line is absent')
+            continue
+        if line['sha256'] not in source_digests.get(source_id, set()):
+            errors.append(f'{event_id}: cited line snapshot is not a retrieval of {source_id}')
+        decision = decision_by_event.get((kind_by_event[event_id], event_id))
+        if decision is not None and (
+                line['sha256'] != decision['source_sha256']
+                or line['locator'] != decision['locator']):
+            errors.append(f'{event_id}: line differs from reviewed source snapshot/locator')
+    for (kind, event_id), decision in decision_by_event.items():
+        if event_id not in source_by_event:
+            errors.append(f'{event_id}: citation decision has no legacy event')
+        elif kind != kind_by_event[event_id]:
+            errors.append(f'{event_id}: citation decision names the wrong legacy table')
+        elif (event_id in accepted) != (decision['decision'] == 'accepted'):
+            errors.append(f'{event_id}: citation decision differs from final disposition')
+    return errors
+
+
 def write_normalized_event_tables(ledger_dir, events, implementation_events, event_timings):
     """Write v2 event tables and their evidence-gap register to ``ledger_dir``."""
     ledger_dir = Path(ledger_dir)
@@ -355,12 +446,25 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
     with (ledger_dir / 'migration' / '0970-event-adjudications.csv').open(
             encoding='utf-8', newline='') as handle:
         adjudications = list(csv.DictReader(handle))
+    with (ledger_dir / 'migration' / '1160-citation-decisions.csv').open(
+            encoding='utf-8', newline='') as handle:
+        citation_decisions = list(csv.DictReader(handle))
     observations, timings, pending = normalize_event_tables(
-        events, implementation_events, event_timings, dispositions, adjudications)
+        events, implementation_events, event_timings, dispositions, adjudications,
+        citation_decisions)
     # A blocked retrieval is an acquisition gap; a collected document with no
     # resolved event line needs line-level review.  Keep those remedies apart.
     with (ledger_dir / 'retrievals.csv').open(encoding='utf-8', newline='') as handle:
         retrievals = list(csv.DictReader(handle))
+    lines = []
+    for path in sorted((ledger_dir / 'lines.d').glob('*.csv')):
+        with path.open(encoding='utf-8', newline='') as handle:
+            lines.extend(csv.DictReader(handle))
+    errors = citation_provenance_errors(
+        events, implementation_events, observations, pending, citation_decisions,
+        lines, retrievals)
+    if errors:
+        raise ValueError('\n'.join(errors))
     retrieved = {}
     for row in retrievals:
         retrieved.setdefault(row['document_id'], []).append(row)
