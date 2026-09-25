@@ -115,9 +115,17 @@ def observations_by_country(tables, registry):
     return {code: country_observations(tables, registry, code) for code in COUNTRIES}
 
 
-def append_event_timings(event_id, observation_id, line_id, source_rows, timings, pending):
+def append_event_timings(event_id, observation_id, line_id, source_rows, timings, pending,
+                         hold_reason=None):
     """Translate supported dates while preserving unmapped source roles."""
     for ordinal, row in enumerate(source_rows, start=1):
+        if hold_reason:
+            pending.append({
+                'legacy_table': 'event-timing', 'legacy_event_id': event_id,
+                'legacy_project_id': '', 'source_id': '', 'locator': '',
+                'reason': hold_reason,
+            })
+            continue
         role = TIMING_ROLES.get(row['date_role'])
         if role is None:
             pending.append({
@@ -166,7 +174,7 @@ def append_event_timings(event_id, observation_id, line_id, source_rows, timings
 
 
 def index_adjudications(adjudications):
-    """Validate and index the event-specific 0970 identity decisions."""
+    """Validate and index event-specific source and identity decisions."""
     indexed = {}
     for adjudication in adjudications:
         key = (adjudication['legacy_table'], adjudication['legacy_event_id'])
@@ -178,6 +186,8 @@ def index_adjudications(adjudications):
             raise ValueError(f'{key}: unsupported referent kind {adjudication["referent_kind"]}')
         if not all(adjudication[field] for field in ('source_id', 'line_id', 'referent_id')):
             raise ValueError(f'{key}: incomplete adjudication target')
+        if adjudication.get('timing_hold_reason') and adjudication['promotion'] != 'accept':
+            raise ValueError(f'{key}: timing hold requires an accepted observation')
         indexed[key] = adjudication
     return indexed
 
@@ -225,6 +235,7 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
                 'disposition': adjudication['referent_kind'],
                 'new_id': adjudication['referent_id'],
                 'line_id': adjudication['line_id'],
+                'timing_hold_reason': adjudication.get('timing_hold_reason') or None,
             }
         disposition = disposition_by_old_id.get(row['project_id'])
         if disposition is None:
@@ -269,7 +280,8 @@ def normalize_event_tables(events, implementation_events, event_timings, disposi
             'notes': f"Legacy event {event_id}; source={row['source_id']}; locator={row['locator']}",
         })
         append_event_timings(event_id, observation_id, disposition['line_id'],
-                             timing_by_event.get(event_id, ()), timings, pending)
+                             timing_by_event.get(event_id, ()), timings, pending,
+                             disposition.get('timing_hold_reason'))
 
     for row in implementation_events:
         event_id = row['implementation_event_id']
@@ -311,6 +323,8 @@ def reconcile_timing_rows(event_timings, observations, timings, pending):
     observed = {row['observation_id'] for row in observations}
     event_gaps = {row['legacy_event_id']: row['reason'] for row in pending
                   if row['legacy_table'] != 'event-timing'}
+    timing_gaps = {row['legacy_event_id']: row['reason'] for row in pending
+                   if row['legacy_table'] == 'event-timing'}
     ordinals = {}
     reconciliation = []
     for source_row, row in enumerate(event_timings, start=2):
@@ -328,6 +342,9 @@ def reconcile_timing_rows(event_timings, observations, timings, pending):
                 approval_id = ''
         elif f'observation-{event_id}' not in observed:
             outcome, reason = 'pending', event_gaps.get(event_id, 'no_observation')
+            approval_id = ''
+        elif event_id in timing_gaps:
+            outcome, reason = 'pending', timing_gaps[event_id]
             approval_id = ''
         elif row['date_role'] not in TIMING_ROLES:
             outcome, reason = 'pending', f"unmapped_date_role_{row['date_role']}"
@@ -355,6 +372,9 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
     with (ledger_dir / 'migration' / '0970-event-adjudications.csv').open(
             encoding='utf-8', newline='') as handle:
         adjudications = list(csv.DictReader(handle))
+    with (ledger_dir / 'migration' / '1120-event-adjudications.csv').open(
+            encoding='utf-8', newline='') as handle:
+        adjudications.extend(csv.DictReader(handle))
     observations, timings, pending = normalize_event_tables(
         events, implementation_events, event_timings, dispositions, adjudications)
     # A blocked retrieval is an acquisition gap; a collected document with no
