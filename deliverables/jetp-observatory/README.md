@@ -205,7 +205,12 @@ no earlier address is kept, and an internal page key is not an address.
 - A Documents page with one row per document, on its best collection attempt
   (the latest collected one, else the latest), with every attempt recorded in
   `data/documents.json` listed under a fold (ticket 1210); status, content type,
-  size and origin URL, and filters and counts that count documents. The archived copies
+  size and origin URL, and filters and counts that count documents. Each row is
+  named by its title, the identifier beneath it (ticket 1290): the title comes
+  from the ledger's documents table, served alone as `data/ledger-documents.json`
+  (`document_id`, `country`, `document_type`, `language`, `title`,
+  `published_date`, `edition_of`) by `scripts/jetp/build_ledger_documents_view.py`
+  and joined by the page on the identifier; the search reads titles too. The archived copies
   themselves are staged locally by `make jetp-observatory-documents` into
   `documents/`, with the index of what was staged. That staging happens once;
   after a `dvc checkout` moves the snapshot to another revision, `make

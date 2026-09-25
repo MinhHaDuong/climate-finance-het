@@ -524,6 +524,16 @@ td a {
 td a:hover {
   text-decoration: underline;
 }
+/* A document named by its title, its identifier beneath it in small type
+ * (ticket 1290): the identifier is what addresses and other pages use. */
+td [data-document-title] {
+  font-weight: 600;
+}
+td [data-document-title] + br + code {
+  color: var(--muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
 td small {
   display: block;
   color: var(--muted);
