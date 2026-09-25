@@ -2,6 +2,9 @@
 Title: Observations et timings
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Blocked-by: 1120
+Blocked-by: 1160
+Blocked-by: 1162
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -20,6 +23,8 @@ Author: HDMX-coding-agent
 2026-09-24T20:24Z Codex note gate : `test_jetp_observations.py` 3 verts, `erg check` vert, `make jetp-ledger-check` vert, `make check-fast` 2324 verts/10 ignorés, `make lint` 339 verts/11 ignorés. La revue Terra du code et de l'extraction de fonction est verte. `make check` complet a terminé 3285 verts/62 ignorés/5 échecs : quatre tests pays échouent sur les tables v2 non classées, reproduits sur main et détaillés en [[0940]] ; le test CRS ne peut démarrer sans le checkout DVC, détaillé en [[0990]]. Les deux blocages sont conservés comme tickets avec critères de sortie, sans déclarer 0876 fini.
 2026-09-25T05:55Z Codex note intégration [[0970]] : les 24 décisions `accept` par événement alimentent 447 observations et 367 timings (365 lignes legacy typées, plus deux timings d'approbation). Trois assertions physiques restent pending avec leur `line_id` 0970 précis ; AfDB reste pending `missing_precise_cited_line` après que [[0926]] a collecté son snapshot ; [[1120]] porte la citation et la décision d’identité restantes. Les 451 lignes legacy de date se réconcilient en 365 timings typés et 86 dispositions. `tests/test_jetp_observations.py` et `test_jetp_0970_event_identities.py` (6 verts), `make jetp-ledger-check` et Ruff ciblé sont verts ; les quatre vues servies sont identiques au SHA-256 avant/après.
 2026-09-25T06:05Z Codex note gates : sur doudou, `make check-fast` 2371 verts/10 ignorés et `make lint` 339 verts/11 ignorés. Le contrôle complet a été exécuté sur padme avec `PYTEST_WORKERS=16`, après `make jetp-data`, `make data` et copie byte-identique du cache local de reranking : 3338 verts/52 ignorés/4 échecs, les quatre IDs et l'erreur `_country_migration.py:87` de [[0940]]. Le test CRS de [[0990]] passe après matérialisation DVC ; aucun nouvel échec n'a été observé.
+2026-09-25T07:19Z Codex note audit du basculement des vues ([[1160]]) : sur 447 observations `accepted`, 120 citent une `line_id` dont le SHA-256 appartient à un autre document que le `source_id` de l'événement legacy (74 IDN, 46 SEN ; 96 financiers, 24 physiques). Le rapprochement exhaustif `observation_id` → événement → `line_id` → `sha256` → `retrievals.document_id` est dans `docs/jetp-0876-citation-mismatches.csv`. Les 327 autres passent le contrôle de source, de pays, de statut et de montant/devise. Le premier exemple est `idn-approved-isle1-canada-2025` : source `idn-jetp-progress-report-2025`, ligne actuelle `idn-world-bank-isle1-technical-assessment-2022-claim-66`. Un adaptateur de vue qui exige la même ligne citée échoue donc sur les données actuelles. Remède : retrouver dans le document legacy une ligne qui porte exactement l'assertion, ou requalifier explicitement l'assertion comme issue de l'autre document ; ne pas valider par simple égalité de projet. Le travail de code de l'adaptateur a été remis de côté jusqu'à cette adjudication. Les vues publiques restent inchangées, PR #1500 reste draft.
+2026-09-25T07:24Z Codex note rates : `rates.csv` est vide, mais `conception/jetp/papier-court-mesure/figure-distribution-decaissement.py:43` calcule encore `2500 * 1.09` sans date, base ni ligne citée ; [[1162]] porte la résolution sourcée ou le retrait de cette conversion. Le critère rates reste ouvert.
 --- body ---
 ## Context
 
@@ -47,6 +52,7 @@ observation est une règle versionnée par type de document.
 - `config/jetp_tracking.yaml` — quatre axes, liste close des mesures, codes objet CRS
 - `deliverables/jetp-observatory/data/observations/<CODE>.json` — vues à comparer
 - `docs/jetp-0876-evidence-gap-audit.md` — vérification des 27 sources archivées et limites des preuves
+- `docs/jetp-0876-citation-mismatches.csv` — 120 lignes v2 dont la citation vient d'un autre document que la source de l'événement
 
 ## Actions
 
