@@ -902,8 +902,13 @@ full-gate-preflight:
 	@# Use host Python: uv itself cannot start while its configured cache is read-only.
 	python3 scripts/qa_full_gate_preflight.py
 
+# Workers for the full suite, per machine: .env may set PYTEST_WORKERS (make
+# does not read .env itself). On padme's 24 cores, 16 ran the suite in 2 min 21 s
+# against 4 min 33 s at 4; 24 was slower, as some tests start their own processes.
+PYTEST_WORKERS ?= $(or $(shell sed -n 's/^\(export \)\{0,1\}PYTEST_WORKERS=//p' .env 2>/dev/null | tail -n 1 | tr -d "\"' \r"),4)
+
 check: full-gate-preflight check-package | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -q --tb=short -n 4
+	$(PYTHON) -m pytest tests/ -q --tb=short -n $(PYTEST_WORKERS)
 
 # Fast inner loop: pure-Python logic only. Deselects slow (network / real data /
 # heavy numerical dep / heavy compute), integration (subprocess / sleep), and
