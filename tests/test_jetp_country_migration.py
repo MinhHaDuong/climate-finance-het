@@ -73,3 +73,25 @@ def test_country_disposition_follows_financial_and_implementation_timing_links(t
     assert len(timing) == 3
     assert len({row['row_id'] for row in timing}) == 3
     assert any(row['row'].get('event_id') == 'foreign' for row in crosswalk['retained'])
+
+
+def test_ontology_v2_rows_are_excluded_from_legacy_country_dispositions(tmp_path):
+    """0878 must migrate this transitional test when it retires legacy readers."""
+    table(tmp_path, 'projects.csv', [dict(project_id='idn-legacy', country='IDN')])
+    for name in ('agreements.csv', 'assets.csv', 'documents.csv', 'parties.csv'):
+        table(tmp_path, name, [dict(country='IDN', project_id='idn-legacy', value=name)])
+
+    crosswalk = migrate_sources(tmp_path)
+    result = legacy_dispositions(crosswalk, 'IDN', {})
+
+    assert {row['path'] for row in result} == {'data/jetp/projects.csv'}
+    assert {row['path'] for row in crosswalk['mappings']} == {
+        'data/jetp/projects.csv',
+        *(f'data/jetp/{name}' for name in
+          ('agreements.csv', 'assets.csv', 'documents.csv', 'parties.csv')),
+    }
+
+    table(tmp_path, 'unexpected-country-input.csv',
+          [dict(country='IDN', project_id='idn-legacy')])
+    with pytest.raises(ValueError, match='Unclassified country input: unexpected-country-input.csv'):
+        legacy_dispositions(migrate_sources(tmp_path), 'IDN', {})

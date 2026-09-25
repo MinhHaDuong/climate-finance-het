@@ -53,6 +53,15 @@ liste les tables de l'ontologie.
 - `tests/test_jetp_no_legacy_readers.py` : aucun fichier de `scripts/jetp/`
   ne nomme une table retirée ; le test échoue sur une fixture qui en
   nomme une.
+- `tests/test_jetp_country_migration.py::test_ontology_v2_rows_are_excluded_from_legacy_country_dispositions`
+  fixe provisoirement la frontière de [[0940]] entre les sidecars pays anciens et
+  les tables v2. Lors du retrait des lecteurs de compatibilité, migrer ou retirer
+  ce test avec `legacy_dispositions` ; ne pas conserver cette exclusion comme
+  contrat permanent du nouveau ledger.
+- Les tests de candidats réels `test_jetp_{idn,sen,vnm}_positions.py` et
+  `test_jetp_zaf_migration.py` épinglent encore les comptes et lecteurs des
+  sidecars anciens. Les migrer vers les tables v2, ou les retirer avec ces
+  sidecars, au lieu de reconduire leurs comptes provisoires.
 
 ## Verification
 
