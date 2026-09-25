@@ -36,6 +36,7 @@ JETP_V2_EVENT_FILES := data/jetp/observations.csv data/jetp/timings.csv data/jet
 JETP_OBSERVATIONS_INPUTS := $(filter data/jetp/%.csv,$(JETP_OBSERVATORY_INPUTS)) \
     data/jetp/migration/0875-dispositions.csv data/jetp/migration/0970-event-adjudications.csv \
     data/jetp/migration/1120-event-adjudications.csv \
+    data/jetp/migration/1160-citation-decisions.csv $(wildcard data/jetp/lines.d/*.csv) \
     scripts/jetp/build_observations.py scripts/jetp/build_observatory.py \
     scripts/jetp/_observatory_data.py scripts/jetp/_m1a_document_links.py
 

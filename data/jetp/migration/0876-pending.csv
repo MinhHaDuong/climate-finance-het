@@ -41,8 +41,13 @@ event-timing,sen-plan-allocation-qw-04,,,,unmapped_date_role_unknown
 event-timing,sen-plan-allocation-qw-08,,,,unmapped_date_role_unknown
 event-timing,sen-plan-allocation-qw-10,,,,unmapped_date_role_unknown
 implementation-events,idn-impl-green-corridors-2025,idn-pipe-green-corridors-sulawesi,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73; line_id=idn-progress25-t4-3-3-gecs,0970_physical_state_hold
+implementation-events,idn-impl-aicet-2025,idn-fin-rbl-aicet,idn-jetp-progress-report-2025,"p.72–73, Table 4.3-3, row aicet",1160_financing_row_does_not_establish_physical_preparation
+implementation-events,idn-impl-hululais-2025,idn-pipe-hululais-1-2,idn-jetp-progress-report-2025,"p.72–73, Table 4.3-3, row hululais",1160_funding_back_on_track_does_not_establish_physical_preparation
+implementation-events,idn-impl-tanah-laut-2025,idn-pipe-tanah-laut-wind,idn-jetp-progress-report-2025,"p.72–73, Table 4.3-3, row tanah-laut",1160_signed_ppa_does_not_establish_physical_preparation
+implementation-events,idn-impl-eib-framework-2025,idn-pipe-eib-sustainable-infrastructure,idn-jetp-progress-report-2025,"p.72–73, Table 4.3-3, row eib-framework",1160_framework_mou_does_not_establish_physical_project
 implementation-events,idn-impl-dieng34-2025,idn-pipe-dieng-3-4,idn-jetp-progress-report-2025,Table 4.3-3 pp.72-73; line_id=idn-progress25-t4-3-3-dieng34,0970_physical_state_hold
 implementation-events,idn-impl-nagajaya-portal-2026,idn-pipe-nagajaya-micro-hydro,idn-portfolio-project-nagajaya,General Information description; line_id=idn-portfolio-project-nagajaya-claim-79,0970_physical_state_hold
+implementation-events,idn-impl-cirebon-suspended-2025,idn-pipe-cirebon-1-retirement,idn-news-cirebon-retirement-reuters-2025,Ministerial statement,1160_source_snapshot_unavailable
 event-timing,sen-project-qw-02-proposed-2025-04-02,,,,unmapped_date_role_unknown
 event-timing,sen-project-qw-03-proposed-2025-04-02,,,,unmapped_date_role_unknown
 event-timing,sen-project-annex-16-procurement-2026-09-09,,,,unmapped_date_role_ambiguous
