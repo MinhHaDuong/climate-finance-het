@@ -21,6 +21,7 @@ NON_SECRET_NAMES = frozenset(
         "CLIMATE_FINANCE_DATA",
         "AGENT_GIT_NAME",
         "AGENT_GIT_EMAIL",
+        "PYTEST_WORKERS",
     }
 )
 
