@@ -51,7 +51,34 @@ def test_preflight_reports_missing_corpus_and_unwritable_configured_cache(tmp_pa
     assert "make data" in result.stderr
     assert "dvc checkout" in result.stderr
     assert "ticket 0592" in result.stderr
+    assert "found 0 of 80" in result.stderr
+    assert "make jetp-crs-data" in result.stderr
     assert "writable" in result.stderr.lower()
     assert "UV_CACHE_DIR" in result.stderr
     assert "`make corpus`" not in result.stderr
     assert "harvest" not in result.stderr.lower()
+
+
+@pytest.mark.parametrize("file_count,crs_warning", [(79, True), (80, False)])
+def test_preflight_checks_complete_pinned_crs_set(tmp_path, file_count, crs_warning):
+    crs_dir = tmp_path / "jetp" / "crs"
+    crs_dir.mkdir(parents=True)
+    for index in range(file_count):
+        (crs_dir / f"{index:02d}_micro.csv.gz").touch()
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(PREFLIGHT),
+            "--data-dir", str(tmp_path),
+            "--uv-cache-dir", str(tmp_path / "uv-cache"),
+            "--skip-local-socket-check",
+            "--skip-git-check",
+        ],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1  # Other full-gate inputs are deliberately absent.
+    assert ("make jetp-crs-data" in result.stderr) is crs_warning

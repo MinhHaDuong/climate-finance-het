@@ -16,6 +16,7 @@ REQUIRED_CORPUS_ARTIFACTS = (
     "catalogs/refined_embeddings.npz", "catalogs/refined_citations.csv",
 )
 RERANKER_CACHE = "catalogs/llm_relevance_cache.csv"
+EXPECTED_CRS_MICRO_FILES = 80
 
 
 def _default_cache_dir() -> Path:
@@ -71,6 +72,15 @@ def check(args: argparse.Namespace) -> list[str]:
             "Reranker cache is absent: llm_relevance_cache.csv. It is required "
             "by the existing acceptance check but is not a DVC artifact; its "
             "source ownership and recovery route are tracked by ticket 0592."
+        )
+    crs_dir = args.data_dir / "jetp/crs"
+    crs_files = list(crs_dir.glob("*_micro.csv.gz")) if crs_dir.is_dir() else []
+    if len(crs_files) != EXPECTED_CRS_MICRO_FILES:
+        failures.append(
+            f"Pinned JETP CRS inputs are incomplete: found {len(crs_files)} of "
+            f"{EXPECTED_CRS_MICRO_FILES} *_micro.csv.gz files in {crs_dir}. "
+            "Run `make jetp-crs-data` to pull the archived DVC inputs before "
+            "the full gate."
         )
     if not _is_writable_directory(args.uv_cache_dir):
         failures.append(
