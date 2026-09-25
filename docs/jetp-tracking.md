@@ -218,6 +218,29 @@ searches before DVC capture. Extraction and reconciliation run only on source
 rows accepted for evidence. A later refresh appends events and observations;
 it never rewrites prior states to make the latest value look timeless.
 
+Sources that refuse the collector (`blocked`) but open in the author's browser
+are retried at two further rungs (ticket 0926), always within the author's own
+access and never past a paywall or a login the author does not have:
+
+1. `make jetp-harvest-blocked` retries every source whose latest attempt was
+   `blocked`, sending the author's Firefox cookies for those hosts only (a
+   copy of `cookies.sqlite`; `cf_clearance` carries a Cloudflare clearance)
+   with the matching Firefox User-Agent, 2.5 s apart. No cookie value is
+   logged.
+2. What still resists, the author opens and saves in Firefox. `make
+   jetp-collect-downloads` scans the download directory (`xdg-user-dir
+   DOWNLOAD`), reads in `places.sqlite` the address each file came from, and
+   records a file only when that address is the registered or recorded URL of
+   a source not yet collected. Any other file is reported and left alone; the
+   download directory is never modified.
+
+Every manifest row says how it was sought in `collection_method`: `script`,
+`browser-session` or `browser-manual` (the ledger's `retrievals` adds
+`local-record` for research records written in the repository). Both targets,
+like `make jetp-harvest`, then refresh `retrievals` and `snapshots` from the
+manifest. Bytes collected on doudou reach padme before `make
+jetp-documents-track`, since DVC objects are pushed from padme only.
+
 The [13 September scout trial](jetp-senegal-scout-trial-2026-09-13.md) covers all 24 previously unresolved identities and corroborates one PUELEC component; 23 direct-source identities remain unresolved.
 
 The later [managed rounds](jetp-senegal-managed-rounds-2026-09-13.md) refine

@@ -41,7 +41,7 @@ def _valid_tables():
                        'size_bytes': '10'}],
         'retrievals': [{'retrieval_id': 'ret-1', 'document_id': 'doc-1',
                         'retrieved_at': '2026-09-23T10:00Z', 'status': 'collected',
-                        'sha256': SHA_A}],
+                        'sha256': SHA_A, 'collection_method': 'script'}],
         'lines': [
             {'line_id': 'doc-1-t1-2', 'country': 'ZAF', 'sha256': SHA_A,
              'locator': 'p1 r2', 'ordinal': '2', 'classification': 'named_item',

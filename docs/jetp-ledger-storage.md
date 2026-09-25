@@ -31,7 +31,7 @@ error; a missing first or numbered shard also fails validation.
 | `party-names` | `name_row_id` | party_id, name, form_type, language, document_id, line_id, recorded_at, decided_by, status, supersedes, notes |
 | `documents` | `document_id` | country, document_type, language, title, url, published_date, edition_of, active, notes |
 | `document-publishers` | (document_id, party_id) | role, name_row_id (the form of the party's name this document prints) |
-| `retrievals` | `retrieval_id` | document_id, retrieved_at, status, http_status, content_type, etag, last_modified, final_url, error, sha256 (nullable) |
+| `retrievals` | `retrieval_id` | document_id, retrieved_at, status, http_status, content_type, etag, last_modified, final_url, error, sha256 (nullable), collection_method (script, browser-session, browser-manual or local-record) |
 | `snapshots` | `sha256` | storage_path, size_bytes, content_type |
 | `lines` | `line_id` | country, sha256, locator, ordinal, label, classification, own_status, own_status_axis, own_sector, groups, recorded_at, notes |
 | `line-fields/<document_id>` | `line_id` | the document's own columns, verbatim, header as printed |

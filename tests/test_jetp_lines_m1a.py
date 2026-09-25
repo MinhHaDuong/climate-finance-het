@@ -116,7 +116,7 @@ def _build(ledger_dir, lines):
         'snapshots': [{'sha256': SHA, 'storage_path': 'store/a', 'size_bytes': '10'}],
         'retrievals': [{'retrieval_id': 'doc-1:1', 'document_id': 'doc-1',
                         'retrieved_at': '2026-09-23T10:00Z', 'status': 'collected',
-                        'sha256': SHA}],
+                        'sha256': SHA, 'collection_method': 'script'}],
         'lines': lines,
     }
     schema = ledger_headers.load_schema()

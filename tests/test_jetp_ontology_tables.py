@@ -85,7 +85,7 @@ def _fixture_tables():
         'snapshots': [{'sha256': SHA_A, 'storage_path': 'store/a'}],
         'retrievals': [{'retrieval_id': 'ret-1', 'document_id': 'doc-1',
                         'retrieved_at': '2026-02-01', 'status': 'collected',
-                        'sha256': SHA_A}],
+                        'sha256': SHA_A, 'collection_method': 'script'}],
         'lines': [{'line_id': 'doc-1-t1-1', 'country': 'ZAF', 'sha256': SHA_A,
                    'locator': 'p1 r1', 'ordinal': '1', 'classification': 'named_item',
                    'recorded_at': '2026-02-01'}],

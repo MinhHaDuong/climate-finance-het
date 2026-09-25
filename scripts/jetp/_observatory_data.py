@@ -93,6 +93,7 @@ def document_entry(row, available):
         'sha256': row.get('sha256') or None,
         'url': row.get('final_url') or None,
         'error': row.get('error') or None,
+        'collection_method': row.get('collection_method') or None,
         'local_path': (f'documents/{storage_path}'
                        if storage_path and storage_path in available else None),
     }

@@ -3329,7 +3329,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "provisional",
-    "sha256": null,
+    "sha256": "ed60da9ddd628495bef83a65ff280db4db96659168b83b56702cfee6528aa8c7",
     "pdf_page": null
   },
   {
@@ -4184,7 +4184,7 @@
     "table": "project-source-links",
     "kind": "project_source_link",
     "verification": "provisional",
-    "sha256": null,
+    "sha256": "adfd03e13b9bd2d3034ee4ac54e227bcce7b50ebc9e3d76177efc4a64b56a96b",
     "pdf_page": null
   },
   {
