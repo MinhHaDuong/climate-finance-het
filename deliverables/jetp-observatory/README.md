@@ -41,10 +41,11 @@ is one `app.js`, one set of served views and no build flag (ticket 0915).
 Publisher pages rot (ticket 0925). Beside each "Publisher's page" link the
 pages show "Web Archive copy — <date>", a copy held by the Internet Archive,
 where one is recorded. For a PDF the copy opens as the archived bytes
-themselves (Wayback's `id_` form, at the same `#page=N`), and the page says
-our SHA-256 lets a reader check it is the same file; for a web page it opens
-in the Wayback replay, and the page says the capture is not byte-identical to
-what we read. When the periodic check finds a publisher link dead, the pages say "publisher link dead (<status>) since <date>" and put the
+themselves (Wayback's `id_` form, at the same `#page=N`); for a web page it
+opens in the Wayback replay. What our SHA-256 lets a reader check, and why a
+replayed web page never matches it, is said once on the Methods page, not
+beside each copy (ticket 1210). When the periodic check finds a publisher link
+dead, the pages say "publisher link dead (<status>) since <date>" and put the
 Web Archive copy first. The date is the earliest evidence: the check's own
 `dead_since`, or our first retrieval of that address that got a 404 or 410
 after its last successful one, whichever is earlier; a link the check found

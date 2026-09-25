@@ -250,10 +250,10 @@ def check_documents(page, url, staged):
 
 def check_web_archive(page, url):
     """Ticket 0925: each document's Web Archive copy sits beside its publisher's
-    page, dated, with the identity note its type allows; a publisher link the
-    periodic check found dead says since when — the earliest evidence, ticket
-    1210 — and comes second. The publisher's address is never rewritten. Both
-    tables are served views joined on the address."""
+    page, dated; a publisher link the periodic check found dead says since when
+    — the earliest evidence, ticket 1210 — and comes second. No row carries an
+    identity note (ticket 1210). The publisher's address is never rewritten.
+    Both tables are served views joined on the address."""
     documents = page.request.get(url + '/data/documents.json').json()['documents']
     registry = list(best_attempts(documents)[0].values())
     captures = {c['url']: c for c in page.request.get(url + '/data/web-archive.json').json()['captures']
@@ -287,8 +287,8 @@ def check_web_archive(page, url):
                 expected = expected.replace(f'/web/{stamp}/', f'/web/{stamp}id_/', 1)
             assert copy.get_attribute('href').split('#')[0] == expected, row['row_key']
             assert 'Web Archive copy — ' in copy.inner_text(), row['row_key']
-            note = cell.locator('[data-identity]').get_attribute('data-identity')
-            assert note == ('pdf' if pdf else 'html'), row['row_key']
+            assert cell.locator('[data-identity]').count() == 0, row['row_key']
+            assert 'byte-identical' not in cell.inner_text(), row['row_key']
         if row in dead:
             assert 'publisher link dead' in cell.inner_text(), row['row_key']
             since = cell.locator('[data-dead-since]').first.get_attribute('data-dead-since')

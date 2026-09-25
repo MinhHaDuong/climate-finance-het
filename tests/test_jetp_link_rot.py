@@ -513,7 +513,7 @@ def test_positive_control_reaches_the_documents_page(dead_site) -> None:
     rendered = render("documents", {"documents-search": RMP}, site=site)
     html = rendered["main"] + "".join(e["innerHTML"] for e in rendered["elements"].values())
     assert 'data-dead-since="2026-10-01"' in html
-    assert 'data-identity="pdf"' in html
+    assert 'data-link="web-archive"' in html and "data-identity" not in html
 
 
 def test_positive_control_an_earlier_404_of_ours_dates_the_dead_link(dead_site) -> None:
@@ -536,7 +536,7 @@ def test_positive_control_an_earlier_404_of_ours_dates_the_dead_link(dead_site) 
     assert "publisher link dead (404) since 20 Sept 2026" in html
 
 
-def test_the_shipped_site_shows_both_links_and_the_identity_note_by_type() -> None:
+def test_the_shipped_site_shows_both_links_and_no_identity_note() -> None:
     captures = {c["url"]: c for c in json.loads(
         (SITE / "data/web-archive.json").read_text())["captures"]
         if c["outcome"] in ("captured", "reused")}
@@ -549,9 +549,10 @@ def test_the_shipped_site_shows_both_links_and_the_identity_note_by_type() -> No
     for url, html, note in rendered:
         kinds = re.findall(r'data-link="([a-z-]+)"', html)
         if url not in captures:
-            assert kinds == ["publisher"] and "data-identity" not in note, url
+            assert kinds == ["publisher"], url
             continue
         shown += 1
         assert sorted(kinds) == ["publisher", "web-archive"], url
-        assert re.search(r'data-identity="(pdf|html)"', note), url
+        # Ticket 1210: the identity note is said once, on the Methods page.
+        assert "data-identity" not in note and "byte-identical" not in note, url
     assert shown > 0

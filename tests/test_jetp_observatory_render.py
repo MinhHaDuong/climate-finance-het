@@ -376,6 +376,21 @@ def test_dead_since_is_the_earliest_evidence_and_unreachable_is_never_dead() -> 
     }
 
 
+def test_no_row_carries_a_byte_identity_note_and_methods_explains_the_fingerprint() -> None:
+    # Author's decision, 2026-09-25: the per-row notes were a recurring false
+    # alarm. Said once, on the Methods page.
+    rendered = render("documents", {}, "documentsData.documents.map((r) => sourceLinks(r, null, ''))")
+    html = "".join(rendered["eval"]) + json.dumps(rendered["elements"])
+    assert "web-archive" in html, "no Web Archive copy rendered; the check would pass vacuously"
+    for phrase in ("data-identity", "byte-identical", "compare the SHA-256",
+                   "Our SHA-256 lets you check", "No fingerprint is recorded"):
+        assert phrase not in html, phrase
+    methods = unescape(render("methods")["main"])
+    section = re.search(r'<section data-method="fingerprints">(.*?)</section>', methods, re.DOTALL)
+    assert section, "the Methods page has no fingerprint section"
+    assert "SHA-256" in section.group(1) and "Web Archive" in section.group(1)
+
+
 def test_a_document_with_one_product_gets_one_fold_out() -> None:
     linked = climb(RMP, "VNM")
     assert linked["m1a"] and not linked["ledger"]
@@ -1349,9 +1364,10 @@ def test_an_unfingerprinted_row_reaches_the_publisher_but_no_other_attempts_byte
         (rmp["url"] + "#page=156", f"Publisher's page — {rmp['url'].split('/')[2]} ↗")], html
     assert "data-sha256" not in html and 'data-link="archived"' not in html
     # Ticket 0925: the Web Archive copy is a copy of the address, so it is
-    # shown; with no fingerprint pinned, it claims no SHA-256 check.
+    # shown; with no fingerprint pinned, it claims no SHA-256 check (and since
+    # ticket 1210 no row carries an identity note at all).
     if web_copy(rmp, 156):
-        assert 'data-identity="pdf-unpinned"' in html and "Our SHA-256" not in html, html
+        assert 'data-link="web-archive"' in html and "SHA-256" not in html, html
 
 
 def test_the_documents_page_says_how_each_copy_was_sought() -> None:
