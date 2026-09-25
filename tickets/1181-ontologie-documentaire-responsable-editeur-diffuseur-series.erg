@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Ontologie documentaire : responsable, éditeur, diffuseur ; séries et numéros
+Created: 2026-09-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
+
+--- body ---
+## Context
+
+Le registre `data/jetp/sources.csv` n'a qu'une colonne `publisher`, et le
+collecteur raisonne par hôte. Or l'hôte n'est souvent ni l'auteur ni
+l'éditeur : `drive.usercontent.google.com` (7 sources) et
+`data.commoncrawl.org` hébergent des documents d'autres ; le bucket
+`cff-prod.s3.amazonaws.com` sert la C40 Cities Finance Facility ;
+`afd.dgmarket.com` est le prestataire de passation de l'AFD. L'auteur
+demande que l'ontologie distingue clairement **responsable** (qui répond du
+contenu), **éditeur** (qui publie) et **diffuseur** (qui sert les octets) :
+« on reste dans les considérants de gestion documentaire de base ».
+
+Les publications périodiques (rapports annuels, trimestriels, rapports
+d'avancement du secrétariat JETP) forment une **série** : un éditeur, un motif,
+une périodicité ; chaque **numéro** est un document figé une fois publié, un
+corrigendum en fait une nouvelle version.
+
+## Actions
+
+1. Les trois rôles entrent dans le schéma du registre des sources et dans
+   l'ontologie (`config/jetp-ledger.sql`, vues servies), en forme normale :
+   une table par entité, jointures à la lecture.
+2. Les séries et leurs numéros entrent dans l'ontologie, avec la périodicité
+   attendue.
+3. Les 301 sources existantes reçoivent leurs rôles ; les cas où diffuseur et
+   éditeur diffèrent sont vérifiés à la main.
+
+## Exit criteria
+
+- [ ] Chaque source active a un responsable, un éditeur et un diffuseur ; le diffuseur se déduit de l'hôte, les deux autres sont renseignés
+- [ ] Les sources servies par un tiers (Google Drive, Common Crawl, S3, dgMarket) ont un diffuseur distinct de leur éditeur, test à l'appui
+- [ ] Au moins une série réelle (numéros publiés, périodicité) est enregistrée et relue
+- [ ] Le site public affiche éditeur et diffuseur quand ils diffèrent
+- [ ] `make check-fast` et `make lint` verts

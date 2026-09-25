@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Fichiers de site : mémoire du scraping par diffuseur
+Created: 2026-09-25
+Author: HDMX-coding-agent
+Blocked-by: 1181
+
+--- log ---
+2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
+
+--- body ---
+## Context
+
+« Le système a besoin d'une mémoire dédiée au scraping. Chaque bailleur a ses
+pratiques et sa façon de le présenter sur son site » (l'auteur, 2026-09-25).
+Au 2026-09-25 : 301 sources sur 100 hôtes, dont 64 à source unique ; en tête
+portfolio.jetp.id (48), justenergytransition.co.za (34), jetp.moit.gov.vn
+(20), aner.sn (15), adb.org (9).
+
+## Actions
+
+1. Un fichier par diffuseur, `config/jetp-sites/<site>.md`, créé **dès trois
+   documents** ou au premier fait à retenir (blocage, certificat, liens à
+   suivre, document vivant). En-tête YAML lu par le collecteur : hôtes,
+   échelon de collecte de départ, délai, politique TLS, motifs de liens à
+   suivre, classe et fréquence de recollecte, document témoin, position du
+   site (robots.txt, conditions d'usage, politique d'accès). Corps en prose :
+   anatomie du site, ce qui vaut preuve et ce qu'on ignore, pièges, journal
+   daté en ajout seulement.
+2. Un test valide les en-têtes (champs connus, valeurs admises) : ces
+   fichiers ne doivent pas s'accréter comme les noms de méthodes l'ont fait.
+3. L'index est généré (`make jetp-sites`) : par hôte, nombre de documents,
+   dernier résultat ; il signale sans bloquer les hôtes en échec répété sans
+   fichier et les fichiers sans source active.
+4. Premier fichier : `adb.org`, à partir des constats de 2026-09-25 (onglets
+   Overview / Project Data Sheet / Documents ; accords sous
+   `/projects/documents/*-lna*`, `*-ga*`, `*-grj*` ; RRP `*-rrp` ; fiche
+   exportable en PDF, datée « Last PDS Update » ; variante `/id/` en
+   indonésien à dédoublonner ; Cloudflare).
+5. Le skill `jetp-research` renvoie au fichier du site avant toute collecte
+   chez un hôte, et demande de le compléter après.
+
+## Exit criteria
+
+- [ ] Le collecteur lit l'en-tête du site de chaque source ; une source sans fichier suit le profil par défaut
+- [ ] Contrôle positif : pour `adb.org`, le document témoin est retrouvé par les motifs ; motifs volontairement cassés, le run le signale au lieu de conclure « rien de nouveau »
+- [ ] Un changement de robots.txt ou des conditions d'usage est signalé dans le rapport de run, jamais passé sous silence
+- [ ] Tout diffuseur ayant au moins trois documents a son fichier
+- [ ] `make check-fast` et `make lint` verts

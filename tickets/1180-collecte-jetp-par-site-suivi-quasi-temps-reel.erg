@@ -1,0 +1,52 @@
+%erg 0.1
+Title: Collecte JETP par site et suivi en quasi temps réel (suivi)
+Created: 2026-09-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-25T09:00Z HDMX-coding-agent created Suivi des décisions de l'auteur (session interactive du 2026-09-25), après [[0926]] et [[1010]].
+
+--- body ---
+## Context
+
+[[0926]] a montré que chaque bailleur publie à sa façon : ADB derrière
+Cloudflare, avec des fiches projet (Project Data Sheet) mises à jour au fil
+des décaissements et des accords publiés sous des pages intermédiaires ;
+itie.sn et aser.sn en échec de certificat ; dgMarket derrière une connexion.
+Le système a besoin d'une mémoire du scraping par site, et d'un suivi
+périodique des documents qui évoluent. L'enjeu (M2, M3, AEDIST) est de suivre
+en quasi temps réel : les canaux structurés (CRS, IATI) arrivent avec un à
+trois ans de retard.
+
+## Décisions de l'auteur (2026-09-25)
+
+- Une mémoire par site, versionnée dans le dépôt, lue par les agents et par
+  le collecteur ; pas de règle `.claude/rules` (le scoping par `paths:` ne
+  distingue pas les sites) ni de mémoire Claude (locale à une machine).
+- L'ontologie distingue responsable, éditeur et diffuseur : « on reste dans
+  les considérants de gestion documentaire de base ».
+- Un fichier de site dès trois documents.
+- Trois classes de documents : figés, vivants, séries (rapports annuels,
+  trimestriels…).
+- La collecte tourne sur padme ; doudou supervise, vérifie, et diffère quand
+  SSH ne répond pas. L'auteur lève les vérifications ou connexions par un écran
+  de padme déporté sur doudou.
+- Conditions d'usage des sites : sujet délicat ; toujours signaler, ne jamais
+  échouer en silence.
+- Méthodes de collecte : `script`, `script-cookies`, `browser-automated`,
+  `browser-manual`, `archive-record`, `local-record`.
+- La source primaire la plus proche de l'événement prime ; le retard des
+  canaux structurés est à mesurer, pas à supposer.
+
+## Enfants
+
+- [[1181]] Ontologie documentaire : responsable, éditeur, diffuseur ; séries et numéros
+- [[1182]] Fichiers de site : mémoire du scraping par diffuseur
+- [[1183]] Navigateur piloté sur padme, méthodes de collecte renommées, pilote ADB
+- [[1184]] Suivi périodique sur padme : documents vivants et séries
+- [[1185]] Mesurer le retard des canaux structurés sur la source primaire
+
+## Exit criteria
+
+- [ ] Les cinq enfants sont fermés
+- [ ] Revue d'intégration faite (`/roar` étape 8) : un document vivant ADB est recollecté par le suivi périodique sur padme, son site décrit par son fichier, sa méthode affichée sur le site public
