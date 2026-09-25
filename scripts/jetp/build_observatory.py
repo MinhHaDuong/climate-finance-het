@@ -216,6 +216,7 @@ def retrieval_registry(ledger_dir):
             'size_bytes': snapshot.get('size_bytes', ''),
             'storage_path': snapshot.get('storage_path', ''),
             'final_url': r['final_url'], 'error': r['error'],
+            'collection_method': r['collection_method'],
         })
     return registry
 

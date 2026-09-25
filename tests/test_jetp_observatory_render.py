@@ -80,6 +80,18 @@ def entry_of(row_key):
     return next(d for d in registry() if d["row_key"] == row_key)
 
 
+def web_copy(entry, page, label="Web Archive copy"):
+    """The Web Archive anchor the page draws beside a PDF's publisher link, as
+    (href, text), from the served capture table (ticket 0925); [] where none."""
+    capture = next((c for c in served("web-archive")["captures"]
+                    if c["url"] == entry["url"] and c["outcome"] in ("captured", "reused")), None)
+    if capture is None:
+        return []
+    stamp = re.search(r"/web/([0-9]{14})/", capture["capture_url"]).group(1)
+    href = capture["capture_url"].replace(f"/web/{stamp}/", f"/web/{stamp}id_/", 1)
+    return [(href + (f"#page={page}" if page else ""), label + " ↗")]
+
+
 def every_copy():
     """The local preview with every archived copy the registry names staged."""
     return {d["local_path"] for d in registry() if d["local_path"]}
@@ -307,6 +319,7 @@ def test_the_rmp_opens_at_its_first_extracted_page_and_each_position_at_its_own(
     assert anchors(items[21]) == [
         ("#document-rows/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
         (rmp["url"] + "#page=156", "publisher's page ↗"),
+        *web_copy(rmp, 156),
         (rmp["local_path"] + "#page=156", "archived copy ↗"),
     ], anchors(items[21])
 
@@ -326,6 +339,7 @@ def test_the_public_site_links_the_rmp_to_its_publisher_at_the_same_pages() -> N
     assert anchors(items[21]) == [
         ("#document-rows/VNM?row=22", "vnm-rmp-2023:annex-I.1:022"),
         (rmp["url"] + "#page=156", "publisher's page ↗"),
+        *web_copy(rmp, 156),
     ], anchors(items[21])
     # The fingerprint of the bytes read stays on the row.
     assert f'data-sha256="{rmp["sha256"]}"' in row
@@ -1173,6 +1187,28 @@ def test_an_unfingerprinted_row_reaches_the_publisher_but_no_other_attempts_byte
     html = render("documents", {}, f"observationEvidence({json.dumps(row)})",
                   staged=every_copy())["eval"]
 
-    assert [(unescape(h), t) for h, t in anchors(html)] == [
+    publisher = [(unescape(h), t) for h, t in anchors(html) if "web.archive.org" not in h]
+    assert publisher == [
         (rmp["url"] + "#page=156", f"Publisher's page — {rmp['url'].split('/')[2]} ↗")], html
     assert "data-sha256" not in html and 'data-link="archived"' not in html
+    # Ticket 0925: the Web Archive copy is a copy of the address, so it is
+    # shown; with no fingerprint pinned, it claims no SHA-256 check.
+    if web_copy(rmp, 156):
+        assert 'data-identity="pdf-unpinned"' in html and "Our SHA-256" not in html, html
+
+
+def test_the_documents_page_says_how_each_copy_was_sought() -> None:
+    # Ticket 0926: the registry's collection_method reaches the page, in words,
+    # for a copy taken through the author's browser session and for one taken
+    # by the collector under its own name; and it is a facet of the table.
+    session = next(d for d in registry() if d["collection_method"] == "browser-session"
+                   and d["status"] == "collected")
+    script = next(d for d in registry() if d["collection_method"] == "script"
+                  and d["status"] == "collected")
+    for entry, words in ((session, "through the author's browser session"),
+                         (script, "by the collector")):
+        page = render("documents", {"documents-search": entry["id"]})["elements"]
+        html = page["documents-results"]["innerHTML"]
+        assert f'data-collection-method="{entry["collection_method"]}"' in html, entry["id"]
+        assert words in unescape(html), entry["id"]
+    assert "All collection methods" in json.dumps(render("documents")["elements"])

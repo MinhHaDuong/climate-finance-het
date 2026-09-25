@@ -39,9 +39,12 @@ def _rows(directory, table):
 def test_rebuild_counts_pending_and_repeat_bytes(tmp_path):
     ledger = _fixture(tmp_path)
     counts, pending, candidates = rebuild(ledger, write=True)
+    # Ticket 0926 collected blocked sources through the author's browser
+    # session: two more claims and two more discoveries now cite archived
+    # bytes, and seven records leave the pending list (146/35/55 before).
     assert dict(counts) == {'pilot_manifest': 66, 'pilot_observation': 46,
-                            'portfolio': 46, 'claim': 146, 'discovery': 35}
-    assert len(pending) == 55
+                            'portfolio': 46, 'claim': 148, 'discovery': 37}
+    assert len(pending) == 48
     assert len(candidates) == 304
     paths = sorted((ledger / 'lines.d').glob('*.csv'))
     paths += sorted((ledger / 'migration').glob('*.csv'))

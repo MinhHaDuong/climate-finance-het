@@ -41,7 +41,7 @@ def _valid_tables():
                        'size_bytes': '10'}],
         'retrievals': [{'retrieval_id': 'ret-1', 'document_id': 'doc-1',
                         'retrieved_at': '2026-09-23T10:00Z', 'status': 'collected',
-                        'sha256': SHA_A}],
+                        'sha256': SHA_A, 'collection_method': 'script'}],
         'lines': [
             {'line_id': 'doc-1-t1-2', 'country': 'ZAF', 'sha256': SHA_A,
              'locator': 'p1 r2', 'ordinal': '2', 'classification': 'named_item',
@@ -261,8 +261,14 @@ def test_oversized_table_is_chunked_and_reunited(tmp_path):
     _write(whole, tables)
     lines = tables.pop('lines')
     _write(chunked, tables)
-    written = ledger_headers.write_table(chunked, 'lines', lines, ceiling=200)
-    assert sorted(p.name for p in written) == ['VNM-2025.csv', 'ZAF-2026.csv']
+    written = ledger_headers.write_table(chunked, 'lines', lines, ceiling=250)
+    assert sorted(p.name for p in written) == [
+        'VNM-2025.csv', 'ZAF-2026-02.csv', 'ZAF-2026.csv']
+    assert all(p.stat().st_size <= 250 for p in written)
+    files, errors = ledger_headers.table_files(chunked, 'lines')
+    assert errors == []
+    assert [p.name for p, _, _ in files] == [
+        'VNM-2025.csv', 'ZAF-2026.csv', 'ZAF-2026-02.csv']
     assert not ledger_headers.table_path(chunked, 'lines').exists()
 
     assert ledger_build.build(whole, tmp_path / 'whole.sqlite') == []
@@ -280,7 +286,7 @@ def test_chunk_country_must_match_its_file(tmp_path):
     tables = _valid_tables()
     lines = tables.pop('lines')
     _write(tmp_path, tables)
-    ledger_headers.write_table(tmp_path, 'lines', lines, ceiling=1)
+    ledger_headers.write_table(tmp_path, 'lines', lines, ceiling=250)
     chunk = tmp_path / 'lines.d' / 'ZAF-2026.csv'
     chunk.rename(tmp_path / 'lines.d' / 'IDN-2026.csv')
     errors = ledger_build.build(tmp_path, None)
@@ -291,7 +297,7 @@ def test_a_table_shrinking_under_the_ceiling_removes_only_its_own_chunks(tmp_pat
     tables = _valid_tables()
     lines = tables.pop('lines')
     _write(tmp_path, tables)
-    ledger_headers.write_table(tmp_path, 'lines', lines, ceiling=1)
+    ledger_headers.write_table(tmp_path, 'lines', lines, ceiling=250)
     directory = ledger_headers.chunk_dir(tmp_path, 'lines')
     assert directory == tmp_path / 'lines.d'
     keep = directory / 'README.txt'
@@ -302,6 +308,48 @@ def test_a_table_shrinking_under_the_ceiling_removes_only_its_own_chunks(tmp_pat
     keep.unlink()
     ledger_headers.write_table(tmp_path, 'lines', lines)
     assert not directory.exists()
+
+
+def test_one_row_too_large_for_a_shard_is_refused_before_writing(tmp_path):
+    with pytest.raises(ValueError, match='one ledger row exceeds'):
+        ledger_headers.write_table(tmp_path, 'lines', _valid_tables()['lines'], ceiling=200)
+    assert not ledger_headers.table_path(tmp_path, 'lines').exists()
+    assert not ledger_headers.chunk_dir(tmp_path, 'lines').exists()
+
+
+def test_missing_same_year_shard_is_named_in_layout_errors(tmp_path):
+    ledger_headers.write_table(tmp_path, 'lines', _valid_tables()['lines'], ceiling=250)
+    directory = ledger_headers.chunk_dir(tmp_path, 'lines')
+    (directory / 'ZAF-2026.csv').rename(directory / 'ZAF-2026-03.csv')
+    _, errors = ledger_headers.table_files(tmp_path, 'lines')
+    assert any('contiguous' in error and 'ZAF-2026' in error for error in errors)
+
+
+def test_failed_shard_publish_restores_old_files(tmp_path, monkeypatch):
+    rows = _valid_tables()['lines']
+    ledger_headers.write_table(tmp_path, 'lines', rows, ceiling=250)
+    directory = ledger_headers.chunk_dir(tmp_path, 'lines')
+    before = _store_listing(directory)
+    original_rename = Path.rename
+
+    def fail_new_directory(path, target):
+        if path.name == 'new-chunks':
+            raise OSError('injected publication failure')
+        return original_rename(path, target)
+
+    monkeypatch.setattr(Path, 'rename', fail_new_directory)
+    with pytest.raises(OSError, match='injected publication failure'):
+        ledger_headers.write_table(tmp_path, 'lines', rows, ceiling=250)
+    assert _store_listing(directory) == before
+    assert not directory.with_suffix('.d.pending').exists()
+
+
+def test_interrupted_publication_marker_is_a_layout_error(tmp_path):
+    ledger_headers.write_table(tmp_path, 'lines', _valid_tables()['lines'], ceiling=250)
+    directory = ledger_headers.chunk_dir(tmp_path, 'lines')
+    directory.with_suffix('.d.pending').write_text('interrupted\n')
+    _, errors = ledger_headers.table_files(tmp_path, 'lines')
+    assert any('interrupted publication' in error for error in errors)
 
 
 def _store_listing(store):

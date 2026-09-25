@@ -32,7 +32,7 @@ SOURCE_COLUMNS = ['source_id', 'country', 'authority_category', 'publisher', 'so
                   'priority', 'active', 'notes']
 MANIFEST_COLUMNS = ['source_id', 'country', 'retrieved_at', 'status', 'http_status',
                     'content_type', 'etag', 'last_modified', 'sha256', 'size_bytes',
-                    'storage_path', 'final_url', 'error']
+                    'storage_path', 'final_url', 'error', 'collection_method']
 
 
 def _source(source_id, country, category, publisher, kind, title):
@@ -46,7 +46,7 @@ def _source(source_id, country, category, publisher, kind, title):
 def _attempt(source_id, country, when, status, sha=''):
     row = dict.fromkeys(MANIFEST_COLUMNS, '')
     row.update(source_id=source_id, country=country, retrieved_at=when, status=status,
-               final_url=f'https://example.org/{source_id}')
+               final_url=f'https://example.org/{source_id}', collection_method='script')
     if sha:
         row.update(http_status='200', content_type='application/pdf', sha256=sha,
                    size_bytes='10', storage_path=f'objects/{sha[:2]}/{sha}.pdf')

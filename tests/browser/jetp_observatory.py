@@ -198,6 +198,55 @@ def check_documents(page, url, staged):
     assert page.locator('#inventory-results details[open]').count() == 1
 
 
+def check_web_archive(page, url):
+    """Ticket 0925: each document's Web Archive copy sits beside its publisher's
+    page, dated, with the identity note its type allows; a publisher link the
+    periodic check found dead says since when and comes second. The publisher's
+    address is never rewritten. Both tables are served views joined on the
+    address."""
+    registry = page.request.get(url + '/data/documents.json').json()['documents']
+    captures = {c['url']: c for c in page.request.get(url + '/data/web-archive.json').json()['captures']
+                if c['outcome'] in ('captured', 'reused')}
+    checks = {c['url']: c for c in page.request.get(url + '/data/publisher-links.json').json()['checks']}
+    dead = [row for row in registry if checks.get(row['url'], {}).get('outcome') == 'dead']
+    shown = [row for row in registry if row['url'] in captures][:12]
+    # Not a silent pass: the served views must name copies and checks at all.
+    assert shown, 'data/web-archive.json names no Web Archive copy of any document'
+    assert checks, 'data/publisher-links.json records no link check'
+    page.goto(url + '/#documents')
+    page.wait_for_selector('#documents-filters')
+    for row in shown + dead:
+        page.locator('#documents-search').fill(row['id'])
+        key = f'a[data-document-id="{row["row_key"]}"]'
+        origin = page.locator(publisher(key))
+        # The page may refine both links to a first PDF page once the views load.
+        href = origin.get_attribute('href')
+        assert href.split('#')[0] == row['url'], (row['row_key'], href)
+        cell = page.locator('#documents-results tbody tr').filter(has=origin).first
+        copy = page.locator(key + '[data-link="web-archive"]')
+        capture = captures.get(row['url'])
+        if not capture:
+            assert copy.count() == 0, row['row_key']
+        else:
+            pdf = 'pdf' in (row['content_type'] or '').lower() or \
+                row['url'].split('?')[0].lower().endswith('.pdf')
+            expected = capture['capture_url']
+            if pdf:
+                stamp = expected.split('/web/')[1][:14]
+                expected = expected.replace(f'/web/{stamp}/', f'/web/{stamp}id_/', 1)
+            assert copy.get_attribute('href').split('#')[0] == expected, row['row_key']
+            assert 'Web Archive copy — ' in copy.inner_text(), row['row_key']
+            note = cell.locator('[data-identity]').get_attribute('data-identity')
+            assert note == ('pdf' if pdf else 'html'), row['row_key']
+        if row in dead:
+            assert 'publisher link dead since' in cell.inner_text(), row['row_key']
+            if capture:
+                links = cell.locator('a[data-link="web-archive"], a[data-link="publisher"]')
+                assert links.first.get_attribute('data-link') == 'web-archive', row['row_key']
+    page.locator('#documents-search').fill('')
+    print(f'Web Archive links checked on {len(shown)} documents; {len(dead)} dead publisher links')
+
+
 def check_documents_row_height(page, url):
     """The Documents rows stay short at desktop width (PR #1459, cold read).
 
@@ -206,9 +255,11 @@ def check_documents_row_height(page, url):
     max 276 px). Now a row is at most one line per fold-out, and the links
     cell of ticket 0915 is a fixed block: the publisher's page (two lines at
     this width), the collection date and fingerprint, and the archived copy
-    where served — 126 px on the public site, 146 px in the preview. 150 px
-    bounds that block and the cell padding, well under the word-by-word wrap
-    it guards against. A failed attempt shows a short label with the
+    where served — 126 px on the public site, 146 px in the preview. Ticket
+    0925 adds the Web Archive copy and its short identity mark beside the
+    publisher's page, two more lines: 187 px at most in the preview
+    (measured 2026-09-24). 200 px bounds that block and the cell padding,
+    still under the word-by-word wrap it guards against. A failed attempt shows a short label with the
     collector's full message in its title, never a broken URL.
     """
     page.set_viewport_size({'width': 1280, 'height': 1000})
@@ -218,7 +269,7 @@ def check_documents_row_height(page, url):
         "!document.querySelector('#documents-results').textContent.includes('Loading what')")
     heights = page.evaluate("[...document.querySelectorAll('#documents-results tbody tr')]"
                             ".map((r) => r.getBoundingClientRect().height)")
-    assert max(heights) <= 150, sorted(heights)[-5:]
+    assert max(heights) <= 200, sorted(heights)[-5:]
     registry = page.request.get(url + '/data/documents.json').json()['documents']
     failed = next(row for row in registry
                   if row['error'] and len(row['error']) > 100 and not row['local_path'])
@@ -903,6 +954,7 @@ def check_site(url, output, ticket_0902_only=False):
             download_matches(page, url, f'data/m1a/{code}.csv')
         download_matches(page, url, 'data/m1a/manifest.json')
         check_documents(page, url, staged)
+        check_web_archive(page, url)
         check_documents_row_height(page, url)
         check_inventory(page, url, staged)
         check_senegal_and_indonesia(page, url, staged)

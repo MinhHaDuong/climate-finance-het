@@ -49,6 +49,34 @@ JETP_ONTOLOGY_VIEWS_INPUTS := $(wildcard data/jetp/ontology/*.csv data/jetp/onto
     config/jetp-ledger.sql .githooks/pre-commit scripts/jetp/build_ontology_views.py \
     scripts/jetp/_ontology.py scripts/jetp/_ledger_headers.py
 
+# Web Archive copies and publisher link checks (ticket 0925): two tables of
+# their own beside the collection registry, never columns of it, each served
+# as its own view by its own script, so a capture or a monthly check rebuilds
+# these two files and no other view's recorded input hashes. The page joins
+# them to documents.json on the document's address.
+JETP_WEB_ARCHIVE := data/jetp/web-archive-captures.csv
+JETP_LINK_CHECKS := data/jetp/publisher-link-checks.csv
+JETP_LINK_VIEWS := $(JETP_OBSERVATORY)/data/web-archive.json $(JETP_OBSERVATORY)/data/publisher-links.json
+
+.PHONY: jetp-web-archive jetp-link-check jetp-link-views
+jetp-link-views: $(JETP_LINK_VIEWS)
+
+$(JETP_OBSERVATORY)/data/web-archive.json: $(wildcard $(JETP_WEB_ARCHIVE)) scripts/jetp/build_link_views.py
+	$(PYTHON) scripts/jetp/build_link_views.py --view web-archive --output $@
+
+$(JETP_OBSERVATORY)/data/publisher-links.json: $(wildcard $(JETP_LINK_CHECKS)) scripts/jetp/build_link_views.py
+	$(PYTHON) scripts/jetp/build_link_views.py --view publisher-links --output $@
+
+# Network steps, never prerequisites of a build. The capture is resumable and
+# polite (skips what is captured, retries what failed; see its docstring); run
+# it after every harvest. The link check is monthly, on padme; its schedule is
+# the author's to install (deliverables/jetp-observatory/README.md).
+jetp-web-archive:
+	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE)
+
+jetp-link-check:
+	$(PYTHON) scripts/jetp/corpus_check_publisher_links.py --output $(JETP_LINK_CHECKS)
+
 .PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-observatory jetp-observatory-documents \
     jetp-observatory-refresh jetp-observatory-preview jetp-observatory-bundle jetp-observatory-publish
 jetp-m1a: $(JETP_M1A_FILES)
@@ -68,7 +96,7 @@ jetp-ontology-views: $(JETP_ONTOLOGY_VIEWS)
 $(JETP_ONTOLOGY_VIEWS) &: $(JETP_ONTOLOGY_VIEWS_INPUTS)
 	$(PYTHON) scripts/jetp/build_ontology_views.py --output-dir $(JETP_ONTOLOGY_VIEWS_DIR)
 
-jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_PARTY_NAMES_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_PARTY_NAMES_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
 $(JETP_PARTY_NAMES_VIEW): data/jetp/parties.csv data/jetp/party-names.csv scripts/jetp/build_party_names_view.py
 	$(PYTHON) scripts/jetp/build_party_names_view.py --output $@
