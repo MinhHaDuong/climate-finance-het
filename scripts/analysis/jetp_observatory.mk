@@ -79,6 +79,15 @@ jetp-web-archive:
 jetp-link-check:
 	$(PYTHON) scripts/jetp/corpus_check_publisher_links.py --output $(JETP_LINK_CHECKS)
 
+# The ledger's documents table (ticket 1290), served by its own script for the
+# same reason: the Documents page joins it to documents.json on the document
+# identifier to show each title, and a title correction moves this file alone.
+JETP_LEDGER_DOCUMENTS_VIEW := $(JETP_OBSERVATORY)/data/ledger-documents.json
+
+$(JETP_LEDGER_DOCUMENTS_VIEW): data/jetp/documents.csv config/jetp-ledger.sql .githooks/pre-commit \
+    scripts/jetp/build_ledger_documents_view.py scripts/jetp/_ledger_headers.py
+	$(PYTHON) scripts/jetp/build_ledger_documents_view.py --output $@
+
 .PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-observatory jetp-observatory-documents \
     jetp-observatory-refresh jetp-observatory-preview jetp-observatory-bundle jetp-observatory-publish
 jetp-m1a: $(JETP_M1A_FILES)
@@ -99,7 +108,7 @@ jetp-ontology-views: $(JETP_ONTOLOGY_VIEWS)
 $(JETP_ONTOLOGY_VIEWS) &: $(JETP_ONTOLOGY_VIEWS_INPUTS)
 	$(PYTHON) scripts/jetp/build_ontology_views.py --output-dir $(JETP_ONTOLOGY_VIEWS_DIR)
 
-jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_PARTY_NAMES_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
 $(JETP_PARTY_NAMES_VIEW): data/jetp/parties.csv data/jetp/party-names.csv scripts/jetp/build_party_names_view.py
 	$(PYTHON) scripts/jetp/build_party_names_view.py --output $@
