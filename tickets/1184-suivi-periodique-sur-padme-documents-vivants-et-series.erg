@@ -1,0 +1,53 @@
+%erg 0.1
+Title: Suivi périodique sur padme : documents vivants et séries
+Created: 2026-09-25
+Author: HDMX-coding-agent
+Blocked-by: 1181
+Blocked-by: 1182
+Blocked-by: 1183
+
+--- log ---
+2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
+
+--- body ---
+## Context
+
+Trois classes de documents (décision de l'auteur, 2026-09-25) :
+
+- **figés** (accords signés, RRP, rapports) : collectés une fois, puis
+  seulement vérifiés (existence, contrôle des liens de [[0925]], changement) ;
+- **vivants** (fiche projet ADB, portfolio.jetp.id, tableau de bord du
+  ministère vietnamien) : recollectés à la fréquence que déclare leur fichier
+  de site ; chaque version est gardée sous son empreinte, ce qui fait une
+  série datée — la fiche ADB 56140-001 donne par instrument les
+  engagements et décaissements cumulés, datés ;
+- **séries** (rapports annuels, trimestriels, rapports d'avancement) : chaque
+  numéro publié est figé ; la série a une date attendue pour son prochain
+  numéro.
+
+Un module de veille existe : `scripts/jetp/_source_watch.py`,
+`scripts/jetp/build_source_sweep.py` (`new_candidate`, `changed`,
+`checked_no_change`) ; il n'admet jamais de preuve lui-même. Le suivi s'y
+branche, il ne le duplique pas.
+
+## Actions
+
+1. Les passes tournent sur padme. Doudou supervise : il lance, vérifie le
+   rapport, et quand SSH ne répond pas il diffère la passe et le signale.
+2. Un lien nouveau qui correspond à un motif de site, ou un numéro de série
+   paru, devient une candidature à examiner, jamais une source admise
+   d'office. Un chiffre relevé dans une fiche reste un instantané tant qu'il
+   n'est pas transformé en observation par la voie habituelle.
+3. Chaque passe écrit un rapport qui signale sans bloquer : document témoin
+   introuvable, numéro de série en retard, changement de robots.txt ou de
+   conditions d'usage, échec d'échelon. `/lair` et `/healthcheck` le
+   remontent.
+4. Les objets sont capturés par DVC sur padme à chaque passe qui en ajoute.
+
+## Exit criteria
+
+- [ ] Une fiche ADB est recollectée par deux passes datées ; une nouvelle version produit un nouvel instantané, une version inchangée n'en produit pas
+- [ ] Une série réelle est suivie : son prochain numéro attendu est daté, et un retard est signalé
+- [ ] SSH coupé, la supervision depuis doudou diffère la passe et le dit ; aucune passe ne disparaît en silence
+- [ ] Les signalements d'un rapport de passe apparaissent dans `/lair`
+- [ ] `make check-fast` et `make lint` verts

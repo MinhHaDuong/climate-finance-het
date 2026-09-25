@@ -1,0 +1,56 @@
+%erg 0.1
+Title: Navigateur piloté sur padme, méthodes de collecte renommées, pilote ADB
+Created: 2026-09-25
+Author: HDMX-coding-agent
+Blocked-by: 1182
+
+--- log ---
+2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
+
+--- body ---
+## Context
+
+Essai du 2026-09-25 depuis doudou (Playwright, sans affichage, cookies de
+l'auteur) : les pages projet ADB bloquées passent (200, bon titre) ; aser.sn
+échoue sur un certificat au mauvais nom de domaine ; le PDF itie.sn passe sous
+Chromium (Firefox refuse une chaîne incomplète). Sans cookies, ADB renvoie la
+page Cloudflare. Les `fetch_error` restants sont surtout des certificats, pas
+des robots.
+
+L'auteur a décidé : la collecte tourne sur padme ; il lève lui-même les
+vérifications et connexions par un écran de padme déporté sur doudou ; les
+sites au certificat invalide sont collectés et l'erreur est inscrite.
+
+## Actions
+
+1. Échelon « navigateur piloté » sur padme : Playwright avec un profil
+   persistant propre à padme ; affichage déporté vers doudou (X11 par SSH,
+   waypipe ou VNC : essayer et documenter) pour que l'auteur lève une
+   vérification ou se connecte. Aucun cookie ne transite de doudou à padme.
+2. Les octets gardés sont la **réponse du serveur**, non la page rendue ; la
+   page rendue n'est gardée qu'en complément quand elle porte l'information
+   (onglets construits par JavaScript).
+3. Méthodes de collecte renommées et complétées :
+   `script`, `script-cookies` (ex-`browser-session`), `browser-automated`,
+   `browser-manual`, `archive-record` (copies Web Archive et Common Crawl,
+   aujourd'hui comptées `script`), `local-record`. Schéma, registres, site,
+   tests, documentation.
+4. Certificat invalide : collecter, inscrire l'erreur dans la ligne.
+5. Pilote ADB : les 7 accords et les 2 RRP des projets 56140-001 et
+   56368-001, et la fiche PDF de chaque projet (56140-001, 56368-001,
+   58342-001) deviennent des sources et sont collectés.
+6. dgMarket : `sen-irve-framework-tender-2026` est désactivée (même avis que
+   `sen-afd-irve-ami12-2026`, déjà collecté). Les pièces jointes
+   (`sen-irve-attachments-107072743`) demandent un compte : si l'auteur en
+   crée un, identifiants dans `~/.config/keys/dgmarket.env`, lus au moment de
+   la connexion seulement (`.claude/rules/keystore.md`).
+7. Les objets collectés sur padme sont capturés par DVC sur padme.
+
+## Exit criteria
+
+- [ ] Le pilote ADB est collecté sur padme (`browser-automated`), octets vérifiés par empreinte, titres relus
+- [ ] Les `fetch_error` de certificat sont relancés ; chaque ligne dit le résultat et, le cas échéant, l'erreur de certificat
+- [ ] Aucune ligne ne porte encore une ancienne valeur de méthode ; le site affiche les six libellés
+- [ ] Contrôle positif de l'écran déporté : une vérification Cloudflare levée par l'auteur depuis doudou débloque la collecte sur padme
+- [ ] Aucun cookie, jeton ni identifiant dans un log, un commit ou un ticket
+- [ ] `make check-fast` et `make lint` verts

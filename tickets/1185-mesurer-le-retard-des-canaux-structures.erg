@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Mesurer le retard des canaux structurés sur la source primaire
+Created: 2026-09-25
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
+
+--- body ---
+## Context
+
+L'auteur : « les canaux structurés laggent 1-3 ans et l'enjeu en M2 M3 AEDIST
+est justement de mieux suivre en quasi temps réel ». La source à privilégier
+est la publication primaire la plus proche de l'événement, datée par sa
+propre collecte (par exemple la fiche projet ADB, « Last PDS Update »). CRS
+et IATI servent au rapprochement et au rattrapage. Le retard d'IATI dépend du
+publieur et n'est pas connu pour ADB : il se mesure, il ne se suppose pas.
+
+## Actions
+
+1. Sur les projets ADB du pilote de [[1183]] (56140-001, 56368-001), relever
+   pour quelques faits datés (approbation, signature, entrée en vigueur,
+   premiers décaissements) la date où chacun paraît dans la source primaire,
+   dans IATI et dans CRS.
+2. Étendre à un ou deux autres bailleurs présents dans le registre si
+   l'accès le permet.
+3. Rédiger la mesure en note de méthode, chiffres rattachés à des sorties
+   archivées.
+
+## Exit criteria
+
+- [ ] Pour chaque fait relevé, les trois dates (ou « absent au jour J ») sont tracées jusqu'à un fichier archivé
+- [ ] Le retard est rapporté par canal et par bailleur, avec son incertitude, sans extrapolation au-delà des cas mesurés
+- [ ] La note dit quelle source primaire privilégier pour chaque type de fait
