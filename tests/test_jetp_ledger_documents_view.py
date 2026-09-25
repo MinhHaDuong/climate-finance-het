@@ -12,7 +12,10 @@ import json
 import re
 from pathlib import Path
 
+import pytest
 from jetp import build_ledger_documents_view as view
+
+pytestmark = pytest.mark.wp_jetp
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "deliverables/jetp-observatory"
