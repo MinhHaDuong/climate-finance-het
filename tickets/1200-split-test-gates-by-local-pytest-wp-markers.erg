@@ -6,6 +6,7 @@ Author: Codex
 --- log ---
 2026-09-25T10:21Z Codex created after the author's choice of local pytest markers and pytest -m selection.
 2026-09-25T11:00Z Codex note verification — 267 test modules carry local WP markers; the corpus selection collects 1433 tests including all 25 package tests, and JETP selects 952. An unmarked temporary package test fails collection (pytest exit 4). `make check-fast` passed (25 package, 2378 passed, 10 skipped); `make lint` passed (346 passed, 11 skipped); `PYTEST_WORKERS=8 make check` passed (25 package, 3363 passed, 58 skipped). `erg check tickets/`, Ruff, and `git diff --check` passed. Second-model review found and verified the package guard gap, now fixed.
+2026-09-25T11:07Z Codex note padme verification — clean detached worktree at 74374265; `make data` and `make jetp-data` restored DVC inputs. The non-DVC reranker cache required by the preflight was copied from padme's primary checkout and byte-compared. `make check` passed: 25 package tests; 3362 passed, 50 skipped in the root suite (16 workers, 3m03s).
 
 --- body ---
 ## Context
