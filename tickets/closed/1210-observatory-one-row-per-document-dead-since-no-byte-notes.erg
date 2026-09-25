@@ -1,0 +1,67 @@
+%erg 0.1
+Title: Observatory Documents page: one row per document, earliest dead-since, no per-row byte notes
+Created: 2026-09-25
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1529
+
+--- log ---
+2026-09-25T12:00Z HDMX-coding-agent created From the author's preview of the next public build; decisions of 2026-09-25 quoted below.
+
+2026-09-25T10:08Z HDMX-coding-agent closed — autoclosed — PR #1529
+--- body ---
+## Context
+
+The author previewed the next public build of the JETP observatory and found
+three defects on the Documents page, to fix before the site is republished.
+Author's decisions (2026-09-25), quoted, not to be relitigated:
+
+1. **One row per document, history folded.** `data/documents.json` has one row
+   per retrieval attempt (`row_key` `<id>:<n>`); 34 of 294 documents show 2-3
+   rows (e.g. blocked, blocked, collected; or two HTTP 404 attempts for
+   `sen-offgrid-mini-grid-2025`). "The document list must show ONE row per
+   document: its best attempt (a collected attempt if any, the latest
+   collected if several; otherwise the latest attempt), with every attempt
+   listed in a small folded line, e.g. '▸ 2 attempts: 404 on 13 Sep 08:46,
+   404 on 13 Sep 09:14'. Nothing hidden, the retrievals data table
+   unchanged." Filters and counts count documents consistently.
+2. **Dead-link row.** `sen-offgrid-mini-grid-2025` was never collected (HTTP
+   404 on both attempts, 2026-09-13), yet the page said "publisher link dead
+   since 24 September 2026" (the first link check). "'Dead since' must use
+   the earliest evidence: the earliest retrieval attempt of that URL that
+   returned 404/410, or the link check's dead_since, whichever is earlier.
+   And when a document was never collected, say so plainly: 'No copy: the
+   file was already gone when we tried to collect it.'" Author-approved mock:
+
+       Off-Grid Europe Mini-Grid 2025 (FR)   SEN  missing
+         Publisher's page — offgrideurope.com  · publisher link dead (404) since 13 Sep 2026
+         No copy: the file was already gone when we tried to collect it.
+         ▸ 2 attempts: 404 on 13 Sep 08:46, 404 on 13 Sep 09:14
+
+   Keep the unreachable-is-never-dead rule.
+3. **Remove the per-row byte-identity notes** ("A Web Archive capture of a
+   web page is not byte-identical to what we read." and the SHA-256
+   sentences next to "Web Archive copy — …"): "a recurring false alarm".
+   Explain once, on the Methods page, what the SHA-256 lets a reader check
+   and why an archived web page differs from the bytes we read.
+
+Served views stay in normal form (one file = one table, joins at read time):
+the grouping and the dead-since join are made in `app.js`.
+
+## Exit criteria
+
+- [ ] The Documents page shows one row per document id (294), its best
+      attempt per the rule above, with a folded line listing every attempt
+      when there are several; status/method/type facets and the count line
+      count documents, on the best attempt.
+- [ ] "Dead since" is the earliest of the link check's `dead_since` and the
+      earliest 404/410 retrieval of that URL after its last successful one;
+      a link the check found unreachable is never dead.
+- [ ] A never-collected document whose attempts found the file gone says
+      "No copy: the file was already gone when we tried to collect it."
+- [ ] No per-row identity note beside a Web Archive copy; the Methods page
+      explains the SHA-256 and the archived web page once.
+- [ ] Render tests first for each behaviour; the dead-link positive control
+      still fails when the dead-link code is broken.
+- [ ] Browser recipe `tests/browser/jetp_observatory.py` green on the local
+      preview and on the public bundle; `make check-fast`, `make lint`, and
+      the full `make check` on padme green.

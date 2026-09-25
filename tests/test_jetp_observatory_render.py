@@ -221,6 +221,176 @@ def test_a_failed_attempt_shows_a_short_label_with_the_full_message_in_its_title
     assert "<th>Publisher&#39;s page · what we read</th>" in head, head
 
 
+# Ticket 1210, author's decisions of 2026-09-25. documents.json stays one row
+# per retrieval attempt; the page groups them, one row per document.
+
+def attempts_by_document():
+    """Each document's attempts in time order, and its best one: the latest
+    collected attempt if any, otherwise the latest attempt — computed here from
+    the served table, independently of the renderer."""
+    grouped = {}
+    for entry in registry():
+        grouped.setdefault(entry["id"], []).append(entry)
+    out = {}
+    for source_id, attempts in grouped.items():
+        attempts.sort(key=lambda r: (r["collected_on"] or "", int(r["row_key"].rsplit(":", 1)[1])))
+        collected = [r for r in attempts if r["status"] == "collected"]
+        out[source_id] = ((collected or attempts)[-1], attempts)
+    return out
+
+
+def document_rows(results, source_id=None):
+    """The table rows of a Documents page, or those of one document: a search
+    also matches the documents whose identifier extends the one searched."""
+    return [chunk for chunk in re.split(r"(?=<tr>)", results) if chunk.startswith("<tr>")
+            and (source_id is None or f"<code>{source_id}</code>" in chunk)]
+
+
+def attempts_summary(row):
+    match = re.search(r'<details class="attempts"[^>]*><summary>([^<]*)</summary>', row)
+    return unescape(match.group(1)) if match else None
+
+
+def test_the_documents_page_shows_one_row_per_document_on_its_best_attempt() -> None:
+    expected = attempts_by_document()
+    assert any(len(a) > 1 for _, a in expected.values()), "no document has several attempts"
+
+    rendered = render("documents", {}, "documentRows(documentsData.documents)"
+                      ".map((r) => [r.id, r.row_key, r.attempts.map((a) => a.row_key)])")
+
+    assert rendered["eval"] == [
+        [source_id, best["row_key"], [a["row_key"] for a in attempts]]
+        for source_id, (best, attempts) in expected.items()]
+    # The count line counts documents, not attempts.
+    count = rendered["elements"]["documents-count"]["textContent"]
+    assert count.startswith(f"{len(expected)} of {len(expected)} documents"), count
+
+
+def test_a_blocked_then_collected_document_is_one_row_with_its_attempts_folded() -> None:
+    best, attempts = attempts_by_document()["idn-cipp-2023"]
+    assert [a["status"] for a in attempts] == ["blocked", "blocked", "collected"]
+
+    results = render("documents", {"documents-search": "idn-cipp-2023"})["elements"][
+        "documents-results"]["innerHTML"]
+
+    rows = document_rows(results, "idn-cipp-2023")
+    assert len(rows) == 1, len(rows)
+    row = rows[0]
+    assert f'data-document-id="{best["row_key"]}"' in row
+    assert f'data-sha256="{best["sha256"]}"' in row
+    assert attempts_summary(row) == (
+        "3 attempts: 403 on 11 Sept 20:39, 403 on 11 Sept 20:42, collected on 24 Sept 20:22")
+    # Nothing hidden: every attempt is listed under the fold, by its row key.
+    assert re.findall(r'data-attempt="([^"]+)"', row) == [a["row_key"] for a in attempts]
+
+
+def test_a_document_read_once_gets_no_attempts_fold() -> None:
+    once = next(best for best, attempts in attempts_by_document().values()
+                if len(attempts) == 1 and best["sha256"])
+    results = render("documents", {"documents-search": once["id"]})["elements"][
+        "documents-results"]["innerHTML"]
+    row = next(r for r in document_rows(results, once["id"]))
+    assert attempts_summary(row) is None
+
+
+def test_the_status_filter_counts_documents_on_their_best_attempt() -> None:
+    expected = attempts_by_document()
+    blocked = sorted(i for i, (best, _) in expected.items() if best["status"] == "blocked")
+    # The fixture only bites if some document was blocked before it was collected.
+    assert any(any(a["status"] == "blocked" for a in attempts) and best["status"] == "collected"
+               for best, attempts in expected.values())
+
+    elements = render("documents", {"documents-filter-status": "blocked"})["elements"]
+
+    count = elements["documents-count"]["textContent"]
+    assert count.startswith(f"{len(blocked)} of {len(expected)} documents"), count
+    shown = re.findall(r"<td><code>([^<]+)</code></td>", elements["documents-results"]["innerHTML"])
+    assert len(blocked) <= 50 and sorted(shown) == blocked
+    assert "idn-cipp-2023" not in shown
+
+
+def test_a_document_gone_before_collection_says_so_and_is_dead_since_the_first_404() -> None:
+    # The author's mock: the publisher link is dead since our own first 404
+    # (13 Sep), not since the link check that confirmed it (24 Sep); no copy,
+    # said plainly; both attempts folded.
+    source_id = "sen-offgrid-mini-grid-2025"
+    best, attempts = attempts_by_document()[source_id]
+    assert [a["error"] for a in attempts] == ["HTTP 404", "HTTP 404"]
+    checks = {c["url"]: c for c in served("publisher-links")["checks"]}
+    assert checks[best["url"]]["outcome"] == "dead"
+    assert checks[best["url"]]["dead_since"] > "2026-09-13"
+
+    results = render("documents", {"documents-search": source_id})["elements"][
+        "documents-results"]["innerHTML"]
+
+    rows = document_rows(results, source_id)
+    assert len(rows) == 1, len(rows)
+    row = rows[0]
+    text = unescape(re.sub(r"<[^>]+>", "", row))
+    assert 'data-dead-since="2026-09-13"' in row
+    assert "publisher link dead (404) since 13 Sept 2026" in text
+    assert "No copy: the file was already gone when we tried to collect it." in text
+    assert "Collected " not in text
+    assert attempts_summary(row) == "2 attempts: 404 on 13 Sept 08:46, 404 on 13 Sept 09:14"
+
+
+DEAD_SINCE = """(() => {
+  const url = "https://p.example/x.pdf";
+  const attempt = (n, at, status, error, sha256 = null) =>
+    ({ id: "x", row_key: "x:" + n, url, collected_on: at, status, error, sha256 });
+  const cases = {
+    earlier_404: [[attempt(1, "2026-09-13T08:46:00Z", "missing", "HTTP 404")],
+                  { outcome: "dead", dead_since: "2026-09-24", http_status: "404" }],
+    earlier_check: [[attempt(1, "2026-09-13T08:46:00Z", "missing", "HTTP 410")],
+                    { outcome: "dead", dead_since: "2026-09-10", http_status: "410" }],
+    reset_by_success: [[attempt(1, "2026-09-01T00:00:00Z", "missing", "HTTP 404"),
+                        attempt(2, "2026-09-05T00:00:00Z", "collected", null, "aa"),
+                        attempt(3, "2026-09-20T00:00:00Z", "missing", "HTTP 404")],
+                       { outcome: "dead", dead_since: "2026-09-24", http_status: "404" }],
+    forbidden_is_not_gone: [[attempt(1, "2026-09-13T08:46:00Z", "blocked", "HTTP 403")],
+                            { outcome: "dead", dead_since: "2026-09-24", http_status: "404" }],
+    unreachable: [[attempt(1, "2026-09-13T08:46:00Z", "missing", "HTTP 404")],
+                  { outcome: "unreachable", dead_since: null, http_status: null }],
+    alive: [[attempt(1, "2026-09-13T08:46:00Z", "missing", "HTTP 404")],
+            { outcome: "alive", dead_since: null, http_status: "200" }],
+  };
+  return Object.fromEntries(Object.entries(cases).map(([name, [attempts, check]]) => {
+    linkChecks = { [url]: { url, checked_at: "2026-09-24T15:00:00Z", ...check } };
+    goneAttempts = indexGone(attempts);
+    return [name, deadSince({ url })];
+  }));
+})()"""
+
+
+def test_dead_since_is_the_earliest_evidence_and_unreachable_is_never_dead() -> None:
+    assert render("documents", {}, DEAD_SINCE)["eval"] == {
+        "earlier_404": "2026-09-13",
+        "earlier_check": "2026-09-10",
+        # A later collection proves the file was back: the run restarts.
+        "reset_by_success": "2026-09-20",
+        "forbidden_is_not_gone": "2026-09-24",
+        # Our own 404s never make a link dead that the check could not reach
+        # or found alive: the check states the link's present condition.
+        "unreachable": None,
+        "alive": None,
+    }
+
+
+def test_no_row_carries_a_byte_identity_note_and_methods_explains_the_fingerprint() -> None:
+    # Author's decision, 2026-09-25: the per-row notes were a recurring false
+    # alarm. Said once, on the Methods page.
+    rendered = render("documents", {}, "documentsData.documents.map((r) => sourceLinks(r, null, ''))")
+    html = "".join(rendered["eval"]) + json.dumps(rendered["elements"])
+    assert "web-archive" in html, "no Web Archive copy rendered; the check would pass vacuously"
+    for phrase in ("data-identity", "byte-identical", "compare the SHA-256",
+                   "Our SHA-256 lets you check", "No fingerprint is recorded"):
+        assert phrase not in html, phrase
+    methods = unescape(render("methods")["main"])
+    section = re.search(r'<section data-method="fingerprints">(.*?)</section>', methods, re.DOTALL)
+    assert section, "the Methods page has no fingerprint section"
+    assert "SHA-256" in section.group(1) and "Web Archive" in section.group(1)
+
+
 def test_a_document_with_one_product_gets_one_fold_out() -> None:
     linked = climb(RMP, "VNM")
     assert linked["m1a"] and not linked["ledger"]
@@ -622,7 +792,9 @@ def test_the_homepage_keeps_its_stat_grid_under_the_tallies() -> None:
 @pytest.mark.parametrize("route", ["organisations", "documents", "project/" + BAC_AI])
 def test_no_fold_out_summary_repeats_its_count(route) -> None:
     html = "".join(el["innerHTML"] for el in render(route)["elements"].values())
-    summaries_ = [unescape(s) for s in re.findall(r"<summary>([^<]*)</summary>", html)]
+    # A counted fold-out, not the attempts line of ticket 1210: "2 attempts:
+    # 404 on 13 Sep 08:46, 404 on 13 Sep 09:14" repeats a status by design.
+    summaries_ = [unescape(s) for s in re.findall(r"<details(?! class=\"attempts\")[^>]*><summary>([^<]*)</summary>", html)]
     assert summaries_, route
     for summary in summaries_:
         numbers = re.findall(r"\d[\d,]*", summary)
@@ -1192,9 +1364,10 @@ def test_an_unfingerprinted_row_reaches_the_publisher_but_no_other_attempts_byte
         (rmp["url"] + "#page=156", f"Publisher's page — {rmp['url'].split('/')[2]} ↗")], html
     assert "data-sha256" not in html and 'data-link="archived"' not in html
     # Ticket 0925: the Web Archive copy is a copy of the address, so it is
-    # shown; with no fingerprint pinned, it claims no SHA-256 check.
+    # shown; with no fingerprint pinned, it claims no SHA-256 check (and since
+    # ticket 1210 no row carries an identity note at all).
     if web_copy(rmp, 156):
-        assert 'data-identity="pdf-unpinned"' in html and "Our SHA-256" not in html, html
+        assert 'data-link="web-archive"' in html and "SHA-256" not in html, html
 
 
 def test_the_documents_page_says_how_each_copy_was_sought() -> None:

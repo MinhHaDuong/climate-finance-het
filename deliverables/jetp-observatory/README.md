@@ -41,12 +41,16 @@ is one `app.js`, one set of served views and no build flag (ticket 0915).
 Publisher pages rot (ticket 0925). Beside each "Publisher's page" link the
 pages show "Web Archive copy — <date>", a copy held by the Internet Archive,
 where one is recorded. For a PDF the copy opens as the archived bytes
-themselves (Wayback's `id_` form, at the same `#page=N`), and the page says
-our SHA-256 lets a reader check it is the same file; for a web page it opens
-in the Wayback replay, and the page says the capture is not byte-identical to
-what we read. When the periodic check finds a publisher link dead, the pages
-say "publisher link dead since <date>" and put the Web Archive copy first.
-The publisher's address is never rewritten.
+themselves (Wayback's `id_` form, at the same `#page=N`); for a web page it
+opens in the Wayback replay. What our SHA-256 lets a reader check, and why a
+replayed web page never matches it, is said once on the Methods page, not
+beside each copy (ticket 1210). When the periodic check finds a publisher link
+dead, the pages say "publisher link dead (<status>) since <date>" and put the
+Web Archive copy first. The date is the earliest evidence: the check's own
+`dead_since`, or our first retrieval of that address that got a 404 or 410
+after its last successful one, whichever is earlier; a link the check found
+alive or unreachable is never called dead. The publisher's address is never
+rewritten.
 
 Two tables of their own, never columns of the collection registry, each
 served as its own view and joined by the page to `documents.json` on the
@@ -198,8 +202,10 @@ no earlier address is kept, and an internal page key is not an address.
   with instrument, vintage, country, name and additional-finance filters.
 - Downloadable JSON and input SHA-256 hashes. Country prose lives in
   `data/jetp/editorial/countries/`; headline policy is in `config/jetp_observatory.yaml`.
-- A Documents page listing every collection attempt in `data/jetp/manifest.csv`
-  with its status, content type, size and origin URL. The archived copies
+- A Documents page with one row per document, on its best collection attempt
+  (the latest collected one, else the latest), with every attempt recorded in
+  `data/documents.json` listed under a fold (ticket 1210); status, content type,
+  size and origin URL, and filters and counts that count documents. The archived copies
   themselves are staged locally by `make jetp-observatory-documents` into
   `documents/`, with the index of what was staged. That staging happens once;
   after a `dvc checkout` moves the snapshot to another revision, `make

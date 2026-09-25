@@ -500,7 +500,7 @@ def test_positive_control_a_dead_publisher_link_shows_dead_since_and_the_copy_fi
     html = render("documents", {}, f"sourceLinks(documentIndex[{json.dumps(RMP)}], 12, '')",
                   site=site)["eval"]
 
-    assert "publisher link dead since 1 Oct 2026" in html
+    assert "publisher link dead (404) since 1 Oct 2026" in html
     links = anchors(html)
     assert [text.split(" — ")[0] for _, text in links] == ["Web Archive copy", "Publisher's page"]
     # The copy opens the archived bytes at the page; the origin is not rewritten.
@@ -513,10 +513,30 @@ def test_positive_control_reaches_the_documents_page(dead_site) -> None:
     rendered = render("documents", {"documents-search": RMP}, site=site)
     html = rendered["main"] + "".join(e["innerHTML"] for e in rendered["elements"].values())
     assert 'data-dead-since="2026-10-01"' in html
-    assert 'data-identity="pdf"' in html
+    assert 'data-link="web-archive"' in html and "data-identity" not in html
 
 
-def test_the_shipped_site_shows_both_links_and_the_identity_note_by_type() -> None:
+def test_positive_control_an_earlier_404_of_ours_dates_the_dead_link(dead_site) -> None:
+    # Ticket 1210: dead since the earliest evidence. A retrieval attempt of the
+    # same address that got a 404 after the last collection, on 20 Sep, is
+    # earlier evidence than the check that found it dead on 1 Oct.
+    site, dead = dead_site
+    registry = json.loads((site / "data/documents.json").read_text())
+    last = max(int(e["row_key"].rsplit(":", 1)[1]) for e in registry["documents"] if e["id"] == RMP)
+    template = next(e for e in registry["documents"] if e["id"] == RMP)
+    registry["documents"].append(dict(
+        template, row_key=f"{RMP}:{last + 1}", collected_on="2026-09-20T10:00:00Z",
+        status="missing", error="HTTP 404", sha256=None, size_bytes=None, local_path=None))
+    (site / "data/documents.json").write_text(json.dumps(registry))
+
+    html = render("documents", {}, f"sourceLinks(documentIndex[{json.dumps(RMP)}], 12, '')",
+                  site=site)["eval"]
+
+    assert 'data-dead-since="2026-09-20"' in html
+    assert "publisher link dead (404) since 20 Sept 2026" in html
+
+
+def test_the_shipped_site_shows_both_links_and_no_identity_note() -> None:
     captures = {c["url"]: c for c in json.loads(
         (SITE / "data/web-archive.json").read_text())["captures"]
         if c["outcome"] in ("captured", "reused")}
@@ -529,9 +549,10 @@ def test_the_shipped_site_shows_both_links_and_the_identity_note_by_type() -> No
     for url, html, note in rendered:
         kinds = re.findall(r'data-link="([a-z-]+)"', html)
         if url not in captures:
-            assert kinds == ["publisher"] and "data-identity" not in note, url
+            assert kinds == ["publisher"], url
             continue
         shown += 1
         assert sorted(kinds) == ["publisher", "web-archive"], url
-        assert re.search(r'data-identity="(pdf|html)"', note), url
+        # Ticket 1210: the identity note is said once, on the Methods page.
+        assert "data-identity" not in note and "byte-identical" not in note, url
     assert shown > 0
