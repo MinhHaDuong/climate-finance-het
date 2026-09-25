@@ -2,10 +2,12 @@
 Title: Reconcile 120 JETP event citations with their source documents
 Created: 2026-09-25
 Author: Codex
+Closed: All 120 citations reconciled with exact source evidence or explicit holds; integrated 1120 and passed the full 16-worker padme gate at 784696d1.
 
 --- log ---
 2026-09-25T07:19Z Codex created after the 0876 served-view provenance audit found 120 accepted observations citing a line from a different document than the legacy event's source
 2026-09-25T07:55Z Codex reconciled all 120 rows at 6f77c5fb: 115 same-source lines, 5 pending; 442 accepted and 9 event holds of 451. make jetp-ledger-check, focused tests, make check-fast, make lint, and padme make check PYTEST_WORKERS=16 passed. Public four-country views byte-match the 0876 parent branch.
+2026-09-25T08:55Z Codex integrated [[1120]] into PR #1521: the sourced AfDB MURP approval adds one accepted observation and removes one event hold, yielding 443 accepted and 8 event holds of 451. At 784696d1, two normalized builds and public views byte-match, make jetp-ledger-check and focused tests pass, make check-fast passes (2371 passed, 13 skipped), make lint passes (339 passed, 11 skipped), and padme make check PYTEST_WORKERS=16 passes (3347 passed, 52 skipped). The direct ZAF migration count change is covered by tests/test_jetp_zaf_migration.py::test_zaf_candidate_reconciles_inventory_legacy_and_current_views.
 
 --- body ---
 ## Context
@@ -54,7 +56,9 @@ the staged v2 data, not a test infrastructure failure.
       the cited assertion; no subject-only match passes.
 - [x] 451 legacy events reconcile to accepted or pending without invented
       citations; the four existing holds remain explicit until their own
-      evidence is resolved.
+      evidence is resolved. After [[1120]], the AfDB MURP event is accepted
+      and its unsupported event-day timing remains held: 443 accepted and
+      eight event holds of 451.
 - [x] `make jetp-ledger-check`, focused tests, `make check-fast`, `make lint`,
       and full `make check PYTEST_WORKERS=16` on padme pass for the changed
       pipeline surface. The public four-country view is byte-compared before
