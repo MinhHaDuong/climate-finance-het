@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.wp_jetp
 
 @pytest.mark.slow
 def test_zaf_candidate_reconciles_inventory_legacy_and_current_views(tmp_path):

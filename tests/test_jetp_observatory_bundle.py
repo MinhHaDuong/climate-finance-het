@@ -8,6 +8,8 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def site_hashes(root):
     """Compare exactly what a bundle carries: assets and downloads, no documents."""
     from jetp._bundle_inventory import site_files

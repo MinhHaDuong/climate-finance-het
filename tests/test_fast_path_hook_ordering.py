@@ -63,6 +63,8 @@ def test_light_module():
 _FAST_PATH_SELECTOR = "not slow and not integration and not adherence"
 
 
+pytestmark = pytest.mark.wp_shared
+
 def _collect(workdir: str, selector: str) -> set[str]:
     """Return the set of test function names pytest selects under ``selector``."""
     proc = subprocess.run(

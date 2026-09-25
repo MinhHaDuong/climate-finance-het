@@ -3,6 +3,8 @@
 import sys
 from pathlib import Path
 
+import pytest
+
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS / "analysis"))
 
@@ -14,6 +16,7 @@ from _vars_registry import (
 )
 from build_latex_vars import write_registered_latex_vars
 
+pytestmark = pytest.mark.wp_writing
 
 def test_each_jetp_latex_document_has_a_generated_witness_macro():
     """The skeleton proves the macro plumbing before empirical keys arrive."""

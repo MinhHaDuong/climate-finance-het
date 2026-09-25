@@ -20,6 +20,8 @@ DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
 sys.path.insert(0, SCRIPTS_DIR)
 
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestDVCStages:
     """DVC pipeline declares the correct stages after the split."""
 

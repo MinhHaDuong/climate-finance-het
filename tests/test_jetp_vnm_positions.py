@@ -9,6 +9,7 @@ import pytest
 from jetp import build_vnm_positions as builder
 from jetp._compatibility import MVP_VIEWS, read_mvp_view
 
+pytestmark = pytest.mark.wp_jetp
 
 def candidate_fixture():
     """Small structurally complete candidate, without real-data extraction."""

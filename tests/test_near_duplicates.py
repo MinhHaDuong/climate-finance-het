@@ -34,6 +34,8 @@ COP27_ABSTRACT_VARIANT_B = (
 )
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture
 def cop27_df():
     """Synthetic DataFrame mimicking the COP27 coordinated publication.

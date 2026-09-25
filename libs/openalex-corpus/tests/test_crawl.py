@@ -8,6 +8,8 @@ import pytest
 import requests
 from openalex_corpus import retry_get
 
+pytestmark = pytest.mark.wp_corpus
+
 
 @pytest.fixture(autouse=True)
 def _no_sleep(monkeypatch):

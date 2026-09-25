@@ -44,6 +44,8 @@ MEDIUM_ABSTRACT = (
 )
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture
 def sample_df():
     """DataFrame with a mix of abstract lengths."""

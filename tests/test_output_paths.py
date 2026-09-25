@@ -20,6 +20,8 @@ TABLE_SCRIPTS = [
 ]
 
 
+pytestmark = pytest.mark.wp_shared
+
 def _find_output_paths(script_path: str) -> list[str]:
     """Extract string literals that look like output paths from a Python script.
 

@@ -34,6 +34,8 @@ from compute_vars import DOC_VARS
 PINNED_DOCS = frozenset({"manuscript", "manuscript-Gide"})
 
 
+pytestmark = pytest.mark.wp_writing
+
 def _qmd_path(doc_name):
     """Locate a doc's .qmd under its deliverable folder (folder name may differ)."""
     for qmd in deliverable_qmds():

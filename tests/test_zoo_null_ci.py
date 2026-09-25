@@ -12,6 +12,8 @@ sys.path.insert(0, SCRIPTS_DIR)
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "figures"))  # 0255: moved figures entry points
 
 
+pytestmark = pytest.mark.wp_writing
+
 def _build_method_parser() -> argparse.ArgumentParser:
     """Return the method-level argument parser from plot_zoo_results.
 

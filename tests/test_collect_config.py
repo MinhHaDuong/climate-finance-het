@@ -15,6 +15,7 @@ Covers:
 import os
 import sys
 
+import pytest
 import yaml
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
@@ -27,6 +28,8 @@ ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 # ---------------------------------------------------------------------------
 # Config file exists and is well-formed
 # ---------------------------------------------------------------------------
+
+pytestmark = pytest.mark.wp_corpus
 
 class TestCorpusCollectConfig:
     def test_config_file_exists(self):

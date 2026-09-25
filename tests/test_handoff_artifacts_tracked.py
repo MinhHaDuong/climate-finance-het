@@ -34,6 +34,8 @@ from compute_vars import DOC_VARS, DOC_VARS_FILE
 ARTIFACT_RE = re.compile(r"deliverables/[\w./-]+\.(?:yml|yaml|md|csv|png|bib)")
 
 
+pytestmark = pytest.mark.wp_writing
+
 def _writing_makefiles():
     """The per-deliverable render fragments, via the shared discovery helper.
 

@@ -15,6 +15,7 @@ render tests in ``test_jetp_observatory_render.py``.
 import json
 from pathlib import Path
 
+import pytest
 from jetp.build_observatory import country_data, documents_data, project_data
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,6 +80,8 @@ PROJECT_KEYS_BEFORE = {"id", "country", "name", "technology", "location",
                        "finance_stage", "funders", "events", "claims",
                        "source_links", "sources"}
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def fixture_tables():
     return {

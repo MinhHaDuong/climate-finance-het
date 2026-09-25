@@ -11,7 +11,10 @@ import subprocess
 
 import pytest
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.adherence,
+]
 
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 ENV_PATH = os.path.join(PROJECT_ROOT, ".env")

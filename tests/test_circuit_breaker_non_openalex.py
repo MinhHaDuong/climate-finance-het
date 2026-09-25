@@ -19,6 +19,8 @@ from pipeline_io import CONSECUTIVE_FAIL_LIMIT, RateLimitExhausted
 # catalog_istex: fetch_istex_api should abort on consecutive 429s
 # ---------------------------------------------------------------------------
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestIstexCircuitBreaker:
     """ISTEX pagination loop should abort after consecutive 429s."""
 

@@ -23,6 +23,8 @@ sys.path.insert(0, SCRIPTS_DIR)
 # ---------------------------------------------------------------------------
 
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestC2STCore:
     """Test the internal _c2st_auc function."""
 
@@ -310,7 +312,7 @@ class TestC2STDispatcherIntegration:
         validation. Without this, a missing C2STDivergenceSchema import is
         only caught at production runtime.
         """
-        from conftest import run_compute
+        from conftest import run_compute  # isort: skip — pytest's local conftest
         from schemas import C2STDivergenceSchema
 
         out = tmp_path / "tab_div_C2ST_lexical.csv"

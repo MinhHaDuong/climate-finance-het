@@ -9,6 +9,8 @@ from jetp.build_0819_indonesia_ingestion import build_report, validate_adjudicat
 ROOT = Path(__file__).resolve().parents[1]
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def test_seven_document_review_keeps_priority_separate_from_finance() -> None:
     """A priority list supplies plan candidates, never an allocation or approval."""
     report = build_report(ROOT)

@@ -20,6 +20,8 @@ import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestResolveDoi:
     """Tests for the find_doi cache-transparent wrapper."""
 

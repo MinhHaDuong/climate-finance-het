@@ -23,6 +23,8 @@ TABLES_DIR = os.path.join(
 CSV_PATH = os.path.join(TABLES_DIR, "tab_corpus_sources.csv")
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture
 def corpus_table():
     """Load the exported corpus sources table.

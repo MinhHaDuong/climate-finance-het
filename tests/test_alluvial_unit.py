@@ -28,6 +28,8 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysi
 # ---------------------------------------------------------------------------
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _make_works(n=20):
     """Create a small synthetic refined_works DataFrame."""
     rng = np.random.RandomState(42)

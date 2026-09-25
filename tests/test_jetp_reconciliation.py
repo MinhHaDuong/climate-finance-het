@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from jetp._reconciliation import ReconciliationError, reconcile_gross_disbursement
 
+pytestmark = pytest.mark.wp_jetp
 
 def payment(identity, occurrence, amount, date='2024-04-15', **extra):
     return dict(id=identity, occurrence_id=occurrence, amount=str(amount), currency='EUR',

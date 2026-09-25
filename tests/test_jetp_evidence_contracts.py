@@ -22,6 +22,8 @@ TARGET = ref('implementation_event', 'completed')
 EVIDENCE = ref('evidence', 'report-excerpt')
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def evidence_records():
     return [
         row('entity', 'project-a', country='VNM'),

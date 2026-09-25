@@ -5,9 +5,12 @@ import sys
 
 import numpy as np
 import pandas as pd
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def test_split_year_excluded_from_before_window():
     """Year t must not appear in before-window when gap=1."""

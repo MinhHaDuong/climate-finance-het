@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import pytest
 from jetp._ontology import ontology_as_of
 from jetp.build_crosswalks import (
     IDN_PURPOSE,
@@ -14,6 +15,8 @@ from jetp.build_crosswalks import (
 LEDGER = Path(__file__).resolve().parents[1] / 'data' / 'jetp'
 REPORT = 'idn-jetp-progress-report-2025'
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def test_report_groups_are_counted_against_the_fields_and_ambiguous_ones_stay_open():
     _, rows, unresolved = crosswalk_rows(LEDGER)

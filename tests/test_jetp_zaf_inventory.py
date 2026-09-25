@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.wp_jetp
 
 @pytest.mark.slow
 def test_saved_zaf_register_and_finance_tables_are_complete():

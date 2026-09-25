@@ -24,6 +24,8 @@ DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
 sys.path.insert(0, SCRIPTS_DIR)
 
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestEmbeddingsCachePath:
     """utils.py exports the cache path in enrich_cache/."""
 

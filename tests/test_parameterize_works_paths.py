@@ -21,6 +21,8 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 PYTHON = sys.executable
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _read_script(script_name):
     """Read script source text for flag inspection."""
     path = os.path.join(SCRIPTS_DIR, script_name)

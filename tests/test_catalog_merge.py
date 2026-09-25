@@ -11,6 +11,7 @@ import sys
 import tempfile
 
 import pandas as pd
+import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
@@ -18,6 +19,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 from catalog_merge import _dedup_vectorized, _load_and_tag, deduplicate
 from utils import FROM_COLS, WORKS_COLUMNS
 
+pytestmark = pytest.mark.wp_corpus
 
 def _make_catalog(rows, source_name):
     """Create a minimal catalog DataFrame with the given source."""

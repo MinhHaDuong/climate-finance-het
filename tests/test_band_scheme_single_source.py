@@ -20,6 +20,8 @@ what the test looks for.
 import ast
 from pathlib import Path
 
+import pytest
+
 BASE = Path(__file__).resolve().parent.parent
 SCRIPTS = BASE / "scripts"
 
@@ -34,6 +36,8 @@ CONSUMERS = (
     SCRIPTS / "figures" / "plot_genealogy_html.py",
 )
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _module_level_assignments(tree: ast.Module) -> set[str]:
     """Names bound by a module-level assignment (the shape a copy takes)."""

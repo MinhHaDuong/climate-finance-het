@@ -23,6 +23,8 @@ SNAPSHOT_DATES = {
 }
 
 
+pytestmark = pytest.mark.wp_writing
+
 @pytest.mark.parametrize("path,expected", sorted(SNAPSHOT_DATES.items()))
 def test_snapshot_date_documented(path, expected):
     text = Path(path).read_text()

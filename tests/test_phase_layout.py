@@ -19,7 +19,10 @@ import pytest
 from _script_discovery import all_script_files
 
 # Mechanical adherence gate (`make lint` / `pytest -m adherence`).
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.adherence,
+]
 
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 MAKEFILE = os.path.join(PROJECT_ROOT, "Makefile")

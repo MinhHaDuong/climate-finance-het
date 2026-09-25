@@ -9,12 +9,16 @@ When the harness is extracted (PR #224), this test travels with it.
 
 import os
 
+import pytest
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 AGENTS_MD = os.path.join(ROOT, "AGENTS.md")
 
 SMELL_THRESHOLD = 150  # lines — time to trim
 HARD_CEILING = 200  # Anthropic recommended limit
 
+
+pytestmark = pytest.mark.wp_shared
 
 def _line_count():
     with open(AGENTS_MD) as f:

@@ -11,6 +11,8 @@ AUGUST = '2026-08-31T00:00:00Z'
 SEPTEMBER = '2026-09-30T00:00:00Z'
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def ref(kind, identity):
     return {'record_kind': kind, 'record_id': identity}
 

@@ -42,6 +42,8 @@ BAC_AI = "vnm-project-bac-ai-pumped-hydro"
 COUNTRIES = ("ZAF", "IDN", "VNM", "SEN")
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def render(route, state=None, expression=None, site=SITE, staged=None):
     """The elements app.js wrote for one route, with a reader's inputs preset.
 

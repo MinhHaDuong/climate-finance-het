@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from jetp._source_census import validate_census, validate_inventory_manifest
 from jetp.build_0817_source_census import build_rows
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_frozen_census_covers_every_local_source_once() -> None:
     """The four country tickets inherit a finite, replayable source universe."""

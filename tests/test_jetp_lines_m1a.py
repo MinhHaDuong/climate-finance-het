@@ -23,6 +23,8 @@ SERVED = ROOT / 'deliverables' / 'jetp-observatory' / 'data' / 'm1a'
 COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
 
 
+pytestmark = pytest.mark.wp_jetp
+
 @pytest.fixture(scope='module')
 def regenerated(tmp_path_factory):
     output = tmp_path_factory.mktemp('m1a')

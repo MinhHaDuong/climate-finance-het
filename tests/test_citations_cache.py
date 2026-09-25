@@ -20,6 +20,8 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture
 def tmp_catalogs(tmp_path):
     """Create a temporary catalogs directory with enrich_cache/ subdirectory."""

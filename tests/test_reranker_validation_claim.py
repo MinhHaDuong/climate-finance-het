@@ -14,6 +14,7 @@ import os
 import sys
 
 import pandas as pd
+import pytest
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.path.join(REPO, "scripts"))
@@ -39,6 +40,8 @@ EVIDENCE_FILES = [
     "reranker_calibration.csv",
 ]
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _read(path):
     with open(path) as f:

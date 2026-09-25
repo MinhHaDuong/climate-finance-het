@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from jetp._vnm_inventory import assemble_inventory, extract_inventory
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_wrapped_count_is_not_an_ordinal_or_named_asset():
     rows = assemble_inventory(

@@ -23,6 +23,8 @@ sys.path.insert(0, SCRIPTS_DIR)
 # ── Synthetic data helpers ──────────────────────────────────────────────
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _make_citation_data(n_years=15, papers_per_year=10, start_year=2000):
     """Create synthetic works + citations for citation graph tests.
 

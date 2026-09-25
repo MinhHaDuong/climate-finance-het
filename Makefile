@@ -892,6 +892,7 @@ venv-canonicalize:
 	fi
 
 # ── All checks (tests) ───────────────────────────────────
+.PHONY: check-library check-corpus-wp check-finance check-jetp check-writing check-shared
 # The libs/openalex-corpus path package ships its own 25-test suite that root
 # `pytest tests/` never collects (norecursedirs=["libs"]). Run it explicitly so
 # host CI gates it. Pure-logic / mocked-HTTP — belongs in the fast tier too.
@@ -910,6 +911,26 @@ PYTEST_WORKERS ?= $(or $(shell sed -n 's/^\(export \)\{0,1\}PYTEST_WORKERS=//p' 
 
 check: full-gate-preflight check-package | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -n $(PYTEST_WORKERS)
+
+# Domain gates select locally declared pytest markers. Cost tiers remain
+# independent: each WP target includes its own slow and integration tests.
+check-library: | venv-canonicalize
+	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_library -n $(PYTEST_WORKERS)
+
+check-corpus-wp: | venv-canonicalize
+	$(PYTHON) -m pytest tests/ libs/openalex-corpus/tests/ -q --tb=short -m wp_corpus -n $(PYTEST_WORKERS)
+
+check-finance: | venv-canonicalize
+	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_finance -n $(PYTEST_WORKERS)
+
+check-jetp: | venv-canonicalize
+	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_jetp -n $(PYTEST_WORKERS)
+
+check-writing: | venv-canonicalize
+	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_writing -n $(PYTEST_WORKERS)
+
+check-shared: | venv-canonicalize
+	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_shared -n $(PYTEST_WORKERS)
 
 # Fast inner loop: pure-Python logic only. Deselects slow (network / real data /
 # heavy numerical dep / heavy compute), integration (subprocess / sleep), and

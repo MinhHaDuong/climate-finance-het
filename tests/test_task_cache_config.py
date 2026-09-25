@@ -11,7 +11,10 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 RESOLVER = REPO / ".githooks/resolve-task-cache.py"
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.adherence,
+]
 
 CACHE_VARIABLES = {
     "dvc": "DVC_SITE_CACHE_DIR",

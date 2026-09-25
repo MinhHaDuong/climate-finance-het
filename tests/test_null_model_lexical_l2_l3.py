@@ -21,6 +21,8 @@ sys.path.insert(0, SCRIPTS_DIR)
 # ── Helpers ─────────────────────────────────────────────────────────────────
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _make_abstract_df(n_years=20, papers_per_year=60, seed=77):
     """Build a synthetic (year, abstract) DataFrame for lexical tests."""
     rng = np.random.RandomState(seed)

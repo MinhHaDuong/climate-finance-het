@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Compartimenter les tests par WP avec des marqueurs pytest locaux
+Created: 2026-09-25
+Author: Codex
+
+--- log ---
+2026-09-25T10:21Z Codex created after the author's choice of local pytest markers and pytest -m selection.
+2026-09-25T11:00Z Codex note verification — 267 test modules carry local WP markers; the corpus selection collects 1433 tests including all 25 package tests, and JETP selects 952. An unmarked temporary package test fails collection (pytest exit 4). `make check-fast` passed (25 package, 2378 passed, 10 skipped); `make lint` passed (346 passed, 11 skipped); `PYTEST_WORKERS=8 make check` passed (25 package, 3363 passed, 58 skipped). `erg check tickets/`, Ruff, and `git diff --check` passed. Second-model review found and verified the package guard gap, now fixed.
+
+--- body ---
+## Context
+
+La suite `make check` mélange tests du corpus, de la finance, de JETP,
+des publications et de l'infrastructure. Une modification propre à JETP
+déclenche ainsi des tests longs sans rapport avec sa portée. Le découpage
+des données inclut désormais plusieurs WP.
+
+## Actions
+
+1. Déclarer le ou les marqueurs WP dans chaque module de tests, y compris
+   les tests du paquet `openalex-corpus` ; enregistrer les marqueurs dans
+   pytest et rejeter un nouveau test sans WP.
+2. Fournir des cibles `make check-*` qui sélectionnent avec `pytest -m` ;
+   conserver les niveaux de coût indépendants et la suite complète.
+3. Adapter la règle de revue pour exécuter les WP concernés, puis la suite
+   complète pour l'infrastructure partagée et les changements de sélection.
+
+## Exit criteria
+
+- [x] Tous les tests collectés ont un marqueur WP local.
+- [x] Chaque cible WP sélectionne ses tests par `pytest -m`, sans registre de
+      fichiers ni filtrage de modules dans Make ; `make check` reste complet.
+- [x] `make check-fast`, `make lint` et `make check` sont vérifiés ; tout échec
+      dû à un prérequis ou à l'environnement est nommé précisément.

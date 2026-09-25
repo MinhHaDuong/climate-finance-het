@@ -32,8 +32,12 @@ directly when the task needs it before you touch those files.
 ## Merge gate
 
 `make check-fast` + `make lint` (~40 s), then push and open a PR. Run the full
-`make check` first only when the diff touches the pipeline surface (`scripts/`,
-`libs/`, `dvc.yaml`, the Makefiles, or slow/integration tests).
+WP gate first when the diff touches a domain pipeline or its slow/integration
+tests: `make check-library`, `check-corpus-wp`, `check-finance`, `check-jetp`,
+or `check-writing` (run each affected WP). Run full `make check` for shared
+pipeline infrastructure (`dvc.yaml`, shared scripts or libraries, Makefiles)
+or a change to test selection itself. The WP gates select local pytest marks,
+and each includes slow/integration tests for that WP.
 
 When you do, run it on padme (`ssh padme`), in a clean checkout of your
 branch with the corpus and JETP documents in place (`make data`,
@@ -55,7 +59,7 @@ Before merging, decide which checks the change needs and state them on the PR:
 - **Docs, config, STATE**: the merge gate, and a read of the loaded or rendered result.
 - **Prose**: recompile the artifact; `/review-pr-prose` for manuscript text.
 - **Data**: byte-compare the served views, build twice for determinism, check counts.
-- **Code, pipeline, analysis**: tests for the changed behaviour, and the full `make check` when the pipeline surface moved.
+- **Code, pipeline, analysis**: tests for the changed behaviour, the affected WP gate for domain pipeline changes, and full `make check` for shared pipeline or test selection changes.
 
 Anything beyond tickets gets at least one reviewer on a model other than the
 coder's (`/review-pr`, scoped to the risk). Then `/verify-gate`: every ticket exit

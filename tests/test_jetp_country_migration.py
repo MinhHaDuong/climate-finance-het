@@ -5,6 +5,7 @@ from jetp._country_migration import inventory_positions, legacy_dispositions
 from jetp._source_crosswalk import migrate_sources
 from test_jetp_source_crosswalk import table
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_official_rows_without_pages_exact_mapping_and_unnamed_count():
     rows = [

@@ -10,8 +10,12 @@ Verifies that Makefile targets are organized by concern:
 import os
 import re
 
+import pytest
+
 MAKEFILE = os.path.join(os.path.dirname(__file__), "..", "Makefile")
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _read_makefile():
     with open(MAKEFILE) as f:

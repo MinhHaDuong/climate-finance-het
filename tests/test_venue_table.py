@@ -16,6 +16,8 @@ TAB_VENUES = os.path.join(ROOT, "deliverables", "_shared", "tables", "tab_venues
 SCRIPT = os.path.join(ROOT, "scripts", "figures", "export_tab_venues.py")
 
 
+pytestmark = pytest.mark.wp_writing
+
 def read(path):
     with open(path) as f:
         return f.read()

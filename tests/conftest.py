@@ -26,6 +26,9 @@ from _tier_autoscan import (
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "smoke")
 GOLDEN_DIR = os.path.join(FIXTURES_DIR, "golden")
+WP_MARKERS = (
+    "wp_library", "wp_corpus", "wp_finance", "wp_jetp", "wp_writing", "wp_shared",
+)
 
 # Flat imports (from utils import …) resolve via the `scripts` source root
 # declared in [tool.pytest.ini_options] pythonpath (ticket 0253) — the old
@@ -47,7 +50,7 @@ os.environ["PYTHONPATH"] = source_root_env()["PYTHONPATH"]
 
 
 def pytest_collection_modifyitems(config, items):
-    """Auto-mark heavy-import test modules ``slow``.
+    """Require WP ownership and auto-mark heavy-import modules ``slow``.
 
     Runs before pytest's built-in ``-m`` deselection (user conftest hooks fire
     before internal plugin hooks), so an auto-added ``slow`` mark correctly
@@ -55,6 +58,11 @@ def pytest_collection_modifyitems(config, items):
     that already carries slow / integration / adherence.
     """
     for item in items:
+        if not any(item.get_closest_marker(name) for name in WP_MARKERS):
+            raise pytest.UsageError(
+                f"{item.nodeid} has no WP marker; declare pytestmark in its module "
+                "or mark the test locally"
+            )
         if any(item.get_closest_marker(m) for m in NON_FAST_MARKERS):
             continue
         path = str(getattr(item, "path", None) or item.fspath)

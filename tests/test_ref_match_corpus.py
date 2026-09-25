@@ -4,11 +4,14 @@ import os
 import sys
 
 import pandas as pd
+import pytest
 
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 sys.path.insert(0, HARVEST_DIR)
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _make_csv(path, rows, columns):
     """Write a CSV from a list of dicts."""

@@ -11,6 +11,8 @@ from pipeline_loaders import load_analysis_config
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def test_sensitivity_config_block_exists():
     """config/analysis.yaml must have a sensitivity: block with required keys."""
     cfg = load_analysis_config()

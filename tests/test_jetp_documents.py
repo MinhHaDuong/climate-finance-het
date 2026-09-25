@@ -31,6 +31,8 @@ REGISTRY_FIELDS = [
 ]
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def _write_registry(path: Path, rows: list[dict[str, str]]) -> None:
     with path.open("w", newline="", encoding="utf-8") as stream:
         writer = csv.DictWriter(stream, fieldnames=REGISTRY_FIELDS)

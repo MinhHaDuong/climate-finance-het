@@ -22,6 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DVC_YAML = os.path.join(BASE_DIR, "dvc.yaml")
 
 
+pytestmark = pytest.mark.wp_shared
+
 def _out_path(entry):
     """Extract the path from an out entry.
 

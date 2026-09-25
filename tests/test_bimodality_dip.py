@@ -28,6 +28,8 @@ SCRIPT = os.path.join(BASE_DIR, "scripts", "analysis", "analyze_bimodality.py")
 PYPROJECT = os.path.join(BASE_DIR, "pyproject.toml")
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.mark.adherence
 def test_diptest_is_a_declared_dependency():
     """An import the pipeline depends on must be declared, not hoped for."""

@@ -20,11 +20,14 @@ committed.
 import os
 
 import pandas as pd
+import pytest
 
 REPO = os.path.dirname(os.path.dirname(__file__))
 CSV = os.path.join(REPO, "deliverables", "_shared", "tables", "tab_null_separation_pre2007.csv")
 MANUSCRIPT = os.path.join(REPO, "deliverables", "manuscript", "manuscript.qmd")
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _louvain_share_row():
     """The primary A.5 statistic: within_tradition_share, louvain_anchored."""

@@ -18,6 +18,7 @@ import glob
 import os
 import sys
 
+import pytest
 import yaml
 
 BASE = os.path.join(os.path.dirname(__file__), "..")
@@ -32,6 +33,8 @@ KEYDOC_SEEDS = {
 GREY_SEEDS = {"grey_sources.yaml"}
 GREY_REQUIRED = ("title", "author", "year", "source_org")
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def seed_files():
     return sorted(glob.glob(os.path.join(BASE, "config", "*_sources.yaml")))

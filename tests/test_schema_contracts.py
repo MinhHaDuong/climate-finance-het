@@ -20,6 +20,8 @@ sys.path.insert(0, SCRIPTS_DIR)
 # Schema module exists
 # ---------------------------------------------------------------------------
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestSchemaModuleExists:
     def test_schemas_importable(self):
         from schemas import RefinedCitationsSchema, RefinedWorksSchema

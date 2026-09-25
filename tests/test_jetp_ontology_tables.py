@@ -38,6 +38,8 @@ RETIRED_WORD = re.compile(r'(^|_)(evidence|model|layer|fact)(_|$)|(^|_)reconcil'
 
 # --- Fixture ------------------------------------------------------------------
 
+pytestmark = pytest.mark.wp_jetp
+
 def _term(term_id, list_name, definition, recorded_at, row=1, supersedes=None,
           status='accepted'):
     return {'term_row_id': f'{list_name}.{term_id}.{row}', 'term_id': term_id,

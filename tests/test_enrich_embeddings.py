@@ -9,6 +9,7 @@ import pandas as pd
 import pytest
 from enrich_embeddings import build_text, is_boilerplate_abstract
 
+pytestmark = pytest.mark.wp_corpus
 
 class TestIsBoilerplateAbstract:
     """is_boilerplate_abstract should return True for junk abstracts."""

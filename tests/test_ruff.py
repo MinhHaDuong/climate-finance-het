@@ -9,7 +9,10 @@ from pathlib import Path
 
 import pytest
 
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_shared,
+    pytest.mark.adherence,
+]
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 

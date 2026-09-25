@@ -31,6 +31,8 @@ sys.path.insert(0, SCRIPTS_DIR)
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: analysis entry points
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _metric(result: pd.DataFrame, name: str) -> float:
     """Pull a single metric value from the long-format result table."""
     rows = result[result["metric"] == name]

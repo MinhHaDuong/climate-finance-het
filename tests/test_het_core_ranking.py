@@ -23,6 +23,8 @@ from analysis.build_het_core import citations_per_year, parse_years
 YEAR_MIN, YEAR_MAX = 1800, 2100
 
 
+pytestmark = pytest.mark.wp_corpus
+
 class TestParseYears:
     def test_blank_year_stays_undated(self):
         """The defect, at its source: a missing year must not become a number."""

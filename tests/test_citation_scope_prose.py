@@ -18,9 +18,13 @@ text-only: fast tier.
 import os
 import re
 
+import pytest
+
 BASE = os.path.join(os.path.dirname(__file__), "..")
 QMD = os.path.join(BASE, "deliverables", "data-paper", "data-paper.qmd")
 
+
+pytestmark = pytest.mark.wp_writing
 
 def _text():
     with open(QMD, encoding="utf-8") as fh:

@@ -27,6 +27,7 @@ import re
 import sys
 
 import pandas as pd
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
@@ -72,6 +73,8 @@ UNDEMONSTRATED = (
     r"(?:across|between)\s+(?:the\s+)?(?:\S+\s+){0,3}languages",
 )
 
+
+pytestmark = pytest.mark.wp_writing
 
 def read(path):
     with open(path) as fh:

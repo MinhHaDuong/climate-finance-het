@@ -1,5 +1,7 @@
 """Monthly JETP edition reports preserve releases and distinguish change meanings."""
+import pytest
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_monthly_report_classifies_fixture_without_erasing_failed_source_or_old_release():
     from jetp._monthly_editions import compare_editions

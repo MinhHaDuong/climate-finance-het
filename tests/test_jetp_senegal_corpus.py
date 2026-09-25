@@ -5,6 +5,8 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "jetp"
 
@@ -14,6 +16,8 @@ DECLARATION = "sen-political-declaration-fr-2023"
 MAIN_SHA256 = "97c36b242257462f024a934baee6bed3aa02fe0e4917f076d7b865701db65dca"
 ANNEX_SHA256 = "dcd4fd924f9e637d36beb192f509b7971b8b5dda0a76e3c17b799ba26ff43b21"
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as stream:

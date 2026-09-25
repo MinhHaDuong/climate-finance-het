@@ -21,6 +21,8 @@ QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
 COMPLETE_AXES = ["language", "period", "doi", "citation_decile"]
 
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture(scope="module")
 def table():
     return pd.read_csv(TABLE)

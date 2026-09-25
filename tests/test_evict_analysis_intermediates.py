@@ -49,7 +49,10 @@ from _mk_discovery import all_makefiles
 from _script_discovery import all_script_files
 
 # Grep-ratchet guard — belongs to the mechanical adherence gate (`pytest -m adherence`).
-pytestmark = pytest.mark.adherence
+pytestmark = [
+    pytest.mark.wp_corpus,
+    pytest.mark.adherence,
+]
 
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 

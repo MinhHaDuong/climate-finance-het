@@ -6,6 +6,7 @@ import shutil
 import sqlite3
 from pathlib import Path
 
+import pytest
 from jetp._ledger_headers import load_schema, read_table
 from jetp.build_lines import (
     _classification,
@@ -21,6 +22,8 @@ INPUTS = ('vnm-pilot-manifest.csv', 'vnm-pilot-observations.csv',
           'project-source-links.csv')
 TABLES = ('documents.csv', 'retrievals.csv', 'snapshots.csv', 'line-field-specs.csv')
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def _fixture(tmp_path):
     for name in INPUTS + TABLES:

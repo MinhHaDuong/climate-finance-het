@@ -12,7 +12,10 @@ import pytest
 
 # Both tests spawn compute_divergence.py via subprocess — excluded from
 # check-fast per the subprocess-tests-are-integration rule (coding-python.md).
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.wp_corpus,
+    pytest.mark.integration,
+]
 
 
 def test_no_equal_n_flag_accepted(tmp_path):

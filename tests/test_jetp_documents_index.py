@@ -13,6 +13,7 @@ import pytest
 from jetp import build_documents_index
 from jetp.build_documents_index import staged_objects
 
+pytestmark = pytest.mark.wp_jetp
 
 def stage(root):
     documents = root / "documents"

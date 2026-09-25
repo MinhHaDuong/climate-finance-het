@@ -14,6 +14,7 @@ from _permutation_io import permutation_test
 from compute_divergence_bootstrap import bootstrap_one_window
 from compute_divergence_subsampled import subsample_one_window
 
+pytestmark = pytest.mark.wp_corpus
 
 def _samples(dtype):
     rng = np.random.RandomState(19)

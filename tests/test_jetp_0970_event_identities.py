@@ -3,8 +3,12 @@
 import csv
 from pathlib import Path
 
+import pytest
+
 DATA = Path(__file__).resolve().parents[1] / "data/jetp"
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def rows(path):
     with path.open(encoding="utf-8", newline="") as handle:

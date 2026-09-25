@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_programme_components_and_provisional_match_cannot_create_finance_total():
     """Overlapping plan needs are positions, not additive financed amounts."""

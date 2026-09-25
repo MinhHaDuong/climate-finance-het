@@ -6,12 +6,15 @@ import csv
 from collections import Counter
 from pathlib import Path
 
+import pytest
 from jetp.build_idn_progress_priority_projects import PROGRESS_SHA256
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data" / "jetp"
 SOURCE_ID = "idn-jetp-progress-report-2025"
 
+
+pytestmark = pytest.mark.wp_jetp
 
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as stream:

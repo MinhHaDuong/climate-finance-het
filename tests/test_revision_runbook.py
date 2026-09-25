@@ -2,6 +2,9 @@
 
 from pathlib import Path
 
+import pytest
+
+pytestmark = pytest.mark.wp_corpus
 
 def test_runbook_exists():
     """Revision runbook is in place and covers key scenarios."""

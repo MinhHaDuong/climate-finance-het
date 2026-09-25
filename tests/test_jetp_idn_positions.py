@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_plan_and_later_approval_component_do_not_become_payment_or_double_count():
     """A shared programme name never turns two source positions into a disbursement."""

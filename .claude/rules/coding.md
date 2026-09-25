@@ -38,7 +38,17 @@ Markers gate which `make` target runs a test. Pick the tier by **cost**, not by 
 | slow | `@pytest.mark.slow` | network, real data, a heavy numerical dependency (dcor/torch/ot/sentence_transformers), or heavy compute | `make check` |
 | adherence | `@pytest.mark.adherence` | ruff / mypy / hygiene / contracts | `make lint` |
 
-`make check-fast` = `-m "not slow and not integration and not adherence"` (the inner loop — must stay pure logic). `make lint` = `-m adherence`. `make check` runs everything. No coverage is lost by moving a test to a slower tier — the full `make check` still runs it: ex post on main (`/lair` step 9), and pre-PR when the diff touches the pipeline surface (AGENTS.md § Merge gate).
+`make check-fast` = `-m "not slow and not integration and not adherence"` (the inner loop — must stay pure logic). `make lint` = `-m adherence`. `make check` runs everything. No coverage is lost by moving a test to a slower tier — the full `make check` still runs it: ex post on main (`/lair` step 9), and pre-PR for shared pipeline and test-selection changes (AGENTS.md § Merge gate).
+
+Each test module also declares its workpackage with `pytestmark`: `wp_library`,
+`wp_corpus`, `wp_finance`, `wp_jetp`, `wp_writing`, or `wp_shared`. A test may
+carry more than one WP marker when it checks a boundary between workpackages.
+The collection hook rejects tests without a WP marker. These markers are
+independent of cost tiers: `make check-jetp`, `check-finance`, `check-library`,
+`check-corpus-wp`, `check-writing`, and `check-shared` run all cost tiers for
+their selected WP using pytest `-m`. `check-corpus-wp` also collects the
+`libs/openalex-corpus` package tests. Do not maintain a filename registry or
+filter test paths in Make for WP selection.
 
 Two guards keep the fast tier honest (ticket 0216, owned by `tests/test_fast_path_budget.py` + `tests/conftest.py`):
 

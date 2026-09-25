@@ -53,6 +53,8 @@ from _vars_retrieval import retrieval_protocol_stats
 ALLOWED: list[tuple[str, str, str]] = []
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _config_values() -> dict[str, str]:
     """Config-derived vars, as the string a macro would render."""
     values: dict[str, str] = {}

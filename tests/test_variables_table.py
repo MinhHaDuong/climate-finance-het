@@ -60,6 +60,8 @@ EXTENDED_COLUMNS = (
 )
 
 
+pytestmark = pytest.mark.wp_writing
+
 @pytest.fixture()
 def extended_df():
     row = {c: "" for c in EXTENDED_COLUMNS}

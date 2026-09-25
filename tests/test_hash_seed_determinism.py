@@ -39,6 +39,8 @@ SEED_B = "12345"
 N_PAPERS = 60
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _dois():
     return [f"10.1000/paper{i:03d}" for i in range(N_PAPERS)]
 

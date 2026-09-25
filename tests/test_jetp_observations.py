@@ -6,12 +6,14 @@ import re
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
 from jetp.build_observations import (
     citation_provenance_errors,
     normalize_event_tables,
     reconcile_timing_rows,
 )
 
+pytestmark = pytest.mark.wp_jetp
 
 def _financial(event_id, project_id, status, amount='10', currency='USD'):
     return {

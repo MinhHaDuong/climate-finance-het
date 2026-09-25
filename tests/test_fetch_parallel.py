@@ -21,7 +21,10 @@ import pytest
 # machines whose env omits the corpus group instead.
 pytest.importorskip("bs4", reason="corpus dependency group not installed (uv sync --group corpus)")
 
-pytestmark = pytest.mark.integration
+pytestmark = [
+    pytest.mark.wp_corpus,
+    pytest.mark.integration,
+]
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "harvest"))
 

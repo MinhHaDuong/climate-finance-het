@@ -39,6 +39,8 @@ NEWSLETTERS = {
 }
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as stream:
         return list(csv.DictReader(stream))

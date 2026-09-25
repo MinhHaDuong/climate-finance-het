@@ -41,6 +41,11 @@ RESULTAT_CENTRAL = {
 }
 
 
+pytestmark = [
+    pytest.mark.wp_jetp,
+    pytest.mark.wp_finance,
+]
+
 def _read(path):
     with open(path, encoding="utf-8") as fh:
         return list(csv.DictReader(fh))

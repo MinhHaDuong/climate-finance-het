@@ -10,8 +10,12 @@ import inspect
 import os
 import sys
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "harvest"))
 
+
+pytestmark = pytest.mark.wp_corpus
 
 class TestTeachingDOILookup:
     """Verify teaching pipeline uses CrossRef with cache."""

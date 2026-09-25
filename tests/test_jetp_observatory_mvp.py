@@ -1,7 +1,9 @@
 """Scientific boundary checks for the observable website MVP."""
 
+import pytest
 from jetp._observatory_data import historical_record, public_event, timeline
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_static_renderer_exposes_current_route_and_derived_disclosure_count():
     """The preview follows coverage supplied by the frozen release handoff."""

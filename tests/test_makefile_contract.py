@@ -11,12 +11,15 @@ import os
 import re
 from pathlib import Path
 
+import pytest
 import yaml
 from _mk_discovery import all_makefiles
 
 MAKEFILE = os.path.join(os.path.dirname(__file__), "..", "Makefile")
 DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def read_makefile():
     with open(MAKEFILE) as f:

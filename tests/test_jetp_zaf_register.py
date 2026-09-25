@@ -52,6 +52,8 @@ const OVERALL = [
 """
 
 
+pytestmark = pytest.mark.wp_jetp
+
 def test_register_parser_filters_summary_rows_and_preserves_official_ids() -> None:
     rows = parse_register_html(REGISTER_HTML)
 

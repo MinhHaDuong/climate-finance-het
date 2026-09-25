@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: analysis entr
 
 from compute_citation_coverage import compute_citation_coverage
 
+pytestmark = pytest.mark.wp_corpus
 
 def _works():
     """Six works over three periods, with a deliberate DOI-carriage gradient.

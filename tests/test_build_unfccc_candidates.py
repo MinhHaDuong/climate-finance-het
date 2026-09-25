@@ -14,11 +14,14 @@ import json
 import os
 import sys
 
+import pytest
+
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
 import build_unfccc_candidates as du
 
+pytestmark = pytest.mark.wp_corpus
 
 class TestSymbolConstruction:
     def test_old_style_addendum(self):

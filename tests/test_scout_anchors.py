@@ -11,6 +11,8 @@ own guard (ticket 0201).
 import os
 import sys
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "harvest"))
 
 import scout_tradition_coupling as scout
@@ -19,6 +21,8 @@ import scout_tradition_coupling as scout
 # is the 1992 MIT Press *book*, which has no Crossref DOI.
 FABRICATED_DOI = "10.1016/0301-4215(92)90024-V"
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def _iter_anchor_dois():
     """Yield (tradition, citekey, doi) over every ANCHORS entry."""

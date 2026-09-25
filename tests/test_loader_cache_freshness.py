@@ -26,6 +26,8 @@ WORKS = {
 }
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _pair(tmp_path, csv_frame, feather_frame, csv_newer):
     """Write a CSV/Feather pair, ordering their mtimes explicitly."""
     csv_path = tmp_path / "refined_works.csv"

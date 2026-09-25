@@ -20,6 +20,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "fig
 # Fixtures: synthetic data that mimics real corpus structure
 # ---------------------------------------------------------------------------
 
+pytestmark = pytest.mark.wp_corpus
+
 @pytest.fixture
 def synthetic_embeddings():
     """3 well-separated Gaussian blobs in 10D — any reasonable method should find them."""

@@ -43,6 +43,8 @@ ZONE_B = (2014, 2015)
 PEAK = 2009
 
 
+pytestmark = pytest.mark.wp_corpus
+
 def _summary(method: str, peak: int = PEAK) -> pd.DataFrame:
     """A tab_summary_{method}.csv whose w=3 rows peak at `peak`.
 

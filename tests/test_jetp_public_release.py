@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+pytestmark = pytest.mark.wp_jetp
 
 def test_public_release_keeps_four_country_downloads_traceable_and_replays_offline(tmp_path):
     from jetp._public_release import build_release, read_release, restore_release

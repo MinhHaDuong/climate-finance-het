@@ -12,6 +12,8 @@ import os
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "qa"))
 
 from qa_llm_judge_guards import (
@@ -27,6 +29,8 @@ from qa_llm_judge_guards import (
 LLMISMS = ["delve", "tapestry", "robust"]
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
+
+pytestmark = pytest.mark.wp_corpus
 
 def test_word_count():
     assert word_count("the quick brown fox") == 4

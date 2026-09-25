@@ -41,6 +41,8 @@ TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 # ---------------------------------------------------------------------------
 
 
+pytestmark = pytest.mark.wp_shared
+
 class TestHeavyImportDetection:
     def test_detects_plain_import(self):
         assert heavy_imports_in_source("import dcor") == {"dcor"}

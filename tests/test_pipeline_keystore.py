@@ -9,6 +9,7 @@ from pipeline_keystore import (
     read_credential,
 )
 
+pytestmark = pytest.mark.wp_shared
 
 @pytest.fixture
 def keystore(tmp_path):
