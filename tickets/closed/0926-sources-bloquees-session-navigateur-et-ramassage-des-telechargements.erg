@@ -2,6 +2,7 @@
 Title: Sources bloquées par les robots : rejouer la session navigateur, puis ramasser les téléchargements manuels
 Created: 2026-09-24
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1506
 
 --- log ---
 2026-09-24T15:00Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: HDMX-coding-agent
 2026-09-24T21:17Z HDMX-coding-agent note PR #1506 : relance du 2026-09-24 depuis doudou, 16 sources bloquées → 10 collected (browser-session), 5 blocked, 1 invalid_content (page de connexion dgMarket, refusée par la nouvelle garde de titre) ; les 10 objets copiés dans la copie principale de padme, capture DVC suivie par [[1010]]
 2026-09-24T21:17Z HDMX-coding-agent note ramassage des téléchargements : contrôle positif et négatif en test (tests/test_jetp_browser_collection.py) ; pas encore exercé sur les téléchargements réels de l'auteur, rien n'y attend pour les 6 sources restantes
 
+2026-09-25T05:39Z HDMX-coding-agent closed — autoclosed — PR #1506
 --- body ---
 ## Context
 
