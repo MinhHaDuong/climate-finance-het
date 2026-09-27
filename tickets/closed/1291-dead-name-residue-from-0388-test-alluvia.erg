@@ -2,10 +2,12 @@
 Title: Dead-name residue from 0388: test_alluvial_unit.py docstrings and ncc-pipeline-audit line still name compute_alluvial.py
 Created: 2026-09-27
 Author: HDMX-coding-agent
+Closed: done: three test docstring/comment mentions repointed at scripts/analysis/analyze_alluvial.py (the live _build_argv owner — module-level argparse confirmed, which is why the test replicates rather than imports), audit finding 7 marked resolved with the 0290 deletion recorded; git grep compute_alluvial clean outside tickets/; make check-fast 2394 passed, make lint 346 passed
 
 --- log ---
 2026-09-27T12:59Z HDMX-coding-agent created
 
+2026-09-27T13:13Z HDMX-coding-agent closed — done: three test docstring/comment mentions repointed at scripts/analysis/analyze_alluvial.py (the live _build_argv owner — module-level argparse confirmed, which is why the test replicates rather than imports), audit finding 7 marked resolved with the 0290 deletion recorded; git grep compute_alluvial clean outside tickets/; make check-fast 2394 passed, make lint 346 passed
 --- body ---
 
 ## Context
