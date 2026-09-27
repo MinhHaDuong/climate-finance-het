@@ -5,6 +5,13 @@ Assessment of codebase and Makefile readiness for a Nature Climate Change
 
 Date: 2026-04-13
 
+> **Status (2026-09-27, ticket 1292):** this is a dated snapshot, not a
+> live tracker. The `content/` tree it references was reorganized into
+> `deliverables/` (ticket 0226, commit e27d0741), and most of the shared
+> includes it names were deleted by ticket 0290 (commit 94737720) — read
+> `content/…` paths as historical. The section 6 findings carry their
+> dispositions inline.
+
 ## 1. Figure-to-Script Mapping
 
 The NCC piece needs four figures. Here is what exists and what is missing.
@@ -259,10 +266,15 @@ are pre-built, not rebuilt on every render).
 1. **No censor-gap Makefile targets.** The NCC's primary figure (divergence
    showing 2009) requires censor-gap k=2 tables and figures. Scripts support
    it but no targets exist. Must add before ticket 0018 can execute.
+   *(Done: the targets exist — `Makefile` builds `$(DERIVED)/tab_breakpoints_censor2.csv`
+   and the robustness variant, and the four `fig_ncc_*` figure targets under
+   `deliverables/_shared/figures/`.)*
 
 2. **No composite core-vs-full figure script.** Figure (b) requires a new
    script that combines full and core breakpoints into one panel. The data
    exists; the visualization does not.
+   *(Done: `scripts/figures/plot_ncc_core_comparison.py` exists, with its
+   figure target in the Makefile.)*
 
 ### Should-do (recommended)
 
@@ -271,11 +283,17 @@ are pre-built, not rebuilt on every render).
 
 4. **Add ncc-analysis.qmd to _quarto.yml.** Required for Quarto to render
    the document.
+   *(Mooted: the single-Quarto-project layout was replaced by per-deliverable
+   `_quarto.yml` files (ticket 0226), and `ncc-analysis.qmd` was never
+   created.)*
 
 5. **Decide on figure naming convention.** Either `fig_ncc_*.png` (new
    NCC-specific figures) or reuse existing figure filenames with NCC
    format parameterization. Recommendation: new `fig_ncc_*.png` files to
    avoid disturbing existing documents' figures.
+   *(Settled in practice: the NCC figure scripts and targets were built
+   under the new names — `scripts/figures/plot_ncc_*.py`,
+   `deliverables/_shared/figures/fig_ncc_*.png`.)*
 
 ### Nice-to-have (can defer)
 
@@ -283,6 +301,9 @@ are pre-built, not rebuilt on every render).
    about z-scores recomputed from an earlier corpus version where 2013
    no longer meets robustness. The author should resolve this before the
    companion paper is posted as preprint (ticket 0015 scope).
+   *(Resolved, ticket 1292: ticket 0290 (commit 94737720) deleted
+   `structural-breaks.md` — the same commit that deleted `core-vs-full.md`,
+   see finding 7 — so the stale z-score note went with the include.)*
 
 7. **core-vs-full.md include referenced the removed alluvial shim script**
    (line 17) instead of the actual script `compute_clusters.py`. Stale
