@@ -291,9 +291,10 @@ are pre-built, not rebuilt on every render).
    NCC-specific figures) or reuse existing figure filenames with NCC
    format parameterization. Recommendation: new `fig_ncc_*.png` files to
    avoid disturbing existing documents' figures.
-   *(Settled in practice: the NCC figure scripts and targets were built
-   under the new names — `scripts/figures/plot_ncc_*.py`,
-   `deliverables/_shared/figures/fig_ncc_*.png`.)*
+   *(Settled in practice: the new `plot_ncc_*` / `fig_ncc_*` names won —
+   the four scripts exist (`scripts/figures/plot_ncc_*.py`) and the
+   Makefile targets are named for them, though the figures themselves
+   have never been rendered into the tree.)*
 
 ### Nice-to-have (can defer)
 
