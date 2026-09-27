@@ -2,10 +2,12 @@
 Title: ncc-pipeline-audit finding 6 cites structural-breaks.md, deleted by 0290 — sweep the audit for findings against files that no longer exist
 Created: 2026-09-27
 Author: HDMX-coding-agent
+Closed: done: audit marked as a dated snapshot with the content/->deliverables reorg (0226, e27d0741) and 0290 deletions recorded in a header note; findings 1 and 2 marked Done (censor-gap targets and plot_ncc_* scripts verified in Makefile), 4 Mooted (per-deliverable quarto layout, ncc-analysis.qmd never existed), 5 Settled in practice (plot_ncc_*/fig_ncc_* names), 6 Resolved (structural-breaks.md deleted by 0290); finding 3 left open — still true, no ncc DOC_VARS entry today; check-fast 2394 passed, lint 346 passed
 
 --- log ---
 2026-09-27T13:18Z HDMX-coding-agent created
 
+2026-09-27T13:23Z HDMX-coding-agent closed — done: audit marked as a dated snapshot with the content/->deliverables reorg (0226, e27d0741) and 0290 deletions recorded in a header note; findings 1 and 2 marked Done (censor-gap targets and plot_ncc_* scripts verified in Makefile), 4 Mooted (per-deliverable quarto layout, ncc-analysis.qmd never existed), 5 Settled in practice (plot_ncc_*/fig_ncc_* names), 6 Resolved (structural-breaks.md deleted by 0290); finding 3 left open — still true, no ncc DOC_VARS entry today; check-fast 2394 passed, lint 346 passed
 --- body ---
 
 ## Context
