@@ -1,0 +1,51 @@
+%erg 0.1
+Title: ncc-pipeline-audit finding 6 cites structural-breaks.md, deleted by 0290 — sweep the audit for findings against files that no longer exist
+Created: 2026-09-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-27T13:18Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Found by the round-1 reviewer of PR #1538 (ticket 1291), which resolved
+audit finding 7 the same way: `docs/ncc-pipeline-audit.md:282` (finding 6,
+"Nice-to-have" list) still records a defect in `structural-breaks.md`
+lines 60-63 — but ticket 0290 (commit 94737720) deleted
+`deliverables/_shared/_includes/structural-breaks.md` the same day it
+deleted `core-vs-full.md`. An audit finding against a file that no longer
+exists reads as an open defect forever; recording a defect in prose is
+not a mechanism for removing it.
+
+Finding 7 was handled one-off in 1291. The class deserves the sweep once:
+the audit predates the 0290 include deletions and may carry more findings
+whose subject files are gone.
+
+## Relevant files
+
+- `docs/ncc-pipeline-audit.md:282` — finding 6 against the deleted include.
+- `git show --name-status 94737720` — the 14 deleted includes (the sweep list).
+
+## Actions
+
+1. Extract every file path the audit references, check each against the
+   tree (and against 94737720's deletion list), and mark each orphaned
+   finding resolved the way 1291 resolved finding 7: state the disposition
+   (fixed earlier, or mooted by the 0290 deletion), keep the history
+   git-verifiable, do not falsify the original finding.
+2. Findings whose subject still exists stay untouched — this ticket only
+   retires findings against files that are gone.
+
+## Test
+
+Prose: every file path referenced by `docs/ncc-pipeline-audit.md` either
+exists in the tree or its finding is marked resolved with the deletion
+recorded. `make check-fast` and `make lint` stay green.
+
+## Exit criteria
+
+- [ ] No finding in `docs/ncc-pipeline-audit.md` reads as open against a
+      file that no longer exists
+- [ ] `make check-fast` and `make lint` green
