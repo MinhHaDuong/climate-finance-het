@@ -4,7 +4,7 @@ Tests exercise actual computation logic without requiring the real corpus:
 - load_analysis_corpus() filtering logic
 - is_clean_term() denoising function
 - load_analysis_config() with a temp YAML file
-- compute_alluvial.py shim's _build_argv() selective flag forwarding
+- analyze_alluvial.py's _build_argv() selective flag forwarding
 """
 
 import os
@@ -233,10 +233,10 @@ class TestLoadAnalysisConfig:
 
 
 class TestBuildArgv:
-    """Test the shim's selective flag-forwarding logic."""
+    """Test analyze_alluvial.py's selective flag-forwarding logic."""
 
-    # Replicate the logic from compute_alluvial.py without importing the
-    # module-level argparse (which would call sys.argv and fail).
+    # Replicate the logic from scripts/analysis/analyze_alluvial.py without
+    # importing the module-level argparse (which would call sys.argv and fail).
 
     SCRIPT_FLAGS = {
         "scripts/analysis/compute_breakpoints.py": {
@@ -254,7 +254,7 @@ class TestBuildArgv:
 
     @staticmethod
     def _build_argv(script, args, script_flags):
-        """Reimplementation matching compute_alluvial.py logic."""
+        """Reimplementation matching analyze_alluvial.py _build_argv() logic."""
         accepted = script_flags[script]
         argv = []
         if args.core_only and "--core-only" in accepted:

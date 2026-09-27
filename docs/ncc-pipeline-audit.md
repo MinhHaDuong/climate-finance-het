@@ -284,8 +284,13 @@ are pre-built, not rebuilt on every render).
    no longer meets robustness. The author should resolve this before the
    companion paper is posted as preprint (ticket 0015 scope).
 
-7. **core-vs-full.md include references `compute_alluvial.py`** (line 17)
-   but the actual script is `compute_clusters.py`. Stale reference.
+7. **core-vs-full.md include referenced the removed alluvial shim script**
+   (line 17) instead of the actual script `compute_clusters.py`. Stale
+   reference. *(Resolved, ticket 1291: the stale line was fixed, and ticket
+   0290 (commit 94737720) then deleted the core-vs-full.md include outright.
+   The flag-forwarding logic lives in `scripts/analysis/analyze_alluvial.py`,
+   and no file under `deliverables/_shared/_includes/` names a script path
+   that does not exist.)*
 
 
 ## 7. Summary of Required New Files
