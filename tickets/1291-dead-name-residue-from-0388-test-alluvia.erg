@@ -40,9 +40,11 @@ its actions 2 and 3 named, so closure does not drop them.
 ## Test
 
 Pure prose: `make check-fast` and `make lint` stay green; the dead name no
-longer appears outside `tickets/` (`grep -rn compute_alluvial` clean).
+longer appears in tracked files outside `tickets/` (`git grep -n compute_alluvial`
+clean — scoped to tracked files, so untracked caches and scratch worktrees
+do not make a correct fix look unmet).
 
 ## Exit criteria
 
-- [ ] No file outside `tickets/` names `compute_alluvial.py`
+- [ ] No tracked file outside `tickets/` names `compute_alluvial.py`
 - [ ] `docs/ncc-pipeline-audit.md` finding 7 reads as resolved
