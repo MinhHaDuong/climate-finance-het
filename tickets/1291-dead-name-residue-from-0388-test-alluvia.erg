@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Dead-name residue from 0388: test_alluvial_unit.py docstrings and ncc-pipeline-audit line still name compute_alluvial.py
+Created: 2026-09-27
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-27T12:59Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Ticket 0388 filed four actions against the dangling `compute_alluvial.py`
+references. Two are moot — 0290 (commit 94737720) deleted both include
+files, and `temporal-structure.md` went with them — and the exit criteria
+now hold: every `scripts|tests` `.py` path named under
+`deliverables/_shared/_includes/` resolves on disk (mechanical sweep,
+2026-09-27). 0388 is closed as superseded; this ticket carries the residue
+its actions 2 and 3 named, so closure does not drop them.
+
+## Relevant files
+
+- `tests/test_alluvial_unit.py:7` — module docstring credits the removed
+  shim's `_build_argv()` flag forwarding.
+- `tests/test_alluvial_unit.py:238,257` — comments/docstrings describe the
+  replication as "matching compute_alluvial.py logic"; that name is how the
+  dead shim keeps propagating through the tree.
+- `docs/ncc-pipeline-audit.md:287` — audit finding 7 still reads as an open
+  issue ("core-vs-full.md include references `compute_alluvial.py`") though
+  that instance was fixed and the whole include was later deleted.
+
+## Actions
+
+1. Repoint the three test docstring/comment mentions at the real producer
+   (`scripts/analysis/analyze_alluvial.py`) or describe the logic on its own
+   terms; comments only, no behaviour change.
+2. Mark the audit finding resolved (state the fix and the 0290 deletion),
+   so the audit stops recording a defect that no longer exists.
+
+## Test
+
+Pure prose: `make check-fast` and `make lint` stay green; the dead name no
+longer appears outside `tickets/` (`grep -rn compute_alluvial` clean).
+
+## Exit criteria
+
+- [ ] No file outside `tickets/` names `compute_alluvial.py`
+- [ ] `docs/ncc-pipeline-audit.md` finding 7 reads as resolved
