@@ -2,12 +2,15 @@
 Title: Test hygiene: test_pipeline_io leaks stray run-report files into data/catalogs/run_reports
 Created: 2026-07-22
 Author: HDMX-coding-agent
+Closed: superseded by 0346: tests/test_run_report_isolation.py guards the patch-the-wrong-module mechanism across every test module, test_pipeline_io.py no longer calls save_run_report, and the repo-root data/run_reports/ strays are gone
 
 --- log ---
 2026-07-22T12:23Z HDMX-coding-agent created
 
 2026-07-24T21:20Z HDMX-coding-agent note leak reproduced in the wild: data/run_reports/ (repo root, wrong dir) held four test artifacts (my_script__test-run-001.json etc.); trashed during tidy-up.
 
+2026-09-27T12:59Z HDMX-coding-agent closed — superseded by 0346: tests/test_run_report_isolation.py guards the patch-the-wrong-module mechanism across every test module, test_pipeline_io.py no longer calls save_run_report, and the repo-root data/run_reports/ strays are gone
+2026-09-27T13:00Z HDMX-coding-agent note verification for the close: test_pipeline_io.py no longer references save_run_report or CATALOGS_DIR; tests/test_run_report_isolation.py (0346) scans every test module for the patch-the-wrong-module shape and subprocess cwd leaks; repo-root data/run_reports/ no longer exists
 --- body ---
 ## Context
 

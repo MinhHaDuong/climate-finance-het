@@ -2,11 +2,15 @@
 Title: Two rendered includes cite compute_alluvial.py, which no longer exists
 Created: 2026-07-27
 Author: HDMX-coding-agent
+Closed: superseded: 0290 (commit 94737720) deleted both named includes; exit criteria now hold — every scripts/tests .py path under deliverables/_shared/_includes resolves on disk (checked 2026-09-27); docstring and audit-line residue ticketed separately
 
 --- log ---
 2026-07-27T19:05Z HDMX-coding-agent created
 2026-07-27T19:25Z HDMX-coding-agent note Renumbered 0386 -> 0388: PR #1215 renumbered another ticket onto 0386 minutes before #1216 merged. Both PRs were fixing the same duplicate 0385, independently, to different target ids.
 
+2026-09-27T12:59Z HDMX-coding-agent closed — superseded: 0290 (commit 94737720) deleted both named includes; exit criteria now hold — every scripts/tests .py path under deliverables/_shared/_includes resolves on disk (checked 2026-09-27); docstring and audit-line residue ticketed separately
+2026-09-27T13:00Z HDMX-coding-agent note verification for the close: swept every scripts/tests .py path named in any file under deliverables/_shared/_includes/ (including techrep/ and zoo/ subtrees) — all resolve on disk; action 4 moot (temporal-structure.md deleted by 0290); actions 2-3 residue filed as 1291
+2026-09-27T13:07Z HDMX-coding-agent note second exit-criteria clause verified for the close: the only surviving deliberate exception, prior-mappings.md, is exempted in 0290's include-graph guard with the ticket named, and the sweep found no unannotated dangling path (reviewer round 1 finding)
 --- body ---
 ## Context
 
