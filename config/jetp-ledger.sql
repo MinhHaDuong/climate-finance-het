@@ -390,6 +390,7 @@ CREATE TABLE adjudications (
     status TEXT NOT NULL,
     decided_at TEXT NOT NULL,
     decided_by TEXT NOT NULL,
+    recorded_at TEXT NOT NULL,
     supersedes TEXT UNIQUE REFERENCES adjudications (adjudication_id),
     notes TEXT
 );
@@ -401,6 +402,19 @@ CREATE TABLE adjudication_members (
     role TEXT,
     PRIMARY KEY (adjudication_id, kind, id)
 );
+
+-- A later decision replaces the whole member set. Rejected and candidate
+-- terminal rows remain in history but confer no current decision.
+CREATE VIEW adjudications_in_force AS
+SELECT a.*
+FROM adjudications AS a
+WHERE a.status = 'accepted'
+  AND NOT EXISTS (SELECT 1 FROM adjudications AS s
+                  WHERE s.supersedes = a.adjudication_id);
+
+CREATE VIEW adjudication_members_in_force AS
+SELECT m.* FROM adjudication_members AS m
+JOIN adjudications_in_force AS a USING (adjudication_id);
 
 -- ---------------------------------------------------------------------------
 -- Rates and deflators (a script never carries a rate)
@@ -597,6 +611,43 @@ SELECT tbl || ' ' || key || ': ' || kind || ' ''' || id || ''' does not exist' A
 FROM ref
 WHERE kind IN (SELECT kind FROM identity_kinds)
   AND NOT EXISTS (SELECT 1 FROM ledger_identities AS i WHERE i.kind = ref.kind AND i.id = ref.id);
+
+-- Each decision has its own typed evidence. A perimeter compatibility ruling
+-- must name a real perimeter, either as subject or member. Supersession keeps
+-- the decision question fixed and moves forward in both time dimensions.
+CREATE VIEW violation_adjudication_members AS
+SELECT 'adjudications ' || a.adjudication_id || ': no typed members' AS detail
+FROM adjudications AS a
+WHERE NOT EXISTS (SELECT 1 FROM adjudication_members AS m
+                  WHERE m.adjudication_id = a.adjudication_id)
+UNION ALL
+SELECT 'adjudications ' || a.adjudication_id || ': perimeter_compatibility names no perimeter'
+FROM adjudications AS a
+WHERE a.decision_type = 'perimeter_compatibility'
+  AND a.subject_kind <> 'perimeter'
+  AND NOT EXISTS (SELECT 1 FROM adjudication_members AS m
+                  WHERE m.adjudication_id = a.adjudication_id AND m.kind = 'perimeter');
+
+CREATE VIEW violation_adjudication_chain AS
+SELECT 'adjudications ' || a.adjudication_id || ': supersedes ' || p.adjudication_id
+       || ' of another question' AS detail
+FROM adjudications AS a
+JOIN adjudications AS p ON p.adjudication_id = a.supersedes
+WHERE a.decision_type <> p.decision_type OR a.subject_kind <> p.subject_kind
+   OR a.subject_id <> p.subject_id
+UNION ALL
+SELECT 'adjudications ' || a.adjudication_id || ': recorded_at precedes superseded row'
+FROM adjudications AS a
+JOIN adjudications AS p ON p.adjudication_id = a.supersedes
+WHERE a.recorded_at < p.recorded_at
+UNION ALL
+SELECT 'adjudications ' || a.adjudication_id || ': decided_at precedes superseded row'
+FROM adjudications AS a
+JOIN adjudications AS p ON p.adjudication_id = a.supersedes
+WHERE a.decided_at < p.decided_at
+UNION ALL
+SELECT 'adjudications ' || a.adjudication_id || ': self-supersession'
+FROM adjudications AS a WHERE a.supersedes = a.adjudication_id;
 
 -- A project, asset or agreement is an accepted identity only when a cited
 -- line minted it.  Publishing parties use party_names as their separate basis.
