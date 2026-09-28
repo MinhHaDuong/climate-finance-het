@@ -11,6 +11,7 @@ Author: HDMX-coding-agent
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : chemins vérifiés (`build_accounts.py` à créer, confirmé absent d'origin/main ; `overview.json` présent ; titres `$8.5bn` / `$6,12bn allocated` confirmés dans `config/jetp_observatory.yaml`) ; ce ticket est aussi la destination du `member_of` RUPTL et VNM différé par [[0874]] (les identités et le périmètre n'existent pas avant l'action 1 de ce ticket) — l'action 1 est reformulée pour l'expliciter
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep), vérification monstre : ce ticket empile trois unités de signature — (a) `perimeters` et les observations `envelope`/`count` qui les citent, (b) `adjudications`/`adjudication-members`, (c) les comptes dérivés (`build_accounts.py`) et le service d'`overview.json` — chacune testable séparément (fixture périmètre, fixture adjudication de doublon, fixture de compte) ; proposition : scinder en 0877a (périmètres + observations), 0877b (adjudications), 0877c (comptes dérivés + service). Non exécuté ici, signalé à l'auteur.
 2026-09-23T15:23Z HDMX-coding-agent note scission exécutée (raid, tickets-migration-prep) : adjudications vers [[0889]] (Blocked-by ce ticket : `perimeter_compatibility` cite un `perimeter_id`), comptes dérivés et service `overview.json` vers [[0890]] (Blocked-by [[0889]], le prérequis direct, qui couvre transitivement ce ticket). Ce ticket garde `perimeters` et les observations `envelope`/`count`.
+2026-09-28T08:32Z Codex note vérification de la branche 08e0aca5 sur padme (checkout propre, corpus et documents présents) : `make check-jetp` 970 passed/5 skipped, `make check-fast` 25+2402 passed/9 skipped, `make lint` 346 passed/13 skipped, `make jetp-ledger-check` vert ; recette navigateur sur le paquet public HEAD verte (97 entrées historiques). Deux tours de revue indépendante ; les 3 constats du premier sont corrigés, le test de timing signalé au second aussi. Les deux observations de compte VNM ne créent aucun membre fictif.
 
 --- body ---
 ## Context
@@ -33,12 +34,14 @@ autres.
 
 ## Actions
 
-1. `perimeters` : un par partenariat, un pour le portefeuille VNM 2025, un
-   RUPTL ; `member_of` depuis lignes et identités, y compris les 230
-   lignes `plan_only` marquées `ruptl` par [[0874]] (vers le périmètre
-   RUPTL) et les 21 places comptées VNM (vers le périmètre du portefeuille) :
-   ces appartenances ne pouvaient pas être frappées avant que ces
-   périmètres existent, donc elles le sont ici.
+1. `perimeters` : un par partenariat, le portefeuille VNM 2025 déjà déclaré
+   par [[0880]], et un périmètre des lignes CIPP marquées RUPTL ; `member_of`
+   depuis les lignes et identités réellement nommées, dont les 230 lignes
+   `plan_only` marquées `ruptl` par [[0874]]. Les 21 anciennes places VNM
+   non publiées ne sont pas des membres identifiés : conformément à l'ontologie
+   § Perimeter, elles restent des dispositions de [[0875]], et les deux nombres
+   publiés (7 initiaux, 17 nouvellement criblés) deviennent des observations
+   `count` sur le périmètre VNM, chacune citant sa ligne.
 2. Observations `envelope` et `count` citant leurs lignes ; le titre ZAF
    « 6,12 Md$ alloués » cite sa ligne (l'écart avec la somme des
    événements, 4,32 Md$, est un résidu de compte laissé à [[0890]], pas une
@@ -47,15 +50,14 @@ autres.
 ## Test
 
 - `tests/test_jetp_perimeters.py` : depuis une fixture de deux lignes
-  `plan_only` marquées `ruptl` et d'une place comptée VNM, le périmètre
-  RUPTL et le périmètre du portefeuille VNM 2025 reçoivent les `member_of`
-  attendus ; une observation `envelope` ou `count` sans ligne citée est
-  refusée.
+  `plan_only` marquées `ruptl`, le périmètre RUPTL reçoit les `member_of`
+  attendus ; les deux comptes VNM deviennent des observations du périmètre
+  2025, sans membres inventés ; une observation sans ligne citée est refusée.
 
 ## Verification
 
-- [ ] Chaque périmètre déclaré par la migration ([[0870]]) existe : partenariat, portefeuille VNM 2025, RUPTL
-- [ ] Les 230 lignes `plan_only` `ruptl` de [[0874]] et les 21 places comptées VNM ont leur `member_of`
+- [x] Chaque périmètre déclaré par la migration ([[0870]]) existe : partenariat, portefeuille VNM 2025, RUPTL
+- [x] Les 230 lignes `plan_only` `ruptl` de [[0874]] ont leur `member_of` ; les comptes VNM 7 et 17 ont chacun une observation de périmètre citée, sans créer 21 faux membres
 
 ## Invariants
 
@@ -64,5 +66,5 @@ autres.
 
 ## Exit criteria
 
-- [ ] Lignes de `perimeters` écrites dans la table de [[0880]], validées par [[0871]] (`make jetp-ledger-check`)
-- [ ] `tests/test_jetp_perimeters.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
+- [x] Lignes de `perimeters` écrites dans la table de [[0880]], validées par [[0871]] (`make jetp-ledger-check`)
+- [x] `tests/test_jetp_perimeters.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)

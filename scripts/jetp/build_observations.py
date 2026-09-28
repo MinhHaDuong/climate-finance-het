@@ -28,6 +28,7 @@ COUNTRIES = ('ZAF', 'IDN', 'VNM', 'SEN')
 # position its ledger gives it.
 OBSERVATION_TABLES = ('events', 'implementation-events', 'project-source-links')
 RECORDED_AT = '2026-09-24'
+LEGACY_EVENT_METHODS = {'legacy_event', 'legacy_implementation_event'}
 
 # The old date ledger used a wider vocabulary while dates were still an
 # attribute of events.  These are deliberately translations of date *roles*,
@@ -164,6 +165,10 @@ def served_observations_by_country(tables, registry, observations, timings, pend
     the public observations view. Ticket 0878 retires this bridge with the
     remaining legacy readers.
     """
+    # This compatibility view covers legacy event IDs only. Perimeter and
+    # comparator observations live in the same ledger table but have their
+    # own readers and must not be mistaken for unmapped legacy events.
+    observations = [row for row in observations if row['method'] in LEGACY_EVENT_METHODS]
     legacy = [(table, row, row['event_id' if table == 'events'
                                 else 'implementation_event_id'])
               for table in ('events', 'implementation-events')
@@ -173,6 +178,8 @@ def served_observations_by_country(tables, registry, observations, timings, pend
         raise ValueError('duplicate legacy event identifier in served view')
     accepted = {row['observation_id'].removeprefix('observation-'): row
                 for row in observations}
+    timings = [row for row in timings if row['observation_id'] in {
+        observation['observation_id'] for observation in observations}]
     if len(accepted) != len(observations) or set(accepted) - legacy_ids:
         raise ValueError('v2 observation lacks a unique legacy event')
     held = {row['legacy_event_id']: row for row in pending
@@ -598,8 +605,23 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
     timing_reconciliation = reconcile_timing_rows(
         event_timings, observations, timings, pending)
     schema = load_schema()
-    write_table(ledger_dir, 'observations', observations, schema=schema)
-    write_table(ledger_dir, 'timings', timings, schema=schema)
+    # This builder owns only the legacy-event projection. Preserve every
+    # observation and timing owned by later migrations, regardless of ID.
+    external_rows = []
+    observation_path = ledger_dir / 'observations.csv'
+    if observation_path.exists():
+        with observation_path.open(encoding='utf-8', newline='') as handle:
+            external_rows = [row for row in csv.DictReader(handle)
+                             if row['method'] not in LEGACY_EVENT_METHODS]
+    external_ids = {row['observation_id'] for row in external_rows}
+    external_timings = []
+    timing_path = ledger_dir / 'timings.csv'
+    if timing_path.exists():
+        with timing_path.open(encoding='utf-8', newline='') as handle:
+            external_timings = [row for row in csv.DictReader(handle)
+                                if row['observation_id'] in external_ids]
+    write_table(ledger_dir, 'observations', observations + external_rows, schema=schema)
+    write_table(ledger_dir, 'timings', timings + external_timings, schema=schema)
     write_table(ledger_dir, 'rates', [], schema=schema)
     pending_path = ledger_dir / 'migration' / '0876-pending.csv'
     with pending_path.open('w', encoding='utf-8', newline='') as handle:

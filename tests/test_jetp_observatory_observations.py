@@ -220,7 +220,10 @@ def test_the_shipped_views_serve_only_cited_v2_events_and_all_legacy_links() -> 
         with (ledger / name).open(encoding="utf-8") as stream:
             return list(csv.DictReader(stream))
 
-    accepted = {row["observation_id"]: row for row in rows("observations.csv")}
+    # This compatibility view serves legacy events; perimeter observations
+    # have their own ledger reader and are not legacy event rows.
+    accepted = {row["observation_id"]: row for row in rows("observations.csv")
+                if row["method"] in ("legacy_event", "legacy_implementation_event")}
     held = {row["legacy_event_id"] for row in rows("migration/0876-pending.csv")
             if row["legacy_table"] != "event-timing"}
     served = [row for code in COUNTRIES for row in json.loads(
