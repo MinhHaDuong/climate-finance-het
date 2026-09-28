@@ -287,7 +287,9 @@ def test_observation_shards_derive_and_check_country_from_cited_line(tmp_path):
         'recorded_at': '2026-09-28', 'status': 'accepted',
         'notes': 'A source transaction amount with its own source code.',
     } for index in range(3)]
-    written = ledger_headers.write_table(tmp_path, 'observations', rows, ceiling=400)
+    written = ledger_headers.write_table(
+        tmp_path, 'observations', rows, ceiling=400,
+        country_by_line_id={'doc-1-t1-2': 'ZAF'})
     assert len(written) >= 2
     assert all(path.name.startswith('ZAF-2026') for path in written)
     values, errors = ledger_headers.read_table(
@@ -295,7 +297,7 @@ def test_observation_shards_derive_and_check_country_from_cited_line(tmp_path):
     assert len(values) == 3 and errors == []
     written[0].rename(written[0].with_name('VNM-2026.csv'))
     _, errors = ledger_headers.read_table(tmp_path, 'observations', ledger_headers.load_schema())
-    assert any("cites country 'ZAF'" in error for error in errors)
+    assert any("cited line country 'ZAF'" in error for error in errors)
 
 
 def test_small_table_is_written_as_one_file(tmp_path):
