@@ -101,3 +101,16 @@ def test_existing_analysis_corpus_stays_at_2024(monkeypatch):
         with_embeddings=False)
     assert analyzed["year"].tolist() == [2024]
     assert embeddings is None
+
+
+def test_publication_date_survives_merge_with_legacy_source():
+    from harvest.catalog_merge import merge_catalogs
+    from utils import WORKS_COLUMNS
+
+    old = {column: "" for column in WORKS_COLUMNS if column != "publication_date"}
+    old.update(source="istex", source_id="I1", doi="10.1/example",
+               title="Climate finance paper", year="2026")
+    dated = {**old, "source": "openalex", "source_id": "W1",
+             "publication_date": "2026-09-01"}
+    merged, _ = merge_catalogs(pd.DataFrame([old, dated]))
+    assert merged.loc[0, "publication_date"] == "2026-09-01"
