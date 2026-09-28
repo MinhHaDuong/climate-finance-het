@@ -1,0 +1,22 @@
+%erg 0.1
+Title: Refuser les réponses CRS 404 avant archivage DVC
+Created: 2026-09-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-28T09:18Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Le balayage post-fusion de [[0885]] trouve une seconde occurrence du traitement silencieux des HTTP 404. `scripts/jetp/catalog_crs.py:fetch` retourne `b""` pour un 404. `pull_year` le traite comme un succès et écrit un `.csv.gz` vide sous `data/jetp/crs/`. Le stage `jetp_pull` de `dvc.yaml` archive ce répertoire sous DVC. Un tirage forcé ou une année absente peut donc déposer un fichier sans données comme si la collecte avait réussi. Le collecteur tous secteurs ajouté en 0885 refuse déjà les 404.
+
+## Action
+
+Faire échouer `pull_year` sur 404 et réponse vide ; ne pas remplacer une archive existante par un fichier vide. Ajouter un test du chemin HTTP 404 et vérifier qu'aucun fichier de sortie n'est créé ou remplacé. Ne pas retoucher les archives CRS déjà épinglées sans motif explicite.
+
+## Exit criteria
+
+- [ ] Le collecteur historique signale un 404 ou une réponse vide comme échec.
+- [ ] Une collecte en échec ne produit pas de gzip vide et ne remplace pas un tirage valide.
+- [ ] Le test ciblé et les portes du domaine JETP passent.
