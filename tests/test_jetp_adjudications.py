@@ -179,6 +179,21 @@ def test_supersession_cycle_is_refused(tmp_path):
     assert any('supersession cycle' in error for error in build(tmp_path))
 
 
+def test_separator_inside_id_is_not_a_cycle(tmp_path):
+    tables = _tables()
+    tables['adjudications'][0]['adjudication_id'] = 'b'
+    for member in tables['adjudication_members'][:2]:
+        member['adjudication_id'] = 'b'
+    tables['adjudications'].append(_decision(
+        'a|b', 'occurrence_membership', 'observation', 'flow-1',
+        supersedes='b'))
+    tables['adjudication_members'] += [
+        _member('a|b', 'observation', 'flow-1', 'occurrence'),
+        _member('a|b', 'observation', 'flow-2', 'occurrence')]
+    _write(tmp_path, tables)
+    assert build(tmp_path) == []
+
+
 def test_accepted_decisions_need_usable_member_sets(tmp_path):
     tables = _tables()
     tables['adjudication_members'] = [

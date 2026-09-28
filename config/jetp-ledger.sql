@@ -684,16 +684,19 @@ FROM adjudications AS a WHERE a.supersedes = a.adjudication_id;
 CREATE VIEW violation_adjudication_cycle AS
 WITH RECURSIVE chain(start_id, current_id, next_id, path) AS (
     SELECT adjudication_id, adjudication_id, supersedes,
-           '|' || adjudication_id || '|' FROM adjudications
+           json_array(adjudication_id) FROM adjudications
     UNION ALL
     SELECT chain.start_id, a.adjudication_id, a.supersedes,
-           chain.path || a.adjudication_id || '|'
+           json_insert(chain.path, '$[#]', a.adjudication_id)
     FROM chain JOIN adjudications AS a ON a.adjudication_id = chain.next_id
-    WHERE instr(chain.path, '|' || a.adjudication_id || '|') = 0
+    WHERE NOT EXISTS (SELECT 1 FROM json_each(chain.path)
+                      WHERE value = a.adjudication_id)
 )
 SELECT 'adjudications ' || start_id || ': supersession cycle' AS detail
 FROM chain
-WHERE next_id IS NOT NULL AND instr(path, '|' || next_id || '|') > 0;
+WHERE next_id IS NOT NULL
+  AND EXISTS (SELECT 1 FROM json_each(chain.path)
+              WHERE value = chain.next_id);
 
 -- A project, asset or agreement is an accepted identity only when a cited
 -- line minted it.  Publishing parties use party_names as their separate basis.
