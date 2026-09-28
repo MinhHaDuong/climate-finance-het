@@ -79,11 +79,14 @@ def load_query_dates(path=None):
     Returns dict {query_slug: "YYYY-MM-DD"} or empty dict if missing.
     Falls back to legacy single-date file if JSON doesn't exist.
     """
+    explicit_path = path is not None
     if path is None:
         path = SIDECAR_PATH
     if os.path.exists(path):
         with open(path) as fh:
             return json.load(fh)
+    if explicit_path:
+        return {}
     # Fallback: legacy single-date sidecar → treat as global date for all queries
     if os.path.exists(LAST_RUN_PATH):
         with open(LAST_RUN_PATH) as fh:
@@ -290,8 +293,17 @@ def dry_run_query(search_term, delay, from_date=None, year_min=None,
     return data.get("meta", {}).get("count", 0)
 
 
+def query_from_date(slug, query_dates, global_from_date):
+    """Select the incremental creation-date floor for one normal query."""
+    if global_from_date:
+        return global_from_date
+    if slug in query_dates:
+        return query_dates[slug]
+    return query_dates.get("_global")
+
+
 def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
-                    year_min, year_max, today):
+                    year_min, year_max, today, checkpoint_path=None):
     """Run the download phase across all tiers.
 
     Returns (total, completed, skipped, budget_start).
@@ -320,14 +332,12 @@ def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
             slug = query_slug(term)
             pf = pool_path("openalex", slug)
 
-            if global_from_date:
-                from_date = global_from_date
-            elif slug in query_dates:
-                from_date = query_dates[slug]
-            elif "_global" in query_dates:
-                from_date = query_dates["_global"]
-            else:
-                from_date = None
+            if getattr(args, "full_scan", False) and slug in query_dates:
+                log.info('Backfill query already completed: "%s"', term)
+                queries_completed += 1
+                continue
+
+            from_date = query_from_date(slug, query_dates, global_from_date)
 
             if args.dry_run:
                 count = dry_run_query(term, args.delay, from_date,
@@ -367,7 +377,7 @@ def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
             grand_total += n_new
             if completed:
                 query_dates[slug] = today
-                save_query_dates(query_dates)
+                save_query_dates(query_dates, checkpoint_path)
                 queries_completed += 1
             else:
                 queries_skipped += 1

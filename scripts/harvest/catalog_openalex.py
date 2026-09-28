@@ -49,6 +49,7 @@ from utils import (
     CATALOGS_DIR,
     CONFIG_DIR,
     MAILTO,
+    POOL_DIR,
     WORKS_COLUMNS,
     get_logger,
     load_collect_config,
@@ -80,6 +81,14 @@ def effective_year_min(collect_cfg, override):
     if not collect_cfg["year_min"] <= override <= collect_cfg["year_max"]:
         raise ValueError("--year-min must fall inside the collection window")
     return override
+
+
+def backfill_checkpoint_path(full_scan, year_min, year_max):
+    """Keep bounded backfill progress apart from ordinary resume dates."""
+    if not full_scan:
+        return None
+    return os.path.join(
+        POOL_DIR, "openalex", f"_backfill_{year_min}_{year_max}.json")
 
 
 def passes_relevance(text, concept_groups, min_groups):
@@ -310,7 +319,9 @@ def main():
         return
 
     # Load per-query sidecar dates for incremental runs
-    query_dates = load_query_dates() if args.resume and not args.full_scan else {}
+    checkpoint_path = backfill_checkpoint_path(
+        args.full_scan, year_min, year_max)
+    query_dates = load_query_dates(checkpoint_path) if args.resume else {}
     global_from_date = args.from_date  # explicit --from-date overrides per-query
 
     if global_from_date:
@@ -344,7 +355,7 @@ def main():
     # Download phase
     grand_total, queries_completed, queries_skipped, budget_start = _download_tiers(
         tiers, args, existing_ids, query_dates, global_from_date,
-        year_min, year_max, today,
+        year_min, year_max, today, checkpoint_path=checkpoint_path,
     )
 
     if args.dry_run:

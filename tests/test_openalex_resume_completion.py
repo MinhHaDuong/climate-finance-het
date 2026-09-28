@@ -74,6 +74,28 @@ def test_full_scan_does_not_refresh_a_new_work_on_next_query(monkeypatch, tmp_pa
     assert appended == [record]
 
 
+def test_completed_backfill_query_is_skipped_without_touching_normal_checkpoint(
+    monkeypatch, tmp_path
+):
+    normal = tmp_path / "normal.json"
+    backfill = tmp_path / "backfill.json"
+    slug = pool.query_slug("climate finance")
+    pool.save_query_dates({slug: "2026-03-01"}, str(normal))
+    pool.save_query_dates({slug: "2026-09-28"}, str(backfill))
+    monkeypatch.setattr(pool, "SIDECAR_PATH", str(normal))
+    monkeypatch.setattr(pool, "polite_get", lambda *args, **kwargs: pytest.fail(
+        "completed backfill query contacted the API"))
+    args = SimpleNamespace(full_scan=True, dry_run=False, delay=0, limit=0)
+    result = pool._download_tiers(
+        {1: {"terms": ["climate finance"]}}, args, set(),
+        pool.load_query_dates(str(backfill)), None, 2025, 2026,
+        "2026-09-28", checkpoint_path=str(backfill),
+    )
+    assert result[:3] == (0, 1, 0)
+    assert pool.load_query_dates(str(normal)) == {slug: "2026-03-01"}
+    assert pool.load_query_dates(str(tmp_path / "missing.json")) == {}
+
+
 @pytest.mark.parametrize("interruption", ["zero_budget", "rate_limit"])
 def test_interrupted_query_replays_original_window(monkeypatch, tmp_path, interruption):
     sidecar = tmp_path / "_query_dates.json"
@@ -83,7 +105,8 @@ def test_interrupted_query_replays_original_window(monkeypatch, tmp_path, interr
     dates = {slug: old_date, "unrelated_query": "2026-04-01"}
     pool.save_query_dates(dates, str(sidecar))
     real_save = pool.save_query_dates
-    monkeypatch.setattr(pool, "save_query_dates", lambda value: real_save(value, str(sidecar)))
+    monkeypatch.setattr(pool, "save_query_dates",
+                        lambda value, path=None: real_save(value, str(sidecar)))
     monkeypatch.setattr(pool, "pool_path", lambda source, query: str(pool_file))
 
     if interruption == "zero_budget":
@@ -131,7 +154,8 @@ def test_record_limit_does_not_advance_date(monkeypatch, tmp_path):
     dates = {slug: "2026-03-01"}
     pool.save_query_dates(dates, str(sidecar))
     real_save = pool.save_query_dates
-    monkeypatch.setattr(pool, "save_query_dates", lambda value: real_save(value, str(sidecar)))
+    monkeypatch.setattr(pool, "save_query_dates",
+                        lambda value, path=None: real_save(value, str(sidecar)))
     monkeypatch.setattr(pool, "pool_path", lambda source, query: str(pool_file))
     responses = [Response(), Response(["W1"], "c2")]
     monkeypatch.setattr(pool, "polite_get", lambda url, params, **kwargs: responses.pop(0))
