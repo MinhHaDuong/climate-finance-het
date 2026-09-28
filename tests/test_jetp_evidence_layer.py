@@ -358,11 +358,11 @@ def test_the_committed_layer_matches_its_inputs():
     # Later ingestions publish their own datasets in the same ledger.
     assert sum(row[0] in source_ids for row in publications) == (
         len(sources) + joint_extra + firm_written)
-    # 0875 extends the authority file with funders and channels. Replaying
-    # 0872 compares only parties that hold a document publication role.
-    publisher_ids = {dict(zip(schema.header('document_publishers'), row))['party_id']
-                     for row in ledger_headers.read_table(ledger, 'document_publishers', schema)[0]}
-    assert evidence.reconstruct(sources, manifest)['parties'] == [
+    # Later ingestions extend the authority file with funders, channels and
+    # their own publishers. Replaying 0872 compares its own party IDs.
+    expected_parties = evidence.reconstruct(sources, manifest)['parties']
+    publisher_ids = {row['party_id'] for row in expected_parties}
+    assert expected_parties == [
         dict(zip(schema.header('parties'), row)) for row in
         ledger_headers.read_table(ledger, 'parties', schema)[0]
         if dict(zip(schema.header('parties'), row))['party_id'] in publisher_ids

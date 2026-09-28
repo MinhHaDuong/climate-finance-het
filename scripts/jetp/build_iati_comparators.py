@@ -217,10 +217,25 @@ def ingest(paths, ledger_dir=LEDGER_DIR, *, recorded_at):
         _fields(ledger_dir / 'line-fields' / f'{document_id}.csv',
                 FIELD_COLUMNS, field_rows)
     _append_lines(ledger_dir, schema, tables['lines'], existing, recorded_at)
+    country_by_line = {row['line_id']: row['country'] for row in tables['lines']}
+    country_by_doc = {row['document_id']: row.get('country')
+                      for row in tables['documents']}
+
+    def country_for_relation(row):
+        if row['line_id']:
+            return country_by_line[row['line_id']]
+        if row['from_kind'] == 'document':
+            return country_by_doc[row['from_id']] or 'GLB'
+        if row['from_kind'] == 'party':
+            return 'GLB'
+        raise ValueError(f"relation {row['relation_id']} needs a shard bucket")
+
     for name, rows in tables.items():
         if name == 'lines':
             continue
-        write_table(ledger_dir, name, rows, schema=schema)
+        kwargs = ({'country_for_row': country_for_relation} if name == 'relations'
+                  else {'country_by_line_id': country_by_line})
+        write_table(ledger_dir, name, rows, schema=schema, **kwargs)
     return dict(counts)
 
 

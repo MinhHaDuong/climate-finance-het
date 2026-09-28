@@ -23,6 +23,10 @@ chunk directory apart from a directory that shares a table's name:
 `data/jetp/documents/` is the snapshot store under DVC, not the chunks of the
 `documents` table, and the writer deletes only its `<CODE>-<year>[-NN].csv` files of
 its own `.d` directory.
+For rows such as party-alias relations that have no country, `GLB` is the shard
+filename's storage bucket. It asserts no country for the relation. A global
+method-source line may use `country=GLB` because `lines.country` is required;
+`GLB` means no recipient country, not a fifth JETP country (ticket 0885).
 The writer stages complete shard bytes before publishing them. A temporary
 `<table>.d.pending` marker makes an interrupted layout change a named ledger
 error; a missing first or numbered shard also fails validation.

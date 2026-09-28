@@ -315,6 +315,33 @@ def test_chunk_country_must_match_its_file(tmp_path):
     assert any(e.startswith('chunk:') and 'IDN-2026.csv' in e for e in errors), errors
 
 
+def test_cited_line_country_chunks_observations_without_a_country_column(tmp_path):
+    tables = _valid_tables()
+    _write(tmp_path, tables)
+    observations = [dict(observation_id=f'crs-{number}', subject_kind='line',
+                         subject_id='doc-1-t1-1', measure='amount',
+                         line_id='doc-1-t1-1', method='crs_microdata',
+                         recorded_at='2026-09-28', status='accepted')
+                    for number in range(4)]
+    without_citation = [dict(row) for row in observations]
+    without_citation[0]['line_id'] = ''
+    with pytest.raises(ValueError, match='no valid shard country'):
+        ledger_headers.write_table(
+            tmp_path, 'observations', without_citation, ceiling=350,
+            country_by_line_id={'doc-1-t1-1': 'ZAF'})
+    written = ledger_headers.write_table(
+        tmp_path, 'observations', observations, ceiling=350,
+        country_by_line_id={'doc-1-t1-1': 'ZAF'})
+    assert written and all(path.name.startswith('ZAF-2026') for path in written)
+    rows, errors = ledger_headers.read_table(
+        tmp_path, 'observations', ledger_headers.load_schema())
+    assert len(rows) == 4 and errors == []
+    written[0].rename(written[0].with_name('IDN-2026.csv'))
+    _, errors = ledger_headers.read_table(
+        tmp_path, 'observations', ledger_headers.load_schema())
+    assert any("cited line country 'ZAF'" in error for error in errors)
+
+
 def test_a_table_shrinking_under_the_ceiling_removes_only_its_own_chunks(tmp_path):
     tables = _valid_tables()
     lines = tables.pop('lines')
