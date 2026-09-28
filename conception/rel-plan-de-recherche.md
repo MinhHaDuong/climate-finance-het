@@ -1,6 +1,6 @@
 # REL — plan de recherche
 
-*Document de travail, 28 septembre 2026. À distinguer du plan de l'article, encore en préparation : celui-ci règle l'ordre des enquêtes, leurs preuves et leurs points d'arrêt, pas l'ordre des sections publiées.*
+*Approuvé par l'auteur le 28 septembre 2026. À distinguer du plan de l'article, encore en préparation : celui-ci règle l'ordre des enquêtes, leurs preuves et leurs points d'arrêt, pas l'ordre des sections publiées. Le protocole de finalisation et son manifeste restent provisoires.*
 
 ## Question et principe
 
