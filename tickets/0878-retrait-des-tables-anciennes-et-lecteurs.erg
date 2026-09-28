@@ -3,7 +3,6 @@ Title: Retrait des tables anciennes et des lecteurs de compatibilité
 Created: 2026-09-22
 Author: HDMX-coding-agent
 Blocked-by: 0890
-Blocked-by: 0879
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -16,6 +15,7 @@ Blocked-by: 0879
 2026-09-24T14:05Z HDMX-coding-agent note blocker 0887 closed — Blocked-by removed.
 2026-09-24T14:05Z HDMX-coding-agent note blocker 0888 closed — Blocked-by removed.
 2026-09-24T18:56Z HDMX-coding-agent note blocker 0884 closed — Blocked-by removed.
+2026-09-28T06:27Z HDMX-coding-agent note blocker 0879 closed — Blocked-by removed.
 --- body ---
 ## Context
 

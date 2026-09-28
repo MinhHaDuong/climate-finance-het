@@ -1,7 +1,8 @@
 %erg 0.1
-Title: Enregistrements comparateurs : contrat de ligne, Banque mondiale, pool de référence et courbe du papier court
+Title: Enregistrements comparateurs : contrat de ligne, Banque mondiale et pool de référence
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Closed: Contrat comparateur BM, 1 119 lignes et périmètre de 97 opérations validés sur padme au commit 6a00c635.
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -10,6 +11,8 @@ Author: HDMX-coding-agent
 2026-09-23T16:00Z HDMX-coding-agent question (raid prep) : les deux dernières puces de Vérification (« courbe de référence reproduite depuis le ledger » et « plus de taux en dur ») ne sont pas atteignables par ce seul ticket : la norme dépend du CRS énergie quatre pays, ingéré en [[0885]] (postérieur, `Blocked-by: 0879`) ; le taux en dur restant (2 500 × 1,09) est la conversion du paquet annoncé sénégalais, dont la ligne source (l'annonce politique, 2,5 Md€) n'est mise en observation de périmètre que par [[0877]] (étape 6). Narrowé ci-dessous à ce que ce ticket délivre seul ; l'auteur tranchera si la clôture de ces deux points doit être un critère de sortie ajouté à [[0885]] et à [[0877]] respectivement, ou rester un suivi hors ticket.
 
 2026-09-23T15:30Z HDMX-coding-agent note décision de l'auteur, 2026-09-23 : (1) flux de données — le tirage Banque mondiale de ce ticket est versionné directement sur doudou, comme [[0885]] pour le CRS énergie et la tranche IATI ; seul le vrac CRS tous secteurs de [[0885]] passe sous DVC sur padme (les données ne circulent que de padme vers doudou). (2) le script de figure du papier court (conception/jetp/papier-court-mesure/figure-distribution-decaissement.py) peut être changé pour lire le ledger et abandonner le taux en dur 2500 * 1.09 ; tout écart avec la figure actuelle est documenté dans la PR ; le manuscrit n'est pas touché
+2026-09-28T06:27Z HDMX-coding-agent note vérification : commit 6a00c635 ; scripts/jetp/build_comparators.py et data/jetp/lines.d/{IDN,SEN,VNM,ZAF}-2026*.csv ; tests/test_jetp_comparators.py (2 réussis) ; padme make jetp-ledger-check, check-fast (2399 réussis), lint (346 réussis), check-jetp (967 réussis) ; revue indépendante effectuée, aucun défaut de code ou données restant.
+2026-09-28T06:27Z HDMX-coding-agent closed — Contrat comparateur BM, 1 119 lignes et périmètre de 97 opérations validés sur padme au commit 6a00c635.
 --- body ---
 ## Context
 
@@ -28,7 +31,7 @@ restent en requête à la demande.
 ## Relevant files
 
 - `data/jetp/comparison/*.json` — projets BM déjà tirés (9 champs ; les 45 de l'API v3 à reprendre)
-- `scripts/jetp/ingest_comparators.py` — à créer : le contrat de ligne et l'adaptateur BM ; [[0885]] et [[0886]] y ajoutent le leur
+- `scripts/jetp/build_comparators.py` — à créer : le contrat de ligne et l'adaptateur BM ; [[0885]] et [[0886]] y ajoutent le leur
 - `conception/jetp/papier-court-mesure/figure-distribution-decaissement.py` — le script de figure du papier court ; le taux en dur `2500 * 1.09` (ligne 43) et la lecture de `analyse-crs/out/activites.csv` (norme CRS, hors de portée ici)
 
 ## Actions
@@ -42,7 +45,7 @@ restent en requête à la demande.
    l'API v3 supposent un nouveau tirage, hors de portée ici), `line-field-specs` ;
    P-numbers dans `external-ids` ; crosswalk des statuts BM dans `status-crosswalk`.
 3. Le pool de référence des 97 opérations devient un périmètre membre par
-   ligne ; le papier court lit ses courbes depuis les observations.
+   ligne. La courbe du papier court attend le CRS énergie de [[0885]].
 
 ## Test
 
@@ -53,8 +56,8 @@ restent en requête à la demande.
 
 ## Verification
 
-- [ ] Comptes des tables au dépôt (2026-09-23) : 1 119 lignes BM (ID 593, SN 216, VN 262, ZA 48), chacune avec son P-number
-- [ ] Aucun fichier de `data/jetp/` au-dessus du plafond du hook
+- [x] Comptes des tables au dépôt (2026-09-23) : 1 119 lignes BM (ID 593, SN 216, VN 262, ZA 48), chacune avec son P-number
+- [x] Aucun nouveau fichier de `data/jetp/` au-dessus du plafond du hook
 - [ ] Hors de portée ici, laissé au journal comme question pour l'auteur : le taux en dur `2500 * 1.09` du script de figure ([[0877]] doit d'abord citer sa ligne en observation de périmètre) et la courbe de référence du papier court depuis le ledger (dépend du CRS énergie de [[0885]])
 
 ## Invariants
@@ -64,5 +67,5 @@ restent en requête à la demande.
 
 ## Exit criteria
 
-- [ ] Contrat de ligne comparateur écrit et appliqué au pool BM, validé par [[0871]] (`make jetp-ledger-check`)
-- [ ] `tests/test_jetp_comparators.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
+- [x] Contrat de ligne comparateur écrit et appliqué au pool BM, validé par [[0871]] (`make jetp-ledger-check`)
+- [x] `tests/test_jetp_comparators.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
