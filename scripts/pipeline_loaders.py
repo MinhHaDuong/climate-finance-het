@@ -178,6 +178,7 @@ def classify_rel_review_works(works, config=None):
     Publication dates later than the search are excluded. Year-only 2026
     records are quarantined until their release date is verified.
     Journal articles and working papers follow the same rule.
+    Topical relevance and institutional-document screening follow separately.
     """
     from datetime import date
 
@@ -226,7 +227,7 @@ def select_rel_review_works(works, config=None):
 
 
 def load_rel_review_corpus():
-    """Load the refined corpus under REL's own dated review window."""
+    """Load REL's temporal candidate set before topical and type screening."""
     return select_rel_review_works(load_refined_works())
 
 

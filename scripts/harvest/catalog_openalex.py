@@ -167,11 +167,17 @@ def extract_references(r):
 # --- Extract phase ---
 
 def prefer_dated_pool_records(all_raw):
-    """Choose one copy per OpenAlex ID, preferring a known publication date."""
+    """Choose the newest refreshed copy, then prefer a known publication date."""
     latest_by_id = {}
     for record in all_raw:
         oa_id = record.get("id", "").replace("https://openalex.org/", "")
-        if oa_id not in latest_by_id or record.get("publication_date"):
+        rank = (record.get("_retrieved_at", ""),
+                bool(record.get("publication_date")))
+        previous = latest_by_id.get(oa_id)
+        previous_rank = ((previous.get("_retrieved_at", ""),
+                          bool(previous.get("publication_date")))
+                         if previous is not None else ("", False))
+        if previous is None or rank > previous_rank:
             latest_by_id[oa_id] = record
     return list(latest_by_id.values())
 

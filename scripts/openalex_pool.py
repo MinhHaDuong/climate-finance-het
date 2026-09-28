@@ -14,7 +14,7 @@ import json
 import os
 import re
 import tempfile
-from datetime import date
+from datetime import date, datetime, timezone
 
 from pipeline_keystore import read_credential
 from utils import (
@@ -231,12 +231,15 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
 
         for r in data.get("results", []):
             oa_id = r.get("id", "").replace("https://openalex.org/", "")
+            pub_year = r.get("publication_year")
+            recent = (refresh_since is not None and pub_year is not None
+                      and int(pub_year) >= refresh_since)
             if oa_id in existing_ids:
-                pub_year = r.get("publication_year")
-                if not (refresh_since is not None and pub_year is not None
-                        and int(pub_year) >= refresh_since
-                        and oa_id not in refreshed_ids):
+                if not (recent and oa_id not in refreshed_ids):
                     continue
+                refreshed_ids.add(oa_id)
+                r = {**r, "_retrieved_at": datetime.now(timezone.utc).isoformat()}
+            elif recent:
                 refreshed_ids.add(oa_id)
             existing_ids.add(oa_id)
             batch.append(r)

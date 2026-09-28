@@ -40,7 +40,9 @@ def test_full_scan_refreshes_recent_existing_records(monkeypatch, tmp_path):
         year_min=1990, year_max=2026, refresh_since=2025,
     )
     assert (n, exhausted, completed) == (1, False, True)
-    assert appended == records[:1]
+    assert len(appended) == 1
+    assert appended[0]["publication_date"] == "2026-09-01"
+    assert appended[0]["_retrieved_at"]
 
 
 def test_extraction_prefers_refreshed_publication_date_across_pool_files():
@@ -50,6 +52,26 @@ def test_extraction_prefers_refreshed_publication_date_across_pool_files():
     fresh = {**stale, "publication_date": "2026-09-01"}
     assert prefer_dated_pool_records([fresh, stale]) == [fresh]
     assert prefer_dated_pool_records([stale, fresh]) == [fresh]
+    refreshed = {**fresh, "publication_date": "2026-10-01",
+                 "_retrieved_at": "2026-09-28T15:00:00+00:00"}
+    stale_dated = {**fresh, "publication_date": "2026-12-01"}
+    assert prefer_dated_pool_records([refreshed, stale_dated]) == [refreshed]
+
+
+def test_full_scan_does_not_refresh_a_new_work_on_next_query(monkeypatch, tmp_path):
+    record = {"id": "https://openalex.org/W3", "publication_year": 2026,
+              "publication_date": "2026-09-01"}
+    response = Response()
+    response._payload = {"results": [record],
+                         "meta": {"count": 1, "next_cursor": None}}
+    monkeypatch.setattr(pool, "polite_get", lambda *args, **kwargs: response)
+    appended = []
+    monkeypatch.setattr(pool, "append_to_pool", lambda batch, path: appended.extend(batch))
+    existing_ids, refreshed_ids = set(), set()
+    for term in ("climate finance", "carbon finance"):
+        pool.fetch_query(term, 0, 0, existing_ids, str(tmp_path / "pool.jsonl.gz"),
+                         refresh_since=2025, refreshed_ids=refreshed_ids)
+    assert appended == [record]
 
 
 @pytest.mark.parametrize("interruption", ["zero_budget", "rate_limit"])
