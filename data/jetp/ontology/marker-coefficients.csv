@@ -1,0 +1,13 @@
+coefficient_row_id,donor_party_id,marker,score,year,coefficient,line_id,recorded_at,decided_by,status,supersedes
+oecd-survey-eu-adaptation-1-2017,european-union,adaptation,1,2017,0.4,oecd-rio-coefficients-survey-2020-projection-eu-adaptation,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-adaptation-2-2017,european-union,adaptation,2,2017,1,oecd-rio-coefficients-survey-2020-projection-eu-adaptation,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-adaptation-1-2018,european-union,adaptation,1,2018,0.4,oecd-rio-coefficients-survey-2020-projection-eu-adaptation,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-adaptation-2-2018,european-union,adaptation,2,2018,1,oecd-rio-coefficients-survey-2020-projection-eu-adaptation,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-mitigation-1-2017,european-union,mitigation,1,2017,0.4,oecd-rio-coefficients-survey-2020-projection-eu-mitigation,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-mitigation-2-2017,european-union,mitigation,2,2017,1,oecd-rio-coefficients-survey-2020-projection-eu-mitigation,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-mitigation-1-2018,european-union,mitigation,1,2018,0.4,oecd-rio-coefficients-survey-2020-projection-eu-mitigation,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-mitigation-2-2018,european-union,mitigation,2,2018,1,oecd-rio-coefficients-survey-2020-projection-eu-mitigation,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-biodiversity-1-2017,european-union,biodiversity,1,2017,0.4,oecd-rio-coefficients-survey-2020-projection-eu-biodiversity,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-biodiversity-2-2017,european-union,biodiversity,2,2017,1,oecd-rio-coefficients-survey-2020-projection-eu-biodiversity,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-biodiversity-1-2018,european-union,biodiversity,1,2018,0.4,oecd-rio-coefficients-survey-2020-projection-eu-biodiversity,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,
+oecd-survey-eu-biodiversity-2-2018,european-union,biodiversity,2,2018,1,oecd-rio-coefficients-survey-2020-projection-eu-biodiversity,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,

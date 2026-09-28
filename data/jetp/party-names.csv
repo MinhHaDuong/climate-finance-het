@@ -185,3 +185,4 @@ spain.name.1,spain,Spain,preferred,,,zaf-jet-investment-register-q1-2026-overall
 idc.name.1,idc,IDC,preferred,,,zaf-jet-investment-register-q1-2026-overall-data-255,2026-09-24,scripts/jetp/build_reconciliation.py,accepted,,
 jet-ip-nev-programme-management-office-pmo.name.1,jet-ip-nev-programme-management-office-pmo,JET-IP NEV Programme Management Office (PMO),preferred,,,zaf-jet-investment-register-q1-2026-overall-data-255,2026-09-24,scripts/jetp/build_reconciliation.py,accepted,,
 aih-group.name.1,aih-group,AIH Group,preferred,,,zaf-jet-investment-register-q1-2026-overall-data-257,2026-09-24,scripts/jetp/build_reconciliation.py,accepted,,
+oecd.name.1,oecd,Organisation for Economic Co-operation and Development,preferred,,oecd-crs-energy-zaf-2005-q-2026-09-28,,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,,

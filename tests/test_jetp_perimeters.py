@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 from jetp import build_perimeters
+from jetp._ledger_headers import load_schema, read_table, table_files, write_table
 from jetp.build_observations import write_normalized_event_tables
 from jetp.build_perimeters import build_rows, ruptl_memberships
 
@@ -74,7 +75,7 @@ def test_legacy_event_rebuild_preserves_later_observations_and_their_timings(tmp
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(LEDGER / relative, target)
 
-    for relative in ('observations.csv', 'timings.csv', 'retrievals.csv',
+    for relative in ('retrievals.csv',
                      'migration/0875-dispositions.csv',
                      'migration/0970-event-adjudications.csv',
                      'migration/1120-event-adjudications.csv',
@@ -83,17 +84,37 @@ def test_legacy_event_rebuild_preserves_later_observations_and_their_timings(tmp
     for source in (LEDGER / 'lines.d').glob('*.csv'):
         copy(Path('lines.d') / source.name)
 
-    observation = next(r for r in csv.DictReader((tmp_path / 'observations.csv').open())
+    schema = load_schema()
+    for table in ('observations', 'timings'):
+        files, errors = table_files(LEDGER, table)
+        assert not errors
+        for source, _, _ in files:
+            copy(source.relative_to(LEDGER))
+
+    def ledger_rows(table):
+        values, errors = read_table(tmp_path, table, schema)
+        assert not errors
+        return [dict(zip(schema.header(table), value)) for value in values]
+
+    observations = ledger_rows('observations')
+    observation = next(r for r in observations
                        if r['observation_id'] == '0877.zaf-founding-pledge')
-    observation.update(observation_id='later.comparator-one', method='comparator_record')
-    with (tmp_path / 'observations.csv').open('a', newline='', encoding='utf-8') as handle:
-        csv.DictWriter(handle, fieldnames=observation).writerow(observation)
-    timing = next(r for r in csv.DictReader((tmp_path / 'timings.csv').open())
+    observation = dict(observation, observation_id='later.comparator-one',
+                       method='comparator_record')
+    observations.append(observation)
+    timings = ledger_rows('timings')
+    timing = next(r for r in timings
                   if r['observation_id'] == '0877.zaf-founding-pledge')
-    timing.update(timing_id='later.comparator-one.report_date',
+    timing = dict(timing, timing_id='later.comparator-one.report_date',
                   observation_id='later.comparator-one')
-    with (tmp_path / 'timings.csv').open('a', newline='', encoding='utf-8') as handle:
-        csv.DictWriter(handle, fieldnames=timing).writerow(timing)
+    timings.append(timing)
+    line_country = {row['line_id']: row['country'] for row in ledger_rows('lines')}
+    write_table(tmp_path, 'observations', observations, schema=schema,
+                country_by_line_id=line_country)
+    observation_country = {row['observation_id']: line_country[row['line_id']]
+                           for row in observations}
+    write_table(tmp_path, 'timings', timings, schema=schema,
+                country_for_row=lambda row: observation_country[row['observation_id']])
 
     def legacy(table):
         with (LEDGER / table).open(newline='', encoding='utf-8') as handle:
@@ -102,10 +123,8 @@ def test_legacy_event_rebuild_preserves_later_observations_and_their_timings(tmp
     write_normalized_event_tables(tmp_path, legacy('events.csv'),
                                   legacy('implementation-events.csv'),
                                   legacy('event-timing.csv'))
-    with (tmp_path / 'observations.csv').open(newline='', encoding='utf-8') as handle:
-        ids = {r['observation_id'] for r in csv.DictReader(handle)}
-    with (tmp_path / 'timings.csv').open(newline='', encoding='utf-8') as handle:
-        timing_ids = {r['timing_id'] for r in csv.DictReader(handle)}
+    ids = {r['observation_id'] for r in ledger_rows('observations')}
+    timing_ids = {r['timing_id'] for r in ledger_rows('timings')}
     assert {'0877.zaf-founding-pledge', 'later.comparator-one'} <= ids
     assert {'0877.zaf-founding-pledge.report_date',
             'later.comparator-one.report_date'} <= timing_ids
