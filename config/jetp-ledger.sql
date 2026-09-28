@@ -399,7 +399,7 @@ CREATE TABLE adjudication_members (
     adjudication_id TEXT NOT NULL REFERENCES adjudications (adjudication_id),
     kind TEXT NOT NULL,
     id TEXT NOT NULL,
-    role TEXT,
+    role TEXT NOT NULL,
     PRIMARY KEY (adjudication_id, kind, id)
 );
 
@@ -576,6 +576,7 @@ WITH ref (tbl, col, list, value) AS (
     UNION ALL SELECT 'adjudications', 'subject_kind', 'class', subject_kind FROM adjudications
     UNION ALL SELECT 'adjudications', 'status', 'decision_status', status FROM adjudications
     UNION ALL SELECT 'adjudication_members', 'kind', 'class', kind FROM adjudication_members
+    UNION ALL SELECT 'adjudication_members', 'role', 'adjudication_role', role FROM adjudication_members
     UNION ALL SELECT 'routes', 'kind', 'class', kind FROM routes
     UNION ALL SELECT 'coverage', 'referent_kind', 'class', referent_kind FROM coverage
     UNION ALL SELECT 'status_crosswalk', 'axis', 'axis', axis FROM status_crosswalk
@@ -626,7 +627,37 @@ FROM adjudications AS a
 WHERE a.decision_type = 'perimeter_compatibility'
   AND a.subject_kind <> 'perimeter'
   AND NOT EXISTS (SELECT 1 FROM adjudication_members AS m
-                  WHERE m.adjudication_id = a.adjudication_id AND m.kind = 'perimeter');
+                  WHERE m.adjudication_id = a.adjudication_id AND m.kind = 'perimeter')
+UNION ALL
+SELECT 'adjudications ' || a.adjudication_id || ': occurrence_membership needs two occurrence observations'
+FROM adjudications AS a
+WHERE a.decision_type = 'occurrence_membership' AND a.status = 'accepted'
+  AND (SELECT count(*) FROM adjudication_members AS m
+       WHERE m.adjudication_id = a.adjudication_id AND m.kind = 'observation'
+         AND m.role = 'occurrence') < 2
+UNION ALL
+SELECT 'adjudications ' || a.adjudication_id || ': accepted flow_coverage needs covering_flow and covered_movement'
+FROM adjudications AS a
+WHERE a.decision_type = 'flow_coverage' AND a.status = 'accepted'
+  AND (NOT EXISTS (SELECT 1 FROM adjudication_members AS m
+                   WHERE m.adjudication_id = a.adjudication_id
+                     AND m.kind = 'observation' AND m.role = 'covering_flow')
+       OR NOT EXISTS (SELECT 1 FROM adjudication_members AS m
+                      WHERE m.adjudication_id = a.adjudication_id
+                        AND m.kind = 'observation' AND m.role = 'covered_movement'));
+
+CREATE VIEW violation_adjudication_role AS
+SELECT 'adjudications ' || a.adjudication_id || ': member role ' || m.role
+       || ' is not valid for ' || a.decision_type AS detail
+FROM adjudications AS a
+JOIN adjudication_members AS m USING (adjudication_id)
+WHERE (a.decision_type = 'occurrence_membership'
+       AND m.role NOT IN ('occurrence', 'excluded', 'context'))
+   OR (a.decision_type = 'flow_coverage'
+       AND m.role NOT IN ('covering_flow', 'covered_movement', 'excluded',
+                          'opening', 'closing', 'context'))
+   OR (a.decision_type IN ('perimeter_compatibility', 'identity')
+       AND m.role NOT IN ('candidate', 'accepted', 'excluded', 'context'));
 
 CREATE VIEW violation_adjudication_chain AS
 SELECT 'adjudications ' || a.adjudication_id || ': supersedes ' || p.adjudication_id
@@ -648,6 +679,21 @@ WHERE a.decided_at < p.decided_at
 UNION ALL
 SELECT 'adjudications ' || a.adjudication_id || ': self-supersession'
 FROM adjudications AS a WHERE a.supersedes = a.adjudication_id;
+
+-- Equal timestamps are legitimate, so order alone cannot rule out a cycle.
+CREATE VIEW violation_adjudication_cycle AS
+WITH RECURSIVE chain(start_id, current_id, next_id, path) AS (
+    SELECT adjudication_id, adjudication_id, supersedes,
+           '|' || adjudication_id || '|' FROM adjudications
+    UNION ALL
+    SELECT chain.start_id, a.adjudication_id, a.supersedes,
+           chain.path || a.adjudication_id || '|'
+    FROM chain JOIN adjudications AS a ON a.adjudication_id = chain.next_id
+    WHERE instr(chain.path, '|' || a.adjudication_id || '|') = 0
+)
+SELECT 'adjudications ' || start_id || ': supersession cycle' AS detail
+FROM chain
+WHERE next_id IS NOT NULL AND instr(path, '|' || next_id || '|') > 0;
 
 -- A project, asset or agreement is an accepted identity only when a cited
 -- line minted it.  Publishing parties use party_names as their separate basis.

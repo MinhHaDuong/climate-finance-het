@@ -39,6 +39,9 @@ def _tables():
     terms += [_term('named_item', 'line_classification'),
               _term('flow', 'measure'), _term('commitment', 'flow_type'),
               _term('event', 'date_role'), _term('collected', 'retrieval_status')]
+    terms += [_term(v, 'adjudication_role') for v in (
+        'candidate', 'accepted', 'excluded', 'occurrence', 'covering_flow',
+        'covered_movement', 'opening', 'closing', 'context')]
     observations = [dict(observation_id=f'flow-{n}', subject_kind='line',
                          subject_id=f'line-{n}', measure='flow',
                          flow_type='commitment', value='10', unit='USD',
@@ -139,6 +142,8 @@ def test_superseding_rejection_revokes_without_erasing_history(tmp_path):
     (lambda t: t['adjudications'][0].update(decision_type='unknown'),
      'not a term in force'),
     (lambda t: t['adjudication_members'][0].update(id='absent'), 'does not exist'),
+    (lambda t: t['adjudication_members'][0].update(role='opening'),
+     'is not valid for occurrence_membership'),
     (lambda t: (t['adjudications'][2].update(subject_kind='line', subject_id='line-1'),
                 t['adjudication_members'][3].update(kind='line', id='line-1')),
      'names no perimeter'),
@@ -159,3 +164,31 @@ def test_supersession_cannot_change_the_question(tmp_path):
         _member('different-question', 'line', 'line-2', 'candidate'))
     _write(tmp_path, tables)
     assert any('of another question' in error for error in build(tmp_path))
+
+
+def test_supersession_cycle_is_refused(tmp_path):
+    tables = _tables()
+    first = tables['adjudications'][0]
+    first['supersedes'] = 'same-payment-revision'
+    tables['adjudications'].append(_decision(
+        'same-payment-revision', 'occurrence_membership', 'observation',
+        'flow-1', supersedes='same-payment'))
+    tables['adjudication_members'].append(
+        _member('same-payment-revision', 'observation', 'flow-2', 'occurrence'))
+    _write(tmp_path, tables)
+    assert any('supersession cycle' in error for error in build(tmp_path))
+
+
+def test_accepted_decisions_need_usable_member_sets(tmp_path):
+    tables = _tables()
+    tables['adjudication_members'] = [
+        row for row in tables['adjudication_members']
+        if not (row['adjudication_id'] == 'same-payment' and row['id'] == 'flow-2')]
+    _write(tmp_path / 'one', tables)
+    assert any('needs two occurrence observations' in error
+               for error in build(tmp_path / 'one'))
+    tables = _tables()
+    tables['adjudications'][1]['status'] = 'accepted'
+    _write(tmp_path / 'two', tables)
+    assert any('needs covering_flow and covered_movement' in error
+               for error in build(tmp_path / 'two'))

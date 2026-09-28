@@ -44,7 +44,7 @@ error; a missing first or numbered shard also fails validation.
 | `timings` | `timing_id` | observation_id, date_role, date, date_precision, lower_bound, upper_bound, line_id, recorded_at |
 | `external-ids` | (scheme, external_id) | kind, id, line_id, recorded_at (for a party: its IATI organisation identifier, ROR, LEI or Wikidata item, tier 1 of section 4) |
 | `adjudications` | `adjudication_id` | decision_type (`occurrence_membership`, `flow_coverage`, `perimeter_compatibility`, `identity`), subject_kind, subject_id, verdict, status, decided_at, decided_by, recorded_at, supersedes, notes |
-| `adjudication-members` | (adjudication_id, kind, id) | role |
+| `adjudication-members` | (adjudication_id, kind, id) | role (one of `candidate`, `accepted`, `excluded`, `occurrence`, `covering_flow`, `covered_movement`, `opening`, `closing`, `context`) |
 | `rates` | (currency, date, basis) | rate_to_usd, line_id, recorded_at (a publisher's own conversion, printed beside the original, is a `rates` row citing that line, so the ledger records that the publisher converted, at what rate) |
 | `deflators` | (series, year) | value, line_id, recorded_at |
 | `line-field-specs` | `document_id` | columns (the ordered list of a document's own column names, written at extraction, against which each `line-fields/<document_id>` header is validated) |
@@ -52,6 +52,15 @@ error; a missing first or numbered shard also fails validation.
 | `coverage` | (referent_kind, referent_id) | review_status, checked_at, route, document_ids, notes |
 | `dry-searches` | as today | |
 | `decisions.md` | as today | |
+
+Adjudication member roles are typed by decision: `occurrence_membership`
+uses `occurrence`, `excluded` or `context`; `flow_coverage` uses
+`covering_flow`, `covered_movement`, `excluded`, `opening`, `closing` or
+`context`; `perimeter_compatibility` and `identity` use `candidate`,
+`accepted`, `excluded` or `context`. An accepted occurrence decision needs
+at least two occurrence observations; accepted flow coverage needs a covering
+flow and a covered movement. A rejected decision retains its members as
+history but contributes none to the in-force view.
 
 Accounts, the openings, movements, closings, residuals and
 coverage gaps per agreement or perimeter that section 5 of the backend
