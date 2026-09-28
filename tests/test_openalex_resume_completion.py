@@ -49,7 +49,7 @@ def test_interrupted_query_replays_original_window(monkeypatch, tmp_path, interr
 
     monkeypatch.setattr(pool, "polite_get", fake_get)
     args = SimpleNamespace(dry_run=False, delay=0, limit=0)
-    tiers = {1: {"terms": ["climate finance"]}}
+    tiers = {1: {"terms": ["climate finance", "later query"]}}
     ids = set()
 
     result = pool._download_tiers(tiers, args, ids, dates, None, 1990, 2026, "2026-09-28")
@@ -59,7 +59,8 @@ def test_interrupted_query_replays_original_window(monkeypatch, tmp_path, interr
     assert responses == []
 
     responses = replay
-    result = pool._download_tiers(tiers, args, ids, dates, None, 1990, 2026, "2026-09-28")
+    replay_tier = {1: {"terms": ["climate finance"]}}
+    result = pool._download_tiers(replay_tier, args, ids, dates, None, 1990, 2026, "2026-09-28")
     assert result[:3] == (2, 1, 0)
     assert pool.load_query_dates(str(sidecar)) == {
         slug: "2026-09-28", "unrelated_query": "2026-04-01",
