@@ -2,7 +2,7 @@
 Title: Comparateurs IATI : tranche énergie des quatre pays
 Created: 2026-09-23
 Author: HDMX-coding-agent
-Closed: Tranche IATI énergie quatre pays validée sur padme au commit 70c254cc (1 301 lignes, 7 841 flux).
+Closed: Tranche IATI énergie quatre pays validée sur padme au commit 36ecf11c (1 301 lignes, 7 770 flux).
 
 --- log ---
 2026-09-23T10:30Z HDMX-coding-agent created scindé de [[0879]] à la revue du train (2026-09-23), décision de l'auteur
@@ -11,6 +11,7 @@ Closed: Tranche IATI énergie quatre pays validée sur padme au commit 70c254cc 
 2026-09-28T06:27Z HDMX-coding-agent note blocker 0879 closed — Blocked-by removed.
 2026-09-28T08:28Z Codex note vérification : commit 70c254cc ; data/jetp/iati/{ID,SN,VN,ZA}.json.gz et scripts/jetp/{catalog_iati_energy,build_iati_comparators}.py ; 1 301 lignes (ID 344, SN 241, VN 411, ZA 305), 1 207 identifiants IATI distincts, 94 liens same_as et 7 841 observations flow ; aucune promotion en projet. tests/test_jetp_comparators_iati.py (4 réussis), make jetp-ledger-check valide, padme make check-fast (2 422 réussis, 9 ignorés), make lint (346 réussis, 13 ignorés), make check (3 406 réussis, 52 ignorés). Deux reconstructions depuis les snapshots sont identiques octet pour octet au ledger commis ; revue indépendante sur un autre modèle, défaut de secteur explicite corrigé et conservation des 451 observations et 371 timings antérieurs vérifiée. Aucun fichier nouveau ou modifié sous data/jetp ne dépasse 512 000 octets ; data/jetp/plan-projects.csv (561 968 octets) dépasse déjà le plafond sur main et reste inchangé.
 2026-09-28T08:29Z HDMX-coding-agent closed — Tranche IATI énergie quatre pays validée sur padme au commit 70c254cc (1 301 lignes, 7 841 flux).
+2026-09-28T09:17Z Codex note correction après panel de revue PR #1548 : IATI 11 est un engagement entrant, distinct du code 2 sortant cité par l'ontologie ; ses 71 apparitions sont désormais retenues hors du type partagé, comme le serait le code 13 (promesse entrante). Le total des flux passe de 7 841 à 7 770, sans changer les 1 301 lignes. Le collecteur rejette une collision d'identifiants après normalisation et l'adaptateur impose l'emplacement de l'instantané ; tests de régression ajoutés, documents de stockage mis à jour. Commit 36ecf11c : deux reconstructions identiques octet pour octet ; make jetp-ledger-check et, sur padme avec données, make check-fast (2 424 réussis, 9 ignorés), make lint (346 réussis, 13 ignorés), make check (3 408 réussis, 52 ignorés). Le premier tour du panel (cinq perspectives) est publié sur la PR ; le second tour vérifie ces corrections.
 --- body ---
 ## Context
 
