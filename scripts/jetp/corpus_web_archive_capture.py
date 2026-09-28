@@ -9,8 +9,7 @@ table, ``data/jetp/web-archive-captures.csv`` — never in the collection
 registry: one file is one table, and the site joins the two at read time on
 the document's address.
 
-For each collected document (a retrieval that kept bytes, from the ledger's
-``retrievals.csv`` and the legacy ``manifest.csv`` a new harvest still writes)
+For each collected document (a retrieval that kept bytes in the ledger)
 and each address it was collected from:
 
 1. an address on ``data.commoncrawl.org`` is a Common Crawl WARC, not a
@@ -59,6 +58,8 @@ from urllib.parse import urlsplit
 import requests
 from pipeline_keystore import read_credential
 from utils import get_logger
+
+from jetp.build_observatory import retrieval_registry
 
 ROOT = Path(__file__).resolve().parents[2]
 LEDGER = ROOT / 'data/jetp'
@@ -117,17 +118,12 @@ def _read(path):
 def collected_documents(ledger_dir=LEDGER):
     """Every (source id, address, collection instant) that kept bytes, oldest first.
 
-    The ledger's retrievals are what the Documents page serves; the legacy
-    manifest is read too because the harvester still writes a new collection
-    there first. A document collected several times from one address is one
-    row, dated by its first collection.
+    The ledger's retrievals are what the Documents page serves. A document
+    collected several times from one address is one row, dated by its first
+    collection.
     """
     found = {}
-    for row in _read(Path(ledger_dir) / 'retrievals.csv'):
-        if row.get('sha256') and row.get('final_url'):
-            key = (row['document_id'], row['final_url'])
-            found[key] = min(found.get(key, row['retrieved_at']), row['retrieved_at'])
-    for row in _read(Path(ledger_dir) / 'manifest.csv'):
+    for row in retrieval_registry(ledger_dir):
         if row.get('sha256') and row.get('final_url'):
             key = (row['source_id'], row['final_url'])
             found[key] = min(found.get(key, row['retrieved_at']), row['retrieved_at'])
