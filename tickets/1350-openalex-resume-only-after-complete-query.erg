@@ -1,0 +1,45 @@
+%erg 0.1
+Title: OpenAlex: advance resume date only after a complete query, with interruption tests
+Created: 2026-09-28
+Author: Codex
+
+--- log ---
+2026-09-28T00:00Z Codex created before REL corpus harvest; separate from 0298 metadata-update catch-up
+
+--- body ---
+## Context
+
+The REL sweep will run on padme with `scripts/harvest/catalog_openalex.py --resume`.
+In `scripts/openalex_pool.py`, `_download_tiers()` currently increments
+`queries_completed` and writes today's date to `_query_dates.json` immediately
+after `fetch_query()`, even when that query stopped because its API budget was
+exhausted. On the next run, `from_created_date` then skips records that were
+on unread pages. A 429 response may also leave the current boolean completion
+signal ambiguous; `--limit` deliberately stops pagination early.
+
+This ticket covers completion and resume safety. Ticket 0298 separately covers
+the periodic `from_updated_date` pass and discovery-recall gate.
+
+## Actions
+
+1. Make `fetch_query()` report whether pagination reached its natural end,
+   versus budget exhaustion, rate limiting, an explicit limit, or another
+   interruption. Preserve already fetched pool records and their IDs.
+2. Advance the per-query date and completed counter only for a fully completed
+   query. Leave the previous date unchanged for every partial query, so a
+   retry replays its original window and deduplicates records already stored.
+3. Ensure an interrupted query stops the sweep without marking remaining
+   queries complete; keep sidecar writes safe across interruption/restart.
+4. Before the REL sweep, exercise an interrupted and resumed query against a
+   deterministic fake paginated API. The test must check the persisted
+   sidecar, resulting pool IDs and completed/skipped counts, not only logs.
+
+## Exit criteria
+
+- [ ] Budget exhaustion after at least one page and a 429 response leave the
+      old query date intact; the next run retrieves every later page once.
+- [ ] A `--limit` run does not claim a complete query or advance its date.
+- [ ] A fully paginated query advances its date once; unaffected queries retain
+      their own checkpoints.
+- [ ] Changed-behaviour tests and the required corpus WP gate pass on padme,
+      with the corpus available; the PR records the gate and resulting commit.
