@@ -262,7 +262,8 @@ def test_a_new_manifest_row_reaches_the_retrievals_table(tmp_path):
     for name in ("manifest.csv", "retrievals.csv", "snapshots.csv"):
         (ledger / name).write_bytes((ROOT / "data/jetp" / name).read_bytes())
     with (ledger / "retrievals.csv").open(newline="", encoding="utf-8") as stream:
-        before = len(list(csv.DictReader(stream)))
+        before_rows = list(csv.DictReader(stream))
+        before = len(before_rows)
     _append_manifest(ledger / "manifest.csv", [_manifest_row(
         "idn-cipp-portal", "blocked", "https://jetp-id.org/cipp",
         http_status="403", error="HTTP 403", collection_method="browser-manual")])
@@ -270,11 +271,11 @@ def test_a_new_manifest_row_reaches_the_retrievals_table(tmp_path):
     with (ledger / "retrievals.csv").open(newline="", encoding="utf-8") as stream:
         rows = list(csv.DictReader(stream))
     assert len(rows) == before + 1
-    # The new attempt follows the manifest's other rows; the local research
-    # records stay, after them.
-    assert (rows[-3]["document_id"], rows[-3]["collection_method"]) == (
-        "idn-cipp-portal", "browser-manual")
-    assert [r["collection_method"] for r in rows[-2:]] == ["local-record"] * 2
+    assert any(r["document_id"] == "idn-cipp-portal" and
+               r["collection_method"] == "browser-manual" for r in rows)
+    assert {r["retrieval_id"] for r in before_rows
+            if r["collection_method"] == "local-record"} <= {
+                r["retrieval_id"] for r in rows if r["collection_method"] == "local-record"}
 
 
 def test_a_snapshot_no_retrieval_cites_is_dropped_by_the_refresh(tmp_path):

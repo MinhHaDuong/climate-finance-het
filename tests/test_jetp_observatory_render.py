@@ -1206,7 +1206,8 @@ def test_every_ontology_table_is_served_one_file_each_with_its_columns_verbatim(
         assert view["in_force"] == [row[view["key"]] for row in current[table]], table
     assert {row[1] for row in served("ontology/perimeters")["rows"]} == {
         "vnm-jetp-portfolio-2025", "zaf-jetp", "idn-jetp", "vnm-jetp",
-        "sen-jetp", "idn-cipp-ruptl-plan-lines"}
+        "sen-jetp", "idn-cipp-ruptl-plan-lines",
+        "world-bank-pre-jetp-closed-energy"}
 
 
 def test_the_glossary_renders_each_term_in_force_with_its_definition() -> None:

@@ -355,7 +355,9 @@ def test_the_committed_layer_matches_its_inputs():
     # two rows beyond the base, not one.
     joint_extra = sum(len(joint_forms(parts)) - 1
                       for parts in evidence.JOINT_LABELS.values())
-    assert len(publications) == len(sources) + joint_extra + firm_written
+    # Later ingestions publish their own datasets in the same ledger.
+    assert sum(row[0] in source_ids for row in publications) == (
+        len(sources) + joint_extra + firm_written)
     # 0875 extends the authority file with funders and channels. Replaying
     # 0872 compares only parties that hold a document publication role.
     publisher_ids = {dict(zip(schema.header('document_publishers'), row))['party_id']
