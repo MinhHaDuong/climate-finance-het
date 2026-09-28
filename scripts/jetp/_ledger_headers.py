@@ -350,8 +350,8 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None,
     date_field = 'recorded_at' if 'recorded_at' in header else 'decided_at'
     if date_field not in header or ('country' not in header and
                                     country_by_line_id is None and country_for_row is None):
-        raise ValueError(f'{table} is over {ceiling} bytes and has no country/year '
-                         'or cited line country to chunk it by')
+        raise ValueError(f'{table} is over {ceiling} bytes and cannot chunk without '
+                         'country plus recorded_at/decided_at, or cited line country')
     groups = {}
     for row in rows:
         country = (row['country'] if 'country' in header else

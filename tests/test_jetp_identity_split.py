@@ -68,11 +68,12 @@ def test_committed_split_is_replayable_and_every_identity_has_a_line():
         generated_rows = [{key: None if record.get(key) is None else str(record[key])
                            for key in schema.header(table)}
                           for record in generated[table]]
-        if table == 'relations':
-            # A later comparator ingestion adds relation rows whose order is
-            # independent of the original identity split's replay order.
-            assert {r['relation_id']: r for r in generated_rows} == {
-                r['relation_id']: r for r in committed}, table
+        if table in ('relations', 'parties', 'party_names'):
+            # Later comparator ingestions add independently owned records;
+            # replay must preserve identity, not their append order.
+            key = schema.keys[table][0]
+            assert {r[key]: r for r in generated_rows} == {
+                r[key]: r for r in committed}, table
         else:
             assert generated_rows == committed[:len(generated_rows)], table
         assert len(committed) - len(generated[table]) == additions_after_0875.get(table, 0), table
