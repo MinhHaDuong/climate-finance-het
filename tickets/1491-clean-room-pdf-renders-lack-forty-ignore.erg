@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Clean-room PDF renders lack forty ignored figures
+Created: 2026-09-28
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-28T16:59Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Discovered while verifying 0673 from a fresh clone at commit 680da23c. All 11
+Quarto documents render to Markdown, and the data paper compiles to PDF, but
+the corpus-report PDF fails because `deliverables/_shared/figures/fig_dag.png`
+is absent from Git. A scan of Quarto documents and their include closure found
+40 distinct referenced PNG figures that are gitignored and absent in the fresh
+clone. The affected documents are corpus-report (5), multilayer (11),
+slides-eshet (1), technical-report (35), and zoo (35); lists overlap.
+
+These figures are a separate Phase-2 output class from the Markdown tables
+fixed by 0673. They need their own handoff policy and guard. The PDF sweep's
+first concrete failure is in corpus-report; the static scan shows the wider
+exposure without claiming every document has been PDF-rendered.
+
+## Actions
+
+1. Decide which figure outputs must be committed for a clean Phase-3 render,
+   or revise the writing workpackage contract explicitly if it requires a
+   prebuilt figure bundle.
+2. Apply the policy to every submission deliverable and the slide decks.
+3. Extend the artifact guard to catch a newly referenced missing figure.
+
+## Exit criteria
+
+- [ ] Every submission deliverable compiles from a fresh worktree with no
+      Phase-2 run or manual artifact copying.
+- [ ] A missing referenced figure fails an automated test before Quarto runs.

@@ -235,20 +235,24 @@ def test_generated_source_tables_use_table_1s_label():
             f"{expected!r} — run `make corpus-tables` and commit"
         )
 
-    # The protocol table's committed .md, whose row label is what a reader of
-    # the deposit sees. Its composition-table counterpart is deliberately not
-    # read here: `tab_corpus_sources.md` is gitignored, so a clean clone has
-    # none until a build with the corpus produces one — and it comes out of
-    # the same DataFrame as the CSV above in a single `main()`, so it cannot
-    # drift from it on its own.
-    md_rows = pipe_table_rows(
+    # The composition Markdown omits the CSV's Query column, where its World
+    # Bank fingerprint lives. Compare every visible source label with the CSV;
+    # then identify the protocol row by its own World Bank text.
+    source_md = pipe_table_rows(
+        _read(os.path.join(TABLES, "tab_corpus_sources.md")),
+        ["Source", "Raw", "Refined", "Unique", "%non-EN", "%DOI", "%Abstract", "%Refs"],
+    )
+    source_csv = pd.read_csv(os.path.join(TABLES, "tab_corpus_sources.csv"))
+    assert [row["Source"].strip("*") for row in source_md] == source_csv["Source"].tolist()
+
+    protocol_md = pipe_table_rows(
         _read(os.path.join(TABLES, "tab_retrieval_protocol.md")),
         ["Source", "Retrieval", "Query fields", "Query terms", "Languages"],
     )
-    md_label = world_bank_row_label(md_rows)
+    md_label = world_bank_row_label(protocol_md)
     assert md_label == expected, (
-        f"the deposited protocol markdown labels the layer "
-        f"{md_label!r}, not Table 1's {expected!r}"
+        f"tab_retrieval_protocol.md labels the layer {md_label!r}, "
+        f"not Table 1's {expected!r}"
     )
 
 

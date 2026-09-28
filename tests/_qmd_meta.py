@@ -152,10 +152,9 @@ def source_files(qmd: Path) -> tuple[list[Path], list[str]]:
     (`.claude/rules/deliverables.md`, ticket 0359, where writing it that way
     produced 13 confident false positives).
 
-    Some generated tables under `_shared/tables/` are gitignored — others are
-    deliberately tracked, for the clean-room build — so a fresh worktree
-    legitimately lacks a few includes. Those are returned rather than raised,
-    so the caller decides whether a partial scan is good enough.
+    Submission includes under `_shared/tables/` are tracked for clean-room
+    renders. Missing files are returned rather than raised so the caller can
+    report or skip them; test_deliverable_artifacts checks the git contract.
     """
     base = qmd.parent
     found: list[Path] = []

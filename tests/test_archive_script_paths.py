@@ -33,7 +33,7 @@ Two kinds of input need different proof of life:
 
 - **Tracked assets** (the manuscript source, the bibliography) exist on disk in
   any checkout, so existence is the check.
-- **Generated artifacts** (`fig_bars.png`, `tab_languages.md`) are gitignored
+- **Generated artifacts** (for example, `fig_bars.png`) can be gitignored
   regenerables, absent from a fresh checkout and rebuilt by `make`. Requiring
   them on disk would make this guard fail for anyone who has not run the full
   pipeline, so the check is that a Make rule still names them.
