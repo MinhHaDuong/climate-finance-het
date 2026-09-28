@@ -1,6 +1,7 @@
 """Record browser-saved JETP files as v2 retrievals and snapshots."""
 
 import argparse
+import logging
 import mimetypes
 from datetime import datetime, timezone
 from pathlib import Path
@@ -17,6 +18,7 @@ from jetp.corpus_harvest_ledger import (
 )
 
 ROOT = Path(__file__).resolve().parents[2]
+LOG = logging.getLogger(__name__)
 MATERIAL = {'collected', 'not_modified'}
 PARTIAL_SUFFIXES = ('.part', '.crdownload', '.tmp')
 
@@ -89,7 +91,9 @@ def collect_downloads(ledger_dir, storage_root, downloads, origins, *, dry_run=F
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--ledger-dir', type=Path, default=ROOT / 'data/jetp')
+    parser.add_argument('--output', '--ledger-dir', dest='ledger_dir', type=Path,
+                        default=ROOT / 'data/jetp',
+                        help='ledger directory receiving retrievals and snapshots')
     parser.add_argument('--storage-root', type=Path, default=ROOT / 'data/jetp/documents')
     parser.add_argument('--downloads-dir', type=Path)
     parser.add_argument('--firefox-profile', type=Path)
@@ -100,9 +104,10 @@ def main():
         args.ledger_dir, args.storage_root,
         args.downloads_dir or _firefox.downloads_dir(),
         _firefox.download_origins(profile), dry_run=args.dry_run)
-    print(f'{len(rows)} matched downloads; {len(skipped)} left out')
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    LOG.info('%d matched downloads; %d left out', len(rows), len(skipped))
     for path, reason in skipped:
-        print(f'{path.name}: {reason}')
+        LOG.info('%s: %s', path.name, reason)
 
 
 if __name__ == '__main__':

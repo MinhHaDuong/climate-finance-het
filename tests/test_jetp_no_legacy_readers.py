@@ -27,9 +27,14 @@ def test_guard_fails_on_retired_fixture():
 
 
 def test_no_production_jetp_reader_names_retired_tables():
-    offenders = {
-        str(path.relative_to(ROOT)): retired_names(path.read_text())
-        for path in (ROOT / 'scripts/jetp').glob('*.py')
-        if retired_names(path.read_text())
-    }
+    readers = [*(ROOT / 'scripts/jetp').glob('*.py'),
+               ROOT / 'Makefile', ROOT / 'scripts/analysis/jetp_observatory.mk',
+               ROOT / 'deliverables/jetp-observatory/app.js']
+    offenders = {}
+    for path in readers:
+        source = path.read_text()
+        found = (retired_names(source) if path.parent == ROOT / 'scripts/jetp'
+                 else sorted(name for name in RETIRED if f'data/jetp/{name}' in source))
+        if found:
+            offenders[str(path.relative_to(ROOT))] = found
     assert offenders == {}

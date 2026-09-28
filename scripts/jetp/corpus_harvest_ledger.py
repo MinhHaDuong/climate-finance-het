@@ -245,7 +245,9 @@ def browser_session(profile, urls):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--ledger-dir', type=Path, default=ROOT / 'data/jetp')
+    parser.add_argument('--output', '--ledger-dir', dest='ledger_dir', type=Path,
+                        default=ROOT / 'data/jetp',
+                        help='ledger directory receiving retrievals and snapshots')
     parser.add_argument('--storage-root', type=Path, default=ROOT / 'data/jetp/documents')
     parser.add_argument('--document-id', action='append')
     parser.add_argument('--only-status', action='append')
