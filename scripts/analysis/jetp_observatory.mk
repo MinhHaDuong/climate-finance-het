@@ -4,6 +4,13 @@ JETP_OBSERVATORY_VIEWS := overview comparison coverage documents ZAF IDN VNM SEN
 JETP_OBSERVATORY_EDITION_HISTORY := $(JETP_OBSERVATORY)/data/editions.json
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
 JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
+JETP_ACCOUNTS_VIEW := $(JETP_OBSERVATORY)/data/accounts.json
+JETP_ACCOUNTS_DERIVED := data/derived/jetp/accounts.json
+JETP_ACCOUNTS_INPUTS := config/jetp-ledger.sql config/jetp_observatory.yaml .githooks/pre-commit \
+    scripts/jetp/build_accounts.py scripts/jetp/build_ledger.py \
+    scripts/jetp/_ledger_headers.py scripts/jetp/_ontology.py \
+    $(wildcard data/jetp/*.csv data/jetp/*.d/*.csv data/jetp/*/*.csv \
+        data/jetp/ontology/*.csv data/jetp/ontology/*.d/*.csv)
 JETP_PARTY_NAMES_VIEW := $(JETP_OBSERVATORY)/data/party-names.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
 JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
@@ -16,7 +23,7 @@ JETP_M1A_INPUTS := config/jetp-m1a-inventories.json scripts/jetp/build_m1a_inven
     scripts/jetp/_ledger_headers.py config/jetp-ledger.sql .githooks/pre-commit \
     $(wildcard data/jetp/lines.csv data/jetp/lines.d/*.csv data/jetp/line-fields/*.csv) \
     data/jetp/line-field-specs.csv data/jetp/routes.csv
-JETP_OBSERVATORY_INPUTS := data/jetp/migration/0875-projects-legacy.csv $(addprefix data/jetp/,$(addsuffix .csv,coverage events implementation-events sources source-claims project-source-links project-coverage manifest event-timing documents retrievals snapshots)) \
+JETP_OBSERVATORY_INPUTS := data/jetp/migration/0875-projects-legacy.csv $(addprefix data/jetp/,$(addsuffix .csv,coverage events implementation-events sources source-claims project-source-links project-coverage manifest event-timing documents retrievals snapshots observations)) \
     $(wildcard data/jetp/comparison/*.json) \
     $(wildcard data/jetp/editorial/countries/*.md) $(wildcard data/jetp/releases/*/release.json) \
     data/jetp/documents.dvc config/jetp_observatory.yaml \
@@ -88,7 +95,7 @@ $(JETP_LEDGER_DOCUMENTS_VIEW): data/jetp/documents.csv config/jetp-ledger.sql .g
     scripts/jetp/build_ledger_documents_view.py scripts/jetp/_ledger_headers.py
 	$(PYTHON) scripts/jetp/build_ledger_documents_view.py --output $@
 
-.PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-observatory jetp-observatory-documents \
+.PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-accounts jetp-observatory jetp-observatory-documents \
     jetp-observatory-refresh jetp-observatory-preview jetp-observatory-bundle jetp-observatory-publish
 jetp-m1a: $(JETP_M1A_FILES)
 
@@ -108,7 +115,15 @@ jetp-ontology-views: $(JETP_ONTOLOGY_VIEWS)
 $(JETP_ONTOLOGY_VIEWS) &: $(JETP_ONTOLOGY_VIEWS_INPUTS)
 	$(PYTHON) scripts/jetp/build_ontology_views.py --output-dir $(JETP_ONTOLOGY_VIEWS_DIR)
 
-jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+jetp-accounts: $(JETP_ACCOUNTS_DERIVED)
+
+$(JETP_ACCOUNTS_DERIVED): $(JETP_ACCOUNTS_INPUTS)
+	$(PYTHON) scripts/jetp/build_accounts.py --output $@
+
+$(JETP_ACCOUNTS_VIEW): $(JETP_ACCOUNTS_INPUTS)
+	$(PYTHON) scripts/jetp/build_accounts.py --output $@
+
+jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_ACCOUNTS_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
 $(JETP_PARTY_NAMES_VIEW): data/jetp/parties.csv data/jetp/party-names.csv scripts/jetp/build_party_names_view.py
 	$(PYTHON) scripts/jetp/build_party_names_view.py --output $@

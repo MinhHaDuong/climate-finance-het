@@ -59,12 +59,16 @@ def site_files(site):
 def routes(payloads):
     """Enumerate the renderer's stable hash routes and every view download."""
     result = ['#overview', '#countries', '#projects', '#comparison', '#documents', '#methods']
+    downloads = [f'data/{view}.json' for view in VIEWS]
+    if 'site/data/accounts.json' in payloads:
+        json.loads(payloads['site/data/accounts.json'])
+        result.append('#money')
+        downloads.append('data/accounts.json')
     for view in COUNTRIES:
         country = json.loads(payloads[f'site/data/{view}.json'])
         result.extend((f'#country/{view}', f'#projects?country={view}', f'#comparison?country={view}'))
         result.extend('#project/' + quote(row['id'], safe='') for row in country['projects'])
-    return {'routes': sorted(set(result)),
-            'downloads': [f'data/{view}.json' for view in VIEWS]}
+    return {'routes': sorted(set(result)), 'downloads': downloads}
 
 
 def _dvc_sources(root, source_root):

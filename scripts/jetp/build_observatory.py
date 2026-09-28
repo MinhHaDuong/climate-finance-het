@@ -6,6 +6,7 @@ import hashlib
 import json
 import subprocess
 from collections import Counter
+from decimal import Decimal
 from pathlib import Path
 
 import yaml
@@ -146,12 +147,51 @@ def country_data(root, code, config, tables):
     if missing:
         raise ValueError(f'Unknown source references: {missing}')
     metadata = dict(country_config, code=code)
+    if country_config.get('pledge_observation_id'):
+        metadata.update(perimeter_headlines(root, country_config))
     return {'country': metadata, 'projects': projects,
             'undisclosed': len(slots), 'record_count': len(rows),
             'sources': {sid: sources[sid] for sid in sorted(needed) if sid},
             'editorial': editorial(root, code),
             'stages': dict(Counter(p['finance_stage'] for p in projects)),
             'technologies': dict(Counter(p['technology'] for p in projects))}
+
+
+def perimeter_headlines(root, country_config):
+    """Format reported money from cited perimeter observations, never YAML values."""
+    schema = load_schema()
+    rows, errors = read_table(root / 'data/jetp', 'observations', schema)
+    if errors:
+        raise ValueError(errors[0])
+    by_id = {r['observation_id']: r for r in
+             (dict(zip(schema.header('observations'), row)) for row in rows)}
+
+    def cited(identity):
+        row = by_id.get(identity)
+        if (row is None or row['status'] != 'accepted'
+                or row['subject_kind'] != 'perimeter' or row['measure'] != 'envelope'
+                or row['value'] is None or not row['line_id']):
+            raise ValueError(f'Headline needs an accepted cited perimeter envelope: {identity}')
+        value = Decimal(row['value']) / Decimal('1000000000')
+        symbol = {'USD': '$', 'EUR': '€'}.get(row['currency'])
+        if symbol is None:
+            raise ValueError(f'Headline currency needs a display format: {row["currency"]}')
+        formatted = format(value, 'f')
+        if '.' in formatted:
+            formatted = formatted.rstrip('0').rstrip('.')
+        label = f'{symbol}{formatted}bn'
+        return label, {'observation_id': identity, 'perimeter_id': row['subject_id'],
+                       'line_id': row['line_id'], 'currency': row['currency'],
+                       'value': row['value']}
+
+    pledge, pledge_citation = cited(country_config['pledge_observation_id'])
+    result = {'pledge_label': pledge, 'pledge_citation': pledge_citation}
+    if identity := country_config.get('headline_observation_id'):
+        headline, citation = cited(identity)
+        result['headline'] = ('≈' if country_config.get('headline_approximate') else '') + \
+            f'{headline} {country_config["headline_qualifier"]}'
+        result['headline_citation'] = citation
+    return result
 
 
 def comparison_data(root, config):
@@ -287,6 +327,7 @@ def provenance(root, config):
     paths += sorted((root / 'data/jetp/comparison').glob('*.json'))
     paths += sorted((root / 'data/jetp/editorial/countries').glob('*.md'))
     paths += [root / 'config/jetp_observatory.yaml', root / 'data/jetp/documents.dvc',
+              root / 'data/jetp/observations.csv',
               Path(__file__), root / 'scripts/jetp/_observatory_data.py',
               root / 'scripts/jetp/build_observations.py',
               root / 'scripts/jetp/_m1a_document_links.py']
