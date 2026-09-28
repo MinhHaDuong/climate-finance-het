@@ -1,0 +1,8 @@
+# REL review window. Update search_date when the final searches are rerun.
+# 2026 is an incomplete publication year and must be reported separately.
+search_date: 2026-09-28
+year_min: 1990
+last_complete_year: 2025
+partial_year: 2026
+# A publication year alone cannot establish release by the search date.
+require_full_date_for_partial_year: true

@@ -28,7 +28,7 @@ from utils import (
     EMBEDDINGS_CACHE_PATH,
     EMBEDDINGS_PATH,
     get_logger,
-    load_analysis_config,
+    load_collect_config,
     work_key,
 )
 
@@ -44,6 +44,18 @@ def text_hash(text):
     """Short hash of the text that was embedded, to detect content changes."""
     import hashlib
     return hashlib.md5(text.encode()).hexdigest()[:8]
+
+
+def select_works_to_embed(works):
+    """Use the Phase 1 collection window for semantic enrichment."""
+    cfg = load_collect_config()
+    year = pd.to_numeric(works["year"], errors="coerce")
+    has_title = works["title"].notna() & works["title"].str.len().gt(0)
+    in_range = year.ge(cfg["year_min"]) & year.le(cfg["year_max"])
+    selected = works[has_title & in_range].copy().reset_index(drop=True)
+    log.info("Works with titles (%d-%d): %d", cfg["year_min"],
+             cfg["year_max"], len(selected))
+    return selected
 
 
 def _load_npz_cache(path: str) -> tuple[dict, dict]:
@@ -115,14 +127,7 @@ def main():
     log.info("Loading works from %s...", args.works_input)
     works = pd.read_csv(args.works_input)
 
-    # Filter: must have a title, year in range (from config)
-    _cfg = load_analysis_config()
-    _year_min = _cfg["periodization"]["year_min"]
-    _year_max = _cfg["periodization"]["year_max"]
-    has_title = works["title"].notna() & (works["title"].str.len() > 0)
-    in_range = (works["year"] >= _year_min) & (works["year"] <= _year_max)
-    df = works[has_title & in_range].copy().reset_index(drop=True)
-    log.info("Works with titles (%d-%d): %d", _year_min, _year_max, len(df))
+    df = select_works_to_embed(works)
 
     # Build keys, text, and text hashes
     df["_key"] = df.apply(work_key, axis=1)

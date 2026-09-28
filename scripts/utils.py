@@ -77,7 +77,7 @@ from pipeline_loaders import (
 WORKS_COLUMNS = [
     "source", "source_id", "doi", "title", "first_author", "all_authors",
     "year", "journal", "abstract", "language", "keywords", "categories",
-    "cited_by_count", "affiliations",
+    "cited_by_count", "affiliations", "publication_date",
 ]
 
 # Source provenance — boolean columns indicating which sources contributed each work.

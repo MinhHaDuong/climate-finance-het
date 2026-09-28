@@ -13,6 +13,7 @@ Usage:
 
     --tier N          Run only tier N (default: all tiers)
     --resume          Skip OpenAlex IDs already in the pool
+    --full-scan       Revisit every query despite saved creation-date checkpoints
     --from-date D     Only fetch works created on or after YYYY-MM-DD
     --pool-only       Download to pool, don't build CSV
     --extract-only    Build CSV from existing pool, don't download
@@ -40,7 +41,7 @@ from openalex_pool import (
     build_filter,  # noqa: F401 -- re-exported through this module for tests
     capture_budget,
     fetch_query,  # noqa: F401 -- re-exported through this module for tests
-    load_query_dates,
+    load_run_query_dates,
     query_slug,
 )
 from pipeline_keystore import read_credential
@@ -48,6 +49,7 @@ from utils import (
     CATALOGS_DIR,
     CONFIG_DIR,
     MAILTO,
+    POOL_DIR,
     WORKS_COLUMNS,
     get_logger,
     load_collect_config,
@@ -70,6 +72,23 @@ def load_query_config():
     with open(yaml_path, encoding="utf-8") as f:
         config = yaml.safe_load(f)
     return config
+
+
+def effective_year_min(collect_cfg, override):
+    """Allow a bounded backfill of newly opened publication years."""
+    if override is None:
+        return collect_cfg["year_min"]
+    if not collect_cfg["year_min"] <= override <= collect_cfg["year_max"]:
+        raise ValueError("--year-min must fall inside the collection window")
+    return override
+
+
+def backfill_checkpoint_path(full_scan, year_min, year_max):
+    """Keep bounded backfill progress apart from ordinary resume dates."""
+    if not full_scan:
+        return None
+    return os.path.join(
+        POOL_DIR, "openalex", f"_backfill_{year_min}_{year_max}.json")
 
 
 def passes_relevance(text, concept_groups, min_groups):
@@ -133,6 +152,7 @@ def build_record(r):
         "first_author": first_author,
         "all_authors": " ; ".join(all_authors_list),
         "year": r.get("publication_year", ""),
+        "publication_date": r.get("publication_date", ""),
         "journal": journal,
         "abstract": abstract,
         "language": r.get("language", ""),
@@ -164,6 +184,22 @@ def extract_references(r):
 
 # --- Extract phase ---
 
+def prefer_dated_pool_records(all_raw):
+    """Choose the newest refreshed copy, then prefer a known publication date."""
+    latest_by_id = {}
+    for record in all_raw:
+        oa_id = record.get("id", "").replace("https://openalex.org/", "")
+        rank = (record.get("_retrieved_at", ""),
+                bool(record.get("publication_date")))
+        previous = latest_by_id.get(oa_id)
+        previous_rank = ((previous.get("_retrieved_at", ""),
+                          bool(previous.get("publication_date")))
+                         if previous is not None else ("", False))
+        if previous is None or rank > previous_rank:
+            latest_by_id[oa_id] = record
+    return list(latest_by_id.values())
+
+
 def extract_from_pool(config):
     """Build openalex_works.csv and citations from pool records.
 
@@ -185,14 +221,9 @@ def extract_from_pool(config):
     all_raw = load_pool_records("openalex")
     log.info("%d raw records in pool", len(all_raw))
 
-    # Deduplicate by OpenAlex ID
-    seen_ids = set()
-    unique_raw = []
-    for r in all_raw:
-        oa_id = r.get("id", "").replace("https://openalex.org/", "")
-        if oa_id not in seen_ids:
-            seen_ids.add(oa_id)
-            unique_raw.append(r)
+    # Prefer copies with publication_date: pool files are read by query slug,
+    # not by append time, so a stale copy could otherwise win deduplication.
+    unique_raw = prefer_dated_pool_records(all_raw)
     log.info("%d unique after dedup", len(unique_raw))
 
     # Default: use the least restrictive tier (min_concept_groups=0)
@@ -246,11 +277,18 @@ def main():
         description="Unified OpenAlex harvester for climate finance")
     parser.add_argument("--tier", type=int, default=0,
                         help="Run only this tier (default: all)")
+    parser.add_argument("--year-min", type=int, default=None,
+                        help="Restrict this run to newer publication years; "
+                             "the configured collection floor remains unchanged")
     parser.add_argument("--resume", action="store_true",
                         help="Skip OpenAlex IDs already in pool")
-    parser.add_argument("--from-date", type=str, default=None,
-                        help="Only fetch works created on/after YYYY-MM-DD "
-                             "(auto-detected from last run when --resume)")
+    date_mode = parser.add_mutually_exclusive_group()
+    date_mode.add_argument("--full-scan", action="store_true",
+                           help="Ignore query-date checkpoints while retaining "
+                                "--resume ID deduplication; use after widening years")
+    date_mode.add_argument("--from-date", type=str, default=None,
+                           help="Only fetch works created on/after YYYY-MM-DD "
+                                "(auto-detected from last run when --resume)")
     parser.add_argument("--pool-only", action="store_true",
                         help="Download to pool, don't build CSV")
     parser.add_argument("--extract-only", action="store_true",
@@ -265,9 +303,9 @@ def main():
 
     config = load_query_config()
     collect_cfg = load_collect_config()
-    year_min = collect_cfg["year_min"]
+    year_min = effective_year_min(collect_cfg, args.year_min)
     year_max = collect_cfg["year_max"]
-    log.info("Year bounds from corpus_collect.yaml: %d–%d", year_min, year_max)
+    log.info("Effective collection year bounds: %d–%d", year_min, year_max)
     tiers = config.get("tiers", {})
 
     # Filter to requested tier
@@ -281,7 +319,9 @@ def main():
         return
 
     # Load per-query sidecar dates for incremental runs
-    query_dates = load_query_dates() if args.resume else {}
+    checkpoint_path = backfill_checkpoint_path(
+        args.full_scan, year_min, year_max)
+    query_dates = load_run_query_dates(args.resume, checkpoint_path)
     global_from_date = args.from_date  # explicit --from-date overrides per-query
 
     if global_from_date:
@@ -315,7 +355,7 @@ def main():
     # Download phase
     grand_total, queries_completed, queries_skipped, budget_start = _download_tiers(
         tiers, args, existing_ids, query_dates, global_from_date,
-        year_min, year_max, today,
+        year_min, year_max, today, checkpoint_path=checkpoint_path,
     )
 
     if args.dry_run:

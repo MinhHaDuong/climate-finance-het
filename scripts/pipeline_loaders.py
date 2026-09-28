@@ -31,6 +31,8 @@ load_refined_citations
     Load citation edges restricted to refined_works.csv source DOIs.
 load_analysis_corpus
     Load refined_works.csv with standard filtering + optional embeddings.
+load_rel_review_corpus
+    Load the REL review window with complete/partial-year labels.
 """
 
 import json
@@ -148,6 +150,85 @@ def load_analysis_config():
         )
     with open(path) as f:
         return yaml.safe_load(f)
+
+
+def load_rel_review_config():
+    """Load the dated REL review window independently of analysis.yaml."""
+    from datetime import date
+
+    import yaml
+
+    path = os.path.join(CONFIG_DIR, "rel_review.yaml")
+    with open(path, encoding="utf-8") as f:
+        cfg = yaml.safe_load(f)
+    search_date = date.fromisoformat(str(cfg["search_date"]))
+    years = (cfg["year_min"], cfg["last_complete_year"], cfg["partial_year"])
+    if not all(type(year) is int for year in years):
+        raise ValueError("REL year bounds must be integers")
+    if not (years[0] <= years[1] < years[2] == search_date.year):
+        raise ValueError("REL window must end in the partial search year")
+    if years[2] > load_collect_config()["year_max"]:
+        raise ValueError("REL window exceeds the collection window")
+    return cfg
+
+
+def classify_rel_review_works(works, config=None):
+    """Assign each work a dated REL window disposition.
+
+    Publication dates later than the search are excluded. Year-only 2026
+    records are quarantined until their release date is verified.
+    Journal articles and working papers follow the same rule.
+    Topical relevance and institutional-document screening follow separately.
+    """
+    from datetime import date
+
+    cfg = config or load_rel_review_config()
+    search_date = date.fromisoformat(str(cfg["search_date"]))
+    year = pd.to_numeric(works["year"], errors="coerce")
+    has_title = works["title"].notna() & works["title"].astype(str).str.strip().ne("")
+    disposition = pd.Series("include", index=works.index)
+    disposition.loc[~has_title] = "exclude_missing_title"
+    in_window = year.ge(cfg["year_min"]) & year.le(cfg["partial_year"])
+    disposition.loc[~in_window] = "exclude_outside_year_window"
+    date_precision = pd.Series("year_only", index=works.index)
+    dated = pd.Series(False, index=works.index)
+    if "publication_date" in works:
+        raw_date = works["publication_date"].astype("string").str.strip()
+        full_date = raw_date.str.fullmatch(r"\d{4}-\d{2}-\d{2}").fillna(False)
+        published = pd.to_datetime(raw_date.where(full_date),
+                                   format="%Y-%m-%d", errors="coerce")
+        dated = published.notna()
+        year_only = raw_date.str.fullmatch(r"\d{4}").fillna(False)
+        unsupported = raw_date.notna() & raw_date.ne("") & ~dated & ~year_only
+        date_precision.loc[dated] = "full_date"
+        disposition.loc[unsupported] = "quarantine_invalid_date"
+        disposition.loc[dated & published.dt.date.gt(search_date)] = "exclude_future_date"
+    if cfg["require_full_date_for_partial_year"]:
+        unverified = year.eq(cfg["partial_year"]) & ~dated
+        disposition.loc[unverified & disposition.eq("include")] = (
+            "quarantine_unverified_partial_date")
+    classified = works.copy()
+    classified["rel_disposition"] = disposition
+    classified["rel_year_status"] = year.apply(
+        lambda value: "partial" if value == cfg["partial_year"]
+        else "complete" if pd.notna(value) and value <= cfg["last_complete_year"]
+        else "outside")
+    classified["rel_date_precision"] = date_precision
+    classified["rel_search_date"] = search_date.isoformat()
+    return classified
+
+
+def select_rel_review_works(works, config=None):
+    """Return included works; use classify_rel_review_works for exclusions."""
+    classified = classify_rel_review_works(works, config=config)
+    selected = classified.loc[classified["rel_disposition"].eq("include")].copy()
+    selected["year"] = pd.to_numeric(selected["year"]).astype(int)
+    return selected.reset_index(drop=True)
+
+
+def load_rel_review_corpus():
+    """Load REL's temporal candidate set before topical and type screening."""
+    return select_rel_review_works(load_refined_works())
 
 
 def pre2007_cutoff_year(cfg):

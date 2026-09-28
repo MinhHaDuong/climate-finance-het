@@ -35,6 +35,7 @@ RefinedWorksSchema = DataFrameSchema(
         "first_author": Column(str, nullable=True),
         "all_authors": Column(str, nullable=True),
         "year": Column(str),
+        "publication_date": Column(str, nullable=True, required=False),
         "journal": Column(str, nullable=True),
         "abstract": Column(str, nullable=True),
         "language": Column(str, nullable=True),

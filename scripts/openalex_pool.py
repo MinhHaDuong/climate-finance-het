@@ -14,7 +14,7 @@ import json
 import os
 import re
 import tempfile
-from datetime import date
+from datetime import date, datetime, timezone
 
 from pipeline_keystore import read_credential
 from utils import (
@@ -42,7 +42,8 @@ LAST_RUN_PATH = os.path.join(POOL_DIR, "openalex", "_last_run.txt")
 
 # Fields to request from OpenAlex (reduces payload, includes referenced_works)
 OA_SELECT = ",".join([
-    "id", "doi", "display_name", "publication_year", "authorships",
+    "id", "doi", "display_name", "publication_year", "publication_date",
+    "authorships",
     "primary_location", "abstract_inverted_index", "language", "keywords",
     "concepts", "cited_by_count", "referenced_works", "type",
 ])
@@ -90,6 +91,18 @@ def load_query_dates(path=None):
         if d:
             return {"_global": d}
     return {}
+
+
+def load_run_query_dates(resume, backfill_path=None):
+    """Keep backfill checkpoints separate without changing legacy fallback."""
+    if not resume:
+        return {}
+    if backfill_path is None:
+        return load_query_dates()
+    if not os.path.exists(backfill_path):
+        return {}
+    with open(backfill_path) as fh:
+        return json.load(fh)
 
 
 def save_query_dates(dates, path=None):
@@ -158,7 +171,8 @@ def query_slug(term):
 # --- Download phase ---
 
 def fetch_query(search_term, delay, limit, existing_ids, pool_file,
-                from_date=None, year_min=None, year_max=None):
+                from_date=None, year_min=None, year_max=None,
+                refresh_since=None, refreshed_ids=None):
     """Fetch all works matching a search term, append raw JSON to pool.
 
     Parameters
@@ -179,6 +193,10 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
         Minimum publication year (inclusive).
     year_max : int, optional
         Maximum publication year (inclusive).
+    refresh_since : int, optional
+        Re-fetch existing works published since this year during a full scan.
+    refreshed_ids : set, optional
+        Shared set preventing duplicate refreshes across query terms.
 
     Returns
     -------
@@ -189,6 +207,8 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
 
     """
     cursor = "*"
+    if refreshed_ids is None:
+        refreshed_ids = set()
     total_fetched = 0
     n_new = 0
     batch = []
@@ -223,8 +243,16 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
 
         for r in data.get("results", []):
             oa_id = r.get("id", "").replace("https://openalex.org/", "")
+            pub_year = r.get("publication_year")
+            recent = (refresh_since is not None and pub_year is not None
+                      and int(pub_year) >= refresh_since)
             if oa_id in existing_ids:
-                continue
+                if not (recent and oa_id not in refreshed_ids):
+                    continue
+                refreshed_ids.add(oa_id)
+                r = {**r, "_retrieved_at": datetime.now(timezone.utc).isoformat()}
+            elif recent:
+                refreshed_ids.add(oa_id)
             existing_ids.add(oa_id)
             batch.append(r)
             n_new += 1
@@ -274,8 +302,17 @@ def dry_run_query(search_term, delay, from_date=None, year_min=None,
     return data.get("meta", {}).get("count", 0)
 
 
+def query_from_date(slug, query_dates, global_from_date):
+    """Select the incremental creation-date floor for one normal query."""
+    if global_from_date:
+        return global_from_date
+    if slug in query_dates:
+        return query_dates[slug]
+    return query_dates.get("_global")
+
+
 def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
-                    year_min, year_max, today):
+                    year_min, year_max, today, checkpoint_path=None):
     """Run the download phase across all tiers.
 
     Returns (total, completed, skipped, budget_start).
@@ -285,6 +322,7 @@ def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
     queries_skipped = 0
     stop_no_budget = False
     budget_start = None
+    refreshed_ids = set()
 
     for tier_num in sorted(tiers.keys()):
         if stop_no_budget:
@@ -303,14 +341,12 @@ def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
             slug = query_slug(term)
             pf = pool_path("openalex", slug)
 
-            if global_from_date:
-                from_date = global_from_date
-            elif slug in query_dates:
-                from_date = query_dates[slug]
-            elif "_global" in query_dates:
-                from_date = query_dates["_global"]
-            else:
-                from_date = None
+            if getattr(args, "full_scan", False) and slug in query_dates:
+                log.info('Backfill query already completed: "%s"', term)
+                queries_completed += 1
+                continue
+
+            from_date = query_from_date(slug, query_dates, global_from_date)
 
             if args.dry_run:
                 count = dry_run_query(term, args.delay, from_date,
@@ -344,11 +380,13 @@ def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
             log.info('Querying: "%s"%s', term, date_info)
             n_new, out_of_budget, completed = fetch_query(
                 term, args.delay, args.limit, existing_ids, pf,
-                from_date=from_date, year_min=year_min, year_max=year_max)
+                from_date=from_date, year_min=year_min, year_max=year_max,
+                refresh_since=year_max - 1 if getattr(args, "full_scan", False) else None,
+                refreshed_ids=refreshed_ids)
             grand_total += n_new
             if completed:
                 query_dates[slug] = today
-                save_query_dates(query_dates)
+                save_query_dates(query_dates, checkpoint_path)
                 queries_completed += 1
             else:
                 queries_skipped += 1

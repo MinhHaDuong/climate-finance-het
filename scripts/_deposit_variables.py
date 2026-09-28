@@ -35,6 +35,7 @@ FLAG_COLUMNS = [
 
 # Columns dropped from the deposit (intermediate or restricted)
 COLUMNS_TO_DROP = [
+    "publication_date",  # REL date metadata, absent from the frozen deposit contract
     "abstract",       # publisher redistribution restrictions
     "doi_norm",       # intermediate
     "action",         # redundant with is_flagged/is_protected
