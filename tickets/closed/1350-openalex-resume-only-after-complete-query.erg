@@ -2,10 +2,12 @@
 Title: OpenAlex: advance resume date only after a complete query, with interruption tests
 Created: 2026-09-28
 Author: Codex
+Closed: OpenAlex checkpoints now advance only on full pagination; deterministic interruption/retry tests and padme gates verified
 
 --- log ---
 2026-09-28T00:00Z Codex created before REL corpus harvest; separate from 0298 metadata-update catch-up
 
+2026-09-28T14:38Z HDMX-coding-agent closed — OpenAlex checkpoints now advance only on full pagination; deterministic interruption/retry tests and padme gates verified
 --- body ---
 ## Context
 
@@ -36,10 +38,31 @@ the periodic `from_updated_date` pass and discovery-recall gate.
 
 ## Exit criteria
 
-- [ ] Budget exhaustion after at least one page and a 429 response leave the
+- [x] Budget exhaustion after at least one page and a 429 response leave the
       old query date intact; the next run retrieves every later page once.
-- [ ] A `--limit` run does not claim a complete query or advance its date.
-- [ ] A fully paginated query advances its date once; unaffected queries retain
+- [x] A `--limit` run does not claim a complete query or advance its date.
+- [x] A fully paginated query advances its date once; unaffected queries retain
       their own checkpoints.
-- [ ] Changed-behaviour tests and the required corpus WP gate pass on padme,
+- [x] Changed-behaviour tests and the required corpus WP gate pass on padme,
       with the corpus available; the PR records the gate and resulting commit.
+
+## Verification
+
+- `7e358d90` `scripts/openalex_pool.py:212,242-258,345-354` separates
+  interruption from completed pagination and dates only completed queries;
+  `scripts/openalex_pool.py:95-107` replaces the sidecar atomically.
+- `7e358d90` `scripts/harvest/catalog_openalex.py:347-349` stops writing the
+  legacy global checkpoint, which cannot represent a partial sweep.
+- `tests/test_openalex_resume_completion.py::test_interrupted_query_replays_original_window`
+  covers both zero budget and HTTP 429, pool IDs, persisted dates, replay and
+  the later-query stop; `::test_record_limit_does_not_advance_date` covers
+  `--limit`. Both pass locally after the final test edit.
+- Padme, clean branch worktree with `make data`: `make check-fast` 2466 passed,
+  9 skipped; `make lint` 346 passed, 11 skipped. The unmodified
+  `make check-corpus-wp` target failed because it combines two pytest roots
+  with conflicting `conftest` imports and because the gitignored reranker
+  cache was absent from the new worktree. After copying the existing 2.1 MB
+  cache from padme's primary checkout and running the same WP selection by
+  root, `tests/ -m wp_corpus` passed (1368 passed, 34 skipped) and the
+  package's `-m wp_corpus` passed (25 passed). These gate issues are outside
+  this ticket's code diff.

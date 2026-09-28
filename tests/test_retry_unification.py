@@ -148,13 +148,14 @@ class TestFetchQueryBudgetGuard:
         )
 
         pool_file = str(tmp_path / "test.jsonl.gz")
-        n_new, out_of_budget = fetch_query(
+        n_new, out_of_budget, completed = fetch_query(
             "climate finance", delay=0, limit=0,
             existing_ids=set(), pool_file=pool_file,
         )
         # Should have fetched page 1 then stopped
         assert n_new == 1
         assert out_of_budget is True
+        assert completed is False
 
     def test_continues_with_budget(self, requests_mock, tmp_path):
         from catalog_openalex import fetch_query
@@ -170,9 +171,10 @@ class TestFetchQueryBudgetGuard:
         )
 
         pool_file = str(tmp_path / "test.jsonl.gz")
-        n_new, out_of_budget = fetch_query(
+        n_new, out_of_budget, completed = fetch_query(
             "climate finance", delay=0, limit=0,
             existing_ids=set(), pool_file=pool_file,
         )
         assert n_new == 1
         assert out_of_budget is False
+        assert completed is True

@@ -42,7 +42,6 @@ from openalex_pool import (
     fetch_query,  # noqa: F401 -- re-exported through this module for tests
     load_query_dates,
     query_slug,
-    write_last_run_date,
 )
 from pipeline_keystore import read_credential
 from utils import (
@@ -345,8 +344,8 @@ def main():
     log.info("Queries: %d completed, %d skipped", queries_completed, queries_skipped)
     log.info("Budget: $%s -> $%s", budget_start, budget_end)
 
-    # Also write legacy sidecar for backwards compatibility
-    write_last_run_date(date_str=today)
+    # The legacy global marker cannot represent interrupted or tier-limited
+    # runs. Per-query dates above are the only completion checkpoints.
     log.info("Sidecar updated: %d queries dated %s", queries_completed, today)
 
     if not args.pool_only:

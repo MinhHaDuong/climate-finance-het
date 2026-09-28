@@ -13,6 +13,7 @@ Functions here handle:
 import json
 import os
 import re
+import tempfile
 from datetime import date
 
 from pipeline_keystore import read_credential
@@ -96,8 +97,14 @@ def save_query_dates(dates, path=None):
     if path is None:
         path = SIDECAR_PATH
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w") as fh:
-        json.dump(dates, fh, indent=2, sort_keys=True)
+    fd, tmp_path = tempfile.mkstemp(prefix=".query_dates-", dir=os.path.dirname(path))
+    try:
+        with os.fdopen(fd, "w") as fh:
+            json.dump(dates, fh, indent=2, sort_keys=True)
+        os.replace(tmp_path, path)
+    finally:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
 
 def read_last_run_date(path=None):
@@ -176,8 +183,9 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
     Returns
     -------
     tuple
-        (n_new, out_of_budget) — count of new records and whether
-        the API budget was exhausted during pagination.
+        (n_new, out_of_budget, completed) — count of new records, whether
+        budget/rate limiting stopped the run, and whether the final page was
+        reached. A record limit also leaves completed false.
 
     """
     cursor = "*"
@@ -185,6 +193,8 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
     n_new = 0
     batch = []
     remaining = "?"
+    out_of_budget = False
+    completed = False
 
     while cursor:
         params = {
@@ -202,6 +212,7 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
         if resp.status_code == 429:
             remaining = capture_budget(resp)
             log.warning("Rate limited during pagination, stopping query.")
+            out_of_budget = True
             break
 
         data = resp.json()
@@ -228,19 +239,23 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
         log.info("[%s] %d/%s (new: %d, budget: $%s)",
                  search_term, total_fetched, total, n_new, remaining)
 
-        if budget_exhausted(remaining):
+        next_cursor = meta.get("next_cursor")
+        out_of_budget = budget_exhausted(remaining)
+        if not next_cursor:
+            completed = True
+            break
+        if out_of_budget:
             log.warning("API budget exhausted ($%s remaining), stopping.", remaining)
             break
-
-        cursor = meta.get("next_cursor")
         if limit and total_fetched >= limit:
             break
+        cursor = next_cursor
 
     # Flush remaining
     if batch:
         append_to_pool(batch, pool_file)
 
-    return n_new, budget_exhausted(remaining)
+    return n_new, out_of_budget, completed
 
 
 def dry_run_query(search_term, delay, from_date=None, year_min=None,
@@ -327,14 +342,16 @@ def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
 
             date_info = f" (since {from_date})" if from_date else ""
             log.info('Querying: "%s"%s', term, date_info)
-            n_new, out_of_budget = fetch_query(
+            n_new, out_of_budget, completed = fetch_query(
                 term, args.delay, args.limit, existing_ids, pf,
                 from_date=from_date, year_min=year_min, year_max=year_max)
             grand_total += n_new
-            queries_completed += 1
-
-            query_dates[slug] = today
-            save_query_dates(query_dates)
+            if completed:
+                query_dates[slug] = today
+                save_query_dates(query_dates)
+                queries_completed += 1
+            else:
+                queries_skipped += 1
 
             if out_of_budget:
                 log.warning("Budget exhausted — skipping remaining queries.")
