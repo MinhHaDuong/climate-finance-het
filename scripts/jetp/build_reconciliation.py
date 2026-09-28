@@ -312,8 +312,12 @@ def build(ledger=LEDGER_DIR, write=False, output=None):
     pending_lines = {old_id: ';'.join(sorted(line['line_id'] for line in matches))
                      for old_id, matches in by_legacy.items() if len(matches) > 1}
     projects, assets, agreements, referents, report = [], [], [], [], []
-    relations = [r for r in table_rows(ledger, 'relations', schema)
-                 if not r['relation_id'].startswith('0875.')]
+    existing_relations = [r for r in table_rows(ledger, 'relations', schema)
+                          if not r['relation_id'].startswith('0875.')]
+    later_relations = [r for r in existing_relations
+                       if r['relation_id'].startswith('0877.')]
+    relations = [r for r in existing_relations
+                 if not r['relation_id'].startswith('0877.')]
     identity_for = {}
     register_fields = {r['line_id']: r for r in csv_rows(
         ledger / 'line-fields/zaf-jet-investment-register-q1-2026.csv')}
@@ -418,6 +422,9 @@ def build(ledger=LEDGER_DIR, write=False, output=None):
 
     accepted_line_ids = {r['line_id'] for r in referents if r['status'] == 'accepted'}
     relations.extend(tier2_candidates(ledger, lines, accepted_line_ids))
+    # The identity split owns only 0875 relations. Replaying it after 0877
+    # must retain later membership decisions after its own deterministic rows.
+    relations.extend(later_relations)
 
     tables = dict(projects=projects, assets=assets, agreements=agreements,
                   line_referents=referents, relations=relations,

@@ -1204,9 +1204,9 @@ def test_every_ontology_table_is_served_one_file_each_with_its_columns_verbatim(
         # Every row, superseded ones included, as the CSV holds it.
         assert view["rows"] == [list(row) for row in rows], table
         assert view["in_force"] == [row[view["key"]] for row in current[table]], table
-    # The Viet Nam count perimeter is now named; its observations follow in 0877.
-    assert [row[1] for row in served("ontology/perimeters")["rows"]] == [
-        "vnm-jetp-portfolio-2025"]
+    assert {row[1] for row in served("ontology/perimeters")["rows"]} == {
+        "vnm-jetp-portfolio-2025", "zaf-jetp", "idn-jetp", "vnm-jetp",
+        "sen-jetp", "idn-cipp-ruptl-plan-lines"}
 
 
 def test_the_glossary_renders_each_term_in_force_with_its_definition() -> None:
