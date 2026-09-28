@@ -10,18 +10,27 @@ selection rule.  No network request or source-field expansion occurs here.
 import argparse
 import csv
 import hashlib
+import io
 import json
+import logging
 import os
 from pathlib import Path
 
 import yaml
 
-from jetp._ledger_headers import LEDGER_DIR, load_schema, read_table, write_table
+from jetp._ledger_headers import (
+    LEDGER_DIR,
+    file_ceiling,
+    load_schema,
+    read_table,
+    write_table,
+)
 from jetp._observatory_data import historical_record
 
 ROOT = Path(__file__).resolve().parents[2]
 RECORDED_AT = '2026-09-28'
 DECIDED_BY = 'scripts/jetp/build_comparators.py'
+log = logging.getLogger(__name__)
 COUNTRIES = {'ID': 'IDN', 'SN': 'SEN', 'VN': 'VNM', 'ZA': 'ZAF'}
 POOL_ID = 'world-bank-pre-jetp-closed-energy'
 STATUS = {'Active': 'implementation', 'Closed': 'closed',
@@ -45,11 +54,15 @@ def _add(rows, row, key):
 
 
 def _fields(path, columns, rows):
+    output = io.StringIO()
+    writer = csv.DictWriter(output, ['line_id', *columns], lineterminator='\n')
+    writer.writeheader()
+    writer.writerows(rows)
+    text = output.getvalue()
+    if len(text.encode('utf-8')) > file_ceiling():
+        raise ValueError(f'{path}: generated table exceeds the per-file ceiling')
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open('w', encoding='utf-8', newline='') as handle:
-        writer = csv.DictWriter(handle, ['line_id', *columns], lineterminator='\n')
-        writer.writeheader()
-        writer.writerows(rows)
+    path.write_text(text, encoding='utf-8')
 
 
 def _edition(path):
@@ -66,6 +79,8 @@ def _edition(path):
         raise ValueError(f'{path}: duplicate P-number in edition')
     if any(set(row) != set(columns) for row in data['records']):
         raise ValueError(f'{path}: record fields differ from projection_fields')
+    if any(not row['id'] or row.get('status') not in STATUS for row in data['records']):
+        raise ValueError(f'{path}: missing P-number or unmapped World Bank status')
     return data['retrieved_on'], iso2, path, raw, data
 
 
@@ -195,7 +210,8 @@ def main():
     parser.add_argument('--output', '--ledger-dir', dest='ledger_dir', type=Path,
                         default=LEDGER_DIR, help='Output ledger directory')
     args = parser.parse_args()
-    print(ingest(args.snapshot, args.ledger_dir))
+    lines, members = ingest(args.snapshot, args.ledger_dir)
+    log.info('Ingested %d World Bank comparator lines; %d pool members', lines, members)
 
 
 if __name__ == '__main__':
