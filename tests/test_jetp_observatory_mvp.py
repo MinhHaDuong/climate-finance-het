@@ -183,7 +183,8 @@ def test_historical_acquisition_dates_do_not_follow_edition_cutoff():
     result = comparison_data(ROOT, config)
     assert 'retrieved_on' not in result  # country snapshots can have different dates
     for code, country in config['countries'].items():
-        raw = json.loads((ROOT / 'data/jetp/comparison' / f"{country['iso2']}.json").read_text())
+        raw = json.loads((ROOT / 'data/jetp/ledger-snapshots/world-bank' /
+                          f"{country['iso2']}.json").read_text())
         snapshot = result['snapshots'][code]
         assert snapshot['retrieved_on'] == raw['retrieved_on']
         assert snapshot['pages'] == raw['pages']

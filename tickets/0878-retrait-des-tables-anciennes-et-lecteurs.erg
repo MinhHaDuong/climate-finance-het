@@ -16,6 +16,7 @@ Author: HDMX-coding-agent
 2026-09-24T18:56Z HDMX-coding-agent note blocker 0884 closed — Blocked-by removed.
 2026-09-28T06:27Z HDMX-coding-agent note blocker 0879 closed — Blocked-by removed.
 2026-09-28T09:42Z HDMX-coding-agent note blocker 0890 closed — Blocked-by removed.
+2026-09-28T13:50Z Codex note décision de l'auteur : migrer les vues pays vers les identités v2 et présenter les octets modifiés du MVP à sa revue. Le vieux compteur de 404 fiches de l'aperçu ne décrit pas les 64 projets retenus dans `projects.csv` ; l'identité octet à octet de ces vues et de l'overview n'est donc plus un critère. Les vues qui ne changent pas de sens restent comparées aux octets de 0890.
 --- body ---
 ## Context
 
@@ -46,7 +47,8 @@ liste les tables de l'ontologie.
 3. `docs/jetp-tracking.md` : la table des objets renvoie à
    `docs/jetp-ledger-storage.md` § 1 ; les règles de comptage restent.
 4. `make clean` puis `make all` ; comparaison des vues servies avec celles
-   de [[0890]] (comptes, `overview.json`).
+   de [[0890]]. Documenter et faire revoir par l'auteur les écarts intentionnels
+   des vues pays et de `overview.json` ; les autres vues gardent leur contrat.
 
 ## Test
 
@@ -66,7 +68,7 @@ liste les tables de l'ontologie.
 ## Verification
 
 - [ ] `grep` de chaque nom retiré ne trouve rien hors `docs/jetp-study/` et `tickets/closed/`
-- [ ] Vues servies identiques à celles de [[0890]]
+- [ ] Vues pays et `overview.json` : diff intentionnel expliqué et revu par l'auteur ; autres vues servies identiques à celles de [[0890]]
 
 ## Invariants
 
