@@ -2,12 +2,15 @@
 Title: Comparateurs IATI : tranche énergie des quatre pays
 Created: 2026-09-23
 Author: HDMX-coding-agent
+Closed: Tranche IATI énergie quatre pays validée sur padme au commit 70c254cc (1 301 lignes, 7 841 flux).
 
 --- log ---
 2026-09-23T10:30Z HDMX-coding-agent created scindé de [[0879]] à la revue du train (2026-09-23), décision de l'auteur
 2026-09-23T16:00Z HDMX-coding-agent note plan (raid prep) : `conception/jetp/papier-3-ledger/pilote-ledger-vn/rapport-pilote-vn.md` confirmé décrire le tirage IATI (`iati-crs/codeforiati_*`, `registry_*`), 485 activités énergie pour le seul Viet Nam dont 184 bailleurs IPG et 2 mentions JETP explicites — le « ~1 800 » quatre pays de ce ticket est une extrapolation cohérente (~4 × 485) mais reste une estimation, non un tirage existant ; à confirmer au tirage réel. Même remarque #1461 que [[0885]] : l'institution comme publisher peut changer de forme si `publishers` replie dans `parties` avant l'exécution de ce ticket.
 
 2026-09-28T06:27Z HDMX-coding-agent note blocker 0879 closed — Blocked-by removed.
+2026-09-28T08:28Z Codex note vérification : commit 70c254cc ; data/jetp/iati/{ID,SN,VN,ZA}.json.gz et scripts/jetp/{catalog_iati_energy,build_iati_comparators}.py ; 1 301 lignes (ID 344, SN 241, VN 411, ZA 305), 1 207 identifiants IATI distincts, 94 liens same_as et 7 841 observations flow ; aucune promotion en projet. tests/test_jetp_comparators_iati.py (4 réussis), make jetp-ledger-check valide, padme make check-fast (2 422 réussis, 9 ignorés), make lint (346 réussis, 13 ignorés), make check (3 406 réussis, 52 ignorés). Deux reconstructions depuis les snapshots sont identiques octet pour octet au ledger commis ; revue indépendante sur un autre modèle, défaut de secteur explicite corrigé et conservation des 451 observations et 371 timings antérieurs vérifiée. Aucun fichier nouveau ou modifié sous data/jetp ne dépasse 512 000 octets ; data/jetp/plan-projects.csv (561 968 octets) dépasse déjà le plafond sur main et reste inchangé.
+2026-09-28T08:29Z HDMX-coding-agent closed — Tranche IATI énergie quatre pays validée sur padme au commit 70c254cc (1 301 lignes, 7 841 flux).
 --- body ---
 ## Context
 
@@ -37,8 +40,8 @@ en requête à la demande.
 
 ## Verification
 
-- [ ] ~1 800 lignes IATI, chacune avec son identifiant
-- [ ] Aucun fichier de `data/jetp/` au-dessus du plafond du hook
+- [x] 1 301 lignes IATI au tirage réel, chacune avec son identifiant ; les ~1 800 étaient une extrapolation du pilote VN
+- [x] Aucun fichier nouveau ou modifié de `data/jetp/` au-dessus du plafond du hook (exception préexistante signalée au journal)
 
 ## Invariants
 
@@ -46,5 +49,5 @@ en requête à la demande.
 
 ## Exit criteria
 
-- [ ] Tranche IATI ingérée, validée par [[0871]] (`make jetp-ledger-check`)
-- [ ] `tests/test_jetp_comparators_iati.py`, `make check-fast` et `make lint` verts (pas `make check` complet : ex post sur main)
+- [x] Tranche IATI ingérée, validée par [[0871]] (`make jetp-ledger-check`)
+- [x] `tests/test_jetp_comparators_iati.py`, `make check-fast` et `make lint` verts ; `make check` complet également passé sur padme pour les changements d'infrastructure partagée
