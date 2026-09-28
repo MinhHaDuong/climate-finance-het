@@ -129,6 +129,27 @@ def _add_transactions(activity, line_id, tables, observed, timed, recorded_at, c
                 timed[timing['timing_id']] = timing
 
 
+def _load_snapshot(path, ledger_dir, recorded_at):
+    if path.resolve().parent != (ledger_dir / 'iati').resolve():
+        raise ValueError(f'{path}: snapshot must live in {ledger_dir}/iati')
+    raw = path.read_bytes()
+    snapshot = json.loads(gzip.decompress(raw) if path.suffix == '.gz' else raw)
+    iso2 = snapshot['country_code']
+    if iso2 not in COUNTRIES or len(snapshot['records']) != snapshot['count']:
+        raise ValueError(f'{path}: invalid country or activity count')
+    source_total = snapshot['source_total']
+    if (snapshot['count'] > source_total or
+            sum(item['returned'] for item in snapshot['queries']) != source_total or
+            any(item['total'] != source_total for item in snapshot['queries'])):
+        raise ValueError(f'{path}: incomplete API pagination')
+    if len({row['id'] for row in snapshot['records']}) != snapshot['count']:
+        raise ValueError(f'{path}: duplicate IATI identifiers')
+    retrieved = snapshot['retrieved_at'][:10]
+    if retrieved > recorded_at:
+        raise ValueError(f'{path}: retrieval postdates ledger date')
+    return raw, snapshot, iso2, retrieved
+
+
 def ingest(paths, ledger_dir=LEDGER_DIR, *, recorded_at):
     date.fromisoformat(recorded_at)
     ledger_dir = Path(ledger_dir)
@@ -151,24 +172,8 @@ def ingest(paths, ledger_dir=LEDGER_DIR, *, recorded_at):
     counts = defaultdict(int)
     for path in sorted(paths, key=lambda item: Path(item).name):
         path = Path(path)
-        if path.resolve().parent != (ledger_dir / 'iati').resolve():
-            raise ValueError(f'{path}: snapshot must live in {ledger_dir}/iati')
-        raw = path.read_bytes()
-        snapshot = json.loads(gzip.decompress(raw) if path.suffix == '.gz' else raw)
-        iso2 = snapshot['country_code']
-        if iso2 not in COUNTRIES or len(snapshot['records']) != snapshot['count']:
-            raise ValueError(f'{path}: invalid country or activity count')
-        source_total = snapshot['source_total']
-        if (snapshot['count'] > source_total or
-                sum(item['returned'] for item in snapshot['queries']) != source_total or
-                any(item['total'] != source_total for item in snapshot['queries'])):
-            raise ValueError(f'{path}: incomplete API pagination')
-        if len({row['id'] for row in snapshot['records']}) != snapshot['count']:
-            raise ValueError(f'{path}: duplicate IATI identifiers')
+        raw, snapshot, iso2, retrieved = _load_snapshot(path, ledger_dir, recorded_at)
         country = COUNTRIES[iso2]
-        retrieved = snapshot['retrieved_at'][:10]
-        if retrieved > recorded_at:
-            raise ValueError(f'{path}: retrieval postdates ledger date')
         document_id = f'iati-energy-{iso2.lower()}-{retrieved}'
         sha = hashlib.sha256(raw).hexdigest()
         _add(tables['documents'], dict(document_id=document_id, country=country,
