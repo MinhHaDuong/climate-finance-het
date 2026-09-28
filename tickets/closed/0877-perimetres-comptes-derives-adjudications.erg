@@ -2,6 +2,7 @@
 Title: Périmètres et observations de périmètre
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Closed: Implemented and verified in PR #1542 (merge bc3a4030)
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -13,6 +14,7 @@ Author: HDMX-coding-agent
 2026-09-23T15:23Z HDMX-coding-agent note scission exécutée (raid, tickets-migration-prep) : adjudications vers [[0889]] (Blocked-by ce ticket : `perimeter_compatibility` cite un `perimeter_id`), comptes dérivés et service `overview.json` vers [[0890]] (Blocked-by [[0889]], le prérequis direct, qui couvre transitivement ce ticket). Ce ticket garde `perimeters` et les observations `envelope`/`count`.
 2026-09-28T08:32Z Codex note vérification de la branche 08e0aca5 sur padme (checkout propre, corpus et documents présents) : `make check-jetp` 970 passed/5 skipped, `make check-fast` 25+2402 passed/9 skipped, `make lint` 346 passed/13 skipped, `make jetp-ledger-check` vert ; recette navigateur sur le paquet public HEAD verte (97 entrées historiques). Deux tours de revue indépendante ; les 3 constats du premier sont corrigés, le test de timing signalé au second aussi. Les deux observations de compte VNM ne créent aucun membre fictif.
 
+2026-09-28T06:52Z HDMX-coding-agent closed — Implemented and verified in PR #1542 (merge bc3a4030)
 --- body ---
 ## Context
 
