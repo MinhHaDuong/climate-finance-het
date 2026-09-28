@@ -43,6 +43,15 @@ def test_full_scan_refreshes_recent_existing_records(monkeypatch, tmp_path):
     assert appended == records[:1]
 
 
+def test_extraction_prefers_refreshed_publication_date_across_pool_files():
+    from harvest.catalog_openalex import prefer_dated_pool_records
+
+    stale = {"id": "https://openalex.org/W1", "publication_year": 2026}
+    fresh = {**stale, "publication_date": "2026-09-01"}
+    assert prefer_dated_pool_records([fresh, stale]) == [fresh]
+    assert prefer_dated_pool_records([stale, fresh]) == [fresh]
+
+
 @pytest.mark.parametrize("interruption", ["zero_budget", "rate_limit"])
 def test_interrupted_query_replays_original_window(monkeypatch, tmp_path, interruption):
     sidecar = tmp_path / "_query_dates.json"

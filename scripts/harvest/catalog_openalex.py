@@ -166,6 +166,16 @@ def extract_references(r):
 
 # --- Extract phase ---
 
+def prefer_dated_pool_records(all_raw):
+    """Choose one copy per OpenAlex ID, preferring a known publication date."""
+    latest_by_id = {}
+    for record in all_raw:
+        oa_id = record.get("id", "").replace("https://openalex.org/", "")
+        if oa_id not in latest_by_id or record.get("publication_date"):
+            latest_by_id[oa_id] = record
+    return list(latest_by_id.values())
+
+
 def extract_from_pool(config):
     """Build openalex_works.csv and citations from pool records.
 
@@ -187,13 +197,9 @@ def extract_from_pool(config):
     all_raw = load_pool_records("openalex")
     log.info("%d raw records in pool", len(all_raw))
 
-    # Prefer the latest raw copy: a full scan can refresh a 2025/26 record
-    # originally pooled before publication_date was retained.
-    latest_by_id = {}
-    for r in all_raw:
-        oa_id = r.get("id", "").replace("https://openalex.org/", "")
-        latest_by_id[oa_id] = r
-    unique_raw = list(latest_by_id.values())
+    # Prefer copies with publication_date: pool files are read by query slug,
+    # not by append time, so a stale copy could otherwise win deduplication.
+    unique_raw = prefer_dated_pool_records(all_raw)
     log.info("%d unique after dedup", len(unique_raw))
 
     # Default: use the least restrictive tier (min_concept_groups=0)
