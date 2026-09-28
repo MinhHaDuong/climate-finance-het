@@ -354,9 +354,15 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None,
                          'country plus recorded_at/decided_at, or cited line country')
     groups = {}
     for row in rows:
-        country = (row['country'] if 'country' in header else
-                   country_for_row(row) if country_for_row is not None else
-                   country_by_line_id[row['line_id']])
+        if 'country' in header:
+            country = row['country']
+        elif country_for_row is not None:
+            country = country_for_row(row)
+        else:
+            country = country_by_line_id.get(row.get('line_id'))
+        if not country or not re.fullmatch(r'[A-Z]{3}', country):
+            raise ValueError(f'{table}: no valid shard country for cited line '
+                             f"{row.get('line_id')!r}")
         groups.setdefault((country, str(row[date_field])[:4]), []).append(row)
     directory = chunk_dir(ledger_dir, table)
     planned = []

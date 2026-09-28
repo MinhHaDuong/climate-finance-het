@@ -303,6 +303,12 @@ def test_cited_line_country_chunks_observations_without_a_country_column(tmp_pat
                          line_id='doc-1-t1-1', method='crs_microdata',
                          recorded_at='2026-09-28', status='accepted')
                     for number in range(4)]
+    without_citation = [dict(row) for row in observations]
+    without_citation[0]['line_id'] = ''
+    with pytest.raises(ValueError, match='no valid shard country'):
+        ledger_headers.write_table(
+            tmp_path, 'observations', without_citation, ceiling=350,
+            country_by_line_id={'doc-1-t1-1': 'ZAF'})
     written = ledger_headers.write_table(
         tmp_path, 'observations', observations, ceiling=350,
         country_by_line_id={'doc-1-t1-1': 'ZAF'})

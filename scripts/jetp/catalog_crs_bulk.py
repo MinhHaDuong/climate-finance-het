@@ -31,7 +31,7 @@ def _fetch(url, attempts=5):
                 return response.read(), dict(response.headers)
         except urllib.error.HTTPError as exc:
             if exc.code == 404:
-                return b'', {}
+                raise ValueError(f'CRS country-year URL returned 404: {url}') from exc
             if exc.code not in (429, 500, 502, 503, 504) or attempt == attempts - 1:
                 raise
             log.warning('HTTP %d, retry %d/%d: %s', exc.code, attempt + 1, attempts, url)
@@ -44,18 +44,16 @@ def _fetch(url, attempts=5):
 
 
 def _metadata(raw, country, year, url, headers):
-    if raw:
-        reader = csv.DictReader(io.StringIO(raw.decode('utf-8-sig'), newline=''))
-        fields = reader.fieldnames
-        if not fields or len(fields) != 51:
-            raise ValueError(f'{country} {year}: expected 51 CRS fields, got {fields}')
-        rows = list(reader)
-        if any(row['RECIPIENT'] != country or row['TIME_PERIOD'] != str(year)
-               or row['MD_DIM'] != 'DD' for row in rows):
-            raise ValueError(f'{country} {year}: response differs from requested slice')
-    else:
-        rows = []
-        fields = []
+    if not raw:
+        raise ValueError(f'{country} {year}: empty CRS response')
+    reader = csv.DictReader(io.StringIO(raw.decode('utf-8-sig'), newline=''))
+    fields = reader.fieldnames
+    if not fields or len(fields) != 51:
+        raise ValueError(f'{country} {year}: expected 51 CRS fields, got {fields}')
+    rows = list(reader)
+    if any(row['RECIPIENT'] != country or row['TIME_PERIOD'] != str(year)
+           or row['MD_DIM'] != 'DD' for row in rows):
+        raise ValueError(f'{country} {year}: response differs from requested slice')
     return {
         'country': country, 'year': year, 'url': url,
         'retrieved_at': datetime.now(timezone.utc).isoformat(timespec='seconds'),

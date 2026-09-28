@@ -18,6 +18,24 @@ published millions in USD units. Q values are already at `BASE_PER=2024`;
 no exchange rate or additional deflator is applied. The `deflators` rows
 record this no-op representation with value 1, each citing a Q source line.
 
+The separately collected, all-sector four-country response is pinned by
+`data/jetp/crs-bulk.dvc`. `bulk-manifest.json` is a byte-for-byte copy of its
+manifest kept in Git for review; the response bytes stay in DVC. The
+2026-09-28 pull contains 80 country-year files, 690,043 rows across Q and V,
+345,027 Q rows, and 51 fields in every response. This is a newer pull than
+the energy archive above, so their counts need not match.
+
+After `dvc pull data/jetp/crs-bulk.dvc`, an explicit local build can
+materialize those 690,043 source lines in a disposable SQLite ledger. It
+checks the DVC manifest byte-for-byte against the Git copy and adds no bulk
+observations or CSV ledger rows:
+
+```sh
+uv run --env-file .env python scripts/jetp/build_ledger.py --output data/derived/jetp/base.sqlite
+uv run --env-file .env python scripts/jetp/build_crs_bulk_sqlite.py \
+  --base data/derived/jetp/base.sqlite --output data/derived/jetp/crs-bulk.sqlite
+```
+
 `MD_ID` identifies one SDMX microdata row and is the external CRS row ID.
 `OECD_ID` is retained verbatim in the 51 fields; it repeats across flows and
 in 88 cases across different donor project IDs, so it cannot alone be an

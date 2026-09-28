@@ -1,0 +1,6 @@
+outs:
+- md5: bb493c9dce87ceccab73f761c79f4315.dir
+  size: 41785712
+  nfiles: 81
+  hash: md5
+  path: crs-bulk

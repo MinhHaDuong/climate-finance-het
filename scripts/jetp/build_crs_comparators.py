@@ -57,11 +57,11 @@ class Tables:
                 raise ValueError('; '.join(errors))
             header = schema.header(name)
             self.rows[name] = [dict(zip(header, row)) for row in records]
-            self.index[name] = {tuple(row[column] for column in schema.keys[name]): row
+            self.index[name] = {tuple(_cell(row[column]) for column in schema.keys[name]): row
                                 for row in self.rows[name]}
 
     def add(self, name, row):
-        key = tuple(row[column] for column in self.schema.keys[name])
+        key = tuple(_cell(row[column]) for column in self.schema.keys[name])
         found = self.index[name].get(key)
         if found is None:
             self.rows[name].append(row)
@@ -156,12 +156,13 @@ def _activity(tables, row, line_id, first_activity, recorded_at):
     if not donor_project:
         return
     key = f"{row['DONOR']}:{donor_project}"
-    anchor = first_activity.setdefault(key, line_id)
+    anchor, anchor_year = first_activity.setdefault(
+        key, (line_id, row['TIME_PERIOD']))
     if anchor == line_id:
         tables.add('external_ids', dict(scheme='oecd-crs-donor-project-id',
             external_id=key, kind='line', id=line_id, line_id=line_id,
             recorded_at=recorded_at))
-    else:
+    elif row['TIME_PERIOD'] != anchor_year:
         tables.add('relations', dict(relation_id=f'same-as-{line_id}',
             from_kind='line', from_id=line_id, relation='same_as',
             to_kind='line', to_id=anchor, status='accepted',
@@ -300,8 +301,12 @@ def ingest(source_dir=SOURCE_DIR, ledger_dir=LEDGER_DIR, *, recorded_at,
     old_line_ids = set(tables.index['lines'])
     tables.add('parties', dict(party_id='oecd', authority_category='secondary_source',
         notes='OECD publishes Creditor Reporting System microdata supplied by reporters'))
-    first_activity = {row['external_id']: row['id'] for row in tables.rows['external_ids']
-                      if row['scheme'] == 'oecd-crs-donor-project-id'}
+    lines_by_id = {row['line_id']: row for row in tables.rows['lines']}
+    first_activity = {
+        row['external_id']: (row['id'], lines_by_id[row['id']]['locator'].rsplit('/', 1)[-1])
+        for row in tables.rows['external_ids']
+        if row['scheme'] == 'oecd-crs-donor-project-id'
+    }
     first_doc = None
     count = 0
     first_year_line = {}
@@ -343,7 +348,7 @@ def ingest(source_dir=SOURCE_DIR, ledger_dir=LEDGER_DIR, *, recorded_at,
         if row['line_id']:
             return country_by_line[row['line_id']]
         if row['from_kind'] == 'document':
-            return country_by_doc[row['from_id']]
+            return country_by_doc[row['from_id']] or 'GLB'
         # Existing aliases of parties such as AFD have no country. GLB is a
         # storage bucket only; relations still make no country assertion.
         if row['from_kind'] == 'party':
