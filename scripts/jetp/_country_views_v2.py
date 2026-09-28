@@ -116,6 +116,7 @@ def _statement(row, lines, line_documents, timings, agreements, funders):
         source_id=line_documents.get(row['line_id']) or '',
         locator=line['locator'], line_id=row['line_id'], sha256=line['sha256'],
         measure=row['measure'], basis=row['basis'] or '',
+        notes=row['notes'] or '',
         **_timing(timings, row['observation_id']),
     )
 

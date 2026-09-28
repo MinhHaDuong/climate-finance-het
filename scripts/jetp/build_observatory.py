@@ -11,6 +11,7 @@ from pathlib import Path
 
 import yaml
 
+from jetp._country_views_v2 import country_view, load_country_inputs
 from jetp._ledger_headers import load_schema, read_table, table_files
 from jetp._observatory_data import (
     document_entry,
@@ -155,6 +156,19 @@ def country_data(root, code, config, tables):
             'editorial': editorial(root, code),
             'stages': dict(Counter(p['finance_stage'] for p in projects)),
             'technologies': dict(Counter(p['technology'] for p in projects))}
+
+
+def country_data_v2(root, code, config, tables=None):
+    """Serve reviewed referents without counting agreements as projects."""
+    data = country_view(root / 'data/jetp', code, config['countries'][code],
+                        tables=tables)
+    metadata = data['country']
+    if metadata.get('pledge_observation_id'):
+        metadata.update(perimeter_headlines(root, metadata))
+    data['editorial'] = editorial(root, code)
+    data['stages'] = dict(Counter(row['finance_stage'] for row in data['projects']))
+    data['technologies'] = dict(Counter(row['technology'] for row in data['projects']))
+    return data
 
 
 def perimeter_headlines(root, country_config):
@@ -374,22 +388,23 @@ def coverage_data(root):
 
 def provenance(root, config):
     """Hash every input and record the code checkout; make file bytes authoritative."""
-    paths = [(root / LEGACY_PROJECTS
-              if name == 'projects' else root / 'data/jetp' / f'{name}.csv')
-             for name in TABLES]
+    paths = []
+    ledger = root / 'data/jetp'
+    for name in ('projects', 'assets', 'agreements', 'coverage', 'documents',
+                 'document_publishers', 'party_names', 'retrievals', 'snapshots',
+                 'lines', 'line_referents', 'relations', 'observations',
+                 'timings', 'perimeters'):
+        files, errors = table_files(ledger, name)
+        if errors or not files:
+            raise ValueError(errors[0] if errors else f'{name}: no ledger files')
+        paths.extend(path for path, _, _ in files)
     paths += sorted((root / 'data/jetp/ledger-snapshots/world-bank').glob('*.json'))
-    paths += [root / 'data/jetp/documents.csv', root / 'data/jetp/retrievals.csv',
-              root / 'data/jetp/snapshots.csv']
-    paths += sorted((root / 'data/jetp/relations.d').glob('*.csv'))
     paths += sorted((root / 'data/jetp/editorial/countries').glob('*.md'))
-    observation_files, errors = table_files(root / 'data/jetp', 'observations')
-    if errors or not observation_files:
-        raise ValueError(errors[0] if errors else 'No v2 observation table found')
-    paths += [path for path, _, _ in observation_files]
     paths += [root / 'config/jetp_observatory.yaml', root / 'data/jetp/documents.dvc',
-              Path(__file__), root / 'scripts/jetp/_observatory_data.py',
-              root / 'scripts/jetp/build_observations.py',
-              root / 'scripts/jetp/_m1a_document_links.py']
+              root / 'config/jetp-ledger.sql', Path(__file__),
+              root / 'scripts/jetp/_country_views_v2.py',
+              root / 'scripts/jetp/_observatory_data.py',
+              root / 'scripts/jetp/_ledger_headers.py']
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     relative = [str(p.relative_to(root)) for p in paths]
     tracked = subprocess.run(['git', 'ls-files', '--error-unmatch', '--', *relative],
@@ -398,7 +413,7 @@ def provenance(root, config):
                            cwd=root, check=False).returncode == 0
     return {'edition': config['edition'], 'cutoff': config['cutoff'],
             'data_build': {
-                'identity': 'canonical_observatory_preview',
+                'identity': 'ontology_v2_observatory_preview',
                 'observation_cutoff': config['cutoff'],
                 'relationship_to_release': 'canonical_data_build_precedes_release_extension',
             },
@@ -423,6 +438,24 @@ def overview(root, config, tables):
             'provenance': provenance(root, config)}
 
 
+def overview_v2(root, config, tables=None):
+    """Count reviewed project and agreement referents separately."""
+    tables = tables or load_country_inputs(root / 'data/jetp')
+    countries = []
+    all_sources = set()
+    for code in config['countries']:
+        data = country_data_v2(root, code, config, tables)
+        all_sources.update(data['sources'])
+        countries.append(dict(data['country'], named=data['project_count'],
+                              agreement_count=data['agreement_count'],
+                              stages=data['stages'], technologies=data['technologies'],
+                              headline_source_record=data['sources'].get(
+                                  data['country']['headline_source'])))
+    return {'countries': countries, 'source_count': len(all_sources),
+            'historical_count': len(comparison_data(root, config)['projects']),
+            'provenance': provenance(root, config)}
+
+
 def main():
     """Write one requested JSON view deterministically."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -431,9 +464,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
-    # Only the overview and the country views read the legacy registries.
     if args.view == 'overview':
-        result = overview(ROOT, config, read_inputs(ROOT))
+        result = overview_v2(ROOT, config)
     elif args.view == 'comparison':
         result = comparison_data(ROOT, config)
     elif args.view == 'coverage':
@@ -443,7 +475,7 @@ def main():
     elif args.view == 'editions':
         result = edition_history(ROOT)
     else:
-        result = country_data(ROOT, args.view, config, read_inputs(ROOT))
+        result = country_data_v2(ROOT, args.view, config)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':')) + '\n')
 
