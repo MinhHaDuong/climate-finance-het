@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-25T11:31Z
+Last updated: 2026-09-28T16:56Z
 
 ## Current goal
 
@@ -10,11 +10,13 @@ is the tracker; 0701 (outline) and 0705 (Œconomia non-overlap guard) are ready.
 ## JETP checkpoint
 
 No deployment; no causal model (0729 DEFER). M1a ticked (#1448). Ledger
-migration 0870 (ontology v2, 19 children) runs autonomously by author decision
-of 2026-09-23: merge on a checklist review, stop only on a change of meaning.
-11/19 merged: 0871–0876, 0880, 0884, 0887, 0888; site 0881, 0882, plus
-Documents page (1210, 1290). **Next wave ready: 0877, 0879** (parallel), then
-0889→0890, 0885/0886, 0878, 0833 (M1b). Open defect: 1267. Codex takes the non-JETP queue.
+migration 0870 (ontology v2): all 19 children are merged and closed; 0878
+retired the legacy tables and readers (#1559, #1560). The local MVP now serves
+64 reviewed projects and 315 separate agreements; nine changed JSON views
+were approved by the author. **Next: 0870 integration review** — combined diff,
+full suite, ZAF/VNM browser paths, final counts, routes and table coverage.
+The MVP is not published. `make all` is blocked by corpus report ticket 0673,
+being handled in another session.
 
 ## Process pilot
 
@@ -22,15 +24,15 @@ Since #1469, PRs verify in proportion to risk (AGENTS.md § Verify).
 Review time to merge, follow-up fixes, and `/lair` failures after a week or two.
 
 ## Status
-<!-- generated 2026-09-25T11:31Z · as of 7988db45 -->
+<!-- generated 2026-09-28T16:56Z · as of 93ba3edc -->
 
-**Tickets:** 63 ready · 66 blocked · 11 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 60 ready · 61 blocked · 11 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  7988db45 Merge pull request #1533 from MinhHaDuong/t1200-close-ticket
-  5c0930fb Merge pull request #1532 from MinhHaDuong/t1200-wp-test-gates
-  b0901760 Merge pull request #1531 from MinhHaDuong/t1290-documents-page-titles
+  93ba3edc Merge pull request #1558 from MinhHaDuong/t0701-rel-research-plan
+  7e37172c Merge pull request #1560 from MinhHaDuong/t0878-close-ticket
+  6c718014 Merge pull request #1559 from MinhHaDuong/t0878-retire-legacy
 
 ## Corpus and submissions
 
