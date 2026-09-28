@@ -5,11 +5,9 @@ import shutil
 from pathlib import Path
 
 import pytest
-
 from jetp import build_perimeters
-from jetp.build_perimeters import build_rows, ruptl_memberships
 from jetp.build_observations import write_normalized_event_tables
-
+from jetp.build_perimeters import build_rows, ruptl_memberships
 
 LEDGER = Path(__file__).resolve().parents[1] / 'data' / 'jetp'
 pytestmark = pytest.mark.wp_jetp

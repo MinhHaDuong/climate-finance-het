@@ -7,10 +7,16 @@ two published counts cite the frozen pilot observation rows; no slot is minted.
 import argparse
 import csv
 import io
+import logging
 from pathlib import Path
 
 from jetp._ledger_headers import (
-    LEDGER_DIR, file_ceiling, load_schema, read_table, table_files, write_table,
+    LEDGER_DIR,
+    file_ceiling,
+    load_schema,
+    read_table,
+    table_files,
+    write_table,
 )
 
 RECORDED_AT = '2026-09-28'
@@ -254,15 +260,20 @@ def build_rows(ledger_dir, schema=None):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--ledger-dir', type=Path, default=LEDGER_DIR)
-    parser.add_argument('--write', action='store_true')
+    parser.add_argument('--output', type=Path,
+                        help='existing ledger directory to update in place')
     args = parser.parse_args(argv)
     rows = build_rows(args.ledger_dir)
-    if args.write:
+    if args.output:
+        if args.output.resolve() != args.ledger_dir.resolve():
+            raise ValueError('--output must name --ledger-dir for this in-place migration')
         schema = load_schema()
         append_new_lines(args.ledger_dir, rows['lines'], schema)
         for table in ('perimeters', 'observations', 'timings', 'relations'):
             write_table(args.ledger_dir, table, rows[table], schema=schema)
-    print(' '.join(f'{table}={len(rows[table])}' for table in rows))
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s %(message)s')
+    logging.info('perimeter migration: %s',
+                 ' '.join(f'{table}={len(rows[table])}' for table in rows))
 
 
 if __name__ == '__main__':
