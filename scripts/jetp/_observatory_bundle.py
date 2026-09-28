@@ -195,22 +195,21 @@ def _build_view(root, view, output):
         return
     from jetp.build_observatory import (
         comparison_data,
-        country_data,
+        country_data_v2,
         documents_data,
-        overview,
-        read_inputs,
+        overview_v2,
+        retrieval_registry,
     )
 
     config = yaml.safe_load((root / 'config/jetp_observatory.yaml').read_text())
-    tables = read_inputs(root)
     if view == 'overview':
-        result = overview(root, config, tables)
+        result = overview_v2(root, config)
     elif view == 'comparison':
         result = comparison_data(root, config)
     elif view == 'documents':
-        result = documents_data(root, tables)
+        result = documents_data(root, {'manifest': retrieval_registry(root / 'data/jetp')})
     else:
-        result = country_data(root, view, config, tables)
+        result = country_data_v2(root, view, config)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, ensure_ascii=False, separators=(',', ':')) + '\n')
 

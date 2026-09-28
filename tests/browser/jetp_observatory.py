@@ -450,53 +450,32 @@ def check_senegal_and_indonesia(page, url, staged):
 
 
 def check_observations(page, url, staged):
-    """Exercise the ledger observations tab: the counts, a facet, and a search.
-
-    Recipe VN of ticket 0834, adjusted to what the ledger holds: Viet Nam's
-    only rows are seven project-source links, and none of the three tables
-    carries a funder column for them, so the European Investment Bank package
-    is reached by the free-text field and not by the funder facet.
-    """
+    """Check v2 observations and identity citations remain separate tables."""
     rows = page.request.get(url + '/data/observations/ZAF.json').json()
     page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-filters')
     assert str(len(rows)) in page.locator('#observations-count').inner_text()
-    # The head-of-tab figures are per table and per country, never pooled.
-    for table in ('events', 'implementation-events', 'project-source-links'):
+    for table in ('observations', 'line-referents'):
         served = [row for row in rows if row['table'] == table]
         metric = page.locator(f'.metric[data-observation-table="{table}"]')
         assert str(len(served)) in metric.inner_text(), table
-
-    # The table is paged at 50 rows, so the count line carries the filtered
-    # total and the tbody carries the page.
-    page.locator('#observations-filter-table').select_option('project-source-links')
-    links = [row for row in rows if row['table'] == 'project-source-links']
+    page.locator('#observations-filter-table').select_option('line-referents')
+    links = [row for row in rows if row['table'] == 'line-referents']
     assert page.locator('#observations-results tbody tr').count() == min(50, len(links))
     assert f'{len(links)} of {len(rows)}' in page.locator(
         '#observations-count'
     ).inner_text()
     page.locator('#observations-filter-table').select_option('')
-    page.locator('#observations-filter-verification').select_option('official_register')
-    registered = [row for row in rows if row['verification'] == 'official_register']
-    assert page.locator('#observations-results tbody tr').count() == min(
-        50, len(registered)
-    )
-    assert f'{len(registered)} of {len(rows)}' in page.locator(
-        '#observations-count'
-    ).inner_text()
+    page.locator('#observations-filter-verification').select_option('accepted')
+    assert page.locator('#observations-results tbody tr').count() == 50
 
-    # Recipe VN: the Bac Ai package, found through the source identifier.
     vietnam = page.request.get(url + '/data/observations/VNM.json').json()
     page.goto(url + '/#statements/VNM')
     page.wait_for_selector('#observations-filters')
     assert str(len(vietnam)) in page.locator('#observations-count').inner_text()
-    page.locator('#observations-search').fill('eib')
-    eib = [row for row in vietnam if 'eib' in row['source_id']]
-    assert len(eib) == 1, len(eib)
-    assert page.locator('#observations-results tbody tr').count() == len(eib)
+    assert [row['subject_kind'] for row in vietnam].count('project') == 1
+    assert page.locator('#observations-results tbody tr').count() == len(vietnam)
 
-    # Recipe SA: a row read from the Q1 2026 register opens that register's
-    # archived snapshot, at the page the locator names where it names one.
     page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-filters')
     registry = page.request.get(url + '/data/documents.json').json()['documents']
@@ -506,7 +485,7 @@ def check_observations(page, url, staged):
                  if row['id'] == register['source_id'] and row['local_path'])
     assert register['sha256'] == entry['sha256']
     page.locator('#observations-search').fill(register['source_id'])
-    key = f'a[data-observation-id="{register.get("event_id") or register.get("link_id")}"]'
+    key = f'a[data-observation-id="{register.get("observation_id") or register.get("referent_row_id")}"]'
     link = page.locator(publisher(key)).first
     link.wait_for()
     assert link.get_attribute('href').startswith(entry['url'])

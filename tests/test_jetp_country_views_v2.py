@@ -26,6 +26,10 @@ def test_current_country_views_keep_agreements_out_of_project_counts():
         project_ids = {row['id'] for row in view['projects']}
         agreement_ids = {row['id'] for row in view['agreements']}
         assert not project_ids & agreement_ids
+        for project in view['projects']:
+            for cited in project['evidence']:
+                assert cited['line_id'] and cited['locator']
+                assert cited['source_id'] in project['sources']
         for statement in view['statements']:
             assert statement['line_id'] and statement['sha256']
             assert statement['source_id'] in view['sources']

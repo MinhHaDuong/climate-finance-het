@@ -80,8 +80,8 @@ def _line_documents(lines, by_digest):
         elif candidates:
             matching = [identity for identity in candidates
                         if line_id.startswith(identity + '-')]
-            if len(matching) == 1:
-                found[line_id] = matching[0]
+            if matching:
+                found[line_id] = max(matching, key=len)
     return found
 
 
@@ -156,11 +156,17 @@ def country_view(ledger_dir, code, config, *, tables=None):
     for row in statements:
         by_subject[(row['subject_kind'], row['subject_id'])].append(row)
     citations = defaultdict(set)
+    cited_lines = defaultdict(list)
     for row in _current(tables['line_referents'], 'referent_row_id'):
         if (row['referent_kind'], row['referent_id']) in country_subjects:
             document = line_documents.get(row['line_id'])
             if document:
                 citations[(row['referent_kind'], row['referent_id'])].add(document)
+                line = lines[row['line_id']]
+                cited_lines[(row['referent_kind'], row['referent_id'])].append(dict(
+                    line_id=row['line_id'], locator=line['locator'],
+                    label=line['label'], source_id=document, sha256=line['sha256'],
+                ))
     for row in statements:
         if row['source_id']:
             citations[(row['subject_kind'], row['subject_id'])].add(row['source_id'])
@@ -184,6 +190,8 @@ def country_view(ledger_dir, code, config, *, tables=None):
             coverage_note=review.get('notes') or '', finance_stage=stage,
             funders=[], events=events, claims=[], source_links=[],
             sources=cited('project', identity),
+            evidence=sorted(cited_lines[('project', identity)],
+                            key=lambda item: item['line_id']),
         ))
     agreement_views = []
     for identity, row in agreement_rows.items():

@@ -734,7 +734,10 @@ function extractedPageLink(row, entry, key) {
 function extractedItem(row, entry) {
   if (row.product === "m1a")
     return `<li><a href="#document-rows/${esc(row.country)}?row=${Number(row.row)}"><code>${esc(row.source_row_id)}</code></a> ${esc(row.label || "Identity not published")}${extractedPageLink(row, entry, row.source_row_id)}<small>${esc(row.source_layer)} · ${esc(row.evidence_locator || "No locator recorded")}</small></li>`;
-  return `<li><a href="#document-rows/${esc(row.country)}">${esc(OBSERVATION_KINDS[row.kind] || row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}${extractedPageLink(row, entry, row.id)}<small>${esc(row.table)} · <a href="#project/${encodeURIComponent(row.project_id)}">${esc(row.project_id)}</a> · ${esc(row.locator || "No locator recorded")}</small></li>`;
+  const subject = row.subject_kind === "project"
+    ? `<a href="#project/${encodeURIComponent(row.subject_id)}">${esc(row.subject_id)}</a>`
+    : `<code>${esc(row.subject_id)}</code>`;
+  return `<li><a href="#statements/${esc(row.country)}">${esc(row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}${extractedPageLink(row, entry, row.id)}<small>${esc(row.table)} · ${subject} · ${esc(row.locator || "No locator recorded")}</small></li>`;
 }
 function factItem(fact) {
   return fact.record_id
@@ -1027,7 +1030,8 @@ function rowDetail(row, summary, open) {
       ([key, value]) =>
         `<dt>${esc(key)}</dt><dd>${
           value === "" || value == null ? "Not published" : key === "raw_project_description"
-            ? linkedDescription(value) : FIELD_TERMS[key] ? FIELD_TERMS[key](value) : esc(value)
+            ? linkedDescription(value) : key === "own_status" && row.axis === "money"
+              ? termLink("money", value) : FIELD_TERMS[key] ? FIELD_TERMS[key](value) : esc(value)
         }</dd>`,
     )
     .join("")}</dl></details>`;
@@ -1063,22 +1067,10 @@ function inventoryEvidence(row) {
     "",
   );
 }
-/* The second stage-two product: the ledger rows analysts wrote from the same
- * documents, under a different schema. The three tables keep their own names,
- * the ones data/jetp uses, rather than a display vocabulary invented here. */
-const OBSERVATION_TABLES = [
-  "events",
-  "implementation-events",
-  "project-source-links",
-];
-const OBSERVATION_KINDS = {
-  financial_event: "Financial event",
-  implementation_event: "Implementation event",
-  project_source_link: "Project–document link",
-};
-/* Each table names its rows with its own key. */
-const observationId = (row) =>
-  row.event_id || row.implementation_event_id || row.link_id || "";
+/* The v2 statements and identity citations remain two separate tables. */
+const OBSERVATION_TABLES = ["observations", "line-referents"];
+const OBSERVATION_KINDS = {};
+const observationId = (row) => row.observation_id || row.referent_row_id || "";
 /* Counted from the rows this tab serves, never from a stored total: a head
  * count that can drift from the table below it is a claim, not a summary. */
 const observationCounts = (rows) =>
@@ -1095,7 +1087,7 @@ function observationTotals(rows, code) {
           `<div class="metric computed" data-unit="items on the record" data-observation-table="${esc(table)}"><strong>${fmt(count)}</strong><span>${esc(table)}</span><small><span class="computed-tag">Our calculation</span> · items recorded for ${esc(c?.short || code)}</small></div>`,
       )
       .join("")}</div>` +
-    `<p class="note">Document rows and statements are two readings of some of the same publications. A row may support several statements, and statements may come from prose; their counts are never added together. Legacy event rows without a precise cited line are held for review and do not appear as observations here.</p>`
+    `<p class="note">Document rows, observations and identity citations are separate readings of some of the same publications. A document line may support more than one row; their counts are never added together. Rows without a precise cited line remain outside this view.</p>`
   );
 }
 function observationDetail(row) {
@@ -1133,7 +1125,7 @@ function observationsTable(rows) {
       {
         key: "table",
         label: "Ledger table",
-        all: "All three tables",
+        all: "Both tables",
         options: values("table"),
       },
       {
@@ -1141,17 +1133,6 @@ function observationsTable(rows) {
         label: "Kind",
         all: "All kinds",
         options: values("kind"),
-      },
-      // Only the financial events publish a funder. The other two tables have
-      // no such column, so their rows carry no such key and can never match a
-      // chosen funder — which is the honest answer: the ledger does not record
-      // one for them, and inventing a blank would make the absence look like a
-      // value.
-      {
-        key: "funder",
-        label: "Funder",
-        all: "All funders",
-        options: values("funder"),
       },
       {
         key: "verification",
@@ -1182,15 +1163,16 @@ function observationsTable(rows) {
         label: "Kind",
         cell: (row) => esc(OBSERVATION_KINDS[row.kind] || row.kind),
       },
-      { label: "Project", cell: (row) => `<code>${esc(row.project_id)}</code>` },
-      { label: "Funder", cell: (row) => esc(row.funder || "Not recorded here") },
+      { label: "Subject", cell: (row) => row.subject_kind === "project"
+        ? `<a href="#project/${encodeURIComponent(row.subject_id)}">${esc(row.subject_id)}</a>`
+        : `<code>${esc(row.subject_kind)} · ${esc(row.subject_id)}</code>` },
       // Verbatim, as the ledger wrote it: this is the word a reader has to be
       // able to check against the source, not a grade assigned here.
       { label: "Verification", cell: (row) => pill(row.verification) },
       { label: "According to", cell: (row) => according(documentOf(row.country, row.source_id)) },
       { label: "Document page", cell: observationEvidence },
     ],
-    empty: "No statements or project–document links match these filters.",
+    empty: "No observations or identity citations match these filters.",
     resultNoun: "items on the record",
     pageSize: 50,
   });
@@ -1359,35 +1341,13 @@ function sourceAdjudication(p, id) {
     )
     .join("");
 }
-/* The descent, fact → its stage-two rows: the country's ledger observations
- * addressed to this record, read from observations/<CODE>.json — the view the
- * Observations tab loads — and filtered on project_id here, never copied into
- * the country view (ticket 0855). Same detail, same evidence cell, same
- * fingerprint resolution, so the two pages are one reading. */
-function projectEvidenceRow(row) {
-  return `<tr data-evidence-row="${esc(observationId(row))}"><td>${esc(row.table)}</td><td>${observationDetail(row)}</td><td>${pill(row.verification)}</td><td>${according(documentOf(row.country, row.source_id))}</td><td>${observationEvidence(row)}</td></tr>`;
-}
-function projectEvidence(rows) {
-  return rows.length
-    ? `<details class="foldout" data-evidence-count="${rows.length}"><summary>${fmt(rows.length)} ${rows.length === 1 ? "item" : "items"} on the record</summary><div class="table-wrap"><table><thead><tr><th>Table</th><th>Row</th><th>Verification</th><th>According to</th><th>Document page</th></tr></thead><tbody>${rows.map(projectEvidenceRow).join("")}</tbody></table></div></details>`
-    : emptyNote("evidence-count", 0, "Nothing on the record is addressed to this project in this release.");
-}
-/* Fills the section once the view arrives, if the reader is still on this
- * page. The view absent, the section says so and points at the tab that
- * would have shown the same rows, rather than showing an empty list. */
-function fillProjectEvidence(p) {
-  const still = () =>
-    location.hash.slice(1).split("?")[0] === "project/" + encodeURIComponent(p.id);
-  const section = () => document.getElementById("project-evidence-rows");
-  observationsView(p.country)
-    .then((rows) => {
-      if (!still() || !section()) return;
-      section().innerHTML = projectEvidence(rows.filter((row) => row.project_id === p.id));
-    })
-    .catch((error) => {
-      if (!still() || !section()) return;
-      section().innerHTML = emptyNote("evidence-count", "unavailable", `The ${esc(p.country)} items on the record could not load (${esc(error.message)}). They are the items <a href="#statements/${esc(p.country)}">recorded for this country</a> addressed to <code>${esc(p.id)}</code>.`);
-    });
+/* A project identity cites reviewed document lines in the v2 ledger. These
+ * are identity citations; money statements remain in its timeline. */
+function projectEvidence(p) {
+  const rows = p.evidence || [];
+  if (!rows.length)
+    return emptyNote("evidence-count", 0, "No cited identity line is available for this project in this release.");
+  return `<details class="foldout" data-evidence-count="${rows.length}"><summary>${fmt(rows.length)} cited ${rows.length === 1 ? "line" : "lines"}</summary><div class="table-wrap"><table><thead><tr><th>Document</th><th>Line</th><th>Location</th></tr></thead><tbody>${rows.map((row) => `<tr data-evidence-row="${esc(row.line_id)}"><td>${sourceLink(documentOf(p.country, row.source_id), "Read the document")}</td><td>${esc(row.label || row.line_id)}</td><td>${esc(row.locator)}</td></tr>`).join("")}</tbody></table></div></details>`;
 }
 /* A source card's title already links to the publisher's page; under it, the
  * host of that very link (the country view's address, which can differ from
@@ -1407,7 +1367,7 @@ function projectPage(id) {
   if (!p) return notFound();
   const c = country(p.country),
     sources = countries[p.country].sources;
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> › ${esc(p.name)}</div><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Country</dt><dd><a href="#funding/${c.code}">${esc(c.name)}</a></dd><dt>Theme / technology</dt><dd>${esc(p.technology)}</dd><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See the individual documents; no funder entry yet")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Document follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation event has yet been added to this project\'s timeline. Its documents may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Statements about this project</h2><p class="note">Reported amounts, dates and statuses about this project, plus project–document links, each with a publisher and document location. These items are not amounts to add together.</p><div id="project-evidence-rows"><p class="note">Loading statements for ${esc(c.short)}…</p></div></section>${p.claims.length ? `<section class="section"><h2>What other documents say</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">${according(sources[r.source_id])} · Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Read the document")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Documents</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> › ${esc(p.name)}</div><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Country</dt><dd><a href="#funding/${c.code}">${esc(c.name)}</a></dd><dt>Theme / technology</dt><dd>${esc(p.technology)}</dd><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See the individual documents; no funder entry yet")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Document follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation event has yet been added to this project\'s timeline. Its documents may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Lines citing this project</h2><p class="note">Reviewed document lines supporting this project identity. Reported money statements, where present, appear in the timeline above.</p><div id="project-evidence-rows"></div></section>${p.claims.length ? `<section class="section"><h2>What other documents say</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">${according(sources[r.source_id])} · Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Read the document")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Documents</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
     .map((id) => {
       const s = sources[id];
       return s
@@ -1417,7 +1377,7 @@ function projectPage(id) {
     .join(
       "",
     )}</ul></div><p class="note" style="margin-top:20px">Each item keeps its document's scope. An agreement, approval or register entry does not establish a payment or physical delivery.</p><a class="button light" href="data/${c.code}.json" download>Download the country's data ↓</a></aside></div>`;
-  fillProjectEvidence(p);
+  document.getElementById("project-evidence-rows").innerHTML = projectEvidence(p);
 }
 function median(values) {
   if (!values.length) return null;
