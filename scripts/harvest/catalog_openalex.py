@@ -73,6 +73,15 @@ def load_query_config():
     return config
 
 
+def effective_year_min(collect_cfg, override):
+    """Allow a bounded backfill of newly opened publication years."""
+    if override is None:
+        return collect_cfg["year_min"]
+    if not collect_cfg["year_min"] <= override <= collect_cfg["year_max"]:
+        raise ValueError("--year-min must fall inside the collection window")
+    return override
+
+
 def passes_relevance(text, concept_groups, min_groups):
     """Check if text mentions at least min_groups concept groups."""
     if min_groups == 0:
@@ -259,6 +268,9 @@ def main():
         description="Unified OpenAlex harvester for climate finance")
     parser.add_argument("--tier", type=int, default=0,
                         help="Run only this tier (default: all)")
+    parser.add_argument("--year-min", type=int, default=None,
+                        help="Restrict this run to newer publication years; "
+                             "the configured collection floor remains unchanged")
     parser.add_argument("--resume", action="store_true",
                         help="Skip OpenAlex IDs already in pool")
     date_mode = parser.add_mutually_exclusive_group()
@@ -282,9 +294,9 @@ def main():
 
     config = load_query_config()
     collect_cfg = load_collect_config()
-    year_min = collect_cfg["year_min"]
+    year_min = effective_year_min(collect_cfg, args.year_min)
     year_max = collect_cfg["year_max"]
-    log.info("Year bounds from corpus_collect.yaml: %d–%d", year_min, year_max)
+    log.info("Effective collection year bounds: %d–%d", year_min, year_max)
     tiers = config.get("tiers", {})
 
     # Filter to requested tier

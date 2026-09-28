@@ -113,6 +113,15 @@ class TestLoadCollectConfig:
 # ---------------------------------------------------------------------------
 
 class TestOpenAlexYearFilter:
+    def test_bounded_openalex_backfill_preserves_configured_floor(self):
+        from catalog_openalex import effective_year_min
+
+        cfg = {"year_min": 1990, "year_max": 2026}
+        assert effective_year_min(cfg, None) == 1990
+        assert effective_year_min(cfg, 2025) == 2025
+        with pytest.raises(ValueError, match="collection window"):
+            effective_year_min(cfg, 2027)
+
     def test_build_filter_includes_year(self):
         from catalog_openalex import build_filter
         f = build_filter("climate finance", year_min=1990, year_max=2024)
