@@ -80,8 +80,8 @@ def _fields(path, columns, rows):
 
 def _edition(path, ledger_dir):
     path = Path(path)
-    if path.resolve().parent != (ledger_dir / 'comparison').resolve():
-        raise ValueError(f'{path}: source snapshot must live in {ledger_dir}/comparison')
+    if path.resolve().parent != (ledger_dir / 'ledger-snapshots/world-bank').resolve():
+        raise ValueError(f'{path}: source snapshot must live in {ledger_dir}/ledger-snapshots/world-bank')
     raw = path.read_bytes()
     data = json.loads(raw)
     iso2 = data['country_code']
@@ -186,7 +186,7 @@ def ingest(paths, ledger_dir=LEDGER_DIR, signed_dates=None, *, recorded_at):
             party_id='world-bank', role='author', name_row_id='world-bank.name.1'),
             ('document_id', 'party_id'))
         _add(tables['snapshots'], dict(sha256=sha,
-            storage_path=f'../comparison/{path.name}',
+            storage_path=f'../ledger-snapshots/world-bank/{path.name}',
             size_bytes=len(raw), content_type='application/json'), ('sha256',))
         _add(tables['retrievals'], dict(retrieval_id=f'{document_id}:1',
             document_id=document_id, retrieved_at=date,

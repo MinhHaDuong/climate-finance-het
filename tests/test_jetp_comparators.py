@@ -2,13 +2,17 @@
 
 import json
 import shutil
+from pathlib import Path
 
 import pytest
+import yaml
 from jetp._ledger_headers import LEDGER_DIR, load_schema, read_table
 from jetp.build_comparators import flow_type, ingest
 from jetp.build_ledger import build
+from jetp.build_observatory import comparison_data
 
 pytestmark = pytest.mark.wp_jetp
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def rows(directory, table):
@@ -25,7 +29,7 @@ def test_two_projects_on_two_editions(tmp_path):
         shutil.copy2(source, ledger / source.name)
     for subdir in ('ontology', 'lines.d', 'line-fields'):
         shutil.copytree(LEDGER_DIR / subdir, ledger / subdir)
-    (ledger / 'comparison').mkdir()
+    (ledger / 'ledger-snapshots/world-bank').mkdir(parents=True)
 
     fields = ['id', 'project_name', 'status', 'boardapprovaldate', 'closingdate',
               'lendinginstr', 'sector_namecode', 'supplementprojectflg', 'url']
@@ -38,7 +42,7 @@ def test_two_projects_on_two_editions(tmp_path):
                 closingdate='12/31/2021 12:00:00 AM', lendinginstr='Investment Loan',
                 sector_namecode=[{'name': 'Energy', 'code': 'L'}],
                 supplementprojectflg='N', url=f'https://example.org/P99999{number}'))
-        path = ledger / 'comparison' / f'{day}.json'
+        path = ledger / 'ledger-snapshots/world-bank' / f'{day}.json'
         path.write_text(json.dumps(dict(country_code='ID', retrieved_on=day,
             source_total=2, projection_fields=fields, records=records)))
         source_paths.append(path)
@@ -88,3 +92,10 @@ def test_deposited_bank_counts_and_pool():
     assert sum(r['relation'] == 'member_of' and
                r['to_id'] == 'world-bank-pre-jetp-closed-energy'
                for r in rows(LEDGER_DIR, 'relations')) == 97
+
+
+def test_world_bank_view_rebuilds_from_ledger_snapshots_without_byte_change():
+    config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
+    rebuilt = comparison_data(ROOT, config)
+    rendered = json.dumps(rebuilt, ensure_ascii=False, separators=(',', ':')) + '\n'
+    assert rendered == (ROOT / 'deliverables/jetp-observatory/data/comparison.json').read_text()

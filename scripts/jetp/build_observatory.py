@@ -221,17 +221,47 @@ def perimeter_headlines(root, country_config):
 
 
 def comparison_data(root, config):
-    """Build the descriptive closed-operation cohort from frozen API projections."""
+    """Build the closed-operation cohort from the ledger's frozen API snapshots."""
+    schema = load_schema()
+
+    def rows(table):
+        found, errors = read_table(root / 'data/jetp', table, schema)
+        if errors:
+            raise ValueError(f'{table}: {errors[0]}')
+        return [dict(zip(schema.header(table), row)) for row in found]
+
+    documents = rows('documents')
+    retrievals = {row['document_id']: row for row in rows('retrievals')
+                  if row['document_id'].startswith('world-bank-projects-')}
+    snapshots_by_hash = {row['sha256']: row for row in rows('snapshots')}
+    members = {row['from_id'] for row in rows('relations')
+               if row['from_kind'] == 'line' and row['relation'] == 'member_of'
+               and row['to_kind'] == 'perimeter'
+               and row['to_id'] == 'world-bank-pre-jetp-closed-energy'
+               and row['status'] == 'accepted'}
     projects = []
     snapshots = {}
     for code, country in config['countries'].items():
-        source = root / 'data/jetp/comparison' / f"{country['iso2']}.json"
-        snapshot = json.loads(source.read_text())
+        prefix = f"world-bank-projects-{country['iso2'].lower()}-"
+        editions = [row['document_id'] for row in documents
+                    if row['document_id'].startswith(prefix)]
+        if not editions:
+            raise ValueError(f'World Bank edition unavailable for {code}')
+        document_id = max(editions)
+        digest = retrievals[document_id]['sha256']
+        storage = snapshots_by_hash[digest]['storage_path']
+        source = (root / 'data/jetp/documents' / storage).resolve()
+        raw = source.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != digest:
+            raise ValueError(f'World Bank snapshot digest mismatch: {document_id}')
+        snapshot = json.loads(raw)
         snapshots[code] = {k: snapshot[k] for k in ('retrieved_on', 'pages', 'country_code', 'source_total')}
         snapshots[code]['source_updated_on'] = None
         for row in snapshot['records']:
             record = historical_record(row, code, country['signed_on'])
             if record:
+                if f"{document_id}-{row['id']}" not in members:
+                    raise ValueError(f"World Bank pool membership missing: {row['id']}")
                 projects.append(record)
     return {'projects': sorted(projects, key=lambda row: row['approval'], reverse=True),
             'method': 'World Bank status Closed; approved before the country JETP announcement; at least one sector label contains energy, power or electric. All available approval years. Additional-financing operations are labelled separately. This is a descriptive pool, not a matched control group.',
@@ -347,7 +377,10 @@ def provenance(root, config):
     paths = [(root / LEGACY_PROJECTS
               if name == 'projects' else root / 'data/jetp' / f'{name}.csv')
              for name in TABLES]
-    paths += sorted((root / 'data/jetp/comparison').glob('*.json'))
+    paths += sorted((root / 'data/jetp/ledger-snapshots/world-bank').glob('*.json'))
+    paths += [root / 'data/jetp/documents.csv', root / 'data/jetp/retrievals.csv',
+              root / 'data/jetp/snapshots.csv']
+    paths += sorted((root / 'data/jetp/relations.d').glob('*.csv'))
     paths += sorted((root / 'data/jetp/editorial/countries').glob('*.md'))
     observation_files, errors = table_files(root / 'data/jetp', 'observations')
     if errors or not observation_files:
