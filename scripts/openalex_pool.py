@@ -79,14 +79,11 @@ def load_query_dates(path=None):
     Returns dict {query_slug: "YYYY-MM-DD"} or empty dict if missing.
     Falls back to legacy single-date file if JSON doesn't exist.
     """
-    explicit_path = path is not None
     if path is None:
         path = SIDECAR_PATH
     if os.path.exists(path):
         with open(path) as fh:
             return json.load(fh)
-    if explicit_path:
-        return {}
     # Fallback: legacy single-date sidecar → treat as global date for all queries
     if os.path.exists(LAST_RUN_PATH):
         with open(LAST_RUN_PATH) as fh:
@@ -94,6 +91,18 @@ def load_query_dates(path=None):
         if d:
             return {"_global": d}
     return {}
+
+
+def load_run_query_dates(resume, backfill_path=None):
+    """Keep backfill checkpoints separate without changing legacy fallback."""
+    if not resume:
+        return {}
+    if backfill_path is None:
+        return load_query_dates()
+    if not os.path.exists(backfill_path):
+        return {}
+    with open(backfill_path) as fh:
+        return json.load(fh)
 
 
 def save_query_dates(dates, path=None):

@@ -93,7 +93,7 @@ def test_completed_backfill_query_is_skipped_without_touching_normal_checkpoint(
     )
     assert result[:3] == (0, 1, 0)
     assert pool.load_query_dates(str(normal)) == {slug: "2026-03-01"}
-    assert pool.load_query_dates(str(tmp_path / "missing.json")) == {}
+    assert pool.load_run_query_dates(True, str(tmp_path / "missing.json")) == {}
 
 
 @pytest.mark.parametrize("interruption", ["zero_budget", "rate_limit"])

@@ -41,7 +41,7 @@ from openalex_pool import (
     build_filter,  # noqa: F401 -- re-exported through this module for tests
     capture_budget,
     fetch_query,  # noqa: F401 -- re-exported through this module for tests
-    load_query_dates,
+    load_run_query_dates,
     query_slug,
 )
 from pipeline_keystore import read_credential
@@ -321,7 +321,7 @@ def main():
     # Load per-query sidecar dates for incremental runs
     checkpoint_path = backfill_checkpoint_path(
         args.full_scan, year_min, year_max)
-    query_dates = load_query_dates(checkpoint_path) if args.resume else {}
+    query_dates = load_run_query_dates(args.resume, checkpoint_path)
     global_from_date = args.from_date  # explicit --from-date overrides per-query
 
     if global_from_date:
