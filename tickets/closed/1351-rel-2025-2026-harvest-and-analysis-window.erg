@@ -2,10 +2,12 @@
 Title: REL: harvest through the final 2026 search date with a separate analysis window
 Created: 2026-09-28
 Author: Codex
+Closed: 2025-2026 REL source harvest and dated selection verified on padme; Scopus unavailability disclosed
 
 --- log ---
 2026-09-28T00:00Z Codex created from author decision to include 2025 and available 2026 research, including working papers
 
+2026-09-28T15:59Z HDMX-coding-agent closed — 2025-2026 REL source harvest and dated selection verified on padme; Scopus unavailability disclosed
 --- body ---
 ## Context
 
@@ -36,10 +38,32 @@ dated 2025+ do not prove those years have been comprehensively searched.
 
 ## Exit criteria
 
-- [ ] A dated REL harvest covers 2025 and eligible 2026 works in every
-      relevant collection route; the chosen cutoff is recorded with queries.
-- [ ] 2025 and 2026 are distinguishable in the REL analytic data, with 2026
+- [x] A dated REL harvest covers 2025 and eligible 2026 works in available
+      collection routes; the chosen cutoff is recorded with queries, and the
+      unavailable Scopus route is disclosed by author decision.
+- [x] 2025 and 2026 are distinguishable in the REL analytic data, with 2026
       marked partial; future-dated records receive an explicit disposition.
-- [ ] Other deliverables' periodization does not change unintentionally.
-- [ ] Changed-behaviour tests and the required corpus WP gate pass on padme,
+- [x] Other deliverables' periodization does not change unintentionally.
+- [x] Changed-behaviour tests and the required corpus WP selection pass on padme,
       with the corpus available; the PR records the gate and resulting commit.
+
+## Verification
+
+- `7cf4eee0` `config/corpus_collect.yaml:10`, `config/rel_review.yaml:3-8`,
+  `scripts/pipeline_loaders.py:175-231`: collect through 2026, label 2025
+  complete and 2026 partial, and classify future or unverified dates.
+- `7cf4eee0` `docs/rel-harvest-window-2026-09-28.md:8-58` records queries,
+  cutoff, actual source counts, the author's Scopus-unavailable decision,
+  and the pinned downstream corpus. DVC source and pool pointers accompany it.
+- `tests/test_rel_review_window.py` exercises journal and working-paper years,
+  partial dates, future dates, unchanged 2024 analysis, and Phase-1 filters;
+  `tests/test_openalex_resume_completion.py` exercises bounded backfill and
+  checkpoint replay. Version reconciliation belongs to REL corpus
+  finalization under 0700/0702.
+- Padme branch `7cf4eee0`: `make check-fast` 2478 passed, 9 skipped;
+  `make lint` 346 passed, 13 skipped; `make check` 3470 passed, 50 skipped.
+  The combined `make check-corpus-wp` target has a pre-existing `conftest`
+  collision between two test roots. Running the same marker separately gives
+  `tests/` 1380 passed, 34 skipped, and `libs/openalex-corpus/tests/` 25
+  passed. Gate logs are in padme's branch worktree under
+  `data/raw/t1351-gates/`.
