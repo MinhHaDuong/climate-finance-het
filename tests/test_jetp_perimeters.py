@@ -6,7 +6,8 @@ from pathlib import Path
 
 import pytest
 from jetp import build_perimeters
-from jetp.build_observations import write_normalized_event_tables
+from jetp._ledger_headers import write_table
+from jetp.build_observations import ledger_rows, write_normalized_event_tables
 from jetp.build_perimeters import build_rows, ruptl_memberships
 
 LEDGER = Path(__file__).resolve().parents[1] / 'data' / 'jetp'
@@ -74,12 +75,18 @@ def test_legacy_event_rebuild_preserves_later_observations_and_their_timings(tmp
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(LEDGER / relative, target)
 
-    for relative in ('observations.csv', 'timings.csv', 'retrievals.csv',
+    for relative in ('retrievals.csv',
                      'migration/0875-dispositions.csv',
                      'migration/0970-event-adjudications.csv',
                      'migration/1120-event-adjudications.csv',
                      'migration/1160-citation-decisions.csv'):
         copy(relative)
+    baseline = [row for row in ledger_rows(LEDGER, 'observations')
+                if row['method'] != 'iati_transaction']
+    baseline_ids = {row['observation_id'] for row in baseline}
+    write_table(tmp_path, 'observations', baseline)
+    write_table(tmp_path, 'timings', [row for row in ledger_rows(LEDGER, 'timings')
+                                     if row['observation_id'] in baseline_ids])
     for source in (LEDGER / 'lines.d').glob('*.csv'):
         copy(Path('lines.d') / source.name)
 

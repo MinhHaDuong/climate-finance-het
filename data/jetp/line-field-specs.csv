@@ -11,3 +11,7 @@ world-bank-projects-id-2026-09-13,"[""id"", ""project_name"", ""status"", ""boar
 world-bank-projects-sn-2026-09-13,"[""id"", ""project_name"", ""status"", ""boardapprovaldate"", ""closingdate"", ""lendinginstr"", ""sector_namecode"", ""supplementprojectflg"", ""url""]"
 world-bank-projects-vn-2026-09-13,"[""id"", ""project_name"", ""status"", ""boardapprovaldate"", ""closingdate"", ""lendinginstr"", ""sector_namecode"", ""supplementprojectflg"", ""url""]"
 world-bank-projects-za-2026-09-13,"[""id"", ""project_name"", ""status"", ""boardapprovaldate"", ""closingdate"", ""lendinginstr"", ""sector_namecode"", ""supplementprojectflg"", ""url""]"
+iati-energy-id-2026-09-28,"[""id"", ""title"", ""status"", ""reporting_org"", ""sectors"", ""other_identifiers"", ""source_transaction_count"", ""unallocated_country_count"", ""unallocated_sector_count""]"
+iati-energy-sn-2026-09-28,"[""id"", ""title"", ""status"", ""reporting_org"", ""sectors"", ""other_identifiers"", ""source_transaction_count"", ""unallocated_country_count"", ""unallocated_sector_count""]"
+iati-energy-vn-2026-09-28,"[""id"", ""title"", ""status"", ""reporting_org"", ""sectors"", ""other_identifiers"", ""source_transaction_count"", ""unallocated_country_count"", ""unallocated_sector_count""]"
+iati-energy-za-2026-09-28,"[""id"", ""title"", ""status"", ""reporting_org"", ""sectors"", ""other_identifiers"", ""source_transaction_count"", ""unallocated_country_count"", ""unallocated_sector_count""]"

@@ -340,3 +340,7 @@ world-bank-projects-id-2026-09-13:1,world-bank-projects-id-2026-09-13,2026-09-13
 world-bank-projects-sn-2026-09-13:1,world-bank-projects-sn-2026-09-13,2026-09-13,collected,,application/json,,,,,6cbe786b9bb60d149700a45c35ec7ee50c17cee0a1e6b33f0da1383228a621bc,local-record
 world-bank-projects-vn-2026-09-13:1,world-bank-projects-vn-2026-09-13,2026-09-13,collected,,application/json,,,,,86d69979839b161cffc23d09725e1df93011e578f555f217e8de9f6f749fb058,local-record
 world-bank-projects-za-2026-09-13:1,world-bank-projects-za-2026-09-13,2026-09-13,collected,,application/json,,,,,dd31671c6188de6839b10021eadd88b711077076eb47aad541266596fd7e13aa,local-record
+iati-energy-id-2026-09-28:1,iati-energy-id-2026-09-28,2026-09-28,collected,,application/gzip,,,,,88afadd4cf2ee612938b5cda41887d8bd150f169b2ab72ca018ffa3a77423837,script
+iati-energy-sn-2026-09-28:1,iati-energy-sn-2026-09-28,2026-09-28,collected,,application/gzip,,,,,00686134f5af343bbc376320b61a845bd6da8761284b007395722537752f823d,script
+iati-energy-vn-2026-09-28:1,iati-energy-vn-2026-09-28,2026-09-28,collected,,application/gzip,,,,,bafaa263faf8ae5d0aba0e6ca98a9f721e17156805d15a0aed99e466c9c9b1c8,script
+iati-energy-za-2026-09-28:1,iati-energy-za-2026-09-28,2026-09-28,collected,,application/gzip,,,,,1d8b378cefc7ab3e30679af3f34ba3c9cabbf07fb168985810f9720bfb81a464,script

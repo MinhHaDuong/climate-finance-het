@@ -16,7 +16,9 @@ A table too large for the repository's file ceiling, 512 000 bytes per
 file in `.githooks/pre-commit`, is chunked by country and year into
 `<table>.d/<CODE>-<year>.csv`, with numbered `-02`, `-03` shards when one
 country-year still exceeds the ceiling. Readers join those shards in numeric
-order, preserving row order within that country-year. The `.d` suffix keeps a
+order, preserving row order within that country-year. `observations` and
+`timings` get their shard country from the cited `line_id`, since those tables
+have no country column. The `.d` suffix keeps a
 chunk directory apart from a directory that shares a table's name:
 `data/jetp/documents/` is the snapshot store under DVC, not the chunks of the
 `documents` table, and the writer deletes only its `<CODE>-<year>[-NN].csv` files of

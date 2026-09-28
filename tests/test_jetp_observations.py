@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 from jetp.build_observations import (
     citation_provenance_errors,
+    ledger_rows,
     normalize_event_tables,
     reconcile_timing_rows,
 )
@@ -148,7 +149,7 @@ def test_current_ledger_accounts_for_every_event_without_inventing_a_citation():
     assert sum(row['reason'] == '0970_physical_state_hold'
                for row in committed_reconciliation) == 3
     legacy_observation_ids = {row['observation_id'] for row in observations}
-    committed_timings = [row for row in rows(ledger / 'timings.csv')
+    committed_timings = [row for row in ledger_rows(ledger, 'timings')
                          if row['observation_id'] in legacy_observation_ids]
     assert {row['timing_id']: (row['date_role'], row['date_precision'],
                                row['lower_bound'], row['upper_bound'])
@@ -189,7 +190,7 @@ def test_1160_every_mismatch_has_source_evidence_or_a_named_hold():
     decisions = rows(ledger / 'migration/1160-citation-decisions.csv')
     events = rows(ledger / 'events.csv')
     implementation = rows(ledger / 'implementation-events.csv')
-    observations = [row for row in rows(ledger / 'observations.csv')
+    observations = [row for row in ledger_rows(ledger, 'observations')
                     if row['method'] in ('legacy_event', 'legacy_implementation_event')]
     pending = rows(ledger / 'migration/0876-pending.csv')
     lines = [row for path in sorted((ledger / 'lines.d').glob('*.csv'))

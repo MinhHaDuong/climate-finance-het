@@ -15,6 +15,7 @@ from jetp._observatory_data import observation_entry
 from jetp.build_observations import (
     COUNTRIES,
     build_registry,
+    ledger_rows,
     observations_by_country,
     served_observations_by_country,
 )
@@ -222,7 +223,7 @@ def test_the_shipped_views_serve_only_cited_v2_events_and_all_legacy_links() -> 
 
     # This compatibility view serves legacy events; perimeter observations
     # have their own ledger reader and are not legacy event rows.
-    accepted = {row["observation_id"]: row for row in rows("observations.csv")
+    accepted = {row["observation_id"]: row for row in ledger_rows(ledger, 'observations')
                 if row["method"] in ("legacy_event", "legacy_implementation_event")}
     held = {row["legacy_event_id"] for row in rows("migration/0876-pending.csv")
             if row["legacy_table"] != "event-timing"}

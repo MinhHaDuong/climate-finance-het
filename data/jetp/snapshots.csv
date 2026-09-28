@@ -283,3 +283,7 @@ b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,../ledger-snaps
 6cbe786b9bb60d149700a45c35ec7ee50c17cee0a1e6b33f0da1383228a621bc,../comparison/SN.json,100509,application/json
 86d69979839b161cffc23d09725e1df93011e578f555f217e8de9f6f749fb058,../comparison/VN.json,126638,application/json
 dd31671c6188de6839b10021eadd88b711077076eb47aad541266596fd7e13aa,../comparison/ZA.json,21795,application/json
+88afadd4cf2ee612938b5cda41887d8bd150f169b2ab72ca018ffa3a77423837,../iati/ID.json.gz,42832,application/gzip
+00686134f5af343bbc376320b61a845bd6da8761284b007395722537752f823d,../iati/SN.json.gz,26947,application/gzip
+bafaa263faf8ae5d0aba0e6ca98a9f721e17156805d15a0aed99e466c9c9b1c8,../iati/VN.json.gz,29789,application/gzip
+1d8b378cefc7ab3e30679af3f34ba3c9cabbf07fb168985810f9720bfb81a464,../iati/ZA.json.gz,23432,application/gzip

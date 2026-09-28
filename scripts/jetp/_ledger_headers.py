@@ -183,6 +183,12 @@ def read_table(ledger_dir, table, schema):
     """
     expected = schema.header(table)
     files, errors = table_files(ledger_dir, table)
+    line_country = None
+    if table in {'observations', 'timings'} and any(country for _, country, _ in files):
+        line_rows, _ = read_table(ledger_dir, 'lines', schema)
+        line_header = schema.header('lines')
+        id_index, country_index = line_header.index('line_id'), line_header.index('country')
+        line_country = {row[id_index]: row[country_index] for row in line_rows}
     ceiling = file_ceiling()
     rows = []
     for path, country, year in files:
@@ -202,6 +208,10 @@ def read_table(ledger_dir, table, schema):
             record = dict(zip(expected, row))
             if country is not None:
                 errors.extend(_chunk_errors(record, country, year, where, number))
+                if (line_country is not None and record['line_id'] in line_country and
+                        line_country[record['line_id']] != country):
+                    errors.append(f"chunk: {where}: line {number} cites country "
+                                  f"'{line_country[record['line_id']]}'")
             rows.append(tuple(value if value != '' else None for value in row))
     return rows, errors
 
@@ -333,12 +343,24 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
     if len(text.encode('utf-8')) <= ceiling:
         _publish_single(single, chunk_dir(ledger_dir, table), text)
         return [single]
-    if 'country' not in header or 'recorded_at' not in header:
+    if 'recorded_at' not in header:
+        raise ValueError(f'{table} is over {ceiling} bytes and has no recorded_at')
+    if 'country' in header:
+        country_by_line = None
+    elif table in {'observations', 'timings'}:
+        line_rows, errors = read_table(ledger_dir, 'lines', schema)
+        if errors:
+            raise ValueError('; '.join(errors))
+        columns = schema.header('lines')
+        id_index, country_index = columns.index('line_id'), columns.index('country')
+        country_by_line = {row[id_index]: row[country_index] for row in line_rows}
+    else:
         raise ValueError(f'{table} is over {ceiling} bytes and has no country '
-                         'and recorded_at to chunk it by')
+                         'to chunk it by')
     groups = {}
     for row in rows:
-        groups.setdefault((row['country'], str(row['recorded_at'])[:4]), []).append(row)
+        country = row['country'] if country_by_line is None else country_by_line[row['line_id']]
+        groups.setdefault((country, str(row['recorded_at'])[:4]), []).append(row)
     directory = chunk_dir(ledger_dir, table)
     planned = []
     for (country, year), members in sorted(groups.items()):
