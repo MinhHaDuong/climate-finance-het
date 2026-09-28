@@ -50,6 +50,7 @@ stages:
     cmd: uv run --env-file .env python scripts/harvest/catalog_openalex.py --resume
     deps:
       - scripts/harvest/catalog_openalex.py
+      - scripts/openalex_pool.py
       - scripts/utils.py
       - scripts/pipeline_io.py
       - scripts/pipeline_loaders.py
