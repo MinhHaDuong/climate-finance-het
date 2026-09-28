@@ -11,7 +11,7 @@ from pathlib import Path
 
 import yaml
 
-from jetp._ledger_headers import load_schema, read_table
+from jetp._ledger_headers import load_schema, read_table, table_files
 from jetp._observatory_data import (
     document_entry,
     historical_record,
@@ -352,8 +352,11 @@ def provenance(root, config):
              for name in TABLES]
     paths += sorted((root / 'data/jetp/comparison').glob('*.json'))
     paths += sorted((root / 'data/jetp/editorial/countries').glob('*.md'))
+    observation_files, errors = table_files(root / 'data/jetp', 'observations')
+    if errors or not observation_files:
+        raise ValueError(errors[0] if errors else 'No v2 observation table found')
+    paths += [path for path, _, _ in observation_files]
     paths += [root / 'config/jetp_observatory.yaml', root / 'data/jetp/documents.dvc',
-              root / 'data/jetp/observations.csv',
               Path(__file__), root / 'scripts/jetp/_observatory_data.py',
               root / 'scripts/jetp/build_observations.py',
               root / 'scripts/jetp/_m1a_document_links.py']
