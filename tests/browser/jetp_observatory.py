@@ -450,53 +450,32 @@ def check_senegal_and_indonesia(page, url, staged):
 
 
 def check_observations(page, url, staged):
-    """Exercise the ledger observations tab: the counts, a facet, and a search.
-
-    Recipe VN of ticket 0834, adjusted to what the ledger holds: Viet Nam's
-    only rows are seven project-source links, and none of the three tables
-    carries a funder column for them, so the European Investment Bank package
-    is reached by the free-text field and not by the funder facet.
-    """
+    """Check v2 observations and identity citations remain separate tables."""
     rows = page.request.get(url + '/data/observations/ZAF.json').json()
     page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-filters')
     assert str(len(rows)) in page.locator('#observations-count').inner_text()
-    # The head-of-tab figures are per table and per country, never pooled.
-    for table in ('events', 'implementation-events', 'project-source-links'):
+    for table in ('observations', 'line-referents'):
         served = [row for row in rows if row['table'] == table]
         metric = page.locator(f'.metric[data-observation-table="{table}"]')
         assert str(len(served)) in metric.inner_text(), table
-
-    # The table is paged at 50 rows, so the count line carries the filtered
-    # total and the tbody carries the page.
-    page.locator('#observations-filter-table').select_option('project-source-links')
-    links = [row for row in rows if row['table'] == 'project-source-links']
+    page.locator('#observations-filter-table').select_option('line-referents')
+    links = [row for row in rows if row['table'] == 'line-referents']
     assert page.locator('#observations-results tbody tr').count() == min(50, len(links))
     assert f'{len(links)} of {len(rows)}' in page.locator(
         '#observations-count'
     ).inner_text()
     page.locator('#observations-filter-table').select_option('')
-    page.locator('#observations-filter-verification').select_option('official_register')
-    registered = [row for row in rows if row['verification'] == 'official_register']
-    assert page.locator('#observations-results tbody tr').count() == min(
-        50, len(registered)
-    )
-    assert f'{len(registered)} of {len(rows)}' in page.locator(
-        '#observations-count'
-    ).inner_text()
+    page.locator('#observations-filter-verification').select_option('accepted')
+    assert page.locator('#observations-results tbody tr').count() == 50
 
-    # Recipe VN: the Bac Ai package, found through the source identifier.
     vietnam = page.request.get(url + '/data/observations/VNM.json').json()
     page.goto(url + '/#statements/VNM')
     page.wait_for_selector('#observations-filters')
     assert str(len(vietnam)) in page.locator('#observations-count').inner_text()
-    page.locator('#observations-search').fill('eib')
-    eib = [row for row in vietnam if 'eib' in row['source_id']]
-    assert len(eib) == 1, len(eib)
-    assert page.locator('#observations-results tbody tr').count() == len(eib)
+    assert [row['subject_kind'] for row in vietnam].count('project') == 1
+    assert page.locator('#observations-results tbody tr').count() == len(vietnam)
 
-    # Recipe SA: a row read from the Q1 2026 register opens that register's
-    # archived snapshot, at the page the locator names where it names one.
     page.goto(url + '/#statements/ZAF')
     page.wait_for_selector('#observations-filters')
     registry = page.request.get(url + '/data/documents.json').json()['documents']
@@ -506,7 +485,7 @@ def check_observations(page, url, staged):
                  if row['id'] == register['source_id'] and row['local_path'])
     assert register['sha256'] == entry['sha256']
     page.locator('#observations-search').fill(register['source_id'])
-    key = f'a[data-observation-id="{register.get("event_id") or register.get("link_id")}"]'
+    key = f'a[data-observation-id="{register.get("observation_id") or register.get("referent_row_id")}"]'
     link = page.locator(publisher(key)).first
     link.wait_for()
     assert link.get_attribute('href').startswith(entry['url'])
@@ -684,8 +663,8 @@ def check_paper_trail(page, url):
     def step(label):
         page.locator(f'#step-bar a[data-step]:text-is("{label}")').click()
 
-    page.goto(url + '/#project/vnm-project-bac-ai-pumped-hydro')
-    at_step('Projects', 'project/vnm-project-bac-ai-pumped-hydro')
+    page.goto(url + '/#project/project-vnm-project-bac-ai-pumped-hydro')
+    at_step('Projects', 'project/project-vnm-project-bac-ai-pumped-hydro')
     assert 'Viet Nam' in page.locator('#step-bar .scope-chip').inner_text()
     step('Statements')
     at_step('Statements', 'statements/VNM')
@@ -721,7 +700,7 @@ def check_paper_trail(page, url):
 
     page.goto(url + '/#funding/VNM')
     page.wait_for_selector('.metric.computed')
-    counted = page.locator('.metric.computed[data-unit="named projects"]')
+    counted = page.locator('.metric.computed[data-unit="reviewed projects"]')
     assert 'Our calculation' in counted.text_content()
     assert 'As published' in page.locator('.callout.published').text_content()
     counted.locator('a').click()
@@ -762,7 +741,7 @@ def check_sections(page, url):
     assert page.locator('main .stat-grid, main .metrics').count() == 0
     assert page.locator('.counts-figure figcaption strong').all_text_contents() == [
         'Figure 1.', 'Figure 2.']
-    page.locator('tbody[data-country="VNM"] tr[data-computed-figure="Named projects"] a').click()
+    page.locator('tbody[data-country="VNM"] tr[data-computed-figure="Reviewed projects"] a').click()
     page.wait_for_selector('#results tbody tr')
     assert page.locator('#country-filter').input_value() == 'VNM'
     # Who's who counts each name's projects once.
@@ -880,17 +859,32 @@ def check_projects(page, url):
     page.locator('#results tbody tr a').click()
     page.wait_for_selector('.project-layout')
     assert page.locator('.sources a').count() > 0
-    page.goto(url + '/#project/sen-project-qw-02')
-    link = page.locator('[data-link-id="round4-boad-linguere"]')
-    link.wait_for()
-    assert 'possible match' in link.inner_text()
-    assert 'provisional' in link.inner_text()
-    assert 'JETP' in link.inner_text()
-    page.goto(url + '/#project/sen-project-qw-04')
-    report = page.locator('[data-event-id="sen-puelec-three-villages-reported-20251109"]')
-    report.wait_for()
-    assert 'Event date not established' in report.inner_text()
-    assert 'Document published' in report.inner_text()
+    page.goto(url + '/#project/project-sen-project-annex-01')
+    page.wait_for_selector('.project-layout')
+    assert 'Review state' in page.locator('main').inner_text()
+
+
+def check_v2_country_views(page, url):
+    """Keep reviewed projects and agreements as different visible units."""
+    expected = {'ZAF': (5, 258), 'IDN': (13, 57),
+                'VNM': (1, 0), 'SEN': (45, 0)}
+    for code, (project_count, agreement_count) in expected.items():
+        data = page.request.get(url + f'/data/{code}.json').json()
+        assert len(data['projects']) == project_count
+        assert len(data['agreements']) == agreement_count
+        assert {row['subject_kind'] for row in data['statements']} <= {
+            'project', 'agreement', 'asset'}
+        page.goto(url + '/#funding/' + code)
+        page.wait_for_selector('.metrics')
+        assert page.locator('.metrics [data-unit="reviewed projects"] strong').inner_text() == str(project_count)
+        assert page.locator('.metrics [data-unit="agreements"] strong').inner_text() == str(agreement_count)
+    page.goto(url + '/#funding/VNM')
+    page.wait_for_selector('#vnm-side-by-side')
+    assert '7 initial proposals' in page.locator('#vnm-side-by-side').inner_text()
+    assert '17 newly screened proposals' in page.locator('#vnm-side-by-side').inner_text()
+    page.goto(url + '/#project/project-vnm-project-bac-ai-pumped-hydro')
+    page.wait_for_selector('.project-layout')
+    assert page.locator('.sources a').count() > 0
 
 
 def check_ticket_0902(page, url):
@@ -905,13 +899,13 @@ def check_ticket_0902(page, url):
         page.wait_for_selector('.page-head h1')
         assert title in page.locator('main h1').inner_text()
 
-    page.goto(url + '/#funding/SEN')
+    page.goto(url + '/#funding/ZAF')
     page.wait_for_selector('#funding-statements-results tbody tr')
     assert page.locator('#funding-statements-results th').all_text_contents() == [
-        'Project or programme', 'Reported milestone', 'Original amount',
+        'Project or agreement', 'Reported milestone', 'Original amount',
         'Funder · instrument', 'Date and its role', 'Document and location']
     assert 'Inside the portfolio' not in page.locator('main').inner_text()
-    assert 'Financing needs stated' in page.locator('main').inner_text()
+    assert 'agreement' in page.locator('main').inner_text().lower()
     initial = page.locator('#funding-statements-results tbody tr').count()
     funders = page.locator('#funding-statements-filter-funder option').all_text_contents()
     assert len(funders) > 1
@@ -920,24 +914,17 @@ def check_ticket_0902(page, url):
     page.locator('#funding-statements-filter-funder').select_option('')
     page.locator('#funding-statements-filter-status').select_option(index=1)
     assert 0 < page.locator('#funding-statements-results tbody tr').count() <= initial
-    assert page.locator('#funding-statements-results a[href^="#project/"]').count() > 0
+    assert 'agreement' in page.locator('#funding-statements-results').inner_text().lower()
     assert page.locator('#funding-statements-results td:last-child a').count() > 0
 
     page.goto(url + '/#organisations')
     page.wait_for_selector('#parties-results tbody tr')
-    # Senelec has a reviewed recorded form in the served party-name table.
-    page.locator('#parties-search').fill('Senelec')
-    name = page.locator('#parties-results .organisation-aliases').first
-    name.wait_for()
-    name.locator('summary').focus()
-    page.keyboard.press('Enter')
-    assert name.get_attribute('open') is not None
-    assert 'SENELEC' in name.inner_text()
-    projects = page.locator('#parties-results .organisation-projects').first
-    assert projects.locator('> a').count() == 3
-    projects.locator('details > summary').click()
-    assert projects.locator('details[open] a[href^="#project/"]').count() > 0
-    page.locator('#parties-filter-roles').select_option('Operator')
+    # V2 funders are attached to agreements, which remain distinct from projects.
+    page.locator('#parties-search').fill('AfDB')
+    assert page.locator('#parties-results tbody tr').count() > 0
+    assert 'agreement' in page.locator('#parties-results').inner_text().lower()
+    page.locator('#parties-search').fill('')
+    page.locator('#parties-filter-roles').select_option('Funder')
     assert page.locator('#parties-results tbody tr').count() > 0
 
     page.goto(url + '/#document-rows/ZAF?row=1')
@@ -1025,9 +1012,8 @@ def check_site(url, output, ticket_0902_only=False):
         check_web_archive(page, url)
         check_documents_row_height(page, url)
         check_inventory(page, url, staged)
-        check_senegal_and_indonesia(page, url, staged)
+        check_v2_country_views(page, url)
         check_observations(page, url, staged)
-        check_facts(page, url, staged)
         check_paper_trail(page, url)
         check_sections(page, url)
         check_header_menus(page, url)
@@ -1059,7 +1045,7 @@ def check_site(url, output, ticket_0902_only=False):
                       'document-rows', 'statements', 'statements/ZAF', 'organisations',
                       'counts', 'glossary', 'about',
                       'who-we-are',
-                      'release-history', 'project/vnm-project-bac-ai-pumped-hydro',
+                      'release-history', 'project/project-vnm-project-bac-ai-pumped-hydro',
                       'methods'):
             page.goto(url + '/#' + route)
             page.wait_for_timeout(150)

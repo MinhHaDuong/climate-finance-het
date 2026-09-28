@@ -237,24 +237,20 @@ no earlier address is kept, and an internal page key is not an address.
   so the page wires only the five facets every country carries and shows every
   other column in the row detail. HTTP(S) URLs in `raw_project_description`
   open as links without changing the archived text or the export.
-- Statements for the same four countries, at
-  `#statements/<CODE>`, the step after Document rows: the 766 rows of `data/jetp/events.csv`,
-  `implementation-events.csv` and `project-source-links.csv`, served verbatim
-  under `data/observations/<CODE>.json` with the table, the kind, the
-  verification word the ledger wrote, and the fingerprint and PDF page of the
-  document each was read from. Each item reads "according to" its publisher,
-  with the document's date, as the country view names them. Counts are shown
-  per table and per country. Document rows and these items are two extractions
-  of the same documents under two schemas; they are read separately and are
-  never added together. No amount is summed, converted or promoted here, and
-  no verification state is recoded.
+- Statements for the same four countries, at `#statements/<CODE>`, the step
+  after Document rows: 406 accepted v2 observations and 382 accepted identity
+  citations, served as separate tables under `data/observations/<CODE>.json`.
+  Each row keeps its subject kind, cited line, retrieval document, fingerprint,
+  locator and review status. Counts appear per table and country. Document rows,
+  observations and identity citations are separate readings of source material;
+  their counts and amounts are not added together.
 - Each Funding country page now lists one row per recorded financing statement,
-  with the project, milestone, original amount and currency, funder, date role,
+  with its project, agreement or asset subject, milestone, original amount and currency, funder, date role,
   and document location. Financing needs appear in a separate section. This
   replaces the first eight rows of the Projects table; repeated milestones
   and currencies are never summed.
-- Organisations combines a name's funder and operator roles within a country,
-  shows up to three project names directly, and unfolds the rest. The
+- Organisations combines a name's recorded funder and operator roles within a country,
+  shows linked projects and agreements separately. The
   `data/party-names.json` view comes from reviewed `parties.csv` and
   `party-names.csv` rows; only those reviewed names are displayed as aliases.
 - The step down from a project to the statements recorded about it, and the

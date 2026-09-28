@@ -15,32 +15,24 @@ comes from dated official documents and project records. This contract keeps
 the two roles separate and makes every aggregate reversible.
 
 Publication storage and the Markdown editorial layer are specified in
-[the programme storage contract](jetp-storage.md). Existing registry paths and
-source-evidence rules below remain authoritative.
+[the programme storage contract](jetp-storage.md). The dated country
+checkpoints below describe the earlier source-bound review; current table
+paths and referent counts are given in the v2 ledger contract.
 
 ## Objects and ownership
 
-| Object | Canonical location | Versioning | Meaning |
-|---|---|---|---|
-| Controlled vocabularies | `config/jetp_tracking.yaml` | git | Countries, authority classes, source types, event statuses and scopes |
-| Source universe | `data/jetp/sources.csv` | git | One curated URL per source; a row is discovery, not proof that collection succeeded |
-| Collection history | `data/jetp/manifest.csv` | git | Append-only observation for every retrieval attempt, including failure and `not_modified` |
-| Binary snapshots | `data/jetp/documents/` | DVC | Content-addressed immutable objects; one object may support several source rows |
-| Project identities | `data/jetp/projects.csv` | git | Stable projects and aliases, independent of individual financing events |
-| Project follow-up | `data/jetp/project-coverage.csv` | git | One direct-source review verdict per canonical project, preserving pending and dry searches |
-| Indonesia grant observations | `data/jetp/idn-portfolio-observations.csv` | git | One official-portal row per financing modality, reconciled without overwriting the 2025 report value |
-| Viet Nam pilot manifest | `data/jetp/vnm-pilot-manifest.csv` | git | Lossless staging of all 66 pilot collection attempts before canonical source reconciliation |
-| Viet Nam pilot observations | `data/jetp/vnm-pilot-observations.csv` | git | All 46 pilot evidence rows joined to their verification verdicts; unresolved human ratifications remain blank |
-| Plan-project lines | `data/jetp/plan-projects.csv` | git | Every row in an official plan or pipeline, with explicit canonical reconciliation |
-| Financial events | `data/jetp/events.csv` | git | One dated event at one status layer, tied to an exact document and locator |
-| Implementation events | `data/jetp/implementation-events.csv` | git | Physical project delivery and closure states, kept separate from finance |
-| Dry searches | `data/jetp/dry-searches.csv` | git | Expected but absent, blocked or unpublished material and the route checked |
-| Human decisions | `data/jetp/decisions.md` | git | Adjudications that change coding conventions or resolve conflicts |
+The current ledger tables, keys and storage layout are specified in
+[the ledger storage contract](jetp-ledger-storage.md#1-tables-and-rules).
+The tracking vocabulary lists their current paths in
+[`config/jetp_tracking.yaml`](../config/jetp_tracking.yaml).
+Documents and retrieval attempts are separate records; byte snapshots are
+content addressed under DVC. Projects, agreements and assets are separate
+referents. A cited line can support an observation or an identity link, and
+coverage records the review state for each referent.
 
-The small registries stay visible in git because they are research evidence.
-The binary pool is excluded from git and captured with `dvc add
-data/jetp/documents` on padme. A DVC push is never part of a harvest run and is
-performed only from padme after review.
+Small ledger tables stay in git because they are research records. The binary
+pool is excluded from git and captured with `dvc add data/jetp/documents` on
+padme. A DVC push follows review on padme, never an ordinary harvest command.
 
 ## Source-bounded exhaustiveness
 
@@ -60,7 +52,13 @@ official updates when those exist. News is searched after official sources;
 secondary reporting remains a lead unless no primary document is public, in
 which case the event is marked `secondary_only` during verification.
 
-## Country checkpoints
+## Historical country checkpoints
+
+These are the counts and review states of the earlier preview sidecars, kept
+here as a dated research record. The current observatory serves 5 South
+African, 13 Indonesian, 1 Vietnamese and 45 Senegalese reviewed project
+identities. It keeps 258 South African and 57 Indonesian agreements separate
+from projects. Publisher-reported proposal counts remain separate again.
 
 | Country | Project review | Current checkpoint |
 |---|---:|---|
@@ -164,7 +162,7 @@ the single Linguère plant; absent a Champions Nationaux ownership crosswalk or
 JETP/IPG attribution, it remains context rather than QW2 finance.
 
 Every remaining project has a dated route and explicit gap in
-`project-coverage.csv` and `dry-searches.csv`. Related programmes, earlier
+`coverage.csv` and `dry-searches.csv` (the former project-sidecar checkpoint). Related programmes, earlier
 pilots and geographically similar developments are provisional leads, not
 identity matches. Full prequalification and feasibility documents available
 only on request remain gaps; no request email was sent. See
@@ -208,7 +206,7 @@ and limitations. Twenty-four identities still lack a confirmed direct page.
 ## Refresh cycle
 
 `make jetp-harvest` performs conditional HTTP requests, appends the result of
-each check to the manifest and stores any new content by SHA-256. At a stable
+each check to `retrievals.csv` and stores any new content by SHA-256. At a stable
 URL, changed bytes create a second immutable object; a `304 Not Modified`
 observation points back to the previous object. HTML error pages cannot enter
 the PDF pool.
@@ -234,11 +232,8 @@ access and never past a paywall or a login the author does not have:
    a source not yet collected. Any other file is reported and left alone; the
    download directory is never modified.
 
-Every manifest row says how it was sought in `collection_method`: `script`,
-`browser-session` or `browser-manual` (the ledger's `retrievals` adds
-`local-record` for research records written in the repository). Both targets,
-like `make jetp-harvest`, then refresh `retrievals` and `snapshots` from the
-manifest. Bytes collected on doudou reach padme before `make
+Every retrieval row says how it was sought in `collection_method`: `script`,
+`browser-session` or `browser-manual` (the ledger also records `local-record` for research records written in the repository). All three collection targets append directly to `retrievals` and `snapshots`. Bytes collected on doudou reach padme before `make
 jetp-documents-track`, since DVC objects are pushed from padme only.
 
 The [13 September scout trial](jetp-senegal-scout-trial-2026-09-13.md) covers all 24 previously unresolved identities and corroborates one PUELEC component; 23 direct-source identities remain unresolved.

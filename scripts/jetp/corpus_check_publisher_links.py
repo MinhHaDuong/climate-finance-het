@@ -40,6 +40,8 @@ from urllib.parse import urlsplit
 import requests
 from utils import get_logger
 
+from jetp.build_observatory import retrieval_registry
+
 log = get_logger('jetp.corpus_check_publisher_links')
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -65,8 +67,7 @@ def _read(path):
 
 def publisher_urls(ledger_dir=LEDGER):
     """Every address a document was collected from, as the site links it."""
-    urls = {row['final_url'] for row in _read(Path(ledger_dir) / 'retrievals.csv')}
-    urls |= {row['final_url'] for row in _read(Path(ledger_dir) / 'manifest.csv')}
+    urls = {row['final_url'] for row in retrieval_registry(ledger_dir)}
     return sorted(u for u in urls if u and u.lower().startswith(('http://', 'https://')))
 
 
@@ -151,7 +152,7 @@ def run(urls, output, http=None, pace=1.5, sleep=time.sleep, checked_at=None):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--ledger-dir', type=Path, default=LEDGER,
-                        help='where retrievals.csv and manifest.csv are read')
+                        help='directory of the JETP ledger tables')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--pace', type=float, default=1.5, help='seconds between requests')
     args = parser.parse_args(argv)

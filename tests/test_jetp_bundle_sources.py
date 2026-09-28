@@ -5,6 +5,7 @@ import json
 
 import pytest
 from jetp._bundle_inventory import source_inventory
+from jetp._ledger_headers import load_schema, write_table
 
 pytestmark = pytest.mark.wp_jetp
 
@@ -24,8 +25,19 @@ def cached_source(tmp_path):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(contents)
     (corpus / 'documents.dvc').write_text(f'outs:\n- md5: {index_md5}.dir\n  path: documents\n')
-    (corpus / 'manifest.csv').write_text(
-        f'source_id,status,sha256,storage_path\nsource,collected,{sha},{relative}\n')
+    schema = load_schema()
+    write_table(corpus, 'documents', [dict(
+        document_id='source', country='ZAF', document_type='report', language='',
+        title='Source', url='https://example.test/source.pdf', published_date='',
+        edition_of='', active='true', notes='')], schema=schema)
+    write_table(corpus, 'retrievals', [dict(
+        retrieval_id='source:1', document_id='source', retrieved_at='2026-09-28T00:00:00Z',
+        status='collected', http_status='200', content_type='application/pdf',
+        etag='', last_modified='', final_url='https://example.test/source.pdf',
+        error='', sha256=sha, collection_method='script')], schema=schema)
+    write_table(corpus, 'snapshots', [dict(
+        sha256=sha, storage_path=relative, size_bytes=str(len(data)),
+        content_type='application/pdf')], schema=schema)
     return cache / md5[:2] / md5[2:], cache / index_md5[:2] / (index_md5[2:] + '.dir')
 
 

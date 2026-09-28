@@ -39,11 +39,10 @@ tickets' work. It creates no empty registries and performs no writes. Saved-byte
 hashes and extraction locators are validated against supplied manifests, not by
 retrieving documents; full material acquisition/crosswalks belong to 0763.
 
-The independent `jetp._compatibility.read_mvp_view(root, view,
-supported_versions={'mvp/1'})` negotiates the legacy public contract without
-injecting fields into its payload. It reads the existing CSV authority and returns
-one of `overview`, `comparison`, `ZAF`, `IDN`, `VNM` or `SEN`. No renderer or
-publication path changes. Candidate-core records are not an alternative writer.
+The independent MVP compatibility reader described at this checkpoint was
+retired in ticket 0878 with the old CSV authority. The frozen 0761 archive and
+its inspection hash remain as historical fixtures; current country and overview
+views are built directly from the v2 ledger.
 
 ## Acceptance fixtures
 

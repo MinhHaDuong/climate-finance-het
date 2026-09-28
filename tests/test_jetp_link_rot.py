@@ -30,6 +30,7 @@ from jetp import (
     corpus_check_publisher_links,
     corpus_web_archive_capture,
 )
+from jetp._ledger_headers import load_schema, write_table
 from jetp.corpus_web_archive_capture import Unreachable, Wayback
 from test_jetp_observatory_render import SITE, anchors, render
 
@@ -326,17 +327,30 @@ def test_the_unreachable_exception_is_what_a_dead_host_raises() -> None:
         service.save(DOC["url"])
 
 
-def test_collected_documents_are_the_retrievals_and_manifest_rows_that_kept_bytes(tmp_path) -> None:
-    (tmp_path / "retrievals.csv").write_text(
-        "retrieval_id,document_id,retrieved_at,status,http_status,content_type,etag,"
-        "last_modified,final_url,error,sha256\n"
-        "a:1,a,2026-09-02T00:00:00Z,collected,200,,,,https://p.example/a,,aa\n"
-        "b:1,b,2026-09-02T00:00:00Z,blocked,403,,,,https://p.example/b,HTTP 403,\n")
-    (tmp_path / "manifest.csv").write_text(
-        "source_id,country,retrieved_at,status,http_status,content_type,etag,last_modified,"
-        "sha256,size_bytes,storage_path,final_url,error\n"
-        "a,IDN,2026-09-01T00:00:00Z,collected,200,,,,aa,1,x,https://p.example/a,\n"
-        "c,IDN,2026-09-03T00:00:00Z,collected,200,,,,cc,1,x,https://p.example/c,\n")
+def _collection_fixture(ledger, retrievals):
+    schema = load_schema()
+    documents = sorted({row['document_id'] for row in retrievals})
+    write_table(ledger, 'documents',
+                [dict(document_id=identity, country='IDN') for identity in documents],
+                schema=schema)
+    write_table(ledger, 'retrievals', retrievals, schema=schema)
+    write_table(ledger, 'snapshots',
+                [dict(sha256=digest, storage_path=f'objects/{digest}')
+                 for digest in sorted({row.get('sha256') for row in retrievals} - {None, ''})],
+                schema=schema)
+
+
+def test_collected_documents_are_ledger_retrievals_that_kept_bytes(tmp_path) -> None:
+    _collection_fixture(tmp_path, [
+        dict(retrieval_id='a:1', document_id='a', retrieved_at='2026-09-01T00:00:00Z',
+             sha256='aa', final_url='https://p.example/a', collection_method='script'),
+        dict(retrieval_id='a:2', document_id='a', retrieved_at='2026-09-02T00:00:00Z',
+             sha256='aa', final_url='https://p.example/a', collection_method='script'),
+        dict(retrieval_id='b:1', document_id='b', retrieved_at='2026-09-02T00:00:00Z',
+             final_url='https://p.example/b', collection_method='script'),
+        dict(retrieval_id='c:1', document_id='c', retrieved_at='2026-09-03T00:00:00Z',
+             sha256='cc', final_url='https://p.example/c', collection_method='script'),
+    ])
     assert corpus_web_archive_capture.collected_documents(tmp_path) == [
         dict(source_id="a", url="https://p.example/a", collected_at="2026-09-01T00:00:00Z"),
         dict(source_id="c", url="https://p.example/c", collected_at="2026-09-03T00:00:00Z")]
@@ -465,11 +479,14 @@ def dead_site(tmp_path):
     try:
         ledger = tmp_path / "ledger"
         ledger.mkdir()
-        (ledger / "retrievals.csv").write_text(
-            "retrieval_id,document_id,retrieved_at,status,http_status,content_type,etag,"
-            "last_modified,final_url,error,sha256\n"
-            f"{RMP}:1,{RMP},2026-09-12T00:00:00Z,collected,200,,,,{dead},,aa\n"
-            f"x:1,x,2026-09-12T00:00:00Z,collected,200,,,,{alive},,bb\n")
+        _collection_fixture(ledger, [
+            dict(retrieval_id=f'{RMP}:1', document_id=RMP,
+                 retrieved_at='2026-09-12T00:00:00Z', status='collected',
+                 final_url=dead, sha256='aa', collection_method='script'),
+            dict(retrieval_id='x:1', document_id='x',
+                 retrieved_at='2026-09-12T00:00:00Z', status='collected',
+                 final_url=alive, sha256='bb', collection_method='script'),
+        ])
         checks = ledger / "publisher-link-checks.csv"
         corpus_check_publisher_links.run(corpus_check_publisher_links.publisher_urls(ledger), checks,
                                   pace=0, checked_at="2026-10-01T03:00:00Z")
