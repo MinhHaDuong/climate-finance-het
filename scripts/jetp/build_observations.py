@@ -17,7 +17,7 @@ import csv
 import json
 from pathlib import Path
 
-from jetp._ledger_headers import load_schema, write_table
+from jetp._ledger_headers import load_schema, read_table, write_table
 from jetp._m1a_document_links import pdf_page_of
 from jetp._observatory_data import observation_entry
 
@@ -607,21 +607,27 @@ def write_normalized_event_tables(ledger_dir, events, implementation_events, eve
     schema = load_schema()
     # This builder owns only the legacy-event projection. Preserve every
     # observation and timing owned by later migrations, regardless of ID.
-    external_rows = []
-    observation_path = ledger_dir / 'observations.csv'
-    if observation_path.exists():
-        with observation_path.open(encoding='utf-8', newline='') as handle:
-            external_rows = [row for row in csv.DictReader(handle)
-                             if row['method'] not in LEGACY_EVENT_METHODS]
+    def ledger_rows(table):
+        values, errors = read_table(ledger_dir, table, schema)
+        if errors:
+            raise ValueError('\n'.join(errors))
+        return [dict(zip(schema.header(table), (cell or '' for cell in value)))
+                for value in values]
+
+    external_rows = [row for row in ledger_rows('observations')
+                     if row['method'] not in LEGACY_EVENT_METHODS]
     external_ids = {row['observation_id'] for row in external_rows}
-    external_timings = []
-    timing_path = ledger_dir / 'timings.csv'
-    if timing_path.exists():
-        with timing_path.open(encoding='utf-8', newline='') as handle:
-            external_timings = [row for row in csv.DictReader(handle)
-                                if row['observation_id'] in external_ids]
-    write_table(ledger_dir, 'observations', observations + external_rows, schema=schema)
-    write_table(ledger_dir, 'timings', timings + external_timings, schema=schema)
+    external_timings = [row for row in ledger_rows('timings')
+                        if row['observation_id'] in external_ids]
+    country_by_line_id = {row['line_id']: row['country'] for row in lines}
+    write_table(ledger_dir, 'observations', observations + external_rows, schema=schema,
+                country_by_line_id=country_by_line_id)
+    country_by_observation_id = {
+        row['observation_id']: country_by_line_id[row['line_id']]
+        for row in observations + external_rows
+    }
+    write_table(ledger_dir, 'timings', timings + external_timings, schema=schema,
+                country_for_row=lambda row: country_by_observation_id[row['observation_id']])
     write_table(ledger_dir, 'rates', [], schema=schema)
     pending_path = ledger_dir / 'migration' / '0876-pending.csv'
     with pending_path.open('w', encoding='utf-8', newline='') as handle:
@@ -668,11 +674,19 @@ def main():
         with path.open(encoding='utf-8', newline='') as handle:
             return list(csv.DictReader(handle))
 
-    lines = [row for path in sorted((ledger_dir / 'lines.d').glob('*.csv'))
-             for row in rows(path)]
+    schema = load_schema()
+
+    def ledger_rows(table):
+        values, errors = read_table(ledger_dir, table, schema)
+        if errors:
+            raise ValueError('\n'.join(errors))
+        return [dict(zip(schema.header(table), (cell or '' for cell in value)))
+                for value in values]
+
+    lines = ledger_rows('lines')
     by_country = served_observations_by_country(
-        tables, build_registry(tables), rows(ledger_dir / 'observations.csv'),
-        rows(ledger_dir / 'timings.csv'),
+        tables, build_registry(tables), ledger_rows('observations'),
+        ledger_rows('timings'),
         rows(ledger_dir / 'migration/0876-pending.csv'), lines,
         rows(ledger_dir / 'retrievals.csv'),
         rows(ledger_dir / 'migration/1160-citation-decisions.csv'))

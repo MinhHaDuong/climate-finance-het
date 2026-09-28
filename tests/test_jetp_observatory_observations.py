@@ -11,6 +11,7 @@ from copy import deepcopy
 from pathlib import Path
 
 import pytest
+from jetp._ledger_headers import load_schema, read_table
 from jetp._observatory_data import observation_entry
 from jetp.build_observations import (
     COUNTRIES,
@@ -222,7 +223,13 @@ def test_the_shipped_views_serve_only_cited_v2_events_and_all_legacy_links() -> 
 
     # This compatibility view serves legacy events; perimeter observations
     # have their own ledger reader and are not legacy event rows.
-    accepted = {row["observation_id"]: row for row in rows("observations.csv")
+    schema = load_schema()
+    values, errors = read_table(ledger, 'observations', schema)
+    assert not errors
+    accepted = {row["observation_id"]: row
+                for row in (dict(zip(schema.header('observations'),
+                                    (cell or '' for cell in value)))
+                            for value in values)
                 if row["method"] in ("legacy_event", "legacy_implementation_event")}
     held = {row["legacy_event_id"] for row in rows("migration/0876-pending.csv")
             if row["legacy_table"] != "event-timing"}

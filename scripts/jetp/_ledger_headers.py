@@ -185,6 +185,13 @@ def read_table(ledger_dir, table, schema):
     files, errors = table_files(ledger_dir, table)
     ceiling = file_ceiling()
     rows = []
+    line_countries = None
+    if files and files[0][1] is not None and 'country' not in expected and 'line_id' in expected:
+        lines, line_errors = read_table(ledger_dir, 'lines', schema)
+        errors.extend(line_errors)
+        line_header = schema.header('lines')
+        line_countries = {row[line_header.index('line_id')]:
+                          row[line_header.index('country')] for row in lines}
     for path, country, year in files:
         where = _relative(path, ledger_dir)
         if path.stat().st_size > ceiling:
@@ -201,18 +208,24 @@ def read_table(ledger_dir, table, schema):
                 continue
             record = dict(zip(expected, row))
             if country is not None:
-                errors.extend(_chunk_errors(record, country, year, where, number))
+                errors.extend(_chunk_errors(record, country, year, where, number,
+                                            line_countries))
             rows.append(tuple(value if value != '' else None for value in row))
     return rows, errors
 
 
-def _chunk_errors(record, country, year, where, number):
+def _chunk_errors(record, country, year, where, number, line_countries=None):
     errors = []
     if 'country' in record and record['country'] != country:
         errors.append(f"chunk: {where}: line {number} has country '{record['country']}'")
-    if 'recorded_at' in record and not record['recorded_at'].startswith(year):
-        errors.append(f"chunk: {where}: line {number} recorded_at "
-                      f"'{record['recorded_at']}' is not in {year}")
+    if line_countries is not None and record.get('line_id'):
+        actual = line_countries.get(record['line_id'])
+        if actual is not None and actual != country:
+            errors.append(f"chunk: {where}: line {number} cited line country '{actual}'")
+    date_field = 'recorded_at' if 'recorded_at' in record else 'decided_at'
+    if date_field in record and not (record[date_field] or '').startswith(year):
+        errors.append(f"chunk: {where}: line {number} {date_field} "
+                      f"'{record[date_field]}' is not in {year}")
     return errors
 
 
@@ -318,7 +331,8 @@ def _publish_chunks(single, directory, planned):
             raise
 
 
-def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
+def write_table(ledger_dir, table, rows, ceiling=None, schema=None,
+                country_by_line_id=None, country_for_row=None):
     """Write a table with its generated header, chunked when over the ceiling.
 
     ``rows`` are dicts keyed by column. Under the ceiling the table is one
@@ -333,12 +347,23 @@ def write_table(ledger_dir, table, rows, ceiling=None, schema=None):
     if len(text.encode('utf-8')) <= ceiling:
         _publish_single(single, chunk_dir(ledger_dir, table), text)
         return [single]
-    if 'country' not in header or 'recorded_at' not in header:
-        raise ValueError(f'{table} is over {ceiling} bytes and has no country '
-                         'and recorded_at to chunk it by')
+    date_field = 'recorded_at' if 'recorded_at' in header else 'decided_at'
+    if date_field not in header or ('country' not in header and
+                                    country_by_line_id is None and country_for_row is None):
+        raise ValueError(f'{table} is over {ceiling} bytes and cannot chunk without '
+                         'country plus recorded_at/decided_at, or cited line country')
     groups = {}
     for row in rows:
-        groups.setdefault((row['country'], str(row['recorded_at'])[:4]), []).append(row)
+        if 'country' in header:
+            country = row['country']
+        elif country_for_row is not None:
+            country = country_for_row(row)
+        else:
+            country = country_by_line_id.get(row.get('line_id'))
+        if not country or not re.fullmatch(r'[A-Z]{3}', country):
+            raise ValueError(f'{table}: no valid shard country for cited line '
+                             f"{row.get('line_id')!r}")
+        groups.setdefault((country, str(row[date_field])[:4]), []).append(row)
     directory = chunk_dir(ledger_dir, table)
     planned = []
     for (country, year), members in sorted(groups.items()):

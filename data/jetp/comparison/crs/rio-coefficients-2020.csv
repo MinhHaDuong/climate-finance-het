@@ -1,0 +1,4 @@
+provider,period_start,period_end,marker,principal_pct,significant_pct,measurement_basis,source_locator
+EU,2017,2018,adaptation,100,40,commitment,"DCD/DAC/STAT(2020)41, Table 1, EU row, printed p. 4"
+EU,2017,2018,mitigation,100,40,commitment,"DCD/DAC/STAT(2020)41, Table 1, EU row, printed p. 4"
+EU,2017,2018,biodiversity,100,40,commitment,"DCD/DAC/STAT(2020)41, Table 1, EU row, printed p. 4"
