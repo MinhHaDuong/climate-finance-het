@@ -35,3 +35,8 @@ def test_current_country_views_keep_agreements_out_of_project_counts():
             assert statement['source_id'] in view['sources']
             assert statement['subject_id'] in (project_ids | agreement_ids | {
                 row['asset_id'] for row in tables['assets']})
+
+
+def test_south_africa_country_view_stays_within_publication_ceiling():
+    path = ROOT / 'deliverables/jetp-observatory/data/ZAF.json'
+    assert path.stat().st_size < 512_000

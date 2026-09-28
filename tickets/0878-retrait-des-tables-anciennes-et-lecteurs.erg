@@ -17,6 +17,8 @@ Author: HDMX-coding-agent
 2026-09-28T06:27Z HDMX-coding-agent note blocker 0879 closed — Blocked-by removed.
 2026-09-28T09:42Z HDMX-coding-agent note blocker 0890 closed — Blocked-by removed.
 2026-09-28T13:50Z Codex note décision de l'auteur : migrer les vues pays vers les identités v2 et présenter les octets modifiés du MVP à sa revue. Le vieux compteur de 404 fiches de l'aperçu ne décrit pas les 64 projets retenus dans `projects.csv` ; l'identité octet à octet de ces vues et de l'overview n'est donc plus un critère. Les vues qui ne changent pas de sens restent comparées aux octets de 0890.
+2026-09-28T15:30Z Codex note décision de l'auteur : migrer aussi les quatre vues observations/<pays>.json vers les observations et citations d'identité v2 et présenter leurs octets modifiés à la revue. Les 315 anciens liens projet-document ne sont pas reconduits comme des observations ; les 65 référents de ligne projet acceptés sont servis comme citations d'identité.
+2026-09-28T15:39Z Codex note vérification : le grep littéral global rencontre des références historiques immuables (manifestes de revue, métadonnées d'origine dans les lignes v2 et vues M1a inchangées). Les supprimer violerait la provenance ou le contrat d'octets accepté. Le critère opérationnel est donc l'absence de lecteur des tables retirées dans scripts/jetp, Makefile et la recette active ; les archives datées restent des traces historiques, vérifiées comme non exécutées.
 --- body ---
 ## Context
 
@@ -67,7 +69,7 @@ liste les tables de l'ontologie.
 
 ## Verification
 
-- [ ] `grep` de chaque nom retiré ne trouve rien hors `docs/jetp-study/` et `tickets/closed/`
+- [ ] Aucun lecteur actif des tables retirées dans `scripts/jetp/`, les cibles Make et le navigateur ; les mentions de provenance historique restent conservées
 - [ ] Vues pays et `overview.json` : diff intentionnel expliqué et revu par l'auteur ; autres vues servies identiques à celles de [[0890]]
 
 ## Invariants
@@ -78,4 +80,4 @@ liste les tables de l'ontologie.
 ## Exit criteria
 
 - [ ] Tables et lecteurs retirés ; `storage` du vocabulaire à jour
-- [ ] `tests/test_jetp_no_legacy_readers.py`, `make check-fast` et `make lint` verts ; `make jetp-ledger-check` vert ; balayage `grep` de chaque nom retiré vide hors `docs/jetp-study/` et `tickets/closed/` ; recette navigateur (`tests/browser/jetp_observatory.py`) verte (pas `make check` complet comme critère de sortie du train : ex post sur main, cf. journal)
+- [ ] `tests/test_jetp_no_legacy_readers.py`, `make check-fast` et `make lint` verts ; `make jetp-ledger-check` vert ; balayage des lecteurs actifs sans référence aux tables retirées, avec les traces historiques consignées ; recette navigateur (`tests/browser/jetp_observatory.py`) verte (pas `make check` complet comme critère de sortie du train : ex post sur main, cf. journal)

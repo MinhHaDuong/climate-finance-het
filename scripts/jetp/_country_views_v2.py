@@ -111,7 +111,7 @@ def _statement(row, lines, line_documents, timings, agreements, funders):
     return dict(
         id=row['observation_id'], subject_kind=row['subject_kind'], subject_id=subject,
         status=status, amount=row['value'], currency=row['currency'] or row['unit'] or '',
-        funder='; '.join(funders.get(subject, ())),
+        funder='; '.join(sorted(funders.get(subject, ()))),
         instrument=agreement.get('instrument') or '',
         source_id=line_documents.get(row['line_id']) or '',
         locator=line['locator'], line_id=row['line_id'], sha256=line['sha256'],

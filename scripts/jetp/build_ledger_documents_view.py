@@ -10,9 +10,7 @@ country, type, language, title, publication date, the edition it revises —
 and drops three columns: ``url``, which the retrievals view already serves as
 the address each attempt read; ``active``, a collector switch; and ``notes``,
 the curators' working notes. Together they would double the file (134 kB
-served whole against 66 kB, 2026-09-25), and it loads on every route. The ledger table is the target of the migration that retires
-``sources.csv`` (docs/jetp-ledger-migration.md), so the view is read from it
-rather than from the legacy registry. A separate script from
+served whole against 66 kB, 2026-09-25), and it loads on every route. A separate script from
 ``build_observatory.py``, so a title correction rebuilds this file alone and
 leaves the other views and their recorded input hashes where they are.
 """

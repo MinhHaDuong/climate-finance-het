@@ -128,12 +128,11 @@ def _source_record(row, source_root, cached):
 
 def source_inventory(root, source_root, payloads, include_sources):
     """Verify available document bytes; missing files remain explicit gaps."""
-    manifest = root / 'data/jetp/manifest.csv'
-    if not manifest.exists():
-        return []
+    from jetp.build_observatory import retrieval_registry
+
     cached = _dvc_sources(root, source_root)
     records = []
-    for row in csv.DictReader(io.StringIO(manifest.read_text())):
+    for row in retrieval_registry(root / 'data/jetp'):
         item, source, relative = _source_record(row, source_root, cached)
         if row.get('sha256') and source.is_file():
             data = source.read_bytes()

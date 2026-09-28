@@ -1,5 +1,7 @@
 # JETP programme storage: Markdown first, static publication
 
+**Historical planning note (2026-09-13).** The current table map is in [ledger storage](jetp-ledger-storage.md). This page records the original storage decision and its older examples.
+
 **Terminology note (2026-09-23).** This document predates the ODEM language
 of [`jetp-language.md`](jetp-language.md), which governs where the two
 differ. Read *evidence* (a link, a layer, a table of documentary support) as
@@ -49,7 +51,7 @@ unnecessary for the initial site.
 | Editorial templates | `data/jetp/editorial/templates/` | Git; excluded from published content |
 | Project identities and source-linked observations | Existing `data/jetp/*.csv` | Git; canonical field ownership unchanged |
 | Source bytes | `data/jetp/documents/objects/<prefix>/<sha256>.<ext>` | DVC via existing `documents.dvc`; not served wholesale |
-| Collection attempts | `data/jetp/manifest.csv` | Git; append-only, including failed retrievals |
+| Collection attempts | `data/jetp/retrievals.csv` | Git; append-only, including failed retrievals |
 | Release descriptors | `data/jetp/releases/<edition_id>/release.json` | Git; planned output of 0726/0728 |
 | Analysis intermediates | `data/derived/jetp/` | Regenerable; gitignored; planned under 0730 |
 | Site sources and selected-release handoff | `deliverables/jetp-observatory/` | Local MVP under 0734; public deployment under 0727; source and small handoff assets in Git |

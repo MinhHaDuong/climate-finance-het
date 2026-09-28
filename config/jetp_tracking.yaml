@@ -1,106 +1,38 @@
-version: 1
+version: 2
 
-# Vocabularies of the legacy documentary tables (sources.csv, manifest.csv,
-# events.csv and their readers in scripts/jetp/schemas.py). The ledger's closed
-# lists live in data/jetp/ontology/terms.csv (ticket 0880): authority
-# categories, document types (document_types here, checked on the legacy
-# source_type column; renamed from source_types by ticket 0872) and retrieval
-# statuses (collection_statuses here) are terms there, and the status lists below are
-# replaced by the shared axes of docs/jetp-ontology.md section 4. These lists
-# stay only while the legacy readers do and go with them (ticket 0878); what
-# remains here afterwards is display choices. Do not add a value here for the
-# ledger: add a terms row.
+# Country labels for documentary tracking. Ledger vocabulary lives in the
+# ontology terms; table headers and constraints live in config/jetp-ledger.sql.
 countries:
   ZAF: South Africa
   IDN: Indonesia
   VNM: Viet Nam
   SEN: Senegal
 
-authority_categories:
-  - national_government
-  - jetp_secretariat
-  - ipg
-  - bilateral_funder
-  - multilateral_funder
-  - private_finance
-  - operator
-  - secondary_source
-
-document_types:
-  - political_declaration
-  - investment_plan
-  - implementation_plan
-  - annual_report
-  - progress_update
-  - project_list
-  - project_page
-  - approval_document
-  - financing_agreement
-  - operator_report
-  - official_news
-  - secondary_news
-  - data_portal
-
-financial_statuses:
-  - need
-  - announced
-  - mou
-  - approved
-  - signed
-  - disbursed
-  - cancelled
-  - withdrawn
-
-# Physical delivery and closure states are deliberately separate from finance.
-# An approved loan never implies construction, operation or retirement.
-implementation_statuses:
-  - proposed
-  - preparation
-  - procurement
-  - construction
-  - operational
-  - suspended
-  - closure_proposed
-  - closure_agreed
-  - retired
-  - cancelled
-
-scopes:
-  - jetp_strict
-  - ipg_energy_extended
-
-# Official plan ranking only; this is neither finance nor implementation status.
-priority_tiers:
-  - priority
-  - top_priority
-
-collection_statuses:
-  - collected
-  - not_modified
-  - blocked
-  - missing
-  - invalid_content
-  - invalid_response
-  - retryable_http_error
-  - http_error
-  - fetch_error
-  - not_published
-  - not_applicable
-
+# Current ledger homes. A .d directory contains ordered country/year shards.
 storage:
-  source_registry: data/jetp/sources.csv
-  manifest: data/jetp/manifest.csv
-  documents: data/jetp/documents
+  parties: data/jetp/parties.csv
+  party_names: data/jetp/party-names.csv
+  documents: data/jetp/documents.csv
+  document_publishers: data/jetp/document-publishers.csv
+  retrievals: data/jetp/retrievals.csv
+  snapshots: data/jetp/snapshots.csv
+  document_bytes: data/jetp/documents
+  lines: data/jetp/lines.d
   projects: data/jetp/projects.csv
-  project_coverage: data/jetp/project-coverage.csv
-  idn_portfolio_observations: data/jetp/idn-portfolio-observations.csv
-  vnm_pilot_manifest: data/jetp/vnm-pilot-manifest.csv
-  vnm_pilot_observations: data/jetp/vnm-pilot-observations.csv
-  plan_projects: data/jetp/plan-projects.csv
-  events: data/jetp/events.csv
-  implementation_events: data/jetp/implementation-events.csv
-  project_source_links: data/jetp/project-source-links.csv
-  source_claims: data/jetp/source-claims.csv
-  news_leads: data/jetp/news-leads.csv
+  assets: data/jetp/assets.csv
+  agreements: data/jetp/agreements.csv
+  line_referents: data/jetp/line-referents.csv
+  relations: data/jetp/relations.d
+  observations: data/jetp/observations.d
+  timings: data/jetp/timings.d
+  external_ids: data/jetp/external-ids.d
+  adjudications: data/jetp/adjudications.csv
+  adjudication_members: data/jetp/adjudication-members.csv
+  rates: data/jetp/rates.csv
+  deflators: data/jetp/deflators.csv
+  line_field_specs: data/jetp/line-field-specs.csv
+  routes: data/jetp/routes.csv
+  coverage: data/jetp/coverage.csv
   dry_searches: data/jetp/dry-searches.csv
   decisions: data/jetp/decisions.md
+  ontology: data/jetp/ontology
