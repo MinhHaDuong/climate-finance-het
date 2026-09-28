@@ -172,10 +172,11 @@ small: every edition is a new document and lines are appended, never
 renumbered. A monthly register edition adds about 3 000 lines a year for
 South Africa alone, the Indonesian plan appendices add 1 500 per edition
 pair, and the comparator pools add 1 100 World Bank records now and, for the
-four countries' energy sector, about 8 000 CRS rows and 1 800 IATI
-activities. The steady state is tens of thousands of lines a year, and the
-record format has to be designed for it, in two ways. Lines of hand-read
-documents stay per-document files reviewed row by row in a pull request.
+four countries' energy sector, about 8 000 CRS rows and 1 301 IATI country
+lines in the September 2026 draw. The steady state is tens of thousands of
+lines a year, and the record format has to be designed for it, in two ways.
+Lines of hand-read documents stay per-document files reviewed row by row in a
+pull request.
 Lines of bulk API snapshots are written by the ingestion script with a
 manifest naming the snapshot, the row count and the field spec, and the
 pull request reviews the manifest; a bulk line is adjudicated only when an

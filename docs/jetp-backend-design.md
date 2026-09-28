@@ -94,7 +94,7 @@ by country and year into `<table>.d/<CODE>-<year>.csv`, which stays one table.
 | Lines and their verbatim fields | `lines.csv`, `line-fields/<document_id>.csv`, `line-field-specs.csv` | Git; the first-class unit, its locator and ordinal, and the publisher's own columns validated against their spec |
 | Identities | `projects.csv`, `assets.csv`, `agreements.csv`, `perimeters.csv`, and `parties.csv` above | Git; minted only by a reviewed match, never by ingestion, except a publisher, which the document register mints |
 | Reviewed matches and relations | `line-referents.csv`, `relations.csv` | Git; dated, defeasible decisions with method, confidence and evidence lines |
-| Observations and their dates | `observations.csv`, `timings.csv` | Git; one statement per row citing one line, one timing row per date role |
+| Observations and their dates | `observations.d/<CODE>-<year>[-NN].csv`, `timings.d/<CODE>-<year>[-NN].csv` | Git; one statement per row citing one line, one timing row per date role |
 | External identifiers | `external-ids.csv` | Git; another register's code, typed by scheme |
 | Adjudications | `adjudications.csv`, `adjudication-members.csv` | Git; reviewed decisions with typed member rows |
 | Sourced rates and deflators | `rates.csv`, `deflators.csv` | Git; each row cites the line that printed it |

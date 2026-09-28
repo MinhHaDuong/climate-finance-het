@@ -1,12 +1,13 @@
 """The IATI comparator slice preserves activity identity and transaction flow."""
 
 import gzip
+import io
 import json
 
 import pytest
 from jetp._ledger_headers import LEDGER_DIR, load_schema, read_table
 from jetp.build_iati_comparators import ingest
-from jetp.catalog_iati_energy import project
+from jetp.catalog_iati_energy import collect, project
 
 pytestmark = pytest.mark.wp_jetp
 
@@ -36,18 +37,23 @@ def test_two_activities_three_flows_and_no_partnership_project(tmp_path):
                                'date': '2025-01-01'}]},
             {'id': 'XM-DAC-1-B', 'title': 'Grid B', 'status': '4',
              'reporting_org': 'XM-DAC-1', 'sectors': [{'code': '23110', 'vocabulary': '1'}],
-             'other_identifiers': [], 'source_transaction_count': 2,
+             'other_identifiers': [], 'source_transaction_count': 4,
              'unallocated_country_count': 0, 'unallocated_sector_count': 0,
              'transactions': [{'code': '3', 'value': '40', 'currency': 'EUR',
                                'date': '2025-02-01'},
                               {'code': '3', 'value': '60', 'currency': 'EUR',
-                               'date': '2025-03-01'}]},
+                               'date': '2025-03-01'},
+                              {'code': '11', 'value': '70', 'currency': 'EUR',
+                               'date': '2025-04-01'},
+                              {'code': '13', 'value': '80', 'currency': 'EUR',
+                               'date': '2025-05-01'}]},
         ],
     }
     path = ledger / 'iati' / 'ID.json.gz'
     path.write_bytes(gzip.compress(json.dumps(source).encode(), mtime=0))
 
-    assert ingest([path], ledger, recorded_at='2026-10-02') == {'flows': 3, 'lines': 2}
+    expected = {'flows': 3, 'lines': 2, 'unmapped_transactions': 2}
+    assert ingest([path], ledger, recorded_at='2026-10-02') == expected
     lines = _rows(ledger, 'lines')
     assert len(lines) == 2
     assert {row['locator'] for row in lines} == {'XM-DAC-1-A', 'XM-DAC-1-B'}
@@ -60,8 +66,32 @@ def test_two_activities_three_flows_and_no_partnership_project(tmp_path):
             if row['scheme'] == 'iati-activity-id'} == {'XM-DAC-1-A', 'XM-DAC-1-B'}
     assert _rows(ledger, 'projects') == []
     assert len(_rows(ledger, 'timings')) == 3
-    assert ingest([path], ledger, recorded_at='2026-10-02') == {'flows': 3, 'lines': 2}
+    assert ingest([path], ledger, recorded_at='2026-10-02') == expected
     assert len(_rows(ledger, 'observations')) == 3
+
+
+def test_ingest_rejects_snapshot_outside_registered_location(tmp_path):
+    path = tmp_path / 'ID.json.gz'
+    path.write_bytes(b'not-read')
+    with pytest.raises(ValueError, match='snapshot must live'):
+        ingest([path], tmp_path / 'ledger', recorded_at='2026-10-02')
+
+
+def test_collector_rejects_identifiers_that_collide_after_normalization(
+        tmp_path, monkeypatch):
+    activity = {
+        'recipient-country': {'code': 'ID'},
+        'sector': {'code': '230', 'vocabulary': '2'},
+        'activity-status': {'code': '2'},
+    }
+    payload = json.dumps({'ok': True, 'total-count': 2, 'iati-activities': [
+        {'iati-activity': {**activity, 'iati-identifier': 'X-1'}},
+        {'iati-activity': {**activity, 'iati-identifier': 'X-1 '}},
+    ]}).encode()
+    monkeypatch.setattr('jetp.catalog_iati_energy.urlopen',
+                        lambda *args, **kwargs: io.BytesIO(payload))
+    with pytest.raises(ValueError, match='duplicate API page identifier: X-1'):
+        collect('ID', tmp_path / 'ID.json.gz')
 
 
 def test_projection_keeps_only_country_energy_transactions():
@@ -127,3 +157,10 @@ def test_frozen_four_country_slice_has_identifiers_and_no_project_promotion():
     assert len(repeats) == 94
     project_ids = {row['project_id'] for row in _rows(LEDGER_DIR, 'projects')}
     assert not ({row['line_id'] for row in lines} & project_ids)
+    flows = [row for row in _rows(LEDGER_DIR, 'observations')
+             if row['line_id'].startswith('iati-energy-')]
+    assert {country: sum(row['line_id'].startswith(f'iati-energy-{country}-')
+                         for row in flows)
+            for country in ('id', 'sn', 'vn', 'za')} == {
+                'id': 4204, 'sn': 1240, 'vn': 1603, 'za': 723}
+    assert not {row['own_status'] for row in flows} & {'11', '13'}

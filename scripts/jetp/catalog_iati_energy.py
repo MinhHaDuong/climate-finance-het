@@ -144,15 +144,16 @@ def collect(country, output):
         for entry in entries:
             activity = entry.get('iati-activity', entry)
             identifier = activity.get('iati-identifier')
+            if not isinstance(identifier, str) or not identifier.strip():
+                raise ValueError(f'missing API page identifier at {url}')
+            identifier = identifier.strip()
             if identifier in seen:
                 raise ValueError(f'duplicate API page identifier: {identifier}')
             seen.add(identifier)
             record = project(activity, country)
             if record is None:
                 continue
-            old = records.setdefault(record['id'], record)
-            if old != record:
-                raise ValueError(f'conflicting responses for {record["id"]}')
+            records[record['id']] = record
         offset += len(entries)
         if offset >= total:
             break

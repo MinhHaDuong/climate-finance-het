@@ -24,7 +24,7 @@ COUNTRIES = {'ID': 'IDN', 'SN': 'SEN', 'VN': 'VNM', 'ZA': 'ZAF'}
 PUBLISHER = 'international-aid-transparency-initiative'
 STATUS = {'1': 'pipeline', '2': 'implementation', '3': 'finalisation',
           '4': 'closed', '5': 'cancelled', '6': 'suspended'}
-FLOWS = {'2': 'commitment', '11': 'commitment',
+FLOWS = {'2': 'commitment',
          '3': 'disbursement', '4': 'expenditure',
          '12': 'pledge', 'C': 'commitment', 'D': 'disbursement',
          '7': 'disbursement'}
@@ -151,6 +151,8 @@ def ingest(paths, ledger_dir=LEDGER_DIR, *, recorded_at):
     counts = defaultdict(int)
     for path in sorted(paths, key=lambda item: Path(item).name):
         path = Path(path)
+        if path.resolve().parent != (ledger_dir / 'iati').resolve():
+            raise ValueError(f'{path}: snapshot must live in {ledger_dir}/iati')
         raw = path.read_bytes()
         snapshot = json.loads(gzip.decompress(raw) if path.suffix == '.gz' else raw)
         iso2 = snapshot['country_code']

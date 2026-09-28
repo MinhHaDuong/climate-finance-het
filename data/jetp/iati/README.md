@@ -8,11 +8,11 @@ adapter is `scripts/jetp/build_iati_comparators.py`.
 
 | Country | API hits | Admitted activities | Ledger flow observations |
 |---|---:|---:|---:|
-| Indonesia | 433 | 344 | 4,233 |
-| Senegal | 370 | 241 | 1,254 |
-| Viet Nam | 485 | 411 | 1,618 |
-| South Africa | 410 | 305 | 736 |
-| **Total** | **1,698** | **1,301** | **7,841** |
+| Indonesia | 433 | 344 | 4,204 |
+| Senegal | 370 | 241 | 1,240 |
+| Viet Nam | 485 | 411 | 1,603 |
+| South Africa | 410 | 305 | 723 |
+| **Total** | **1,698** | **1,301** | **7,770** |
 
 The query selects recipient country and any of the 19 energy sector codes used
 in the Viet Nam pilot. The API matches country and sector independently, so
@@ -40,11 +40,16 @@ in the ledger is the International Aid Transparency Initiative. These external
 activities are never partnership projects. The adapter also records GEM IDs
 from `other-identifier` when present; none occur in this frozen slice.
 
-Transaction types 2/11/C (commitment), 3/D and 7 (disbursement), 4 (expenditure),
-and 12 (pledge) map to the ledger's existing flow types, following the
+Standard IATI transaction types 2 (outgoing commitment), 3 and 7
+(disbursement), 4 (expenditure), and 12 (outgoing pledge) map to the ledger's
+existing flow types, following the
 [IATI TransactionType codelist](https://codelists.codeforiati.org/TransactionType/).
-Another 4,913 country-energy transactions have other source codes and are
-counted by the adapter but are not promoted to a shared flow type. The six
+Legacy C and D codes map to commitment and disbursement respectively.
+Incoming commitment (11) and incoming pledge (13) have no matching shared
+flow type and are withheld. The frozen slice has 71 code-11 transaction
+appearances and no code-13 appearances. Another 4,913 country-energy
+transactions have other source codes, for 4,984 withheld by flow type in
+total; the adapter counts but does not promote them. The six
 standard activity statuses map through `status-crosswalk`. Dates and amounts
 remain source assertions. There is no currency conversion or reconciliation
 with partnership finance.
