@@ -58,6 +58,34 @@ def test_interrupted_candidate_preserves_accepted_and_restores_offline(tmp_path,
     assert site_hashes(restored) == canonical
 
 
+@pytest.mark.integration
+def test_candidate_rebuilds_account_view_instead_of_copying_stale_bytes(tmp_path, monkeypatch):
+    import json
+
+    from jetp import build_accounts
+    from jetp._observatory_bundle import _read_bundle, build_candidate, freeze_bundle
+
+    accepted = tmp_path / 'accepted.zip'
+    freeze_bundle(ROOT, accepted)
+    monkeypatch.setattr(build_accounts, 'build', lambda *args, **kwargs: {'marker': 'fresh-account-build'})
+    candidate = tmp_path / 'candidate.zip'
+    build_candidate(ROOT, candidate, accepted=accepted)
+    manifest, payloads = _read_bundle(candidate)
+    assert json.loads(payloads['site/data/accounts.json']) == {'marker': 'fresh-account-build'}
+    assert '#money' in manifest['routes']
+
+
+def test_bundle_rejects_renderer_that_requires_missing_accounts():
+    from jetp._observatory_bundle import _validate_site
+
+    payloads = {'site/index.html': b'asset', 'site/app.js': b'load("accounts")',
+                'site/styles.css': b'asset'}
+    for view in ('overview', 'comparison', 'documents', 'ZAF', 'IDN', 'VNM', 'SEN'):
+        payloads[f'site/data/{view}.json'] = b'{}'
+    with pytest.raises(ValueError, match='Missing account view'):
+        _validate_site(payloads)
+
+
 def test_semantic_diff_requires_evidence_for_intentional_changes(tmp_path):
     """A declared scientific change needs source, reviewer and rationale."""
     from jetp._observatory_bundle import compare_bundles

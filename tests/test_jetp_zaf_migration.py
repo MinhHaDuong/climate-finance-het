@@ -33,8 +33,9 @@ def test_zaf_candidate_reconciles_inventory_legacy_and_current_views(tmp_path):
     assert result['comparison']['register_status_counts']['D. Completed'] == 88
     assert result['comparison']['financial_event_additions'] == 0
     assert result['event_candidates'] == []
-    # 0926 refreshed the served ZAF view; the migration must still leave it untouched.
-    assert result['comparison']['public_payload_bytes']['ZAF'] == 509381
+    # 0890 adds cited ledger observations to the served ZAF headlines;
+    # the migration must still leave that view untouched.
+    assert result['comparison']['public_payload_bytes']['ZAF'] == 510861
     assert result['writer_owner'] == result['publication_mode'] == 'legacy'
     register = [r for r in result['inventory_positions'] if r['inventory_id'] == 'Register']
     assert len(register) == 257

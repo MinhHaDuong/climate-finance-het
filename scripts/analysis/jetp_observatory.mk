@@ -4,6 +4,8 @@ JETP_OBSERVATORY_VIEWS := overview comparison coverage documents ZAF IDN VNM SEN
 JETP_OBSERVATORY_EDITION_HISTORY := $(JETP_OBSERVATORY)/data/editions.json
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
 JETP_OBSERVATORY_PROVENANCE := $(JETP_OBSERVATORY)/data/provenance.json
+JETP_ACCOUNTS_VIEW := $(JETP_OBSERVATORY)/data/accounts.json
+JETP_ACCOUNTS_DERIVED := data/derived/jetp/accounts.json
 JETP_PARTY_NAMES_VIEW := $(JETP_OBSERVATORY)/data/party-names.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
 JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
@@ -88,7 +90,7 @@ $(JETP_LEDGER_DOCUMENTS_VIEW): data/jetp/documents.csv config/jetp-ledger.sql .g
     scripts/jetp/build_ledger_documents_view.py scripts/jetp/_ledger_headers.py
 	$(PYTHON) scripts/jetp/build_ledger_documents_view.py --output $@
 
-.PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-observatory jetp-observatory-documents \
+.PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-accounts jetp-observatory jetp-observatory-documents \
     jetp-observatory-refresh jetp-observatory-preview jetp-observatory-bundle jetp-observatory-publish
 jetp-m1a: $(JETP_M1A_FILES)
 
@@ -108,7 +110,21 @@ jetp-ontology-views: $(JETP_ONTOLOGY_VIEWS)
 $(JETP_ONTOLOGY_VIEWS) &: $(JETP_ONTOLOGY_VIEWS_INPUTS)
 	$(PYTHON) scripts/jetp/build_ontology_views.py --output-dir $(JETP_ONTOLOGY_VIEWS_DIR)
 
-jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+jetp-accounts: $(JETP_ACCOUNTS_DERIVED)
+
+# The committed v2 ledger CSVs are also declared outputs of the earlier
+# normalization step. A downstream account or site build must read them as they
+# stand, never follow their producer edge. Rebuild these views on invocation.
+.PHONY: jetp-current-ledger-input
+jetp-current-ledger-input:
+
+$(JETP_ACCOUNTS_DERIVED): jetp-current-ledger-input
+	$(PYTHON) scripts/jetp/build_accounts.py --output $@
+
+$(JETP_ACCOUNTS_VIEW): jetp-current-ledger-input
+	$(PYTHON) scripts/jetp/build_accounts.py --output $@
+
+jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_ACCOUNTS_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
 $(JETP_PARTY_NAMES_VIEW): data/jetp/parties.csv data/jetp/party-names.csv scripts/jetp/build_party_names_view.py
 	$(PYTHON) scripts/jetp/build_party_names_view.py --output $@
@@ -117,6 +133,8 @@ $(JETP_PARTY_NAMES_VIEW): data/jetp/parties.csv data/jetp/party-names.csv script
 # no other view, so it has no prerequisite beyond the inputs above. The join
 # between a document and what was extracted from it is made by the page, at
 # read time, on the M1a and observations views served beside it.
+$(JETP_OBSERVATORY_JSON): jetp-current-ledger-input
+
 $(JETP_OBSERVATORY)/data/%.json: $(JETP_OBSERVATORY_INPUTS)
 	$(PYTHON) scripts/jetp/build_observatory.py --view $* --output $@
 

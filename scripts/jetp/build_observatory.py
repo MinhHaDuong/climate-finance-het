@@ -6,11 +6,12 @@ import hashlib
 import json
 import subprocess
 from collections import Counter
+from decimal import Decimal
 from pathlib import Path
 
 import yaml
 
-from jetp._ledger_headers import load_schema, read_table
+from jetp._ledger_headers import load_schema, read_table, table_files
 from jetp._observatory_data import (
     document_entry,
     historical_record,
@@ -146,12 +147,77 @@ def country_data(root, code, config, tables):
     if missing:
         raise ValueError(f'Unknown source references: {missing}')
     metadata = dict(country_config, code=code)
+    if country_config.get('pledge_observation_id'):
+        metadata.update(perimeter_headlines(root, country_config))
     return {'country': metadata, 'projects': projects,
             'undisclosed': len(slots), 'record_count': len(rows),
             'sources': {sid: sources[sid] for sid in sorted(needed) if sid},
             'editorial': editorial(root, code),
             'stages': dict(Counter(p['finance_stage'] for p in projects)),
             'technologies': dict(Counter(p['technology'] for p in projects))}
+
+
+def perimeter_headlines(root, country_config):
+    """Format reported money from cited perimeter observations, never YAML values."""
+    schema = load_schema()
+    rows, errors = read_table(root / 'data/jetp', 'observations', schema)
+    if errors:
+        raise ValueError(errors[0])
+    by_id = {r['observation_id']: r for r in
+             (dict(zip(schema.header('observations'), row)) for row in rows)}
+    def indexed(table, key):
+        table_rows, table_errors = read_table(root / 'data/jetp', table, schema)
+        if table_errors:
+            raise ValueError(table_errors[0])
+        return {r[key]: r for r in
+                (dict(zip(schema.header(table), row)) for row in table_rows)}
+
+    lines = indexed('lines', 'line_id')
+    documents = indexed('documents', 'document_id')
+    retrieval_rows, retrieval_errors = read_table(root / 'data/jetp', 'retrievals', schema)
+    if retrieval_errors:
+        raise ValueError(retrieval_errors[0])
+    retrievals = [dict(zip(schema.header('retrievals'), row)) for row in retrieval_rows]
+
+    def cited(identity):
+        row = by_id.get(identity)
+        if (row is None or row['status'] != 'accepted'
+                or row['subject_kind'] != 'perimeter' or row['measure'] != 'envelope'
+                or row['value'] is None or not row['line_id']):
+            raise ValueError(f'Headline needs an accepted cited perimeter envelope: {identity}')
+        if any(other['supersedes'] == identity and other['status'] in
+               ('accepted', 'rejected', 'withdrawn') for other in by_id.values()):
+            raise ValueError(f'Headline observation has been superseded: {identity}')
+        value = Decimal(row['value']) / Decimal('1000000000')
+        symbol = {'USD': '$', 'EUR': '€'}.get(row['currency'])
+        if symbol is None:
+            raise ValueError(f'Headline currency needs a display format: {row["currency"]}')
+        formatted = format(value, 'f')
+        if '.' in formatted:
+            formatted = formatted.rstrip('0').rstrip('.')
+        label = f'{symbol}{formatted}bn'
+        line = lines.get(row['line_id'])
+        if line is None:
+            raise ValueError(f'Headline line unavailable: {row["line_id"]}')
+        document_ids = {r['document_id'] for r in retrievals if r['sha256'] == line['sha256']}
+        if len(document_ids) != 1 or next(iter(document_ids)) not in documents:
+            raise ValueError(f'Headline line has no unique document: {row["line_id"]}')
+        document_id = next(iter(document_ids))
+        document = documents[document_id]
+        return label, {'observation_id': identity, 'perimeter_id': row['subject_id'],
+                       'line_id': row['line_id'], 'currency': row['currency'],
+                       'value': row['value'], 'locator': line['locator'],
+                       'sha256': line['sha256'], 'document_id': document_id,
+                       'document_title': document['title'], 'document_url': document['url']}
+
+    pledge, pledge_citation = cited(country_config['pledge_observation_id'])
+    result = {'pledge_label': pledge, 'pledge_citation': pledge_citation}
+    if identity := country_config.get('headline_observation_id'):
+        headline, citation = cited(identity)
+        result['headline'] = ('≈' if country_config.get('headline_approximate') else '') + \
+            f'{headline} {country_config["headline_qualifier"]}'
+        result['headline_citation'] = citation
+    return result
 
 
 def comparison_data(root, config):
@@ -286,6 +352,10 @@ def provenance(root, config):
              for name in TABLES]
     paths += sorted((root / 'data/jetp/comparison').glob('*.json'))
     paths += sorted((root / 'data/jetp/editorial/countries').glob('*.md'))
+    observation_files, errors = table_files(root / 'data/jetp', 'observations')
+    if errors or not observation_files:
+        raise ValueError(errors[0] if errors else 'No v2 observation table found')
+    paths += [path for path, _, _ in observation_files]
     paths += [root / 'config/jetp_observatory.yaml', root / 'data/jetp/documents.dvc',
               Path(__file__), root / 'scripts/jetp/_observatory_data.py',
               root / 'scripts/jetp/build_observations.py',

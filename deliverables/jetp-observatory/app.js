@@ -31,7 +31,7 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex, documentsBySha, ontology, partyNames;
+let overview, accounts, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex, documentsBySha, ontology, partyNames;
 const country = (code) => overview.countries.find((c) => c.code === code);
 const undisclosedCount = () =>
   overview.countries.reduce((total, c) => total + c.undisclosed, 0);
@@ -53,7 +53,7 @@ const pill = (text) => `<span class="pill">${esc(text)}</span>`;
 const SECTIONS = {
   "the-paper-trail": ["the-paper-trail", "documents", "entries", "on-the-record", "projects",
     "project", "funding", "whos-who"],
-  "the-tallies": ["counts", "comparisons"],
+  "the-tallies": ["counts", "money", "comparisons"],
   about: ["about", "glossary", "methods", "who-we-are", "release-history"],
 };
 /* Where each header tab lands: a section's landing page, or its first page
@@ -76,12 +76,10 @@ const STEPS = [
     href: (code) => (code ? `#organisations?country=${code}` : "#organisations") },
 ];
 const plain = (page, label, extra = {}) => ({ page, label, href: () => "#" + page, ...extra });
-/* The pages of each section, in the order its sub-bar and its dropdown list
- * them. The tallies lists only pages with content today; the accounts page of
- * ticket 0877 joins it as "Money". */
+/* The pages of each section, in the order its sub-bar and its dropdown list. */
 const SUB_PAGES = {
   "the-paper-trail": STEPS,
-  "the-tallies": [plain("counts", "Counts", { object: "E" }),
+  "the-tallies": [plain("counts", "Counts", { object: "E" }), plain("money", "Money"),
     plain("comparisons", "Non-JETP energy operations", { href: () => "#non-jetp-energy-operations" })],
   about: [
     plain("glossary", "Glossary", { object: "O" }),
@@ -150,7 +148,7 @@ const countStages = (rows) =>
 const header = (title, description) =>
   `<div class="page-head"><h1>${title}</h1>${titleBlock(description)}</div>`;
 function card(c) {
-  return `<article class="country-card" style="--accent:${c.colour}"><span class="country-code">${c.code} · SINCE ${c.signed_on.slice(0, 4)}</span><h3><a href="#funding/${c.code}" style="text-decoration:none">${esc(c.name)}</a></h3><div class="headline published">${esc(c.headline)}</div><p class="detail">${esc(c.headline_detail)}</p><div class="asof"><span class="published-tag">As published</span> ${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}</div><div class="card-bottom"><span class="computed" data-unit="named projects"><span class="computed-tag">Our calculation</span> ${c.named} named projects${c.undisclosed ? " + " + c.undisclosed + " unnamed" : ""}</span><a href="#funding/${c.code}" aria-label="Explore ${esc(c.name)}">Explore ↗</a></div></article>`;
+  return `<article class="country-card" style="--accent:${c.colour}"><span class="country-code">${c.code} · SINCE ${c.signed_on.slice(0, 4)}</span><h3><a href="#funding/${c.code}" style="text-decoration:none">${esc(c.name)}</a></h3><div class="headline published">${esc(c.headline)}</div><p class="detail">${esc(c.headline_detail)}</p><div class="asof"><span class="published-tag">As published</span> ${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}</div>${citationNote(c.headline_citation)}<div class="card-bottom"><span class="computed" data-unit="named projects"><span class="computed-tag">Our calculation</span> ${c.named} named projects${c.undisclosed ? " + " + c.undisclosed + " unnamed" : ""}</span><a href="#funding/${c.code}" aria-label="Explore ${esc(c.name)}">Explore ↗</a></div></article>`;
 }
 function stageChart(cs) {
   return `<div role="img" aria-label="Furthest financing milestone on the record, by country. Counts of named projects, not assets or amounts.">${cs
@@ -283,13 +281,20 @@ function fundingStatements(data, code) {
     mount: table.mount,
   };
 }
+function citationNote(citation) {
+  if (!citation) return "";
+  const document = citation.document_url
+    ? `${esc(citation.document_title)} · ${sourceLink({url: citation.document_url, title: citation.document_title}, "Read the cited document")}`
+    : `Source: ${esc(citation.document_title)} (no public URL)`;
+  return `<small class="note">${document} · ${esc(citation.locator)} · ledger observation <code>${esc(citation.observation_id)}</code> · cited line <code>${esc(citation.line_id)}</code></small>`;
+}
 function countryPage(code) {
   const d = countries[code],
     c = country(code);
   if (!d) return notFound();
   const refs = Object.keys(d.sources).length;
   const funding = fundingStatements(d, code);
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#funding">Funding</a> › ${esc(c.name)}</div><h1>${esc(c.name)}: funding</h1>${titleBlock("Read this partnership's published headline alongside the financing statements recorded for its projects and programmes. Financing needs are listed separately because they describe money required, not money provided.")}${countryTabs(code)}</div><div class="callout published"><h3>${esc(c.headline)}</h3><p><span class="published-tag">As published</span> ${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}</p></div><div class="metrics">${computedMetric(c.named, "named projects", "this partnership's portfolio", `#projects?country=${code}`)}${computedMetric(c.undisclosed, "unpublished identities", "counted in the country's own disclosure, which lists none of them by name")}${computedMetric(refs, "documents cited", "by this country's projects and headline", "#documents")}<div class="metric published"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span><small><span class="published-tag">As published</span> · announced ${date(c.signed_on)}</small></div></div><div class="split"><div><h2>Reading this partnership</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Browse named projects ↗</a><a class="text-link" href="#non-jetp-energy-operations?country=${code}">Earlier energy operations →</a></div></div><div class="panel"><h3>Furthest financing milestone reported</h3>${stageChart([c])}<p class="note" style="margin-top:20px"><span class="computed-tag">Our calculation</span> Each named project appears once at its furthest recorded milestone. A later milestone does not make an earlier amount a second tranche.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}<p class="note" style="margin-top:10px">Named projects by the theme or technology their documents give.</p></div></div>${code === "VNM" ? vietnamSideBySide(d) : ""}${funding.head}`;
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#funding">Funding</a> › ${esc(c.name)}</div><h1>${esc(c.name)}: funding</h1>${titleBlock("Read this partnership's published headline alongside the financing statements recorded for its projects and programmes. Financing needs are listed separately because they describe money required, not money provided.")}${countryTabs(code)}</div><div class="callout published"><h3>${esc(c.headline)}</h3><p><span class="published-tag">As published</span> ${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}</p>${citationNote(c.headline_citation)}</div><div class="metrics">${computedMetric(c.named, "named projects", "this partnership's portfolio", `#projects?country=${code}`)}${computedMetric(c.undisclosed, "unpublished identities", "counted in the country's own disclosure, which lists none of them by name")}${computedMetric(refs, "documents cited", "by this country's projects and headline", "#documents")}<div class="metric published"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span><small><span class="published-tag">As published</span> · announced ${date(c.signed_on)}</small>${citationNote(c.pledge_citation)}</div></div><div class="split"><div><h2>Reading this partnership</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Browse named projects ↗</a><a class="text-link" href="#non-jetp-energy-operations?country=${code}">Earlier energy operations →</a></div></div><div class="panel"><h3>Furthest financing milestone reported</h3>${stageChart([c])}<p class="note" style="margin-top:20px"><span class="computed-tag">Our calculation</span> Each named project appears once at its furthest recorded milestone. A later milestone does not make an earlier amount a second tranche.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}<p class="note" style="margin-top:10px">Named projects by the theme or technology their documents give.</p></div></div>${code === "VNM" ? vietnamSideBySide(d) : ""}${funding.head}`;
   funding.mount();
 }
 /* Rendering only: both figures already exist — the RMP row count in the M1a
@@ -1512,7 +1517,17 @@ function numbersPage() {
       .join("")}</table></div>` +
     `<figure class="counts-figure" data-figure="1"><figcaption><strong>Figure 1.</strong> Furthest financing milestone on the record, named projects by country. <span class="computed-tag">Our calculation</span> Each named project once, at the most advanced milestone on the record for it. Registered financing is not an independently verified signature or payment, and “Not coded in ledger” can coexist with financing described in a document.</figcaption>${stageChart(overview.countries)}</figure>` +
     `<figure class="counts-figure" data-figure="2"><figcaption><strong>Figure 2.</strong> Named projects by theme or technology, the seven most frequent. <span class="computed-tag">Our calculation</span> Categories keep each document's own wording.</figcaption>${technologyChart(projects)}</figure>` +
-    `<section class="section"><h2>Accounts</h2><p>No account of pledges, allocations and payments is computed in this release: nothing on these pages adds amounts across documents, or a project's amounts to a partnership's headline.</p><p><a class="text-link" href="#release-history">Release history →</a></p></section>`;
+    `<section class="section"><h2>Money</h2><p>See the <a href="#money">commitment accounts</a> and their documented gaps. Partnership headlines remain separate publisher figures. The <a href="#release-history">release history</a> shows this snapshot.</p></section>`;
+}
+function moneyPage() {
+  const rows = accounts.accounts || [];
+  main.innerHTML = header(
+    "Money: what can be accounted for",
+    "These original-currency commitment accounts include only dated, admitted flows with reviewed membership and coverage. A documented subtotal is never presented as a complete closing balance when an opening or coverage is missing. Partnership headlines have different scopes and are shown separately on their country pages.",
+  ) + (rows.length
+    ? `<div class="table-wrap"><table><thead><tr><th>Agreement</th><th>Perimeter</th><th>Documented subtotal</th><th>Closing</th><th>Residual</th><th>What remains open</th></tr></thead><tbody>${rows.map((a) => `<tr><td>${esc(a.agreement_id)}</td><td>${esc(a.perimeter_id)}</td><td>${esc(a.documented_subtotal)} ${esc(a.currency)}</td><td>${a.reconstructed_closing == null ? "Unavailable" : esc(a.reconstructed_closing) + " " + esc(a.currency)}</td><td>${a.residual == null ? "Unavailable" : esc(a.residual) + " " + esc(a.currency)}</td><td>${esc(a.uncertainty.join("; ") || "None")}</td></tr>`).join("")}</tbody></table></div>`
+    : `<div class="empty">${esc(accounts.availability || "No commitment account is available for this cutoff.")}</div>`) +
+    `<p class="note">Valid cutoff: ${date(accounts.valid_cutoff)}. Knowledge cutoff: ${date(accounts.knowledge_cutoff)}. Each account retains its observation and decision identifiers in the <a href="data/accounts.json" download>account data ↓</a>.</p>`;
 }
 function editionHistoryPage() {
   const rows = editions.editions;
@@ -1851,6 +1866,7 @@ const TITLES = {
   entries: "Document rows",
   "whos-who": "Organisations",
   counts: "Counts",
+  money: "Money",
   glossary: "Glossary",
   about: "About",
   methods: "Methods",
@@ -2004,6 +2020,7 @@ function render() {
   else if (page === "entries") id ? inventoryPage(id, params, "") : entriesPage();
   else if (page === "whos-who") whosWhoPage(params);
   else if (page === "counts") numbersPage();
+  else if (page === "money") moneyPage();
   else if (page === "glossary") glossaryPage(params.get("term"));
   else if (page === "about") aboutPage();
   else if (page === "who-we-are") whoWeArePage();
@@ -2037,8 +2054,9 @@ const load = async (file) => {
 async function start() {
   try {
     let termsView, statusCrosswalkView, staged, captures, checks, ledgerDocuments;
-    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks, ledgerDocuments] = await Promise.all([
+    [overview, accounts, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks, ledgerDocuments] = await Promise.all([
       load("overview"),
+      load("accounts"),
       load("comparison"),
       load("documents"),
       load("editions").catch(() => ({ editions: [] })),

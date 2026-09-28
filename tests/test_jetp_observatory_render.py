@@ -708,7 +708,7 @@ FORBIDDEN = re.compile(
     re.IGNORECASE,
 )
 ROUTES = ("overview", "the-paper-trail", "about", "who-we-are", "glossary", "documents", "document-rows", "statements", "projects",
-          "funding", "organisations", "counts", "methods", "release-history",
+          "funding", "organisations", "counts", "money", "methods", "release-history",
           "non-jetp-energy-operations", *(f"funding/{code}" for code in COUNTRIES),
           "document-rows/VNM", "statements/ZAF", "project/" + BAC_AI)
 
@@ -776,7 +776,8 @@ SECTION_KEYS = ("the-paper-trail", "the-tallies", "about")
 SUB_PAGES = {
     "the-paper-trail": list(zip(STEPS, ["#documents", "#document-rows", "#statements", "#projects",
                                         "#funding", "#organisations"])),
-    "the-tallies": [("Counts", "#counts"), ("Non-JETP energy operations", "#non-jetp-energy-operations")],
+    "the-tallies": [("Counts", "#counts"), ("Money", "#money"),
+                    ("Non-JETP energy operations", "#non-jetp-energy-operations")],
     "about": [("Glossary", "#glossary"), ("Methods", "#methods"), ("Who we are", "#who-we-are")],
 }
 
@@ -978,7 +979,8 @@ def test_a_trail_page_carries_no_second_position_indicator(route) -> None:
 
 @pytest.mark.parametrize(("route", "section"), [
     ("documents", "the-paper-trail"), ("project/" + BAC_AI, "the-paper-trail"),
-    ("counts", "the-tallies"), ("non-jetp-energy-operations", "the-tallies"), ("glossary", "about")])
+    ("counts", "the-tallies"), ("money", "the-tallies"),
+    ("non-jetp-energy-operations", "the-tallies"), ("glossary", "about")])
 def test_every_sub_bar_is_the_same_component(route, section) -> None:
     # Sixth batch: one markup and one class for the three sections' sub-bars,
     # plain tabs, no separators; the country chip is the paper trail's alone.
@@ -988,6 +990,34 @@ def test_every_sub_bar_is_the_same_component(route, section) -> None:
     assert [unescape(t) for t in tabs] == [label for label, _ in SUB_PAGES[section]]
     assert "›" not in bar and "<ol" not in bar
     assert bar.count('aria-current="page"') == 1
+
+
+def test_money_page_reports_unavailable_accounts_without_a_false_total() -> None:
+    payload = served('accounts')
+    assert payload['accounts'] == []
+    main = render('money')['main']
+    assert 'Money: what can be accounted for' in main
+    assert payload['availability'] in main
+    assert 'data/accounts.json' in main
+    assert '$6.12bn' not in main and '$4.32bn' not in main
+
+
+@pytest.mark.parametrize('code', ('ZAF', 'IDN', 'SEN'))
+def test_political_pledge_links_to_its_cited_document(code) -> None:
+    country = next(c for c in served('overview')['countries'] if c['code'] == code)
+    citation = country['pledge_citation']
+    main = render(f'funding/{code}')['main']
+    assert 'Read the cited document' in main
+    assert citation['document_title'] in unescape(main)
+    assert citation['observation_id'] in main
+    assert citation['line_id'] in main
+    assert citation['locator'] in unescape(main)
+
+
+def test_local_vietnam_pledge_names_its_unpublished_source() -> None:
+    main = render('funding/VNM')['main']
+    assert 'no public URL' in main
+    assert 'vnm-pilot-observations-local-record' in main
 
 
 @pytest.mark.parametrize("route", ["overview"])
