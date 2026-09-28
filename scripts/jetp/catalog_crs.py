@@ -65,26 +65,29 @@ def build_key(**kw) -> str:
     return ".".join(kw.get(d, "") for d in DIMS)
 
 
-def fetch(url: str, retries: int = 4, pause: float = 5.0) -> bytes | None:
+def fetch(url: str, retries: int = 4, pause: float = 5.0) -> bytes:
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     for attempt in range(retries):
         try:
             with urllib.request.urlopen(req, timeout=900) as r:
-                return r.read()
+                data = r.read()
         except urllib.error.HTTPError as e:
-            body = e.read()[:200]
             if e.code == 404:
-                log.info("404 (aucune donnee) %s", url[:120])
-                return b""
+                raise ValueError(f"CRS URL returned 404: {url}") from e
+            body = e.read()[:200]
             log.warning("HTTP %s (essai %d) %s", e.code, attempt + 1, body)
         except Exception as e:
             log.warning("erreur reseau (essai %d) : %s", attempt + 1, e)
+        else:
+            if not data:
+                raise ValueError(f"CRS URL returned an empty response: {url}")
+            return data
         time.sleep(pause * (attempt + 1))
-    return None
+    raise RuntimeError(f"CRS URL failed after {retries} attempts: {url}")
 
 
 def pull_year(country: str, year: int, sectors: list[str], md_dim: str,
-              outdir: Path, force: bool) -> Path | None:
+              outdir: Path, force: bool) -> Path:
     tag = "micro" if md_dim == "DD" else "agg"
     out = outdir / f"crs_{country}_{year}_{tag}.csv.gz"
     if out.exists() and not force and out.stat().st_size > 0:
@@ -94,9 +97,6 @@ def pull_year(country: str, year: int, sectors: list[str], md_dim: str,
     url = (f"{BASE}{key}?startPeriod={year}&endPeriod={year}"
            f"&dimensionAtObservation=AllDimensions&format=csvfile")
     data = fetch(url)
-    if data is None:
-        log.error("ECHEC %s %s %s", country, year, tag)
-        return None
     with gzip.open(out, "wb") as fh:
         fh.write(data)
     nl = data.count(b"\n")
