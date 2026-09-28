@@ -1002,6 +1002,24 @@ def test_money_page_reports_unavailable_accounts_without_a_false_total() -> None
     assert '$6.12bn' not in main and '$4.32bn' not in main
 
 
+@pytest.mark.parametrize('code', ('ZAF', 'IDN', 'SEN'))
+def test_political_pledge_links_to_its_cited_document(code) -> None:
+    country = next(c for c in served('overview')['countries'] if c['code'] == code)
+    citation = country['pledge_citation']
+    main = render(f'funding/{code}')['main']
+    assert 'Read the cited document' in main
+    assert citation['document_title'] in unescape(main)
+    assert citation['observation_id'] in main
+    assert citation['line_id'] in main
+    assert citation['locator'] in unescape(main)
+
+
+def test_local_vietnam_pledge_names_its_unpublished_source() -> None:
+    main = render('funding/VNM')['main']
+    assert 'no public URL' in main
+    assert 'vnm-pilot-observations-local-record' in main
+
+
 @pytest.mark.parametrize("route", ["overview"])
 def test_no_second_bar_outside_the_paper_trail_and_about(route) -> None:
     assert step_bar(route) == ""

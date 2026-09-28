@@ -29,21 +29,30 @@ def _rows(conn, table):
     return [dict(row) for row in conn.execute(f'SELECT * FROM {table}')]
 
 
-def _current(rows, key, cutoff, time_field='recorded_at'):
-    known = [r for r in rows if r[time_field] <= cutoff]
-    superseded = {r['supersedes'] for r in known if r['supersedes']}
+def _current(rows, key, cutoff, time_field='recorded_at', review_field=None,
+             superseding_statuses=('accepted', 'rejected', 'withdrawn')):
+    known = [r for r in rows if r[time_field] <= cutoff
+             and (review_field is None or r[review_field] <= cutoff)]
+    superseded = {r['supersedes'] for r in known
+                  if r['supersedes'] and r['status'] in superseding_statuses}
     return [r for r in known if r['status'] == 'accepted' and r[key] not in superseded]
 
 
 def _amount(row, raw_values=None):
     try:
-        raw = (raw_values or {}).get(row['observation_id'])
-        value = Decimal(raw if raw is not None else str(row['value']))
+        raw = (raw_values or {}).get(row['observation_id'], {})
+        value = Decimal(raw.get('value') if raw.get('value') is not None
+                        else str(row['value']))
+        low = raw.get('value_low', row['value_low'])
+        high = raw.get('value_high', row['value_high'])
+        low = Decimal(str(low)) if low not in (None, '') else None
+        high = Decimal(str(high)) if high not in (None, '') else None
     except (InvalidOperation, TypeError):
         return None
     if (not value.is_finite() or value < 0
-            or (raw is None and value > 2**53)
-            or row['value_low'] is not None or row['value_high'] is not None):
+            or (not raw and value > 2**53)
+            or ((low is None) != (high is None))
+            or (low is not None and (low != value or high != value))):
         return None
     return value
 
@@ -77,7 +86,9 @@ def _occurrence_exclusions(decisions, members, known_ids, knowledge_cutoff):
     """A rejected terminal ruling makes its entire known group unresolved."""
     relevant = {r['adjudication_id']: r for r in decisions
                 if r['decision_type'] == 'occurrence_membership'
-                and r['recorded_at'] <= knowledge_cutoff}
+                and r['recorded_at'] <= knowledge_cutoff
+                and r['decided_at'] <= knowledge_cutoff
+                and r['status'] in ('accepted', 'rejected', 'withdrawn')}
     children = {r['supersedes']: r['adjudication_id'] for r in relevant.values()
                 if r['supersedes'] in relevant}
     excluded, reasons, used = set(), [], []
@@ -96,8 +107,12 @@ def _occurrence_exclusions(decisions, members, known_ids, knowledge_cutoff):
             continue
         if decision['status'] == 'accepted':
             terminal_group = _members(members, decision['adjudication_id'], 'occurrence')
-            excluded.update(terminal_group - {decision['subject_id']})
-            used.append(decision['adjudication_id'])
+            if decision['subject_id'] not in terminal_group or not terminal_group <= known_ids:
+                excluded.update(terminal_group & known_ids)
+                reasons.append(f'occurrence crosses account: {decision["adjudication_id"]}')
+            else:
+                excluded.update(terminal_group - {decision['subject_id']})
+                used.append(decision['adjudication_id'])
         else:
             excluded.update(historical_group)
             reasons.append(f'occurrence unresolved: {decision["adjudication_id"]}')
@@ -132,20 +147,13 @@ def _positions(observations, timings, members, decision, agreement_id, currency,
     return opening, closing, reported, reasons
 
 
-def account_for(conn, agreement_id, perimeter_id, currency, valid_cutoff,
-                knowledge_cutoff, raw_values=None):
-    """One account. Selection and completeness require in-force decisions."""
-    observations = _rows(conn, 'observations')
-    timings = _rows(conn, 'timings')
-    decisions = _rows(conn, 'adjudications')
-    members = _rows(conn, 'adjudication_members')
-    current = _current(decisions, 'adjudication_id', knowledge_cutoff)
+def _eligible_intervals(observations, timings, agreement_id, currency,
+                        valid_cutoff, knowledge_cutoff, raw_values):
     eligible = [r for r in _current(observations, 'observation_id', knowledge_cutoff)
                 if r['subject_kind'] == 'agreement' and r['subject_id'] == agreement_id
                 and r['measure'] == 'flow' and r['flow_type'] == 'commitment'
                 and r['basis'] == 'gross' and r['currency'] == currency]
-    reasons = []
-    dated = []
+    dated, reasons = [], []
     for row in eligible:
         interval = _flow_interval(timings, row['observation_id'], knowledge_cutoff)
         amount = _amount(row, raw_values)
@@ -156,53 +164,116 @@ def account_for(conn, agreement_id, perimeter_id, currency, valid_cutoff,
                 reasons.append(f'flow overlaps cutoff: {row["observation_id"]}')
             else:
                 dated.append((row, interval, amount))
+    return eligible, dated, reasons
+
+
+def _membership_reasons(conn, agreement_id, perimeter_id, opening, valid_cutoff,
+                        knowledge_cutoff):
     relation_rows = _current(_rows(conn, 'relations'), 'relation_id', knowledge_cutoff,
                              'decided_at')
+    reasons = []
     if not any(r['from_kind'] == 'agreement' and r['from_id'] == agreement_id
                and r['relation'] == 'member_of' and r['to_kind'] == 'perimeter'
-               and r['to_id'] == perimeter_id
-               and (r['valid_from'] is None or r['valid_from'] <= valid_cutoff)
+               and r['to_id'] == perimeter_id and opening is not None
+               and (r['valid_from'] is None or r['valid_from'] <= opening[1])
                and (r['valid_to'] is None or valid_cutoff <= r['valid_to'])
                for r in relation_rows):
         reasons.append('agreement perimeter membership unreviewed')
     if not any(r['perimeter_id'] == perimeter_id for r in
                _current(_rows(conn, 'perimeters'), 'perimeter_row_id', knowledge_cutoff)):
         reasons.append('perimeter unavailable')
+    return reasons
 
-    excluded, occurrence_reasons, decision_ids = _occurrence_exclusions(
-        decisions, members, {r['observation_id'] for r, _, _ in dated}, knowledge_cutoff)
-    reasons += occurrence_reasons
 
+def _interval_rows(dated, opening, valid_cutoff):
+    rows, reasons = [], []
+    if opening is not None and opening[1] < valid_cutoff:
+        for row, interval, amount in dated:
+            if interval[1] <= opening[1]:
+                continue
+            if interval[0] <= opening[1]:
+                reasons.append(f'flow overlaps opening: {row["observation_id"]}')
+            else:
+                rows.append((row, interval, amount))
+    return rows, reasons
+
+
+def _reviewed_cover(coverage, members, eligible, dated, interval_ids):
+    if not coverage:
+        return set(), set(), [], []
+    if len(coverage) != 1:
+        return set(), set(), ['coverage decisions ambiguous'], []
+    decision = coverage[0]
+    covering = _members(members, decision['adjudication_id'], 'covering_flow')
+    covered = _members(members, decision['adjudication_id'], 'covered_movement')
+    eligible_ids = {row['observation_id'] for row in eligible}
+    if not (covering and covered and covering | covered <= eligible_ids
+            and not covering & covered):
+        return set(), set(), [f'coverage members unavailable: {decision["adjudication_id"]}'], []
+    intervals = {row['observation_id']: interval for row, interval, _ in dated}
+    if any(not any(cover_id in interval_ids and cover_id in intervals
+                   and intervals[cover_id][0] <= intervals[move_id][0]
+                   and intervals[move_id][1] <= intervals[cover_id][1]
+                   for cover_id in covering)
+           for move_id in covered & interval_ids):
+        return set(), set(), [f'covered movement outside covering flow: {decision["adjudication_id"]}'], []
+    return (covering & interval_ids, covered & interval_ids, [],
+            [decision['adjudication_id']])
+
+
+def account_for(conn, agreement_id, perimeter_id, currency, valid_cutoff,
+                knowledge_cutoff, raw_values=None):
+    """One account. Selection and completeness require in-force decisions."""
+    observations = _rows(conn, 'observations')
+    timings = _rows(conn, 'timings')
+    decisions = _rows(conn, 'adjudications')
+    members = _rows(conn, 'adjudication_members')
+    current = _current(decisions, 'adjudication_id', knowledge_cutoff,
+                       review_field='decided_at',
+                       superseding_statuses=('accepted', 'rejected', 'withdrawn'))
+    eligible, dated, reasons = _eligible_intervals(
+        observations, timings, agreement_id, currency, valid_cutoff,
+        knowledge_cutoff, raw_values)
     coverage = [r for r in current if r['decision_type'] == 'flow_coverage'
                 and r['subject_kind'] == 'agreement' and r['subject_id'] == agreement_id]
     complete = [r for r in coverage if r['verdict'] == 'complete']
     if len(complete) != 1:
         reasons.append('complete coverage not reviewed')
-    for decision in coverage:
-        covering = _members(members, decision['adjudication_id'], 'covering_flow')
-        covered = _members(members, decision['adjudication_id'], 'covered_movement')
-        dated_ids = {row['observation_id'] for row, _, _ in dated}
-        if covering and covered and covering | covered <= dated_ids and not covering & covered:
-            excluded.update(covered)
-            decision_ids.append(decision['adjudication_id'])
-        elif covering or covered:
-            reasons.append(f'coverage members unavailable: {decision["adjudication_id"]}')
-    included = [(row, day, amount) for row, day, amount in dated
-                if row['observation_id'] not in excluded]
-    subtotal = sum((amount for _, _, amount in included), Decimal(0))
+    position_decision = complete[0] if len(complete) == 1 else (coverage[0] if len(coverage) == 1 else None)
     reported = []
     opening = closing = None
-    if complete:
+    if position_decision:
         opening, closing, reported, position_reasons = _positions(
-            observations, timings, members, complete[0], agreement_id, currency,
+            observations, timings, members, position_decision, agreement_id, currency,
             valid_cutoff, knowledge_cutoff, raw_values)
         reasons += position_reasons
     if opening is None:
         reasons.append('verified opening unavailable')
     elif opening[1] >= valid_cutoff:
         reasons.append('opening outside reporting interval')
-    elif any(interval[0] <= opening[1] for _, interval, _ in included):
-        reasons.append('movement outside opening interval')
+    reasons += _membership_reasons(conn, agreement_id, perimeter_id, opening,
+                                   valid_cutoff, knowledge_cutoff)
+    interval_rows, interval_reasons = _interval_rows(dated, opening, valid_cutoff)
+    reasons += interval_reasons
+    interval_ids = {row['observation_id'] for row, _, _ in interval_rows}
+    excluded, occurrence_reasons, decision_ids = _occurrence_exclusions(
+        decisions, members, interval_ids, knowledge_cutoff)
+    reasons += occurrence_reasons
+    reviewed_covering, covered, cover_reasons, cover_decisions = _reviewed_cover(
+        coverage, members, eligible, dated, interval_ids)
+    excluded.update(covered)
+    reasons += cover_reasons
+    decision_ids += cover_decisions
+    unreviewed = interval_ids - excluded - reviewed_covering
+    if unreviewed:
+        reasons.append('unreviewed flows: ' + ', '.join(sorted(unreviewed)))
+        excluded.update(unreviewed)
+    if reviewed_covering & excluded:
+        reasons.append('covering flow unresolved')
+    included = [(row, interval, amount) for row, interval, amount in interval_rows
+                if row['observation_id'] in reviewed_covering
+                and row['observation_id'] not in excluded]
+    subtotal = sum((amount for _, _, amount in included), Decimal(0))
     exact = not reasons and closing is not None
     reconstructed = opening[0] + subtotal if exact else None
     return {
@@ -221,6 +292,18 @@ def account_for(conn, agreement_id, perimeter_id, currency, valid_cutoff,
     }
 
 
+def _latest_knowledge(conn, valid_cutoff):
+    return conn.execute(
+        "SELECT max(day) FROM ("
+        "SELECT recorded_at AS day FROM observations UNION ALL "
+        "SELECT recorded_at FROM timings UNION ALL "
+        "SELECT recorded_at FROM perimeters UNION ALL "
+        "SELECT recorded_at FROM adjudications UNION ALL "
+        "SELECT decided_at FROM adjudications UNION ALL "
+        "SELECT decided_at FROM relations)"
+    ).fetchone()[0] or valid_cutoff
+
+
 def build(ledger_dir=LEDGER_DIR, valid_cutoff=None, knowledge_cutoff=None):
     """Validate CSVs, derive available account requests, and pin both cutoffs."""
     if valid_cutoff is None:
@@ -231,8 +314,10 @@ def build(ledger_dir=LEDGER_DIR, valid_cutoff=None, knowledge_cutoff=None):
     if raw_errors:
         raise ValueError('; '.join(raw_errors))
     columns = schema.header('observations')
-    id_index, value_index = columns.index('observation_id'), columns.index('value')
-    raw_values = {row[id_index]: row[value_index] for row in raw_rows}
+    id_index = columns.index('observation_id')
+    amount_columns = ('value', 'value_low', 'value_high')
+    raw_values = {row[id_index]: {name: row[columns.index(name)] for name in amount_columns}
+                  for row in raw_rows}
     with tempfile.TemporaryDirectory() as temporary:
         database = Path(temporary) / 'ledger.sqlite'
         errors = build_ledger(ledger_dir, database)
@@ -243,8 +328,7 @@ def build(ledger_dir=LEDGER_DIR, valid_cutoff=None, knowledge_cutoff=None):
         conn.row_factory = sqlite3.Row
         try:
             if knowledge_cutoff is None:
-                knowledge_cutoff = conn.execute(
-                    "SELECT max(recorded_at) FROM observations").fetchone()[0] or valid_cutoff
+                knowledge_cutoff = _latest_knowledge(conn, valid_cutoff)
             flow_rows = conn.execute(
                 "SELECT DISTINCT subject_id, currency FROM observations WHERE "
                 "subject_kind='agreement' AND measure='flow' AND flow_type='commitment' "

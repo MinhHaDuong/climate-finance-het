@@ -56,6 +56,8 @@ def _validate_site(payloads):
             raise ValueError(f'Missing rendering asset: {asset}')
     for view in VIEWS:
         json.loads(payloads[f'site/data/{view}.json'])
+    if b'load("accounts")' in payloads['site/app.js'] and 'site/data/accounts.json' not in payloads:
+        raise ValueError('Missing account view required by renderer')
     return routes(payloads)
 
 
@@ -183,6 +185,14 @@ def freeze_bundle(root, output, *, source_root=None, include_sources=False):
 
 def _build_view(root, view, output):
     """Reuse existing pure exporter functions for one candidate handoff."""
+    if view == 'accounts':
+        from jetp.build_accounts import build as build_accounts
+
+        config = yaml.safe_load((root / 'config/jetp_observatory.yaml').read_text())
+        result = build_accounts(root / 'data/jetp', valid_cutoff=config['cutoff'])
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(result, sort_keys=True, separators=(',', ':')) + '\n')
+        return
     from jetp.build_observatory import (
         comparison_data,
         country_data,
@@ -216,7 +226,7 @@ def build_candidate(root, output, *, accepted, builder=None, source_root=None, i
         # Skip the local document staging at the copy, not only at the capture:
         # it can hold the whole archived snapshot.
         shutil.copytree(root / SITE, site, ignore=shutil.ignore_patterns(*SITE_EXCLUDE))
-        for view in VIEWS:
+        for view in (*VIEWS, *(("accounts",) if (site / 'data/accounts.json').exists() else ())):
             (builder or _build_view)(root, view, site / 'data' / f'{view}.json')
         # Older accepted bundles remain renderer-compatible.  A publication-aware
         # checkout regenerates its sidecar from the just-built country payloads.

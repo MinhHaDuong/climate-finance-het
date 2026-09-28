@@ -7,7 +7,7 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
-from jetp.build_accounts import account_for, build
+from jetp.build_accounts import _latest_knowledge, account_for, build
 from jetp.build_observatory import perimeter_headlines
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,7 +62,9 @@ def _fixture():
          decision_type='flow_coverage', subject_kind='agreement',
          subject_id='agreement-1', verdict='complete', status='accepted',
          decided_at='2026-04-01', decided_by='reviewer', recorded_at='2026-04-01')
-    for identity, role in (('flow-3', 'covering_flow'),
+    for identity, role in (('flow-1', 'covering_flow'),
+                           ('flow-3', 'covering_flow'),
+                           ('flow-5', 'covering_flow'),
                            ('flow-4', 'covered_movement'),
                            ('opening', 'opening'), ('closing', 'closing')):
         _add(conn, 'adjudication_members', adjudication_id='cover-1',
@@ -130,12 +132,12 @@ def test_coverage_cannot_remove_a_flow_outside_the_account():
     conn = _fixture()
     try:
         conn.execute("UPDATE adjudication_members SET id='flow-missing' "
-                     "WHERE adjudication_id='cover-1' AND role='covering_flow'")
+                     "WHERE adjudication_id='cover-1' AND id='flow-3'")
         result = _account(conn)
         assert result['status'] == 'incomplete'
-        assert Decimal(result['documented_subtotal']) == 17
+        assert Decimal(result['documented_subtotal']) == 0
         assert result['residual'] is None
-        assert 'flow-4' in result['included_observation_ids']
+        assert 'flow-4' in result['excluded_observation_ids']
         assert 'coverage members unavailable: cover-1' in result['uncertainty']
     finally:
         conn.close()
@@ -153,8 +155,10 @@ def test_accepted_supersession_replaces_occurrence_members():
             _add(conn, 'adjudication_members', adjudication_id='occ-2',
                  kind='observation', id=identity, role='occurrence')
         result = _account(conn)
-        assert result['included_observation_ids'] == ['flow-1', 'flow-2', 'flow-3']
-        assert Decimal(result['documented_subtotal']) == 17
+        assert result['included_observation_ids'] == ['flow-1', 'flow-3']
+        assert Decimal(result['documented_subtotal']) == 12
+        assert result['status'] == 'incomplete'
+        assert 'unreviewed flows: flow-2' in result['uncertainty']
     finally:
         conn.close()
 
@@ -173,6 +177,158 @@ def test_exact_period_flow_and_membership_validity():
         result = _account(conn)
         assert result['status'] == 'incomplete'
         assert 'agreement perimeter membership unreviewed' in result['uncertainty']
+    finally:
+        conn.close()
+
+
+def test_unreviewed_flow_cannot_create_a_false_exact_total():
+    conn = _fixture()
+    try:
+        _add(conn, 'observations', observation_id='flow-extra',
+             subject_kind='agreement', subject_id='agreement-1', measure='flow',
+             flow_type='commitment', basis='gross', value=9, currency='USD',
+             line_id='extra', method='review', recorded_at='2026-04-01', status='accepted')
+        _add(conn, 'timings', timing_id='flow-extra-time', observation_id='flow-extra',
+             date_role='event', date='2026-02-01', date_precision='day',
+             recorded_at='2026-04-01')
+        result = _account(conn)
+        assert result['status'] == 'incomplete'
+        assert Decimal(result['documented_subtotal']) == 15
+        assert result['residual'] is None
+        assert 'unreviewed flows: flow-extra' in result['uncertainty']
+    finally:
+        conn.close()
+
+
+def test_future_review_cannot_complete_an_earlier_knowledge_account():
+    conn = _fixture()
+    try:
+        conn.execute("UPDATE adjudications SET decided_at='2026-05-01' "
+                     "WHERE adjudication_id='cover-1'")
+        result = _account(conn)
+        assert result['status'] == 'incomplete'
+        assert result['reconstructed_closing'] is None and result['residual'] is None
+        assert 'complete coverage not reviewed' in result['uncertainty']
+    finally:
+        conn.close()
+
+
+def test_default_knowledge_advances_after_review_without_new_observation():
+    conn = _fixture()
+    try:
+        assert _latest_knowledge(conn, '2026-03-31') == '2026-04-01'
+        conn.execute("UPDATE adjudications SET decided_at='2026-05-01', "
+                     "recorded_at='2026-05-01' WHERE adjudication_id='cover-1'")
+        assert _latest_knowledge(conn, '2026-03-31') == '2026-05-01'
+    finally:
+        conn.close()
+
+
+def test_membership_must_cover_opening_and_closing():
+    conn = _fixture()
+    try:
+        conn.execute("UPDATE relations SET valid_from='2026-03-01'")
+        result = _account(conn)
+        assert result['status'] == 'incomplete'
+        assert result['residual'] is None
+        assert 'agreement perimeter membership unreviewed' in result['uncertainty']
+    finally:
+        conn.close()
+
+
+def test_rejected_membership_successor_revokes_the_old_relation():
+    conn = _fixture()
+    try:
+        _add(conn, 'relations', relation_id='member-revoked', from_kind='agreement',
+             from_id='agreement-1', relation='member_of', to_kind='perimeter',
+             to_id='scope', status='rejected', method='review',
+             decided_at='2026-04-02', decided_by='reviewer', supersedes='member-1')
+        result = _account(conn)
+        assert result['status'] == 'incomplete'
+        assert 'agreement perimeter membership unreviewed' in result['uncertainty']
+    finally:
+        conn.close()
+
+
+def test_preopening_flow_is_outside_documented_subtotal():
+    conn = _fixture()
+    try:
+        conn.execute("UPDATE timings SET date='2025-12-31' WHERE observation_id='flow-5'")
+        result = _account(conn)
+        assert Decimal(result['documented_subtotal']) == 12
+        assert result['included_observation_ids'] == ['flow-1', 'flow-3']
+        assert 'flow-5' not in result['included_observation_ids']
+    finally:
+        conn.close()
+
+
+def test_equal_scalar_bounds_keep_exact_amount():
+    conn = _fixture()
+    try:
+        conn.execute("UPDATE observations SET value_low=3, value_high=3 "
+                     "WHERE observation_id='flow-5'")
+        result = _account(conn)
+        assert result['status'] == 'exact'
+        assert Decimal(result['documented_subtotal']) == 15
+    finally:
+        conn.close()
+
+
+def test_blank_raw_csv_bounds_are_absent():
+    conn = _fixture()
+    try:
+        raw = {row['observation_id']: {'value': str(row['value']),
+                                       'value_low': '', 'value_high': ''}
+               for row in conn.execute('SELECT * FROM observations')}
+        result = account_for(conn, 'agreement-1', 'scope', 'USD', '2026-03-31',
+                             '2026-04-02', raw)
+        assert result['status'] == 'exact'
+        assert Decimal(result['documented_subtotal']) == 15
+    finally:
+        conn.close()
+
+
+def test_covered_movement_must_fit_covering_flow_interval():
+    conn = _fixture()
+    try:
+        conn.execute("UPDATE timings SET date='2026-03-15' WHERE observation_id='flow-4'")
+        result = _account(conn)
+        assert result['status'] == 'incomplete'
+        assert result['residual'] is None
+        assert 'covered movement outside covering flow: cover-1' in result['uncertainty']
+    finally:
+        conn.close()
+
+
+def test_covering_flow_before_opening_cannot_exclude_later_movement():
+    conn = _fixture()
+    try:
+        conn.execute("UPDATE timings SET date='2025-12-31' WHERE observation_id='flow-3'")
+        conn.execute("UPDATE timings SET date='2026-02-02' "
+                     "WHERE observation_id IN ('flow-1', 'flow-2', 'flow-5')")
+        result = _account(conn)
+        assert result['status'] == 'incomplete'
+        assert 'flow-4' in result['excluded_observation_ids']
+        assert result['residual'] is None
+        assert 'covered movement outside covering flow: cover-1' in result['uncertainty']
+    finally:
+        conn.close()
+
+
+def test_pending_observation_correction_does_not_erase_accepted_flow():
+    conn = _fixture()
+    try:
+        _add(conn, 'observations', observation_id='flow-5-pending',
+             subject_kind='agreement', subject_id='agreement-1', measure='flow',
+             flow_type='commitment', basis='gross', value=8, currency='USD',
+             line_id='pending', method='review', recorded_at='2026-04-02',
+             status='candidate', supersedes='flow-5')
+        _add(conn, 'timings', timing_id='pending-time', observation_id='flow-5-pending',
+             date_role='event', date='2026-02-01', date_precision='day',
+             recorded_at='2026-04-02')
+        result = _account(conn)
+        assert result['status'] == 'exact'
+        assert Decimal(result['documented_subtotal']) == 15
     finally:
         conn.close()
 

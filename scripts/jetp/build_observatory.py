@@ -165,6 +165,19 @@ def perimeter_headlines(root, country_config):
         raise ValueError(errors[0])
     by_id = {r['observation_id']: r for r in
              (dict(zip(schema.header('observations'), row)) for row in rows)}
+    def indexed(table, key):
+        table_rows, table_errors = read_table(root / 'data/jetp', table, schema)
+        if table_errors:
+            raise ValueError(table_errors[0])
+        return {r[key]: r for r in
+                (dict(zip(schema.header(table), row)) for row in table_rows)}
+
+    lines = indexed('lines', 'line_id')
+    documents = indexed('documents', 'document_id')
+    retrieval_rows, retrieval_errors = read_table(root / 'data/jetp', 'retrievals', schema)
+    if retrieval_errors:
+        raise ValueError(retrieval_errors[0])
+    retrievals = [dict(zip(schema.header('retrievals'), row)) for row in retrieval_rows]
 
     def cited(identity):
         row = by_id.get(identity)
@@ -172,6 +185,9 @@ def perimeter_headlines(root, country_config):
                 or row['subject_kind'] != 'perimeter' or row['measure'] != 'envelope'
                 or row['value'] is None or not row['line_id']):
             raise ValueError(f'Headline needs an accepted cited perimeter envelope: {identity}')
+        if any(other['supersedes'] == identity and other['status'] in
+               ('accepted', 'rejected', 'withdrawn') for other in by_id.values()):
+            raise ValueError(f'Headline observation has been superseded: {identity}')
         value = Decimal(row['value']) / Decimal('1000000000')
         symbol = {'USD': '$', 'EUR': '€'}.get(row['currency'])
         if symbol is None:
@@ -180,9 +196,19 @@ def perimeter_headlines(root, country_config):
         if '.' in formatted:
             formatted = formatted.rstrip('0').rstrip('.')
         label = f'{symbol}{formatted}bn'
+        line = lines.get(row['line_id'])
+        if line is None:
+            raise ValueError(f'Headline line unavailable: {row["line_id"]}')
+        document_ids = {r['document_id'] for r in retrievals if r['sha256'] == line['sha256']}
+        if len(document_ids) != 1 or next(iter(document_ids)) not in documents:
+            raise ValueError(f'Headline line has no unique document: {row["line_id"]}')
+        document_id = next(iter(document_ids))
+        document = documents[document_id]
         return label, {'observation_id': identity, 'perimeter_id': row['subject_id'],
                        'line_id': row['line_id'], 'currency': row['currency'],
-                       'value': row['value']}
+                       'value': row['value'], 'locator': line['locator'],
+                       'sha256': line['sha256'], 'document_id': document_id,
+                       'document_title': document['title'], 'document_url': document['url']}
 
     pledge, pledge_citation = cited(country_config['pledge_observation_id'])
     result = {'pledge_label': pledge, 'pledge_citation': pledge_citation}

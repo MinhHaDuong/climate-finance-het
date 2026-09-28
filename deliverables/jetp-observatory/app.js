@@ -282,7 +282,11 @@ function fundingStatements(data, code) {
   };
 }
 function citationNote(citation) {
-  return citation ? `<small class="note">Ledger observation <code>${esc(citation.observation_id)}</code> · cited line <code>${esc(citation.line_id)}</code></small>` : "";
+  if (!citation) return "";
+  const document = citation.document_url
+    ? `${esc(citation.document_title)} · ${sourceLink({url: citation.document_url, title: citation.document_title}, "Read the cited document")}`
+    : `Source: ${esc(citation.document_title)} (no public URL)`;
+  return `<small class="note">${document} · ${esc(citation.locator)} · ledger observation <code>${esc(citation.observation_id)}</code> · cited line <code>${esc(citation.line_id)}</code></small>`;
 }
 function countryPage(code) {
   const d = countries[code],

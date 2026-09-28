@@ -19,7 +19,10 @@ SITE = Path('deliverables/jetp-observatory')
 SITE_EXCLUDE = ('documents',)
 EXTRA_INPUTS = ('config/jetp_observatory.yaml', 'scripts/jetp/build_observatory.py',
                 'scripts/jetp/_observatory_data.py', 'scripts/jetp/_publication.py',
-                'scripts/jetp/build_observatory_provenance.py')
+                'scripts/jetp/build_observatory_provenance.py',
+                'scripts/jetp/build_accounts.py', 'scripts/jetp/build_ledger.py',
+                'scripts/jetp/_ledger_headers.py', 'scripts/jetp/_ontology.py',
+                'config/jetp-ledger.sql', '.githooks/pre-commit')
 
 
 def digest(data):
