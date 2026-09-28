@@ -38,7 +38,7 @@ this dated window alone does not certify literature-review eligibility.
 | --- | --- | --- |
 | OpenAlex | All 52 query terms completed; zero incomplete. 56,478 distinct IDs after pool deduplication; 1,389,713 outgoing citation links. API allowance after run: $0.812. | 9,916 / 8,801 |
 | ISTEX | API returned four records; cumulative pool extraction yielded 754 works, all dated through 2024. | 0 / 0 |
-| Scopus | The collector found no API key on padme or doudou; no Scopus query ran. | unavailable |
+| Scopus | The collector found no API key on padme or doudou; no Scopus query ran. The author chose to record this route as unavailable on 2026-09-28. | unavailable |
 | World Bank | Three queries returned 342 distinct items; with the curated seed list, the CSV contains 354 works. No query hit the 500-item safety cap. | 45 / 28 |
 
 In the OpenAlex 2026 source records, 8,786 have an exact publication date;
@@ -46,11 +46,12 @@ three of those dates are later than 2026-09-28 and 15 records lack an exact
 date. The REL selector excludes the former and quarantines the latter. The
 28 World Bank 2026 records have exact dates no later than the search date.
 
-The offline source merge produced 58,333 unified works: 9,966 dated 2025,
-8,814 dated 2026, and one pre-existing future-dated 2027 record. These are
-discovery counts before topic, document-type, version, and quality screening.
-The previously published refined corpus has not yet been rebuilt from this
-expanded pool; its 2025–2026 counts cannot stand in for the final REL review.
+An offline source-merge preview produced 58,333 unified works: 9,966 dated
+2025, 8,814 dated 2026, and one pre-existing future-dated 2027 record. These
+are discovery counts before topic, document-type, version, and quality
+screening. The DVC merge and downstream refined-corpus outputs remain pinned
+to the prior 43,179-work pool until the full corpus-finalization run. Thus the
+old refined corpus's 2025–2026 counts cannot stand in for the final REL review.
 The unavailable Scopus route, EconLit working-paper searches, DAG-edge
 searches, journal contents checks, and working-paper/article reconciliation
 remain to be recorded in the corpus-finalization audit before the article

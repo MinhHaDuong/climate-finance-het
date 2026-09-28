@@ -529,20 +529,20 @@ stages:
       size: 53677
     - path: data/catalogs/grey_works.csv
       hash: md5
-      md5: 6b116ccf60982eeaf000b142ef7ddea9
-      size: 970656
+      md5: 040fa6208615713261dfcaecb1882628
+      size: 817689
     - path: data/catalogs/istex_works.csv
       hash: md5
-      md5: 5c52c90b8b35f319ad4abfdb738b02dd
-      size: 1663089
+      md5: 5ef315ccb2f5e433683421c95f0ba3df
+      size: 1659302
     - path: data/catalogs/oecd_works.csv
       hash: md5
       md5: 9662d287849b5cbbb78d50107b0eaa92
       size: 98295
     - path: data/catalogs/openalex_works.csv
       hash: md5
-      md5: 6f9cebdc08edbd6e7a170afbe05b1655
-      size: 112402165
+      md5: 0fa29aa8aae593ab0d797a363afef0fb
+      size: 78397849
     - path: data/catalogs/scispace_works.csv
       hash: md5
       md5: 21be3cfd3e0947eb03385134f1826e14
@@ -557,37 +557,37 @@ stages:
       size: 573921
     - path: scripts/harvest/catalog_merge.py
       hash: md5
-      md5: 6bd4ee2c4805708ef81dec8ad72fec38
-      size: 12949
+      md5: ca8d33293b422992ac04b84a46b3dec1
+      size: 12775
     - path: scripts/pipeline_io.py
       hash: md5
-      md5: f0c991246c651986b9fc6ce63aa644fb
-      size: 18373
+      md5: 3372fe9d3660cd23e701e4a12a3a4356
+      size: 18431
     - path: scripts/pipeline_loaders.py
       hash: md5
-      md5: a0cae697b16b25918c83d7c3d8897e8f
-      size: 21929
+      md5: 566959c639ea91d994e1eda7a90e224e
+      size: 18687
     - path: scripts/pipeline_progress.py
       hash: md5
       md5: 0279195c59e9de819e8b519490b26091
       size: 10311
     - path: scripts/pipeline_text.py
       hash: md5
-      md5: 23bd8c3da316f19824a97cb39283e34e
-      size: 12754
+      md5: 37fb1f5519c0f114298d8ad90de9bcff
+      size: 12354
     - path: scripts/utils.py
       hash: md5
-      md5: c4f10eee91d01b7a56bb1cba44ed12dc
-      size: 6071
+      md5: 29d2e795d9aafd45b97ded048c3be0f4
+      size: 6054
     outs:
     - path: data/catalogs/catalog_merge_report.json
       hash: md5
-      md5: ceb38e12be5054ae1493ecd57bbdcc18
-      size: 347
+      md5: 73fb9b277ce90543bcc84dfd8486b6f4
+      size: 345
     - path: data/catalogs/unified_works.csv
       hash: md5
-      md5: e2c2279acebab046bd72c84e12e453cf
-      size: 116263582
+      md5: 3633ad9f4517c02618a0ecab722a8051
+      size: 81934596
   enrich_works:
     cmd: uv run python scripts/enrich_dois.py --works-input
       data/catalogs/unified_works.csv --works-output
