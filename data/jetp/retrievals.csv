@@ -421,3 +421,7 @@ oecd-crs-energy-sen-2022-q-2026-09-28:1,oecd-crs-energy-sen-2022-q-2026-09-28,20
 oecd-crs-energy-sen-2023-q-2026-09-28:1,oecd-crs-energy-sen-2023-q-2026-09-28,2026-09-28,collected,,text/csv,,,,,22000d87fd9db7aeca5ebb561cd18adf3870b5efc0ff8ebdd03cc5557fc186ce,local-record
 oecd-crs-energy-sen-2024-q-2026-09-28:1,oecd-crs-energy-sen-2024-q-2026-09-28,2026-09-28,collected,,text/csv,,,,,825255fb9ebdbec022658cd4903ebfe1a61d18dbb48166a88128d51e19bf9f51,local-record
 oecd-rio-coefficients-survey-2020-projection:1,oecd-rio-coefficients-survey-2020-projection,2026-09-28,collected,,text/csv,,,,,11fd9bb4450b46db14334d7047aebc73f865ce581ab0bddb0bff7adcb0a8a514,local-record
+iati-energy-id-2026-09-28:1,iati-energy-id-2026-09-28,2026-09-28,collected,,application/gzip,,,,,88afadd4cf2ee612938b5cda41887d8bd150f169b2ab72ca018ffa3a77423837,script
+iati-energy-sn-2026-09-28:1,iati-energy-sn-2026-09-28,2026-09-28,collected,,application/gzip,,,,,00686134f5af343bbc376320b61a845bd6da8761284b007395722537752f823d,script
+iati-energy-vn-2026-09-28:1,iati-energy-vn-2026-09-28,2026-09-28,collected,,application/gzip,,,,,bafaa263faf8ae5d0aba0e6ca98a9f721e17156805d15a0aed99e466c9c9b1c8,script
+iati-energy-za-2026-09-28:1,iati-energy-za-2026-09-28,2026-09-28,collected,,application/gzip,,,,,1d8b378cefc7ab3e30679af3f34ba3c9cabbf07fb168985810f9720bfb81a464,script

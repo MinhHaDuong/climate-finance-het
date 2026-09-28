@@ -364,3 +364,7 @@ df64d315bc3da66d35acf0255200ed0376013502485e988ca1cac795b92b6734,../comparison/c
 22000d87fd9db7aeca5ebb561cd18adf3870b5efc0ff8ebdd03cc5557fc186ce,../comparison/crs/crs_SEN_2023_Q.csv,180412,text/csv
 825255fb9ebdbec022658cd4903ebfe1a61d18dbb48166a88128d51e19bf9f51,../comparison/crs/crs_SEN_2024_Q.csv,111393,text/csv
 11fd9bb4450b46db14334d7047aebc73f865ce581ab0bddb0bff7adcb0a8a514,../comparison/crs/rio-coefficients-2020.csv,393,text/csv
+88afadd4cf2ee612938b5cda41887d8bd150f169b2ab72ca018ffa3a77423837,../iati/ID.json.gz,42832,application/gzip
+00686134f5af343bbc376320b61a845bd6da8761284b007395722537752f823d,../iati/SN.json.gz,26947,application/gzip
+bafaa263faf8ae5d0aba0e6ca98a9f721e17156805d15a0aed99e466c9c9b1c8,../iati/VN.json.gz,29789,application/gzip
+1d8b378cefc7ab3e30679af3f34ba3c9cabbf07fb168985810f9720bfb81a464,../iati/ZA.json.gz,23432,application/gzip

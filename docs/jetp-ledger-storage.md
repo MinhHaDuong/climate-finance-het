@@ -16,7 +16,9 @@ A table too large for the repository's file ceiling, 512 000 bytes per
 file in `.githooks/pre-commit`, is chunked by country and year into
 `<table>.d/<CODE>-<year>.csv`, with numbered `-02`, `-03` shards when one
 country-year still exceeds the ceiling. Readers join those shards in numeric
-order, preserving row order within that country-year. The `.d` suffix keeps a
+order, preserving row order within that country-year. `observations` and
+`timings` get their shard country from the cited `line_id`, since those tables
+have no country column. The `.d` suffix keeps a
 chunk directory apart from a directory that shares a table's name:
 `data/jetp/documents/` is the snapshot store under DVC, not the chunks of the
 `documents` table, and the writer deletes only its `<CODE>-<year>[-NN].csv` files of
@@ -174,10 +176,11 @@ small: every edition is a new document and lines are appended, never
 renumbered. A monthly register edition adds about 3 000 lines a year for
 South Africa alone, the Indonesian plan appendices add 1 500 per edition
 pair, and the comparator pools add 1 100 World Bank records now and, for the
-four countries' energy sector, about 8 000 CRS rows and 1 800 IATI
-activities. The steady state is tens of thousands of lines a year, and the
-record format has to be designed for it, in two ways. Lines of hand-read
-documents stay per-document files reviewed row by row in a pull request.
+four countries' energy sector, about 8 000 CRS rows and 1 301 IATI country
+lines in the September 2026 draw. The steady state is tens of thousands of
+lines a year, and the record format has to be designed for it, in two ways.
+Lines of hand-read documents stay per-document files reviewed row by row in a
+pull request.
 Lines of bulk API snapshots are written by the ingestion script with a
 manifest naming the snapshot, the row count and the field spec, and the
 pull request reviews the manifest; a bulk line is adjudicated only when an

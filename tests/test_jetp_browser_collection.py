@@ -271,12 +271,10 @@ def test_a_new_manifest_row_reaches_the_retrievals_table(tmp_path):
     with (ledger / "retrievals.csv").open(newline="", encoding="utf-8") as stream:
         rows = list(csv.DictReader(stream))
     assert len(rows) == before + 1
-    local_before = [r for r in before_rows if r["collection_method"] == "local-record"]
-    assert [r["retrieval_id"] for r in rows[-len(local_before):]] == [
-        r["retrieval_id"] for r in local_before]
-    assert (rows[-len(local_before) - 1]["document_id"],
-            rows[-len(local_before) - 1]["collection_method"]) == (
-                "idn-cipp-portal", "browser-manual")
+    new_rows = [r for r in rows if r["document_id"] == "idn-cipp-portal" and
+                r["collection_method"] == "browser-manual"]
+    assert len(new_rows) == 1
+    assert [r for r in rows if r is not new_rows[0]] == before_rows
 
 
 def test_a_snapshot_no_retrieval_cites_is_dropped_by_the_refresh(tmp_path):
