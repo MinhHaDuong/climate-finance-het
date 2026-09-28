@@ -54,7 +54,7 @@ class TestCorpusCollectConfig:
         with open(path) as f:
             cfg = yaml.safe_load(f)
         assert cfg["year_min"] == 1990
-        assert cfg["year_max"] == 2024
+        assert cfg["year_max"] == 2026
 
     def test_config_has_queries_section(self):
         """#176: query strings externalized into config."""
@@ -105,7 +105,7 @@ class TestLoadCollectConfig:
         cfg = load_collect_config()
         assert isinstance(cfg, dict)
         assert cfg["year_min"] == 1990
-        assert cfg["year_max"] == 2024
+        assert cfg["year_max"] == 2026
 
 
 # ---------------------------------------------------------------------------

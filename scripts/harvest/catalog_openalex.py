@@ -13,6 +13,7 @@ Usage:
 
     --tier N          Run only tier N (default: all tiers)
     --resume          Skip OpenAlex IDs already in the pool
+    --full-scan       Revisit every query despite saved creation-date checkpoints
     --from-date D     Only fetch works created on or after YYYY-MM-DD
     --pool-only       Download to pool, don't build CSV
     --extract-only    Build CSV from existing pool, don't download
@@ -133,6 +134,7 @@ def build_record(r):
         "first_author": first_author,
         "all_authors": " ; ".join(all_authors_list),
         "year": r.get("publication_year", ""),
+        "publication_date": r.get("publication_date", ""),
         "journal": journal,
         "abstract": abstract,
         "language": r.get("language", ""),
@@ -185,14 +187,13 @@ def extract_from_pool(config):
     all_raw = load_pool_records("openalex")
     log.info("%d raw records in pool", len(all_raw))
 
-    # Deduplicate by OpenAlex ID
-    seen_ids = set()
-    unique_raw = []
+    # Prefer the latest raw copy: a full scan can refresh a 2025/26 record
+    # originally pooled before publication_date was retained.
+    latest_by_id = {}
     for r in all_raw:
         oa_id = r.get("id", "").replace("https://openalex.org/", "")
-        if oa_id not in seen_ids:
-            seen_ids.add(oa_id)
-            unique_raw.append(r)
+        latest_by_id[oa_id] = r
+    unique_raw = list(latest_by_id.values())
     log.info("%d unique after dedup", len(unique_raw))
 
     # Default: use the least restrictive tier (min_concept_groups=0)
@@ -248,9 +249,13 @@ def main():
                         help="Run only this tier (default: all)")
     parser.add_argument("--resume", action="store_true",
                         help="Skip OpenAlex IDs already in pool")
-    parser.add_argument("--from-date", type=str, default=None,
-                        help="Only fetch works created on/after YYYY-MM-DD "
-                             "(auto-detected from last run when --resume)")
+    date_mode = parser.add_mutually_exclusive_group()
+    date_mode.add_argument("--full-scan", action="store_true",
+                           help="Ignore query-date checkpoints while retaining "
+                                "--resume ID deduplication; use after widening years")
+    date_mode.add_argument("--from-date", type=str, default=None,
+                           help="Only fetch works created on/after YYYY-MM-DD "
+                                "(auto-detected from last run when --resume)")
     parser.add_argument("--pool-only", action="store_true",
                         help="Download to pool, don't build CSV")
     parser.add_argument("--extract-only", action="store_true",
@@ -281,7 +286,7 @@ def main():
         return
 
     # Load per-query sidecar dates for incremental runs
-    query_dates = load_query_dates() if args.resume else {}
+    query_dates = load_query_dates() if args.resume and not args.full_scan else {}
     global_from_date = args.from_date  # explicit --from-date overrides per-query
 
     if global_from_date:

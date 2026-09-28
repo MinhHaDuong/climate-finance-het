@@ -23,6 +23,26 @@ class Response:
         return self._payload
 
 
+def test_full_scan_refreshes_recent_existing_records(monkeypatch, tmp_path):
+    records = [
+        {"id": "https://openalex.org/W1", "publication_year": 2026,
+         "publication_date": "2026-09-01"},
+        {"id": "https://openalex.org/W2", "publication_year": 2024,
+         "publication_date": "2024-01-01"},
+    ]
+    response = Response()
+    response._payload = {"results": records, "meta": {"count": 2, "next_cursor": None}}
+    monkeypatch.setattr(pool, "polite_get", lambda *args, **kwargs: response)
+    appended = []
+    monkeypatch.setattr(pool, "append_to_pool", lambda batch, path: appended.extend(batch))
+    n, exhausted, completed = pool.fetch_query(
+        "climate finance", 0, 0, {"W1", "W2"}, str(tmp_path / "pool.jsonl.gz"),
+        year_min=1990, year_max=2026, refresh_since=2025,
+    )
+    assert (n, exhausted, completed) == (1, False, True)
+    assert appended == records[:1]
+
+
 @pytest.mark.parametrize("interruption", ["zero_budget", "rate_limit"])
 def test_interrupted_query_replays_original_window(monkeypatch, tmp_path, interruption):
     sidecar = tmp_path / "_query_dates.json"

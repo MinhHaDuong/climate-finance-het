@@ -237,6 +237,11 @@ def merge_catalogs(
     catalog frame. Extracted from main() so the dedup guards (ticket 0288)
     can exercise the real merge path on fixtures. Returns the unified frame
     plus the per-procedure removal counters for the run report (R1-12)."""
+    # Older source catalogs predate optional publication-date metadata.
+    for col in WORKS_COLUMNS:
+        if col not in combined.columns:
+            combined[col] = ""
+
     # Normalize text fields — fix encoding artifacts from upstream aggregators
     text_fields = ["title", "abstract", "first_author", "all_authors",
                    "journal", "keywords"]

@@ -38,7 +38,7 @@ from utils import (
     CONFIG_DIR,
     EMBEDDINGS_PATH,
     get_logger,
-    load_analysis_config,
+    load_collect_config,
     normalize_doi,
     normalize_doi_safe,
     save_csv,
@@ -434,14 +434,14 @@ def _flag5_subset(df):
     Returns (abstract_bearing, in_window). The stages are reported separately
     because an empty result means different things: no abstract-bearing work at
     all is a corpus with nothing to score, whereas abstract-bearing works that
-    all fall outside the periodization window points at an unusable ``year``
+    all fall outside the collection window points at an unusable ``year``
     column — and that one used to read as "no embeddings".
     """
     abstract_bearing = df[
         df["abstract"].notna() & (df["abstract"].str.len() > 50)].copy()
     abstract_bearing["year_num"] = pd.to_numeric(
         abstract_bearing["year"], errors="coerce")
-    periodization = load_analysis_config()["periodization"]
+    periodization = load_collect_config()
     in_window = abstract_bearing[
         (abstract_bearing["year_num"] >= periodization["year_min"])
         & (abstract_bearing["year_num"] <= periodization["year_max"])]
@@ -462,7 +462,7 @@ def load_embeddings(df, cheap=False, embeddings_path=None, skip=False,
     enrich_embeddings.py, so ``embeddings[i]`` belongs to ``emb_df`` row i by
     construction. Position is never assumed: the two frames are filtered
     independently — enrich_embeddings embeds every titled work in the
-    periodization window, this loader wants the abstract-bearing subset — and
+    collection window, this loader wants the abstract-bearing subset — and
     the day the row sets diverged, the length check turned Flag 5 off on every
     run behind a log.warning (ticket 0336).
 
@@ -513,7 +513,7 @@ def load_embeddings(df, cheap=False, embeddings_path=None, skip=False,
     key_to_row = {str(k): i for i, k in enumerate(keys) if str(k)}
 
     if emb_df.empty:
-        periodization = load_analysis_config()["periodization"]
+        periodization = load_collect_config()
         raise RuntimeError(
             f"{len(abstract_bearing)} abstract-bearing works, none with a year "
             f"in {periodization['year_min']}-{periodization['year_max']}. The "
@@ -760,4 +760,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

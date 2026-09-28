@@ -42,7 +42,8 @@ LAST_RUN_PATH = os.path.join(POOL_DIR, "openalex", "_last_run.txt")
 
 # Fields to request from OpenAlex (reduces payload, includes referenced_works)
 OA_SELECT = ",".join([
-    "id", "doi", "display_name", "publication_year", "authorships",
+    "id", "doi", "display_name", "publication_year", "publication_date",
+    "authorships",
     "primary_location", "abstract_inverted_index", "language", "keywords",
     "concepts", "cited_by_count", "referenced_works", "type",
 ])
@@ -158,7 +159,8 @@ def query_slug(term):
 # --- Download phase ---
 
 def fetch_query(search_term, delay, limit, existing_ids, pool_file,
-                from_date=None, year_min=None, year_max=None):
+                from_date=None, year_min=None, year_max=None,
+                refresh_since=None, refreshed_ids=None):
     """Fetch all works matching a search term, append raw JSON to pool.
 
     Parameters
@@ -179,6 +181,10 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
         Minimum publication year (inclusive).
     year_max : int, optional
         Maximum publication year (inclusive).
+    refresh_since : int, optional
+        Re-fetch existing works published since this year during a full scan.
+    refreshed_ids : set, optional
+        Shared set preventing duplicate refreshes across query terms.
 
     Returns
     -------
@@ -189,6 +195,8 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
 
     """
     cursor = "*"
+    if refreshed_ids is None:
+        refreshed_ids = set()
     total_fetched = 0
     n_new = 0
     batch = []
@@ -224,7 +232,12 @@ def fetch_query(search_term, delay, limit, existing_ids, pool_file,
         for r in data.get("results", []):
             oa_id = r.get("id", "").replace("https://openalex.org/", "")
             if oa_id in existing_ids:
-                continue
+                pub_year = r.get("publication_year")
+                if not (refresh_since is not None and pub_year is not None
+                        and int(pub_year) >= refresh_since
+                        and oa_id not in refreshed_ids):
+                    continue
+                refreshed_ids.add(oa_id)
             existing_ids.add(oa_id)
             batch.append(r)
             n_new += 1
@@ -285,6 +298,7 @@ def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
     queries_skipped = 0
     stop_no_budget = False
     budget_start = None
+    refreshed_ids = set()
 
     for tier_num in sorted(tiers.keys()):
         if stop_no_budget:
@@ -344,7 +358,9 @@ def _download_tiers(tiers, args, existing_ids, query_dates, global_from_date,
             log.info('Querying: "%s"%s', term, date_info)
             n_new, out_of_budget, completed = fetch_query(
                 term, args.delay, args.limit, existing_ids, pf,
-                from_date=from_date, year_min=year_min, year_max=year_max)
+                from_date=from_date, year_min=year_min, year_max=year_max,
+                refresh_since=year_max - 1 if getattr(args, "full_scan", False) else None,
+                refreshed_ids=refreshed_ids)
             grand_total += n_new
             if completed:
                 query_dates[slug] = today

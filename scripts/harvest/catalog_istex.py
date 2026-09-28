@@ -73,7 +73,8 @@ def build_record(d):
                 affs.append(aff)
     affiliations = " ; ".join(dict.fromkeys(affs))
 
-    year = d.get("publicationDate", "")
+    publication_date = d.get("publicationDate", "")
+    year = str(publication_date)[:4]
     journal = d.get("host", {}).get("title", "")
     abstract = d.get("abstract", "")
     lang = d.get("language", [])
@@ -102,6 +103,7 @@ def build_record(d):
         "first_author": first_author,
         "all_authors": all_authors,
         "year": year,
+        "publication_date": publication_date,
         "journal": journal,
         "abstract": abstract,
         "language": language,

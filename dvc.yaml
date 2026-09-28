@@ -300,6 +300,7 @@ stages:
       - scripts/pipeline_loaders.py
       - scripts/pipeline_progress.py
       - scripts/pipeline_text.py
+      - config/corpus_collect.yaml
       - data/catalogs/enriched_works.csv
     outs:
       - data/catalogs/embeddings.npz
@@ -325,6 +326,7 @@ stages:
       - scripts/pipeline_progress.py
       - scripts/pipeline_text.py
       - config/corpus_filter.yaml
+      - config/corpus_collect.yaml
       - data/catalogs/enriched_works.csv
       - data/catalogs/embeddings.npz
     outs:

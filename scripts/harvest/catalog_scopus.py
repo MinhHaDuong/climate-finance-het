@@ -102,6 +102,7 @@ def main():
                 "first_author": e.get("dc:creator", ""),
                 "all_authors": e.get("dc:creator", ""),
                 "year": (e.get("prism:coverDate", "") or "")[:4],
+                "publication_date": e.get("prism:coverDate", ""),
                 "journal": e.get("prism:publicationName", ""),
                 "abstract": e.get("dc:description", ""),
                 "language": "",

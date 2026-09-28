@@ -7,7 +7,7 @@
 # (too large to inline here — multiple concept/keyword/title queries).
 
 year_min: 1990
-year_max: 2024
+year_max: 2026
 
 # Query strings for non-OpenAlex sources.
 # Each value is the base query for the corresponding API.
