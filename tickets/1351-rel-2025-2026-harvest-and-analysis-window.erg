@@ -1,0 +1,45 @@
+%erg 0.1
+Title: REL: harvest through the final 2026 search date with a separate analysis window
+Created: 2026-09-28
+Author: Codex
+
+--- log ---
+2026-09-28T00:00Z Codex created from author decision to include 2025 and available 2026 research, including working papers
+
+--- body ---
+## Context
+
+`config/corpus_collect.yaml` still sets `year_max: 2024`, so new API queries
+cannot reliably add relevant 2025–2026 research. `config/analysis.yaml` also
+ends the shared periodization at 2024. The REL decision is to harvest all
+available research through the dated final search, include relevant 2025 and
+2026 works (including working papers), present 2025 as the last complete year,
+and flag 2026 as partial. The corpus pool is cumulative, so records already
+dated 2025+ do not prove those years have been comprehensively searched.
+
+## Actions
+
+1. Specify and apply a Phase-1 collection window that reaches the final REL
+   search date in 2026 across each relevant source, without silently admitting
+   future-dated 2027 records as observations from 2026. Record the execution
+   date and the actual publication-date rule used by each source.
+2. Keep the REL analytic window separate from existing deliverables' pinned
+   periodizations. Include 2025 in complete-year comparisons and report 2026
+   separately as a partial year; working papers follow the same eligibility
+   rule and are reconciled with later article versions.
+3. Check every collector and downstream filter that reads
+   `config/corpus_collect.yaml` or `config/analysis.yaml`; document what
+   changes for REL and what remains pinned for other outputs.
+4. Test inclusion of representative 2025 and pre-cutoff 2026 journal and
+   working-paper records, exclusion or quarantine of future-dated records,
+   and preservation of the existing outputs' configured windows.
+
+## Exit criteria
+
+- [ ] A dated REL harvest covers 2025 and eligible 2026 works in every
+      relevant collection route; the chosen cutoff is recorded with queries.
+- [ ] 2025 and 2026 are distinguishable in the REL analytic data, with 2026
+      marked partial; future-dated records receive an explicit disposition.
+- [ ] Other deliverables' periodization does not change unintentionally.
+- [ ] Changed-behaviour tests and the required corpus WP gate pass on padme,
+      with the corpus available; the PR records the gate and resulting commit.
