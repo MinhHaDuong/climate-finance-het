@@ -1662,7 +1662,7 @@ const GLOSSARY_THEMES = [
   ["How documents are read", {
     classes: ["comparator_record", "crosswalk", "document", "external_identifier", "line",
       "observation", "publisher", "retrieval", "snapshot", "timing"],
-    lists: ["date_precision", "date_role", "decision_status", "decision_type", "document_type",
+    lists: ["adjudication_role", "date_precision", "date_role", "decision_status", "decision_type", "document_type",
       "line_classification", "mapping_relation", "retrieval_status", "term_kind"],
   }],
   ["Statuses", { lists: ["asset_state", "axis", "delivery", "money", "project_stage"] }],
