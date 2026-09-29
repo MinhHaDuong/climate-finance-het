@@ -8,6 +8,14 @@ The same checks run on the local preview and on the public bundle (ticket
 archived-copy checks follow ``documents/index.json``: where the server serves
 it, each listed copy must be linked and open, and where it does not, no page
 may link into ``documents/``.
+
+Recipe VN3 of ticket 0834 is a manual step, not a check here (author's
+decision, 2026-09-29, ticket 1610): from Bac Ai, the page shows one cited
+document (``vnm-evn-cdp-bac-ai-2025``) and, in the block "Collected in the
+coverage review of 12 Sept 2026 (not cited)", six collected documents, among
+them MOIT bulletin 5 (``vnm-moit-newsletter-05-2025-07``), which opens from
+that block. The ledger supports no more until M2 (tracker 1500) resolves the
+legacy links.
 """
 
 import argparse
@@ -491,148 +499,6 @@ def check_observations(page, url, staged):
     assert link.get_attribute('href').startswith(entry['url'])
     check_archived(page, url, page.locator(archived(key)).first, entry, staged,
                    exact=False, opens=False)
-
-
-def check_facts(page, url, staged):
-    """Exercise stage three: a fact's fold-out, its descent, and a document's climb.
-
-    Recipe VN of ticket 0834: from Bac Ai, the fold-out lists its ledger rows
-    verbatim and a source card opens MOIT bulletin 5 (July 2025); the Viet Nam
-    page shows the RMP 2023 table and the 2025 portfolio side by side, with the
-    sentence that no link is established. Recipe SA: from a register project,
-    the descent reaches its ledger row and opens the Q1 2026 register snapshot.
-    From the RMP on the Documents page, the climb lists the 279 positions and
-    no fact of 2025.
-    """
-    documents = page.request.get(url + '/data/documents.json').json()['documents']
-    tables = served_tables(page, url)
-    vietnam = page.request.get(url + '/data/VNM.json').json()
-    bac_ai = next(p for p in vietnam['projects']
-                  if p['id'] == 'vnm-project-bac-ai-pumped-hydro')
-    observations = page.request.get(url + '/data/observations/VNM.json').json()
-    served = [row for row in observations if row['project_id'] == bac_ai['id']]
-    # The fact's evidence is the observations view's own rows, read from that
-    # view in the browser and never copied into the country view (0855).
-    assert 'evidence' not in bac_ai and len(served) == 3, len(served)
-
-    page.goto(url + '/#project/' + bac_ai['id'])
-    page.wait_for_selector('#project-evidence details[data-evidence-count]')
-    assert bac_ai['coverage'] in page.locator('h1 [data-review-state]').inner_text()
-    # The fold-out itself, not the per-row detail elements nested inside it.
-    fold = page.locator('#project-evidence details[data-evidence-count]')
-    assert fold.get_attribute('data-evidence-count') == str(len(served))
-    fold.locator('> summary').click()
-    assert page.locator('#project-evidence tbody tr').count() == len(served)
-    # The ledger's own words, one pill per row, never recoded.
-    assert page.locator('#project-evidence tbody .pill').all_inner_texts() == [
-        row['verification'] for row in served
-    ]
-    # Every ledger row whose document the registry knows links to the
-    # publisher's page — by fingerprint, or by source id where the collection
-    # kept no bytes; an archived link joins it only where this server holds
-    # the copy those bytes name.
-    by_sha = {row['sha256']: row for row in documents if row['sha256']}
-    ids = {row['id'] for row in documents}
-    assert page.locator(publisher('#project-evidence a[data-observation-id]')).count() == sum(
-        1 for row in served
-        if (row['sha256'] in by_sha if row['sha256'] else row['source_id'] in ids)
-    )
-    assert page.locator(archived('#project-evidence a[data-observation-id]')).count() == sum(
-        1 for row in served
-        if row['sha256'] and by_sha.get(row['sha256'], {}).get('local_path') in staged
-    )
-    # The bulletin is reached through the source card, the one place the
-    # record names it: its host and fingerprint, and the archived PDF where
-    # this server holds it.
-    assert page.locator('.sources > li').count() == len(bac_ai['sources'])
-    bulletin = next(row for row in documents
-                    if row['id'] == 'vnm-moit-newsletter-05-2025-07' and row['local_path'])
-    facts = page.locator('[data-document-facts="vnm-moit-newsletter-05-2025-07"]')
-    assert 'jetp.moit.gov.vn' in facts.inner_text(), facts.inner_text()
-    assert facts.locator(f'[data-sha256="{bulletin["sha256"]}"]').count() == 1
-    check_archived(page, url,
-                   page.locator('a[data-archived-source="vnm-moit-newsletter-05-2025-07"]'),
-                   bulletin, staged)
-
-    # Side by side, no link: the two figures come from the M1a manifest and the
-    # country view, and the page counts stay 3 named + 21 unpublished.
-    manifest = page.request.get(url + '/data/m1a/manifest.json').json()
-    page.goto(url + '/#funding/VNM')
-    page.wait_for_selector('#vnm-side-by-side')
-    block = page.locator('#vnm-side-by-side')
-    assert str(manifest['countries']['VNM']['row_count']) in block.locator(
-        '[data-side="rmp-2023"]'
-    ).inner_text()
-    assert str(vietnam['record_count']) in block.locator(
-        '[data-side="portfolio-2025"]'
-    ).inner_text()
-    assert 'No link between the 2023 table and the 2025 portfolio' in block.inner_text()
-    assert page.locator('.metrics .metric strong').all_inner_texts()[:2] == ['3', '21']
-
-    # Recipe SA: from a register project, the fold-out row opens the snapshot.
-    zaf = page.request.get(url + '/data/observations/ZAF.json').json()
-    register = next(row for row in zaf
-                    if row['source_id'] == 'zaf-jet-investment-register-q1-2026')
-    entry = next(row for row in documents
-                 if row['id'] == register['source_id'] and row['local_path'])
-    page.goto(url + '/#project/' + register['project_id'])
-    page.wait_for_selector('#project-evidence details[data-evidence-count]')
-    page.locator('#project-evidence details[data-evidence-count] > summary').click()
-    key = f'#project-evidence a[data-observation-id="{register["event_id"]}"]'
-    link = page.locator(publisher(key))
-    link.wait_for()
-    assert link.get_attribute('href') == entry['url'], link.get_attribute('href')
-    copy = page.locator(archived(key))
-    if entry['local_path'] in staged:
-        assert copy.get_attribute('href').startswith(entry['local_path'])
-        with page.expect_popup() as popup:
-            copy.click()
-        opened = popup.value
-        opened.wait_for_load_state()
-        assert opened.url.endswith(entry['local_path'])
-        opened.close()
-    else:
-        assert copy.count() == 0
-
-    # The climb: the RMP lists its 279 positions and no fact of 2025, joined
-    # at read time from the served VNM views (ticket 0858).
-    linked = climb(tables, 'vnm-rmp-2023', 'VNM')
-    assert linked['facts'] == [] and linked['ledger'] == []
-    assert len(linked['m1a']) == 279
-    page.goto(url + '/#documents')
-    page.wait_for_selector('#documents-filters')
-    page.locator('#documents-search').fill('vnm-rmp-2023')
-    # The link is keyed by the attempt's row key (ticket 0853), not by the
-    # source identifier: the RMP has two attempts, and either row climbs.
-    rmp = next(row for row in documents if row['id'] == 'vnm-rmp-2023' and row['local_path'])
-    row = page.locator('#documents-results tbody tr').filter(
-        has=page.locator(publisher(f'a[data-document-id="{rmp["row_key"]}"]'))
-    ).first
-    extracted = row.locator('details[data-extracted-count]')
-    assert extracted.get_attribute('data-extracted-count') == '279'
-    facts = row.locator('details[data-facts-count]')
-    assert facts.get_attribute('data-facts-count') == '0'
-    extracted.locator('summary').click()
-    assert extracted.locator('li').count() == 279
-    assert facts.locator('a[href^="#project/"]').count() == 0
-    # A registry row nothing cites says so, rather than showing empty lists.
-    uncited = next(row for row in documents
-                   if not any(climb(tables, row['id'], row['country']).values()))
-    page.locator('#documents-search').fill(uncited['id'])
-    # The note lands once the row's country views have loaded.
-    page.locator(f'[data-uncited="{uncited["id"]}"]').first.wait_for()
-
-    # A reviewed record's pedigree links to the publisher's page of the bytes
-    # it pins, and opens those bytes where this server holds them.
-    page.goto(url + '/#statements')
-    page.wait_for_selector('[data-reviewed-evidence-id]')
-    evidence = page.request.get(url + '/data/reviewed-evidence.json').json()
-    proofs = [proof for record in evidence['records'] for proof in record['evidence']]
-    assert page.locator(publisher('a[data-reviewed-source]')).count() == sum(
-        1 for proof in proofs if proof['sha256'] in by_sha)
-    assert page.locator(archived('a[data-reviewed-source]')).count() == sum(
-        1 for proof in proofs
-        if by_sha.get(proof['sha256'], {}).get('local_path') in staged)
 
 
 def check_paper_trail(page, url):
