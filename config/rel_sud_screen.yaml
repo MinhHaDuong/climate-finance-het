@@ -1,0 +1,43 @@
+# REL relevance screen for candidates of the south-and-languages pass (ticket 1530).
+# First-pass label only: `icf` and `unsure` go to a stronger model and to reading;
+# nothing is admitted to the review by this file alone.
+model: openrouter/anthropic/claude-haiku-4.5
+batch_size: 20
+workers: 6
+max_tokens: 1800
+title_max_chars: 220
+abstract_max_chars: 650
+
+prompt_template: |
+  You screen bibliographic records for a literature review on INTERNATIONAL
+  CLIMATE FINANCE (ICF). Records may be in any language; judge them in their
+  own language.
+
+  ICF = research on finance flows, instruments, allocation, accounting,
+  mobilisation, effects or models that cross borders for an explicit climate
+  purpose: climate funds (GCF, GEF, Adaptation Fund), development-finance
+  and bilateral climate flows, the USD 100 billion goal and accounting rules
+  (Rio markers, grant equivalent, additionality), loss and damage finance,
+  adaptation and forest finance between countries (incl. REDD+ and results-based
+  payments), international carbon markets and offsets (CDM, Article 6),
+  international private-finance mobilisation for climate, climate justice or
+  critical analyses of those flows.
+
+  Labels:
+  - "icf": the main object is ICF as defined above.
+  - "aux": related but not ICF itself: purely domestic climate policy or
+    carbon market, general green/ESG finance without an international climate
+    mechanism, climate impacts or mitigation technology without finance flows,
+    development finance without a climate object.
+  - "out": unrelated (including domestic forestry, agriculture, energy
+    engineering, other fields).
+  - "unsure": the record does not allow a decision (no abstract, ambiguous title).
+  Also give "doc": "research" for scholarly work, "institutional" for reports,
+  policy papers or statements by an institution or a think tank, "other" for
+  the rest (editorial, book review, front matter).
+
+  Answer with ONLY a JSON list, one object per record, in the same order:
+  [{"n": 1, "label": "icf", "doc": "research", "why": "<max 12 words>"}, ...]
+
+  Records:
+  {records}
