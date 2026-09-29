@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Make the accounts view's ledger identity independent of the SQLite version
+Created: 2026-09-29
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-29T13:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`scripts/jetp/build_accounts.py` names the ledger it read by `ledger_sha256`,
+the SHA-256 of the raw bytes of a temporary SQLite file written by
+`VACUUM INTO`, and derives `run_id` from it. Those bytes depend on the SQLite
+library, which ships inside each Python build: the same ledger digests to
+9cdd4fec... on doudou (3.47.1), 5606733d... on padme's `.venv` (3.45.1) and
+fbf2ab89... on a fresh `uv sync` clone on padme (3.53.1). A version-neutral
+dump (schema, then every table's rows sorted) hashed identically on all three.
+
+The served `deliverables/jetp-observatory/data/accounts.json` still carries
+`eed348e1...`, last regenerated in fe5e75d2 (PR #1547); the ledger content
+changed afterwards (PRs #1548 and #1559) and no test compares the committed
+view with a rebuild, so the drift went unnoticed. Science lane: a served view
+out of step with the ledger it claims to describe.
+
+Author decision (2026-09-29): fix the digest, do not pin SQLite. Three
+environments and two Python minors would each need the pin, and a pin only
+defers the next drift.
+
+## Exit criteria
+
+- [ ] `ledger_sha256` is the hash of a canonical dump of the ledger database
+      (tables in a fixed order, rows in primary-key order, values serialized
+      with an explicit type-tagged encoding so NULL, empty string, integer,
+      real and text cannot collide), documented in a docstring.
+- [ ] A test builds the digest through two code paths that produce different
+      SQLite file layouts and asserts equal digests; it fails on the raw-bytes
+      digest and passes on the canonical one. A one-cell change moves the digest.
+- [ ] A test asserts that a fresh rebuild of `accounts.json` from the committed
+      ledger equals the committed `accounts.json`.
+- [ ] `accounts.json` is regenerated on doudou and its rebuild on padme is
+      byte-identical; `accounts.json` is the only served file that changes.
+- [ ] `make check-fast`, `make lint`, and `make check-jetp` on padme pass.

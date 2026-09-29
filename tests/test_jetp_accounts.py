@@ -1,14 +1,19 @@
 """Derived commitment accounts preserve decisions, cutoffs and uncertainty."""
 
+import hashlib
 import json
 import re
 import sqlite3
 from decimal import Decimal
 from pathlib import Path
 
+import jetp.build_accounts as module
 import pytest
+from jetp import build_ledger as ledger_build
 from jetp.build_accounts import _latest_knowledge, account_for, build
+from jetp.build_ledger import content_digest
 from jetp.build_observatory import perimeter_headlines
+from test_jetp_ledger_ddl import _valid_tables, _write
 
 ROOT = Path(__file__).resolve().parents[1]
 pytestmark = pytest.mark.wp_jetp
@@ -331,6 +336,87 @@ def test_pending_observation_correction_does_not_erase_accepted_flow():
         assert Decimal(result['documented_subtotal']) == 15
     finally:
         conn.close()
+
+
+def _relayout(database, page_size):
+    """Rewrite a SQLite file with another page size and reversed row order.
+
+    Same content, different bytes: the layout a VACUUM INTO of another SQLite
+    version would produce is not reproducible on demand, but any layout change
+    stands in for it.
+    """
+    source = sqlite3.connect(database)
+    statements = list(source.iterdump())
+    source.close()
+    head = [s for s in statements if not s.startswith('INSERT')]
+    inserts = [s for s in statements if s.startswith('INSERT')]
+    alternate = Path(str(database) + '.alt')
+    alternate.unlink(missing_ok=True)
+    target = sqlite3.connect(alternate)
+    target.execute(f'PRAGMA page_size = {page_size}')
+    target.executescript('\n'.join(head[:-1] + inserts[::-1] + head[-1:]))
+    target.close()
+    alternate.replace(database)
+
+
+def test_ledger_digest_is_independent_of_the_sqlite_file_layout(tmp_path, monkeypatch):
+    """Ticket 1545: the same ledger written two ways has one ledger_sha256."""
+    ledger_dir = tmp_path / 'ledger'
+    _write(ledger_dir, _valid_tables())
+    raw = {}
+
+    def relaid(ledger_dir, database, page_size):
+        errors = ledger_build.build(ledger_dir, database)
+        if not errors:
+            _relayout(database, page_size)
+            raw[page_size] = hashlib.sha256(Path(database).read_bytes()).hexdigest()
+        return errors
+
+    digests = {}
+    for page_size in (1024, 8192):
+        monkeypatch.setattr(module, 'build_ledger',
+                            lambda d, db, p=page_size: relaid(d, db, p))
+        digests[page_size] = module.build(ledger_dir, '2026-09-23')
+    assert raw[1024] != raw[8192], 'control: the two files must differ byte-wise'
+    assert digests[1024]['ledger_sha256'] == digests[8192]['ledger_sha256']
+    assert digests[1024]['run_id'] == digests[8192]['run_id']
+
+
+def test_one_cell_change_moves_the_ledger_digest(tmp_path):
+    before, after = _valid_tables(), _valid_tables()
+    after['lines'][0]['locator'] = 'p1 r3'
+    digests = []
+    for name, tables in (('before', before), ('after', after)):
+        _write(tmp_path / name, tables)
+        digests.append(build(tmp_path / name, '2026-09-23')['ledger_sha256'])
+    assert digests[0] != digests[1]
+
+
+def test_ledger_digest_encoding_separates_storage_classes():
+    """NULL, '', 1, 1.0 and '1' are different cells, so different digests."""
+    def digest_of(value):
+        conn = sqlite3.connect(':memory:')
+        conn.execute('CREATE TABLE t (k INTEGER PRIMARY KEY, v)')
+        conn.execute('INSERT INTO t VALUES (1, ?)', (value,))
+        try:
+            return content_digest(conn)
+        finally:
+            conn.close()
+
+    seen = [digest_of(value) for value in (None, '', 1, 1.0, '1', b'1', 'N', 'I1')]
+    assert len(set(seen)) == len(seen)
+
+
+def test_committed_accounts_view_matches_a_rebuild():
+    """The served accounts.json is the ledger's: a rebuild reproduces it byte for byte.
+
+    Every field derives from committed inputs (the ledger CSVs, the ontology
+    tables and config/jetp_observatory.yaml): none depends on the git
+    revision, the clock or the machine, so the comparison is exact.
+    """
+    served = (ROOT / 'deliverables/jetp-observatory/data/accounts.json').read_text(encoding='utf-8')
+    rebuilt = json.dumps(build(ROOT / 'data/jetp'), sort_keys=True, separators=(',', ':')) + '\n'
+    assert rebuilt == served
 
 
 def test_real_ledger_has_no_admitted_commitment_flow_and_build_is_stable():
