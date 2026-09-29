@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-29T12:00Z HDMX-coding-agent created
 
+2026-09-29T14:50Z HDMX-coding-agent note decision de l'auteur (2026-09-29) : une partie en role channel n'est pas un bailleur ; filtre role=funder sur les agreements et les projets (dix agreements ZAF et leurs dix statements servaient leur channel comme funder avant cette branche ; cpd4e-germany perd GIZ) ; aucun affichage des channels ajoute ; la verification de build sur un document_id de coverage inconnu reste en place, non tranchee
 --- body ---
 ## Context
 
@@ -49,6 +50,12 @@ Author decisions (2026-09-29):
   (never called by `check_site`, stale Bac Ai identifier, typed constant
   3) and is deleted.
 - The navigation is not restructured here (a later ticket does that).
+- A party in the `channel` role is not a funder (author, 2026-09-29): the
+  funder rule keeps the `funder` role only, for agreements and for the
+  projects they are components of; channels are shown nowhere as funders
+  and get no display of their own. The build-time stop on a coverage
+  `document_ids` entry the ledger does not hold stays in place; the author
+  has not ruled on it.
 
 ## Relevant files
 
