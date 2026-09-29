@@ -407,26 +407,31 @@ def test_ledger_digest_encoding_separates_storage_classes():
     assert len(set(seen)) == len(seen)
 
 
-def test_committed_accounts_view_matches_a_rebuild():
+@pytest.fixture(scope='session')
+def real_ledger_build():
+    """One build of the committed ledger per session: validating it takes minutes."""
+    return build(ROOT / 'data/jetp')
+
+
+def test_committed_accounts_view_matches_a_rebuild(real_ledger_build):
     """The served accounts.json is the ledger's: a rebuild reproduces it byte for byte.
 
     Every field derives from committed inputs (the ledger CSVs, the ontology
     tables and config/jetp_observatory.yaml): none depends on the git
-    revision, the clock or the machine, so the comparison is exact.
+    revision, the clock or the machine, so the comparison is exact. It is
+    also the determinism check: the served file is an earlier, independent
+    build, on another day and possibly another machine.
     """
     served = (ROOT / 'deliverables/jetp-observatory/data/accounts.json').read_text(encoding='utf-8')
-    rebuilt = json.dumps(build(ROOT / 'data/jetp'), sort_keys=True, separators=(',', ':')) + '\n'
+    rebuilt = json.dumps(real_ledger_build, sort_keys=True, separators=(',', ':')) + '\n'
     assert rebuilt == served
 
 
-def test_real_ledger_has_no_admitted_commitment_flow_and_build_is_stable():
-    first = build(ROOT / 'data/jetp')
-    second = build(ROOT / 'data/jetp')
-    assert first == second
-    assert first['accounts'] == []
-    assert first['availability']
-    assert first['ontology_ref'].startswith('sha256:')
-    assert json.dumps(first, sort_keys=True) == json.dumps(second, sort_keys=True)
+def test_real_ledger_has_no_admitted_commitment_flow(real_ledger_build):
+    assert real_ledger_build['accounts'] == []
+    assert real_ledger_build['availability']
+    assert real_ledger_build['ontology_ref'].startswith('sha256:')
+    assert re.fullmatch(r'[0-9a-f]{64}', real_ledger_build['ledger_sha256'])
 
 
 def test_served_headlines_match_cited_perimeter_observations():
