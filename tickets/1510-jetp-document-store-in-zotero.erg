@@ -1,0 +1,67 @@
+%erg 0.1
+Title: JETP document store in a dedicated Zotero group library
+Created: 2026-09-29
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-29T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Tracker. Author decision (2026-09-29, Imagine conversation): the JETP
+observatory should not maintain its own document management. Zotero offers a
+stable data model and a plugin ecosystem, and the author cites these documents
+from Zotero anyway (EDM rule), so any other store would make two catalogues of
+the same items. A due-diligence check of Python alternatives (papis, DataLad /
+git-annex, Paperless-ngx, Mayan EDMS, Calibre) found none better for this role.
+
+Today step D1 is a home-made document manager: `data/jetp/documents.csv`
+(392 rows), `snapshots.csv`, and the content-addressed object store
+`data/jetp/documents/objects/<sha256>` under DVC (padme remote, about 282 MB).
+
+## Division of labour
+
+- Zotero (a dedicated group library, separate from the author's personal
+  library, cloud-synced for distribution) holds document identity (title, publisher, date,
+  language, type, URL), files (one attachment per byte version), edition and
+  translation links, reading, annotation and citation.
+- The repo keeps what is research data, not document management:
+  `retrievals.csv`, `publisher-link-checks.csv`, `web-archive-captures.csv`,
+  `decisions.md`, and steps D2-D4.
+
+## Design constraints
+
+1. The existing `document_id` goes into each Zotero item's Extra field, so the
+   D2-D4 keys stay unchanged.
+2. The pipeline never reads live Zotero. It reads a committed export of the
+   group library (Web API, or a Better BibTeX auto-export), pinned like any
+   other input.
+3. Every locator records the hash of the file it read. A check flags an
+   attachment whose bytes changed. A new publisher version becomes a new
+   attachment on the same item.
+4. DVC shrinks to a hash-keyed cache filled from Zotero, plus the frozen
+   evidence for each release. It stops being a second system of record.
+5. The group may be public. A public Zotero group library shares metadata,
+   not attachment contents (author, 2026-09-29), so the files stay
+   non-redistributed, as in `docs/jetp-storage.md` ("not served wholesale").
+   Public access to the documents themselves already goes through the Web
+   Archive snapshots (`web-archive-captures.csv`).
+
+## Children
+
+- 1511: pilot on Viet Nam (58 documents, the smallest country).
+- Later children are filed after the pilot's findings: the remaining
+  countries, switching the harvester (`corpus_harvest_ledger.py`) to write
+  through the Web API (reuse the `zotero-import` / `index-source` machinery),
+  and retiring `documents.csv` as a hand-edited table.
+
+## Exit criteria
+
+- [ ] Every JETP document lives in the group library, with its `document_id`
+      in Extra.
+- [ ] The pipeline builds D1-D4 from the committed export, with no read of
+      live Zotero.
+- [ ] The observatory and the D2-D4 outputs are byte-identical before and
+      after the migration.
+- [ ] Integration review done (`/roar` step 8).
