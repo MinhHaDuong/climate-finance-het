@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Pre-warm dcor's numba cache before parallel pytest gates
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1571
+
+--- log ---
+2026-09-29T09:00Z HDMX-coding-agent created
+
+2026-09-29T12:38Z HDMX-coding-agent closed — autoclosed — PR #1571
+--- body ---
+## Context
+On a fresh environment (empty `NUMBA_CACHE_DIR`), `make check` at
+`PYTEST_WORKERS=16` fails: the 20 S2_energy/dcor tests (test_divergence,
+test_bias_flag, test_golden_values, test_embedding_sensitivity,
+test_null_model, test_subsampling_ribbon) abort with
+`LLVM ERROR: Symbol not found: __gufunc__...` then SIGABRT, at rates that grow
+with worker count (0 at 0-1 workers, ~1 at 2-4, 1-4 at 8, 6-17 at 16; padme,
+origin/main 5382a1f5 and later).
+
+Reproduced without pytest (investigation, padme): 16 concurrent
+`import dcor` processes sharing one empty cache abort in 5-15 of 16;
+per-process caches: 0 of 16; a plain `@njit(cache=True)` function: 0 of 16.
+Replayed on 2026-09-29 for this ticket: doudou 6 of 6 runs abort (1-16 of
+16 processes), padme 5 of 15 runs (1-7 of 16); after one serial import,
+0 aborts in 3 doudou runs and 5 padme runs. The cause is specific to dcor:
+`dcor/_fast_dcov_avl.py` builds two gufuncs (cpu and parallel) from one inner
+function, both `cache=True`, both compiled at import time, and concurrent
+writers race on the shared cache index. A damaged cache sometimes persists
+(serial reruns abort about half the time).
+
+A warm cache removes every numba failure: one serial `import dcor` first, then
+the full suite at 16 workers, gave zero `Symbol not found` (3006 passed,
+43 skipped). Author decision 2026-09-29: fix it as its own small ticket, not
+inside 0870.
+
+## Decision
+Pre-warm once, serially, before pytest in every Makefile recipe that runs
+pytest with `-n $(PYTEST_WORKERS)` and can import dcor. Not per-worker caches:
+the scripts the tests launch as subprocesses share one environment and one
+cache, so a per-worker `NUMBA_CACHE_DIR` would still race inside a worker.
+Not a version pin: the race is in how dcor declares its gufuncs, present in
+every dcor release that uses `cache=True` at import.
+
+## Exit criteria
+- [ ] One `numba-prewarm` step (variable or prerequisite target), written once,
+      runs `$(PYTHON) -c "import dcor"` before every pytest recipe that passes
+      `-n $(PYTEST_WORKERS)` and can select a dcor-importing test
+- [ ] A failing warm-up import fails the gate (make stops, non-zero exit)
+- [ ] Warm-cache cost of the step is measured and stated in the PR (numba
+      import plus cache load: seconds, not the cold compile it absorbs)
+- [ ] No separate test: the gate itself is the replay. The red half is shown
+      by hand and recorded here: without the warm-up, 16 concurrent
+      `import dcor` on an empty cache abort in 6/6 runs on doudou and 5/15
+      on padme (author decision 2026-09-29: the PR keeps the fix alone)
+- [ ] On padme, `make check` with `PYTEST_WORKERS=16` on an empty
+      `NUMBA_CACHE_DIR` passes three times, each with a fresh cache directory
+- [ ] `make check-fast` and `make lint` pass
