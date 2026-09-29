@@ -2,12 +2,14 @@
 Title: REL — passe de recherche « Sud et langues » : premiere execution (OpenAlex, revues E)
 Created: 2026-09-29
 Author: haduong
+Closed: Code de recherche et de tri, configurations, tests, passes f et g sur padme, sentinelles et archive livres ; suite sous 1653, 1655, 1656.
 
 --- log ---
 2026-09-29T11:00Z haduong created
 2026-09-29T11:00Z haduong note Auteur : approuve le plan d'Astra (conception/rel-sud-et-langues-annexe-brouillon.md) et demande le lancement sur padme ; l'assistant execute.
 2026-09-29T17:30Z HDMX-coding-agent note Critères de sortie ajustes a ce qui est livre : PRISMA, protocole, paragraphe de methode et paquet de reproduction relevent du gel (1656) ; le tri ICF de tout le pool et l'injection au catalogue relevent de 1655 ; sources hors OpenAlex : 1653.
 
+2026-09-29T15:52Z HDMX-coding-agent closed — Code de recherche et de tri, configurations, tests, passes f et g sur padme, sentinelles et archive livres ; suite sous 1653, 1655, 1656.
 --- body ---
 ## Contexte
 
@@ -26,6 +28,10 @@ prompt de l'etape 2), leurs tests, la recherche finale (passes f et g sur padme,
 requetes gelees), 25 693 oeuvres triees puis relues (etape 2 : 4 792), 55 sentinelles.
 Archive de sauvegarde : `~/data/projets/climate-finance-het/rel_sud/2026-09-29/`
 (manifeste SHA-256).
+
+Le fichier d'entree du tri (dedoublonnage des recherches, mise a l'ecart du corpus) et les
+tableaux de l'etape 2 ont ete produits par des scripts ponctuels, archives dans
+`~/data/projets/climate-finance-het/rel_sud/2026-09-29/adhoc-scripts/` ; ils entrent au depot sous 1655.
 
 Suite, dans des tickets propres :
 - tri ICF de tout le pool et injection au catalogue : 1655 ;
