@@ -2,11 +2,13 @@
 Title: Restore the project views' lost content and show each document's collection state
 Created: 2026-09-29
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1575
 
 --- log ---
 2026-09-29T12:00Z HDMX-coding-agent created
 
 2026-09-29T14:50Z HDMX-coding-agent note decision de l'auteur (2026-09-29) : une partie en role channel n'est pas un bailleur ; filtre role=funder sur les agreements et les projets (dix agreements ZAF et leurs dix statements servaient leur channel comme funder avant cette branche ; cpd4e-germany perd GIZ) ; aucun affichage des channels ajoute ; la verification de build sur un document_id de coverage inconnu reste en place, non tranchee
+2026-09-29T16:12Z HDMX-coding-agent closed — autoclosed — PR #1575
 --- body ---
 ## Context
 
