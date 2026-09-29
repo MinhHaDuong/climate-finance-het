@@ -6,6 +6,7 @@ Author: haduong
 --- log ---
 2026-09-29T11:00Z haduong created
 2026-09-29T11:00Z haduong note Auteur : approuve le plan d'Astra (conception/rel-sud-et-langues-annexe-brouillon.md) et demande le lancement sur padme ; l'assistant execute.
+2026-09-29T17:30Z HDMX-coding-agent note Critères de sortie ajustes a ce qui est livre : PRISMA, protocole, paragraphe de methode et paquet de reproduction relevent du gel (1656) ; le tri ICF de tout le pool et l'injection au catalogue relevent de 1655 ; sources hors OpenAlex : 1653.
 
 --- body ---
 ## Contexte
@@ -13,19 +14,31 @@ Author: haduong
 Enfant de 0700 (0702 en aval). Premiere execution de la strate obligatoire
 « Sud et langues » du protocole `conception/rel-audit-finalisation-corpus.md`.
 Cette passe automatise ce qui est automatisable avec OpenAlex : 76 executions
-de requetes (7 strates regionales x langues obligatoires x 4 themes) et le
-balayage integral 1990-2026 de six revues E. Elle n'ecrit pas dans le pool
-OpenAlex ni dans le corpus raffine : sortie separee, comparee au corpus par
-DOI et identifiant OpenAlex ; les candidats absents passent ensuite par la
-collecte de phase 1 apres decision.
+de requetes (7 strates regionales x langues obligatoires x 4 themes), une
+requete anglaise de comblement, le balayage integral 1990-2026 de six revues E
+et cinq requetes par revue (Q). Elle n'ecrit pas dans le pool OpenAlex ni dans le
+corpus raffine : sortie separee, comparee au corpus par DOI et identifiant
+OpenAlex.
 
-Limites assumees : requetes traduites par l'assistant, non relues par un
-lecteur natif ; sentinelles pas encore fixees (la passe est donc exploratoire,
-pas une cloture) ; SciELO, Redalyc, CNKI, AJOL, eLIBRARY, GARUDA, CLACSO,
-series de working papers non couverts ici.
+Livre : le code de recherche et de tri (`scripts/rel_sud_search.py`,
+`scripts/rel_sud_screen.py`), leurs configurations (requetes, tri, sentinelles,
+prompt de l'etape 2), leurs tests, la recherche finale (passes f et g sur padme,
+requetes gelees), 25 693 oeuvres triees puis relues (etape 2 : 4 792), 55 sentinelles.
+Archive de sauvegarde : `~/data/projets/climate-finance-het/rel_sud/2026-09-29/`
+(manifeste SHA-256).
+
+Suite, dans des tickets propres :
+- tri ICF de tout le pool et injection au catalogue : 1655 ;
+- sources du Sud hors OpenAlex : 1653 ;
+- PRISMA, protocole, paragraphe de methode, paquet de reproduction, gel : 1656.
+
+Limites assumees : requetes traduites par l'assistant et corrigees par deux
+conseillers, non relues par un lecteur natif ; SciELO, Redalyc, CNKI, AJOL,
+eLIBRARY, GARUDA, CLACSO et series de working papers non couverts ici ; filtre
+de pays d'affiliation seulement sur les requetes anglaises.
 
 ## Exit criteria
-- [ ] `scripts/rel_sud_search.py` + `config/rel_sud_search.yaml` + test, `make check-fast` et `make lint` verts
-- [ ] Execution sur padme : registre par requete (chaine, filtre, date, attendu/recu, complet ou non) archive
-- [ ] Rapport : par strate et par revue E, nombre de notices, part deja au corpus, candidats absents ; requetes incompletes listees
-- [ ] Sources non automatisees et acces bloques listes explicitement, strates marquees « incomplete » tant qu'elles le sont
+- [x] `scripts/rel_sud_search.py`, `scripts/rel_sud_screen.py`, leurs configurations et tests (`tests/test_rel_sud_search.py`, `tests/test_rel_sud_screen.py`) ; `make lint` vert sur la branche
+- [x] Execution sur padme : registre par requete (chaine, filtre, date, attendu/recu, complet ou non) archive : passes f et g dans `~/rel_sud_runs/`, copie et manifeste dans l'archive du 2026-09-29
+- [x] Comptes par strate et par revue E, part deja au corpus, candidats absents, requetes incompletes : `conception/rel-prisma-flux-provisoire.md` (effectifs provisoires, chaque chiffre marque mesure ou derive)
+- [x] Sources non automatisees et acces bloques listes explicitement, strates marquees « incompletes » tant qu'elles le sont : `conception/rel-sud-et-langues-annexe-brouillon.md`, ticket 1653
