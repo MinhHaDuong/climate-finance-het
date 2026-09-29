@@ -8,6 +8,7 @@ Label: deferred
 --- log ---
 2026-09-29T00:00Z HDMX-coding-agent created
 2026-09-29T12:00Z HDMX-coding-agent note Feasibility checked: key and storage ready, group creation is the only manual step (no API endpoint); deferred to M4 at the author's request
+2026-09-29T14:00Z HDMX-coding-agent note Exit criteria aligned with 1510 decisions: observatory pages change only in document links; page-link form checked; no Zotero API call in tests or renders
 
 --- body ---
 ## Context
@@ -61,7 +62,13 @@ M4 (author, 2026-09-29). Do not start before the milestone opens.
 
 - [ ] The Viet Nam items are in the group library, each with its
       `document_id` in Extra and every snapshot attached.
-- [ ] The D2-D4 outputs and the observatory pages for Viet Nam are
-      byte-identical before and after the switch.
+- [ ] The D2-D4 outputs for Viet Nam are byte-identical before and after
+      the switch; the observatory pages differ only in their document links
+      (1510 decision 5).
+- [ ] A page-level link of the form Web Archive `id_` URL + `#page=N` opens
+      the cited page on at least one Viet Nam capture (1510 decision 5).
+- [ ] No test and no render calls the Zotero API: builds read the committed
+      export, tests read a small fixture export, and `make check-fast` passes
+      with the network off.
 - [ ] A findings note in the log of 1510: what fits, what does not, go or
       no-go for the other countries.
