@@ -17,10 +17,12 @@ Next: sweep; Gavard/Schoch; DAG and independent EconLit/OpenAlex searches;
 
 ## JETP checkpoint
 
-No deployment; no causal model (0729 DEFER). All 19 migration 0870 children are closed; 0878 retired legacy tables/readers.
-The local MVP serves 64 reviewed projects and 315 agreements; nine changed JSON views were approved.
-**Tomorrow, 2026-09-29: finish 0870 integration review** — combined diff, full suite,
-ZAF/VNM paths, counts, routes and tables. The MVP is unpublished.
+No deployment; no causal model (0729 DEFER). MVP unpublished. The 0870 integration review ran on 2026-09-29:
+full suite green on padme, criteria 3, 5 and 6 unmet; merged fixes #1570 (digest), #1571 (numba), #1572 (CRS builders),
+#1575 (lost view content, channels, collection state). Decisions are logged on 0870 and on branch `t0870-integration-testing`.
+**Next, 2026-09-30:** #1574 (register dispositions, cross-model panel: rebase, regenerate views, padme gates, merge);
+child C (trail of three + "Projects and organisations", served tables, decisions page by confidence); child D (Viet Nam
+drill-down); closing PR from `t0870-integration-testing`; `/verify-gate` on 0870; then M1b (0833).
 `make all` still awaits the figure handoff (1491); the Markdown blocker 0673 merged (#1561).
 
 ## Status
