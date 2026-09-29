@@ -2,11 +2,13 @@
 Title: Restore the CRS comparator builders retired with 0878
 Created: 2026-09-29
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1572
 
 --- log ---
 2026-09-29T09:00Z HDMX-coding-agent created
 2026-09-29T15:50Z HDMX-coding-agent note author decision (2026-09-29): tests/test_jetp_no_legacy_readers.py, which matched the bare basename manifest.csv and flagged the restored builders for the living comparison/crs/manifest.csv, is deleted rather than narrowed (harness rule for a misfiring guard; 0878's retirement is complete). PR #1572.
 
+2026-09-29T14:00Z HDMX-coding-agent closed — autoclosed — PR #1572
 --- body ---
 ## Context
 
