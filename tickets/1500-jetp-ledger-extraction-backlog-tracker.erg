@@ -1,11 +1,12 @@
 %erg 0.1
-Title: JETP ledger extraction backlog: 115 collected documents without lines (tracker)
+Title: M2: an extraction pipeline that works on every JETP document held (tracker)
 Created: 2026-09-29
 Author: HDMX-coding-agent
 
 --- log ---
-2026-09-29T10:30Z HDMX-coding-agent created
-2026-09-29T10:30Z HDMX-coding-agent note author decisions (2026-09-29, interactive): waves by yield; parser per repeated series, LLM-assisted reading with row-by-row diff review for one-offs, bulk data through an ingestion script with a manifest; independent of M1b ([[0833]]) and M1b goes first; tracker plus one child per wave, dedup pass first.
+2026-09-29T09:10Z HDMX-coding-agent created
+2026-09-29T09:10Z HDMX-coding-agent note author decisions (2026-09-29, interactive): waves by yield; parser per repeated series, LLM-assisted reading with row-by-row diff review for one-offs, bulk data through an ingestion script with a manifest; independent of M1b ([[0833]]) and M1b goes first; tracker plus one child per wave, dedup pass first.
+2026-09-29T09:14Z HDMX-coding-agent decision reframed by the author as milestone M2 of [[0725]]: the goal is code, an extraction pipeline that works on all we hold, run over all 392 documents, code polished. Children reshaped into code children (1506 to 1509) and run children (1501 to 1505). Milestone definitions: [[0725]] section "Milestones after M1".
 
 --- body ---
 ## Context
@@ -13,15 +14,16 @@ Author: HDMX-coding-agent
 Migration [[0870]] rebuilt what was already extracted and extracted nothing new.
 Measured 2026-09-29 on main (5382a1f5): 392 documents, 369 with a snapshot, 254
 with lines (13,089 lines from 253 snapshots), 115 snapshotted documents with
-zero lines, 23 with no snapshot (acquisition, out of scope). The information
-gain the migration prepares sits in the 115. The join is document, then
-`retrievals.sha256`, then `lines.sha256`: `snapshots.csv` has no `document_id`.
+zero lines, 23 with no snapshot (acquisition, out of scope). The join is
+document, then `retrievals.sha256`, then `lines.sha256`: `snapshots.csv` has no
+`document_id`.
 
 The 115 by country: ZAF 49, SEN 28, VNM 25, IDN 13. By type: progress_update 24
 (VNM 14, ZAF 9), project_page 27, data_portal 19, official_news 11,
 annual_report 7, operator_report 8, project_list 8, implementation_plan 4,
 investment_plan 3, approval_document 2, secondary_news 2. All 115 are active;
-languages en 59, vi 20, fr 16, empty 20.
+languages en 59, vi 20, fr 16, empty 20. Snapshot formats over the 115: HTML 66,
+PDF 38, octet-stream 6, xlsx 2, JSON 2, JavaScript 2.
 
 Dedup pass done at planning time (documents only, storage contract § 4): no
 tier-1 group (same fingerprint) touches the 115; no `edition_of` row exists;
@@ -29,26 +31,60 @@ one title matches an already extracted document (to be checked by 1501). Tier 2
 (normalised text) was not run: the snapshot bytes are not in a fresh worktree
 (DVC), so 1501 runs it where the bytes are.
 
+## What "works" means (M2 criterion, [[0725]])
+
+- **Replay:** the pipeline reproduces the lines of the 254 extracted documents
+  byte for byte, or every difference is explained. This is the oracle; the 115
+  have none, so they get row-by-row review.
+- **Idempotence:** re-running on an extracted document changes nothing and
+  never renumbers a `line_id`.
+- **Complete run:** all 392 documents end with lines or a recorded disposition
+  (duplicate of a canonical document, translation not canonical, no snapshot,
+  judged without extractable content, with the reason).
+- **Polish:** each extractor is red-tested by replaying a defect it must reject.
+- **Limit:** an LLM read is not byte-reproducible; the committed CSV is the
+  record. Replay and idempotence bind parsers and the writer, not a fresh LLM
+  read.
+
+## Pipeline stages
+
+1. Registry and dedup gate ([[1501]]). 2. Bytes by `sha256`, behind a registry
+interface. 3. Text layer, cached by hash and parser version. 4. Extractor:
+a per-series parser or an LLM-assisted read. 5. Writer: append-only lines,
+`line-field-specs`, dispositions. 6. Validator (`make jetp-ledger-check`) and a
+review diff. Build from cases: the first parser is the VNM progress updates;
+generalise after two or three cases, not before.
+
 ## Relation to other work
 
-- M1b ([[0833]]) covers only the four M1a documents (2,164 lines) and forbids
-  new acquisition, not extraction from archived bytes. It runs first and does
-  not wait for these waves; [[1140]] is blocked by 0833, not by extraction.
-- Fork B (dedicated document library, Zotero) may change where snapshot bytes
-  live. Lines cite `sha256` plus a locator, so the citation survives if the
-  byte address is kept. Extraction needs the bytes local; no decision here.
-- [[0920]] finishes the 55 pending links of 0874 (missing snapshots, vague
-  locators). It overlaps only on the documents it acquires.
+- M1b ([[0833]]) covers only the four M1a documents and forbids new
+  acquisition, not extraction from archived bytes. It runs first and does not
+  wait for these children. M3a discovery follows M2.
+- The document-library sessions (tickets 1510 to 1512, not yet on main) may
+  change where snapshot bytes live and offer a shared PDF text layer. The
+  registry interface of 1506 hides the first; the text layer of 1508 should
+  reuse the second if it lands. Open design point for the author: document
+  relations (`same_as`, `edition_of`, `translation_of`) are in the ledger per
+  the storage contract, while the library tracker proposes them in Zotero.
+  Settle one home before 1501 writes rows. Viet Nam is the library pilot's
+  country: its byte-identical check must compare against a frozen base while
+  the VNM waves add lines.
+- [[0920]] finishes the 55 pending links of 0874 and overlaps only on the
+  documents it acquires.
 
 ## Children, in order
 
-| Wave | Child | Scope |
+| Kind | Child | Scope |
 |---|---|---|
-| 0 | [[1501]] | dedup and canonical pass over the 115; fill the 20 empty languages |
-| 1 | [[1502]] | 47 periodic or structured documents: progress updates 24, annual and operator reports 15, project lists 8 |
-| 1' | [[1505]] | 9 one-off plans and approval documents: implementation plans 4, investment plans 3, approval documents 2 |
-| 2 | [[1503]] | 19 data portals, after checking what each snapshot holds |
-| 3 | [[1504]] | 40 project pages and news items, as lines under existing identities |
+| code | [[1506]] | pipeline core: registry interface, writer, dispositions, idempotence |
+| code | [[1508]] | format adapters (HTML, PDF text layer, xlsx, JSON) |
+| code | [[1507]] | replay harness over the 254 extracted documents |
+| code | [[1509]] | LLM-assisted extractor and review protocol |
+| run | [[1501]] | dedup and canonical pass over the 115; fill the 20 empty languages |
+| run | [[1502]] | 47 periodic or structured documents: progress updates 24, annual and operator reports 15, project lists 8 |
+| run | [[1505]] | 9 one-off plans and approval documents |
+| run | [[1503]] | 19 data portals, after checking what each snapshot holds |
+| run | [[1504]] | 40 project pages and news items |
 
 VNM and ZAF first inside each wave: they are the acceptance cases.
 
@@ -61,6 +97,8 @@ VNM and ZAF first inside each wave: they are the acceptance cases.
 
 ## Exit criteria
 
-- [ ] Children 1501 to 1505 are closed
-- [ ] Every one of the 115 documents has lines, or a recorded disposition (duplicate of a canonical document, translation not canonical, or judged without extractable content, with the reason)
-- [ ] `docs/jetp-ledger-migration.md` or the observatory How we did this page states the new counts
+- [ ] Children 1501 to 1509 are closed
+- [ ] The replay of the 254 extracted documents passes (1507)
+- [ ] All 392 documents have lines or a recorded disposition with the reason
+- [ ] Each extractor was red-tested against a defect it must reject
+- [ ] Author acceptance of M2 after an integration review, recorded in [[0725]]

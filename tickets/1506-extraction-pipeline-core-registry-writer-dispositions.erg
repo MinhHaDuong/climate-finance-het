@@ -1,0 +1,39 @@
+%erg 0.1
+Title: Extraction pipeline core: registry interface, writer, dispositions, idempotence
+Created: 2026-09-29
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-29T09:14Z HDMX-coding-agent created — code child of [[1500]] (M2)
+
+--- body ---
+## Context
+
+Stages 2 and 5 of the pipeline in [[1500]]. Today each extractor is bespoke and
+writes its own lines (`build_idn_cipp_priority_projects.py`,
+`build_sen_plan_projects.py`, `_vnm_inventory.py`, ...). The core gives them one
+way to read a document and one way to write lines, without rewriting the
+layout-specific parsers, which are research code and stay as plug-ins.
+
+## Work
+
+- Registry interface: given a `document_id`, return its metadata and the
+  bytes of its snapshots by `sha256`. Today it reads `documents.csv`,
+  `retrievals.csv` and `data/jetp/documents/objects/`; a later export from a
+  document library must swap in without touching extractors.
+- Writer: append-only lines under `lines.d/`, `line-field-specs` rows, minted
+  `line_id`s `<document_id>-<table>-<ordinal>`, never renumbered.
+- Dispositions: a document with no snapshot, a non-canonical duplicate or
+  translation, or no extractable content gets a recorded disposition with its
+  reason, not silence.
+- Idempotence: re-running on an already extracted document changes nothing.
+- Build from the first real case (the VNM progress-update series) and
+  generalise after two or three cases.
+
+## Exit criteria
+
+- [ ] One entry point runs a named document through registry, extractor and writer
+- [ ] Re-running on an extracted document leaves the tree byte-identical (test)
+- [ ] A missing snapshot, a duplicate and an empty document each yield a disposition (tests)
+- [ ] A defect replayed against the writer is rejected (red test): a renumbered `line_id`, a header that disagrees with `line-field-specs`
+- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-jetp` pass

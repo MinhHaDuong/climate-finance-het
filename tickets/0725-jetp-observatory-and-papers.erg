@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 
 2026-09-17T17:05Z HDMX-coding-agent note M1a redefined by the author: exploration in the MVP, not downloads — tracker 0834, children 0835–0839
 2026-09-22T11:05Z HDMX-coding-agent note M1a accepted by the author on 2026-09-22 after the final integration review of [[0834]] (docs/jetp-study/0834-integration-review-final-2026-09-22.md) and a four-country provenance measurement; page-level anchors exist for Viet Nam only, follow-up [[0861]]. M1b ([[0833]]) may start.
+2026-09-29T09:13Z HDMX-coding-agent decision milestones after M1 redefined by the author (2026-09-29, interactive): M2 = an extraction pipeline that works on every document held (replay of the 254 extracted, idempotence, full run over the 115, dispositions); M3a = discover to a cutoff date under a stopping rule, then freeze the registry; M3b = extract the new documents, reconcile with CRS and IATI (0721), join events and outcomes (0723), release; M4 = operate it: scheduled refresh, link-rot, launcher, shared code for AEDIST. The former M2 (live monitoring) is now M4 except its scientific parts. See section 'Milestones after M1'; children in tracker [[1500]].
 --- body ---
 
 ## Context
@@ -31,12 +32,52 @@ The first programme milestone is now **M1**, accepted in two bounded steps:
 [[0833]] / M1b overlays stable canonical IDs, a common taxonomy and only
 source-documented `same_as` / `component_of` relations. `possible_match` rows
 remain separate and counted. Monthly refresh, source watching and match
-resolution begin only in M2 after this base is accepted.
+resolution begin only after this base is accepted (the milestone that carries
+them was renamed on 2026-09-29: see the next section).
+
+## Milestones after M1 (redefined 2026-09-29)
+
+Author decision, interactive. The instrument, then the measurement, then its
+operation.
+
+- **M2, the instrument.** An extraction pipeline that works on every document
+  held (392 registered, 369 with a snapshot). Works means: it reproduces the
+  lines of the 254 documents already extracted (replay, with every difference
+  explained); re-running changes nothing and never renumbers a `line_id`; every
+  document ends with lines or a recorded disposition; the code is polished by
+  red-testing each extractor against a defect it must reject. Tracker
+  [[1500]].
+- **M3a, discover and freeze.** Discover all there is to discover at a cutoff
+  date, under a stopping rule stated in advance, then freeze the registry.
+  Two dates are published: the discovery cutoff (date of the last search) and
+  the newest document date. Rounds are logged, empty ones included, and a
+  known-item list gives a recall estimate. Draft rule: a fixed frame of
+  channel classes per country and language; a secondary-to-primary pass that
+  follows each quantitative claim of the main secondary trackers to its
+  primary source (yielding a traceability rate); stop when two consecutive
+  rounds in different channels add under 2 % new admitted documents and at
+  least 90 % of the known-item list is recovered, with a pre-declared date and
+  effort cap as backstop (numbers to be tuned). The list of unreachable
+  sources is data, released with the registry. Acceptance: the author accepts
+  the protocol, the recall estimate and the unreachable list before M3b starts.
+- **M3b, extract, reconcile, release.** Extract the documents new since M2,
+  reconcile with CRS and IATI ([[0721]]), join events, assets and outcomes
+  ([[0723]]), release a dataset that cites its `release_id`. Reconciliation
+  checks the ledger; it gives CRS and IATI no precedence over the source
+  closest to the event (rule of [[1180]]).
+- **M4, operation.** Scheduled refresh, link-rot, the pass launcher, shared code
+  for AEDIST; the recurring machinery, whose deterministic part is checked by
+  replay over the M3 release ([[1141]], [[1184]], weekly cadence of [[1140]]).
+  Rule of two: shared code is extracted to `libs/` when a second consumer runs
+  on it, not before.
 
 ## Exit criteria
 
 - [x] M1a accepted: the MVP explores documents, extractions and facts end to end on the SA and VN acceptance cases ([[0834]]); the frozen inventories of [[0832]] are its input, not its result
 - [ ] M1b bounded catalogue accepted without changing M1a or resolving `possible_match`
+- [ ] M2 accepted: the extraction pipeline replays the 254 extracted documents and has run over all documents held ([[1500]])
+- [ ] M3a accepted: registry frozen at a published cutoff, with protocol, recall estimate and unreachable list
+- [ ] M3b released: dataset extracted, reconciled with CRS and IATI, joined, citing its `release_id`
 - [ ] Children 0726–0733 delivered, or scope changes explicitly adjudicated
 - [ ] Public observatory and repeatable monthly editions operational
 - [ ] Citable dataset and three reviewable manuscripts linked to frozen releases

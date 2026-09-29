@@ -2,10 +2,12 @@
 Title: Dedup and canonical pass over the 115 unextracted JETP documents
 Created: 2026-09-29
 Author: HDMX-coding-agent
+Blocked-by: 1508
 
 --- log ---
-2026-09-29T10:30Z HDMX-coding-agent created — child of [[1500]]
+2026-09-29T09:10Z HDMX-coding-agent created — child of [[1500]]
 
+2026-09-29T09:14Z HDMX-coding-agent note reshaped 2026-09-29 under milestone M2 of [[0725]]: run child, stage 1 of the pipeline; Blocked-by 1508 for the text layer tier 2 needs
 --- body ---
 ## Context
 
