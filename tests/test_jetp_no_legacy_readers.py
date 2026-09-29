@@ -14,16 +14,32 @@ RETIRED = (
     'authority-coverage.csv',
 )
 
+# A basename a living table reuses: data/jetp/comparison/crs/manifest.csv is
+# the CRS projection manifest (ticket 0885), not the retired collection
+# history. Only its path-anchored form counts, in scripts too.
+REUSED = ('manifest.csv',)
+
 pytestmark = pytest.mark.wp_jetp
 
 
-def retired_names(text):
-    """Identify exact retired basenames in one reader's source text."""
-    return sorted(name for name in RETIRED if name in text)
+def retired_names(text, anchored=False):
+    """Retired names in one reader's source text.
+
+    A bare basename counts, except for a reused one; ``anchored`` (readers
+    outside ``scripts/jetp``) counts only the retired location ``data/jetp/``.
+    """
+    found = []
+    for name in RETIRED:
+        needle = f'data/jetp/{name}' if anchored or name in REUSED else name
+        if needle in text:
+            found.append(name)
+    return sorted(found)
 
 
 def test_guard_fails_on_retired_fixture():
     assert retired_names("reader = 'data/jetp/events.csv'") == ['events.csv']
+    assert retired_names("reader = 'data/jetp/manifest.csv'") == ['manifest.csv']
+    assert retired_names("path = source_dir / 'manifest.csv'") == []
 
 
 def test_no_production_jetp_reader_names_retired_tables():
@@ -33,8 +49,7 @@ def test_no_production_jetp_reader_names_retired_tables():
     offenders = {}
     for path in readers:
         source = path.read_text()
-        found = (retired_names(source) if path.parent == ROOT / 'scripts/jetp'
-                 else sorted(name for name in RETIRED if f'data/jetp/{name}' in source))
+        found = retired_names(source, anchored=path.parent != ROOT / 'scripts/jetp')
         if found:
             offenders[str(path.relative_to(ROOT))] = found
     assert offenders == {}
