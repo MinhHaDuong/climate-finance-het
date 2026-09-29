@@ -1,0 +1,56 @@
+sentinel,source,class,set,region,lang,year,doi,openalex_id,in_corpus_2026_09_29,title
+S03,opus-1,c,retention,Global,en,2011,10.1016/j.worlddev.2011.07.020,W2008564321,True,Coding error or statistical embellishment? ... reporting climate aid
+S04,opus-1,c,retention,Global,en,2022,10.1038/s41558-022-01482-7,W4296683578,True,Consistent and replicable estimation of bilateral climate finance
+S05,opus-1,c,retention,Global,en,2013,10.1080/14693062.2013.791146,W2019302301,True,Difficulties in accounting for private finance in international climate policy
+S07,opus-1,c,retention,Global,en,2011,10.1080/17565529.2011.599550,W2056541886,True,New and additional to what? Baselines to assess climate finance pledges
+S08,opus-1,b,other-source,Global,en,2023,,,False,Seeing Double: Decoding the additionality of climate finance
+S09,opus-1,c,retention,Global,en,2020,10.21201/2020.6621,W3167647398,True,Climate Finance Shadow Report 2020
+S10,opus-1,c,retention,Global,en,2019 (online 2017),10.1080/17565529.2017.1410087,W2773736658,True,The international climate finance accounting muddle: is there hope on the horizon?
+S13,opus-1,a,holdout,Global,en,2017 (online 2016),10.1111/rode.12271,W2439293444,False,REDD+ as result-based aid: ... bilateral agreements of Norway
+S14,opus-1,c,retention,Global,en,2009,10.3763/cpol.2008.0533,W1996545933,True,Assessing the additionality of CDM projects: practical experiences and lessons learned
+S16,opus-1,a,tuning,Global,en,2017,10.1007/s10784-016-9343-8,W2561644322,False,Allocation of aid for adaptation ...: do vulnerable countries receive more support?
+S17,opus-1,c,retention,Global,en,2025,10.1016/j.esg.2025.100255,W4409458358,True,The three missed opportunities of the UNFCCC's New Collective Quantified Goal
+S19,opus-1,c,retention,"Global (SA, Indonesia, Vietnam)",en,2025,10.1016/j.erss.2025.104103,W4410229963,True,Just Energy Transition Partnerships: an inclusive climate finance approach?
+S20,opus-1,c,retention,LAC (Brazil),en,2019,10.3390/f10030272,W2923073841,True,Amazon Fund 10 years later: lessons from the world's largest REDD+ program
+S21,opus-1,a,tuning,LAC (Brazil),pt,2026,10.51359/2238-6211.2026.267237,W7196962542,False,"Governança ambiental na Amazônia Legal: REDD+, PPCDAm, Fundo Amazônia"
+S22,opus-1,c,retention,LAC,es,2024,10.12804/revistas.urosario.edu.co/desafios/a.13762,W4400729508,True,Financiamiento de la transición energética en América Latina: el papel de los bancos multilaterales
+S23,opus-1,a,tuning,LAC (Mexico),es,2026,10.22201/fe.18701442e.2026.54.96010,W7163361817,False,El contramovimiento capturado: adaptación climática y banca pública en América Latina
+S24,opus-1,b,other-source,LAC,es,n.d. on page,,,False,"Análisis del financiamiento climático internacional en ALC, desde un enfoque de justicia climática y financiera"
+S26,opus-1,c,retention,Africa,en,2022,10.1080/14693062.2022.2093152,W4283826331,True,The green climate fund and its shortcomings in local delivery of adaptation finance
+S27,opus-1,c,retention,Africa,fr,2022,10.3917/pe.221.0043,W4220739735,True,Les financements-climat vers l'Afrique : charge ou opportunité ?
+S28,opus-1,b,other-source,Africa,en,2022,,,False,Landscape of Climate Finance in Africa
+S29,opus-1,c,retention,Africa (Lesotho),en,2023,10.4324/9781003397120-7,W4386442655,True,"Climate finance, public–private partnerships and climate injustice in Lesotho"
+S30,opus-1,a,holdout,China,zh,2018,10.12006/j.issn.1673-1719.2017.169,W2796390012,False,中国气候变化南南合作对《巴黎协定》后适应谈判的影响
+S31,opus-1,c,retention,China,en,2024,10.46830/wriwp.24.00036,W4402784245,True,China's international climate-related finance provision and mobilization for South-South cooperation
+S32,opus-1,c,retention,China,en,2025,10.3390/su17052256,W4408163093,True,China's climate aid for the Global South: changing approach and evolving institutions
+S34,opus-1,c,retention,China,en,2004,10.2139/ssrn.555906,W1561354901,True,Towards an effective implementation of CDM projects in China
+S35,opus-1,b,other-source,South Asia (India),en,2015,,,False,"Climate Change Finance, Analysis of a Recent OECD Report: Some Credible Facts Needed"
+S36,opus-1,b,other-source,South Asia (India),hi,2023,,,False,जलवायु कार्रवाई के लिए निजी वित्त के जुगाड़ से जुड़े मिथक और पैमाने से जुड़े सवाल
+S37,opus-1,c,retention,South Asia (India),en,2007,10.1016/j.enpol.2006.01.016,W1999527470,True,CDM and off-grid small-scale hydropower projects: evaluation of additionality
+S38,opus-1,a,holdout,South Asia / SE Asia,en,2002,10.1016/s0301-4215(01)00054-4,W2040775942,True,The additionality criterion for identifying CDM projects under the Kyoto Protocol
+S39,opus-1,b,other-source,South Asia (Bangladesh),en,2023,,,False,Operationalizing the Loss and Damage Fund: learning from the intended beneficiaries
+S40,opus-1,c,retention,South Asia (Bangladesh),en,2025,10.46985/kslr.v13i1.2234,W4406932058,True,"Addressing ""loss and damage"" for climate justice in the Global South"
+S41,opus-1,a,holdout,South Asia (India),en,2026,10.1080/17565529.2026.2674796,W7162189273,False,Operationalizing the loss and damage fund: equity and justice in India's climate response
+S42,opus-1,c,retention,South Asia (India),en,2025,10.1080/24730580.2025.2541331,W4412892965,True,Legal readiness towards climate finance in India: a critical evaluation
+S43,opus-1,b,other-source,SE Asia (Indonesia),id,2017,,,False,Kerjasama Indonesia-Norwegia dalam konservasi hutan ... REDD+ (Kalimantan Tengah)
+S44,opus-1,a,holdout,SE Asia (Indonesia),id,2023,10.24843/jiwsp.2023.v05.i01.p03,W4385217408,False,Analisis konsep dasar: pengakhiran Letter of Intent antara Indonesia-Norwegia dalam kerjasama REDD+
+S45,opus-1,b,other-source,SE Asia (Vietnam),vi,2023,,,False,Thúc đẩy tài chính khí hậu tại Việt Nam: thực trạng và khuyến nghị
+S46,opus-1,a,holdout,SE Asia (Vietnam),en,2017,10.3390/f8100376,W2761786550,False,"Potential impact of the REDD+ program on poverty reduction in Nghe An, Vietnam"
+S47,opus-1,a,tuning,SE Asia (Vietnam),en,2025,10.17528/cifor-icraf/009390,W4413734304,False,Rooting impactful forest carbon benefit sharing in local definitions ...: lessons from Vietnam
+S48,opus-1,c,retention,Russia,ru,2021,10.31107/2075-1990-2021-5-11-28,W3208231271,True,Изменения климатической политики и финансовых стратегий ее реализации в ЕС и России
+S49,opus-1,c,retention,Russia,ru,2025,10.17323/2949-5776-2025-3-3-57-76,W7116905687,True,Эволюция и текущее состояние климатических переговоров в ООН
+S50,opus-1,c,retention,Russia (on Africa),ru,2023,10.17323/1996-7845-2023-04-05,W4394696778,True,Проблемы и перспективы реализации политики справедливого энергетического перехода в ЮАР
+S51,opus-1,a,holdout,Russia,ru,2015,,W2197519700,False,Международное климатическое финансирование как инструмент снижения антропогенного воздействия
+S52,opus-1,a,tuning,Russia,en,2003,10.3763/cpol.2003.0307,W4241870965,False,Forging alliance with Russia: the example of a Green Investment Scheme
+S54,opus-1,c,retention,Pacific,en,2018,10.3390/su10041192,W2796870799,True,Assessing climate finance readiness in the Asia-Pacific region
+S55,opus-1,a,tuning,Pacific,fr,2019,10.4000/jso.10804,W3005703820,False,"L'Océanie, championne de la lutte contre les changements climatiques sur la scène internationale ?"
+S56,opus-1,a,tuning,Pacific,en,2017 (online 2016),10.1007/s10113-016-1085-1,W2566592515,False,International financing for climate change adaptation in small island developing states
+S58,opus-1,b,other-source,Pacific,en,2012-2014,,,False,"Pacific Climate Change Financing Assessment (framework, Nauru case)"
+S59,opus-1,b,other-source,Pacific,en,2026,,,False,Pacific Regional Climate Finance Access and Mobilisation Strategy 2025-2030
+H03,opus-2-fresh,a,holdout,Africa,en,2023,10.1007/978-3-031-30050-9_5,W4381414941,False,"Climate Change, REDD+, and Gendered Benefit Sharing in Forest-Dependent Communities of Africa"
+H06,opus-2-fresh,a,holdout,Latin America,pt,2026,10.38116/rtm39art1,W7166244895,False,"A Governança do Fundo Amazônia: cooperação internacional, participação social e os desafios do financiamento internacional climático no Brasil"
+H07,opus-2-fresh,a,holdout,Southeast Asia,en,2022,10.33541/japs.v6i2.3773,W4368240879,False,Factors Behind the Establishment and Fulfillment of Norway-Indonesia REDD+ Partnership (2010-2019)
+H08,opus-2-fresh,a,holdout,Southeast Asia,en,2026,10.59408/bjgs.v4i1.278,W7160163465,False,"INDONESIA–NORWAY COOPERATION IN REDUCING CARBON EMISSIONS IN INDONESIA UNDER THE REDD+ SCHEME, 2016–2025"
+H11,opus-2-fresh,a,holdout,South Asia,en,2026,10.65582/rrs.2026.013,W7162549974,False,Tracking Climate Finance Flows in India: The UNFCCC $100 Billion Goal
+H15,opus-2-fresh,a,holdout,Pacific,en,2026,10.5089/9798229043175.001,W7155368246,False,Climate Finance and Adaptation Needs In Pacific Island Countries
+H16,opus-2-fresh,a,holdout,Africa (topic); author and venue in Sri Lanka,en,2026,10.4038/sljsds.v1i2.49,W7170141286,False,Hegemonic Governance and Africa’s Climate Adaptation Deficit: A Critical Political Economy of International Finance Flows
