@@ -53,9 +53,14 @@ def test_stratum_queries_carry_the_spelling_variants():
     assert "Зеленый климатический фонд" in filt["Q-russia-ru-T1"]
 
 
-def test_no_stratum_run_filters_on_the_openalex_language_tag():
+def test_non_english_runs_accept_the_language_or_a_null_tag_and_english_runs_none():
     for s in rs.plan_queries(_cfg()):
-        assert "language:" not in s["filter"], s["query_id"]
+        if s["kind"] != "q":
+            continue
+        if s["language"] == "en":
+            assert "language:" not in s["filter"], s["query_id"]
+        else:
+            assert f"language:{s['language']}|null" in s["filter"], s["query_id"]
 
 
 def test_filter_carries_language_and_affiliation_countries():

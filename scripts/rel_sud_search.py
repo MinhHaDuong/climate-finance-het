@@ -109,12 +109,16 @@ def plan_queries(cfg):
                     # country filter), so only English queries are filtered
                     # by country. For the others the stratum names the query
                     # set; geography comes from the recorded `countries`.
-                    # No `language:` filter either: OpenAlex leaves it null on
-                    # some 2026 works and tags Indonesian and Russian titles
-                    # `en` (sentinels 21, 23, 44, 48, 50), and a phrase in
-                    # Portuguese is its own language filter.
+                    # Language: OpenAlex leaves the tag null on some 2026 works
+                    # (sentinels 21, 23), so non-English runs accept `lang|null`.
+                    # Dropping the filter altogether was tried and fails: Latin
+                    # tokens inside the lists (REDD, JETP, Green Climate Fund)
+                    # then match every work in the world (11,700 hits, record cap,
+                    # rate limit; run d, 2026-09-29). English runs carry the
+                    # country filter instead and no language filter.
                     "filter": build_filter(
                         expand_query(search), y0, y1,
+                        language=None if lang == "en" else f"{lang}|null",
                         countries=s["countries"] if lang == "en" else None)})
     for j in cfg["journals_e"]:
         slug = re.sub(r"\W+", "-", j["name"]).strip("-").lower()
