@@ -16,8 +16,21 @@ local:
   workers: 1
   max_tokens: 2500
   timeout: 900
+  # Decoding dominates the local run (about 24 of 25 s per batch), so the
+  # answer is one short line per record and the reason only where it is used.
+  answer_format: |-
+    Answer with ONLY one line per record, in the same order, no other text:
+    n|label|doc|why
+    "why" (max 12 words) is given only when the label is icf or unsure, and is
+    left empty otherwise. Example:
+    1|out|research|
+    2|icf|research|Green Climate Fund allocation to African countries
   request_extra:
     chat_template_kwargs: {enable_thinking: false}
+
+answer_format: |-
+  Answer with ONLY a JSON list, one object per record, in the same order:
+  [{"n": 1, "label": "icf", "doc": "research", "why": "<max 12 words>"}, ...]
 
 prompt_template: |
   You screen bibliographic records for a literature review on INTERNATIONAL
@@ -47,8 +60,7 @@ prompt_template: |
   policy papers or statements by an institution or a think tank, "other" for
   the rest (editorial, book review, front matter).
 
-  Answer with ONLY a JSON list, one object per record, in the same order:
-  [{"n": 1, "label": "icf", "doc": "research", "why": "<max 12 words>"}, ...]
+  {answer_format}
 
   Records:
   {records}

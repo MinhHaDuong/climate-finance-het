@@ -16,6 +16,7 @@ import hashlib
 import json
 import os
 import random
+import re
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -42,7 +43,8 @@ def format_record(n, rec, cfg):
 
 def build_prompt(batch, cfg):
     records = "\n".join(format_record(i, r, cfg) for i, r in enumerate(batch, 1))
-    return cfg["prompt_template"].replace("{records}", records)
+    return (cfg["prompt_template"].replace("{answer_format}", cfg["answer_format"])
+            .replace("{records}", records))
 
 
 def extract_list(text):
@@ -60,11 +62,23 @@ def extract_list(text):
     return data if isinstance(data, list) else None
 
 
+_LINE = re.compile(r"^\s*(\d+)\s*\|\s*(\w+)\s*\|\s*(\w+)\s*(?:\|(.*))?$")
+
+
+def extract_lines(text):
+    """Records from `n|label|doc|why` lines, as the dicts the JSON form yields."""
+    items = []
+    for line in (text or "").splitlines():
+        m = _LINE.match(line)
+        if m:
+            items.append({"n": int(m.group(1)), "label": m.group(2),
+                          "doc": m.group(3), "why": (m.group(4) or "").strip()})
+    return items
+
+
 def parse_answer(text, batch):
     """{openalex_id: result} for the records the answer labels validly."""
-    data = extract_list(text)
-    if data is None:
-        return {}
+    data = extract_list(text) or extract_lines(text)
     out = {}
     for item in data:
         if not isinstance(item, dict):

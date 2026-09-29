@@ -41,6 +41,22 @@ def test_parse_keeps_valid_items_and_drops_invalid_ones():
     assert sc.parse_answer(None, batch) == {}
 
 
+def test_compact_lines_parse_like_the_json_form_and_bad_lines_are_dropped():
+    batch = _recs(4)
+    reply = "1|out|research|\n2|icf|research|GCF allocation\n3|maybe|research|x\ngarbage\n4|unsure|other"
+    assert sc.parse_answer(reply, batch) == {
+        "W1": {"label": "out", "doc": "research", "why": ""},
+        "W2": {"label": "icf", "doc": "research", "why": "GCF allocation"},
+        "W4": {"label": "unsure", "doc": "other", "why": ""}}
+
+
+def test_local_prompt_asks_for_compact_lines_and_default_prompt_for_json():
+    local = {**_cfg(), **_cfg()["local"]}
+    assert "n|label|doc|why" in sc.build_prompt(_recs(1), local)
+    assert '"label": "icf"' in sc.build_prompt(_recs(1), _cfg())
+    assert "{answer_format}" not in sc.build_prompt(_recs(1), local)
+
+
 def test_local_backend_posts_the_thinking_switch_and_returns_content(monkeypatch):
     cfg = {**_cfg(), **_cfg()["local"]}
     sent = {}
