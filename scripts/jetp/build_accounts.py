@@ -19,6 +19,7 @@ import yaml
 from jetp._ledger_headers import LEDGER_DIR, load_schema, read_table
 from jetp._ontology import ontology_ref
 from jetp.build_ledger import build as build_ledger
+from jetp.build_ledger import content_digest
 
 ROOT = Path(__file__).resolve().parents[2]
 METRIC = 'gross_commitment_original_currency_v1'
@@ -323,7 +324,9 @@ def build(ledger_dir=LEDGER_DIR, valid_cutoff=None, knowledge_cutoff=None):
         errors = build_ledger(ledger_dir, database)
         if errors:
             raise ValueError('; '.join(errors))
-        digest = hashlib.sha256(database.read_bytes()).hexdigest()
+        # The ledger's identity is its content, not the bytes SQLite laid it
+        # out in: those differ by library version (ticket 1545).
+        digest = content_digest(database)
         conn = sqlite3.connect(database)
         conn.row_factory = sqlite3.Row
         try:

@@ -23,6 +23,7 @@ failure nothing is written and a previous output is removed.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import sqlite3
@@ -131,6 +132,78 @@ def _line_field_errors(conn, ledger_dir):
                               'is not in lines')
             seen.add(line_id)
     return errors
+
+
+def _tagged(value):
+    """One value as bytes whose leading tag names the storage class.
+
+    NULL, integer, real, text and blob each get their own tag, and text and
+    blob are length-prefixed, so ``NULL`` and ``''``, ``1``, ``1.0`` and
+    ``'1'`` never serialize alike. Reals use ``repr``, the shortest decimal
+    that round-trips, so the same IEEE value always prints the same.
+    """
+    if value is None:
+        return b'N'
+    if isinstance(value, bool):  # sqlite3 never returns bool; guard the tag anyway
+        return b'I' + str(int(value)).encode()
+    if isinstance(value, int):
+        return b'I' + str(value).encode()
+    if isinstance(value, float):
+        return b'R' + repr(value).encode()
+    if isinstance(value, str):
+        data = value.encode('utf-8')
+        return b'T' + str(len(data)).encode() + b':' + data
+    if isinstance(value, (bytes, memoryview)):
+        data = bytes(value)
+        return b'B' + str(len(data)).encode() + b':' + data
+    raise TypeError(f'unsupported SQLite value type {type(value).__name__}')
+
+
+def content_digest(database):
+    """SHA-256 of a canonical dump of the ledger database, whatever wrote it.
+
+    The raw bytes of a SQLite file depend on the library that wrote them (page
+    layout, header fields, freelist), so the same ledger hashed differently on
+    three SQLite versions across the project's machines (ticket 1545). This
+    digest covers the content only:
+
+    1. the schema, as every ``sqlite_master`` row of type table, index or view
+       ordered by (type, name), with its stored ``sql`` text;
+    2. every table in ``sqlite_master`` name order, each row ordered by its
+       primary-key columns and then by every column, so the order in which
+       rows were inserted does not matter;
+    3. every value serialized by :func:`_tagged`, with the table name, the
+       column list and a record separator between rows so a value cannot
+       masquerade as a neighbour.
+
+    ``database`` is a path or an open connection. The result is stable across
+    SQLite versions, page sizes, journal modes and insertion orders, and
+    changes when one cell changes.
+    """
+    conn = database if isinstance(database, sqlite3.Connection) else sqlite3.connect(
+        f'file:{Path(database)}?mode=ro', uri=True)
+    digest = hashlib.sha256()
+    try:
+        for row in conn.execute(
+                "SELECT type, name, tbl_name, sql FROM sqlite_master "
+                "WHERE type IN ('table', 'index', 'view') ORDER BY type, name"):
+            digest.update(b'S' + b''.join(_tagged(v) for v in row) + b'\n')
+        tables = [row[0] for row in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'table' "
+            "AND name NOT LIKE 'sqlite\\_%' ESCAPE '\\' ORDER BY name")]
+        for table in tables:
+            info = conn.execute(f'PRAGMA table_info("{table}")').fetchall()
+            columns = [row[1] for row in info]
+            keys = [row[1] for row in sorted((r for r in info if r[5]), key=lambda r: r[5])]
+            quoted = ', '.join(f'"{c}"' for c in columns)
+            order = ', '.join(f'"{c}"' for c in [*keys, *columns])
+            digest.update(b'T' + _tagged(table) + b''.join(_tagged(c) for c in columns) + b'\n')
+            for row in conn.execute(f'SELECT {quoted} FROM "{table}" ORDER BY {order}'):
+                digest.update(b'R' + b''.join(_tagged(v) for v in row) + b'\n')
+    finally:
+        if conn is not database:
+            conn.close()
+    return digest.hexdigest()
 
 
 def _write(conn, output):
