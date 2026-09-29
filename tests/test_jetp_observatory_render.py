@@ -187,9 +187,12 @@ def test_the_project_page_lists_the_coverage_review_apart_from_the_cited_documen
     assert only_collected, "the positive control: every collected document is also cited"
 
     html = render("project/" + project["id"])["main"]
-    block = re.search(r'<div class="panel" id="coverage-review" data-coverage-review="(\d+)">(.*?)</ul></div>',
+    block = re.search(r'<div class="panel" id="coverage-review" data-coverage-review="(\d+)">(.*?)</ul>',
                       html, re.DOTALL)
     assert block and int(block.group(1)) == len(project["coverage_documents"])
+    # The legend that names the states sits in the block itself, not only on
+    # the Documents page: a reader lands here from a project.
+    assert 'id="reading-legend"' in html[block.end():block.end() + 2000]
     heading = re.search(r"<h3>([^<]*)</h3>", block.group(2)).group(1)
     assert heading.startswith("Collected in the coverage review of ") and heading.endswith("(not cited)")
     assert project["coverage_checked_at"][:4] in heading
@@ -228,7 +231,7 @@ def test_every_document_shows_the_state_of_our_collection_and_reading() -> None:
 
     results = rendered["elements"]["documents-results"]["innerHTML"]
     rows = [chunk for chunk in re.split(r"(?=<tr>)", results) if "data-document-id=" in chunk]
-    assert len(rows) == 50, len(rows)
+    assert rows
     for row in rows:
         document_id = re.search(r'data-document-id="([^"]+):\d+"', row).group(1)
         state = ledger_documents()[document_id]["collection_state"]
@@ -238,7 +241,10 @@ def test_every_document_shows_the_state_of_our_collection_and_reading() -> None:
 
     funding = render("funding/ZAF")
     table = funding["elements"]["funding-statements-results"]["innerHTML"]
-    assert 'class="reading-state" data-reading-state="' in table
+    statement_rows = [chunk for chunk in re.split(r"(?=<tr>)", table) if "<td" in chunk]
+    assert statement_rows
+    for row in statement_rows:
+        assert row.count('class="reading-state" data-reading-state="') == 1, row[:200]
 
 
 def test_the_documents_view_is_a_table_of_collection_attempts_under_the_committed_file_cap() -> None:

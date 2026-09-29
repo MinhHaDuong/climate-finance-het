@@ -32,7 +32,6 @@ from pathlib import Path
 
 from script_io_args import parse_io_args, validate_io
 
-from jetp._country_views_v2 import _line_documents
 from jetp._ledger_headers import load_schema, read_table
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -57,24 +56,28 @@ def is_stub_line(line):
 
 
 def collection_states(documents, retrievals, lines):
-    """The state of each document, from what its retrievals yielded and what was read."""
-    by_digest = defaultdict(set)
+    """The state of each document, from what its retrievals yielded and what was read.
+
+    A line is read from bytes, so the state follows the digest: two documents
+    whose retrievals yielded the same bytes (a mirror and its original) are in
+    the same state, whichever of them a line's identifier names.
+    """
+    digests = defaultdict(set)
     for row in retrievals:
         if row['sha256']:
-            by_digest[row['sha256']].add(row['document_id'])
-    by_line = {row['line_id']: row for row in lines}
+            digests[row['document_id']].add(row['sha256'])
     read = defaultdict(list)
-    for line_id, document_id in _line_documents(by_line, by_digest).items():
-        read[document_id].append(by_line[line_id])
-    collected = {document_id for members in by_digest.values() for document_id in members}
+    for row in lines:
+        read[row['sha256']].append(row)
     states = {}
     for row in documents:
         document_id = row['document_id']
-        if document_id not in collected:
+        found = [line for digest in digests[document_id] for line in read[digest]]
+        if not digests[document_id]:
             states[document_id] = 'not_collected'
-        elif not read[document_id]:
+        elif not found:
             states[document_id] = 'collected'
-        elif all(is_stub_line(line) for line in read[document_id]):
+        elif all(is_stub_line(line) for line in found):
             states[document_id] = 'stub'
         else:
             states[document_id] = 'extracted'

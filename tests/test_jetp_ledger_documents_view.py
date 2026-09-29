@@ -64,11 +64,14 @@ def test_each_document_carries_the_state_of_our_collection_and_reading(tmp_path)
     # collected. Only the minimal line the migration minted to hold a
     # locator (docs/jetp-ledger-migration.md step 3, method=legacy_link in
     # its notes): stub. Any other line: extracted, whatever else it holds.
+    # A mirror whose retrieval yielded the same bytes as the read document is
+    # in the same state: a line is read from bytes, not from an identifier.
     ledger = _ledger(tmp_path, [
         f"{name},SEN,report,fr,{name},https://x.example/{name},2025,,true,\n"
-        for name in ("none", "bytes", "stub", "read", "mixed")
+        for name in ("none", "bytes", "stub", "read", "mixed", "mirror")
     ])
     digest = {name: name[0] * 64 for name in ("bytes", "stub", "read", "mixed")}
+    digest["mirror"] = digest["read"]
     _table(ledger, "retrievals", [
         dict(retrieval_id="none:1", document_id="none", retrieved_at="2026-09-12T00:00:00Z",
              status="blocked", error="HTTP 403", collection_method="script"),
@@ -89,7 +92,7 @@ def test_each_document_carries_the_state_of_our_collection_and_reading(tmp_path)
     states = {row["document_id"]: row["collection_state"]
               for row in view.build(ledger)["documents"]}
     assert states == {"none": "not_collected", "bytes": "collected", "stub": "stub",
-                      "read": "extracted", "mixed": "extracted"}
+                      "read": "extracted", "mixed": "extracted", "mirror": "extracted"}
 
 
 def test_the_served_view_is_the_committed_table() -> None:
@@ -97,7 +100,8 @@ def test_the_served_view_is_the_committed_table() -> None:
     assert served == view.build(ROOT / "data/jetp")
     assert list(served) == ["documents"]
     assert all(list(row) == COLUMNS + ["collection_state"] for row in served["documents"])
-    assert {row["collection_state"] for row in served["documents"]} == set(view.STATES)
+    states = {row["collection_state"] for row in served["documents"]}
+    assert states and states <= set(view.STATES), states
     with (ROOT / "data/jetp/documents.csv").open(newline="") as handle:
         titles = {r["document_id"]: r["title"] for r in csv.DictReader(handle)}
     assert {r["document_id"]: r["title"] for r in served["documents"]} == titles

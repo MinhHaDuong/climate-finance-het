@@ -235,6 +235,9 @@ def country_view(ledger_dir, code, config, *, tables=None):
         needed.add(config['headline_source'])
     if missing := needed - sources.keys():
         raise ValueError(f'Unknown cited documents: {sorted(missing)}')
+    collected = {d for item in project_views for d in item['coverage_documents']}
+    if missing := collected - sources.keys():
+        raise ValueError(f'Unknown collected documents: {sorted(missing)}')
     country_perimeters = {row['perimeter_id'] for row in tables['perimeters']
                           if row['country'] == code and row['status'] == 'accepted'}
     reported_counts = [dict(id=row['observation_id'], perimeter_id=row['subject_id'],
