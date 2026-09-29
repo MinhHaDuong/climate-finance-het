@@ -73,6 +73,7 @@ def test_real_sidecar_traces_each_visible_country_headline():
         assert {row['route'] for row in displays} == {'#overview', '#funding/' + displays[0]['payload'][5:8]}
 
 
+@pytest.mark.slow
 def test_candidate_bundle_keeps_provenance_sidecar_with_matching_release_bytes(tmp_path):
     from pathlib import Path
 
