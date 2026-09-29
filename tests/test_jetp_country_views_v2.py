@@ -107,8 +107,32 @@ def test_a_channel_party_is_not_a_funder(views):
             assert 'GIZ' not in project['funders'] or project['id'] != 'project-page-zaf-project-cpd4e-germany'
 
 
-def test_funders_keep_the_funder_role_only():
-    from jetp._country_views_v2 import _funders
+def test_a_channel_is_served_beside_the_funders_under_its_own_name(views):
+    # Author, 2026-09-29: the channel is shown as a second line, never as a
+    # funder. Agreements, their statements and the projects they compose
+    # carry `channels`, the preferred name forms, sorted, from the same rows.
+    tables, by_code = views
+    preferred = {row['party_id']: row['name'] for row in tables['party_names']
+                 if row['form_type'] == 'preferred' and row['status'] == 'accepted'}
+    channels = {}
+    for row in tables['relations']:
+        if row['relation'] == 'party_in' and row['role'] == 'channel' and row['status'] == 'accepted':
+            channels.setdefault(row['to_id'], set()).add(preferred[row['from_id']])
+    served = 0
+    for view in by_code.values():
+        for agreement in view['agreements']:
+            assert agreement['channels'] == sorted(channels.get(agreement['id'], ()))
+            served += bool(agreement['channels'])
+        for statement in view['statements']:
+            expected = channels.get(statement['subject_id'], ()) if statement['subject_kind'] == 'agreement' else ()
+            assert statement['channels'] == '; '.join(sorted(expected))
+    assert served == len(channels), 'the positive control: every channel row is served once'
+    cpd4e = next(p for p in by_code['ZAF']['projects'] if p['id'] == 'project-page-zaf-project-cpd4e-germany')
+    assert cpd4e['channels'] == ['GIZ'] and 'GIZ' not in cpd4e['funders']
+
+
+def test_funders_keep_the_funder_role_and_channels_the_channel_role():
+    from jetp._country_views_v2 import _parties
     names = [dict(name_row_id=f'n{i}', party_id=p, name=n, form_type='preferred',
                   status='accepted', supersedes='')
              for i, (p, n) in enumerate([('p-de', 'Germany'), ('p-giz', 'GIZ')])]
@@ -120,9 +144,34 @@ def test_funders_keep_the_funder_role_only():
         dict(relation_id='r3', from_kind='agreement', from_id='a1', relation='component_of',
              to_kind='project', to_id='pr1', role=None, status='accepted', supersedes=''),
     ]
-    funders, project_funders = _funders({'relations': relations, 'party_names': names}, {'a1': {}})
-    assert dict(funders) == {'a1': {'Germany'}}
-    assert dict(project_funders) == {'pr1': {'Germany'}}
+    parties, by_project = _parties({'relations': relations, 'party_names': names}, {'a1': {}})
+    assert dict(parties['funder']) == {'a1': {'Germany'}}
+    assert dict(parties['channel']) == {'a1': {'GIZ'}}
+    assert dict(by_project['funder']) == {'pr1': {'Germany'}}
+    assert dict(by_project['channel']) == {'pr1': {'GIZ'}}
+
+
+def test_an_unknown_collected_document_fails_loud_and_does_not_block(views, caplog, capsys):
+    # Author's ruling, 2026-09-29: a build-time assert fails loud and does
+    # not block. The unknown id is logged at ERROR with the row citing it,
+    # counted once at the end, left out of the served list, and nothing in
+    # the views hides it.
+    import copy
+    tables, _ = views
+    tables = dict(tables, coverage=copy.deepcopy(tables['coverage']))
+    row = next(r for r in tables['coverage'] if r['referent_kind'] == 'project'
+               and r['referent_id'] == 'project-vnm-project-bac-ai-pumped-hydro')
+    row['document_ids'] += ';vnm-no-such-document'
+    config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
+    with caplog.at_level('ERROR'):
+        view = country_view(ROOT / 'data/jetp', 'VNM', config['countries']['VNM'], tables=tables)
+    project = view['projects'][0]
+    assert 'vnm-no-such-document' not in project['coverage_documents']
+    assert len(project['coverage_documents']) == 6
+    errors = [r for r in caplog.records if r.levelname == 'ERROR' and 'vnm-no-such-document' in r.getMessage()]
+    assert len(errors) == 1 and 'project-vnm-project-bac-ai-pumped-hydro' in errors[0].getMessage()
+    assert 'coverage: 1 unknown document ids, not served' in capsys.readouterr().err
+    assert 'vnm-no-such-document' not in str(view)
 
 
 def test_the_coverage_review_is_listed_apart_from_the_cited_documents(views):

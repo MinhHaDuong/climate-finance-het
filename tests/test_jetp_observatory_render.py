@@ -207,6 +207,39 @@ def test_the_project_page_lists_the_coverage_review_apart_from_the_cited_documen
     assert not [d for d in only_collected if d in cited]
 
 
+def test_a_channel_is_a_second_line_under_the_funder_never_a_funder() -> None:
+    # Author, 2026-09-29: "through <channel>" under the funder on the Funding
+    # page and the project page; on the Organisations page the party is
+    # named as Channel, by the page's own grouping; the funder filters stay
+    # on funders. Data-driven on the served ZAF view.
+    zaf = served("ZAF")
+    with_channel = [a for a in zaf["agreements"] if a["channels"]]
+    assert with_channel, "the positive control: no served agreement has a channel"
+    statements = [s for s in zaf["statements"] if s["channels"] and s["status"] != "Need"]
+    assert statements
+
+    funding = render("funding/ZAF", {"funding-statements-filter-funder": statements[0]["funder"]})
+    table = funding["elements"]["funding-statements-results"]["innerHTML"]
+    shown = re.findall(r'data-channels="([^"]+)">through ([^<]+)</small>', table)
+    assert shown and all(name == data for data, name in shown), shown[:3]
+    options = re.search(r'id="funding-statements-filter-funder">(.*?)</select>', funding["main"], re.DOTALL).group(1)
+    assert not any(name in options for a in with_channel for name in a["channels"])
+
+    project = next(p for p in zaf["projects"] if p["channels"])
+    html = render("project/" + project["id"])["main"]
+    funders = re.search(r"<dt>Funders</dt><dd>(.*?)</dd>", html, re.DOTALL).group(1)
+    assert f'through {"; ".join(project["channels"])}</small>' in funders
+    assert not any(name in funders.split("<br>")[0] for name in project["channels"])
+
+    channel = project["channels"][0]
+    organisations = render("organisations", {"parties-search": channel})
+    rows = organisations["elements"]["parties-results"]["innerHTML"]
+    row = next(chunk for chunk in re.split(r"(?=<tr>)", rows) if f">{channel}<" in chunk)
+    pills = re.findall(r'<span class="pill">([^<]+)</span>', row)
+    assert "Channel" in pills and "Funder" not in pills, pills
+    assert project["name"] in unescape(row)
+
+
 def test_a_project_page_serves_no_field_the_ledger_cannot_fill() -> None:
     # The sections the retired fields fed are gone with them (ticket 1610).
     html = render("project/" + BAC_AI)["main"]

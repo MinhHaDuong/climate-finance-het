@@ -245,6 +245,14 @@ function fundingDocument(event, code) {
   const state = readingState(event.source_id);
   return `${link || esc(event.source_id)}${state ? " · " + state : ""}<small>${esc(event.locator || "No locator recorded")}</small>`;
 }
+/* Ticket 1610 (author, 2026-09-29): the channel an agreement's money passes
+ * through is a second, muted line under the funder — never a funder, never a
+ * column or a filter of its own. `channels` is a "; " string on a statement
+ * and a list on an agreement or a project. */
+function throughChannel(channels) {
+  const names = Array.isArray(channels) ? channels : (channels || "").split("; ").filter(Boolean);
+  return names.length ? `<br><small class="note" data-channels="${esc(names.join("; "))}">through ${esc(names.join("; "))}</small>` : "";
+}
 function fundingStatements(data, code) {
   const subjects = new Map([
     ...data.projects.map((item) => [item.id, item]),
@@ -270,7 +278,7 @@ function fundingStatements(data, code) {
       { label: "Reported milestone", cell: (row) => pill(row.status) },
       { label: "Original amount", cell: (row) => esc(money(row.amount, row.currency)) },
       { label: "Funder · instrument", cell: (row) =>
-        esc([row.funder, row.instrument].filter(Boolean).join(" · ") || "Not stated") },
+        esc([row.funder, row.instrument].filter(Boolean).join(" · ") || "Not stated") + throughChannel(row.channels) },
       { label: "Date and its role", cell: fundingDate },
       { label: "Document and location", cell: (row) => fundingDocument(row, code) },
     ],
@@ -1412,7 +1420,7 @@ function projectPage(id) {
   if (!p) return notFound();
   const c = country(p.country),
     sources = countries[p.country].sources;
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> › ${esc(p.name)}</div><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Country</dt><dd><a href="#funding/${c.code}">${esc(c.name)}</a></dd><dt>Theme / technology</dt><dd>${esc(p.technology)}</dd><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See the individual documents; no funder entry yet")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Document follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation event has yet been added to this project\'s timeline. Its documents may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Lines citing this project</h2><p class="note">Reviewed document lines supporting this project identity. Reported money statements, where present, appear in the timeline above.</p><div id="project-evidence-rows"></div></section></div><aside><div class="panel"><h3>Documents</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> › ${esc(p.name)}</div><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Country</dt><dd><a href="#funding/${c.code}">${esc(c.name)}</a></dd><dt>Theme / technology</dt><dd>${esc(p.technology)}</dd><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See the individual documents; no funder entry yet")}${throughChannel(p.channels)}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Document follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation event has yet been added to this project\'s timeline. Its documents may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Lines citing this project</h2><p class="note">Reviewed document lines supporting this project identity. Reported money statements, where present, appear in the timeline above.</p><div id="project-evidence-rows"></div></section></div><aside><div class="panel"><h3>Documents</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
     .map((id) => {
       const s = sources[id];
       return s
@@ -1603,6 +1611,7 @@ function organisationIndex() {
   const byKey = new Map();
   for (const project of projects) {
     const named = [...project.funders.map((name) => [name, "Funder"]),
+      ...(project.channels || []).map((name) => [name, "Channel"]),
       [project.operator, "Operator"]];
     for (const [name, role] of named) {
       if (!name || name === "Not specified") continue;
@@ -1624,7 +1633,9 @@ function organisationIndex() {
   }
   for (const [code, data] of Object.entries(countries)) {
     for (const agreement of data.agreements) {
-      for (const name of agreement.funders) {
+      const named = [...agreement.funders.map((name) => [name, "Funder"]),
+        ...(agreement.channels || []).map((name) => [name, "Channel"])];
+      for (const [name, role] of named) {
         const ids = new Set((formsByName.get(name) || [])
           .filter((form) => !form.country || form.country === code)
           .map((form) => form.party_id));
@@ -1638,7 +1649,7 @@ function organisationIndex() {
           aliases: forms.filter((form) => form.name !== preferred?.name),
         });
         const row = byKey.get(key);
-        row.roles.add("Funder");
+        row.roles.add(role);
         row.agreements ||= new Map();
         row.agreements.set(agreement.id, agreement);
       }
@@ -1673,8 +1684,8 @@ function whosWhoPage(params) {
   const rows = whosWhoRows;
   const table = filterTable("parties", rows, {
     facets: [
-      { key: "roles", label: "Named as", all: "Funders and operators",
-        options: ["Funder", "Operator"], matches: (row, value) => row.roles.includes(value) },
+      { key: "roles", label: "Named as", all: "Funders, channels and operators",
+        options: ["Funder", "Channel", "Operator"], matches: (row, value) => row.roles.includes(value) },
       { key: "country", label: "Country", all: "All four countries",
         options: overview.countries.map((c) => ({ value: c.code, label: c.name })),
         selected: knownCountry(params.get("country")) },

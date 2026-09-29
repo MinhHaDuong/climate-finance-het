@@ -52,10 +52,16 @@ Author decisions (2026-09-29):
 - The navigation is not restructured here (a later ticket does that).
 - A party in the `channel` role is not a funder (author, 2026-09-29): the
   funder rule keeps the `funder` role only, for agreements and for the
-  projects they are components of; channels are shown nowhere as funders
-  and get no display of their own. The build-time stop on a coverage
-  `document_ids` entry the ledger does not hold stays in place; the author
-  has not ruled on it.
+  projects they are components of. The channel is served beside the
+  funders under its own name (`channels` on agreements, statements and
+  projects) and shown as a muted second line "through <channel>" under the
+  funder on the Funding page and the project page, and as the role Channel
+  on the Organisations page; the funder filters stay on funders.
+- A build-time assert fails loud and does not block (author, 2026-09-29):
+  a coverage `document_ids` entry the ledger does not hold is logged at
+  ERROR with the row citing it, counted once on stderr at the end of the
+  build ("coverage: N unknown document ids, not served"), left out of the
+  served list, and hidden nowhere.
 
 ## Relevant files
 
