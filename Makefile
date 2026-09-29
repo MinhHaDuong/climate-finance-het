@@ -900,27 +900,39 @@ full-gate-preflight:
 # check-fast went from 28 s to 19 s and lint from 15 s to 13 s, flat beyond 8.
 PYTEST_WORKERS ?= $(or $(shell sed -n 's/^\(export \)\{0,1\}PYTEST_WORKERS=//p' .env 2>/dev/null | tail -n 1 | tr -d "\"' \r"),4)
 
-check: full-gate-preflight check-package | venv-canonicalize
+# dcor compiles two numba gufuncs (cpu and parallel, both cache=True) at
+# import time. On an empty NUMBA_CACHE_DIR, N pytest workers importing dcor at
+# once race on that shared cache and some abort with `LLVM ERROR: Symbol not
+# found: __gufunc__...` (SIGABRT, no traceback); a damaged cache can persist
+# across reruns. One serial import fills the cache before any worker starts.
+# Per-worker caches would not do: the scripts tests launch as subprocesses
+# share one environment. No separate guard: the gate itself is the replay
+# (ticket 1372 has the red evidence, taken by hand without this step).
+.PHONY: numba-prewarm
+numba-prewarm: | venv-canonicalize
+	$(PYTHON) -c "import dcor"
+
+check: full-gate-preflight check-package numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -n $(PYTEST_WORKERS)
 
 # Domain gates select locally declared pytest markers. Cost tiers remain
 # independent: each WP target includes its own slow and integration tests.
-check-library: | venv-canonicalize
+check-library: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_library -n $(PYTEST_WORKERS)
 
-check-corpus-wp: | venv-canonicalize
+check-corpus-wp: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ libs/openalex-corpus/tests/ -q --tb=short -m wp_corpus -n $(PYTEST_WORKERS)
 
-check-finance: | venv-canonicalize
+check-finance: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_finance -n $(PYTEST_WORKERS)
 
-check-jetp: | venv-canonicalize
+check-jetp: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_jetp -n $(PYTEST_WORKERS)
 
-check-writing: | venv-canonicalize
+check-writing: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_writing -n $(PYTEST_WORKERS)
 
-check-shared: | venv-canonicalize
+check-shared: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_shared -n $(PYTEST_WORKERS)
 
 # Fast inner loop: pure-Python logic only. Deselects slow (network / real data /
