@@ -2,6 +2,7 @@
 Title: M1b: the bounded catalogue of referents on the ontology v2 contract
 Created: 2026-09-17
 Author: HDMX-coding-agent
+Closed: Published and accepted the bounded M1b ontology-v2 catalogue over all 2,164 frozen inventory rows, with candidates separated, O v1 frozen, and complete review provenance.
 
 --- log ---
 2026-09-17T08:48Z HDMX-coding-agent created
@@ -19,6 +20,8 @@ Author: HDMX-coding-agent
 2026-09-24T18:45Z HDMX-coding-agent note blocker 0875 closed — Blocked-by removed.
 2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
 2026-09-29T13:36Z HDMX-coding-agent note ticket 1620 (2026-09-29): the 17 project-coverage rows of 0884-coverage-dispositions.csv (0875 has no resolved identity: idn-fin-muara-laboh-2, idn-fin-rbl-sreap, idn-grant-ietf, idn-grant-jetp-etp, idn-monitor-cihaur-talaga-micro-hydro, idn-monitor-gde-pipeline-2025, idn-pipe-dediesel-east-phase1, idn-pipe-dieng-3-4, idn-pipe-e-taxi, idn-pipe-green-corridors-sulawesi, idn-pipe-hijaunesia-2, idn-pipe-hydro-quota-sulawesi, idn-pipe-hydro-quota-sumatra, idn-pipe-nagajaya-micro-hydro, idn-pipe-rscm-energy-efficiency, vnm-project-binh-duong-dong-nai-transmission, vnm-project-tri-an-expansion) are M1b candidates for this ticket, no data change made. While attaching authority coverage, tier-2 same_as pairs surfaced: afd / agence-francaise-de-developpement, kfw / kfw-development-bank, germany / federal-government-of-germany, united-kingdom / government-of-the-united-kingdom / foreign-commonwealth-and-development-office, dbsa / development-bank-of-southern-africa, afdb / african-development-bank, eib / european-investment-bank
+2026-09-29T20:35Z Codex delivered M1b over the exact 2,164 frozen inventory rows (ZAF 257, IDN 1,579, VNM 279, SEN 49). Accepted identities and relations retain their decision and justification lines; parties also retain their accepted preferred-name authority record. Seventeen terminal candidate relations were reviewed from existing records only: 14 remain visible candidates and 3 are outside the bounded scope, with no promotions. All 17 inherited coverage identifiers have explicit 0833 outcomes and later 0970 decisions are linked as out-of-scope context rather than counted. O v1 and every input/output hash are frozen in the release descriptor. Astra and Luna approved. On padme after rebase: M1b 13 passed with two byte-identical builds and no skip; bundle 139 passed; `make jetp-ledger-check` and frozen-artifact check passed; `make check-domain-jetp` 612 passed, 5 skipped; full `make check` 3,066 passed, 52 skipped plus 25 package tests; `make check-fast` 2,089 passed, 9 skipped plus 25 package tests; `make lint` 351 passed, 8 skipped.
+2026-09-29T20:36Z HDMX-coding-agent closed — Published and accepted the bounded M1b ontology-v2 catalogue over all 2,164 frozen inventory rows, with candidates separated, O v1 frozen, and complete review provenance.
 --- body ---
 ## Context
 
@@ -89,14 +92,14 @@ unchanged.
 
 ## Exit criteria
 
-- [ ] Every accepted referent and relation cites its justification lines and a decision row
-- [ ] The lines of the four M1a documents are byte-identical before and after M1b
-- [ ] Candidates are separate, not in force, and counted by country and relation in the observatory
-- [ ] O v1 is frozen: the M1b release cites its `ontology_ref`
-- [ ] No new source acquisition and no match-resolution campaign occurred
-- [ ] The M1b release reproduces from its inputs
-- [ ] `tests/test_jetp_m1b_catalog.py`, `make jetp-ledger-check`, `make check-fast` and `make lint` green (not the full `make check`: ex post on main)
-- [ ] The 17 project-coverage identifiers of `data/jetp/migration/0884-coverage-dispositions.csv` (0875 has no resolved identity) each have a referent decision row or a recorded disposition (ticket 1620, log note 2026-09-29)
+- [x] Every accepted referent and relation cites its justification lines and a decision row
+- [x] The lines of the four M1a documents are byte-identical before and after M1b
+- [x] Candidates are separate, not in force, and counted by country and relation in the observatory
+- [x] O v1 is frozen: the M1b release cites its `ontology_ref`
+- [x] No new source acquisition and no match-resolution campaign occurred
+- [x] The M1b release reproduces from its inputs
+- [x] `tests/test_jetp_m1b_catalog.py`, `make jetp-ledger-check`, `make check-fast` and `make lint` green (not the full `make check`: ex post on main)
+- [x] The 17 project-coverage identifiers of `data/jetp/migration/0884-coverage-dispositions.csv` (0875 has no resolved identity) each have a referent decision row or a recorded disposition (ticket 1620, log note 2026-09-29)
 
 ## Out of scope
 

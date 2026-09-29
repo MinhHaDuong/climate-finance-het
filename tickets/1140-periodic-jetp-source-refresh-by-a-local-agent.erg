@@ -2,7 +2,6 @@
 Title: M3a and M4: periodic JETP source refresh, run by a local agent on padme
 Created: 2026-09-25
 Author: HDMX-coding-agent
-Blocked-by: 0833
 Blocked-by: 0722
 Blocked-by: 1182
 
@@ -12,6 +11,7 @@ Blocked-by: 1182
 2026-09-29T13:00Z HDMX-coding-agent note storage seam added to Design constraints: acquisitions go through the single write function of [[1184]], because M4 ([[1510]]) moves document storage to Zotero
 
 2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
+2026-09-29T20:36Z HDMX-coding-agent note blocker 0833 closed — Blocked-by removed.
 --- body ---
 ## Context
 
