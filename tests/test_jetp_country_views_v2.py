@@ -103,8 +103,6 @@ def test_a_channel_party_is_not_a_funder(views):
             assert not [name for _, name in channels
                         if name in statement['funder'].split('; ')
                         and (statement['subject_id'], name) in channels], statement['id']
-        for project in view['projects']:
-            assert 'GIZ' not in project['funders'] or project['id'] != 'project-page-zaf-project-cpd4e-germany'
 
 
 def test_a_channel_is_served_beside_the_funders_under_its_own_name(views):
@@ -127,8 +125,22 @@ def test_a_channel_is_served_beside_the_funders_under_its_own_name(views):
             expected = channels.get(statement['subject_id'], ()) if statement['subject_kind'] == 'agreement' else ()
             assert statement['channels'] == '; '.join(sorted(expected))
     assert served == len(channels), 'the positive control: every channel row is served once'
-    cpd4e = next(p for p in by_code['ZAF']['projects'] if p['id'] == 'project-page-zaf-project-cpd4e-germany')
-    assert cpd4e['channels'] == ['GIZ'] and 'GIZ' not in cpd4e['funders']
+    # A project's channels are those of its component agreements, derived,
+    # and a channel there is never among that project's funders.
+    components = {}
+    for row in tables['relations']:
+        if row['status'] == 'accepted' and row['relation'] == 'component_of' \
+                and row['from_kind'] == 'agreement' and row['to_kind'] == 'project':
+            components.setdefault(row['to_id'], set()).add(row['from_id'])
+    with_channels = 0
+    for view in by_code.values():
+        for project in view['projects']:
+            expected = sorted({name for agreement in components.get(project['id'], ())
+                               for name in channels.get(agreement, ())})
+            assert project['channels'] == expected, project['id']
+            assert not set(project['channels']) & set(project['funders']), project['id']
+            with_channels += bool(expected)
+    assert with_channels, 'the positive control: no project reaches a channel'
 
 
 def test_funders_keep_the_funder_role_and_channels_the_channel_role():
@@ -165,13 +177,31 @@ def test_an_unknown_collected_document_fails_loud_and_does_not_block(views, capl
     config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
     with caplog.at_level('ERROR'):
         view = country_view(ROOT / 'data/jetp', 'VNM', config['countries']['VNM'], tables=tables)
-    project = view['projects'][0]
+    project = next(p for p in view['projects'] if p['id'] == row['referent_id'])
     assert 'vnm-no-such-document' not in project['coverage_documents']
-    assert len(project['coverage_documents']) == 6
+    assert project['coverage_documents'] == row['document_ids'].split(';')[:-1]
     errors = [r for r in caplog.records if r.levelname == 'ERROR' and 'vnm-no-such-document' in r.getMessage()]
     assert len(errors) == 1 and 'project-vnm-project-bac-ai-pumped-hydro' in errors[0].getMessage()
     assert 'coverage: 1 unknown document ids, not served' in capsys.readouterr().err
     assert 'vnm-no-such-document' not in str(view)
+
+
+def test_every_coverage_row_of_the_country_is_checked_not_only_the_projects(views, caplog, capsys):
+    # Codex review, 2026-09-29: agreement, asset, party and perimeter rows
+    # cite documents too. An unknown id on an agreement row of the country
+    # is logged and counted like a project's, though no view lists it.
+    import copy
+    tables, _ = views
+    tables = dict(tables, coverage=copy.deepcopy(tables['coverage']))
+    row = next(r for r in tables['coverage'] if r['referent_kind'] == 'agreement'
+               and r['referent_id'] == 'agreement-idn-fin-isle-1')
+    row['document_ids'] += ';idn-no-such-document'
+    config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
+    with caplog.at_level('ERROR'):
+        country_view(ROOT / 'data/jetp', 'IDN', config['countries']['IDN'], tables=tables)
+    errors = [r.getMessage() for r in caplog.records if r.levelname == 'ERROR']
+    assert [m for m in errors if 'agreement-idn-fin-isle-1' in m and 'idn-no-such-document' in m]
+    assert 'coverage: 1 unknown document ids, not served' in capsys.readouterr().err
 
 
 def test_the_coverage_review_is_listed_apart_from_the_cited_documents(views):

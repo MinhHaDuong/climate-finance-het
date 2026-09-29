@@ -253,6 +253,13 @@ function throughChannel(channels) {
   const names = Array.isArray(channels) ? channels : (channels || "").split("; ").filter(Boolean);
   return names.length ? `<br><small class="note" data-channels="${esc(names.join("; "))}">through ${esc(names.join("; "))}</small>` : "";
 }
+/* The funder and the instrument on one line; a channel with no funder on
+ * record says so rather than letting the channel stand in for one. */
+function funderCell(row) {
+  const names = Array.isArray(row.channels) ? row.channels : (row.channels || "").split("; ").filter(Boolean);
+  const funder = row.funder || (names.length ? "No funder recorded" : "");
+  return esc([funder, row.instrument].filter(Boolean).join(" · ") || "Not stated") + throughChannel(names);
+}
 function fundingStatements(data, code) {
   const subjects = new Map([
     ...data.projects.map((item) => [item.id, item]),
@@ -277,8 +284,7 @@ function fundingStatements(data, code) {
           : `${esc(row.subject?.name || row.subject_id)} <small>${esc(row.subject_kind)}</small>` },
       { label: "Reported milestone", cell: (row) => pill(row.status) },
       { label: "Original amount", cell: (row) => esc(money(row.amount, row.currency)) },
-      { label: "Funder · instrument", cell: (row) =>
-        esc([row.funder, row.instrument].filter(Boolean).join(" · ") || "Not stated") + throughChannel(row.channels) },
+      { label: "Funder · instrument", cell: funderCell },
       { label: "Date and its role", cell: fundingDate },
       { label: "Document and location", cell: (row) => fundingDocument(row, code) },
     ],
@@ -1702,7 +1708,7 @@ function whosWhoPage(params) {
   });
   main.innerHTML = header(
     "Organisations named in the documents",
-    "See which organisations are named as funders or operators and which projects or agreements name them. Rows with the same name and country are grouped; only reviewed name forms are shown as aliases, and a shared spelling alone does not establish a shared identity.",
+    "See which organisations are named as funders, channels or operators and which projects or agreements name them. Rows with the same name and country are grouped; only reviewed name forms are shown as aliases, and a shared spelling alone does not establish a shared identity.",
   ) + table.head;
   table.mount();
 }

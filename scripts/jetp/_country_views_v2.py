@@ -40,7 +40,7 @@ def load_country_inputs(ledger_dir):
     names = ('projects', 'assets', 'agreements', 'coverage', 'documents',
              'document_publishers', 'party_names', 'retrievals', 'snapshots',
              'lines', 'line_referents', 'relations', 'observations', 'timings',
-             'perimeters')
+             'perimeters', 'parties')
     return {name: _rows(ledger_dir, name, schema) for name in names}
 
 
@@ -144,8 +144,12 @@ def _parties(tables, agreement_rows):
     by_agreement = {role: defaultdict(set) for role in PARTY_ROLES}
     for row in relations:
         if row['from_kind'] == 'party' and row['relation'] == 'party_in' \
-                and row['role'] in PARTY_ROLES \
                 and row['to_kind'] == 'agreement' and row['to_id'] in agreement_rows:
+            if row['role'] not in PARTY_ROLES:
+                # Loud, not blocking: a role no view serves is not dropped in silence.
+                logging.error('relations %s: party_in role %r on %s is served by no view',
+                              row['relation_id'], row['role'], row['to_id'])
+                continue
             by_agreement[row['role']][row['to_id']].add(
                 preferred.get(row['from_id'], row['from_id']))
     by_project = {role: defaultdict(set) for role in PARTY_ROLES}
@@ -272,7 +276,18 @@ def country_view(ledger_dir, code, config, *, tables=None):
         needed.add(config['headline_source'])
     if missing := needed - sources.keys():
         raise ValueError(f'Unknown cited documents: {sorted(missing)}')
-    print(f'coverage: {len(unknown)} unknown document ids, not served', file=sys.stderr)
+    # Every other coverage row of this country is checked the same way, though
+    # no view lists its documents (Codex review, 2026-09-29): an agreement,
+    # asset, party or perimeter row citing an unknown document is a defect of
+    # the same kind, logged and counted here, once per country.
+    referents = country_subjects | {
+        (kind, row[key]) for kind, table, key in (('party', 'parties', 'party_id'),
+                                                  ('perimeter', 'perimeters', 'perimeter_id'))
+        for row in tables[table] if row['country'] == code}
+    for (kind, identity), review in coverage.items():
+        if kind != 'project' and (kind, identity) in referents:
+            _collected(review, kind, identity, sources, unknown)
+    print(f'coverage: {len(set(unknown))} unknown document ids, not served', file=sys.stderr)
     country_perimeters = {row['perimeter_id'] for row in tables['perimeters']
                           if row['country'] == code and row['status'] == 'accepted'}
     reported_counts = [dict(id=row['observation_id'], perimeter_id=row['subject_id'],

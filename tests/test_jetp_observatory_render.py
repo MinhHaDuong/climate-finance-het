@@ -222,14 +222,24 @@ def test_a_channel_is_a_second_line_under_the_funder_never_a_funder() -> None:
     table = funding["elements"]["funding-statements-results"]["innerHTML"]
     shown = re.findall(r'data-channels="([^"]+)">through ([^<]+)</small>', table)
     assert shown and all(name == data for data, name in shown), shown[:3]
+    # The funder filter lists the funders the statements name, exactly: a
+    # party that is a channel on one agreement and a funder on another
+    # would still be listed, as a funder.
     options = re.search(r'id="funding-statements-filter-funder">(.*?)</select>', funding["main"], re.DOTALL).group(1)
-    assert not any(name in options for a in with_channel for name in a["channels"])
+    listed = [unescape(v) for v in re.findall(r'<option value="([^"]+)"', options)]
+    financing = [s for s in zaf["statements"] if s["status"] != "Need"]
+    assert listed == sorted({s["funder"] for s in financing if s["funder"]})
+    # An agreement with a channel and no funder says so, and keeps the line.
+    cell = render("funding/ZAF", expression='funderCell({funder: "", instrument: "Grants", channels: "GIZ"})')["eval"]
+    assert cell.startswith("No funder recorded · Grants") and 'through GIZ</small>' in cell
 
     project = next(p for p in zaf["projects"] if p["channels"])
     html = render("project/" + project["id"])["main"]
     funders = re.search(r"<dt>Funders</dt><dd>(.*?)</dd>", html, re.DOTALL).group(1)
+    # The first line is the served funders, the second the served channels:
+    # a party that is both, on different agreements, appears on both lines.
+    assert unescape(funders.split("<br>")[0]) == "; ".join(project["funders"])
     assert f'through {"; ".join(project["channels"])}</small>' in funders
-    assert not any(name in funders.split("<br>")[0] for name in project["channels"])
 
     channel = project["channels"][0]
     organisations = render("organisations", {"parties-search": channel})

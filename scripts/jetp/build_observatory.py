@@ -264,7 +264,7 @@ def provenance(root, config):
     for name in ('projects', 'assets', 'agreements', 'coverage', 'documents',
                  'document_publishers', 'party_names', 'retrievals', 'snapshots',
                  'lines', 'line_referents', 'relations', 'observations',
-                 'timings', 'perimeters'):
+                 'timings', 'perimeters', 'parties'):
         files, errors = table_files(ledger, name)
         if errors or not files:
             raise ValueError(errors[0] if errors else f'{name}: no ledger files')
