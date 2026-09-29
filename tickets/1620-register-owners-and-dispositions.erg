@@ -35,8 +35,12 @@ applied as a defeasible decision and served later sorted by confidence
   "temporarily halted" row (Table 4.3-3), the briquetting Projet #2 at
   EUR 0.3 million (plan p. 42) and the QW2 total EUR 215.9 million (p. 53).
 - The record of every decision is `data/jetp/migration/1620-register-dispositions.csv`
-  (one row per register row, 145 distinct keys, `decided_by`, confidence,
-  page evidence). `0876-pending.csv` gains `disposition` and `owner`; resolved
+  (152 decision records over the original 145 unresolved semantic rows, plus
+  the follow-up review of the previously accepted Nagajaya observation;
+  `decided_by`, confidence and page evidence are retained). The extra records
+  preserve the five 0876/1160 overlaps, split the composite DEG/Proparco
+  authority into two applications, and record Nagajaya's revocation rather
+  than overwriting history. `0876-pending.csv` gains `disposition` and `owner`; resolved
   and rejected rows leave it and are accounted for in
   `0876-timing-reconciliation.csv` and `1160-citation-decisions.csv`.
 - Party rule for the 37 authorities: R1 a party in force that publishes one of
@@ -58,17 +62,22 @@ applied as a defeasible decision and served later sorted by confidence
   verdict, basis and self-score, the agreement, the stance and its confidence
   are columns of the dispositions register. A stance that changes what a term
   means is a candidate revision row of the term, never an edit.
-- Panel outcome: 18 questions (5 controls, 13 register questions covering 94
-  register rows); 3/3 on 49 rows, 2/3 on 45, no split. Three readings were
-  overturned: the plan's own date (42 rows, terminal instead of a typo-read
-  report_date), Green Energy Corridors and Dieng 3,4 (rejected under the
-  physical reading of `preparation`). The Saloum bid deadline became a
-  `planned` timing; the implied narrower definition of `preparation` is the
-  candidate row `project_stage.preparation.2` (confidence 0.65).
+- Panel outcome: 18 initial questions (5 controls, 13 register questions
+  covering 94 rows), followed by one consistency review of the previously
+  accepted Nagajaya observation. Across the 95 panel-backed records, agreement
+  is 3/3 on 51 and 2/3 on 44, with no split. The plan's own date became
+  terminal rather than a typo-read `report_date`; Green Energy Corridors and
+  Dieng 3,4 were rejected under the physical reading of `preparation`; and the
+  same reading revoked Nagajaya through a superseding observation. The Saloum
+  bid deadline became a `planned` timing; the implied narrower definition of
+  `preparation` is the candidate row `project_stage.preparation.2`
+  (confidence 0.65).
 
 ## Exit criteria
 
-- [ ] Every row of the three registers has an owner or a recorded disposition in `1620-register-dispositions.csv` (145 distinct keys)
+- [ ] Every original unresolved row of the three registers has an owner or a
+      recorded disposition in `1620-register-dispositions.csv`; follow-up and
+      split decisions preserve their history rather than overwriting it
 - [ ] Every read judgment carries the three verdicts, the agreement, a stance and a confidence in the register; no item is routed to the author; the stances are applied to the ledger as defeasible decisions
 - [ ] Log notes and exit-criterion lines on [[0920]], [[0833]] and the M2 child that owns the unextracted Senelec notice index ([[1502]])
 - [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` green; `make check-jetp` green on padme
