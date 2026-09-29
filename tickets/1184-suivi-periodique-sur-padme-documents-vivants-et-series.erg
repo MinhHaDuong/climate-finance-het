@@ -12,6 +12,7 @@ Blocked-by: 1141
 2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
 2026-09-25T09:10Z HDMX-coding-agent note Reporté à la semaine prochaine par l'auteur ; priorité du jour : finir la migration de l'ontologie (0870), main vert, republier le MVP.
 2026-09-25T10:30Z HDMX-coding-agent note le lanceur part de celui de [[1141]] (passe « figés ») ; [[1140]] est la passe « découverte » sur le même lanceur ; voir [[1180]] § Passes voisines
+2026-09-29T13:00Z HDMX-coding-agent note Fonction de dépôt unique exigée (action 4) : le stockage des documents passe à Zotero au jalon M4 ([[1510]]), décision de l'auteur
 
 --- body ---
 ## Context
@@ -47,6 +48,12 @@ branche, il ne le duplique pas.
    conditions d'usage, échec d'échelon. `/lair` et `/healthcheck` le
    remontent.
 4. Les objets sont capturés par DVC sur padme à chaque passe qui en ajoute.
+   Toute écriture d'un document ou d'une nouvelle version passe par une seule
+   fonction de dépôt (octets, empreinte, métadonnées de collecte), appelée par
+   toutes les passes. Le jalon M4 ([[1510]]) remplacera ce qu'il y a derrière
+   (bibliothèque de groupe Zotero) sans toucher aux passes ; ne pas écrire dans
+   `data/jetp/documents/objects/` ni dans `snapshots.csv` ailleurs que dans
+   cette fonction.
 5. Le lanceur reprend celui de [[1141]] (checkout persistant, cron, refus
    d'écraser un résultat non relu) et le généralise ; la vérification des
    documents figés est la passe de [[1141]], non une seconde. La découverte
@@ -59,4 +66,5 @@ branche, il ne le duplique pas.
 - [ ] Une série réelle est suivie : son prochain numéro attendu est daté, et un retard est signalé
 - [ ] SSH coupé, la supervision depuis doudou diffère la passe et le dit ; aucune passe ne disparaît en silence
 - [ ] Les signalements d'un rapport de passe apparaissent dans `/lair`
+- [ ] Aucune passe n'écrit un objet ou une ligne de `snapshots.csv` hors de la fonction de dépôt unique (action 4)
 - [ ] `make check-fast` et `make lint` verts
