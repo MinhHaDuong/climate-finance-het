@@ -1,5 +1,5 @@
 %erg 0.1
-Title: M2: periodic JETP source refresh, run by a local agent on padme
+Title: M3a and M4: periodic JETP source refresh, run by a local agent on padme
 Created: 2026-09-25
 Author: HDMX-coding-agent
 Blocked-by: 0833
@@ -11,13 +11,16 @@ Blocked-by: 1182
 2026-09-25T10:30Z HDMX-coding-agent note streamlined with the 1180 suite at the author's request: discovery pass on the runner of [[1184]]; reads the site files of [[1182]] (Blocked-by added); candidates join the same queue as [[1184]]
 2026-09-29T13:00Z HDMX-coding-agent note storage seam added to Design constraints: acquisitions go through the single write function of [[1184]], because M4 ([[1510]]) moves document storage to Zotero
 
+2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
 --- body ---
 ## Context
 
 The observatory's documents come from bounded collection rounds. New JETP
 documents (plans, progress reports, project pages, news) appear weekly, and
 nothing watches for them between rounds. Tracker [[0715]] puts source watching
-in M2, after M1b ([[0833]]); [[0722]] installs the skill and rules that the
+in the former M2 train, after M1b ([[0833]]); since 2026-09-29 ([[0725]]) one
+discovery campaign to a cutoff date is M3a and the weekly cadence is M4;
+[[0722]] installs the skill and rules that the
 refresh follows. This ticket is the recurring run itself.
 
 What already exists:
@@ -31,7 +34,7 @@ What already exists:
 ## Author decisions (2026-09-25)
 
 - A **local agent** runs the search, not a hosted Claude or Codex session.
-- It belongs to the M2 train.
+- It belongs to the M2 train (former numbering: M3a and M4 since 2026-09-29, see [[0725]]).
 
 ## Design constraints
 

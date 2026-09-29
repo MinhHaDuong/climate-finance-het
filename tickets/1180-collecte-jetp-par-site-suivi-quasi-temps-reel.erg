@@ -9,6 +9,7 @@ Label: deferred
 2026-09-25T09:10Z HDMX-coding-agent note Reporté à la semaine prochaine par l'auteur ; priorité du jour : finir la migration de l'ontologie (0870), main vert, republier le MVP.
 2026-09-25T10:30Z HDMX-coding-agent note rapprochement demandé par l'auteur : [[1140]], [[1141]] et [[1060]] partagent le lanceur de passes de [[1184]] ; section « Passes voisines »
 
+2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
 --- body ---
 ## Context
 
@@ -17,7 +18,7 @@ Cloudflare, avec des fiches projet (Project Data Sheet) mises à jour au fil
 des décaissements et des accords publiés sous des pages intermédiaires ;
 itie.sn et aser.sn en échec de certificat ; dgMarket derrière une connexion.
 Le système a besoin d'une mémoire du scraping par site, et d'un suivi
-périodique des documents qui évoluent. L'enjeu (M2, M3, AEDIST) est de suivre
+périodique des documents qui évoluent. L'enjeu (numérotation d'avant le 2026-09-29 : M2, M3, AEDIST) est de suivre
 en quasi temps réel : les canaux structurés (CRS, IATI) arrivent avec un à
 trois ans de retard.
 
@@ -49,7 +50,7 @@ trois ans de retard.
 - [[1184]] Suivi périodique sur padme : documents vivants et séries
 - [[1185]] Mesurer le retard des canaux structurés sur la source primaire
 
-## Passes voisines (train M2, suivi [[0715]])
+## Passes voisines (ancien train M2, devenu M3a et M4 le 2026-09-29, suivi [[0715]])
 
 Le **lanceur de passes sur padme** appartient à [[1184]] : checkout persistant
 hors de la copie de l'auteur, planification, rapport de passe qui signale sans
@@ -69,7 +70,7 @@ branchent au lieu d'en bâtir chacun un :
 
 **Couture de stockage** (auteur, 2026-09-29) : au jalon M4, le stockage des
 documents passe à une bibliothèque de groupe Zotero ([[1510]]). Les passes de
-M2 écrivent donc tout document ou toute version par la fonction de dépôt unique
+l'ancien M2 (M3a, M4) écrivent donc tout document ou toute version par la fonction de dépôt unique
 de [[1184]] (action 4), pour que M4 change ce qu'il y a derrière sans les
 réécrire.
 

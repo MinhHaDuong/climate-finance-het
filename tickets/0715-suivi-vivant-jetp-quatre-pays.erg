@@ -52,15 +52,22 @@ les quatre pays doivent être traités avec le même contrat de preuve.
 4. **0833 (M1b)** — ajouter identifiants canoniques, taxonomie commune et
    relations certaines ; compter séparément les `possible_match` non résolus.
 
-### M2 — suivi vivant, après acceptation de M1
+### Ancien M2 — suivi vivant, après acceptation de M1
 
-5. **0721** — réconcilier les quatre ledgers avec CRS/IATI et produire les
-   contrôles transversaux.
-6. **0722** — installer la skill, la veille et les règles de mise à jour.
-7. **0723** — joindre événements financiers, actifs et réalisations physiques.
-8. **1140** — veille périodique des nouvelles sources, conduite par un agent
-   local sur padme ; tout candidat reste non admis jusqu'au tri de l'auteur.
-9. **1141** — contrôle mensuel de la pourriture des liens et relance des
+Renommé le 2026-09-29 (décision de l'auteur, voir [[0725]]) : le nouveau M2 est
+un pipeline d'extraction ; ce train se répartit en M3a (découvrir et geler),
+M3b (extraire, réconcilier, publier) et M4 (exploitation).
+
+5. **0721** (M3b) — réconcilier les quatre ledgers avec CRS/IATI et produire
+   les contrôles transversaux.
+6. **0722** (M3a et M4) — installer la skill, la veille et les règles de mise
+   à jour.
+7. **0723** (M3b) — joindre événements financiers, actifs et réalisations
+   physiques.
+8. **1140** (M3a : une campagne ; M4 : cadence hebdomadaire) — veille
+   périodique des nouvelles sources, conduite par un agent local sur padme ;
+   tout candidat reste non admis jusqu'au tri de l'auteur.
+9. **1141** (M4) — contrôle mensuel de la pourriture des liens et relance des
    captures Web Archive, planifié sur padme.
 
 ## Invariants
@@ -85,14 +92,15 @@ les quatre pays doivent être traités avec le même contrat de preuve.
 
 - [x] M1a / 0834 : le MVP explore documents, extractions et faits de bout en bout sur les recettes SA et VN ; les tables gelées de 0832 en sont l'entrée
 - [ ] M1b / 0833 publie le catalogue borné et compte les correspondances non résolues
-- [ ] Le jalon M1 de 0725 accepte la base avant tout démarrage de la veille M2
+- [ ] Le jalon M1 de 0725 accepte la base avant tout démarrage de la veille (M3a et M4 depuis le 2026-09-29)
 - [ ] Les quatre pays ont un registre de sources borné, un manifeste de
       collecte, un ledger financier et une carte documentée des absences
 - [ ] Chaque montant agrégé est reconstructible depuis des événements sourcés
 - [ ] La couverture et les limites sont publiables comme résultats de méthode
 
 Le rafraîchissement périodique, la résolution de `possible_match`, l'extension
-des sources et les jointures finance-actifs sont des critères M2 ultérieurs ;
+des sources et les jointures finance-actifs sont des critères ultérieurs
+(M3 et M4 depuis le 2026-09-29) ;
 ils ne bloquent pas l'acceptation de M1.
 
 ## Publication programme (13 September 2026)
