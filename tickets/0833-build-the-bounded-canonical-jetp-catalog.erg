@@ -18,6 +18,7 @@ Author: HDMX-coding-agent
 2026-09-23T18:56Z HDMX-coding-agent note blocker 0873 closed — Blocked-by removed.
 2026-09-24T18:45Z HDMX-coding-agent note blocker 0875 closed — Blocked-by removed.
 2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
+2026-09-29T13:36Z HDMX-coding-agent note ticket 1590 (2026-09-29): the 17 project-coverage rows of 0884-coverage-dispositions.csv (0875 has no resolved identity: idn-fin-muara-laboh-2, idn-fin-rbl-sreap, idn-grant-ietf, idn-grant-jetp-etp, idn-monitor-cihaur-talaga-micro-hydro, idn-monitor-gde-pipeline-2025, idn-pipe-dediesel-east-phase1, idn-pipe-dieng-3-4, idn-pipe-e-taxi, idn-pipe-green-corridors-sulawesi, idn-pipe-hijaunesia-2, idn-pipe-hydro-quota-sulawesi, idn-pipe-hydro-quota-sumatra, idn-pipe-nagajaya-micro-hydro, idn-pipe-rscm-energy-efficiency, vnm-project-binh-duong-dong-nai-transmission, vnm-project-tri-an-expansion) are M1b candidates for this ticket, no data change made. While attaching authority coverage, tier-2 same_as pairs surfaced: afd / agence-francaise-de-developpement, kfw / kfw-development-bank, germany / federal-government-of-germany, united-kingdom / government-of-the-united-kingdom / foreign-commonwealth-and-development-office, dbsa / development-bank-of-southern-africa, afdb / african-development-bank, eib / european-investment-bank
 --- body ---
 ## Context
 
@@ -95,6 +96,7 @@ unchanged.
 - [ ] No new source acquisition and no match-resolution campaign occurred
 - [ ] The M1b release reproduces from its inputs
 - [ ] `tests/test_jetp_m1b_catalog.py`, `make jetp-ledger-check`, `make check-fast` and `make lint` green (not the full `make check`: ex post on main)
+- [ ] The 17 project-coverage identifiers of `data/jetp/migration/0884-coverage-dispositions.csv` (0875 has no resolved identity) each have a referent decision row or a recorded disposition (ticket 1590, log note 2026-09-29)
 
 ## Out of scope
 
