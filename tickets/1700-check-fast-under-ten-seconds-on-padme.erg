@@ -42,3 +42,31 @@ gate with a target.
 - [ ] Every test moved out of `check-fast` is still selected by a WP gate or by
       `make check` (shown by `--collect-only`)
 - [ ] `AGENTS.md` and [[1060]] state the measured duration
+
+## Investigation and partial fix (2026-09-29)
+
+On padme, in a clean worktree at `91156e0a` with load 0.16 before the run,
+`make check-fast` took 89.56 s wall time: 2042 passed, 12 skipped, pytest
+87.95 s. A repeat with `--durations=50` took 87.91 s wall time and identified:
+
+- `test_jetp_publication.py::test_candidate_bundle_keeps_provenance_sidecar_with_matching_release_bytes`: 71.01 s call; builds real bundles.
+- `test_jetp_ontology_tables.py::test_the_real_ledger_is_valid`: 41.73 s call; validates the real ledger.
+
+Excluding only those two tests gave 22.09 s wall time (2040 passed, 12
+skipped). Collecting the whole suite and running one trivial test took 12.63 s
+with `-n 16`, versus 8.09 s serial, so the 10 s target also needs a change to
+collection or worker overhead.
+
+PR #1580 (`3c2fc0dd`) marked both tests `slow`; `--collect-only` selected both
+under `wp_jetp` and neither under the fast marker expression. In a clean padme
+worktree at `23e73e39`, with corpus and JETP data materialized, `make
+check-fast` passed (2066 passed, 9 skipped; 22.87 s wall), `make lint` passed
+(351 passed, 8 skipped; 17.87 s wall), and `make check-jetp` passed (588
+passed, 3 skipped; 157.68 s wall). The full `make check` was not run before
+the author directed immediate merge.
+
+The 10 s exit criterion remains unmet. The current-main sweep also found
+unmarked JETP tests that read real ledger files in `test_jetp_comparators.py`
+and tests that launch Node or Python subprocesses in
+`test_jetp_observatory_render.py`. Classify these by cost and measure the
+remaining gate before changing the documented duration.
