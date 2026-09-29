@@ -7,12 +7,13 @@ from the corpus enter phase 1 only after a decision.
 
 Per query the registry records the exact search string and filter, the count
 OpenAlex announced, the count received and whether the last page was reached.
-A query stopped by the record cap, a rate limit or an error is ``incomplete``,
-and the run report says so.
+A query stopped by the record cap, a rate limit or an error is ``incomplete`` in
+the registry (``completed`` False, ``stop_reason`` set). An output directory that
+already holds a registry is refused, so a rerun cannot truncate earlier results.
 
 Usage:
     python scripts/catalog_rel_sud_search.py --output-dir data/rel_sud/run1 \
-        --corpus data/catalogs/refined_works.csv [--only q|e|qj] [--dry-run]
+        --corpus data/catalogs/refined_works.csv [--only q|e|qj|g] [--dry-run]
 """
 
 import argparse
@@ -144,7 +145,14 @@ def plan_queries(cfg):
 def icf_flag_pattern(cfg):
     terms = {v for q in cfg["queries"].values() for s in q.values()
              for t in split_terms(s) for v in spelling_variants(t)}
-    return re.compile("|".join(re.escape(t) for t in sorted(terms, key=len, reverse=True)),
+
+    def part(t):
+        # Latin-script terms need boundaries; CJK, Arabic and Indic scripts have none
+        if all(ord(c) < 0x250 for c in t):
+            return r"(?<!\w)" + re.escape(t) + r"(?!\w)"
+        return re.escape(t)
+
+    return re.compile("|".join(part(t) for t in sorted(terms, key=len, reverse=True)),
                       re.IGNORECASE)
 
 
@@ -204,16 +212,22 @@ def fetch(spec, api_key, cap, delay):
         if resp.status_code != 200:
             yield ("end", f"http {resp.status_code}")
             return
-        body = resp.json()
+        try:
+            body = resp.json()
+            count, results = body["meta"]["count"], body["results"]
+            next_cursor = body["meta"].get("next_cursor")
+        except (ValueError, KeyError, TypeError):
+            yield ("end", "error: bad body")
+            return
         if cursor == "*":
-            yield ("meta", body["meta"]["count"])
-        for w in body["results"]:
+            yield ("meta", count)
+        for i, w in enumerate(results):
             yield ("work", w)
             received += 1
-            if cap and received >= cap:
+            if cap and received >= cap and not (i == len(results) - 1 and not next_cursor):
                 yield ("end", "record cap")
                 return
-        cursor = body["meta"].get("next_cursor")
+        cursor = next_cursor
     yield ("end", "")
 
 
@@ -229,6 +243,9 @@ def run(cfg, args, api_key):
         return 0
     os.makedirs(args.output_dir, exist_ok=True)
     reg_path = os.path.join(args.output_dir, "registry.csv")
+    if os.path.exists(reg_path):
+        log.error("%s already holds a registry; use a new --output-dir", args.output_dir)
+        return 2
     with open(reg_path, "w", encoding="utf-8", newline="") as reg_fh, \
             gzip.open(os.path.join(args.output_dir, "results.jsonl.gz"), "wt",
                       encoding="utf-8") as res_fh:
@@ -269,7 +286,7 @@ def run(cfg, args, api_key):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--config", default="config/rel_sud_search.yaml")
-    # Multi-output script (registry, results, report): --output-dir, not --output.
+    # Multi-output script (registry and results): --output-dir, not --output.
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--corpus", default=None,
                     help="refined_works.csv, to flag works already in the corpus")

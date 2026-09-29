@@ -86,7 +86,7 @@ def parse_answer(text, batch):
         n = item.get("n")
         if not isinstance(n, int) or not 1 <= n <= len(batch):
             continue
-        label, doc = item.get("label"), item.get("doc")
+        label, doc = str(item.get("label", "")).strip().lower(), str(item.get("doc", "")).strip().lower()
         if label in LABELS and doc in DOCS:
             out[batch[n - 1]["openalex_id"]] = {
                 "label": label, "doc": doc, "why": str(item.get("why", ""))[:160]}
@@ -125,8 +125,12 @@ def screen_batch(batch, cfg, call=llm_call):
 
 
 def select_records(path, done, limit, seed):
+    recs, seen = [], set(done)
     with open(path, encoding="utf-8") as fh:
-        recs = [r for r in map(json.loads, fh) if r["openalex_id"] not in done]
+        for r in map(json.loads, fh):
+            if r["openalex_id"] not in seen:
+                seen.add(r["openalex_id"])
+                recs.append(r)
     if limit and limit < len(recs):
         recs = random.Random(seed).sample(recs, limit)
     return recs
@@ -139,23 +143,36 @@ def run(cfg, args, call=None):
     done = set()
     if os.path.exists(out_path):
         with open(out_path, encoding="utf-8") as fh:
-            done = {json.loads(line)["openalex_id"] for line in fh}
+            for line in fh:
+                try:
+                    done.add(json.loads(line)["openalex_id"])
+                except (ValueError, KeyError):
+                    log.warning("skipping an unreadable line in %s (killed mid-write?)", out_path)
     recs = select_records(args.input, done, args.limit, args.sample_seed)
     size = cfg["batch_size"]
     batches = [recs[i:i + size] for i in range(0, len(recs), size)]
-    with open(os.path.join(args.output_dir, "screen_run.json"), "w", encoding="utf-8") as fh:
-        json.dump({
-            "model": cfg["model"], "started": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "prompt_sha256": hashlib.sha256(cfg["prompt_template"].encode()).hexdigest(),
-            "input": args.input, "n_todo": len(recs), "n_batches": len(batches)}, fh, indent=1)
+    prompt_sha = hashlib.sha256((cfg["prompt_template"] + "\n" + cfg["answer_format"]).encode()).hexdigest()
+    with open(os.path.join(args.output_dir, "screen_runs.jsonl"), "a", encoding="utf-8") as fh:
+        fh.write(json.dumps({
+            "model": cfg["model"], "backend": "local" if cfg.get("api_base") else "openrouter",
+            "started": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "prompt_sha256": prompt_sha,
+            "input": args.input, "n_todo": len(recs), "n_batches": len(batches)}) + "\n")
     by_id = {r["openalex_id"]: r for r in recs}
     n_ok = n_lost = 0
+    if os.path.exists(out_path) and os.path.getsize(out_path):
+        with open(out_path, "rb") as fh:
+            fh.seek(-1, os.SEEK_END)
+            ends_cleanly = fh.read(1) == b"\n"
+        if not ends_cleanly:  # a killed write left a partial line: start the next label on its own line
+            with open(out_path, "a", encoding="utf-8") as fh:
+                fh.write("\n")
     with open(out_path, "a", encoding="utf-8") as out, \
             ThreadPoolExecutor(max_workers=cfg["workers"]) as pool:
         for batch, res in zip(batches, pool.map(lambda b: screen_batch(b, cfg, call), batches)):
             for oid, r in res.items():
                 out.write(json.dumps({"openalex_id": oid, "title": by_id[oid]["title"],
-                                      **r}, ensure_ascii=False) + "\n")
+                                      **r, "model": cfg["model"]}, ensure_ascii=False) + "\n")
             out.flush()
             n_ok += len(res)
             n_lost += len(batch) - len(res)
@@ -167,7 +184,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--config", default="config/rel_sud_screen.yaml")
     ap.add_argument("--input", required=True)
-    # Multi-output script (labels plus a run header): --output-dir, not --output.
+    # Multi-output script (labels plus run headers): --output-dir, not --output.
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--limit", type=int, default=0, help="random sample size (0 = all)")
     ap.add_argument("--sample-seed", type=int, default=7)

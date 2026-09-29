@@ -111,3 +111,42 @@ def test_rerun_retries_unlabelled_records_and_skips_labelled_ones(tmp_path):
     lines = [json.loads(x) for x in open(tmp_path / "o" / "screen.jsonl", encoding="utf-8")]
     assert sorted(x["openalex_id"] for x in lines) == ["W1", "W2", "W3"]
     assert calls == [3, 2]
+
+
+def test_labels_carry_their_model_and_headers_are_appended(tmp_path):
+    inp = tmp_path / "in.jsonl"
+    inp.write_text("\n".join(json.dumps(r) for r in _recs(2)) + "\n", encoding="utf-8")
+    args = types.SimpleNamespace(input=str(inp), output_dir=str(tmp_path / "o"), limit=0, sample_seed=7)
+    cfg = {**_cfg(), "batch_size": 5, "workers": 1}
+
+    def label_all(prompt, model, max_tokens):
+        n = prompt.count("Title:")
+        return json.dumps([{"n": i, "label": "out", "doc": "other", "why": ""} for i in range(1, n + 1)])
+
+    sc.run(cfg, args, call=label_all)
+    sc.run({**cfg, "model": "other-model"}, args, call=label_all)
+    lines = [json.loads(x) for x in open(tmp_path / "o" / "screen.jsonl", encoding="utf-8")]
+    assert {x["model"] for x in lines} == {cfg["model"]}
+    headers = [json.loads(x) for x in open(tmp_path / "o" / "screen_runs.jsonl", encoding="utf-8")]
+    assert len(headers) == 2 and headers[1]["model"] == "other-model"
+
+
+def test_resume_skips_an_unreadable_line_and_duplicate_input_ids(tmp_path):
+    inp = tmp_path / "in.jsonl"
+    recs = _recs(2) + _recs(1)
+    inp.write_text("\n".join(json.dumps(r) for r in recs) + "\n", encoding="utf-8")
+    out = tmp_path / "o"
+    out.mkdir()
+    (out / "screen.jsonl").write_text(json.dumps({"openalex_id": "W1"}) + '\n{"openalex_id": "W', encoding="utf-8")
+    args = types.SimpleNamespace(input=str(inp), output_dir=str(out), limit=0, sample_seed=7)
+    asked = []
+
+    def label_all(prompt, model, max_tokens):
+        n = prompt.count("Title:")
+        asked.append(n)
+        return json.dumps([{"n": i, "label": "ICF", "doc": "Research", "why": ""} for i in range(1, n + 1)])
+
+    sc.run({**_cfg(), "batch_size": 5, "workers": 1}, args, call=label_all)
+    assert asked == [1]  # W1 is done; W2 is asked once despite the duplicate row
+    last = [json.loads(x) for x in open(out / "screen.jsonl", encoding="utf-8") if x.strip().endswith("}")]
+    assert last[-1]["label"] == "icf" and last[-1]["doc"] == "research"
