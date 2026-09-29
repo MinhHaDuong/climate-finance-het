@@ -186,3 +186,11 @@ idc.name.1,idc,IDC,preferred,,,zaf-jet-investment-register-q1-2026-overall-data-
 jet-ip-nev-programme-management-office-pmo.name.1,jet-ip-nev-programme-management-office-pmo,JET-IP NEV Programme Management Office (PMO),preferred,,,zaf-jet-investment-register-q1-2026-overall-data-255,2026-09-24,scripts/jetp/build_reconciliation.py,accepted,,
 aih-group.name.1,aih-group,AIH Group,preferred,,,zaf-jet-investment-register-q1-2026-overall-data-257,2026-09-24,scripts/jetp/build_reconciliation.py,accepted,,
 oecd.name.1,oecd,Organisation for Economic Co-operation and Development,preferred,,oecd-crs-energy-zaf-2005-q-2026-09-28,,2026-09-28,"author, ticket 0885 (2026-09-28)",accepted,,
+climate-investment-funds.name.1,climate-investment-funds,Climate Investment Funds,preferred,,,line-1160-idn-approved-smi-retirement-cif-2025,2026-09-29,claude-fable-5-1,accepted,,Ticket 1620: form as printed in the cited line
+pln.name.1,pln,PLN,preferred,,,idn-progress25-t4-3-2-sreap-kfw,2026-09-29,claude-fable-5-1,accepted,,Ticket 1620: form as printed in the cited line
+japan.name.1,japan,Japan,preferred,,,line-1160-idn-approved-secretariat-japan-2025,2026-09-29,claude-fable-5-1,accepted,,Ticket 1620: form as printed in the cited line
+norway.name.1,norway,Norway,preferred,,,idn-progress25-t4-3-3-nagajaya,2026-09-29,claude-fable-5-1,accepted,,Ticket 1620: form as printed in the cited line
+jbic.name.1,jbic,JBIC,preferred,,,idn-progress25-t4-3-2-muara-laboh-jbic,2026-09-29,claude-fable-5-1,accepted,,Ticket 1620: form as printed in the cited line
+norfund.name.1,norfund,Norfund,preferred,,,line-1160-idn-approved-xurya-norfund-2025,2026-09-29,claude-fable-5-1,accepted,,Ticket 1620: form as printed in the cited line
+deg.name.1,deg,DEG,preferred,,,line-1160-idn-approved-saguling-blended-2025,2026-09-29,claude-fable-5-1,accepted,,Ticket 1620: form as printed in the cited line
+proparco.name.1,proparco,Proparco,preferred,,,line-1160-idn-approved-saguling-blended-2025,2026-09-29,claude-fable-5-1,accepted,,Ticket 1620: form as printed in the cited line

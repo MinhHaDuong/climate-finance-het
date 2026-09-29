@@ -34,3 +34,21 @@ This decision authorizes extraction from the preserved bytes. It does not
 upgrade an archive or mirror into a primary authority for event-level claims:
 locators must cite the government-authored document, while provenance retains
 both the document publisher and the delivery host.
+
+## 2026-09-29 — verification by panel, ticket 1620
+
+Author: decision of 2026-09-29, applied by claude-fable-5-1. The author is
+not the checker: no item is routed here for adjudication. Each reading of
+ticket 1620 was verified by two independent readers (gpt-6-sol through
+codex-cli 0.158.0, mistral-vibe-cli-latest through Mistral Vibe 2.25.8) on the
+same page text, blind, against a closed option list, after five positive
+controls that both passed. The stance is the majority of the three verdicts
+and the confidence combines agreement with the readers' self-scores
+(`config/jetp_tracking.yaml`, `matching.panel`, version 1). Every stance is
+applied to the ledger as a defeasible decision. The row-level record, with
+each reader's verdict, basis and self-score, the agreement, the stance and
+its confidence, is `data/jetp/migration/1620-register-dispositions.csv`; the
+observatory will serve it sorted by confidence (ticket C). The panel's stance
+on the financing rows implies a narrower reading of `project_stage.preparation`,
+written as the candidate row `project_stage.preparation.2` in
+`data/jetp/ontology/terms.csv`, not as an edit of the accepted definition.

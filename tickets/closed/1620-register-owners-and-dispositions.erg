@@ -1,0 +1,87 @@
+%erg 0.1
+Title: Give every row of the three JETP migration registers an owner or a disposition
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Closed: Accounted for all 145 unresolved semantic rows, applied the three-reader dispositions, documented served-view changes, and passed the Padme merge gates with self-provisioning CRS fixtures.
+
+--- log ---
+2026-09-29T16:00Z HDMX-coding-agent created — child of [[0870]]; author decisions of 2026-09-29 fix the homes, the judgment rows are decided by claude-fable-5-1 and recorded with that decided_by
+2026-09-29T19:32Z Codex verified all 145 original semantic rows are accounted for by 152 preserved decision records; 53 rows remain explicitly owned pending work, 95 panel-backed records are complete (51 unanimous, 44 majority), and no item is routed to the author. On padme, `make jetp-ledger-check`, `make check-jetp` (599 passed, 5 skipped), `make check` (3066 passed, 38 skipped), `make check-fast` (2079 passed, 9 skipped plus 25 package tests), and `make lint` (351 passed, 8 skipped) passed. The supported full, finance, and JETP gates now materialize the 80 pinned CRS fixtures when absent or incomplete.
+2026-09-29T19:32Z HDMX-coding-agent closed — Accounted for all 145 unresolved semantic rows, applied the three-reader dispositions, documented served-view changes, and passed the Padme merge gates with self-provisioning CRS fixtures.
+--- body ---
+## Context
+
+Three registers under `data/jetp/migration/` were left by the migration
+train with rows that had no owner: `0876-pending.csv` (91 rows: 83
+event-timing dispositions and 8 implementation events), the 5 pending rows of
+`1160-citation-decisions.csv` (the same five events) and the 54 `no_referent`
+rows of `0884-coverage-dispositions.csv` (37 authorities with no matching
+party name, 17 project identifiers 0875 left unresolved). 145 distinct rows.
+
+Homes approved by the author on 2026-09-29: unknown Senegal date roles are
+resolved from the cited pages where the page supports a role, else left
+pending with the reason refined; page-observation dates are terminal (author
+decision 2026-09-24); the Cirebon snapshot goes to [[0920]]; the 17 unresolved
+project identifiers go to [[0833]] (M1b); an authority is covered by a party
+only where a line justifies the party. Author decision of 2026-09-29,
+superseding the routing of judgments to the author: the author is not the
+checker. Every reading is verified by two independent readers of other vendors
+on the same inputs, blind; every row gets a stance and a recorded confidence,
+applied as a defeasible decision and served later sorted by confidence
+(ticket C serves the table).
+
+## Method
+
+- Every cited page was read from the pinned snapshot (pdftotext, HTML to
+  text); no live source was fetched. Positive controls: the same reading
+  found the ISLE-1 CAD 64.3 million row (Table 4.3-2), the Singkarak
+  "temporarily halted" row (Table 4.3-3), the briquetting Projet #2 at
+  EUR 0.3 million (plan p. 42) and the QW2 total EUR 215.9 million (p. 53).
+- The record of every decision is `data/jetp/migration/1620-register-dispositions.csv`
+  (152 decision records over the original 145 unresolved semantic rows, plus
+  the follow-up review of the previously accepted Nagajaya observation;
+  `decided_by`, confidence and page evidence are retained). The extra records
+  preserve the five 0876/1160 overlaps, split the composite DEG/Proparco
+  authority into two applications, and record Nagajaya's revocation rather
+  than overwriting history. `0876-pending.csv` gains `disposition` and `owner`; resolved
+  and rejected rows leave it and are accounted for in
+  `0876-timing-reconciliation.csv` and `1160-citation-decisions.csv`.
+- Party rule for the 37 authorities: R1 a party in force that publishes one of
+  the row's own sources; R2 a party a register line names for the same
+  organisation; R3 a composite row ("France and AFD") goes to the agency when
+  R1 holds for it, else to the country; R4 a party is minted only from a line
+  in force that prints its name, with the authority category of the legacy
+  row and no external identifier (none is held in a snapshot line); R5
+  otherwise left uncovered, naming the lines that would justify it.
+- Panel rule, version 1 (`config/jetp_tracking.yaml`, `matching.panel`):
+  readers claude-fable-5-1 (lead), gpt-6-sol through codex-cli 0.158.0 (the
+  author expected Opus) and mistral-vibe-cli-latest through Mistral Vibe
+  2.25.8 (the author expected GLM), each given the row, the cited page text
+  from the pinned snapshot, the term definitions and a closed option list,
+  blind to the others; five positive controls first, both readers passed all
+  five. Stance: majority of the three verdicts (a three-way split takes the
+  lead reader's). Confidence: agreement weight (3/3 = 1.0, 2/3 = 0.7,
+  split = 0.3) times the mean self-score of the majority. Each reader's
+  verdict, basis and self-score, the agreement, the stance and its confidence
+  are columns of the dispositions register. A stance that changes what a term
+  means is a candidate revision row of the term, never an edit.
+- Panel outcome: 18 initial questions (5 controls, 13 register questions
+  covering 94 rows), followed by one consistency review of the previously
+  accepted Nagajaya observation. Across the 95 panel-backed records, agreement
+  is 3/3 on 51 and 2/3 on 44, with no split. The plan's own date became
+  terminal rather than a typo-read `report_date`; Green Energy Corridors and
+  Dieng 3,4 were rejected under the physical reading of `preparation`; and the
+  same reading revoked Nagajaya through a superseding observation. The Saloum
+  bid deadline became a `planned` timing; the implied narrower definition of
+  `preparation` is the candidate row `project_stage.preparation.2`
+  (confidence 0.65).
+
+## Exit criteria
+
+- [x] Every original unresolved row of the three registers has an owner or a
+      recorded disposition in `1620-register-dispositions.csv`; follow-up and
+      split decisions preserve their history rather than overwriting it
+- [x] Every read judgment carries the three verdicts, the agreement, a stance and a confidence in the register; no item is routed to the author; the stances are applied to the ledger as defeasible decisions
+- [x] Log notes and exit-criterion lines on [[0920]], [[0833]] and the M2 child that owns the unextracted Senelec notice index ([[1502]])
+- [x] `make jetp-ledger-check`, `make check-fast`, `make lint` green; `make check-jetp` green on padme
+- [x] Served-view byte changes listed in the PR with a diff summary of the four country JSONs and the parties/names views

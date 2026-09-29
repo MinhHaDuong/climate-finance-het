@@ -150,6 +150,17 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
 jetp-crs-data:
 	$(UV_RUN) dvc pull data/jetp/crs
 
+# Test gates that exercise the archived CRS replay must be self-sufficient in a
+# fresh worktree. Avoid contacting DVC when all 80 pinned snapshots are already
+# materialized, but repair a missing or incomplete checkout before pytest runs.
+.PHONY: jetp-test-data
+jetp-test-data: | venv-canonicalize
+	@count="$$(find data/jetp/crs -maxdepth 1 -name '*_micro.csv.gz' -type f 2>/dev/null | wc -l)"; \
+	  if [ "$$count" -ne 80 ]; then \
+	    echo "Materializing 80 pinned JETP CRS test fixtures (found $$count)"; \
+	    $(MAKE) jetp-crs-data; \
+	  fi
+
 jetp-crs: jetp-crs-data
 	dvc repro jetp_cohortes jetp_livrable jetp_synthese
 
@@ -890,7 +901,7 @@ venv-canonicalize:
 check-package: | venv-canonicalize
 	$(PYTHON) -m pytest libs/openalex-corpus/tests -q --tb=short
 
-full-gate-preflight:
+full-gate-preflight: jetp-test-data
 	@# Use host Python: uv itself cannot start while its configured cache is read-only.
 	python3 scripts/qa_full_gate_preflight.py
 
@@ -923,10 +934,10 @@ check-library: numba-prewarm | venv-canonicalize
 check-corpus-wp: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ libs/openalex-corpus/tests/ -q --tb=short -m wp_corpus -n $(PYTEST_WORKERS)
 
-check-finance: numba-prewarm | venv-canonicalize
+check-finance: jetp-test-data numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_finance -n $(PYTEST_WORKERS)
 
-check-jetp: numba-prewarm | venv-canonicalize
+check-jetp: jetp-test-data numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m wp_jetp -n $(PYTEST_WORKERS)
 
 check-writing: numba-prewarm | venv-canonicalize
