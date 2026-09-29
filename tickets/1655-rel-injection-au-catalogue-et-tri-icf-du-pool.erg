@@ -1,0 +1,34 @@
+%erg 0.1
+Title: REL — injection des recherches au catalogue et tri ICF de tout le pool
+Created: 2026-09-29
+Author: haduong
+
+--- log ---
+2026-09-29T15:00Z haduong created
+
+--- body ---
+## Contexte
+
+Enfant de 0700. Décision de conception du 29 septembre : mettre en commun le pool
+brut et les résultats des recherches, puis appliquer une seule fois la règle ICF à
+tout, au lieu d'ajouter des œuvres triées à un corpus v2 filtré autrement. Les
+six drapeaux du filtre v2 restent comme information, non comme filtre : sur 489
+œuvres que la recherche du Sud a retrouvées et que le filtre v2 avait écartées,
+122 sont ICF après relecture.
+
+Travail déjà fait (ticket 1530, archive `~/data/projets/climate-finance-het/rel_sud/2026-09-29/`) :
+recherche OpenAlex du Sud, tri de 25 693 œuvres absentes du corpus raffiné, relecture
+Opus de 4 792 œuvres, 55 sentinelles. Ce travail reste valable : même règle.
+
+Forme retenue :
+- table `icf_screen` en ajout seul (œuvre, étape, étiqueteur et modèle, étiquette, type de document, pays étudié, motif, date), jamais dans un fichier régénérable ;
+- vue REL dérivée par jointure ; `refined_works` reste épinglé pour les autres livrables ;
+- injection des recherches comme source du catalogue fusionné, avec provenance et rapport de fusion par source (Phase 1, PR propre).
+
+## Exit criteria
+- [ ] Les recherches (1530, 1650 à 1653) entrent au catalogue comme sources, avec provenance ; rapport de fusion par source avant dédoublonnage
+- [ ] Tri ICF de tout le pool en deux étapes, même règle et mêmes prompts, étiqueteur et modèle enregistrés pour chaque étiquette
+- [ ] Audit par échantillon de l'étape 2 par un second modèle (Fable), accord mesuré
+- [ ] Règle de sortie fixée pour les œuvres restées « incertaines » (177 à ce jour)
+- [ ] Vue REL construite ; comptes reproductibles depuis la table
+- [ ] Unité de compte des versions (working paper / article) fixée avant la vue finale

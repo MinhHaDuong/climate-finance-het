@@ -1,0 +1,22 @@
+%erg 0.1
+Title: REL — chaînage de citations, deux tours
+Created: 2026-09-29
+Author: haduong
+Blocked-by: 1655
+
+--- log ---
+2026-09-29T15:00Z haduong created
+
+--- body ---
+## Contexte
+
+Enfant de 0700. Recherche rétrospective et prospective de citations à partir des
+œuvres ICF retenues par 1655. Décision de la consultation du 29 septembre : deux
+tours ; un troisième seulement si le second apporte des œuvres admissibles.
+Conditions de relance : requête interrompue, sentinelle manquée, référence
+externe sans décision, sommaire incomplet.
+
+## Exit criteria
+- [ ] Deux tours exécutés, effectifs par tour (références et citations, doublons, nouvelles œuvres)
+- [ ] Troisième tour déclenché ou écarté, avec la mesure qui le décide
+- [ ] Nouvelles œuvres livrées à 1655 pour tri, avec provenance

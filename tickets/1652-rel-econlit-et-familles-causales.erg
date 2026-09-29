@@ -1,0 +1,25 @@
+%erg 0.1
+Title: REL — recherches EconLit et familles de la carte causale
+Created: 2026-09-29
+Author: haduong
+
+--- log ---
+2026-09-29T15:00Z haduong created
+
+--- body ---
+## Contexte
+
+Enfant de 0700. Voies « Carte causale » et « OpenAlex et EconLit » du protocole,
+hors strate Sud (1530, 1653). Regrouper les 126 arcs par familles de mécanismes,
+puis lancer plusieurs formulations par famille prioritaire (intervention +
+médiateur, intervention + résultat, synonymes, pays/secteur, sentinelles), avec
+recherche libre de la carte pour adaptation, forêt, pertes et préjudices,
+justice, approches critiques. EconLit : adapter champs, descripteurs, JEL,
+filtres et export ; vérifier l'accès et les working papers via bibCNRS.
+
+## Exit criteria
+- [ ] Matrice question × base × formulation × langue × sentinelles, chaînes exactes archivées
+- [ ] Adaptation EconLit écrite et testée ; accès bibCNRS et export vérifiés, ou impossibilité documentée
+- [ ] Rendement de chaque voie mesuré (références uniques et pertinentes)
+- [ ] Trois issues distinguées pour chaque famille : aucune étude retrouvée après recherches tracées / présente mais non reconnue par les mots-clés / arc théorique sans preuve directe attendue
+- [ ] Résultats livrés à l'injection (1655) avec provenance
