@@ -7,6 +7,7 @@ Label: deferred
 --- log ---
 2026-09-29T00:00Z HDMX-coding-agent created
 2026-09-29T12:00Z HDMX-coding-agent note Milestone M4 (author); feasibility of the group library checked in 1511
+2026-09-29T13:00Z HDMX-coding-agent decision Design decisions recorded (scope, versions, review, publishers, observatory links, storage locations, sync direction); M2 storage seam noted in [[1140]], [[1180]], [[1184]]
 
 --- body ---
 ## Milestone
@@ -56,6 +57,50 @@ Today step D1 is a home-made document manager: `data/jetp/documents.csv`
    non-redistributed, as in `docs/jetp-storage.md` ("not served wholesale").
    Public access to the documents themselves already goes through the Web
    Archive snapshots (`web-archive-captures.csv`).
+
+## Design decisions (author, 2026-09-29)
+
+To settle before the pilot, so that 1511 does not settle them by accident.
+
+1. **Scope: documents, not data.** Zotero holds what a person reads or cites
+   (plans, reports, agreements, project pages). Machine data fetched from
+   APIs stays in DVC: `crs-bulk.dvc` (81 files, 41.8 MB), `recovery.dvc`
+   (one file, 210 MB), and the IATI JSON, XML and CSV payloads.
+2. **Versions.** A new edition (`edition_of`) or a translation
+   (`translation_of`) is its own Zotero item, linked by "Related". A byte
+   change with no editorial change (republished file, new metadata) is one
+   more attachment on the same item, its title carrying the retrieval date.
+3. **Review.** The harvester writes new items into an inbox collection; the
+   author reviews in Zotero and tags reviewed items `reviewed`. The export
+   keeps only reviewed items, which replaces the "reviewed identities" role of
+   `documents.csv`.
+4. **Publishers.** Party links (`document-publishers.csv` to `parties.csv`,
+   with role) stay in the repo, keyed by `document_id`. Zotero gets a display
+   name only.
+5. **Observatory links.** The group's public item page becomes the document
+   link on the observatory. It replaces, not supplements, the current
+   "Publisher's page" and "Web Archive copy" links: the Zotero record carries
+   the publisher URL (URL field) and the Web Archive capture (Archive fields
+   or a link attachment). Open point for the pilot: page locators
+   (`#page=N`) need a direct file URL, which a Zotero item page cannot give;
+   keep a direct link (Web Archive copy) for page-level locators only, or
+   print the page number as text.
+6. **Where the files are.** Master copy in Zotero's cloud storage, in the
+   group library, counted against the author's unlimited quota. Reading
+   copies in each desktop client's data directory, synced by Zotero. The
+   pipeline's copy on padme is a cache keyed by hash, filled through the Web
+   API into the same path as today (`data/jetp/documents/objects/<sha256>`),
+   so the parsers do not change. Releases freeze the files they cite in DVC on
+   padme, as evidence independent of Zotero.
+7. **Sync direction.** Two writers into Zotero (the harvester creates items
+   and attachments; the author reviews, edits and annotates), one reader (the
+   pipeline). The repo never pushes metadata back to Zotero. Edits are watched
+   by polling, not live: a scheduled pass on the runner of [[1184]] asks the
+   Web API for what changed since the last library version
+   (`?since=<version>`, plus deletions), regenerates the export, and opens a
+   PR when it differs, so every Zotero edit reaches the pipeline as a
+   reviewable diff. An attachment of a cited file whose checksum changed
+   raises an alarm instead of a silent update.
 
 ## Children
 

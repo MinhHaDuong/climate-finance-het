@@ -67,6 +67,12 @@ branchent au lieu d'en bâtir chacun un :
   lanceur et même remontée dans `/lair`, mais dans son propre checkout, pour
   que les diffs de collecte ne se mêlent jamais aux tests.
 
+**Couture de stockage** (auteur, 2026-09-29) : au jalon M4, le stockage des
+documents passe à une bibliothèque de groupe Zotero ([[1510]]). Les passes de
+M2 écrivent donc tout document ou toute version par la fonction de dépôt unique
+de [[1184]] (action 4), pour que M4 change ce qu'il y a derrière sans les
+réécrire.
+
 ## Exit criteria
 
 - [ ] Les cinq enfants sont fermés
