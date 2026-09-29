@@ -1,0 +1,48 @@
+%erg 0.1
+Title: Pilot the Zotero group library on Viet Nam JETP documents
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-09-29T00:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of tracker 1510. The pilot tests the design on the smallest country
+before any wider migration: Viet Nam, 58 of the 392 rows of
+`data/jetp/documents.csv` (Senegal, the first choice, is the largest at 138).
+A pilot on one instance is expected to critique the tracker's design; feed its
+findings back into 1510 before filing further children.
+
+## Human step (needs-human)
+
+The author creates the group library under their own account (public is
+fine: a public group shares metadata, not attachment contents; see 1510),
+and decides on the Zotero Storage plan. The 282 MB object store is close to the
+free 300 MB tier, and WebDAV may not serve group libraries: check current
+Zotero terms before choosing. The author then supplies a group-scoped API key
+in `~/.config/keys/` (never in `.env`).
+
+## Actions
+
+1. Import the Viet Nam documents and every snapshot of each as attachments,
+   with `document_id` in Extra and the publisher, date, language and type
+   mapped to Zotero fields.
+2. Write the export, commit it, and have the D1 reader take Viet Nam rows from
+   it instead of `documents.csv`.
+3. Verify locator hashes against attachment hashes (confirm that the Web API
+   exposes a checksum for each attachment; if it does not, hash the
+   downloaded file).
+4. Record what did not fit Zotero's model, and in particular whether one
+   attachment per byte version stays workable.
+
+## Exit criteria
+
+- [ ] The Viet Nam items are in the group library, each with its
+      `document_id` in Extra and every snapshot attached.
+- [ ] The D2-D4 outputs and the observatory pages for Viet Nam are
+      byte-identical before and after the switch.
+- [ ] A findings note in the log of 1510: what fits, what does not, go or
+      no-go for the other countries.
