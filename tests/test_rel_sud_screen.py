@@ -41,6 +41,38 @@ def test_parse_keeps_valid_items_and_drops_invalid_ones():
     assert sc.parse_answer(None, batch) == {}
 
 
+def test_local_backend_posts_the_thinking_switch_and_returns_content(monkeypatch):
+    cfg = {**_cfg(), **_cfg()["local"]}
+    sent = {}
+
+    class Resp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"choices": [{"message": {"content": "[]"}}]}
+
+    def fake_post(url, json, timeout):
+        sent.update(url=url, body=json, timeout=timeout)
+        return Resp()
+
+    monkeypatch.setattr(sc.requests, "post", fake_post)
+    assert sc.make_call(cfg)("p", model=cfg["model"], max_tokens=10) == "[]"
+    assert sent["url"].endswith("/v1/chat/completions")
+    assert sent["body"]["chat_template_kwargs"] == {"enable_thinking": False}
+    assert sc.make_call(_cfg()) is sc.llm_call
+
+
+def test_local_backend_failure_returns_none_so_the_batch_stays_unlabelled(monkeypatch):
+    cfg = {**_cfg(), **_cfg()["local"]}
+
+    def boom(url, json, timeout):
+        raise sc.requests.ConnectionError("down")
+
+    monkeypatch.setattr(sc.requests, "post", boom)
+    assert sc.make_call(cfg)("p", model="m", max_tokens=1) is None
+
+
 def test_rerun_retries_unlabelled_records_and_skips_labelled_ones(tmp_path):
     inp = tmp_path / "in.jsonl"
     inp.write_text("\n".join(json.dumps(r) for r in _recs(3)) + "\n", encoding="utf-8")

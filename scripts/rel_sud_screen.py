@@ -20,6 +20,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 
+import requests
 import yaml
 from syllabi_io import llm_call
 from utils import get_logger
@@ -78,6 +79,32 @@ def parse_answer(text, batch):
     return out
 
 
+def make_call(cfg):
+    """OpenRouter through litellm by default; a llama-server when `api_base` is set.
+
+    The local model thinks by default and a 20-record batch then spends the
+    whole token budget on reasoning (0 of 20 parsed at 4000 tokens, 132 s);
+    `request_extra` carries the per-request switch that turns it off.
+    """
+    if not cfg.get("api_base"):
+        return llm_call
+
+    def local_call(prompt, model, max_tokens):
+        body = {"model": model, "temperature": 0, "max_tokens": max_tokens,
+                "messages": [{"role": "user", "content": prompt}],
+                **cfg.get("request_extra", {})}
+        try:
+            resp = requests.post(cfg["api_base"].rstrip("/") + "/chat/completions",
+                                 json=body, timeout=cfg.get("timeout", 900))
+            resp.raise_for_status()
+            return resp.json()["choices"][0]["message"].get("content")
+        except (requests.RequestException, KeyError, ValueError) as exc:
+            log.error("local LLM call failed: %s", type(exc).__name__)
+            return None
+
+    return local_call
+
+
 def screen_batch(batch, cfg, call=llm_call):
     reply = call(build_prompt(batch, cfg), model=cfg["model"], max_tokens=cfg["max_tokens"])
     return parse_answer(reply, batch)
@@ -91,7 +118,8 @@ def select_records(path, done, limit, seed):
     return recs
 
 
-def run(cfg, args, call=llm_call):
+def run(cfg, args, call=None):
+    call = call or make_call(cfg)
     os.makedirs(args.output_dir, exist_ok=True)
     out_path = os.path.join(args.output_dir, "screen.jsonl")
     done = set()
@@ -129,9 +157,13 @@ def main(argv=None):
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--limit", type=int, default=0, help="random sample size (0 = all)")
     ap.add_argument("--sample-seed", type=int, default=7)
+    ap.add_argument("--backend", choices=["openrouter", "local"], default="openrouter",
+                    help="local applies the `local:` block of the config (llama-server)")
     args = ap.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
+    if args.backend == "local":
+        cfg.update(cfg["local"])
     return run(cfg, args)
 
 

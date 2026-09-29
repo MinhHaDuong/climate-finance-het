@@ -8,6 +8,17 @@ max_tokens: 1800
 title_max_chars: 220
 abstract_max_chars: 650
 
+# Applied with --backend local, on the machine that hosts llama-server (padme).
+# One slot, so one worker; `enable_thinking: false` is sent per request.
+local:
+  api_base: http://127.0.0.1:8080/v1
+  model: qwen3.8-27b
+  workers: 1
+  max_tokens: 2500
+  timeout: 900
+  request_extra:
+    chat_template_kwargs: {enable_thinking: false}
+
 prompt_template: |
   You screen bibliographic records for a literature review on INTERNATIONAL
   CLIMATE FINANCE (ICF). Records may be in any language; judge them in their
