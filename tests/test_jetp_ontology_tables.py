@@ -250,6 +250,7 @@ def _in_list(terms, list_name):
     return {t['term_id'] for t in terms if t['list'] == list_name}
 
 
+@pytest.mark.slow
 def test_the_real_ledger_is_valid():
     assert ledger_build.build(ledger_headers.LEDGER_DIR, None) == []
 
