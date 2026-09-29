@@ -138,29 +138,37 @@ def test_a_channel_is_served_beside_the_funders_under_its_own_name(views):
             expected = sorted({name for agreement in components.get(project['id'], ())
                                for name in channels.get(agreement, ())})
             assert project['channels'] == expected, project['id']
-            assert not set(project['channels']) & set(project['funders']), project['id']
             with_channels += bool(expected)
     assert with_channels, 'the positive control: no project reaches a channel'
 
 
 def test_funders_keep_the_funder_role_and_channels_the_channel_role():
     from jetp._country_views_v2 import _parties
+    # The World Bank is the channel of a1 and the funder of a2, both
+    # components of pr1: a role is per agreement, so the project lists it on
+    # both lines (Codex review, 2026-09-29).
     names = [dict(name_row_id=f'n{i}', party_id=p, name=n, form_type='preferred',
                   status='accepted', supersedes='')
-             for i, (p, n) in enumerate([('p-de', 'Germany'), ('p-giz', 'GIZ')])]
+             for i, (p, n) in enumerate([('p-de', 'Germany'), ('p-giz', 'GIZ'), ('p-wb', 'World Bank')])]
+    party_in = [('r1', 'p-de', 'a1', 'funder'), ('r2', 'p-giz', 'a1', 'channel'),
+                ('r3', 'p-wb', 'a1', 'channel'), ('r4', 'p-wb', 'a2', 'funder')]
     relations = [
-        dict(relation_id='r1', from_kind='party', from_id='p-de', relation='party_in',
-             to_kind='agreement', to_id='a1', role='funder', status='accepted', supersedes=''),
-        dict(relation_id='r2', from_kind='party', from_id='p-giz', relation='party_in',
-             to_kind='agreement', to_id='a1', role='channel', status='accepted', supersedes=''),
-        dict(relation_id='r3', from_kind='agreement', from_id='a1', relation='component_of',
-             to_kind='project', to_id='pr1', role=None, status='accepted', supersedes=''),
+        dict(relation_id=rid, from_kind='party', from_id=party, relation='party_in',
+             to_kind='agreement', to_id=agreement, role=role, status='accepted', supersedes='')
+        for rid, party, agreement, role in party_in
+    ] + [
+        dict(relation_id=f'c{agreement}', from_kind='agreement', from_id=agreement, relation='component_of',
+             to_kind='project', to_id='pr1', role=None, status='accepted', supersedes='')
+        for agreement in ('a1', 'a2')
     ]
-    parties, by_project = _parties({'relations': relations, 'party_names': names}, {'a1': {}})
-    assert dict(parties['funder']) == {'a1': {'Germany'}}
-    assert dict(parties['channel']) == {'a1': {'GIZ'}}
-    assert dict(by_project['funder']) == {'pr1': {'Germany'}}
-    assert dict(by_project['channel']) == {'pr1': {'GIZ'}}
+    parties, by_project = _parties({'relations': relations, 'party_names': names}, {'a1': {}, 'a2': {}})
+    def held(mapping):
+        return {k: v for k, v in mapping.items() if v}
+
+    assert held(parties['funder']) == {'a1': {'Germany'}, 'a2': {'World Bank'}}
+    assert held(parties['channel']) == {'a1': {'GIZ', 'World Bank'}}
+    assert held(by_project['funder']) == {'pr1': {'Germany', 'World Bank'}}
+    assert held(by_project['channel']) == {'pr1': {'GIZ', 'World Bank'}}
 
 
 def test_an_unknown_collected_document_fails_loud_and_does_not_block(views, caplog, capsys):
