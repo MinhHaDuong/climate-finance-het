@@ -53,6 +53,5 @@ tier with a confidence; anything below the configured threshold goes to
 - [ ] Every row of the three registers has an owner or a recorded disposition in `1620-register-dispositions.csv` (145 distinct keys)
 - [ ] The judgment rows carry decision, page evidence and confidence; those below the threshold are items in `data/jetp/decisions.md`
 - [ ] Log notes and exit-criterion lines on [[0920]], [[0833]] and the M2 child that owns the unextracted Senelec notice index ([[1502]])
-- [ ] `tests/test_jetp_register_dispositions.py` red before the data change, green after
 - [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` green; `make check-jetp` green on padme
 - [ ] Served-view byte changes listed in the PR with a diff summary of the four country JSONs and the parties/names views
