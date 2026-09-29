@@ -36,3 +36,12 @@ storage:
   dry_searches: data/jetp/dry-searches.csv
   decisions: data/jetp/decisions.md
   ontology: data/jetp/ontology
+
+# Matching tiers (storage contract § 4). A tier writes `accepted` only at or
+# above its threshold; below it, a decision stays a candidate or, when a
+# person must decide, becomes an item in data/jetp/decisions.md for the
+# author, never accepted silently (author decision 2026-09-23; ticket 1590).
+matching:
+  llm_adjudication:
+    method_version: 1
+    accept_threshold: 0.8
