@@ -6,6 +6,7 @@ Author: Codex
 --- log ---
 2026-09-24T15:45Z Codex created — follow-up to [[0874]], after the author chose to keep unavailable evidence pending
 
+2026-09-29T13:36Z HDMX-coding-agent note ticket 1590 (2026-09-29): idn-impl-cirebon-suspended-2025 stays pending in 0876-pending.csv and 1160-citation-decisions.csv, owner 0920: retrieval hash 9803416b0403f306f9d91b12346f7e702de57d338479419b9bf0667a320f5766 (idn-news-cirebon-retirement-reuters-2025) is registered in snapshots.csv but the object is absent from the DVC store, so the ministerial statement cannot be read at source level
 --- body ---
 ## Context
 
@@ -30,5 +31,8 @@ on 2026-09-24 to leave missing snapshots pending until acquisition.
 
 - [ ] Every pending claim and link has a traceable line or an explicit,
   documented absence of available source bytes.
+- [ ] The Reuters Cirebon snapshot `9803416b…` is present in the store, or its
+  absence is documented, and `idn-impl-cirebon-suspended-2025` leaves
+  `0876-pending.csv` and `1160-citation-decisions.csv` with a decision (ticket 1590)
 - [ ] `make jetp-ledger-check`, M1a byte comparison, `make check-fast`, and
   `make lint` pass.
