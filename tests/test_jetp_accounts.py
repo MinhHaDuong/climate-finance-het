@@ -409,10 +409,16 @@ def test_ledger_digest_encoding_separates_storage_classes():
 
 @pytest.fixture(scope='session')
 def real_ledger_build():
-    """One build of the committed ledger per session: validating it takes minutes."""
+    """One build of the committed ledger per session (per xdist worker).
+
+    Validating the real ledger takes about three minutes, so the tests that
+    read this fixture are marked slow: they run in the JETP gate and the full
+    check, not in the fast inner loop.
+    """
     return build(ROOT / 'data/jetp')
 
 
+@pytest.mark.slow
 def test_committed_accounts_view_matches_a_rebuild(real_ledger_build):
     """The served accounts.json is the ledger's: a rebuild reproduces it byte for byte.
 
@@ -427,6 +433,7 @@ def test_committed_accounts_view_matches_a_rebuild(real_ledger_build):
     assert rebuilt == served
 
 
+@pytest.mark.slow
 def test_real_ledger_has_no_admitted_commitment_flow(real_ledger_build):
     assert real_ledger_build['accounts'] == []
     assert real_ledger_build['availability']
