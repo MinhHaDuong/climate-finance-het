@@ -256,8 +256,8 @@ legacy_row_number,legacy_event_id,legacy_date_role,outcome,timing_id,approval_ti
 256,zaf-register-idc001-2026-03-30,register,typed_timing,timing-zaf-register-idc001-2026-03-30-1,,
 257,zaf-register-idc002-2026-03-30,register,typed_timing,timing-zaf-register-idc002-2026-03-30-1,,
 258,zaf-register-idc003-2026-03-30,register,typed_timing,timing-zaf-register-idc003-2026-03-30-1,,
-259,zaf-murp-afdb-approved-2026,event,pending,,,approval_day_unsupported_by_cited_article
-260,zaf-eepbip-maf-approved-2018,other_milestone,pending,,,unmapped_date_role_other_milestone
+259,zaf-murp-afdb-approved-2026,event,rejected,,,"legacy event day 2026-07-16 is the article dateline, not an approval day; report_date written as timing-zaf-murp-afdb-approved-2026-1 (ticket 1620)"
+260,zaf-eepbip-maf-approved-2018,other_milestone,terminal,,,"terminal (panel-1620-v1, 3/3): the MAF profile prints ""Project duration 05/2016-01/2018 (Appraisal); 08/2018-12/2026 (Implementation)""; a project period is not a date role of a money amount observation; no timing"
 261,idn-approved-isle1-canada-2025,reporting_cutoff,typed_timing,timing-idn-approved-isle1-canada-2025-1,,
 262,idn-approved-sreap-kfw-2025,reporting_cutoff,typed_timing,timing-idn-approved-sreap-kfw-2025-1,,
 263,idn-approved-xurya-norfund-2025,reporting_cutoff,typed_timing,timing-idn-approved-xurya-norfund-2025-1,,
@@ -337,116 +337,116 @@ legacy_row_number,legacy_event_id,legacy_date_role,outcome,timing_id,approval_ti
 337,idn-pipeline-dieng34-adb-2025,reporting_cutoff,typed_timing,timing-idn-pipeline-dieng34-adb-2025-1,,
 338,idn-pipeline-rscm-private-2025,reporting_cutoff,typed_timing,timing-idn-pipeline-rscm-private-2025-1,,
 339,idn-pipeline-rsud-private-2025,reporting_cutoff,typed_timing,timing-idn-pipeline-rsud-private-2025-1,,
-340,idn-portal-gecs-kfw-2026,observation,pending,,,unmapped_date_role_observation
-341,idn-portal-nagajaya-norfund-2026,observation,pending,,,unmapped_date_role_observation
-342,idn-portal-hululais-jica-2026,observation,pending,,,unmapped_date_role_observation
-343,sen-qw2-plan-need-2025,unknown,pending,,,unmapped_date_role_unknown
-344,sen-qw3-plan-need-2025,unknown,pending,,,unmapped_date_role_unknown
-345,sen-diass-kfw-reported-funding,unknown,pending,,,unmapped_date_role_unknown
-346,sen-diass-afd-reported-funding,unknown,pending,,,unmapped_date_role_unknown
+340,idn-portal-gecs-kfw-2026,observation,terminal,,,no timing
+341,idn-portal-nagajaya-norfund-2026,observation,terminal,,,no timing
+342,idn-portal-hululais-jica-2026,observation,terminal,,,no timing
+343,sen-qw2-plan-need-2025,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+344,sen-qw3-plan-need-2025,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+345,sen-diass-kfw-reported-funding,unknown,terminal,,,no timing
+346,sen-diass-afd-reported-funding,unknown,terminal,,,no timing
 347,sen-saloum-reported-german-allocation-2026,publication,typed_timing,timing-sen-saloum-reported-german-allocation-2026-1,,
-348,sen-plan-cost-annex-03,unknown,pending,,,unmapped_date_role_unknown
-349,sen-plan-cost-annex-05,unknown,pending,,,unmapped_date_role_unknown
-350,sen-plan-cost-annex-06,unknown,pending,,,unmapped_date_role_unknown
-351,sen-plan-cost-annex-07,unknown,pending,,,unmapped_date_role_unknown
-352,sen-plan-cost-annex-08,unknown,pending,,,unmapped_date_role_unknown
-353,sen-plan-cost-annex-09,unknown,pending,,,unmapped_date_role_unknown
-354,sen-plan-cost-annex-10,unknown,pending,,,unmapped_date_role_unknown
-355,sen-plan-cost-annex-11,unknown,pending,,,unmapped_date_role_unknown
-356,sen-plan-cost-annex-12,unknown,pending,,,unmapped_date_role_unknown
-357,sen-plan-cost-annex-13,unknown,pending,,,unmapped_date_role_unknown
-358,sen-plan-cost-annex-14,unknown,pending,,,unmapped_date_role_unknown
-359,sen-plan-cost-annex-15,unknown,pending,,,unmapped_date_role_unknown
-360,sen-plan-cost-annex-16,unknown,pending,,,unmapped_date_role_unknown
-361,sen-plan-cost-annex-17,unknown,pending,,,unmapped_date_role_unknown
-362,sen-plan-cost-annex-19,unknown,pending,,,unmapped_date_role_unknown
-363,sen-plan-cost-annex-20,unknown,pending,,,unmapped_date_role_unknown
-364,sen-plan-cost-annex-21,unknown,pending,,,unmapped_date_role_unknown
-365,sen-plan-cost-annex-22,unknown,pending,,,unmapped_date_role_unknown
-366,sen-plan-cost-annex-23,unknown,pending,,,unmapped_date_role_unknown
-367,sen-plan-cost-annex-24,unknown,pending,,,unmapped_date_role_unknown
-368,sen-plan-cost-annex-25,unknown,pending,,,unmapped_date_role_unknown
-369,sen-plan-cost-annex-26,unknown,pending,,,unmapped_date_role_unknown
-370,sen-plan-cost-annex-27,unknown,pending,,,unmapped_date_role_unknown
-371,sen-plan-cost-annex-28,unknown,pending,,,unmapped_date_role_unknown
-372,sen-plan-cost-annex-29,unknown,pending,,,unmapped_date_role_unknown
-373,sen-plan-cost-annex-31,unknown,pending,,,unmapped_date_role_unknown
-374,sen-plan-cost-annex-33,unknown,pending,,,unmapped_date_role_unknown
-375,sen-plan-cost-annex-36,unknown,pending,,,unmapped_date_role_unknown
-376,sen-plan-cost-annex-37,unknown,pending,,,unmapped_date_role_unknown
-377,sen-plan-allocation-qw-04,unknown,pending,,,unmapped_date_role_unknown
-378,sen-plan-allocation-qw-08,unknown,pending,,,unmapped_date_role_unknown
-379,sen-plan-allocation-qw-10,unknown,pending,,,unmapped_date_role_unknown
+348,sen-plan-cost-annex-03,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+349,sen-plan-cost-annex-05,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+350,sen-plan-cost-annex-06,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+351,sen-plan-cost-annex-07,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+352,sen-plan-cost-annex-08,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+353,sen-plan-cost-annex-09,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+354,sen-plan-cost-annex-10,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+355,sen-plan-cost-annex-11,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+356,sen-plan-cost-annex-12,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+357,sen-plan-cost-annex-13,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+358,sen-plan-cost-annex-14,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+359,sen-plan-cost-annex-15,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+360,sen-plan-cost-annex-16,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+361,sen-plan-cost-annex-17,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+362,sen-plan-cost-annex-19,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+363,sen-plan-cost-annex-20,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+364,sen-plan-cost-annex-21,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+365,sen-plan-cost-annex-22,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+366,sen-plan-cost-annex-23,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+367,sen-plan-cost-annex-24,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+368,sen-plan-cost-annex-25,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+369,sen-plan-cost-annex-26,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+370,sen-plan-cost-annex-27,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+371,sen-plan-cost-annex-28,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+372,sen-plan-cost-annex-29,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+373,sen-plan-cost-annex-31,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+374,sen-plan-cost-annex-33,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+375,sen-plan-cost-annex-36,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+376,sen-plan-cost-annex-37,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+377,sen-plan-allocation-qw-04,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+378,sen-plan-allocation-qw-08,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+379,sen-plan-allocation-qw-10,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
 380,sen-diass-kfw-reported-20260420,publication,typed_timing,timing-sen-diass-kfw-reported-20260420-1,,
 381,sen-diass-afd-reported-20260420,publication,typed_timing,timing-sen-diass-afd-reported-20260420-1,,
-382,idn-impl-green-corridors-2025,reporting_cutoff,pending,,,0970_physical_state_hold
-383,idn-impl-aicet-2025,reporting_cutoff,pending,,,1160_financing_row_does_not_establish_physical_preparation
+382,idn-impl-green-corridors-2025,reporting_cutoff,rejected,,,panel stance B: financing status alone does not place the project in preparation; no observation written; defeasible
+383,idn-impl-aicet-2025,reporting_cutoff,rejected,,,author decision 2026-09-29: unsupported physical claims; recorded rejected in 1160-citation-decisions.csv; panel stance B confirms the rejection
 384,idn-impl-cirebon-closure-2025,reporting_cutoff,typed_timing,timing-idn-impl-cirebon-closure-2025-1,,
-385,idn-impl-hululais-2025,reporting_cutoff,pending,,,1160_funding_back_on_track_does_not_establish_physical_preparation
+385,idn-impl-hululais-2025,reporting_cutoff,rejected,,,author decision 2026-09-29: unsupported physical claims; recorded rejected in 1160-citation-decisions.csv; panel stance B confirms the rejection
 386,idn-impl-nagajaya-2025,reporting_cutoff,typed_timing,timing-idn-impl-nagajaya-2025-1,,
 387,idn-impl-dediesel-east-2025,reporting_cutoff,typed_timing,timing-idn-impl-dediesel-east-2025-1,,
 388,idn-impl-dediesel-west-2025,reporting_cutoff,typed_timing,timing-idn-impl-dediesel-west-2025-1,,
-389,idn-impl-tanah-laut-2025,reporting_cutoff,pending,,,1160_signed_ppa_does_not_establish_physical_preparation
+389,idn-impl-tanah-laut-2025,reporting_cutoff,rejected,,,author decision 2026-09-29: unsupported physical claims; recorded rejected in 1160-citation-decisions.csv; panel stance B confirms the rejection
 390,idn-impl-legok-nangka-2025,reporting_cutoff,typed_timing,timing-idn-impl-legok-nangka-2025-1,,
 391,idn-impl-singkarak-2025,reporting_cutoff,typed_timing,timing-idn-impl-singkarak-2025-1,,
-392,idn-impl-eib-framework-2025,reporting_cutoff,pending,,,1160_framework_mou_does_not_establish_physical_project
+392,idn-impl-eib-framework-2025,reporting_cutoff,rejected,,,author decision 2026-09-29: unsupported physical claims; recorded rejected in 1160-citation-decisions.csv; panel stance B confirms the rejection
 393,idn-impl-sutami-2025,reporting_cutoff,typed_timing,timing-idn-impl-sutami-2025-1,,
 394,idn-impl-solar-manufacturing-2025,reporting_cutoff,typed_timing,timing-idn-impl-solar-manufacturing-2025-1,,
 395,idn-impl-e-taxi-2025,reporting_cutoff,typed_timing,timing-idn-impl-e-taxi-2025-1,,
 396,idn-impl-hijaunesia2-2025,reporting_cutoff,typed_timing,timing-idn-impl-hijaunesia2-2025-1,,
 397,idn-impl-hydro-sumatra-2025,reporting_cutoff,typed_timing,timing-idn-impl-hydro-sumatra-2025-1,,
 398,idn-impl-hydro-sulawesi-2025,reporting_cutoff,typed_timing,timing-idn-impl-hydro-sulawesi-2025-1,,
-399,idn-impl-dieng34-2025,reporting_cutoff,pending,,,0970_physical_state_hold
+399,idn-impl-dieng34-2025,reporting_cutoff,rejected,,,panel stance B: financing status alone does not place the project in preparation; no observation written; defeasible
 400,idn-impl-rscm-2025,reporting_cutoff,typed_timing,timing-idn-impl-rscm-2025-1,,
 401,idn-impl-rsud-2025,reporting_cutoff,typed_timing,timing-idn-impl-rsud-2025-1,,
-402,idn-impl-nagajaya-portal-2026,observation,pending,,,0970_physical_state_hold
-403,idn-impl-cirebon-suspended-2025,publication,pending,,,1160_source_snapshot_unavailable
+402,idn-impl-nagajaya-portal-2026,observation,rejected,,,panel stance B: financing status alone does not place the project in preparation; no observation written; defeasible
+403,idn-impl-cirebon-suspended-2025,publication,pending,,,"1160_source_snapshot_unavailable: retrieval hash 9803416b registered, object absent from the store; ticket 0920 owns missing snapshots"
 404,idn-impl-seg-operational-2025,event,typed_timing,timing-idn-impl-seg-operational-2025-1,,
 405,idn-impl-sutami-construction-2026,event,typed_timing,timing-idn-impl-sutami-construction-2026-1,,
 406,idn-impl-legok-construction-2026,event,typed_timing,timing-idn-impl-legok-construction-2026-1,,
-407,sen-project-qw-02-proposed-2025-04-02,unknown,pending,,,unmapped_date_role_unknown
-408,sen-project-qw-03-proposed-2025-04-02,unknown,pending,,,unmapped_date_role_unknown
+407,sen-project-qw-02-proposed-2025-04-02,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+408,sen-project-qw-03-proposed-2025-04-02,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
 409,sen-project-annex-15-preparation-2024-10-18,publication,typed_timing,timing-sen-project-annex-15-preparation-2024-10-18-1,,
-410,sen-project-annex-16-procurement-2026-09-09,ambiguous,pending,,,unmapped_date_role_ambiguous
-411,sen-project-annex-20-proposed-2026-09-13,observation,pending,,,unmapped_date_role_observation
-412,sen-project-annex-22-proposed-2026-09-13,observation,pending,,,unmapped_date_role_observation
-413,sen-project-annex-27-proposed-2026-09-13,observation,pending,,,unmapped_date_role_observation
-414,sen-project-annex-31-proposed-2026-09-13,observation,pending,,,unmapped_date_role_observation
+410,sen-project-annex-16-procurement-2026-09-09,ambiguous,typed_timing,timing-sen-project-annex-16-procurement-2026-09-09-1,,
+411,sen-project-annex-20-proposed-2026-09-13,observation,terminal,,,no timing
+412,sen-project-annex-22-proposed-2026-09-13,observation,terminal,,,no timing
+413,sen-project-annex-27-proposed-2026-09-13,observation,terminal,,,no timing
+414,sen-project-annex-31-proposed-2026-09-13,observation,terminal,,,no timing
 415,sen-diass-groundbreaking-20260331,event,typed_timing,timing-sen-diass-groundbreaking-20260331-1,,
 416,sen-biognv-ppp-preparation-20250508,event,typed_timing,timing-sen-biognv-ppp-preparation-20250508-1,,
-417,sen-project-annex-01-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-418,sen-project-annex-02-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-419,sen-project-annex-03-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-420,sen-project-annex-04-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-421,sen-project-annex-05-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-422,sen-project-annex-06-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-423,sen-project-annex-07-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-424,sen-project-annex-08-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-425,sen-project-annex-09-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-426,sen-project-annex-10-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-427,sen-project-annex-11-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-428,sen-project-annex-12-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-429,sen-project-annex-13-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-430,sen-project-annex-14-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-431,sen-project-annex-17-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-432,sen-project-annex-18-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-433,sen-project-annex-19-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-434,sen-project-annex-21-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-435,sen-project-annex-23-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-436,sen-project-annex-24-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-437,sen-project-annex-25-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-438,sen-project-annex-26-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-439,sen-project-annex-28-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-440,sen-project-annex-29-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-441,sen-project-annex-30-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-442,sen-project-annex-32-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-443,sen-project-annex-33-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-444,sen-project-annex-34-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-445,sen-project-annex-35-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-446,sen-project-annex-36-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-447,sen-project-annex-37-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-448,sen-project-annex-38-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-449,sen-project-qw-04-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-450,sen-project-qw-08-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
-451,sen-project-qw-10-plan-proposal,unknown,pending,,,unmapped_date_role_unknown
+417,sen-project-annex-01-plan-proposal,unknown,typed_timing,timing-sen-project-annex-01-plan-proposal-1,,
+418,sen-project-annex-02-plan-proposal,unknown,typed_timing,timing-sen-project-annex-02-plan-proposal-1,,
+419,sen-project-annex-03-plan-proposal,unknown,typed_timing,timing-sen-project-annex-03-plan-proposal-1,,
+420,sen-project-annex-04-plan-proposal,unknown,typed_timing,timing-sen-project-annex-04-plan-proposal-1,,
+421,sen-project-annex-05-plan-proposal,unknown,typed_timing,timing-sen-project-annex-05-plan-proposal-1,,
+422,sen-project-annex-06-plan-proposal,unknown,typed_timing,timing-sen-project-annex-06-plan-proposal-1,,
+423,sen-project-annex-07-plan-proposal,unknown,typed_timing,timing-sen-project-annex-07-plan-proposal-1,,
+424,sen-project-annex-08-plan-proposal,unknown,typed_timing,timing-sen-project-annex-08-plan-proposal-1,,
+425,sen-project-annex-09-plan-proposal,unknown,typed_timing,timing-sen-project-annex-09-plan-proposal-1,,
+426,sen-project-annex-10-plan-proposal,unknown,typed_timing,timing-sen-project-annex-10-plan-proposal-1,,
+427,sen-project-annex-11-plan-proposal,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+428,sen-project-annex-12-plan-proposal,unknown,typed_timing,timing-sen-project-annex-12-plan-proposal-1,,
+429,sen-project-annex-13-plan-proposal,unknown,typed_timing,timing-sen-project-annex-13-plan-proposal-1,,
+430,sen-project-annex-14-plan-proposal,unknown,typed_timing,timing-sen-project-annex-14-plan-proposal-1,,
+431,sen-project-annex-17-plan-proposal,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+432,sen-project-annex-18-plan-proposal,unknown,typed_timing,timing-sen-project-annex-18-plan-proposal-1,,
+433,sen-project-annex-19-plan-proposal,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+434,sen-project-annex-21-plan-proposal,unknown,typed_timing,timing-sen-project-annex-21-plan-proposal-1,,
+435,sen-project-annex-23-plan-proposal,unknown,typed_timing,timing-sen-project-annex-23-plan-proposal-1,,
+436,sen-project-annex-24-plan-proposal,unknown,typed_timing,timing-sen-project-annex-24-plan-proposal-1,,
+437,sen-project-annex-25-plan-proposal,unknown,typed_timing,timing-sen-project-annex-25-plan-proposal-1,,
+438,sen-project-annex-26-plan-proposal,unknown,typed_timing,timing-sen-project-annex-26-plan-proposal-1,,
+439,sen-project-annex-28-plan-proposal,unknown,typed_timing,timing-sen-project-annex-28-plan-proposal-1,,
+440,sen-project-annex-29-plan-proposal,unknown,typed_timing,timing-sen-project-annex-29-plan-proposal-1,,
+441,sen-project-annex-30-plan-proposal,unknown,typed_timing,timing-sen-project-annex-30-plan-proposal-1,,
+442,sen-project-annex-32-plan-proposal,unknown,typed_timing,timing-sen-project-annex-32-plan-proposal-1,,
+443,sen-project-annex-33-plan-proposal,unknown,typed_timing,timing-sen-project-annex-33-plan-proposal-1,,
+444,sen-project-annex-34-plan-proposal,unknown,typed_timing,timing-sen-project-annex-34-plan-proposal-1,,
+445,sen-project-annex-35-plan-proposal,unknown,typed_timing,timing-sen-project-annex-35-plan-proposal-1,,
+446,sen-project-annex-36-plan-proposal,unknown,typed_timing,timing-sen-project-annex-36-plan-proposal-1,,
+447,sen-project-annex-37-plan-proposal,unknown,typed_timing,timing-sen-project-annex-37-plan-proposal-1,,
+448,sen-project-annex-38-plan-proposal,unknown,typed_timing,timing-sen-project-annex-38-plan-proposal-1,,
+449,sen-project-qw-04-plan-proposal,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+450,sen-project-qw-08-plan-proposal,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
+451,sen-project-qw-10-plan-proposal,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
 452,sen-puelec-three-villages-reported-20251109,publication,typed_timing,timing-sen-puelec-three-villages-reported-20251109-1,,
