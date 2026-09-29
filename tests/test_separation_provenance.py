@@ -27,7 +27,7 @@ CSV = os.path.join(REPO, "deliverables", "_shared", "tables", "tab_null_separati
 MANUSCRIPT = os.path.join(REPO, "deliverables", "manuscript", "manuscript.qmd")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _louvain_share_row():
     """The primary A.5 statistic: within_tradition_share, louvain_anchored."""

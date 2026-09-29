@@ -16,7 +16,7 @@ import pytest
 from jetp import build_ledger_documents_view as view
 from jetp._ledger_headers import load_schema
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "deliverables/jetp-observatory"

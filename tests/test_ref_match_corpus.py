@@ -11,7 +11,7 @@ HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 sys.path.insert(0, HARVEST_DIR)
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _make_csv(path, rows, columns):
     """Write a CSV from a list of dicts."""

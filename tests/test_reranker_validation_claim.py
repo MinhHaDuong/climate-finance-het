@@ -41,7 +41,7 @@ EVIDENCE_FILES = [
 ]
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _read(path):
     with open(path) as f:

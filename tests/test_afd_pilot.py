@@ -4,8 +4,8 @@ import pytest
 from build_afd_pilot import payment_observation, reconcile
 
 pytestmark = [
-    pytest.mark.wp_finance,
-    pytest.mark.wp_jetp,
+    pytest.mark.domain_finance,
+    pytest.mark.domain_jetp,
 ]
 
 def test_cma123501_disappearance_is_not_an_outcome():

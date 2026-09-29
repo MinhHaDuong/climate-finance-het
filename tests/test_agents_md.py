@@ -18,7 +18,7 @@ SMELL_THRESHOLD = 150  # lines — time to trim
 HARD_CEILING = 200  # Anthropic recommended limit
 
 
-pytestmark = pytest.mark.wp_shared
+pytestmark = pytest.mark.domain_infrastructure
 
 def _line_count():
     with open(AGENTS_MD) as f:

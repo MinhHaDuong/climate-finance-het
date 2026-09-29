@@ -34,7 +34,7 @@ GREY_SEEDS = {"grey_sources.yaml"}
 GREY_REQUIRED = ("title", "author", "year", "source_org")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def seed_files():
     return sorted(glob.glob(os.path.join(BASE, "config", "*_sources.yaml")))

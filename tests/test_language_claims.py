@@ -74,7 +74,7 @@ UNDEMONSTRATED = (
 )
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def read(path):
     with open(path) as fh:

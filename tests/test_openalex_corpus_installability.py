@@ -34,7 +34,7 @@ import pytest
 _PKG_DIR = Path(__file__).resolve().parent.parent / "libs" / "openalex-corpus"
 
 pytestmark = [
-    pytest.mark.wp_shared,
+    pytest.mark.domain_infrastructure,
     pytest.mark.integration,
 ]
 

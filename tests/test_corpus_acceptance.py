@@ -20,7 +20,7 @@ import pytest
 
 # Entire module requires corpus data files on disk — slow in CI.
 pytestmark = [
-    pytest.mark.wp_corpus,
+    pytest.mark.domain_corpus,
     pytest.mark.slow,
     pytest.mark.timeout(120),
 ]

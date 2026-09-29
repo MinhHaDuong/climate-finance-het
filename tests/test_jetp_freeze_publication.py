@@ -6,7 +6,7 @@ import pytest
 from jetp import _observatory_bundle as bundles
 from test_jetp_observatory_bundle import tiny_bundle
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 @pytest.fixture
 def capture(tmp_path, monkeypatch):

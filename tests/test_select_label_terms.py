@@ -11,7 +11,7 @@ import pytest
 
 # --- Copied from compute_clusters.py (pure Python, no numpy) ---
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _word_count(terms):
     return sum(len(t.split()) for t in terms)

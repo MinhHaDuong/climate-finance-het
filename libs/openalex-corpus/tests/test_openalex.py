@@ -15,7 +15,7 @@ from openalex_corpus import (
     reconstruct_abstract,
 )
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 
 class TestReconstructAbstract:

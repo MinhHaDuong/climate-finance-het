@@ -45,7 +45,7 @@ _ALLOWLIST = {
 }
 
 
-pytestmark = pytest.mark.wp_shared
+pytestmark = pytest.mark.domain_infrastructure
 
 @pytest.mark.adherence
 def test_no_handrolled_script_enumeration():

@@ -32,7 +32,7 @@ import pytest
 pkg = pytest.importorskip("openalex_corpus")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.mark.parametrize(
     "module_path, symbol",

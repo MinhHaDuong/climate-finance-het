@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from jetp.build_0823_figure import _svg, build_figure_data, render_outputs
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def test_figure_data_keeps_one_denominator_and_the_null_join_visible() -> None:
     """Different documentary panels cannot be made to look like a joint sample."""

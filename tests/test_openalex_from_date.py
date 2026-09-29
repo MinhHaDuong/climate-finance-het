@@ -29,7 +29,7 @@ from openalex_pool import (
 # build_filter
 # ---------------------------------------------------------------------------
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestBuildFilter:
     def test_no_date(self):

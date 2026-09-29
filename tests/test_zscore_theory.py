@@ -9,7 +9,7 @@ formal statement and proof.
 """
 import pytest
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def test_zscore_inflated_at_trend_extremes():
     """Under linear trend, Z-score is biased at early and late years."""

@@ -8,7 +8,7 @@ import corpus_rel_sud_screen as sc
 import pytest
 import yaml
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
 

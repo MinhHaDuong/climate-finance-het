@@ -18,7 +18,7 @@ REPO = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PAPER = REPO / "deliverables" / "multilayer" / "multilayer-detection.qmd"
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _text() -> str:
     return PAPER.read_text(encoding="utf-8")

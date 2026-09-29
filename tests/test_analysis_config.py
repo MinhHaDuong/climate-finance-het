@@ -19,7 +19,7 @@ from utils import load_analysis_config
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestAnalysisYamlStructure:
     """Config has year_min < breaks[0] < breaks[-1] < year_max."""

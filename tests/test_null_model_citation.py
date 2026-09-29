@@ -20,7 +20,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 # ---------------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _make_synthetic_citation_data(n_years=15, papers_per_year=20, seed=42):
     """Build minimal synthetic works + internal_edges for citation null model tests."""

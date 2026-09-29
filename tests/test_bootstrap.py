@@ -27,7 +27,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "figures"))  # 0255: moved figures 
 # ---------------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _make_synthetic_null_df():
     """Minimal null model CSV for testing summary."""

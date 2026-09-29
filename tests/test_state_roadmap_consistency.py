@@ -7,7 +7,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def test_published_data_paper_is_not_listed_as_awaiting_resubmission():
     state = (ROOT / "STATE.md").read_text(encoding="utf-8").lower()

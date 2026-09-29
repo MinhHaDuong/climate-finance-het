@@ -20,7 +20,7 @@ REPO = Path(__file__).resolve().parent.parent
 GATE = REPO / "scripts" / "dvc_lock_gate.sh"
 
 pytestmark = [
-    pytest.mark.wp_shared,
+    pytest.mark.domain_infrastructure,
     pytest.mark.integration,
 ]
 

@@ -15,8 +15,8 @@ SPEC.loader.exec_module(pilot)
 
 
 pytestmark = [
-    pytest.mark.wp_jetp,
-    pytest.mark.wp_finance,
+    pytest.mark.domain_jetp,
+    pytest.mark.domain_finance,
 ]
 
 def test_component_start_and_earlier_expenditure_are_not_parent_or_transfer_clock():

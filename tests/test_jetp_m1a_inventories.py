@@ -17,7 +17,7 @@ from jetp.build_m1a_inventories import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def _row(
     row_id: str,

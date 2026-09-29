@@ -29,7 +29,7 @@ CORPUS_CONSTRUCTION_MD = os.path.join(ROOT, "deliverables", "_shared", "_include
 REPRODUCIBILITY_MD = os.path.join(ROOT, "deliverables", "_shared", "_includes", "reproducibility.md")
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def read(path):
     with open(path) as f:

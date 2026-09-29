@@ -32,7 +32,7 @@ REFS = (
 )
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 class TestStripReferences:
     def test_drops_everything_from_the_heading_on(self):

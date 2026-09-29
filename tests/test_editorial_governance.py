@@ -15,7 +15,7 @@ BRIEF = os.path.join(ROOT, "docs", "editorial-brief.md")
 WRITING_RULE = os.path.join(ROOT, ".claude", "rules", "writing.md")
 
 pytestmark = [
-    pytest.mark.wp_writing,
+    pytest.mark.domain_writing,
     pytest.mark.adherence,
 ]
 

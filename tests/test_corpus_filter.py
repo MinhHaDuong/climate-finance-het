@@ -31,7 +31,7 @@ FILTER_YAML = os.path.join(
     os.path.dirname(__file__), "..", "config", "corpus_filter.yaml")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def run_script(*args, cwd=None):
     """Run corpus_filter.py with args, return (returncode, stdout+stderr)."""

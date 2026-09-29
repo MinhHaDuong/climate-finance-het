@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 from catalog_merge import _dedup_vectorized, _load_and_tag, deduplicate
 from utils import FROM_COLS, WORKS_COLUMNS
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _make_catalog(rows, source_name):
     """Create a minimal catalog DataFrame with the given source."""

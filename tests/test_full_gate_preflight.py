@@ -17,7 +17,7 @@ import pytest
 REPO = Path(__file__).resolve().parent.parent
 PREFLIGHT = REPO / "scripts" / "qa_full_gate_preflight.py"
 pytestmark = [
-    pytest.mark.wp_shared,
+    pytest.mark.domain_infrastructure,
     pytest.mark.integration,
 ]
 

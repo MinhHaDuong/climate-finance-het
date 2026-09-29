@@ -20,7 +20,7 @@ RESOURCE = "climate_finance_corpus.csv"
 RECIPE = "df[~df['is_flagged'] | df['is_protected']]"
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _valid_value(v) -> str:
     """A cell that satisfies the contract for one variable."""

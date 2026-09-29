@@ -16,7 +16,7 @@ LEDGER = Path(__file__).resolve().parents[1] / 'data' / 'jetp'
 REPORT = 'idn-jetp-progress-report-2025'
 
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def test_report_groups_are_counted_against_the_fields_and_ambiguous_ones_stay_open():
     _, rows, unresolved = crosswalk_rows(LEDGER)

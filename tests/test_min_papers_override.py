@@ -17,7 +17,7 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def test_c2st_min_papers_override():
     """C2ST uses min_papers=50, not the global 30."""

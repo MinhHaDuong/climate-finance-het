@@ -76,7 +76,7 @@ import compute_vars
 KNOWN_UNRESOLVED: dict[str, frozenset[str]] = {}
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _sentinel_values() -> frozenset[str]:
     """Every "this value is unavailable" marker `compute_vars` can write.

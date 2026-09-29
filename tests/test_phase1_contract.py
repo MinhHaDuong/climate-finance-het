@@ -30,7 +30,7 @@ sys.path.insert(0, HARVEST_DIR)
 # Fixtures
 # ---------------------------------------------------------------------------
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _make_refined_works(tmp_path, n=5):
     """Synthetic refined_works.csv with n rows."""

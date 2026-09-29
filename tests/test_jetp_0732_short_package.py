@@ -9,7 +9,7 @@ TEX = ROOT / "deliverables" / "jetp-mesure" / "jetp-mesure.tex"
 RECIPE = ROOT / "deliverables" / "jetp-mesure" / "jetp-mesure.mk"
 
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def test_short_package_exposes_frozen_result_figure_and_next_iteration() -> None:
     """Reviewers can see the result, its frozen input, and what must be re-harvested."""

@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 import pipeline_loaders
 import utils
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def test_cluster_labels_path_is_phase2():
     """_CLUSTER_LABELS_PATH must point to data/derived/tables/, not data/catalogs/."""

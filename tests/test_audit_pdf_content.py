@@ -22,7 +22,7 @@ audit = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(audit)
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def test_identical_title_scores_high():
     score = audit.match_score(

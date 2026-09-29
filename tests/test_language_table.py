@@ -22,7 +22,7 @@ DATA_PAPER = os.path.join(ROOT, "deliverables", "data-paper", "data-paper.qmd")
 SCRIPT = os.path.join(ROOT, "scripts", "figures", "export_language_table.py")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def read(path):
     with open(path) as f:

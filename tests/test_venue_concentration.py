@@ -21,7 +21,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestComputeConcentration:
     """Unit tests for the compute_concentration function."""

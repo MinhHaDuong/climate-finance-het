@@ -23,7 +23,7 @@ from jetp.build_crs_comparators import _activity, ingest
 from jetp.build_ledger import build
 from jetp.catalog_crs_bulk import _fetch
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 ROOT = Path(__file__).resolve().parents[1]
 
 

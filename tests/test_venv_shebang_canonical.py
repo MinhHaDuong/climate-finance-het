@@ -25,7 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 VENV = REPO_ROOT / ".venv"
 
 
-pytestmark = pytest.mark.wp_shared
+pytestmark = pytest.mark.domain_infrastructure
 
 def _read_shebang_interpreter(script: Path) -> str | None:
     """Return the interpreter path from a python console-script shebang, or None.

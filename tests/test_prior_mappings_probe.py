@@ -22,7 +22,7 @@ PROBE = (
 )
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _load():
     spec = importlib.util.spec_from_file_location("probe_prior_mappings", PROBE)

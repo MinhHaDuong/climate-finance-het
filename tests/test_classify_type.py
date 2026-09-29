@@ -82,7 +82,7 @@ CASES = [
 ]
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestClassifyType:
     """Regression tests: classify_type must return the same result after refactoring."""

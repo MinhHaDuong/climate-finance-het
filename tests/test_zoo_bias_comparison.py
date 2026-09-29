@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 from _source_roots import source_root_env
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 @pytest.fixture()
 def bias_csvs(tmp_path):

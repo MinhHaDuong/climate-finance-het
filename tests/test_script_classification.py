@@ -25,7 +25,7 @@ import pytest
 from _script_discovery import script_paths_by_stem
 
 pytestmark = [
-    pytest.mark.wp_shared,
+    pytest.mark.domain_infrastructure,
     pytest.mark.adherence,
 ]
 

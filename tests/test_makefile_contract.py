@@ -19,7 +19,7 @@ MAKEFILE = os.path.join(os.path.dirname(__file__), "..", "Makefile")
 DVC_YAML = os.path.join(os.path.dirname(__file__), "..", "dvc.yaml")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def read_makefile():
     with open(MAKEFILE) as f:

@@ -35,7 +35,7 @@ SOURCE_ROOTS = ["scripts", "libs/openalex-corpus/src"]
 PILOT = "scripts/figures/plot_schematic_L3_burst.py"
 
 
-pytestmark = pytest.mark.wp_shared
+pytestmark = pytest.mark.domain_infrastructure
 
 def _pyproject() -> dict:
     with open(REPO_ROOT / "pyproject.toml", "rb") as f:

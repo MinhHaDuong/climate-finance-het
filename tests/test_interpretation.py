@@ -26,7 +26,7 @@ from conftest import smoke_env
 # ---------------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestLogOddsRatio:
     """Test the log_odds_ratio function (Monroe et al. 2008)."""

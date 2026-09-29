@@ -40,15 +40,19 @@ Markers gate which `make` target runs a test. Pick the tier by **cost**, not by 
 
 `make check-fast` = `-m "not slow and not integration and not adherence"` (the inner loop — must stay pure logic). `make lint` = `-m adherence`. `make check` runs everything. No coverage is lost by moving a test to a slower tier — the full `make check` still runs it: ex post on main (`/lair` step 9), and pre-PR for shared pipeline and test-selection changes (AGENTS.md § Merge gate).
 
-Each test module also declares its workpackage with `pytestmark`: `wp_library`,
-`wp_corpus`, `wp_finance`, `wp_jetp`, `wp_writing`, or `wp_shared`. A test may
-carry more than one WP marker when it checks a boundary between workpackages.
-The collection hook rejects tests without a WP marker. These markers are
-independent of cost tiers: `make check-jetp`, `check-finance`, `check-library`,
-`check-corpus-wp`, `check-writing`, and `check-shared` run all cost tiers for
-their selected WP using pytest `-m`. `check-corpus-wp` also collects the
-`libs/openalex-corpus` package tests. Do not maintain a filename registry or
-filter test paths in Make for WP selection.
+Each test module also declares one or more risk domains with `pytestmark`:
+`domain_literature`, `domain_corpus`, `domain_finance`, `domain_jetp`,
+`domain_writing`, or `domain_infrastructure`. A test may carry more than one
+domain marker when it checks a boundary. These domains intentionally differ
+from build workpackages: workpackages partition artifacts and toolchains;
+domains partition the behaviour a change can break.
+
+The collection hook rejects tests without a domain marker. Domain markers are
+independent of cost tiers: the matching `make check-domain-*` target runs all
+cost tiers selected by that domain using pytest `-m`. `check-domain-corpus`
+runs the root and `libs/openalex-corpus` suites in separate pytest invocations
+because their `conftest.py` modules cannot safely share one collection. Do not
+maintain a filename registry or filter test paths in Make for domain selection.
 
 Two guards keep the fast tier honest (ticket 0216, owned by `tests/test_fast_path_budget.py` + `tests/conftest.py`):
 
@@ -75,6 +79,8 @@ Two guards keep the fast tier honest (ticket 0216, owned by `tests/test_fast_pat
 
 ## Build (Make)
 
-- `make` builds all documents. `make manuscript` builds manuscript only. `make papers` builds the 3 companions. `make figures` regenerates all figures (byte-reproducible).
+- `make` builds the manuscript. `make manuscript` builds the manuscript only.
+  `make papers` builds the live companion document workpackages. `make figures`
+  regenerates all figures (byte-reproducible).
 - Add `*.stamp` to `.gitignore` for sentinel stamps.
 - **Makefile truth**: prerequisites and targets must match each script's actual file reads and writes.

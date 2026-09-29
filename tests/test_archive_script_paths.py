@@ -69,7 +69,7 @@ import pytest
 from _mk_discovery import all_makefiles, makefile_constants
 
 pytestmark = [
-    pytest.mark.wp_writing,
+    pytest.mark.domain_writing,
     pytest.mark.adherence,
 ]
 

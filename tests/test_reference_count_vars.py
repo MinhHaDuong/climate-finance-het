@@ -35,7 +35,7 @@ REFS_KEYS = [
 ]
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _metrics():
     df = pd.read_csv(ARTIFACT)

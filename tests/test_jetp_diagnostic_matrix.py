@@ -21,7 +21,7 @@ from jetp.build_0816_diagnostic import (
     write_summary,
 )
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def test_documentary_rules_do_not_invent_a_private_share_or_event_date() -> None:
     """A duplicated mixed package stays one unsplit contribution and undated event."""

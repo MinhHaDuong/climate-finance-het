@@ -11,7 +11,7 @@ from pipeline_loaders import (
     select_rel_review_works,
 )
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 
 def test_windows_and_dvc_dependencies():

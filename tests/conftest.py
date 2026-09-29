@@ -26,8 +26,13 @@ from _tier_autoscan import (
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "smoke")
 GOLDEN_DIR = os.path.join(FIXTURES_DIR, "golden")
-WP_MARKERS = (
-    "wp_library", "wp_corpus", "wp_finance", "wp_jetp", "wp_writing", "wp_shared",
+DOMAIN_MARKERS = (
+    "domain_literature",
+    "domain_corpus",
+    "domain_finance",
+    "domain_jetp",
+    "domain_writing",
+    "domain_infrastructure",
 )
 
 # Flat imports (from utils import …) resolve via the `scripts` source root
@@ -50,7 +55,7 @@ os.environ["PYTHONPATH"] = source_root_env()["PYTHONPATH"]
 
 
 def pytest_collection_modifyitems(config, items):
-    """Require WP ownership and auto-mark heavy-import modules ``slow``.
+    """Require test-domain ownership and auto-mark heavy imports ``slow``.
 
     Runs before pytest's built-in ``-m`` deselection (user conftest hooks fire
     before internal plugin hooks), so an auto-added ``slow`` mark correctly
@@ -58,9 +63,9 @@ def pytest_collection_modifyitems(config, items):
     that already carries slow / integration / adherence.
     """
     for item in items:
-        if not any(item.get_closest_marker(name) for name in WP_MARKERS):
+        if not any(item.get_closest_marker(name) for name in DOMAIN_MARKERS):
             raise pytest.UsageError(
-                f"{item.nodeid} has no WP marker; declare pytestmark in its module "
+                f"{item.nodeid} has no test-domain marker; declare pytestmark in its module "
                 "or mark the test locally"
             )
         if any(item.get_closest_marker(m) for m in NON_FAST_MARKERS):

@@ -23,7 +23,7 @@ ALLOWLIST = {
 }
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _scoped_md_files():
     for top in SCOPE:

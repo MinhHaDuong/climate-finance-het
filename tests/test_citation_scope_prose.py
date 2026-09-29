@@ -24,7 +24,7 @@ BASE = os.path.join(os.path.dirname(__file__), "..")
 QMD = os.path.join(BASE, "deliverables", "data-paper", "data-paper.qmd")
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _text():
     with open(QMD, encoding="utf-8") as fh:

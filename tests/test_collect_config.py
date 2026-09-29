@@ -29,7 +29,7 @@ ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 # Config file exists and is well-formed
 # ---------------------------------------------------------------------------
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestCorpusCollectConfig:
     def test_config_file_exists(self):

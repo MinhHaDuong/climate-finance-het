@@ -8,7 +8,7 @@ import pytest
 import requests
 from openalex_corpus import retry_get
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 
 @pytest.fixture(autouse=True)

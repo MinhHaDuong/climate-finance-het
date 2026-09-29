@@ -30,7 +30,7 @@ LLMISMS = ["delve", "tapestry", "robust"]
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def test_word_count():
     assert word_count("the quick brown fox") == 4

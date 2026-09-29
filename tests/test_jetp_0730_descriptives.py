@@ -18,7 +18,7 @@ from jetp.build_0730_descriptives import (
     render_outputs,
 )
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def test_descriptives_keep_atomic_reconciled_and_unreconciled_denominators() -> None:
     """No missing amount, date, or unit link can disappear from 0730 tables."""
