@@ -1,0 +1,31 @@
+%erg 0.1
+Title: REL — passe de recherche « Sud et langues » : premiere execution (OpenAlex, revues E)
+Created: 2026-09-29
+Author: haduong
+
+--- log ---
+2026-09-29T11:00Z haduong created
+2026-09-29T11:00Z haduong note Auteur : approuve le plan d'Astra (conception/rel-sud-et-langues-annexe-brouillon.md) et demande le lancement sur padme ; l'assistant execute.
+
+--- body ---
+## Contexte
+
+Enfant de 0700 (0702 en aval). Premiere execution de la strate obligatoire
+« Sud et langues » du protocole `conception/rel-audit-finalisation-corpus.md`.
+Cette passe automatise ce qui est automatisable avec OpenAlex : 76 executions
+de requetes (7 strates regionales x langues obligatoires x 4 themes) et le
+balayage integral 1990-2026 de six revues E. Elle n'ecrit pas dans le pool
+OpenAlex ni dans le corpus raffine : sortie separee, comparee au corpus par
+DOI et identifiant OpenAlex ; les candidats absents passent ensuite par la
+collecte de phase 1 apres decision.
+
+Limites assumees : requetes traduites par l'assistant, non relues par un
+lecteur natif ; sentinelles pas encore fixees (la passe est donc exploratoire,
+pas une cloture) ; SciELO, Redalyc, CNKI, AJOL, eLIBRARY, GARUDA, CLACSO,
+series de working papers non couverts ici.
+
+## Exit criteria
+- [ ] `scripts/rel_sud_search.py` + `config/rel_sud_search.yaml` + test, `make check-fast` et `make lint` verts
+- [ ] Execution sur padme : registre par requete (chaine, filtre, date, attendu/recu, complet ou non) archive
+- [ ] Rapport : par strate et par revue E, nombre de notices, part deja au corpus, candidats absents ; requetes incompletes listees
+- [ ] Sources non automatisees et acces bloques listes explicitement, strates marquees « incomplete » tant qu'elles le sont
