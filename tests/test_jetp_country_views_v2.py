@@ -40,3 +40,65 @@ def test_current_country_views_keep_agreements_out_of_project_counts():
 def test_south_africa_country_view_stays_within_publication_ceiling():
     path = ROOT / 'deliverables/jetp-observatory/data/ZAF.json'
     assert path.stat().st_size < 512_000
+
+
+@pytest.fixture(scope='module')
+def views():
+    ledger = ROOT / 'data/jetp'
+    config = yaml.safe_load((ROOT / 'config/jetp_observatory.yaml').read_text())
+    tables = load_country_inputs(ledger)
+    return tables, {code: country_view(ledger, code, country, tables=tables)
+                    for code, country in config['countries'].items()}
+
+
+def test_a_project_view_carries_no_field_the_ledger_cannot_fill(views):
+    # Ticket 1610: the 0878 retirement left `claims` and `source_links`
+    # hard-coded empty. A field nothing in the ledger fills is not served;
+    # the identity citations they once held are the `evidence` rows.
+    _, by_code = views
+    for view in by_code.values():
+        for project in view['projects']:
+            assert 'claims' not in project and 'source_links' not in project
+
+
+def test_project_funders_are_the_funders_of_its_component_agreements(views):
+    # A project has no party_in row of its own: its funders are derived from
+    # the agreements recorded as its components, never typed. A project
+    # without a component agreement has none.
+    tables, by_code = views
+    components = {}
+    for row in tables['relations']:
+        if row['status'] == 'accepted' and row['relation'] == 'component_of' \
+                and row['from_kind'] == 'agreement' and row['to_kind'] == 'project':
+            components.setdefault(row['to_id'], set()).add(row['from_id'])
+    with_funders = 0
+    for view in by_code.values():
+        agreements = {row['id']: row for row in view['agreements']}
+        for project in view['projects']:
+            expected = sorted({name for agreement in components.get(project['id'], ())
+                               for name in agreements[agreement]['funders']})
+            assert project['funders'] == expected, project['id']
+            with_funders += bool(expected)
+    assert with_funders, 'the positive control: no project derives a funder'
+
+
+def test_the_coverage_review_is_listed_apart_from_the_cited_documents(views):
+    # A coverage row is a review record: what was collected for the project,
+    # not what a document says. Its documents are served on their own and
+    # never join the cited documents or the country's document index.
+    tables, by_code = views
+    coverage = {(row['referent_kind'], row['referent_id']): row for row in tables['coverage']}
+    uncited = 0
+    for view in by_code.values():
+        for project in view['projects']:
+            review = coverage.get(('project', project['id']))
+            collected = [d for d in (review['document_ids'] or '').split(';') if d] if review else []
+            assert project['coverage_documents'] == collected, project['id']
+            assert project['coverage_checked_at'] == ((review or {}).get('checked_at') or '')
+            cited = {row['source_id'] for row in project['evidence']} | {
+                row['source_id'] for row in view['statements']
+                if row['subject_kind'] == 'project' and row['subject_id'] == project['id']
+                and row['source_id']}
+            assert set(project['sources']) == cited, project['id']
+            uncited += len(set(collected) - cited)
+    assert uncited, 'the positive control: every collected document is also cited'

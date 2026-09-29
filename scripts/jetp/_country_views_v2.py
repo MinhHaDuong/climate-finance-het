@@ -121,6 +121,29 @@ def _statement(row, lines, line_documents, timings, agreements, funders):
     )
 
 
+def _funders(tables, agreement_rows):
+    """Funders by agreement, from party_in rows, and by project, from its components.
+
+    A project has no party_in row of its own (ticket 1610): its funders are
+    those of the agreements recorded as its components, derived, never typed.
+    """
+    relations = _current(tables['relations'], 'relation_id')
+    preferred = {row['party_id']: row['name'] for row in
+                 _current(tables['party_names'], 'name_row_id')
+                 if row['form_type'] == 'preferred'}
+    funders = defaultdict(set)
+    for row in relations:
+        if row['from_kind'] == 'party' and row['relation'] == 'party_in' \
+                and row['to_kind'] == 'agreement' and row['to_id'] in agreement_rows:
+            funders[row['to_id']].add(preferred.get(row['from_id'], row['from_id']))
+    project_funders = defaultdict(set)
+    for row in relations:
+        if row['relation'] == 'component_of' and row['from_kind'] == 'agreement' \
+                and row['to_kind'] == 'project':
+            project_funders[row['to_id']] |= funders[row['from_id']]
+    return funders, project_funders
+
+
 def country_view(ledger_dir, code, config, *, tables=None):
     """A site payload of reviewed projects, agreements and cited statements."""
     tables = tables or load_country_inputs(ledger_dir)
@@ -132,15 +155,7 @@ def country_view(ledger_dir, code, config, *, tables=None):
     agreement_rows = {row['agreement_id']: row for row in tables['agreements']
                       if row['country'] == code}
     projects = [row for row in tables['projects'] if row['country'] == code]
-    relations = _current(tables['relations'], 'relation_id')
-    preferred = {row['party_id']: row['name'] for row in
-                 _current(tables['party_names'], 'name_row_id')
-                 if row['form_type'] == 'preferred'}
-    funders = defaultdict(set)
-    for row in relations:
-        if row['from_kind'] == 'party' and row['relation'] == 'party_in' \
-                and row['to_kind'] == 'agreement' and row['to_id'] in agreement_rows:
-            funders[row['to_id']].add(preferred.get(row['from_id'], row['from_id']))
+    funders, project_funders = _funders(tables, agreement_rows)
     timings = defaultdict(list)
     for row in tables['timings']:
         timings[row['observation_id']].append(row)
@@ -182,13 +197,18 @@ def country_view(ledger_dir, code, config, *, tables=None):
         stage = next((MILESTONE_LABELS[s] for s in MILESTONES if s in stages),
                      'Not documented')
         review = coverage.get(('project', identity), {})
+        # The coverage row is a review record: what was collected for the
+        # project on checked_at, not what a document says (ticket 1610). Its
+        # documents are served apart from the cited ones and never join them.
         project_views.append(dict(
             id=identity, country=code, name=row['canonical_name'],
             technology=row['sector'] or 'Not specified', location='Not specified',
             operator='Not specified', notes=row['notes'] or '',
             coverage=review.get('review_status') or 'Not assessed',
             coverage_note=review.get('notes') or '', finance_stage=stage,
-            funders=[], events=events, claims=[], source_links=[],
+            coverage_checked_at=review.get('checked_at') or '',
+            coverage_documents=[d for d in (review.get('document_ids') or '').split(';') if d],
+            funders=sorted(project_funders[identity]), events=events,
             sources=cited('project', identity),
             evidence=sorted(cited_lines[('project', identity)],
                             key=lambda item: item['line_id']),
