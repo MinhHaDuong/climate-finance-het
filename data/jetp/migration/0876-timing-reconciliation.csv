@@ -337,13 +337,13 @@ legacy_row_number,legacy_event_id,legacy_date_role,outcome,timing_id,approval_ti
 337,idn-pipeline-dieng34-adb-2025,reporting_cutoff,typed_timing,timing-idn-pipeline-dieng34-adb-2025-1,,
 338,idn-pipeline-rscm-private-2025,reporting_cutoff,typed_timing,timing-idn-pipeline-rscm-private-2025-1,,
 339,idn-pipeline-rsud-private-2025,reporting_cutoff,typed_timing,timing-idn-pipeline-rsud-private-2025-1,,
-340,idn-portal-gecs-kfw-2026,observation,pending,,,terminal: a page-observation date is not relabelled as event or report_date (author decision 2026-09-24)
-341,idn-portal-nagajaya-norfund-2026,observation,pending,,,terminal: a page-observation date is not relabelled as event or report_date (author decision 2026-09-24)
-342,idn-portal-hululais-jica-2026,observation,pending,,,terminal: a page-observation date is not relabelled as event or report_date (author decision 2026-09-24)
+340,idn-portal-gecs-kfw-2026,observation,terminal,,,no timing
+341,idn-portal-nagajaya-norfund-2026,observation,terminal,,,no timing
+342,idn-portal-hululais-jica-2026,observation,terminal,,,no timing
 343,sen-qw2-plan-need-2025,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
 344,sen-qw3-plan-need-2025,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
-345,sen-diass-kfw-reported-funding,unknown,pending,,,"terminal: the factsheet is undated; its only date, 2018, dates the ARE Scale-up technical assistance, not the KfW/AFD funding it reports"
-346,sen-diass-afd-reported-funding,unknown,pending,,,"terminal: the factsheet is undated; its only date, 2018, dates the ARE Scale-up technical assistance, not the KfW/AFD funding it reports"
+345,sen-diass-kfw-reported-funding,unknown,terminal,,,no timing
+346,sen-diass-afd-reported-funding,unknown,terminal,,,no timing
 347,sen-saloum-reported-german-allocation-2026,publication,typed_timing,timing-sen-saloum-reported-german-allocation-2026-1,,
 348,sen-plan-cost-annex-03,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
 349,sen-plan-cost-annex-05,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
@@ -379,27 +379,27 @@ legacy_row_number,legacy_event_id,legacy_date_role,outcome,timing_id,approval_ti
 379,sen-plan-allocation-qw-10,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
 380,sen-diass-kfw-reported-20260420,publication,typed_timing,timing-sen-diass-kfw-reported-20260420-1,,
 381,sen-diass-afd-reported-20260420,publication,typed_timing,timing-sen-diass-afd-reported-20260420-1,,
-382,idn-impl-green-corridors-2025,reporting_cutoff,pending,,,"0970_physical_state_hold: the ledger term preparation (""designed, appraised and prepared for funding and procurement"") would admit the row; the four 1160 rejections read preparation as physical; author decision pending (decisions.md 2026-09-29)"
-383,idn-impl-aicet-2025,reporting_cutoff,pending,,,1160_financing_row_does_not_establish_physical_preparation
+382,idn-impl-green-corridors-2025,reporting_cutoff,rejected,,,panel stance B: financing status alone does not place the project in preparation; no observation written; defeasible
+383,idn-impl-aicet-2025,reporting_cutoff,rejected,,,author decision 2026-09-29: unsupported physical claims; recorded rejected in 1160-citation-decisions.csv; panel stance B confirms the rejection
 384,idn-impl-cirebon-closure-2025,reporting_cutoff,typed_timing,timing-idn-impl-cirebon-closure-2025-1,,
-385,idn-impl-hululais-2025,reporting_cutoff,pending,,,1160_funding_back_on_track_does_not_establish_physical_preparation
+385,idn-impl-hululais-2025,reporting_cutoff,rejected,,,author decision 2026-09-29: unsupported physical claims; recorded rejected in 1160-citation-decisions.csv; panel stance B confirms the rejection
 386,idn-impl-nagajaya-2025,reporting_cutoff,typed_timing,timing-idn-impl-nagajaya-2025-1,,
 387,idn-impl-dediesel-east-2025,reporting_cutoff,typed_timing,timing-idn-impl-dediesel-east-2025-1,,
 388,idn-impl-dediesel-west-2025,reporting_cutoff,typed_timing,timing-idn-impl-dediesel-west-2025-1,,
-389,idn-impl-tanah-laut-2025,reporting_cutoff,pending,,,1160_signed_ppa_does_not_establish_physical_preparation
+389,idn-impl-tanah-laut-2025,reporting_cutoff,rejected,,,author decision 2026-09-29: unsupported physical claims; recorded rejected in 1160-citation-decisions.csv; panel stance B confirms the rejection
 390,idn-impl-legok-nangka-2025,reporting_cutoff,typed_timing,timing-idn-impl-legok-nangka-2025-1,,
 391,idn-impl-singkarak-2025,reporting_cutoff,typed_timing,timing-idn-impl-singkarak-2025-1,,
-392,idn-impl-eib-framework-2025,reporting_cutoff,pending,,,1160_framework_mou_does_not_establish_physical_project
+392,idn-impl-eib-framework-2025,reporting_cutoff,rejected,,,author decision 2026-09-29: unsupported physical claims; recorded rejected in 1160-citation-decisions.csv; panel stance B confirms the rejection
 393,idn-impl-sutami-2025,reporting_cutoff,typed_timing,timing-idn-impl-sutami-2025-1,,
 394,idn-impl-solar-manufacturing-2025,reporting_cutoff,typed_timing,timing-idn-impl-solar-manufacturing-2025-1,,
 395,idn-impl-e-taxi-2025,reporting_cutoff,typed_timing,timing-idn-impl-e-taxi-2025-1,,
 396,idn-impl-hijaunesia2-2025,reporting_cutoff,typed_timing,timing-idn-impl-hijaunesia2-2025-1,,
 397,idn-impl-hydro-sumatra-2025,reporting_cutoff,typed_timing,timing-idn-impl-hydro-sumatra-2025-1,,
 398,idn-impl-hydro-sulawesi-2025,reporting_cutoff,typed_timing,timing-idn-impl-hydro-sulawesi-2025-1,,
-399,idn-impl-dieng34-2025,reporting_cutoff,pending,,,"0970_physical_state_hold: the ledger term preparation (""designed, appraised and prepared for funding and procurement"") would admit the row; the four 1160 rejections read preparation as physical; author decision pending (decisions.md 2026-09-29)"
+399,idn-impl-dieng34-2025,reporting_cutoff,rejected,,,panel stance B: financing status alone does not place the project in preparation; no observation written; defeasible
 400,idn-impl-rscm-2025,reporting_cutoff,typed_timing,timing-idn-impl-rscm-2025-1,,
 401,idn-impl-rsud-2025,reporting_cutoff,typed_timing,timing-idn-impl-rsud-2025-1,,
-402,idn-impl-nagajaya-portal-2026,observation,pending,,,"0970_physical_state_hold: the ledger term preparation (""designed, appraised and prepared for funding and procurement"") would admit the row; the four 1160 rejections read preparation as physical; author decision pending (decisions.md 2026-09-29)"
+402,idn-impl-nagajaya-portal-2026,observation,rejected,,,panel stance B: financing status alone does not place the project in preparation; no observation written; defeasible
 403,idn-impl-cirebon-suspended-2025,publication,pending,,,"1160_source_snapshot_unavailable: retrieval hash 9803416b registered, object absent from the store; ticket 0920 owns missing snapshots"
 404,idn-impl-seg-operational-2025,event,typed_timing,timing-idn-impl-seg-operational-2025-1,,
 405,idn-impl-sutami-construction-2026,event,typed_timing,timing-idn-impl-sutami-construction-2026-1,,
@@ -408,10 +408,10 @@ legacy_row_number,legacy_event_id,legacy_date_role,outcome,timing_id,approval_ti
 408,sen-project-qw-03-proposed-2025-04-02,unknown,terminal,,,"terminal (panel-1620-v1, 3/3): the plan prints no supported document date; 2025-04-02 is the mirror label and file name, absent from the plan; the version table prints v4 09/05/2025 then v5 28/05/2024; no timing"
 409,sen-project-annex-15-preparation-2024-10-18,publication,typed_timing,timing-sen-project-annex-15-preparation-2024-10-18-1,,
 410,sen-project-annex-16-procurement-2026-09-09,ambiguous,typed_timing,timing-sen-project-annex-16-procurement-2026-09-09-1,,
-411,sen-project-annex-20-proposed-2026-09-13,observation,pending,,,terminal: a page-observation date is not relabelled as event or report_date (author decision 2026-09-24)
-412,sen-project-annex-22-proposed-2026-09-13,observation,pending,,,terminal: a page-observation date is not relabelled as event or report_date (author decision 2026-09-24)
-413,sen-project-annex-27-proposed-2026-09-13,observation,pending,,,terminal: a page-observation date is not relabelled as event or report_date (author decision 2026-09-24)
-414,sen-project-annex-31-proposed-2026-09-13,observation,pending,,,terminal: a page-observation date is not relabelled as event or report_date (author decision 2026-09-24)
+411,sen-project-annex-20-proposed-2026-09-13,observation,terminal,,,no timing
+412,sen-project-annex-22-proposed-2026-09-13,observation,terminal,,,no timing
+413,sen-project-annex-27-proposed-2026-09-13,observation,terminal,,,no timing
+414,sen-project-annex-31-proposed-2026-09-13,observation,terminal,,,no timing
 415,sen-diass-groundbreaking-20260331,event,typed_timing,timing-sen-diass-groundbreaking-20260331-1,,
 416,sen-biognv-ppp-preparation-20250508,event,typed_timing,timing-sen-biognv-ppp-preparation-20250508-1,,
 417,sen-project-annex-01-plan-proposal,unknown,typed_timing,timing-sen-project-annex-01-plan-proposal-1,,

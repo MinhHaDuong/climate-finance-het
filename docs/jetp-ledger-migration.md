@@ -121,7 +121,7 @@ Order of work, each step a ticket with its own byte-level check:
    pending citations of 1160 and the 54 coverage dispositions of 0884 an owner
    or a disposition each (`1620-register-dispositions.csv`, 145 distinct rows):
    31 timings typed from the documents' own text (29 annex proposals dated by
-   the annexes' version table, the AfDB approval by its dateline, the Saloum
+   the annexes' version table, the AfDB approval's report_date by the article dateline (its event day rejected), the Saloum
    tender by its bid deadline as `planned`), 52 terminal (the plan's own date
    cannot be read from its version table; the MAF period; page-observation
    dates; the undated Diass factsheet), 7 physical claims rejected, 1 with
