@@ -120,6 +120,10 @@ def plan_queries(cfg):
                         expand_query(search), y0, y1,
                         language=None if lang == "en" else f"{lang}|null",
                         countries=s["countries"] if lang == "en" else None)})
+    specs.append({
+        "query_id": "G-gap-fill-en", "kind": "g", "stratum": "global-english", "language": "en",
+        "theme": "gap-fill",
+        "filter": build_filter(expand_query(cfg["gap_fill"]), y0, y1)})
     for j in cfg["journals_e"]:
         slug = re.sub(r"\W+", "-", j["name"]).strip("-").lower()
         specs.append({
@@ -269,7 +273,7 @@ def main(argv=None):
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--corpus", default=None,
                     help="refined_works.csv, to flag works already in the corpus")
-    ap.add_argument("--only", choices=["q", "e", "qj"])
+    ap.add_argument("--only", choices=["q", "e", "qj", "g"])
     ap.add_argument("--cap", type=int, default=5000,
                     help="max records per query (0 = unlimited)")
     ap.add_argument("--delay", type=float, default=0.2)

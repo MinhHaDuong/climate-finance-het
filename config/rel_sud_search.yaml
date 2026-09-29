@@ -23,6 +23,14 @@ themes:
   T3: adaptation and forest
   T4: loss and damage, justice, accounting
 
+# Global English gap-fill (added after run f, 2026-09-29): the English stratum runs
+# carry an affiliation-country filter, so research about the South by authors
+# elsewhere (sentinels 16, 47, 52, 56, none in the corpus) is not reached.
+# This run has no country or language filter and only these phrases: the generic
+# forms accepted in the sentinel arbitration and the scope decision for Kyoto
+# instruments and REDD+ benefit sharing. Sentinel recall is reported separately.
+gap_fill: '"adaptation aid" OR "aid for adaptation" OR "adaptation financing" OR "financing for adaptation" OR "financing for climate change adaptation" OR "climate change finance" OR "Green Investment Scheme" OR "assigned amount units" OR "REDD+ benefit sharing" OR "carbon benefit sharing"'
+
 queries:
   en:
     T1: '"climate finance" OR "Green Climate Fund" OR "climate funds" OR "Adaptation Fund" OR "Global Environment Facility" OR "Just Energy Transition Partnership" OR "climate change finance"'

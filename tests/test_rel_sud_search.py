@@ -63,6 +63,13 @@ def test_non_english_runs_accept_the_language_or_a_null_tag_and_english_runs_non
             assert f"language:{s['language']}|null" in s["filter"], s["query_id"]
 
 
+def test_gap_fill_run_is_global_english_without_country_or_language_filter():
+    g = [s for s in rs.plan_queries(_cfg()) if s["kind"] == "g"]
+    assert len(g) == 1
+    assert "country_code" not in g[0]["filter"] and "language:" not in g[0]["filter"]
+    assert '"aid for adaptation"' in g[0]["filter"]
+
+
 def test_filter_carries_language_and_affiliation_countries():
     f = rs.build_filter('"a"', 1990, 2026, language="es", countries=["AR", "BR"])
     assert "language:es" in f
