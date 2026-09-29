@@ -1,0 +1,127 @@
+# REL "Sud et langues" search pass (ticket 1530).
+# Query strings were translated by the assistant and have not been read by a
+# native speaker: treat non-English/French/Spanish/Portuguese strings as drafts.
+# Values feed OpenAlex `title_and_abstract.search`; keep commas out of them.
+year_min: 1990
+year_max: 2026
+
+# 2026-09-29 tuning note (sentinel rule): 'climate change finance' and the adaptation
+# forms in `en` T1/T3 were added after sentinels 16 and 56 were missed; those two,
+# and 21/23 (rescued by dropping the language filter), are TUNING sentinels.
+
+# Scope decision, author, 2026-09-29 (independent of any sentinel): the harvest
+# covers Kyoto instruments (CDM, JI, Green Investment Schemes, AAU trading) because the
+# review's rule admits international carbon mechanisms with an explicit climate
+# object, and REDD+ benefit sharing (harvested for recall; the article keeps it only
+# when the payment comes from an international mechanism). The phrases added under
+# this decision in `en` T2/T3 are 'Green Investment Scheme', 'assigned amount units',
+# 'REDD+ benefit sharing', 'carbon benefit sharing'. Sentinels 47 and 52 are tuning.
+
+themes:
+  T1: international climate finance
+  T2: instruments, private finance, international carbon
+  T3: adaptation and forest
+  T4: loss and damage, justice, accounting
+
+# Global English gap-fill (added after run f, 2026-09-29): the English stratum runs
+# carry an affiliation-country filter, so research about the South by authors
+# elsewhere (sentinels 16, 47, 52, 56, none in the corpus) is not reached.
+# This run has no country or language filter and only these phrases: the generic
+# forms accepted in the sentinel arbitration and the scope decision for Kyoto
+# instruments and REDD+ benefit sharing. Sentinel recall is reported separately.
+gap_fill: '"adaptation aid" OR "aid for adaptation" OR "adaptation financing" OR "financing for adaptation" OR "financing for climate change adaptation" OR "climate change finance" OR "Green Investment Scheme" OR "assigned amount units" OR "REDD+ benefit sharing" OR "carbon benefit sharing"'
+
+queries:
+  en:
+    T1: '"climate finance" OR "Green Climate Fund" OR "climate funds" OR "Adaptation Fund" OR "Global Environment Facility" OR "Just Energy Transition Partnership" OR "climate change finance"'
+    T2: '"carbon market" OR "carbon credits" OR "Clean Development Mechanism" OR "blended finance" OR "private climate finance" OR "climate bonds" OR "Joint Implementation" OR "Green Investment Scheme" OR "assigned amount units"'
+    T3: '"adaptation finance" OR "REDD" OR "forest finance" OR "payments for ecosystem services" OR "adaptation financing" OR "financing for adaptation" OR "financing for climate change adaptation" OR "adaptation aid" OR "aid for adaptation" OR "REDD+ benefit sharing" OR "carbon benefit sharing"'
+    T4: '"loss and damage" OR "climate justice" OR "climate debt" OR "Rio markers" OR "grant equivalent"'
+  fr:
+    T1: '"finance climat" OR "finance climatique" OR "financement climatique" OR "Fonds vert pour le climat" OR "financements climat" OR "financement de la lutte contre le changement climatique" OR "Fonds d''adaptation"'
+    T2: '"marché carbone" OR "marchés du carbone" OR "crédits carbone" OR "mécanisme de développement propre" OR "financement mixte" OR "mécanisme pour un développement propre"'
+    T3: '"financement de l''adaptation" OR "REDD" OR "financement forestier" OR "paiements pour services environnementaux"'
+    T4: '"pertes et préjudices" OR "justice climatique" OR "dette climatique" OR "marqueurs de Rio" OR "pertes et dommages"'
+  es:
+    T1: '"financiamiento climático" OR "financiación climática" OR "finanzas climáticas" OR "Fondo Verde para el Clima" OR "Fondo Verde del Clima" OR "financiamiento para el clima" OR "financiación para el clima" OR "Fondo de Adaptación"'
+    T2: '"mercado de carbono" OR "mercados de carbono" OR "bonos de carbono" OR "mecanismo de desarrollo limpio" OR "financiamiento combinado" OR "mecanismo para un desarrollo limpio" OR "créditos de carbono" OR "financiamiento mixto" OR "financiación combinada"'
+    T3: '"financiamiento de la adaptación" OR "REDD" OR "financiamiento forestal" OR "pago por servicios ambientales" OR "pago por servicios ecosistémicos"'
+    T4: '"pérdidas y daños" OR "justicia climática" OR "deuda climática" OR "marcadores de Río"'
+  pt:
+    T1: '"financiamento climático" OR "finanças climáticas" OR "financiamento para o clima" OR "Fundo Verde para o Clima" OR "Fundo Verde do Clima" OR "Fundo Amazônia" OR "Fundo de Adaptação"'
+    T2: '"mercado de carbono" OR "mercados de carbono" OR "créditos de carbono" OR "mecanismo de desenvolvimento limpo" OR "financiamento misto" OR "financiamento combinado"'
+    T3: '"financiamento da adaptação" OR "REDD" OR "financiamento florestal" OR "pagamento por serviços ambientais" OR "pagamentos por serviços ambientais" OR "pagamento por serviços ecossistêmicos"'
+    T4: '"perdas e danos" OR "justiça climática" OR "dívida climática" OR "marcadores do Rio"'
+  ar:
+    T1: '"تمويل المناخ" OR "التمويل المناخي" OR "الصندوق الأخضر للمناخ" OR "التمويل المتعلق بالمناخ" OR "صندوق المناخ الأخضر" OR "صندوق التكيف" OR "مرفق البيئة العالمية" OR "لتمويل المناخ" OR "بالتمويل المناخي"'
+    T2: '"سوق الكربون" OR "أسواق الكربون" OR "ائتمانات الكربون" OR "آلية التنمية النظيفة" OR "أرصدة الكربون" OR "تجارة الكربون"'
+    T3: '"تمويل التكيف" OR "تمويل الغابات" OR "الدفع مقابل الخدمات البيئية" OR "REDD"'
+    T4: '"الخسائر والأضرار" OR "العدالة المناخية" OR "الدين المناخي" OR "الديون المناخية" OR "صندوق الخسائر والأضرار"'
+  zh:
+    T1: '"气候融资" OR "气候金融" OR "气候资金" OR "绿色气候基金" OR "气候投融资" OR "全球环境基金" OR "适应基金" OR "气候变化南南合作"'
+    T2: '"碳市场" OR "碳信用" OR "清洁发展机制" OR "混合融资" OR "碳金融"'
+    T3: '"适应资金" OR "适应融资" OR "森林融资" OR "生态系统服务付费" OR "REDD"'
+    T4: '"损失与损害" OR "气候正义" OR "气候债务" OR "损失和损害"'
+  hi:
+    T1: '"जलवायु वित्त" OR "जलवायु वित्तपोषण" OR "हरित जलवायु कोष" OR "ग्रीन क्लाइमेट फंड" OR "जलवायु वित्त पोषण"'
+    T2: '"कार्बन बाजार" OR "कार्बन क्रेडिट" OR "स्वच्छ विकास तंत्र" OR "कार्बन बाज़ार"'
+    T3: '"अनुकूलन वित्त" OR "वन वित्त" OR "अनुकूलन कोष"'
+    T4: '"हानि और क्षति" OR "जलवायु न्याय"'
+  bn:
+    T1: '"জলবায়ু অর্থায়ন" OR "জলবায়ু তহবিল" OR "সবুজ জলবায়ু তহবিল" OR "গ্রিন ক্লাইমেট ফান্ড"'
+    T2: '"কার্বন বাজার" OR "কার্বন ক্রেডিট" OR "ক্লিন ডেভেলপমেন্ট মেকানিজম"'
+    T3: '"অভিযোজন অর্থায়ন" OR "বন অর্থায়ন" OR "অভিযোজন তহবিল"'
+    T4: '"জলবায়ু ন্যায়বিচার" OR "লস অ্যান্ড ড্যামেজ" OR "জলবায়ু ক্ষয়ক্ষতি" OR "জলবায়ু ন্যায্যতা"'
+  id:
+    T1: '"pendanaan iklim" OR "pembiayaan iklim" OR "keuangan iklim" OR "Dana Iklim Hijau" OR "pendanaan perubahan iklim" OR "pembiayaan perubahan iklim" OR "Green Climate Fund" OR "Kemitraan Transisi Energi yang Adil" OR "JETP"'
+    T2: '"pasar karbon" OR "kredit karbon" OR "mekanisme pembangunan bersih" OR "pembiayaan campuran" OR "perdagangan karbon"'
+    T3: '"pendanaan adaptasi" OR "pembiayaan adaptasi" OR "REDD" OR "pembiayaan kehutanan" OR "pembayaran jasa lingkungan" OR "imbal jasa lingkungan" OR "Dana Adaptasi"'
+    T4: '"kerugian dan kerusakan" OR "keadilan iklim" OR "utang iklim" OR "kehilangan dan kerusakan" OR "hutang iklim"'
+  ru:
+    T1: '"климатическое финансирование" OR "климатические финансы" OR "финансирование борьбы с изменением климата" OR "Зеленый климатический фонд" OR "Зелёный климатический фонд" OR "климатического финансирования" OR "Зеленого климатического фонда" OR "Глобальный экологический фонд" OR "Адаптационный фонд"'
+    T2: '"углеродный рынок" OR "углеродные кредиты" OR "механизм чистого развития" OR "смешанное финансирование" OR "углеродные единицы" OR "проекты совместного осуществления" OR "совместное осуществление" OR "механизма чистого развития"'
+    T3: '"финансирование адаптации" OR "REDD" OR "финансирование лесов" OR "плата за экосистемные услуги" OR "платежи за экосистемные услуги" OR "финансирования адаптации"'
+    T4: '"потери и ущерб" OR "климатическая справедливость" OR "климатический долг"'
+
+# Affiliation country codes (authorships.institutions.country_code). Country
+# studied and language are separate fields, handled in the reading step.
+strata:
+  latin_america_caribbean:
+    languages: [en, es, pt, fr]
+    countries: [AR, BO, BR, CL, CO, CR, CU, DO, EC, SV, GT, HN, JM, MX, NI, PA, PY, PE, PR, TT, UY, VE, HT, BB, BS, BZ, GY, SR]
+  africa:
+    languages: [en, fr, pt, ar]
+    countries: [DZ, AO, BJ, BW, BF, BI, CM, CV, CF, TD, KM, CG, CD, CI, DJ, EG, GQ, ER, SZ, ET, GA, GM, GH, GN, GW, KE, LS, LR, LY, MG, MW, ML, MR, MU, MA, MZ, NA, NE, NG, RW, ST, SN, SC, SL, SO, ZA, SS, SD, TZ, TG, TN, UG, ZM, ZW]
+  china:
+    languages: [zh, en]
+    countries: [CN]
+  south_asia:
+    languages: [en, hi, bn]
+    countries: [IN, BD, PK, LK, NP, BT, MV, AF]
+  southeast_asia:
+    languages: [id, en]
+    countries: [ID, MY, TH, VN, PH, SG, MM, KH, LA, BN, TL]
+  russia:
+    languages: [ru, en]
+    countries: [RU]
+  pacific:
+    languages: [en, fr]
+    countries: [FJ, PG, WS, TO, VU, SB, KI, TV, NR, PW, FM, MH, CK, NC, PF]
+
+# Full sweep 1990-2026 of every work of the journal (E), then multilingual
+# term flags on title and abstract. ISSNs are Crossref-confirmed (step 0).
+journals_e:
+  - {name: Revista Brasileira de Política Internacional, issn: ["0034-7329", "1983-3121"]}
+  - {name: Development Southern Africa, issn: ["0376-835X", "1470-3637"]}
+  - {name: Africa Development, issn: ["0850-3907"]}
+  - {name: Revista de la CEPAL, issn: ["1682-0908"]}
+  - {name: CEPAL Review, issn: ["1684-0348"]}
+  - {name: The Journal of Pacific Studies, issn: ["1011-3029"]}
+
+# Topic query restricted to the journal (Q), English plus the journal's language.
+journals_q:
+  - {name: Current Science, issn: ["0011-3891"], languages: [en]}
+  - {name: World Economy and International Relations, issn: ["0131-2227", "2782-4330"], languages: [en, ru]}
+  - {name: Jurnal Ekonomi dan Pembangunan (BRIN, 0854-526X; to confirm), issn: ["0854-526X", "2503-0272"], languages: [en, id]}
+  - {name: Indian Growth and Development Review, issn: ["1753-8254", "1753-8262"], languages: [en]}
+  - {name: South African Journal of Economics, issn: ["0038-2280", "1813-6982"], languages: [en]}

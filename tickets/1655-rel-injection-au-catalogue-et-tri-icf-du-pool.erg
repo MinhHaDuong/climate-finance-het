@@ -31,4 +31,5 @@ Forme retenue :
 - [ ] Audit par échantillon de l'étape 2 par un second modèle (Fable), accord mesuré
 - [ ] Règle de sortie fixée pour les œuvres restées « incertaines » (177 à ce jour)
 - [ ] Vue REL construite ; comptes reproductibles depuis la table
+- [ ] Les scripts qui construisent l'entree du tri (dedoublonnage, mise a l'ecart du corpus) et les tableaux de l'etape 2, aujourd'hui ponctuels (archive `adhoc-scripts/` du 2026-09-29), sont dans le depot, testes
 - [ ] Unité de compte des versions (working paper / article) fixée avant la vue finale
