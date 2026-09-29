@@ -1,0 +1,52 @@
+%erg 0.1
+Title: Restore the CRS comparator builders retired with 0878
+Created: 2026-09-29
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-29T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+Child of [[0870]] (integration review, 2026-09-29, author-approved). Commit
+c9fe29db (ticket [[0878]], retirement of the legacy tables) deleted
+`scripts/jetp/build_crs_comparators.py`,
+`scripts/jetp/build_crs_energy_projection.py` and
+`tests/test_jetp_comparators_crs.py` although they were not on the
+retirement list: they are the only writers of the CRS comparator data of
+[[0885]]. Nothing on main now regenerates `data/jetp/comparison/crs/*_Q.csv`
+(80) + `manifest.csv`, `data/jetp/deflators.csv`, the 81
+`line-fields/oecd-*` tables, `ontology/marker-coefficients.csv` nor the CRS
+rows of lines.d (8,029), observations.d (40,145), timings.d (16,058),
+relations.d (2,864), external-ids.d (10,514), documents (80) and retrievals
+(80). `build_crs_bulk_sqlite.py` only writes a disposable SQLite.
+`data/jetp/comparison/crs/README.md:9` still names the deleted script.
+
+The integration review established, at c9fe29db^, that those builders
+reproduce the committed data from pinned local inputs only (byte for byte
+for the files, row for row for the sharded ledger tables). Restoring them is
+therefore a reproducibility repair, not a port: the helpers they import
+(`_ledger_headers.py`, `config/jetp-ledger.sql`, `catalog_crs.py`,
+`build_comparators.py`) are unchanged since c9fe29db^.
+
+Out of scope: `build_lines.py`, `build_evidence_layer.py`,
+`build_m1a_lines.py` were one-time migrations and would change committed
+data today; they stay retired. No new guard beyond the restored test.
+
+## Exit criteria
+
+- [ ] The three files are restored from c9fe29db^ (`git show`, never
+      `git checkout -- <path>`), with only the adaptations current main
+      requires, each named in the PR
+- [ ] On padme, from a clean clone with `data/jetp/crs` pulled and outbound
+      HTTP pointed at a dead proxy, `build_crs_energy_projection.py` then
+      `build_crs_comparators.py --recorded-at 2026-09-28` leave
+      `git status --porcelain` empty; the CRS rows stripped from the ledger
+      and rebuilt match the committed rows; one perturbed input digit is
+      flagged (positive control)
+- [ ] The restored test follows the repo convention: the test that reads the
+      deposited ledger carries `@pytest.mark.slow`; `--collect-only` shows
+      `check-fast` deselects it and `check-jetp` selects it
+- [ ] `make lint`, `make check-fast`, `make check-jetp` (padme) pass
+- [ ] `data/jetp/comparison/crs/README.md:9` names an existing script
