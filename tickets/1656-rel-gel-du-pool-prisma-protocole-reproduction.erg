@@ -1,0 +1,37 @@
+%erg 0.1
+Title: REL — gel du pool : PRISMA, protocole, paragraphe de méthode, paquet de reproduction
+Created: 2026-09-29
+Author: haduong
+Blocked-by: 1650
+Blocked-by: 1651
+Blocked-by: 1652
+Blocked-by: 1653
+Blocked-by: 1654
+Blocked-by: 1655
+
+--- log ---
+2026-09-29T15:00Z haduong created
+
+--- body ---
+## Contexte
+
+Enfant de 0700. Clôture de la collecte : le pool est gelé quand toutes les voies
+du protocole sont exécutées ou déclarées impossibles, et que tout le pool est
+trié. Ce ticket porte les livrables du gel.
+
+Gel intermédiaire possible avant la clôture : la table `icf_screen` (1655) est en
+ajout seul ; le tri de l'existant reste valable, seuls les ajouts sont triés.
+Les comptes du diagramme ne se fixent qu'au gel final.
+
+Pièces déjà en brouillon (branche du ticket 1530) : structure et chiffres
+provisoires du diagramme dans `conception/rel-prisma-flux-provisoire.md`, annexe
+`conception/rel-sud-et-langues-annexe-brouillon.md`, note de revue d'Astra.
+
+## Exit criteria
+- [ ] Protocole mis à jour et réconcilié avec la version de `origin/main` : tri à trois étages, sentinelles fixées, deux tours de chaînage, sources hors OpenAlex, réserves, règle BRICS
+- [ ] Diagramme PRISMA : effectifs reconstruits par script depuis les registres et la table `icf_screen`, identification par source et par date (PRISMA-S)
+- [ ] Automatisation déclarée : modèles, versions, prompts, accords mesurés avec le juge de référence
+- [ ] Paragraphe de méthode rédigé avec les comptes finaux
+- [ ] Manifeste de gel : empreintes des fichiers, SHA du code, verrou DVC, versions de modèles et de prompts
+- [ ] Paquet de reproduction : configurations, code, registres et sorties de chaque passe, prompts (dont l'étape 2), sentinelles, sorties des conseillers
+- [ ] Sentinelles de réserve rapportées à part de celles de réglage

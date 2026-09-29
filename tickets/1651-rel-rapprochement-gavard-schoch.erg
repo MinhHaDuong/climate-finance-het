@@ -1,0 +1,26 @@
+%erg 0.1
+Title: REL — rapprochement des références de l'audit Gavard & Schoch avec le pool
+Created: 2026-09-29
+Author: haduong
+
+--- log ---
+2026-09-29T15:00Z haduong created
+
+--- body ---
+## Contexte
+
+Enfant de 0700, voie « Gavard–Schoch » du protocole. Aujourd'hui simple action de
+0702 (action 1) ; sortie en ticket propre parce qu'elle livre des notices au pool
+par son propre PR. Matériau amont : note de source et 14 articles sur l'efficacité
+des émissions, en staging Zotero (0704).
+
+## Actions
+1. Rapprocher chaque référence par DOI, puis titre/auteurs/année ; vérifier PDF
+   et versions working paper/article.
+2. Noter : inclus, doublon, hors période, hors thème, non résolu.
+3. Livrer les absences pertinentes à l'injection (1655), avec provenance.
+
+## Exit criteria
+- [ ] Liste de décisions par référence (inclus / doublon / hors période / hors thème / non résolu)
+- [ ] Absences pertinentes livrées à 1655 avec provenance ; l'absence d'un DOI correspondant n'est pas traitée comme absence du pool
+- [ ] Références non résolues listées, jamais comptées comme traitées
