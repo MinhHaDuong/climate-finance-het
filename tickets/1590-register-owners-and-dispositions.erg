@@ -1,0 +1,58 @@
+%erg 0.1
+Title: Give every row of the three JETP migration registers an owner or a disposition
+Created: 2026-09-29
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-29T16:00Z HDMX-coding-agent created — child of [[0870]]; author decisions of 2026-09-29 fix the homes, the judgment rows are decided by claude-fable-5-1 and recorded with that decided_by
+--- body ---
+## Context
+
+Three registers under `data/jetp/migration/` were left by the migration
+train with rows that had no owner: `0876-pending.csv` (91 rows: 83
+event-timing dispositions and 8 implementation events), the 5 pending rows of
+`1160-citation-decisions.csv` (the same five events) and the 54 `no_referent`
+rows of `0884-coverage-dispositions.csv` (37 authorities with no matching
+party name, 17 project identifiers 0875 left unresolved). 145 distinct rows.
+
+Homes approved by the author on 2026-09-29: unknown Senegal date roles are
+resolved from the cited pages where the page supports a role, else left
+pending with the reason refined; page-observation dates are terminal (author
+decision 2026-09-24); the four unsupported physical claims of 1160 are
+rejected; the Cirebon snapshot goes to [[0920]]; the 17 unresolved project
+identifiers go to [[0833]] (M1b); an authority is covered by a party only where a
+line justifies the party. Judgment rows (three 0970 holds, the AfDB approval
+day, the MAF milestone, the Saloum tender deadline) are decided by the Fable
+tier with a confidence; anything below the configured threshold goes to
+`data/jetp/decisions.md` for the author (storage contract § 4).
+
+## Method
+
+- Every cited page was read from the pinned snapshot (pdftotext, HTML to
+  text); no live source was fetched. Positive controls: the same reading
+  found the ISLE-1 CAD 64.3 million row (Table 4.3-2), the Singkarak
+  "temporarily halted" row (Table 4.3-3), the briquetting Projet #2 at
+  EUR 0.3 million (plan p. 42) and the QW2 total EUR 215.9 million (p. 53).
+- The record of every decision is `data/jetp/migration/1590-register-dispositions.csv`
+  (one row per register row, 145 distinct keys, `decided_by`, confidence,
+  page evidence). `0876-pending.csv` gains `disposition` and `owner`; resolved
+  and rejected rows leave it and are accounted for in
+  `0876-timing-reconciliation.csv` and `1160-citation-decisions.csv`.
+- Party rule for the 37 authorities: R1 a party in force that publishes one of
+  the row's own sources; R2 a party a register line names for the same
+  organisation; R3 a composite row ("France and AFD") goes to the agency when
+  R1 holds for it, else to the country; R4 a party is minted only from a line
+  in force that prints its name, with the authority category of the legacy
+  row and no external identifier (none is held in a snapshot line); R5
+  otherwise left uncovered, naming the lines that would justify it.
+- Threshold for tier decisions: `config/jetp_tracking.yaml`
+  `matching.llm_adjudication.accept_threshold` (0.8).
+
+## Exit criteria
+
+- [ ] Every row of the three registers has an owner or a recorded disposition in `1590-register-dispositions.csv` (145 distinct keys)
+- [ ] The judgment rows carry decision, page evidence and confidence; those below the threshold are items in `data/jetp/decisions.md`
+- [ ] Log notes and exit-criterion lines on [[0920]], [[0833]] and the M2 child that owns the unextracted Senelec notice index ([[1502]])
+- [ ] `tests/test_jetp_register_dispositions.py` red before the data change, green after
+- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` green; `make check-jetp` green on padme
+- [ ] Served-view byte changes listed in the PR with a diff summary of the four country JSONs and the parties/names views
