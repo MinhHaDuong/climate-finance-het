@@ -10,6 +10,25 @@ JETP_PARTY_NAMES_VIEW := $(JETP_OBSERVATORY)/data/party-names.json
 JETP_M1A_DIR := $(JETP_OBSERVATORY)/data/m1a
 JETP_M1A_FILES := $(addprefix $(JETP_M1A_DIR)/,ZAF.csv IDN.csv VNM.csv SEN.csv \
     ZAF.json IDN.json VNM.json SEN.json manifest.json)
+JETP_M1B_DIR := $(JETP_OBSERVATORY)/data/m1b
+JETP_M1B_FILES := $(addprefix $(JETP_M1B_DIR)/,ZAF.json IDN.json VNM.json SEN.json \
+    ZAF-decisions.json IDN-decisions.json VNM-decisions.json SEN-decisions.json manifest.json)
+JETP_M1B_INPUTS := $(wildcard data/jetp/*.csv data/jetp/*.d/*.csv data/jetp/ontology/*.csv \
+    data/jetp/line-fields/*.csv) data/jetp/migration/0884-coverage-dispositions.csv \
+    data/jetp/migration/1620-register-dispositions.csv config/jetp-m1a-inventories.json config/jetp-m1b-release.json \
+    data/jetp/migration/0833-candidate-reviews.csv data/jetp/migration/0833-coverage-reviews.json \
+    data/jetp/migration/0875-dispositions.csv data/jetp/migration/0970-event-adjudications.csv \
+    config/jetp-ledger.sql .githooks/pre-commit scripts/jetp/build_m1b_catalog.py \
+    scripts/jetp/build_ledger.py scripts/jetp/_ledger_headers.py scripts/jetp/_ontology.py
+
+.PHONY: jetp-m1b jetp-m1b-check
+# Explicit historical replay only. Live builds retain and check the frozen
+# release, even when later ledger or ontology decisions legitimately change.
+jetp-m1b: $(JETP_M1B_INPUTS)
+	$(PYTHON) scripts/jetp/build_m1b_catalog.py --output-dir $(JETP_M1B_DIR)
+
+jetp-m1b-check:
+	$(PYTHON) scripts/jetp/build_m1b_catalog.py --output-dir $(JETP_M1B_DIR) --check
 # The export is a view of the ledger lines of its six extracts (ticket 0873).
 # The pinned extracts they were ingested from once, by
 # scripts/jetp/build_m1a_lines.py, are not read here: that ingestion is a
@@ -119,7 +138,7 @@ $(JETP_ACCOUNTS_DERIVED): jetp-current-ledger-input
 $(JETP_ACCOUNTS_VIEW): jetp-current-ledger-input
 	$(PYTHON) scripts/jetp/build_accounts.py --output $@
 
-jetp-observatory: $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_ACCOUNTS_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+jetp-observatory: jetp-m1b-check $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_ACCOUNTS_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
 $(JETP_PARTY_NAMES_VIEW): data/jetp/parties.csv data/jetp/party-names.csv scripts/jetp/build_party_names_view.py
 	$(PYTHON) scripts/jetp/build_party_names_view.py --output $@

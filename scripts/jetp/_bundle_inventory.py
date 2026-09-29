@@ -22,7 +22,9 @@ EXTRA_INPUTS = ('config/jetp_observatory.yaml', 'scripts/jetp/build_observatory.
                 'scripts/jetp/build_observatory_provenance.py',
                 'scripts/jetp/build_accounts.py', 'scripts/jetp/build_ledger.py',
                 'scripts/jetp/_ledger_headers.py', 'scripts/jetp/_ontology.py',
-                'config/jetp-ledger.sql', '.githooks/pre-commit')
+                'config/jetp-ledger.sql', '.githooks/pre-commit',
+                'config/jetp-m1a-inventories.json', 'config/jetp-m1b-release.json',
+                'scripts/jetp/build_m1b_catalog.py')
 
 
 def digest(data):
@@ -67,6 +69,20 @@ def routes(payloads):
         json.loads(payloads['site/data/accounts.json'])
         result.append('#money')
         downloads.append('data/accounts.json')
+    if 'site/data/m1b/manifest.json' in payloads:
+        descriptor = json.loads(payloads['site/data/m1b/manifest.json'])
+        result.append('#referents')
+        downloads.append('data/m1b/manifest.json')
+        for code, item in descriptor['countries'].items():
+            name = 'site/data/m1b/' + item['file']
+            if name not in payloads or digest(payloads[name]) != item['sha256']:
+                raise ValueError(f'M1b country view missing or changed: {code}')
+            decisions_name = 'site/data/m1b/' + item['decisions_file']
+            if decisions_name not in payloads or digest(payloads[decisions_name]) != item['decisions_sha256']:
+                raise ValueError(f'M1b decision view missing or changed: {code}')
+            result.append('#referents/' + code)
+            downloads.append('data/m1b/' + item['file'])
+            downloads.append('data/m1b/' + item['decisions_file'])
     for view in COUNTRIES:
         country = json.loads(payloads[f'site/data/{view}.json'])
         result.extend((f'#country/{view}', f'#projects?country={view}', f'#comparison?country={view}'))

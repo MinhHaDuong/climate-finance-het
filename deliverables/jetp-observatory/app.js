@@ -31,7 +31,7 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, accounts, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex, documentsBySha, ontology, partyNames;
+let overview, accounts, countries, comparison, editions, evidence, m1a, m1b, projects, documentsData, documentIndex, documentsBySha, ontology, partyNames;
 const country = (code) => overview.countries.find((c) => c.code === code);
 const agreementCount = () =>
   overview.countries.reduce((total, c) => total + c.agreement_count, 0);
@@ -52,7 +52,7 @@ const pill = (text) => `<span class="pill">${esc(text)}</span>`;
  * chip, and every trail tab keeps the country. */
 const SECTIONS = {
   "the-paper-trail": ["the-paper-trail", "documents", "entries", "on-the-record", "projects",
-    "project", "funding", "whos-who"],
+    "project", "referents", "funding", "whos-who"],
   "the-tallies": ["counts", "money", "comparisons"],
   about: ["about", "glossary", "methods", "who-we-are", "release-history"],
 };
@@ -89,7 +89,7 @@ const SUB_PAGES = {
 };
 /* The page a sub-bar marks as current: a project under Projects, the release
  * history under Methods, which links to it. */
-const CURRENT = { project: "projects", "release-history": "methods" };
+const CURRENT = { project: "projects", referents: "projects", "release-history": "methods" };
 // Internal page keys stay stable while public addresses follow their labels.
 // An internal key is not itself an address, and no earlier address is kept:
 // the site was never published (author, 2026-09-24).
@@ -1334,6 +1334,7 @@ function cataloguePage(params) {
       "Reviewed projects, programmes and components",
       "Search the undertakings named in the documents and follow their links to recorded statements and publications. Programmes and components can overlap, so their number is not a count of distinct physical assets.",
     ) +
+    `<p><a class="button light" href="#referents">Explore the frozen document catalogue: projects, assets, agreements, parties and pending matches →</a></p>` +
     `<div class="note"><span class="computed-tag">Our calculation</span> ${projects.length} reviewed projects · ${agreementCount()} agreements. These are different kinds of record.</div><div class="filters"><label class="search">Search projects, operators or locations<input id="search" type="search" placeholder="Try transmission, geothermal, Bac Ai…"></label><label>Country<select id="country-filter"><option value="">All countries</option>${overview.countries.map((c) => `<option value="${c.code}" ${params.get("country") === c.code ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select></label><label>Theme / technology<select id="technology-filter"><option value="">All themes / technologies</option>${options([...new Set(projects.map((p) => p.technology))].sort())}</select></label><label>Funder<select id="funder-filter"><option value="">All funders</option>${options([...new Set(projects.flatMap((p) => p.funders))].sort())}</select></label><label>Financing milestone<select id="stage-filter"><option value="">All milestones</option>${options(Object.keys(STAGE_COLOURS))}</select></label></div><p id="result-count" class="result-count" aria-live="polite"></p><div id="results"></div>`;
   const update = () => {
     const q = document.getElementById("search").value.toLowerCase();
@@ -1363,6 +1364,59 @@ function cataloguePage(params) {
       el.addEventListener(el.tagName === "INPUT" ? "input" : "change", update),
     );
   update();
+}
+
+function referentJustification(row, view) {
+  const decisionIds = new Set(row.decision_ids || []);
+  const decisions = view.decisions.filter((decision) => decisionIds.has(decision.referent_row_id));
+  const relationIds = new Set(row.relation_decision_ids || []);
+  const roles = view.relations.filter((decision) => relationIds.has(decision.relation_id));
+  const lineIds = new Set(decisions.flatMap((decision) => [decision.line_id, decision.justification_line_ids]).filter(Boolean));
+  roles.forEach((decision) => lineIds.add(decision.line_id));
+  if (row.name_record?.line_id) lineIds.add(row.name_record.line_id);
+  return `<details data-referent-id="${esc(row.id)}"><summary>${esc(row.name)} · ${esc(row.id)}</summary>${rowDetail(row.record, "Referent record")}${row.name_record ? rowDetail(row.name_record, "Accepted name record") : ""}${decisions.map((decision) => rowDetail(decision, "Decision · " + decision.referent_row_id)).join("")}${roles.map((decision) => rowDetail(decision, "Role decision · " + decision.relation_id)).join("")}${view.lines.filter((line) => lineIds.has(line.line_id)).map((line) => `<p><code>${esc(line.line_id)}</code> · ${esc(line.label)}<br>${observationEvidence({ ...line, observation_id: line.line_id })}</p>`).join("")}</details>`;
+}
+function matchJustification(row, view) {
+  const { view: ignoredView, country: ignoredCountry, review, ...decision } = row;
+  const ids = new Set([row.line_id, ...["from", "to"].filter((side) => row[side + "_kind"] === "line").map((side) => row[side + "_id"])]);
+  return rowDetail(decision, "Decision · " + (row.relation_id || row.referent_row_id)) + (review ? rowDetail(review, "M1b review · " + review.decision_id) : "") + view.lines.filter((line) => ids.has(line.line_id)).map((line) => `<p><code>${esc(line.line_id)}</code> · ${esc(line.label)}<br>${observationEvidence({ ...line, observation_id: line.line_id })}</p>`).join("");
+}
+function legacyDisposition(row) {
+  const { decision, ownership_decision, related_records, ...disposition } = row;
+  return `<details><summary>${esc(row.legacy_id)} · ${esc(row.disposition)}</summary>${rowDetail(disposition, "Recorded disposition")}${rowDetail(decision, "M1b bounded review")}${rowDetail(ownership_decision, "Ownership decision from 1620")}${(related_records || []).map((record) => rowDetail(record, "Related later record · " + record.scope + " · " + record.legacy_event_id)).join("")}</details>`;
+}
+async function referentsPage(code) {
+  const selected = knownCountry(code);
+  main.innerHTML = header("Frozen document catalogue", "Explore identities justified by the four frozen document inventories. Projects, assets, agreements and parties are counted separately; pending matches are listed below and have no effect on those counts.") + '<p class="loading">Opening the catalogue…</p>';
+  try {
+    const codes = selected ? [selected] : Object.keys(m1b.countries);
+    const unpack = (table) => table.rows.map((values) => Object.fromEntries(table.fields.map((key, index) => [key, values[index]])));
+    const views = (await Promise.all(codes.map(async (c) => {
+      const [view, decisions] = await Promise.all([load("m1b/" + c), load("m1b/" + c + "-decisions")]);
+      return { ...view, ...decisions };
+    }))).map((view) => ({ ...view,
+      referents: view.referents.map((row) => ({ ...row, record: unpack(view.referent_records[row.kind])[row.record_index] })),
+      decisions: unpack(view.decisions), relations: unpack(view.relations), lines: unpack(view.lines),
+      candidates: { in_force: false, line_referents: unpack(view.candidates.line_referents), relations: unpack(view.candidates.relations) } }));
+    if (!location.hash.startsWith("#referents")) return;
+    const rows = views.flatMap((view) => view.referents.map((row) => ({ ...row, country: view.country, view })));
+    const relations = views.flatMap((view) => view.relations.map((row) => ({ ...row, country: view.country, view })));
+    const candidates = views.flatMap((view) => [...view.candidates.line_referents.map((row) => ({ ...row, relation: "refers_to" })), ...view.candidates.relations].map((row) => ({ ...row, country: view.country, view })));
+    const counts = views.map((view) => `<tr><td><a href="#referents/${view.country}">${esc(country(view.country)?.name || view.country)}</a></td>${["project", "asset", "agreement", "party"].map((kind) => `<td data-unit="${kind} referents">${fmt(view.counts.referents[kind])}</td>`).join("")}<td>${fmt(view.counts.lines_with_accepted_referent)} / ${fmt(view.counts.lines)}</td><td>${Object.entries(view.counts.candidate_relations).map(([relation, count]) => `${esc(relation)}: ${fmt(count)}`).join("; ") || "0"}${Object.entries(view.counts.candidate_referents).map(([kind, count]) => `; refers_to ${esc(kind)}: ${fmt(count)}`).join("")}</td></tr>`).join("");
+    main.innerHTML = header("Frozen document catalogue", "Explore identities justified by the four frozen document inventories. Projects, assets, agreements and parties are counted separately; pending matches are listed below and have no effect on those counts.") +
+      `<p><a href="#referents">All countries</a> · ${Object.keys(m1b.countries).map((c) => `<a href="#referents/${c}">${esc(country(c)?.name || c)}</a>`).join(" · ")}</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Projects</th><th>Assets</th><th>Agreements</th><th>Parties</th><th>Lines with an accepted identity / inventory lines</th><th>Pending decisions by relation</th></tr></thead><tbody>${counts}</tbody></table></div><p class="note"><span class="computed-tag">Our calculation</span> Counts cover only the frozen inventories. A line can justify several kinds of referent; a party appearing in two countries is counted in each country's catalogue. A party's country of incorporation is separate from the country whose lines justify its role. Lines without a decided identity remain document rows, including headings and unnamed items; <a href="#document-rows${selected ? '/' + selected : ''}">browse the frozen document rows</a>.</p><h2>Accepted identities</h2><div id="m1b-identities"></div><h2>Accepted relations</h2><div id="m1b-relations"></div><h2>Pending matches — not in force</h2><p>Counts below are decisions by country and relation, separate from accepted identities. Generic names and unverified aliases stay pending.</p><div id="m1b-candidates"></div><h2>Legacy coverage dispositions</h2>${views.flatMap((view) => view.legacy_coverage_dispositions || []).map(legacyDisposition).join("") || '<p>No carried legacy coverage identifiers for this country.</p>'}<h2>Frozen ontology and reproducibility</h2><p>Ontology release ${esc(m1b.ontology.release_id)}: <code>${esc(m1b.ontology.ontology_ref)}</code>. The descriptor pins every input hash and the ontology rows in force.</p><div class="downloads">${codes.map((c) => `<a class="button light" href="data/m1b/${c}.json" download>${esc(country(c)?.name || c)} catalogue ↓</a>`).join("")}<a class="button light" href="data/m1b/manifest.json" download>Release descriptor ↓</a></div>`;
+    main.innerHTML += `<div class="downloads">${codes.map((c) => `<a class="button light" href="data/m1b/${c}-decisions.json" download>${esc(country(c)?.name || c)} decisions ↓</a>`).join("")}</div>`;
+    const mountTable = (id, table) => {
+      document.getElementById(id).innerHTML = table.head;
+      table.mount();
+    };
+    mountTable("m1b-identities", filterTable("m1b-identities", rows, { resultNoun: "accepted referents", empty: "No accepted referents in this selection.", pageSize: 30, facets: [{ key: "country", label: "Country", all: "All countries", options: codes }, { key: "kind", label: "Kind", all: "All kinds", options: ["project", "asset", "agreement", "party"] }], columns: [{ label: "Country", cell: (r) => esc(r.country) }, { label: "Kind", cell: (r) => esc(r.kind) }, { label: "Identity and justification", cell: (r) => referentJustification(r, r.view) }] }));
+    const showMatches = (id, matches) => mountTable(id, filterTable(id, matches, { resultNoun: "decisions", empty: "No decisions in this selection.", pageSize: 30, facets: [{ key: "country", label: "Country", all: "All countries", options: codes }, { key: "relation", label: "Relation", all: "All relations", options: distinctValues(matches, "relation") }], columns: [{ label: "Country", cell: (r) => esc(r.country) }, { label: "Relation", cell: (r) => esc(r.relation) }, { label: "Decision and justification", cell: (r) => matchJustification(r, r.view) }] }));
+    showMatches("m1b-relations", relations);
+    showMatches("m1b-candidates", candidates);
+  } catch (error) {
+    if (location.hash.startsWith("#referents")) main.innerHTML = `<div class="error"><h1>The catalogue could not load.</h1><p>${esc(error.message)}</p></div>`;
+  }
 }
 function eventView(e, sources) {
   const timing = e.date
@@ -1909,6 +1963,7 @@ const TITLES = {
   "the-paper-trail": "The paper trail",
   funding: "Funding",
   projects: "Projects",
+  referents: "Frozen document catalogue",
   project: "Project",
   "comparisons": "Non-JETP energy operations",
   "on-the-record": "Statements",
@@ -2063,6 +2118,7 @@ function render() {
   else if (page === "the-paper-trail") paperTrailPage();
   else if (page === "funding") id ? countryPage(id) : countriesPage();
   else if (page === "projects") cataloguePage(params);
+  else if (page === "referents") referentsPage(id);
   else if (page === "project") projectPage(decodeURIComponent(id || ""));
   else if (page === "comparisons") comparisonPage(params);
   else if (page === "on-the-record") id ? inventoryPage(id, params, "record") : evidencePage();
@@ -2105,7 +2161,7 @@ const load = async (file) => {
 async function start() {
   try {
     let termsView, statusCrosswalkView, staged, captures, checks, ledgerDocuments;
-    [overview, accounts, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks, ledgerDocuments] = await Promise.all([
+    [overview, accounts, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks, ledgerDocuments, m1b] = await Promise.all([
       load("overview"),
       load("accounts"),
       load("comparison"),
@@ -2120,6 +2176,7 @@ async function start() {
       load("web-archive").catch(() => ({ captures: [] })),
       load("publisher-links").catch(() => ({ checks: [] })),
       load("ledger-documents").catch(() => ({ documents: [] })),
+      load("m1b/manifest"),
     ]);
     stagedCopies = new Set(staged?.objects || []);
     webArchive = indexBy(captures.captures, "url");
