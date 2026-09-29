@@ -1,0 +1,44 @@
+%erg 0.1
+Title: make check-fast under ten seconds on padme
+Created: 2026-09-29
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-29T16:40Z HDMX-coding-agent created — author, 2026-09-29: "File it, target 10 s on padme"
+
+--- body ---
+## Context
+
+`AGENTS.md` and [[1060]] describe the merge gate `make check-fast` + `make lint`
+as about 40 s. The 0870 integration review measured `make check-fast` at 322 to
+462 s on doudou (load 2 to 4, `-n 4`), on five runs between 2026-09-29 12:00Z
+and 14:00Z; one run of 441 s had 2040 tests passed. No padme figure without load
+exists. The gate ran some fifteen times during that one review, so its cost
+multiplies across every PR and every parallel session.
+
+One cause is already known and fixed: before PR #1570 a JETP accounts test built
+the real ledger twice (about 340 s of worker time) inside `check-fast`; it is now
+marked `slow`. The rest is unmeasured. [[0041]] (deferred, April) and [[0038]]
+cover pipeline speed and test strategy in general; this ticket is the measured
+gate with a target.
+
+## Work
+
+- Measure on padme, unloaded, with the load noted: `make check-fast` wall time,
+  `pytest --durations=50` under the gate's own selection, and the xdist startup
+  cost (`-n 16` against serial on a trivial selection).
+- Move each test that reads real data, builds a derived artifact, starts a
+  subprocess or sleeps out of `check-fast`: `slow` for real-data tests (repo
+  convention: a single `@pytest.mark.slow`), `integration` for subprocess and
+  sleep, per `pyproject.toml`. Check with `--collect-only` that each moved test
+  is still selected by its WP gate, so nothing leaves every gate.
+- Where a fast test pays a fixed setup cost per worker, share it or shrink it.
+- Correct the "~40 s" in `AGENTS.md` and [[1060]] to the measured value.
+
+## Exit criteria
+
+- [ ] `make check-fast` takes 10 s or less of wall time on padme, measured three
+      times unloaded, with the pytest summary line quoted from an unfiltered log
+- [ ] Every test moved out of `check-fast` is still selected by a WP gate or by
+      `make check` (shown by `--collect-only`)
+- [ ] `AGENTS.md` and [[1060]] state the measured duration
