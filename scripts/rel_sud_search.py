@@ -22,6 +22,7 @@ import json
 import os
 import re
 import sys
+import unicodedata
 from datetime import datetime, timezone
 
 import yaml
@@ -45,6 +46,39 @@ REGISTRY_FIELDS = [
 def split_terms(query):
     """Phrases of an ``"a" OR "b"`` query string, unquoted."""
     return [t.strip().strip('"') for t in query.split(" OR ") if t.strip()]
+
+
+# OpenAlex folds neither Unicode spellings of the same letter nor ё/е (control
+# counts 2026-09-29: Bengali "climate change" 5 vs 4, Russian 0 vs 1), so each
+# phrase is sent in every spelling. Bengali and Hindi nukta letters exist both
+# as base+nukta and as one composition-excluded code point.
+_PRECOMPOSED = {unicodedata.normalize("NFD", c): c
+                for c in map(chr, [*range(0x958, 0x960), 0x9DC, 0x9DD, 0x9DF])}
+
+
+def spelling_variants(phrase):
+    out = [phrase]
+    for dec, pre in _PRECOMPOSED.items():
+        for p in list(out):
+            for a, b in ((dec, pre), (pre, dec)):
+                q = p.replace(a, b)
+                if a in p and q not in out:
+                    out.append(q)
+    for p in list(out):
+        q = p.replace("ё", "е").replace("Ё", "Е")
+        if q not in out:
+            out.append(q)
+    return out
+
+
+def expand_query(query):
+    """The query with every spelling variant of each phrase, in stable order."""
+    phrases = []
+    for term in split_terms(query):
+        for v in spelling_variants(term):
+            if v not in phrases:
+                phrases.append(v)
+    return " OR ".join(f'"{p}"' for p in phrases)
 
 
 def build_filter(search, year_min, year_max, language=None, countries=None,
@@ -76,7 +110,7 @@ def plan_queries(cfg):
                     # by country. For the others the stratum names the query
                     # set; geography comes from the recorded `countries`.
                     "filter": build_filter(
-                        search, y0, y1, language=lang,
+                        expand_query(search), y0, y1, language=lang,
                         countries=s["countries"] if lang == "en" else None)})
     for j in cfg["journals_e"]:
         slug = re.sub(r"\W+", "-", j["name"]).strip("-").lower()
@@ -91,13 +125,13 @@ def plan_queries(cfg):
         specs.append({
             "query_id": f"J-{slug}", "kind": "qj", "stratum": j["name"],
             "language": "+".join(j["languages"]), "theme": "all",
-            "filter": build_filter(search, y0, y1, issns=j["issn"])})
+            "filter": build_filter(expand_query(search), y0, y1, issns=j["issn"])})
     return specs
 
 
 def icf_flag_pattern(cfg):
-    terms = {t for q in cfg["queries"].values() for s in q.values()
-             for t in split_terms(s)}
+    terms = {v for q in cfg["queries"].values() for s in q.values()
+             for t in split_terms(s) for v in spelling_variants(t)}
     return re.compile("|".join(re.escape(t) for t in sorted(terms, key=len, reverse=True)),
                       re.IGNORECASE)
 

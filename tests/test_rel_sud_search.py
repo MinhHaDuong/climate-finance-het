@@ -37,6 +37,22 @@ def test_only_english_stratum_runs_are_filtered_by_affiliation_country():
             assert has_country == (s["language"] == "en"), s["query_id"]
 
 
+def test_both_unicode_spellings_and_yo_variant_are_sent():
+    bn = "জলবায়ু অর্থায়ন"
+    assert "য়" in "".join(rs.spelling_variants(bn))
+    assert len(rs.spelling_variants(bn)) == 2
+    assert "Зеленый климатический фонд" in rs.spelling_variants("Зелёный климатический фонд")
+    assert rs.spelling_variants("climate finance") == ["climate finance"]
+    q = rs.expand_query('"a" OR "Зелёный"')
+    assert q == '"a" OR "Зелёный" OR "Зеленый"'
+
+
+def test_stratum_queries_carry_the_spelling_variants():
+    filt = {s["query_id"]: s["filter"] for s in rs.plan_queries(_cfg())}
+    assert "য়" in filt["Q-south_asia-bn-T1"]
+    assert "Зеленый климатический фонд" in filt["Q-russia-ru-T1"]
+
+
 def test_filter_carries_language_and_affiliation_countries():
     f = rs.build_filter('"a"', 1990, 2026, language="es", countries=["AR", "BR"])
     assert "language:es" in f
