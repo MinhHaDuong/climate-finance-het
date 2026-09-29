@@ -30,6 +30,13 @@ def test_plan_has_76_stratum_runs_and_every_query_is_defined():
             assert "," not in search
 
 
+def test_only_english_stratum_runs_are_filtered_by_affiliation_country():
+    for s in rs.plan_queries(_cfg()):
+        if s["kind"] == "q":
+            has_country = "country_code" in s["filter"]
+            assert has_country == (s["language"] == "en"), s["query_id"]
+
+
 def test_filter_carries_language_and_affiliation_countries():
     f = rs.build_filter('"a"', 1990, 2026, language="es", countries=["AR", "BR"])
     assert "language:es" in f

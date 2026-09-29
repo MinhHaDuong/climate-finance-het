@@ -70,8 +70,14 @@ def plan_queries(cfg):
                 specs.append({
                     "query_id": f"Q-{stratum}-{lang}-{theme}", "kind": "q",
                     "stratum": stratum, "language": lang, "theme": theme,
-                    "filter": build_filter(search, y0, y1, language=lang,
-                                           countries=s["countries"])})
+                    # Affiliation countries are missing on most non-English
+                    # works (Chinese T2: 260 hits by language, 4 with the
+                    # country filter), so only English queries are filtered
+                    # by country. For the others the stratum names the query
+                    # set; geography comes from the recorded `countries`.
+                    "filter": build_filter(
+                        search, y0, y1, language=lang,
+                        countries=s["countries"] if lang == "en" else None)})
     for j in cfg["journals_e"]:
         slug = re.sub(r"\W+", "-", j["name"]).strip("-").lower()
         specs.append({
