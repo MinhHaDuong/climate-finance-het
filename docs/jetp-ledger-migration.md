@@ -117,9 +117,9 @@ Order of work, each step a ticket with its own byte-level check:
    occur in the current event table; the Indonesia Cirebon case stays unmapped
    pending review. The Observations tab and each record's justification
    fold-out are the check for the remaining observation step.
-   Ticket 1590 (2026-09-29) gave the 91 pending timing dispositions, the five
+   Ticket 1620 (2026-09-29) gave the 91 pending timing dispositions, the five
    pending citations of 1160 and the 54 coverage dispositions of 0884 an owner
-   or a disposition each (`1590-register-dispositions.csv`, 145 distinct rows):
+   or a disposition each (`1620-register-dispositions.csv`, 145 distinct rows):
    30 timings typed from the documents' own front matter (29 annex proposals
    dated by the annexes' version table, the AfDB approval by its dateline), 9
    terminal, 4 physical claims rejected, 47 held for the author in

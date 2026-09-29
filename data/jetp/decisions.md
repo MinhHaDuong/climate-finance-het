@@ -35,13 +35,13 @@ upgrade an archive or mirror into a primary authority for event-level claims:
 locators must cite the government-authored document, while provenance retains
 both the document publisher and the delivery host.
 
-## 2026-09-29 — items below the tier threshold, ticket 1590
+## 2026-09-29 — items below the tier threshold, ticket 1620
 
 Author: claude-fable-5-1 (tier 4 adjudication), for Minh's decision. Each
 item scored below `matching.llm_adjudication.accept_threshold` (0.8,
 `config/jetp_tracking.yaml`) and stays pending in
 `data/jetp/migration/0876-pending.csv` with owner `author`. The row-level
-record is `data/jetp/migration/1590-register-dispositions.csv`.
+record is `data/jetp/migration/1620-register-dispositions.csv`.
 
 ### 1. The Senegal plan's own date (42 timing rows, confidence 0.7)
 

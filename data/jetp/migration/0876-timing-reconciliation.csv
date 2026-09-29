@@ -256,7 +256,7 @@ legacy_row_number,legacy_event_id,legacy_date_role,outcome,timing_id,approval_ti
 256,zaf-register-idc001-2026-03-30,register,typed_timing,timing-zaf-register-idc001-2026-03-30-1,,
 257,zaf-register-idc002-2026-03-30,register,typed_timing,timing-zaf-register-idc002-2026-03-30-1,,
 258,zaf-register-idc003-2026-03-30,register,typed_timing,timing-zaf-register-idc003-2026-03-30-1,,
-259,zaf-murp-afdb-approved-2026,event,rejected,,,"legacy event day 2026-07-16 is the article dateline, not an approval day; report_date written as timing-zaf-murp-afdb-approved-2026-1 (ticket 1590)"
+259,zaf-murp-afdb-approved-2026,event,rejected,,,"legacy event day 2026-07-16 is the article dateline, not an approval day; report_date written as timing-zaf-murp-afdb-approved-2026-1 (ticket 1620)"
 260,zaf-eepbip-maf-approved-2018,other_milestone,pending,,,"other_milestone_no_role_for_amount: the MAF profile prints ""Project duration 05/2016-01/2018 (Appraisal); 08/2018-12/2026 (Implementation)""; a project period is not a date role of a money amount observation; author decision pending (decisions.md 2026-09-29)"
 261,idn-approved-isle1-canada-2025,reporting_cutoff,typed_timing,timing-idn-approved-isle1-canada-2025-1,,
 262,idn-approved-sreap-kfw-2025,reporting_cutoff,typed_timing,timing-idn-approved-sreap-kfw-2025-1,,

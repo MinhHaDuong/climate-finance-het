@@ -1,6 +1,6 @@
 """Every row of the three JETP migration registers has an owner or a disposition.
 
-Ticket 1590. The registers are records, not build outputs, so the guard reads
+Ticket 1620. The registers are records, not build outputs, so the guard reads
 the committed files: the pending register names an owner on every row it
 keeps, the dispositions register accounts for every row the three registers
 held on 2026-09-29 (145 distinct keys), and a row it calls resolved names a
@@ -34,7 +34,7 @@ def test_every_pending_row_names_its_disposition_and_owner():
 
 
 def test_dispositions_register_accounts_for_every_register_row():
-    register = _rows(MIG / '1590-register-dispositions.csv')
+    register = _rows(MIG / '1620-register-dispositions.csv')
     keys = {(r['register'], r['row_key']) for r in register}
     assert len({r['row_key'] for r in register}) == 145
     pending = {('0876-pending', r['legacy_event_id']) for r in _rows(MIG / '0876-pending.csv')}
@@ -57,7 +57,7 @@ def test_a_resolved_row_names_a_timing_that_exists():
     timing_ids = set()
     for path in glob.glob(str(ROOT / 'data' / 'jetp' / 'timings.d' / '*.csv')):
         timing_ids.update(r['timing_id'] for r in _rows(path))
-    resolved = [r for r in _rows(MIG / '1590-register-dispositions.csv') if r['disposition'] == 'resolved']
+    resolved = [r for r in _rows(MIG / '1620-register-dispositions.csv') if r['disposition'] == 'resolved']
     assert len(resolved) == 30
     for row in resolved:
         named = [token for token in row['note'].replace(';', ' ').split() if token.startswith('timing-')]

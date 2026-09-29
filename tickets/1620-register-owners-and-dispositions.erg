@@ -33,7 +33,7 @@ tier with a confidence; anything below the configured threshold goes to
   found the ISLE-1 CAD 64.3 million row (Table 4.3-2), the Singkarak
   "temporarily halted" row (Table 4.3-3), the briquetting Projet #2 at
   EUR 0.3 million (plan p. 42) and the QW2 total EUR 215.9 million (p. 53).
-- The record of every decision is `data/jetp/migration/1590-register-dispositions.csv`
+- The record of every decision is `data/jetp/migration/1620-register-dispositions.csv`
   (one row per register row, 145 distinct keys, `decided_by`, confidence,
   page evidence). `0876-pending.csv` gains `disposition` and `owner`; resolved
   and rejected rows leave it and are accounted for in
@@ -50,7 +50,7 @@ tier with a confidence; anything below the configured threshold goes to
 
 ## Exit criteria
 
-- [ ] Every row of the three registers has an owner or a recorded disposition in `1590-register-dispositions.csv` (145 distinct keys)
+- [ ] Every row of the three registers has an owner or a recorded disposition in `1620-register-dispositions.csv` (145 distinct keys)
 - [ ] The judgment rows carry decision, page evidence and confidence; those below the threshold are items in `data/jetp/decisions.md`
 - [ ] Log notes and exit-criterion lines on [[0920]], [[0833]] and the M2 child that owns the unextracted Senelec notice index ([[1502]])
 - [ ] `tests/test_jetp_register_dispositions.py` red before the data change, green after
