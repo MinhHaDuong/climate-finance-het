@@ -5,6 +5,10 @@
 year_min: 1990
 year_max: 2026
 
+# 2026-09-29 tuning note (sentinel rule): 'climate change finance' and the adaptation
+# forms in `en` T1/T3 were added after sentinels 16 and 56 were missed; those two,
+# and 21/23 (rescued by dropping the language filter), are TUNING sentinels.
+
 themes:
   T1: international climate finance
   T2: instruments, private finance, international carbon
@@ -13,9 +17,9 @@ themes:
 
 queries:
   en:
-    T1: '"climate finance" OR "Green Climate Fund" OR "climate funds" OR "Adaptation Fund" OR "Global Environment Facility" OR "Just Energy Transition Partnership"'
+    T1: '"climate finance" OR "Green Climate Fund" OR "climate funds" OR "Adaptation Fund" OR "Global Environment Facility" OR "Just Energy Transition Partnership" OR "climate change finance"'
     T2: '"carbon market" OR "carbon credits" OR "Clean Development Mechanism" OR "blended finance" OR "private climate finance" OR "climate bonds" OR "Joint Implementation"'
-    T3: '"adaptation finance" OR "REDD" OR "forest finance" OR "payments for ecosystem services"'
+    T3: '"adaptation finance" OR "REDD" OR "forest finance" OR "payments for ecosystem services" OR "adaptation financing" OR "financing for adaptation" OR "financing for climate change adaptation" OR "adaptation aid" OR "aid for adaptation"'
     T4: '"loss and damage" OR "climate justice" OR "climate debt" OR "Rio markers" OR "grant equivalent"'
   fr:
     T1: '"finance climat" OR "finance climatique" OR "financement climatique" OR "Fonds vert pour le climat" OR "financements climat" OR "financement de la lutte contre le changement climatique" OR "Fonds d''adaptation"'
