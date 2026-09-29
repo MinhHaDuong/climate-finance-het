@@ -3,9 +3,11 @@ Title: Pilot the Zotero group library on Viet Nam JETP documents
 Created: 2026-09-29
 Author: HDMX-coding-agent
 Label: needs-human
+Label: deferred
 
 --- log ---
 2026-09-29T00:00Z HDMX-coding-agent created
+2026-09-29T12:00Z HDMX-coding-agent note Feasibility checked: key and storage ready, group creation is the only manual step (no API endpoint); deferred to M4 at the author's request
 
 --- body ---
 ## Context
@@ -16,14 +18,31 @@ before any wider migration: Viet Nam, 58 of the 392 rows of
 A pilot on one instance is expected to critique the tracker's design; feed its
 findings back into 1510 before filing further children.
 
-## Human step (needs-human)
+## Milestone
 
-The author creates the group library under their own account (public is
-fine: a public group shares metadata, not attachment contents; see 1510),
-and decides on the Zotero Storage plan. The 282 MB object store is close to the
-free 300 MB tier, and WebDAV may not serve group libraries: check current
-Zotero terms before choosing. The author then supplies a group-scoped API key
-in `~/.config/keys/` (never in `.env`).
+M4 (author, 2026-09-29). Do not start before the milestone opens.
+
+## Feasibility (checked 2026-09-29, nothing created)
+
+- Storage and credentials are not blockers. The author has an unlimited
+  Zotero Storage plan (group files count against the owner's quota), and the
+  read-write key `ZOTERO_RW_API_KEY` in `~/.config/keys/zotero.env` already
+  grants `groups.all: library + write`, so it covers a new group with no new
+  key (checked via `GET /keys/current`).
+- The Web API v3 cannot create a group or change group settings: neither the
+  read nor the write documentation has such an endpoint (writable objects are
+  items, collections, saved searches, tags, plus file uploads).
+- Hence one human step: create the group on zotero.org (Groups, Create a New
+  Group) or in the desktop client (File, New Library, New Group), about a
+  minute, once. Everything after that is automatable.
+- Group type: **PublicClosed**, with file editing for members. Zotero:
+  "Open public groups do not allow file sharing", while closed-membership
+  public groups can enable it for members only. Non-members see metadata,
+  never files; public access to the documents goes through the Web Archive
+  snapshots (see 1510). Precedent: the author's existing PublicClosed group
+  "Semantic search challenge fixture" is configured this way.
+- The pilot then records the new group's numeric ID in the pipeline config,
+  not in `.env`.
 
 ## Actions
 

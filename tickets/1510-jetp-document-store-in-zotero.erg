@@ -2,11 +2,18 @@
 Title: JETP document store in a dedicated Zotero group library
 Created: 2026-09-29
 Author: HDMX-coding-agent
+Label: deferred
 
 --- log ---
 2026-09-29T00:00Z HDMX-coding-agent created
+2026-09-29T12:00Z HDMX-coding-agent note Milestone M4 (author); feasibility of the group library checked in 1511
 
 --- body ---
+## Milestone
+
+M4 (author, 2026-09-29: "Zotero storage smells like M4 work"). Do not start
+before the milestone opens.
+
 ## Context
 
 Tracker. Author decision (2026-09-29, Imagine conversation): the JETP
@@ -42,8 +49,10 @@ Today step D1 is a home-made document manager: `data/jetp/documents.csv`
    attachment on the same item.
 4. DVC shrinks to a hash-keyed cache filled from Zotero, plus the frozen
    evidence for each release. It stops being a second system of record.
-5. The group may be public. A public Zotero group library shares metadata,
-   not attachment contents (author, 2026-09-29), so the files stay
+5. The group is PublicClosed: an open public group allows no file sharing,
+   while a closed-membership public group shares metadata with everyone and
+   attachments with members only (author, 2026-09-29; details in 1511), so
+   the files stay
    non-redistributed, as in `docs/jetp-storage.md` ("not served wholesale").
    Public access to the documents themselves already goes through the Web
    Archive snapshots (`web-archive-captures.csv`).
