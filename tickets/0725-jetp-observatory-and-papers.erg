@@ -68,6 +68,11 @@ operation.
 - **M4, operation.** Scheduled refresh, link-rot, the pass launcher, shared code
   for AEDIST; the recurring machinery, whose deterministic part is checked by
   replay over the M3 release ([[1141]], [[1184]], weekly cadence of [[1140]]).
+  Also the move of the document store to a dedicated Zotero group library
+  ([[1510]] tracker, [[1511]] Viet Nam pilot; author, 2026-09-29: "Zotero
+  storage smells like M4 work"). Every acquisition writes through the single
+  function of [[1184]], the storage seam. The shared PDF text layer of
+  [[1512]] is taken up earlier, in M2, by [[1508]].
   Rule of two: shared code is extracted to `libs/` when a second consumer runs
   on it, not before.
 
