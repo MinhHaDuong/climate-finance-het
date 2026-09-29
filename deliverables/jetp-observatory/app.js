@@ -647,8 +647,7 @@ function noCopy(doc) {
     : `${tries > 1 ? `none of our ${tries} attempts could collect it` : "our attempt to collect it failed"} (${doc.error ? collectionFailure(doc.error) : esc((doc.status || "").replaceAll("_", " "))}).`;
   const method = collectionMethod(doc);
   const when = tries > 1 ? "" : `<br>Tried ${esc(date((doc.collected_on || "").slice(0, 10) || null))}${method ? ` <span data-collection-method="${esc(doc.collection_method)}">${esc(method)}</span>` : ""}`;
-  const state = readingState(doc.id);
-  return `${state ? state + "<br>" : ""}<span data-no-copy>No copy: ${reason}</span>${when}`;
+  return `<span data-no-copy>No copy: ${reason}</span>${when}`;
 }
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
@@ -662,9 +661,11 @@ const COLLECTION_METHODS = {
 };
 const collectionMethod = (entry) =>
   COLLECTION_METHODS[entry.collection_method] || entry.collection_method || "";
-function collectedFacts(entry, separator = " · ") {
+/* The reading state rides along (ticket 1610) except where the caller shows
+ * it in a column of its own, as the Documents page does. */
+function collectedFacts(entry, separator = " · ", withState = true) {
   const method = collectionMethod(entry);
-  const state = readingState(entry.id);
+  const state = withState ? readingState(entry.id) : "";
   const when = (state ? state + separator : "") +
     (entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded") +
     (method ? ` <span data-collection-method="${esc(entry.collection_method)}">${esc(method)}</span>` : "");
@@ -902,7 +903,7 @@ function documentsPage(params) {
   // of its own. The publisher's page is always there; the archived copy only
   // where this server holds it (ticket 0915).
   const links = (r) =>
-    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${r.sha256 ? collectedFacts(r, "<br>") : noCopy(r)}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>${attemptsFold(r)}`;
+    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${r.sha256 ? collectedFacts(r, "<br>", false) : noCopy(r)}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>${attemptsFold(r)}`;
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -955,7 +956,7 @@ function documentsPage(params) {
         label: "Country",
         cell: (r) => esc(country(r.country)?.short || r.country),
       },
-      { label: "Collection", cell: (r) => pill(r.status) },
+      { label: "Collection", cell: (r) => pill(r.status) + (readingState(r.id) ? "<br>" + readingState(r.id) : "") },
       { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
       { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)), width: "short" },
       { label: "Publisher's page · what we read", cell: links },
