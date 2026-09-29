@@ -242,7 +242,8 @@ function fundingDocument(event, code) {
   const link = archived
     ? `<a href="${esc(archived)}" target="_blank" rel="noopener">Archived document ↗</a>`
     : sourceLink(documentOf(code, event.source_id), "Publisher's document");
-  return `${link || esc(event.source_id)}<small>${esc(event.locator || "No locator recorded")}</small>`;
+  const state = readingState(event.source_id);
+  return `${link || esc(event.source_id)}${state ? " · " + state : ""}<small>${esc(event.locator || "No locator recorded")}</small>`;
 }
 function fundingStatements(data, code) {
   const subjects = new Map([
@@ -502,6 +503,27 @@ const documentTitle = (entry) => documentTitles[entry.id]?.title || "";
 const documentName = (entry) =>
   (documentTitle(entry) ? `<span data-document-title>${esc(documentTitle(entry))}</span><br>` : "") +
   `<code>${esc(entry.id)}</code>`;
+/* Ticket 1610: the state of our collection and reading of a document,
+ * derived at build time into the same view (collection_state) and joined
+ * here on the identifier. A shape and a word, never a colour alone, so it
+ * reads in grayscale and to a screen reader. The later states of the
+ * extraction backlog are not shown until they exist. */
+const READING_STATES = {
+  not_collected: ["○", "Not collected", "no copy in our collection"],
+  collected: ["◐", "Collected, not extracted", "a copy, nothing read from it yet"],
+  stub: ["◔", "Stub", "a copy and one placeholder line, minted by the migration to hold a location"],
+  extracted: ["●", "Extracted", "lines an extractor read"],
+};
+const readingStateOf = (id) => documentTitles[id]?.collection_state || "";
+function readingState(id) {
+  const state = READING_STATES[readingStateOf(id)];
+  if (!state) return "";
+  return `<span class="reading-state" data-reading-state="${esc(readingStateOf(id))}" title="${esc(state[2])}"><span aria-hidden="true">${state[0]}</span> ${esc(state[1])}</span>`;
+}
+const readingLegend = () =>
+  `<div class="legend reading-legend" id="reading-legend"><strong>State of our collection and reading:</strong>${Object.entries(READING_STATES)
+    .map(([key, [icon, word, gloss]]) => `<span data-reading-state="${key}"><span aria-hidden="true">${icon}</span> ${esc(word)} — ${esc(gloss)}</span>`)
+    .join("")}</div>`;
 const webArchiveOf = (entry) => {
   const capture = webArchive[entry?.url];
   return capture?.capture_url && ["captured", "reused"].includes(capture.outcome) ? capture : null;
@@ -625,7 +647,8 @@ function noCopy(doc) {
     : `${tries > 1 ? `none of our ${tries} attempts could collect it` : "our attempt to collect it failed"} (${doc.error ? collectionFailure(doc.error) : esc((doc.status || "").replaceAll("_", " "))}).`;
   const method = collectionMethod(doc);
   const when = tries > 1 ? "" : `<br>Tried ${esc(date((doc.collected_on || "").slice(0, 10) || null))}${method ? ` <span data-collection-method="${esc(doc.collection_method)}">${esc(method)}</span>` : ""}`;
-  return `<span data-no-copy>No copy: ${reason}</span>${when}`;
+  const state = readingState(doc.id);
+  return `${state ? state + "<br>" : ""}<span data-no-copy>No copy: ${reason}</span>${when}`;
 }
 /* What was read, and when: the collection date and the fingerprint of the
  * bytes, or the failure the collector recorded where no bytes were kept. */
@@ -641,7 +664,9 @@ const collectionMethod = (entry) =>
   COLLECTION_METHODS[entry.collection_method] || entry.collection_method || "";
 function collectedFacts(entry, separator = " · ") {
   const method = collectionMethod(entry);
-  const when = (entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded") +
+  const state = readingState(entry.id);
+  const when = (state ? state + separator : "") +
+    (entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded") +
     (method ? ` <span data-collection-method="${esc(entry.collection_method)}">${esc(method)}</span>` : "");
   return entry.sha256
     ? `${when}${separator}SHA-256 <code data-sha256="${esc(entry.sha256)}" title="${esc(entry.sha256)}">${esc(entry.sha256.slice(0, 12))}…</code>`
@@ -867,7 +892,8 @@ function collectionFailure(error) {
 function documentsPage(params) {
   // One row per document, on its best attempt (ticket 1210): the facets, the
   // search and the count all read that attempt, so they count documents.
-  const rows = documentRows(documentsData.documents);
+  const rows = documentRows(documentsData.documents)
+    .map((r) => ({ ...r, collection_state: readingStateOf(r.id) }));
   const values = (key) =>
     [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
   // Both links open at the file's own first page until the join says
@@ -904,6 +930,14 @@ function documentsPage(params) {
           value, label: COLLECTION_METHODS[value] || value })),
       },
       {
+        key: "collection_state",
+        label: "State of our collection and reading",
+        all: "All states",
+        options: Object.keys(READING_STATES)
+          .filter((value) => rows.some((r) => r.collection_state === value))
+          .map((value) => ({ value, label: READING_STATES[value][1] })),
+      },
+      {
         key: "content_type",
         label: "Content type",
         all: "All content types",
@@ -937,6 +971,7 @@ function documentsPage(params) {
       "See which publications we sought, who issued them, when we tried to retrieve them, and whether an archived copy is available. Inclusion here does not endorse everything a publication says; failed attempts remain visible.",
     ) +
     copiesCallout() +
+    readingLegend() +
     table.head +
     `<div class="downloads"><a class="button light" href="data/documents.json" download>Download the collection registry ↓</a></div>`;
   table.mount();
@@ -1330,16 +1365,25 @@ function eventView(e, sources) {
   ]
     .filter(Boolean)
     .join(" · ");
-  return `<li data-event-id="${esc(e.id)}"><div class="date">${esc(timing)}</div><p class="note">${esc(context)} · ${esc(e.date_basis)}</p><h3>${esc(e.status)}${e.amount != null ? " · " + esc(money(e.amount, e.currency)) + ' <span class="published-tag">As published</span>' : ""}</h3>${e.funder ? `<p>${esc(e.funder)} · ${esc(e.instrument)}</p>` : ""}<p>${esc(e.notes)}</p>${sourceLink(sources[e.source_id], "Read the document")} <span class="date-tag">${esc(e.locator)}</span></li>`;
+  const state = readingState(e.source_id);
+  return `<li data-event-id="${esc(e.id)}"><div class="date">${esc(timing)}</div><p class="note">${esc(context)} · ${esc(e.date_basis)}</p><h3>${esc(e.status)}${e.amount != null ? " · " + esc(money(e.amount, e.currency)) + ' <span class="published-tag">As published</span>' : ""}</h3>${e.funder ? `<p>${esc(e.funder)} · ${esc(e.instrument)}</p>` : ""}<p>${esc(e.notes)}</p>${sourceLink(sources[e.source_id], "Read the document")}${state ? " · " + state : ""} <span class="date-tag">${esc(e.locator)}</span></li>`;
 }
-function sourceAdjudication(p, id) {
-  return (p.source_links || [])
-    .filter((link) => link.source_id === id)
-    .map(
-      (link) =>
-        `<div class="source-adjudication" data-link-id="${esc(link.link_id)}"><small><strong>${esc(link.relationship.replaceAll("_", " "))}</strong> · ${esc(link.review_status.replaceAll("_", " "))}</small><small>${esc(link.locator)}</small><p class="note">${esc(link.notes)}</p></div>`,
-    )
-    .join("");
+/* Ticket 1610: a coverage row is a review record — what our review of that
+ * day collected for the project, not what a document says. Its documents
+ * are listed in a block of their own, never merged into the cited documents
+ * beside it and counted nowhere as support. Each is named by its title,
+ * links where the registry knows an address, and shows its reading state. */
+function coverageReview(p) {
+  const ids = p.coverage_documents || [];
+  if (!ids.length) return "";
+  const item = (id) => {
+    const entry = documentIndex[id];
+    const title = documentTitles[id]?.title || id;
+    const link = entry ? sourceLinks(entry, null, "", esc(title)) : `<span data-link="none">${esc(title)}</span>`;
+    const archived = entry ? archivedLink(entry, null) : "";
+    return `<li data-coverage-document="${esc(id)}">${link}<small><code>${esc(id)}</code>${readingState(id) ? " · " + readingState(id) : ""}</small>${archived ? `<small>${archived}</small>` : ""}</li>`;
+  };
+  return `<div class="panel" id="coverage-review" data-coverage-review="${ids.length}"><h3>Collected in the coverage review of ${esc(date(p.coverage_checked_at))} (not cited)</h3><p class="note">What our review gathered for this project on that day. A collected document is not a cited one: nothing on this page rests on it until a line read from it is cited.</p><ul class="review-documents">${ids.map(item).join("")}</ul></div>`;
 }
 /* A project identity cites reviewed document lines in the v2 ledger. These
  * are identity citations; money statements remain in its timeline. */
@@ -1367,16 +1411,16 @@ function projectPage(id) {
   if (!p) return notFound();
   const c = country(p.country),
     sources = countries[p.country].sources;
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> › ${esc(p.name)}</div><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Country</dt><dd><a href="#funding/${c.code}">${esc(c.name)}</a></dd><dt>Theme / technology</dt><dd>${esc(p.technology)}</dd><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See the individual documents; no funder entry yet")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Document follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation event has yet been added to this project\'s timeline. Its documents may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Lines citing this project</h2><p class="note">Reviewed document lines supporting this project identity. Reported money statements, where present, appear in the timeline above.</p><div id="project-evidence-rows"></div></section>${p.claims.length ? `<section class="section"><h2>What other documents say</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">${according(sources[r.source_id])} · Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Read the document")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Documents</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> › ${esc(p.name)}</div><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Country</dt><dd><a href="#funding/${c.code}">${esc(c.name)}</a></dd><dt>Theme / technology</dt><dd>${esc(p.technology)}</dd><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See the individual documents; no funder entry yet")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Document follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation event has yet been added to this project\'s timeline. Its documents may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Lines citing this project</h2><p class="note">Reviewed document lines supporting this project identity. Reported money statements, where present, appear in the timeline above.</p><div id="project-evidence-rows"></div></section></div><aside><div class="panel"><h3>Documents</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
     .map((id) => {
       const s = sources[id];
       return s
-        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id, s)}${sourceAdjudication(p, id)}</li>`
+        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id, s)}</li>`
         : "";
     })
     .join(
       "",
-    )}</ul></div><p class="note" style="margin-top:20px">Each item keeps its document's scope. An agreement, approval or register entry does not establish a payment or physical delivery.</p><a class="button light" href="data/${c.code}.json" download>Download the country's data ↓</a></aside></div>`;
+    )}</ul></div>${coverageReview(p)}<p class="note" style="margin-top:20px">Each item keeps its document's scope. An agreement, approval or register entry does not establish a payment or physical delivery.</p><a class="button light" href="data/${c.code}.json" download>Download the country's data ↓</a></aside></div>`;
   document.getElementById("project-evidence-rows").innerHTML = projectEvidence(p);
 }
 function median(values) {
