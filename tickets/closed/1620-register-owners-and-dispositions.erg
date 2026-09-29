@@ -2,9 +2,12 @@
 Title: Give every row of the three JETP migration registers an owner or a disposition
 Created: 2026-09-29
 Author: HDMX-coding-agent
+Closed: Accounted for all 145 unresolved semantic rows, applied the three-reader dispositions, documented served-view changes, and passed the Padme merge gates with self-provisioning CRS fixtures.
 
 --- log ---
 2026-09-29T16:00Z HDMX-coding-agent created — child of [[0870]]; author decisions of 2026-09-29 fix the homes, the judgment rows are decided by claude-fable-5-1 and recorded with that decided_by
+2026-09-29T19:32Z Codex verified all 145 original semantic rows are accounted for by 152 preserved decision records; 53 rows remain explicitly owned pending work, 95 panel-backed records are complete (51 unanimous, 44 majority), and no item is routed to the author. On padme, `make jetp-ledger-check`, `make check-jetp` (599 passed, 5 skipped), `make check` (3066 passed, 38 skipped), `make check-fast` (2079 passed, 9 skipped plus 25 package tests), and `make lint` (351 passed, 8 skipped) passed. The supported full, finance, and JETP gates now materialize the 80 pinned CRS fixtures when absent or incomplete.
+2026-09-29T19:32Z HDMX-coding-agent closed — Accounted for all 145 unresolved semantic rows, applied the three-reader dispositions, documented served-view changes, and passed the Padme merge gates with self-provisioning CRS fixtures.
 --- body ---
 ## Context
 
@@ -75,10 +78,10 @@ applied as a defeasible decision and served later sorted by confidence
 
 ## Exit criteria
 
-- [ ] Every original unresolved row of the three registers has an owner or a
+- [x] Every original unresolved row of the three registers has an owner or a
       recorded disposition in `1620-register-dispositions.csv`; follow-up and
       split decisions preserve their history rather than overwriting it
-- [ ] Every read judgment carries the three verdicts, the agreement, a stance and a confidence in the register; no item is routed to the author; the stances are applied to the ledger as defeasible decisions
-- [ ] Log notes and exit-criterion lines on [[0920]], [[0833]] and the M2 child that owns the unextracted Senelec notice index ([[1502]])
-- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` green; `make check-jetp` green on padme
-- [ ] Served-view byte changes listed in the PR with a diff summary of the four country JSONs and the parties/names views
+- [x] Every read judgment carries the three verdicts, the agreement, a stance and a confidence in the register; no item is routed to the author; the stances are applied to the ledger as defeasible decisions
+- [x] Log notes and exit-criterion lines on [[0920]], [[0833]] and the M2 child that owns the unextracted Senelec notice index ([[1502]])
+- [x] `make jetp-ledger-check`, `make check-fast`, `make lint` green; `make check-jetp` green on padme
+- [x] Served-view byte changes listed in the PR with a diff summary of the four country JSONs and the parties/names views
