@@ -18,15 +18,18 @@ are touched.
 
 ## Merge gate
 
-Run `make check-fast` and `make lint`, then push and open a PR.
+Run the smallest sufficient gate, then push and open a PR:
 
-When a diff touches a domain pipeline or its slow/integration tests, run each
-affected test-domain gate: `make check-domain-literature`,
-`check-domain-corpus`, `check-domain-finance`, `check-domain-jetp`, or
-`check-domain-writing`. Run full `make check` for shared pipeline
-infrastructure (`dvc.yaml`, shared scripts or libraries, Makefiles) or a change
-to test selection itself. Test domains and build workpackages are different
-axes; README.md defines their relationship.
+- Ordinary changes: `make check-fast` and `make lint`.
+- Changes to a domain pipeline or its slow/integration tests: those two plus
+  each affected `make check-domain-*` target.
+- Shared pipeline infrastructure (`dvc.yaml`, shared scripts or libraries,
+  Makefiles) or test-selection changes: `make check` only. The full gate
+  subsumes `make check-fast`, `make lint`, and every test-domain gate; do not
+  rerun those smaller gates after it passes.
+
+Test domains and build workpackages are different axes; README.md defines
+their relationship.
 
 Run test-domain and full gates in a clean checkout on padme. When already on
 padme, run them locally; from another host, connect with `ssh padme` first.
