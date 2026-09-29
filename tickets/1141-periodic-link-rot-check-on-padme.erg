@@ -1,5 +1,5 @@
 %erg 0.1
-Title: M2: monthly link-rot check and capture retry, scheduled on padme
+Title: M4: monthly link-rot check and capture retry, scheduled on padme
 Created: 2026-09-25
 Author: HDMX-coding-agent
 Blocked-by: 0833
@@ -8,14 +8,16 @@ Blocked-by: 0833
 2026-09-25T08:30Z HDMX-coding-agent created — author, 2026-09-25: "file the periodic M2 linkrot check to the M2 train"; the scheduling left open by [[0925]] moves here
 2026-09-25T10:30Z HDMX-coding-agent note streamlined with the 1180 suite at the author's request: this is the frozen-documents pass of [[1184]] and builds the minimal runner that [[1184]] generalizes
 
+2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
 --- body ---
 ## Context
 
 [[0925]] built the machinery: `make jetp-link-check jetp-web-archive
 jetp-link-views` checks every publisher address, retries failed Web Archive
 captures and rebuilds `data/web-archive.json` and `data/publisher-links.json`.
-It left the schedule to the author. The author placed the schedule in the M2
-train (tracker [[0715]]), after M1b ([[0833]]).
+It left the schedule to the author. The author placed the schedule in the former M2
+train (tracker [[0715]]), after M1b ([[0833]]); it is M4 since 2026-09-29
+([[0725]]).
 
 ## Findings that shape the setup (2026-09-25)
 
