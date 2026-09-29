@@ -120,10 +120,14 @@ Order of work, each step a ticket with its own byte-level check:
    Ticket 1620 (2026-09-29) gave the 91 pending timing dispositions, the five
    pending citations of 1160 and the 54 coverage dispositions of 0884 an owner
    or a disposition each (`1620-register-dispositions.csv`, 145 distinct rows):
-   30 timings typed from the documents' own front matter (29 annex proposals
-   dated by the annexes' version table, the AfDB approval by its dateline), 9
-   terminal, 4 physical claims rejected, 47 held for the author in
-   `decisions.md`, 1 with ticket 0920; 33 authorities attached to parties (8
+   31 timings typed from the documents' own text (29 annex proposals dated by
+   the annexes' version table, the AfDB approval by its dateline, the Saloum
+   tender by its bid deadline as `planned`), 52 terminal (the plan's own date
+   cannot be read from its version table; the MAF period; page-observation
+   dates; the undated Diass factsheet), 7 physical claims rejected, 1 with
+   ticket 0920; every read judgment verified by a three-reader panel
+   (storage contract § 4, `matching.panel` version 1) with the stance and
+   confidence recorded per row; 33 authorities attached to parties (8
    minted from lines that print their names), 4 left uncovered for want of a
    line, 17 project identifiers handed to M1b.
 6. Perimeter observations replace configured headlines.

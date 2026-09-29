@@ -268,8 +268,25 @@ and each writes its rows with its own method name.
 
 Thresholds per tier live in configuration, are versioned with the method, and
 are tested on the hand-matched rows as a held-out set before a tier is allowed
-to write `accepted` rows. Until a tier passes that test it writes candidates
-only.
+to write `accepted` rows unattended on matching. Until a tier passes that test
+it writes candidates only.
+
+**Verification and confidence (author decision, 2026-09-29).** The author is
+not the checker. A tier-4 reading is verified by independent readers of
+different vendors on the same inputs, blind to each other's answer, against a
+closed option list with a quoted basis and a self-score; positive controls with
+a certain answer run first, and a reader that misses one is weighted out. The
+rule that turns the readings into a stance and a confidence is versioned in
+`config/jetp_tracking.yaml` (`matching.panel`). Every row gets a stance; the
+stance is applied to the ledger as a defeasible decision whose `decided_by`
+names the panel and its version, never as a silent overwrite, and the
+confidence is recorded with the readers' verdicts. In the author's words:
+"take a stance, keep track of the confidence level, and let me examine the
+results sorted by confidence level"; the observatory serves the decision
+record sorted by confidence (ticket C). A stance that implies a change of
+what a term means is written as a proposed revision row of the term, status
+`candidate`, with the same confidence, not as an edit of the accepted
+definition.
 
 **Scope of the first implementation.** Tier 1 in the identity split, tier 2 as
 a candidate generator whose rows are reviewed by hand, tiers 3 to 5 as method

@@ -18,13 +18,14 @@ party name, 17 project identifiers 0875 left unresolved). 145 distinct rows.
 Homes approved by the author on 2026-09-29: unknown Senegal date roles are
 resolved from the cited pages where the page supports a role, else left
 pending with the reason refined; page-observation dates are terminal (author
-decision 2026-09-24); the four unsupported physical claims of 1160 are
-rejected; the Cirebon snapshot goes to [[0920]]; the 17 unresolved project
-identifiers go to [[0833]] (M1b); an authority is covered by a party only where a
-line justifies the party. Judgment rows (three 0970 holds, the AfDB approval
-day, the MAF milestone, the Saloum tender deadline) are decided by the Fable
-tier with a confidence; anything below the configured threshold goes to
-`data/jetp/decisions.md` for the author (storage contract § 4).
+decision 2026-09-24); the Cirebon snapshot goes to [[0920]]; the 17 unresolved
+project identifiers go to [[0833]] (M1b); an authority is covered by a party
+only where a line justifies the party. Author decision of 2026-09-29,
+superseding the routing of judgments to the author: the author is not the
+checker. Every reading is verified by two independent readers of other vendors
+on the same inputs, blind; every row gets a stance and a recorded confidence,
+applied as a defeasible decision and served later sorted by confidence
+(ticket C serves the table).
 
 ## Method
 
@@ -45,13 +46,30 @@ tier with a confidence; anything below the configured threshold goes to
   in force that prints its name, with the authority category of the legacy
   row and no external identifier (none is held in a snapshot line); R5
   otherwise left uncovered, naming the lines that would justify it.
-- Threshold for tier decisions: `config/jetp_tracking.yaml`
-  `matching.llm_adjudication.accept_threshold` (0.8).
+- Panel rule, version 1 (`config/jetp_tracking.yaml`, `matching.panel`):
+  readers claude-fable-5-1 (lead), gpt-6-sol through codex-cli 0.158.0 (the
+  author expected Opus) and mistral-vibe-cli-latest through Mistral Vibe
+  2.25.8 (the author expected GLM), each given the row, the cited page text
+  from the pinned snapshot, the term definitions and a closed option list,
+  blind to the others; five positive controls first, both readers passed all
+  five. Stance: majority of the three verdicts (a three-way split takes the
+  lead reader's). Confidence: agreement weight (3/3 = 1.0, 2/3 = 0.7,
+  split = 0.3) times the mean self-score of the majority. Each reader's
+  verdict, basis and self-score, the agreement, the stance and its confidence
+  are columns of the dispositions register. A stance that changes what a term
+  means is a candidate revision row of the term, never an edit.
+- Panel outcome: 18 questions (5 controls, 13 register questions covering 94
+  register rows); 3/3 on 49 rows, 2/3 on 45, no split. Three readings were
+  overturned: the plan's own date (42 rows, terminal instead of a typo-read
+  report_date), Green Energy Corridors and Dieng 3,4 (rejected under the
+  physical reading of `preparation`). The Saloum bid deadline became a
+  `planned` timing; the implied narrower definition of `preparation` is the
+  candidate row `project_stage.preparation.2` (confidence 0.65).
 
 ## Exit criteria
 
 - [ ] Every row of the three registers has an owner or a recorded disposition in `1620-register-dispositions.csv` (145 distinct keys)
-- [ ] The judgment rows carry decision, page evidence and confidence; those below the threshold are items in `data/jetp/decisions.md`
+- [ ] Every read judgment carries the three verdicts, the agreement, a stance and a confidence in the register; no item is routed to the author; the stances are applied to the ledger as defeasible decisions
 - [ ] Log notes and exit-criterion lines on [[0920]], [[0833]] and the M2 child that owns the unextracted Senelec notice index ([[1502]])
 - [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` green; `make check-jetp` green on padme
 - [ ] Served-view byte changes listed in the PR with a diff summary of the four country JSONs and the parties/names views
