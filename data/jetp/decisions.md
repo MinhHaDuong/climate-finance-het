@@ -64,17 +64,18 @@ precision) for the 42 observations, citing a minted version-table line, and
 note the typo; if the author declines the chronological reading, the rows are
 terminal (`no supported document date`).
 
-### 2. A bid deadline as a date role (1 row, confidence 0.6)
+### 2. A bid deadline as a date role (1 row, confidence 0.7)
 
 Affected: `sen-project-annex-16-procurement-2026-09-09` (observation
 `observation-sen-project-annex-16-procurement-2026-09-09`, state
 `procurement`).
 
-Evidence: AAO 30/2026 (`sen-senelec-saloum-tender-2026`) p. 2 fixes bid
-submission at "SEPTEMBRE 2026 à 09h30mn GMT"; the Senelec notice index
-(`sen-senelec-procurement-2026`, not extracted) lists the notice under
-09/09/2026; the notice itself carries no issue date (it refers to the AGPM in
-Le Soleil of 24 December 2025).
+Evidence: AAO 30/2026 (`sen-senelec-saloum-tender-2026`) p. 3 fixes bid
+submission "au plus tard le MERCREDI 09 SEPTEMBRE 2026 à 09h30mn GMT"; the
+Senelec notice index (`sen-senelec-procurement-2026`, not extracted) lists
+the notice under 09/09/2026 in a column headed "Date limite"; the notice
+itself carries no issue date (it refers to the AGPM in Le Soleil of
+24 December 2025).
 
 Reading: 2026-09-09 is the bid deadline, a date the publisher plans for the
 procurement, not the launch day. Recommended answer: `planned` 2026-09-09
@@ -98,33 +99,41 @@ timing on the amount; once the EEPBIP project is a referent, one
 `project_stage` observation `implementation` with `period_start` 2018-08 and
 `period_end` 2026-12 (month precision), citing the same line.
 
-### 4. Does "in the financing phase" satisfy `preparation`? (3 rows, confidence 0.5 to 0.75)
+### 4. Does "in the financing phase" satisfy `preparation`? (3 rows, confidence 0.5 to 0.6)
 
-Affected: `idn-impl-green-corridors-2025` (0.7), `idn-impl-dieng34-2025`
-(0.75), `idn-impl-nagajaya-portal-2026` (0.5); with them the four 1160
-rejections recorded today (`idn-impl-aicet-2025`, `idn-impl-hululais-2025`,
-`idn-impl-tanah-laut-2025`, `idn-impl-eib-framework-2025`) and the accepted
+Affected: `idn-impl-green-corridors-2025` (0.6), `idn-impl-dieng34-2025`
+(0.6), `idn-impl-nagajaya-portal-2026` (0.5); with them the four 1160
+rejections recorded today on the author's decision (`idn-impl-aicet-2025`,
+`idn-impl-hululais-2025`, `idn-impl-tanah-laut-2025`,
+`idn-impl-eib-framework-2025`) and the accepted
 `observation-idn-impl-nagajaya-2025`.
 
 Evidence: the ledger term `project_stage.preparation` reads "The project is
 being designed, appraised and prepared for funding and procurement"
-(OC4IDS exact match). Progress Report 2025, Table 4.3-3: Green Energy
-Corridors Sulawesi "approved by KfW Board, currently waiting for PLN Board
-Approval" (p. 73); Dieng 3,4 "currently in the financing phase for field
-development" (p. 74); Nagajaya "PPA has been signed, with COD expected by
-mid 2027" (p. 73), while the portal profile only says the plant "will install
-two Francis turbines". The 0970 and 1160 reviews read `preparation` as a
-physical state and held or rejected on that reading; 0970 nevertheless
-accepted Nagajaya's report row as `preparation` on the signed PPA, the same
-fact 1160 rejected for Tanah Laut.
+(OC4IDS exact match). Progress Report 2025, Table 4.3-3 (printed pp. 72-73,
+PDF pp. 73-74): Green Energy Corridors Sulawesi "approved by KfW Board,
+currently waiting for PLN Board Approval" (p. 72); Dieng 3,4 "currently in
+the financing phase for field development" (p. 73); Nagajaya "PPA has been
+signed, with COD expected by mid 2027" (p. 72), while the portal profile
+only says the plant "will install two Francis turbines"; Hululais "funding
+was halted ... but is now back on track" (p. 72); Tanah Laut "PPA was signed
+in May 2023" (p. 73). The 0970 and 1160 reviews read `preparation` as a
+physical state and held or rejected on that reading, which the author
+endorsed on 2026-09-29 for the four 1160 rows; 0970 nevertheless accepted
+Nagajaya's report row as `preparation` on the signed PPA, the same fact 1160
+rejected for Tanah Laut.
 
-Reading: under the ledger's own definition, being prepared for funding is
-`preparation`; the four rejections are then inconsistent with the accepted
-Nagajaya row. Recommended answer: (a) accept Green Energy Corridors and
-Dieng 3,4 as `project_stage` `preparation` with `reporting_cutoff`
-2025-11-30, citing their Table 4.3-3 lines; (b) reject the portal duplicate
-for Nagajaya, already covered by the report row; (c) keep AICET and the EIB
-framework rejected (programmes, no project subject) and re-examine Hululais
-and Tanah Laut under the same definition. If the author instead confirms the
-physical reading, the three holds become terminal rejections and
-`observation-idn-impl-nagajaya-2025` should be revoked for consistency.
+Reading: the ledger's own definition and the physical reading give different
+answers, and the four rows of one table cannot be split between them:
+under the definition, Green Energy Corridors, Dieng 3,4, Hululais and Tanah
+Laut are all "prepared for funding"; AICET (a results-based lending
+programme) and the EIB framework MOU fail either way, having no project
+subject. Recommended answer: choose one reading for the whole table.
+(a) Definition reading: accept the four as `project_stage` `preparation`
+with `reporting_cutoff` 2025-11-30 citing their Table 4.3-3 lines, which
+reopens the two 1160 rejections of Hululais and Tanah Laut; reject the
+portal duplicate for Nagajaya, already covered by the report row.
+(b) Physical reading, as endorsed today: the three holds become terminal
+rejections and `observation-idn-impl-nagajaya-2025` is revoked for
+consistency. Either way the term's definition should say which reading it
+carries.
