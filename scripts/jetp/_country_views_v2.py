@@ -126,6 +126,8 @@ def _funders(tables, agreement_rows):
 
     A project has no party_in row of its own (ticket 1610): its funders are
     those of the agreements recorded as its components, derived, never typed.
+    A party in the `channel` role is the channel the money passes through,
+    not a funder (author, 2026-09-29), and is listed under neither.
     """
     relations = _current(tables['relations'], 'relation_id')
     preferred = {row['party_id']: row['name'] for row in
@@ -134,6 +136,7 @@ def _funders(tables, agreement_rows):
     funders = defaultdict(set)
     for row in relations:
         if row['from_kind'] == 'party' and row['relation'] == 'party_in' \
+                and row['role'] == 'funder' \
                 and row['to_kind'] == 'agreement' and row['to_id'] in agreement_rows:
             funders[row['to_id']].add(preferred.get(row['from_id'], row['from_id']))
     project_funders = defaultdict(set)

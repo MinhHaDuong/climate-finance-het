@@ -82,6 +82,49 @@ def test_project_funders_are_the_funders_of_its_component_agreements(views):
     assert with_funders, 'the positive control: no project derives a funder'
 
 
+def test_a_channel_party_is_not_a_funder(views):
+    # Author's decision, 2026-09-29: a party_in row with role `channel` names
+    # the channel an agreement's money passes through, not a funder. Neither
+    # an agreement, nor the project it is a component of, nor a statement
+    # about either lists it under funders.
+    tables, by_code = views
+    preferred = {row['party_id']: row['name'] for row in tables['party_names']
+                 if row['form_type'] == 'preferred' and row['status'] == 'accepted'}
+    channels = {(row['to_id'], preferred.get(row['from_id'], row['from_id']))
+                for row in tables['relations']
+                if row['relation'] == 'party_in' and row['role'] == 'channel'
+                and row['status'] == 'accepted'}
+    assert channels, 'the positive control: the ledger names no channel party'
+    for view in by_code.values():
+        for agreement in view['agreements']:
+            assert not [name for name in agreement['funders']
+                        if (agreement['id'], name) in channels], agreement['id']
+        for statement in view['statements']:
+            assert not [name for _, name in channels
+                        if name in statement['funder'].split('; ')
+                        and (statement['subject_id'], name) in channels], statement['id']
+        for project in view['projects']:
+            assert 'GIZ' not in project['funders'] or project['id'] != 'project-page-zaf-project-cpd4e-germany'
+
+
+def test_funders_keep_the_funder_role_only():
+    from jetp._country_views_v2 import _funders
+    names = [dict(name_row_id=f'n{i}', party_id=p, name=n, form_type='preferred',
+                  status='accepted', supersedes='')
+             for i, (p, n) in enumerate([('p-de', 'Germany'), ('p-giz', 'GIZ')])]
+    relations = [
+        dict(relation_id='r1', from_kind='party', from_id='p-de', relation='party_in',
+             to_kind='agreement', to_id='a1', role='funder', status='accepted', supersedes=''),
+        dict(relation_id='r2', from_kind='party', from_id='p-giz', relation='party_in',
+             to_kind='agreement', to_id='a1', role='channel', status='accepted', supersedes=''),
+        dict(relation_id='r3', from_kind='agreement', from_id='a1', relation='component_of',
+             to_kind='project', to_id='pr1', role=None, status='accepted', supersedes=''),
+    ]
+    funders, project_funders = _funders({'relations': relations, 'party_names': names}, {'a1': {}})
+    assert dict(funders) == {'a1': {'Germany'}}
+    assert dict(project_funders) == {'pr1': {'Germany'}}
+
+
 def test_the_coverage_review_is_listed_apart_from_the_cited_documents(views):
     # A coverage row is a review record: what was collected for the project,
     # not what a document says. Its documents are served on their own and
