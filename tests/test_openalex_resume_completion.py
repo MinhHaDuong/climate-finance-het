@@ -7,7 +7,7 @@ from types import SimpleNamespace
 import openalex_pool as pool
 import pytest
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 
 class Response:

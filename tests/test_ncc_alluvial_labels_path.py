@@ -34,7 +34,7 @@ _ALLUVIAL_CSV = (
 _CLUSTER_LABELS = {"0": "Finance", "1": "Policy", "2": "Adaptation", "3": "Markets"}
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.mark.integration
 def test_cluster_labels_read_from_input_dir(tmp_path):

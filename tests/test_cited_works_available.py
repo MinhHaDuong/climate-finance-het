@@ -29,7 +29,7 @@ CITE = re.compile(r"(?<!\w)@([\w][\w:.\-+/]*)")
 ENTRY_HEAD = re.compile(r"(?m)^@[a-zA-Z]+\{([^,]+),")
 
 
-pytestmark = pytest.mark.wp_library
+pytestmark = pytest.mark.domain_literature
 
 def _bib_keys_and_fulltext() -> tuple[set[str], set[str]]:
     text = BIB.read_text(encoding="utf-8")

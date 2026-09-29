@@ -37,6 +37,6 @@ duplicates and translations first. Some are Vietnamese (`vi`) or French.
 - [ ] Every document cleared by 1501 for this wave has lines, or a recorded disposition with the reason
 - [ ] Lines of the 254 previously extracted documents are byte-identical before and after
 - [ ] Each parser has a test on a fixture drawn from a real snapshot, and was red-tested by replaying a defect it must reject
-- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-jetp` pass
+- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-domain-jetp` pass
 - [ ] New counts by country and document type stated in the PR
 - [ ] `sen-senelec-procurement-2026` (Senelec notice index) has lines, so the Saloum AAO 30/2026 index date 09/09/2026 is a cited line for `sen-project-annex-16-procurement-2026-09-09` (ticket 1620, log note 2026-09-29)

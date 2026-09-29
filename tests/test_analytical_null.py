@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "figures"))  # 0255: moved figures 
 sys.path.insert(0, os.path.join(SCRIPTS_DIR, "analysis"))  # 0257: moved analysis entry points
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def test_c2st_analytical_null_formula():
     """C2ST analytical null: Hanley-McNeil formula."""

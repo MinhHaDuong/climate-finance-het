@@ -36,7 +36,7 @@ FABRICATED_DOIS = [
 ]
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _all_script_files():
     """Yield every .py file under scripts/, including archived subtrees.

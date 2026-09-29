@@ -33,5 +33,5 @@ compared, not regenerated (list them in the report).
 
 - [ ] Every one of the 254 documents is reported: replays exactly, differs (explained), or not regenerable (named)
 - [ ] The positive control fires
-- [ ] The harness runs in `make check-jetp` or is named as a slow gate, with its data requirement stated (needs the snapshot bytes: padme)
+- [ ] The harness runs in `make check-domain-jetp` or is named as a slow gate, with its data requirement stated (needs the snapshot bytes: padme)
 - [ ] `make jetp-ledger-check` and `make lint` pass

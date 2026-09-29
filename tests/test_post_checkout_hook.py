@@ -31,7 +31,7 @@ MAX_WORKTREE_MB = 200
 MAX_CHECKOUT_SECONDS = 15
 
 
-pytestmark = pytest.mark.wp_shared
+pytestmark = pytest.mark.domain_infrastructure
 
 def test_worktreeinclude_copies_env():
     """.worktreeinclude must list .env for auto-copy into worktrees."""

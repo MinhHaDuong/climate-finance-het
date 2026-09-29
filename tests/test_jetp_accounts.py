@@ -16,7 +16,7 @@ from jetp.build_observatory import perimeter_headlines
 from test_jetp_ledger_ddl import _valid_tables, _write
 
 ROOT = Path(__file__).resolve().parents[1]
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 
 def _add(conn, table, **fields):

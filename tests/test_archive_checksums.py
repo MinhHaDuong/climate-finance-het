@@ -33,7 +33,7 @@ EXPECTED_OUTPUTS = [
 ]
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _read_makefile():
     with open(MAKEFILE) as f:

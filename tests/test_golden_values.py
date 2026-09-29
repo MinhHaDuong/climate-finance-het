@@ -46,7 +46,7 @@ except ImportError:
 
 from conftest import run_compute as _run_compute
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.mark.slow
 class TestGoldenValues:

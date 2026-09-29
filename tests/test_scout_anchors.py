@@ -22,7 +22,7 @@ import scout_tradition_coupling as scout
 FABRICATED_DOI = "10.1016/0301-4215(92)90024-V"
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _iter_anchor_dois():
     """Yield (tradition, citekey, doi) over every ANCHORS entry."""

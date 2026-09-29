@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "figures"))
 REGISTRY_PATH = os.path.join(BASE, "config", "community_registry.yml")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.fixture(scope="module")
 def registry():

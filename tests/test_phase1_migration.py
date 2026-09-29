@@ -21,7 +21,7 @@ HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 sys.path.insert(0, SCRIPTS_DIR)
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _read_script(script_name):
     """Read script source text for flag inspection (moved harvest entry points)."""

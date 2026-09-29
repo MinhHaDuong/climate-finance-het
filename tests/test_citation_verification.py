@@ -38,7 +38,7 @@ REPORT = {
 }
 
 
-pytestmark = pytest.mark.wp_library
+pytestmark = pytest.mark.domain_literature
 
 @pytest.fixture
 def metrics():

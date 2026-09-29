@@ -11,7 +11,7 @@ from jetp.build_comparators import flow_type, ingest
 from jetp.build_ledger import build
 from jetp.build_observatory import comparison_data
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 ROOT = Path(__file__).resolve().parents[1]
 
 

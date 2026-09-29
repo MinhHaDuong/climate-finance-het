@@ -28,7 +28,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "figures"))  # 0255: moved figures 
 # ---------------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _smoke_env():
     # source_root_env puts scripts/ + libs on the child's PYTHONPATH (ticket

@@ -41,7 +41,7 @@ TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 # ---------------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.wp_shared
+pytestmark = pytest.mark.domain_infrastructure
 
 class TestHeavyImportDetection:
     def test_detects_plain_import(self):

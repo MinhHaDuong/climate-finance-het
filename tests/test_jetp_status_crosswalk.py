@@ -9,7 +9,7 @@ from jetp.build_crosswalks import ZAF_DELIVERY, crosswalk_rows, publishing_party
 LEDGER = Path(__file__).resolve().parents[1] / 'data' / 'jetp'
 
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def test_register_words_are_verbatim_and_map_only_to_delivery():
     status, _, _ = crosswalk_rows(LEDGER)

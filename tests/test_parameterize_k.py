@@ -14,7 +14,7 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 CONFIG_DIR = os.path.join(os.path.dirname(__file__), "..", "config")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestKFromConfig:
     """K parameter comes from config, not hardcoded."""

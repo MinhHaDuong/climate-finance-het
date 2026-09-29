@@ -5,7 +5,7 @@ from jetp._ledger_headers import load_schema, write_table
 from jetp.corpus_collect_downloads import collect_downloads, uncollected_documents
 from jetp.corpus_harvest_ledger import harvest_documents, load_inputs
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 
 class Response:

@@ -17,7 +17,7 @@ import pandas as pd
 import pytest
 
 pytestmark = [
-    pytest.mark.wp_corpus,
+    pytest.mark.domain_corpus,
     pytest.mark.integration,
 ]
 

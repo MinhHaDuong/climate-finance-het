@@ -26,7 +26,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 # ---------------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestDetectorsOnSynthetic:
     """Each detector should find a break in a signal with a known mean shift."""

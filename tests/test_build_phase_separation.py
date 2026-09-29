@@ -37,7 +37,7 @@ _PHASE2_RECIPE_RE = re.compile(
 )
 
 
-pytestmark = pytest.mark.wp_shared
+pytestmark = pytest.mark.domain_infrastructure
 
 def _has_render(text: str) -> bool:
     return bool(_RENDER_RECIPE_RE.search(text) or _RENDER_TARGET_RE.search(text))

@@ -9,7 +9,7 @@ from jetp._ledger_headers import LEDGER_DIR, load_schema, read_table
 from jetp.build_iati_comparators import ingest
 from jetp.catalog_iati_energy import collect, project
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 
 def _rows(directory, table):

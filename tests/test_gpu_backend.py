@@ -18,7 +18,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 # Skip entire module if torch+CUDA unavailable
 torch = pytest.importorskip("torch")
 pytestmark = [
-    pytest.mark.wp_corpus,
+    pytest.mark.domain_corpus,
     pytest.mark.skipif(
         not torch.cuda.is_available(),
         reason="CUDA not available",

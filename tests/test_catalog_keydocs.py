@@ -36,7 +36,7 @@ OECD_SEED = os.path.join(BASE, "config", "oecd_dac_sources.yaml")
 GREY_SEED = os.path.join(BASE, "config", "grey_sources.yaml")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _entry(**over):
     e = {

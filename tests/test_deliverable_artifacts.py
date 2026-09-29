@@ -113,7 +113,7 @@ NOT_EMBEDDED_RE = re.compile(
 ALLOWLIST_RE = re.compile(r"^(\S+)\s*(?:—|--)\s*(\S.*)$", re.M)
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _read(path):
     with open(path) as fh:

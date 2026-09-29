@@ -23,7 +23,7 @@ import pytest
 from _script_discovery import all_script_files
 
 pytestmark = [
-    pytest.mark.wp_shared,
+    pytest.mark.domain_infrastructure,
     pytest.mark.adherence,
 ]
 

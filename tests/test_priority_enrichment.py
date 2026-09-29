@@ -23,7 +23,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 # Import the priority utility
 # ---------------------------------------------------------------------------
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestImportPriorityUtil:
     def test_compute_priority_scores_importable(self):

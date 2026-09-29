@@ -6,8 +6,7 @@ The test tiers are gated by pytest `-m` marker expressions in the Makefile:
   `slow`, `integration`, AND `adherence` (lint belongs in `make lint`).
 - `lint` — the adherence tier (ruff / mypy / hygiene / contracts).
 - `check` — everything (no `-m` filter).
-- `check-library` / `check-corpus-wp` / `check-finance` / `check-jetp` /
-  `check-writing` / `check-shared` — all tiers for their local WP marker.
+- `check-domain-*` — all cost tiers for the selected test domain.
 
 These tests source-inspect the Makefile (no subprocess) so a future edit that
 silently drops a tier from the fast loop, or removes `make lint`, turns red.
@@ -19,7 +18,7 @@ import re
 import pytest
 
 pytestmark = [
-    pytest.mark.wp_shared,
+    pytest.mark.domain_infrastructure,
     pytest.mark.adherence,
 ]
 
@@ -72,21 +71,32 @@ class TestLintTargetRunsAdherenceTier:
 @pytest.mark.parametrize(
     ("target", "marker"),
     [
-        ("check-library", "wp_library"),
-        ("check-corpus-wp", "wp_corpus"),
-        ("check-finance", "wp_finance"),
-        ("check-jetp", "wp_jetp"),
-        ("check-writing", "wp_writing"),
-        ("check-shared", "wp_shared"),
+        ("check-domain-literature", "domain_literature"),
+        ("check-domain-corpus", "domain_corpus"),
+        ("check-domain-finance", "domain_finance"),
+        ("check-domain-jetp", "domain_jetp"),
+        ("check-domain-writing", "domain_writing"),
+        ("check-domain-infrastructure", "domain_infrastructure"),
     ],
 )
-def test_wp_gate_selects_local_pytest_marker(target, marker):
+def test_domain_gate_selects_local_pytest_marker(target, marker):
     body = _target_body(target)
     assert re.search(rf"-m\s+{marker}\b", body), (
         f"{target} must select its local pytest mark with -m {marker}"
     )
-    assert "pytest tests/" in body or "pytest tests/ libs/openalex-corpus/tests/" in body
+    assert "pytest tests/" in body
 
 
-def test_corpus_wp_gate_includes_package_tests():
-    assert "libs/openalex-corpus/tests/" in _target_body("check-corpus-wp")
+def test_corpus_domain_runs_roots_separately_and_propagates_failures():
+    body = _target_body("check-domain-corpus")
+    commands = [
+        line.strip()
+        for line in body.splitlines()
+        if "-m domain_corpus" in line
+    ]
+    assert len(commands) == 2
+    assert "pytest tests/" in commands[0]
+    assert "libs/openalex-corpus/tests/" not in commands[0]
+    assert "pytest libs/openalex-corpus/tests/" in commands[1]
+    assert all(not line.startswith("-") for line in commands)
+    assert all("|| true" not in line for line in commands)

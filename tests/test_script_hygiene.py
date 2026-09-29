@@ -34,7 +34,7 @@ from _script_discovery import all_script_files
 # ticket 0214) deselects it — same convention as test_editorial_governance.py and
 # test_manuscript_prose.py.
 pytestmark = [
-    pytest.mark.wp_shared,
+    pytest.mark.domain_infrastructure,
     pytest.mark.adherence,
 ]
 

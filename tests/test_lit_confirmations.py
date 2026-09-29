@@ -22,7 +22,7 @@ CSV_PATH = os.path.join(
     BASE, "deliverables", "_shared", "tables", "tab_lit_confirmations.csv")
 
 
-pytestmark = pytest.mark.wp_library
+pytestmark = pytest.mark.domain_literature
 
 def _config():
     with open(os.path.join(BASE, "config", "analysis.yaml")) as fh:

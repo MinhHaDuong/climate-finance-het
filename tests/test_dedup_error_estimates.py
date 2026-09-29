@@ -23,7 +23,7 @@ from compute_dedup_error_estimates import (
 )
 from pipeline_loaders import load_analysis_config
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _metric(df, name):
     rows = df.loc[df["metric"] == name, "value"]

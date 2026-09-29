@@ -35,7 +35,7 @@ SMOKE_N_ROWS = 100
 # Fixture data existence and schema
 # ---------------------------------------------------------------------------
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestSmokeFixtureExists:
     """Fixture files exist with expected shapes — no DVC pull needed."""

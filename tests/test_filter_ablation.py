@@ -21,7 +21,7 @@ QMD = os.path.join(REPO, "deliverables", "data-paper", "data-paper.qmd")
 COMPLETE_AXES = ["language", "period", "doi", "citation_decile"]
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.fixture(scope="module")
 def table():

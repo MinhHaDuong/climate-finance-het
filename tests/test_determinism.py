@@ -16,7 +16,7 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 MAKEFILE = os.path.join(os.path.dirname(__file__), "..", "Makefile")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _smoke_env():
     return {

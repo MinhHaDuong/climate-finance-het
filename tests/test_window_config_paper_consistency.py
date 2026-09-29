@@ -15,7 +15,7 @@ import yaml
 ROOT = Path(__file__).parent.parent
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _load_config_windows():
     cfg = yaml.safe_load((ROOT / "config/analysis.yaml").read_text())

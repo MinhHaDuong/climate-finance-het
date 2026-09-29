@@ -31,7 +31,7 @@ DEFINING_MODULE = "pipeline_loaders"
 FACADE_MODULE = "utils"
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _test_sources():
     """Every test module, including conftest and nested test directories.

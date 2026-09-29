@@ -22,7 +22,7 @@ import pytest
 pytest.importorskip("bs4", reason="corpus dependency group not installed (uv sync --group corpus)")
 
 pytestmark = [
-    pytest.mark.wp_corpus,
+    pytest.mark.domain_corpus,
     pytest.mark.integration,
 ]
 

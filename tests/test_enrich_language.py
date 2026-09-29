@@ -23,7 +23,7 @@ sys.path.insert(0, HARVEST_DIR)
 
 # ---------- language normalization ----------
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestNormalizeLang:
     """normalize_lang must map various code formats to 2-letter ISO 639-1."""

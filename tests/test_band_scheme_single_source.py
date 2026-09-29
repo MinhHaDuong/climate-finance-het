@@ -37,7 +37,7 @@ CONSUMERS = (
 )
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _module_level_assignments(tree: ast.Module) -> set[str]:
     """Names bound by a module-level assignment (the shape a copy takes)."""

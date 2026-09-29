@@ -22,7 +22,7 @@ from analyze_multilingual import (
     compute_quadrant_stats,
 )
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestClassifyQuadrant:
     """Unit tests for the four-quadrant classification."""

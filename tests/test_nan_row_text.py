@@ -9,7 +9,7 @@ import pytest
 from analysis.build_het_core import text_blob
 from figures import plot_genealogy_html
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def test_text_or_empty_handles_missing_scalars():
     assert [pipeline_text.text_or_empty(v) for v in (None, np.nan, pd.NA, "nan", "None")] == [""] * 5

@@ -50,7 +50,7 @@ from _script_discovery import all_script_files
 
 # Grep-ratchet guard — belongs to the mechanical adherence gate (`pytest -m adherence`).
 pytestmark = [
-    pytest.mark.wp_corpus,
+    pytest.mark.domain_corpus,
     pytest.mark.adherence,
 ]
 

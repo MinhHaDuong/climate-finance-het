@@ -28,7 +28,7 @@ ROWS = [
 ]
 
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def build(tmp_path, rows=ROWS):
     """Write only the PDF's bytes, so availability cannot be read off status."""

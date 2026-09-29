@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(SCRIPTS_DIR, "harvest"))
 
 from utils import REFS_COLUMNS
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.fixture
 def tmp_catalogs(tmp_path):

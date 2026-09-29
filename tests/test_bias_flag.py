@@ -13,7 +13,7 @@ import pytest
 # Both tests spawn compute_divergence.py via subprocess — excluded from
 # check-fast per the subprocess-tests-are-integration rule (coding-python.md).
 pytestmark = [
-    pytest.mark.wp_corpus,
+    pytest.mark.domain_corpus,
     pytest.mark.integration,
 ]
 

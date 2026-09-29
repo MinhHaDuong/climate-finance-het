@@ -11,7 +11,7 @@ SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "..", "scripts")
 HARVEST_DIR = os.path.join(SCRIPTS_DIR, "harvest")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def test_filter_flags_importable():
     """The filtering module is importable under its new name."""

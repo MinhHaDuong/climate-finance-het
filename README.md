@@ -4,18 +4,38 @@
 
 How economists and institutions co-produced the categories, metrics, and accounting frameworks that made climate finance measurable and governable.
 
-## Documents
+## Paper portfolio
 
-| Document | File | Journal | Status |
-|----------|------|---------|--------|
-| Manuscript | `deliverables/manuscript/manuscript.qmd` | Œconomia (Varia) | Submitted 2026-03-18; R&R, revision v2.0.5 in progress |
-| Data paper | `deliverables/data-paper/data-paper.qmd` | RDJ4HSS (diamond OA) | Revision 1 released 2026-07-29, resubmission in progress |
+| Paper | File | Venue | Status |
+|-------|------|-------|--------|
+| Climate-finance literature review | external drafting workspace | *Reviews of Economic Literature* | Current priority; invited proposal accepted, manuscript due December 2026 |
+| “Climate Finance: Birth of an Economic Aggregate” | `deliverables/manuscript/manuscript.qmd` | *Œconomia* | Hard rejected; retained as a completed research output, not an active submission |
+| Climate-finance corpus data paper | `deliverables/data-paper/data-paper.qmd` | RDJ4HSS | Published; revision 1 released 2026-07-29 |
 | Technical report | `deliverables/technical-report/technical-report.qmd` | HAL working paper | Complete |
-| Method paper | `deliverables/multilayer/multilayer-detection.qmd` | Scientometrics / QSS | Outline |
-| JETP measurement paper | `deliverables/jetp-mesure/jetp-mesure.tex` | Climate Policy | Live skeleton |
-| JETP political-economy paper | `deliverables/jetp-econpol/jetp-econpol.tex` | Development Policy Review | Live skeleton |
+| Structural-change methods paper | `deliverables/multilayer/multilayer-detection.qmd` | *Quantitative Science Studies* | Outline |
+| Short comparative JETP paper | `deliverables/jetp-mesure/jetp-mesure.tex` | *Climate Policy* | Live skeleton |
+| JETP political-economy paper | `deliverables/jetp-econpol/jetp-econpol.tex` | *Development Policy Review* | Live skeleton |
+| JETP observatory data paper | not yet created | To be selected | Planned |
 
 Most documents are Quarto projects under `deliverables/<x>/`, sharing fragments and assets via `deliverables/_shared/_includes/`. The two live JETP papers are deliberately plain LaTeX documents: their submission classes are not yet confirmed and their macro files are generated from the document-variable registry.
+
+## Work organization
+
+Three independent axes organize the repository:
+
+- **Build workpackages** partition artifacts and toolchains. Phase 2 analysis
+  produces tracked handoffs; each Phase 3 paper or report has its own render
+  Makefile and consumes only its declared handoffs.
+- **Test domains** partition behaviour and risk: `literature`, `corpus`,
+  `finance`, `jetp`, `writing`, and `infrastructure`. Tests may carry several
+  `domain_*` markers when they cover a boundary. The corresponding
+  `make check-domain-*` targets run every cost tier in that domain.
+- **Cost tiers** partition test expense: unmarked fast logic, `integration`,
+  `slow`, and `adherence`. They cut across every test domain.
+
+The axes intentionally do not coincide. A writing workpackage can depend on
+corpus behaviour, and a finance test can also belong to the JETP domain. Exact
+marker and gate contracts live in `.claude/rules/coding.md`.
 
 ## Setup
 
@@ -72,7 +92,7 @@ make corpus
 git pull && uv run dvc pull             # get updated data
 make figures                            # regenerate figures and tables (~2 min)
 make manuscript                         # build PDF (requires figures)
-make papers                             # build all 3 companion documents
+make papers                             # build all live document workpackages
 
 # Validation and packaging:
 make corpus-validate                    # acceptance tests on corpus
@@ -82,16 +102,17 @@ make archive-manuscript                 # manuscript archive (figures + Quarto)
 
 ### Build architecture — clean-room vs live
 
-A document is built one of two ways, decided by whether it is being submitted from
-the repo:
+A document is built one of two ways, decided by whether the repository preserves
+an exact externally released version:
 
-- **Clean-room** — only a paper pinned by an external commitment (a submission or
-  an active R&R) is frozen in-repo: its `*-vars.yml`, figures, and tables are
+- **Clean-room** — a paper pinned by an external commitment or preserved release
+  is frozen in-repo: its `*-vars.yml`, figures, and tables are
   git-tracked, and it builds from those alone with **Quarto + TeX Live + Pandoc —
   no `uv`, no `dvc`, no data**. This proves the exact submitted PDF reproduces on a
-  bare machine. Today the only clean-room paper is the manuscript
-  (`make -f deliverables/manuscript/manuscript.mk deliverables/manuscript/manuscript.pdf`), because it is the live
-  Œconomia R&R being rebuilt for resubmission.
+  bare machine. The manuscript remains the only clean-room paper because the
+  repository preserves its released revision even though *Œconomia* hard
+  rejected it (`make -f deliverables/manuscript/manuscript.mk
+  deliverables/manuscript/manuscript.pdf`).
 - **Live** — every other document (corpus-report, technical-report, data-paper,
   multilayer-detection) builds from the corpus via `make papers`. Its numbers are
   regenerated by Phase 2 (`compute_vars.py`, `plot_*`, `export_*`) and should track

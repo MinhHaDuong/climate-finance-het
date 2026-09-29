@@ -7,7 +7,7 @@ import yaml
 from jetp._country_views_v2 import country_view, load_country_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 
 def test_current_country_views_keep_agreements_out_of_project_counts():

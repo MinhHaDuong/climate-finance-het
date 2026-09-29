@@ -7,7 +7,7 @@ import pytest
 from jetp._ledger_headers import load_schema, table_path
 from jetp.build_ledger import build
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 SHA = 'a' * 64
 
 

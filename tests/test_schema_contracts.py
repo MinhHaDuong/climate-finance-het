@@ -20,7 +20,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 # Schema module exists
 # ---------------------------------------------------------------------------
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestSchemaModuleExists:
     def test_schemas_importable(self):

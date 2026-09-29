@@ -36,4 +36,4 @@ layout-specific parsers, which are research code and stay as plug-ins.
 - [ ] Re-running on an extracted document leaves the tree byte-identical (test)
 - [ ] A missing snapshot, a duplicate and an empty document each yield a disposition (tests)
 - [ ] A defect replayed against the writer is rejected (red test): a renumbered `line_id`, a header that disagrees with `line-field-specs`
-- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-jetp` pass
+- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-domain-jetp` pass

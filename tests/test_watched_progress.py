@@ -8,7 +8,7 @@ import time
 import pytest
 
 pytestmark = [
-    pytest.mark.wp_corpus,
+    pytest.mark.domain_corpus,
     pytest.mark.integration,
 ]
 

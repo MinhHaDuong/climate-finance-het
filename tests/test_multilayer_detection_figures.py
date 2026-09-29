@@ -30,7 +30,7 @@ from _source_roots import source_root_env
 # whole module is the integration tier (ticket 0216 — surfaced by the fast-path
 # ratchet as unmarked subprocess tests taxing the inner loop at 5-6s each).
 pytestmark = [
-    pytest.mark.wp_writing,
+    pytest.mark.domain_writing,
     pytest.mark.integration,
 ]
 

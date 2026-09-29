@@ -34,7 +34,7 @@ COP27_ABSTRACT_VARIANT_B = (
 )
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.fixture
 def cop27_df():

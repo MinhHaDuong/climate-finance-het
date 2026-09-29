@@ -38,7 +38,7 @@ format:
 """
 
 
-pytestmark = pytest.mark.wp_writing
+pytestmark = pytest.mark.domain_writing
 
 def _probe_document() -> str:
     emitted = [r"\begin{flushleft}"]

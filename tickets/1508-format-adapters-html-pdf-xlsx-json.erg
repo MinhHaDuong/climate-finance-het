@@ -32,4 +32,4 @@ layer; take it up here rather than duplicate it, and close or fold it in.
 - [ ] The five existing PDF parsers read through the shared layer, or the reason one cannot (for example `pdftotext -layout` for Senelec) is recorded
 - [ ] Parser outputs byte-identical before and after the port
 - [ ] A corrupt or empty file yields a disposition, not a crash (red test)
-- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-jetp` pass
+- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-domain-jetp` pass

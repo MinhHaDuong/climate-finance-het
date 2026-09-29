@@ -7,8 +7,8 @@ import pytest
 from jetp._measurement_protocol import ProtocolError, validate_protocol
 
 pytestmark = [
-    pytest.mark.wp_jetp,
-    pytest.mark.wp_finance,
+    pytest.mark.domain_jetp,
+    pytest.mark.domain_finance,
 ]
 
 def test_protocol_rejects_mixed_lifecycle_states_missing_as_zero_and_causal_claim():

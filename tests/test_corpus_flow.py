@@ -48,7 +48,7 @@ REFINED_N = 700
 # ── Pure logic (fast tier) ───────────────────────────────────
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestAuditBuckets:
     def test_counts_all_three_actions(self):

@@ -25,7 +25,7 @@ QMD = os.path.join(
 )
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.fixture
 def artifact_dirs(tmp_path, monkeypatch):

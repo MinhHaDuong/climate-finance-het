@@ -8,7 +8,7 @@ from jetp._country_views_v2 import load_country_inputs
 from jetp.build_observations import served_views
 
 ROOT = Path(__file__).resolve().parents[1]
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 
 def test_v2_statement_views_separate_observations_and_identity_citations():

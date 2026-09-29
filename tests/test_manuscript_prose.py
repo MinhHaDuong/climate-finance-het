@@ -43,7 +43,7 @@ import yaml
 from manuscript_source_qmd import REPO_ROOT, abstract, body, paragraphs, section
 
 pytestmark = [
-    pytest.mark.wp_writing,
+    pytest.mark.domain_writing,
     pytest.mark.adherence,
 ]
 

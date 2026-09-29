@@ -6,8 +6,8 @@ import analyze_jetp_kfw_pilot as pilot
 import pytest
 
 pytestmark = [
-    pytest.mark.wp_jetp,
-    pytest.mark.wp_finance,
+    pytest.mark.domain_jetp,
+    pytest.mark.domain_finance,
 ]
 
 def test_identical_exports_count_distinct_activities():

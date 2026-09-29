@@ -28,7 +28,7 @@ DVC_YAML = os.path.join(BASE_DIR, "dvc.yaml")
 STABLE_REPORT = "data/catalogs/catalog_merge_report.json"
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _stage_outs(stage_name):
     with open(DVC_YAML, encoding="utf-8") as fh:

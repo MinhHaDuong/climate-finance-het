@@ -11,7 +11,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 
 from pipeline_io import save_figure
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestSaveFigureDefault:
     """save_figure() should produce PNG only by default (#544)."""

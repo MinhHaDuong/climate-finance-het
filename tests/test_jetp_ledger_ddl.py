@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SHA_A = 'a' * 64
 
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 def _term(term_id, list_name):
     return {

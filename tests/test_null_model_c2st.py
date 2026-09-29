@@ -34,7 +34,7 @@ except ImportError:
 # ---------------------------------------------------------------------------
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _make_semantic_data(n_years=15, papers_per_year=30, emb_dim=20, seed=42):
     """Return (df, emb) suitable for patching load_semantic_data."""

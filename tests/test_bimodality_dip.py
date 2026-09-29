@@ -28,7 +28,7 @@ SCRIPT = os.path.join(BASE_DIR, "scripts", "analysis", "analyze_bimodality.py")
 PYPROJECT = os.path.join(BASE_DIR, "pyproject.toml")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 @pytest.mark.adherence
 def test_diptest_is_a_declared_dependency():

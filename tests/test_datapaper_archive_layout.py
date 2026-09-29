@@ -20,7 +20,7 @@ import sys
 import pytest
 
 pytestmark = [
-    pytest.mark.wp_writing,
+    pytest.mark.domain_writing,
     pytest.mark.adherence,
 ]
 

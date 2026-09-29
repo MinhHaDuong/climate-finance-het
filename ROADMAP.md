@@ -32,14 +32,14 @@ failed identification returns to an author scope decision. The website and data
 paper do not depend on demonstrating acceleration. AEDIST methods pilot remains
 Imagine-only, separate from this operational programme.
 
-## Oeconomia manuscript next steps
+## Œconomia manuscript outcome
 
-Submitted to Oeconomia (Varia) on 2026-03-18. Revise-and-resubmit received;
-manuscript rebuilt (v2.0.5), response letter drafted (ticket 0152).
-
-- [x] Wait for reviewers feedback
-- [ ] Revise and Resubmit — in progress: R1/R2 ledger sign-offs, then 0195 → 0153 (rebuild, deposit, resubmit)
-- [ ] Continue Tier 1 reading plan (defence against reviewer questions)
+Submitted to *Œconomia* (Varia) on 2026-03-18 and rebuilt as v2.0.5 during
+revision. The journal ultimately hard rejected the paper. The Œconomia submission
+path is closed: there is no active revise-and-resubmit or resubmission target.
+The manuscript remains a completed research output and a non-overlap reference
+for the current literature review. Any new venue would require a new author
+decision and plan.
 
 ## Data paper manuscript next steps
 

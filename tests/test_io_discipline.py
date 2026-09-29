@@ -22,7 +22,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 # parse_io_args() utility
 # ---------------------------------------------------------------------------
 
-pytestmark = pytest.mark.wp_shared
+pytestmark = pytest.mark.domain_infrastructure
 
 class TestParseIoArgs:
     """Shared I/O argument parser works correctly."""

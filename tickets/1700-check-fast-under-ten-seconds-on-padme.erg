@@ -31,7 +31,7 @@ gate with a target.
   subprocess or sleeps out of `check-fast`: `slow` for real-data tests (repo
   convention: a single `@pytest.mark.slow`), `integration` for subprocess and
   sleep, per `pyproject.toml`. Check with `--collect-only` that each moved test
-  is still selected by its WP gate, so nothing leaves every gate.
+  is still selected by its test-domain gate, so nothing leaves every gate.
 - Where a fast test pays a fixed setup cost per worker, share it or shrink it.
 - Correct the "~40 s" in `AGENTS.md` and [[1060]] to the measured value.
 
@@ -39,7 +39,7 @@ gate with a target.
 
 - [ ] `make check-fast` takes 10 s or less of wall time on padme, measured three
       times unloaded, with the pytest summary line quoted from an unfiltered log
-- [ ] Every test moved out of `check-fast` is still selected by a WP gate or by
+- [ ] Every test moved out of `check-fast` is still selected by a test-domain gate or by
       `make check` (shown by `--collect-only`)
 - [ ] `AGENTS.md` and [[1060]] state the measured duration
 
@@ -58,10 +58,10 @@ with `-n 16`, versus 8.09 s serial, so the 10 s target also needs a change to
 collection or worker overhead.
 
 PR #1580 (`3c2fc0dd`) marked both tests `slow`; `--collect-only` selected both
-under `wp_jetp` and neither under the fast marker expression. In a clean padme
+under `domain_jetp` and neither under the fast marker expression. In a clean padme
 worktree at `23e73e39`, with corpus and JETP data materialized, `make
 check-fast` passed (2066 passed, 9 skipped; 22.87 s wall), `make lint` passed
-(351 passed, 8 skipped; 17.87 s wall), and `make check-jetp` passed (588
+(351 passed, 8 skipped; 17.87 s wall), and `make check-domain-jetp` passed (588
 passed, 3 skipped; 157.68 s wall). The full `make check` was not run before
 the author directed immediate merge.
 

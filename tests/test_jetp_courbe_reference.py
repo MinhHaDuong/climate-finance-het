@@ -42,8 +42,8 @@ RESULTAT_CENTRAL = {
 
 
 pytestmark = [
-    pytest.mark.wp_jetp,
-    pytest.mark.wp_finance,
+    pytest.mark.domain_jetp,
+    pytest.mark.domain_finance,
 ]
 
 def _read(path):

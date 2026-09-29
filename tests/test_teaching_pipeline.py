@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "har
 BASE_DIR = os.path.join(os.path.dirname(__file__), "..")
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestBuildTeachingYaml:
     """Tests for build_teaching_yaml.py."""

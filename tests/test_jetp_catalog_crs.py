@@ -7,7 +7,7 @@ import urllib.error
 import pytest
 from jetp.catalog_crs import fetch, pull_year
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 
 @pytest.mark.parametrize('failure', ['404', 'empty'])

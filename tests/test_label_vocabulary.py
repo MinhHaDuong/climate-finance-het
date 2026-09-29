@@ -26,7 +26,7 @@ CONSUMERS = (
 )
 
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 def _source(rel):
     with open(os.path.join(SCRIPTS_DIR, rel)) as fh:

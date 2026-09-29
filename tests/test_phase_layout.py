@@ -20,7 +20,7 @@ from _script_discovery import all_script_files
 
 # Mechanical adherence gate (`make lint` / `pytest -m adherence`).
 pytestmark = [
-    pytest.mark.wp_shared,
+    pytest.mark.domain_infrastructure,
     pytest.mark.adherence,
 ]
 

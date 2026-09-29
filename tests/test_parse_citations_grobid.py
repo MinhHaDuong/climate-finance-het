@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "har
 
 from corpus_parse_citations_grobid import build_cache_key, parse_tei_citation
 
-pytestmark = pytest.mark.wp_corpus
+pytestmark = pytest.mark.domain_corpus
 
 class TestParseTeiCitation:
     """parse_tei_citation extracts structured fields from GROBID TEI XML."""

@@ -40,7 +40,7 @@ RMP = "vnm-rmp-2023"
 # --- fakes -----------------------------------------------------------------
 
 
-pytestmark = pytest.mark.wp_jetp
+pytestmark = pytest.mark.domain_jetp
 
 class Response:
     def __init__(self, status=200, payload=None, headers=None, text=""):
@@ -537,6 +537,7 @@ def test_positive_control_reaches_the_documents_page(dead_site) -> None:
     assert 'data-link="web-archive"' in html and "data-identity" not in html
 
 
+@pytest.mark.integration
 def test_positive_control_an_earlier_404_of_ours_dates_the_dead_link(dead_site) -> None:
     # Ticket 1210: dead since the earliest evidence. A retrieval attempt of the
     # same address that got a 404 after the last collection, on 20 Sep, is
