@@ -4,8 +4,8 @@ import json
 import os
 import types
 
+import corpus_rel_sud_screen as sc
 import pytest
-import rel_sud_screen as sc
 import yaml
 
 pytestmark = pytest.mark.wp_corpus

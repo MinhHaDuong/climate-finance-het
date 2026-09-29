@@ -6,8 +6,8 @@ import json
 import os
 import types
 
+import catalog_rel_sud_search as rs
 import pytest
-import rel_sud_search as rs
 import yaml
 
 pytestmark = pytest.mark.wp_corpus

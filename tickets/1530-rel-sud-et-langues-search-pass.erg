@@ -20,8 +20,8 @@ et cinq requetes par revue (Q). Elle n'ecrit pas dans le pool OpenAlex ni dans l
 corpus raffine : sortie separee, comparee au corpus par DOI et identifiant
 OpenAlex.
 
-Livre : le code de recherche et de tri (`scripts/rel_sud_search.py`,
-`scripts/rel_sud_screen.py`), leurs configurations (requetes, tri, sentinelles,
+Livre : le code de recherche et de tri (`scripts/catalog_rel_sud_search.py`,
+`scripts/corpus_rel_sud_screen.py`), leurs configurations (requetes, tri, sentinelles,
 prompt de l'etape 2), leurs tests, la recherche finale (passes f et g sur padme,
 requetes gelees), 25 693 oeuvres triees puis relues (etape 2 : 4 792), 55 sentinelles.
 Archive de sauvegarde : `~/data/projets/climate-finance-het/rel_sud/2026-09-29/`
@@ -38,7 +38,7 @@ eLIBRARY, GARUDA, CLACSO et series de working papers non couverts ici ; filtre
 de pays d'affiliation seulement sur les requetes anglaises.
 
 ## Exit criteria
-- [x] `scripts/rel_sud_search.py`, `scripts/rel_sud_screen.py`, leurs configurations et tests (`tests/test_rel_sud_search.py`, `tests/test_rel_sud_screen.py`) ; `make lint` vert sur la branche
+- [x] `scripts/catalog_rel_sud_search.py`, `scripts/corpus_rel_sud_screen.py`, leurs configurations et tests (`tests/test_catalog_rel_sud_search.py`, `tests/test_corpus_rel_sud_screen.py`) ; `make lint` vert sur la branche
 - [x] Execution sur padme : registre par requete (chaine, filtre, date, attendu/recu, complet ou non) archive : passes f et g dans `~/rel_sud_runs/`, copie et manifeste dans l'archive du 2026-09-29
 - [x] Comptes par strate et par revue E, part deja au corpus, candidats absents, requetes incompletes : `conception/rel-prisma-flux-provisoire.md` (effectifs provisoires, chaque chiffre marque mesure ou derive)
 - [x] Sources non automatisees et acces bloques listes explicitement, strates marquees « incompletes » tant qu'elles le sont : `conception/rel-sud-et-langues-annexe-brouillon.md`, ticket 1653

@@ -11,7 +11,7 @@ A query stopped by the record cap, a rate limit or an error is ``incomplete``,
 and the run report says so.
 
 Usage:
-    python scripts/rel_sud_search.py --output-dir data/rel_sud/run1 \
+    python scripts/catalog_rel_sud_search.py --output-dir data/rel_sud/run1 \
         --corpus data/catalogs/refined_works.csv [--only q|e|qj] [--dry-run]
 """
 

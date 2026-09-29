@@ -7,7 +7,7 @@ records whose label could not be parsed are left unlabelled so a rerun retries
 them. A header line in ``screen_run.json`` records model, prompt hash and date.
 
 Usage:
-    python scripts/rel_sud_screen.py --input screen_input.jsonl \
+    python scripts/corpus_rel_sud_screen.py --input screen_input.jsonl \
         --output-dir data/rel_sud/screen1 [--limit 200] [--sample-seed 7]
 """
 
