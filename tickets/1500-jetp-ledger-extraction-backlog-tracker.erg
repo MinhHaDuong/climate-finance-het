@@ -60,15 +60,19 @@ generalise after two or three cases, not before.
 - M1b ([[0833]]) covers only the four M1a documents and forbids new
   acquisition, not extraction from archived bytes. It runs first and does not
   wait for these children. M3a discovery follows M2.
-- The document-library sessions (tickets 1510 to 1512, not yet on main) may
-  change where snapshot bytes live and offer a shared PDF text layer. The
-  registry interface of 1506 hides the first; the text layer of 1508 should
-  reuse the second if it lands. Open design point for the author: document
-  relations (`same_as`, `edition_of`, `translation_of`) are in the ledger per
-  the storage contract, while the library tracker proposes them in Zotero.
-  Settle one home before 1501 writes rows. Viet Nam is the library pilot's
-  country: its byte-identical check must compare against a frozen base while
-  the VNM waves add lines.
+- The Zotero document store ([[1510]], pilot [[1511]]) is milestone M4 and
+  deferred, so it does not block M2. M2 must not paint it into a corner: the
+  registry interface of 1506 is the seam (documents and bytes by `sha256`
+  behind one interface, as [[1140]] and [[1184]] already require of
+  acquisition), and the text layer of 1508 takes up [[1512]] (deferred, to be
+  taken up when a new parser is written, which is now).
+- Document relations (`same_as`, `edition_of`, `translation_of`): for M2 the
+  home is the ledger, per the storage contract, because 1501 needs them before
+  any Zotero item exists. 1510 decision 2 places editions and translations in
+  Zotero as linked items; at M4 the ledger rows become the source of that
+  migration. Recorded here so nobody re-decides it in 1501.
+- The Viet Nam byte-identical check of the pilot is no longer concurrent with
+  the VNM waves, since M4 comes after M2.
 - [[0920]] finishes the 55 pending links of 0874 and overlaps only on the
   documents it acquires.
 

@@ -13,9 +13,9 @@ Blocked-by: 1506
 Stage 3 of the pipeline. Snapshot formats over the 115 unextracted documents:
 HTML 66, PDF 38, octet-stream 6, xlsx 2, JSON 2, JavaScript 2. The existing
 PDF parsers open files their own way: four use pdfplumber (pinned 0.11.9), one
-shells out to `pdftotext -layout`, and no text is cached. The document-library
-session has filed a deferred ticket (1512, not yet on main) for a shared text
-layer; take it up here rather than duplicate it.
+shells out to `pdftotext -layout`, and no text is cached. Ticket [[1512]]
+(deferred, "take it up when a new parser is written") asks for a shared text
+layer; take it up here rather than duplicate it, and close or fold it in.
 
 ## Work
 
