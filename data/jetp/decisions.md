@@ -34,3 +34,97 @@ This decision authorizes extraction from the preserved bytes. It does not
 upgrade an archive or mirror into a primary authority for event-level claims:
 locators must cite the government-authored document, while provenance retains
 both the document publisher and the delivery host.
+
+## 2026-09-29 — items below the tier threshold, ticket 1590
+
+Author: claude-fable-5-1 (tier 4 adjudication), for Minh's decision. Each
+item scored below `matching.llm_adjudication.accept_threshold` (0.8,
+`config/jetp_tracking.yaml`) and stays pending in
+`data/jetp/migration/0876-pending.csv` with owner `author`. The row-level
+record is `data/jetp/migration/1590-register-dispositions.csv`.
+
+### 1. The Senegal plan's own date (42 timing rows, confidence 0.7)
+
+Affected: the 42 `event-timing` rows citing `sen-investment-plan-l4-mirror`
+(`sen-qw2-plan-need-2025`, `sen-qw3-plan-need-2025`, the 29
+`sen-plan-cost-annex-*`, `sen-plan-allocation-qw-04/08/10`,
+`sen-project-qw-02/03-proposed-2025-04-02`,
+`sen-project-annex-11/17/19-plan-proposal`, `sen-project-qw-04/08/10-plan-proposal`).
+
+Evidence: the legacy date 2025-04-02 is the mirror host's label and the plan
+file name (`20250402-ENERCAP-Livrable-L4-v5-clean-1.pdf`); it is printed
+nowhere in the document. The version table (PDF p. 2) prints 05/02/2025 v1,
+21/03/2025 v2, 04/04/2025 v3, 09/05/2025 v4 and 28/05/2024 for v5, a year
+that contradicts the sequence. The annexes' own version table (17/03/2025)
+matched their legacy date and was accepted at 0.9.
+
+Reading: v5 is the delivered version and the anomaly is a typo for
+28/05/2025. Recommended answer: record `report_date` 2025-05-28 (day
+precision) for the 42 observations, citing a minted version-table line, and
+note the typo; if the author declines the chronological reading, the rows are
+terminal (`no supported document date`).
+
+### 2. A bid deadline as a date role (1 row, confidence 0.6)
+
+Affected: `sen-project-annex-16-procurement-2026-09-09` (observation
+`observation-sen-project-annex-16-procurement-2026-09-09`, state
+`procurement`).
+
+Evidence: AAO 30/2026 (`sen-senelec-saloum-tender-2026`) p. 2 fixes bid
+submission at "SEPTEMBRE 2026 à 09h30mn GMT"; the Senelec notice index
+(`sen-senelec-procurement-2026`, not extracted) lists the notice under
+09/09/2026; the notice itself carries no issue date (it refers to the AGPM in
+Le Soleil of 24 December 2025).
+
+Reading: 2026-09-09 is the bid deadline, a date the publisher plans for the
+procurement, not the launch day. Recommended answer: `planned` 2026-09-09
+(day), or a new `date_role` term `deadline` if the author prefers the
+publisher's word; either needs the index line that 1502 will extract.
+
+### 3. An implementation period on a money amount (1 row, confidence 0.7)
+
+Affected: `zaf-eepbip-maf-approved-2018` (observation
+`observation-zaf-eepbip-maf-approved-2018`, EUR 20.1 million `approved`,
+subject the line `zaf-eepbip-maf-claim-49`).
+
+Evidence: the MAF profile (`zaf-eepbip-maf`) prints "Funding volume provided
+EUR 20.1 million", "Project duration 05/2016-01/2018 (Appraisal);
+08/2018-12/2026 (Implementation)", "Status Active".
+
+Reading: the legacy `other_milestone` date 2018-08-01 is the first day of the
+implementation period; `period_start` and `period_end` are interval roles of
+a flow, and this observation is an amount state. Recommended answer: no
+timing on the amount; once the EEPBIP project is a referent, one
+`project_stage` observation `implementation` with `period_start` 2018-08 and
+`period_end` 2026-12 (month precision), citing the same line.
+
+### 4. Does "in the financing phase" satisfy `preparation`? (3 rows, confidence 0.5 to 0.75)
+
+Affected: `idn-impl-green-corridors-2025` (0.7), `idn-impl-dieng34-2025`
+(0.75), `idn-impl-nagajaya-portal-2026` (0.5); with them the four 1160
+rejections recorded today (`idn-impl-aicet-2025`, `idn-impl-hululais-2025`,
+`idn-impl-tanah-laut-2025`, `idn-impl-eib-framework-2025`) and the accepted
+`observation-idn-impl-nagajaya-2025`.
+
+Evidence: the ledger term `project_stage.preparation` reads "The project is
+being designed, appraised and prepared for funding and procurement"
+(OC4IDS exact match). Progress Report 2025, Table 4.3-3: Green Energy
+Corridors Sulawesi "approved by KfW Board, currently waiting for PLN Board
+Approval" (p. 73); Dieng 3,4 "currently in the financing phase for field
+development" (p. 74); Nagajaya "PPA has been signed, with COD expected by
+mid 2027" (p. 73), while the portal profile only says the plant "will install
+two Francis turbines". The 0970 and 1160 reviews read `preparation` as a
+physical state and held or rejected on that reading; 0970 nevertheless
+accepted Nagajaya's report row as `preparation` on the signed PPA, the same
+fact 1160 rejected for Tanah Laut.
+
+Reading: under the ledger's own definition, being prepared for funding is
+`preparation`; the four rejections are then inconsistent with the accepted
+Nagajaya row. Recommended answer: (a) accept Green Energy Corridors and
+Dieng 3,4 as `project_stage` `preparation` with `reporting_cutoff`
+2025-11-30, citing their Table 4.3-3 lines; (b) reject the portal duplicate
+for Nagajaya, already covered by the report row; (c) keep AICET and the EIB
+framework rejected (programmes, no project subject) and re-examine Hululais
+and Tanah Laut under the same definition. If the author instead confirms the
+physical reading, the three holds become terminal rejections and
+`observation-idn-impl-nagajaya-2025` should be revoked for consistency.
