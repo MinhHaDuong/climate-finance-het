@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-29T09:00Z HDMX-coding-agent created
+2026-09-29T15:50Z HDMX-coding-agent note author decision (2026-09-29): tests/test_jetp_no_legacy_readers.py, which matched the bare basename manifest.csv and flagged the restored builders for the living comparison/crs/manifest.csv, is deleted rather than narrowed (harness rule for a misfiring guard; 0878's retirement is complete). PR #1572.
 
 --- body ---
 ## Context
@@ -32,7 +33,9 @@ therefore a reproducibility repair, not a port: the helpers they import
 
 Out of scope: `build_lines.py`, `build_evidence_layer.py`,
 `build_m1a_lines.py` were one-time migrations and would change committed
-data today; they stay retired. No new guard beyond the restored test.
+data today; they stay retired. No new guard beyond the restored test; the
+retired-reader guard `tests/test_jetp_no_legacy_readers.py`, which misfired
+on the living `comparison/crs/manifest.csv`, is deleted (author decision).
 
 ## Exit criteria
 
