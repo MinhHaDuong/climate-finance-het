@@ -6,6 +6,7 @@ Author: Codex
 --- log ---
 2026-09-28T16:00Z Codex created after REL ticket 1351 exposed the existing combined-root gate failure
 2026-09-29T19:15Z haduong decision Test domains and build workpackages are distinct axes; vocabulary and machinery must remain aligned. Rename the test markers and gates atomically while fixing the collision, and reconcile AGENTS, README and ROADMAP.
+2026-09-29T19:39Z Codex implemented in 766b2e54. On padme, full `make check` passed (25 package tests; 3,068 root tests, 36 skipped), and CPU replay `CUDA_VISIBLE_DEVICES='' make check-domain-corpus` passed both separate invocations (1,405 root tests, 39 skipped; 25 package tests). `tests/test_make_test_gates.py::test_corpus_domain_runs_roots_separately_and_propagates_failures` covers stop-on-failure semantics. `make check-fast`, `make lint`, and `erg check tickets/` passed. A GPU replay immediately after the full gate exhausted the shared RTX A4000; the CPU replay isolates gate correctness from transient GPU occupancy.
 
 --- body ---
 ## Context
@@ -33,10 +34,10 @@ root: 1,380 repository tests and 25 library tests.
 
 ## Exit criteria
 
-- [ ] `make check-domain-corpus` passes on padme with both suites selected.
-- [ ] A failing root makes the target fail, with no false success from the
+- [x] `make check-domain-corpus` passes on padme with both suites selected.
+- [x] A failing root makes the target fail, with no false success from the
       other root.
-- [ ] Active machinery and guidance use test-domain vocabulary; build
+- [x] Active machinery and guidance use test-domain vocabulary; build
       workpackages retain their distinct meaning.
-- [ ] README, AGENTS and ROADMAP agree on organization and current papers.
+- [x] README, AGENTS and ROADMAP agree on organization and current papers.
 - [ ] Required shared-infrastructure gates and independent review pass.

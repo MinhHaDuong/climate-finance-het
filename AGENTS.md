@@ -28,11 +28,13 @@ infrastructure (`dvc.yaml`, shared scripts or libraries, Makefiles) or a change
 to test selection itself. Test domains and build workpackages are different
 axes; README.md defines their relationship.
 
-Run test-domain and full gates on padme (`ssh padme`) in a clean checkout of
-the branch with the corpus and JETP documents present (`make data` and
-`make jetp-data`; a fresh worktree may need `dvc checkout --force`, ticket
-1060). padme's `.env` sets `PYTEST_WORKERS=16`. A doudou worktree lacks those
-data by default, so its data-bound failures or skips are not evidence.
+Run test-domain and full gates in a clean checkout on padme. When already on
+padme, run them locally; from another host, connect with `ssh padme` first.
+Every fresh worktree, including one on padme, starts without bulk data: run
+`make data` and `make jetp-data` there first (it may need
+`dvc checkout --force`, ticket 1060). padme's `.env` sets
+`PYTEST_WORKERS=16`. Data-bound failures or skips from an unpopulated worktree
+are not gate evidence.
 
 There is no CI (ticket 0321). `/lair` step 9 runs full `make check` on `main`
 after merges and files tickets for new failures; a merged PR does not prove
