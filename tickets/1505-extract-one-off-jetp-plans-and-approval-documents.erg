@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Extract lines from 9 one-off JETP plans and approval documents (wave 1')
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Blocked-by: 1501
+
+--- log ---
+2026-09-29T10:30Z HDMX-coding-agent created — child of [[1500]]
+
+--- body ---
+## Context
+
+Nine documents outside the three waves: implementation plans 4 (ZAF 1, SEN 1,
+VNM 2), investment plans 3 (ZAF 1, SEN 1, VNM 1) and approval documents 2
+(SEN 1, ZAF 1). Large one-off PDFs, so no repeated-series parser applies. Some
+may be earlier or later editions of a document already extracted (the four M1a
+documents include the Indonesian and Senegalese plans): 1501 decides that with
+`edition_of` before anything is read here.
+
+## Work
+
+- LLM-assisted reading with row-by-row diff review, per document, at a stated
+  budget; hand-read files stay per document, reviewed in the PR.
+- A document that is an edition of an extracted one follows the edition rules:
+  new lines, new ids, no renumbering.
+
+## Exit criteria
+
+- [ ] Each of the 9 has lines or a recorded disposition
+- [ ] Editions are related by `edition_of`, never merged into an existing document's lines
+- [ ] Lines of previously extracted documents are byte-identical
+- [ ] `make jetp-ledger-check`, `make check-fast` and `make lint` pass

@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Extract lines from 40 JETP project pages and news items (wave 3)
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Blocked-by: 1501
+
+--- log ---
+2026-09-29T10:30Z HDMX-coding-agent created — child of [[1500]]
+
+--- body ---
+## Context
+
+Project pages 27 (ZAF 16, SEN 5, IDN 3, VNM 3), official news 11 and secondary
+news 2. Lowest yield per document and the highest risk of over-reading: news is
+an attributed statement, not evidence of delivery, and a project page is
+usually already reached through a `refers_to` row from [[0875]]'s tables. These
+are extracted as lines attached to existing identities, so a page that names no
+known project mints nothing.
+
+## Work
+
+- Extract lines with LLM-assisted reading and row-by-row diff review; a
+  publisher page repeated across projects gets one parser.
+- Keep statements attributed to their speaker; classification and axis follow
+  the ontology's status axes. Secondary news never supports a delivery status.
+- Cross-check each page against the 315 `project-source-links` already held;
+  a page already justifying a link gains its lines without a new referent.
+
+## Exit criteria
+
+- [ ] Each of the 40 (after 1501) has lines or a recorded disposition
+- [ ] No page mints a project, asset or agreement by itself; new identities, if any, come by the matching tiers of the storage contract § 4
+- [ ] Lines of previously extracted documents are byte-identical
+- [ ] `make jetp-ledger-check`, `make check-fast` and `make lint` pass
