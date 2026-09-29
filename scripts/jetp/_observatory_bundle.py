@@ -58,6 +58,8 @@ def _validate_site(payloads):
         json.loads(payloads[f'site/data/{view}.json'])
     if b'load("accounts")' in payloads['site/app.js'] and 'site/data/accounts.json' not in payloads:
         raise ValueError('Missing account view required by renderer')
+    if b'load("m1b/manifest")' in payloads['site/app.js'] and 'site/data/m1b/manifest.json' not in payloads:
+        raise ValueError('Missing M1b catalogue required by renderer')
     return routes(payloads)
 
 

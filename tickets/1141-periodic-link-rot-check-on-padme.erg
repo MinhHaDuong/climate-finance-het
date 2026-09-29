@@ -2,13 +2,13 @@
 Title: M4: monthly link-rot check and capture retry, scheduled on padme
 Created: 2026-09-25
 Author: HDMX-coding-agent
-Blocked-by: 0833
 
 --- log ---
 2026-09-25T08:30Z HDMX-coding-agent created — author, 2026-09-25: "file the periodic M2 linkrot check to the M2 train"; the scheduling left open by [[0925]] moves here
 2026-09-25T10:30Z HDMX-coding-agent note streamlined with the 1180 suite at the author's request: this is the frozen-documents pass of [[1184]] and builds the minimal runner that [[1184]] generalizes
 
 2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
+2026-09-29T20:36Z HDMX-coding-agent note blocker 0833 closed — Blocked-by removed.
 --- body ---
 ## Context
 
