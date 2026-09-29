@@ -75,10 +75,15 @@ jetp-link-check:
 # The ledger's documents table (ticket 1290), served by its own script for the
 # same reason: the Documents page joins it to documents.json on the document
 # identifier to show each title, and a title correction moves this file alone.
+# Each row's collection state (ticket 1610) is derived from the retrievals and
+# the lines, so those tables are inputs too.
 JETP_LEDGER_DOCUMENTS_VIEW := $(JETP_OBSERVATORY)/data/ledger-documents.json
 
-$(JETP_LEDGER_DOCUMENTS_VIEW): data/jetp/documents.csv config/jetp-ledger.sql .githooks/pre-commit \
-    scripts/jetp/build_ledger_documents_view.py scripts/jetp/_ledger_headers.py
+$(JETP_LEDGER_DOCUMENTS_VIEW): data/jetp/documents.csv data/jetp/retrievals.csv \
+    $(wildcard data/jetp/lines.csv data/jetp/lines.d/*.csv) \
+    config/jetp-ledger.sql .githooks/pre-commit \
+    scripts/jetp/build_ledger_documents_view.py scripts/jetp/_ledger_headers.py \
+    scripts/jetp/_country_views_v2.py
 	$(PYTHON) scripts/jetp/build_ledger_documents_view.py --output $@
 
 .PHONY: jetp-m1a jetp-observations jetp-ontology-views jetp-accounts jetp-observatory jetp-observatory-documents \

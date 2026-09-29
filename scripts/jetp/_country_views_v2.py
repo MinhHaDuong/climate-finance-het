@@ -5,12 +5,16 @@ country payload preserves that distinction; it never promotes a register row
 or an agreement to a project merely to fill an old site card.
 """
 
+import logging
+import sys
 from collections import defaultdict
 from pathlib import Path
 
 from jetp._ledger_headers import load_schema, read_table
 
 MILESTONES = ('signed', 'approved', 'mou', 'announced', 'need')
+# The party_in roles a view serves, each under its own name.
+PARTY_ROLES = ('funder', 'channel')
 MILESTONE_LABELS = {'signed': 'Signed', 'approved': 'Approved', 'mou': 'Mou',
                     'announced': 'Announced', 'need': 'Need', 'disbursed': 'Disbursed'}
 
@@ -36,7 +40,7 @@ def load_country_inputs(ledger_dir):
     names = ('projects', 'assets', 'agreements', 'coverage', 'documents',
              'document_publishers', 'party_names', 'retrievals', 'snapshots',
              'lines', 'line_referents', 'relations', 'observations', 'timings',
-             'perimeters')
+             'perimeters', 'parties')
     return {name: _rows(ledger_dir, name, schema) for name in names}
 
 
@@ -103,7 +107,7 @@ def _timing(timings, observation_id):
     )
 
 
-def _statement(row, lines, line_documents, timings, agreements, funders):
+def _statement(row, lines, line_documents, timings, agreements, parties):
     line = lines[row['line_id']]
     subject = row['subject_id']
     agreement = agreements.get(subject, {}) if row['subject_kind'] == 'agreement' else {}
@@ -111,7 +115,8 @@ def _statement(row, lines, line_documents, timings, agreements, funders):
     return dict(
         id=row['observation_id'], subject_kind=row['subject_kind'], subject_id=subject,
         status=status, amount=row['value'], currency=row['currency'] or row['unit'] or '',
-        funder='; '.join(sorted(funders.get(subject, ()))),
+        funder='; '.join(sorted(parties['funder'].get(subject, ()))),
+        channels='; '.join(sorted(parties['channel'].get(subject, ()))),
         instrument=agreement.get('instrument') or '',
         source_id=line_documents.get(row['line_id']) or '',
         locator=line['locator'], line_id=row['line_id'], sha256=line['sha256'],
@@ -119,6 +124,62 @@ def _statement(row, lines, line_documents, timings, agreements, funders):
         notes=row['notes'] or '',
         **_timing(timings, row['observation_id']),
     )
+
+
+def _parties(tables, agreement_rows):
+    """Funders and channels by agreement, from party_in rows, and by project.
+
+    A project has no party_in row of its own (ticket 1610): its funders and
+    channels are those of the agreements recorded as its components, derived,
+    never typed. A party in the `channel` role is the channel the money
+    passes through, never a funder (author, 2026-09-29): it is served beside
+    the funders, under its own name, and listed under funders nowhere.
+    Returns ``{'funder': by_agreement, 'channel': by_agreement}`` and the
+    same by project.
+    """
+    relations = _current(tables['relations'], 'relation_id')
+    preferred = {row['party_id']: row['name'] for row in
+                 _current(tables['party_names'], 'name_row_id')
+                 if row['form_type'] == 'preferred'}
+    by_agreement = {role: defaultdict(set) for role in PARTY_ROLES}
+    for row in relations:
+        if row['from_kind'] == 'party' and row['relation'] == 'party_in' \
+                and row['to_kind'] == 'agreement' and row['to_id'] in agreement_rows:
+            if row['role'] not in PARTY_ROLES:
+                # Loud, not blocking: a role no view serves is not dropped in silence.
+                logging.error('relations %s: party_in role %r on %s is served by no view',
+                              row['relation_id'], row['role'], row['to_id'])
+                continue
+            by_agreement[row['role']][row['to_id']].add(
+                preferred.get(row['from_id'], row['from_id']))
+    by_project = {role: defaultdict(set) for role in PARTY_ROLES}
+    for row in relations:
+        if row['relation'] == 'component_of' and row['from_kind'] == 'agreement' \
+                and row['to_kind'] == 'project':
+            for role in PARTY_ROLES:
+                by_project[role][row['to_id']] |= by_agreement[role][row['from_id']]
+    return by_agreement, by_project
+
+
+def _collected(review, kind, identity, known, unknown):
+    """The documents a coverage row collected, less any the ledger does not hold.
+
+    An unknown identifier is a defect in the coverage table. It fails loud
+    and does not block (author, 2026-09-29): logged at ERROR with the row
+    that cites it, counted at the end of the build, and left out of the
+    served list so no page links to a document that does not exist.
+    """
+    found = []
+    for document_id in (review.get('document_ids') or '').split(';'):
+        if not document_id:
+            continue
+        if document_id in known:
+            found.append(document_id)
+        else:
+            unknown.append(document_id)
+            logging.error('coverage: %s %s cites unknown document %r in document_ids=%r',
+                          kind, identity, document_id, review.get('document_ids'))
+    return found
 
 
 def country_view(ledger_dir, code, config, *, tables=None):
@@ -132,15 +193,7 @@ def country_view(ledger_dir, code, config, *, tables=None):
     agreement_rows = {row['agreement_id']: row for row in tables['agreements']
                       if row['country'] == code}
     projects = [row for row in tables['projects'] if row['country'] == code]
-    relations = _current(tables['relations'], 'relation_id')
-    preferred = {row['party_id']: row['name'] for row in
-                 _current(tables['party_names'], 'name_row_id')
-                 if row['form_type'] == 'preferred'}
-    funders = defaultdict(set)
-    for row in relations:
-        if row['from_kind'] == 'party' and row['relation'] == 'party_in' \
-                and row['to_kind'] == 'agreement' and row['to_id'] in agreement_rows:
-            funders[row['to_id']].add(preferred.get(row['from_id'], row['from_id']))
+    parties, project_parties = _parties(tables, agreement_rows)
     timings = defaultdict(list)
     for row in tables['timings']:
         timings[row['observation_id']].append(row)
@@ -148,7 +201,7 @@ def country_view(ledger_dir, code, config, *, tables=None):
     country_subjects |= {('agreement', identity) for identity in agreement_rows}
     country_subjects |= {('asset', row['asset_id']) for row in tables['assets']
                          if row['country'] == code}
-    statements = [_statement(row, lines, line_documents, timings, agreement_rows, funders)
+    statements = [_statement(row, lines, line_documents, timings, agreement_rows, parties)
                   for row in _current(tables['observations'], 'observation_id')
                   if (row['subject_kind'], row['subject_id']) in country_subjects
                   and row['axis'] == 'money' and row['measure'] in ('amount', 'estimate', 'flow')]
@@ -175,6 +228,7 @@ def country_view(ledger_dir, code, config, *, tables=None):
         return sorted(citations[(kind, identity)])
 
     project_views = []
+    unknown = []
     for row in projects:
         identity = row['project_id']
         events = by_subject[('project', identity)]
@@ -182,13 +236,19 @@ def country_view(ledger_dir, code, config, *, tables=None):
         stage = next((MILESTONE_LABELS[s] for s in MILESTONES if s in stages),
                      'Not documented')
         review = coverage.get(('project', identity), {})
+        # The coverage row is a review record: what was collected for the
+        # project on checked_at, not what a document says (ticket 1610). Its
+        # documents are served apart from the cited ones and never join them.
         project_views.append(dict(
             id=identity, country=code, name=row['canonical_name'],
             technology=row['sector'] or 'Not specified', location='Not specified',
             operator='Not specified', notes=row['notes'] or '',
             coverage=review.get('review_status') or 'Not assessed',
             coverage_note=review.get('notes') or '', finance_stage=stage,
-            funders=[], events=events, claims=[], source_links=[],
+            coverage_checked_at=review.get('checked_at') or '',
+            coverage_documents=_collected(review, 'project', identity, sources, unknown),
+            funders=sorted(project_parties['funder'][identity]),
+            channels=sorted(project_parties['channel'][identity]), events=events,
             sources=cited('project', identity),
             evidence=sorted(cited_lines[('project', identity)],
                             key=lambda item: item['line_id']),
@@ -203,7 +263,8 @@ def country_view(ledger_dir, code, config, *, tables=None):
             id=identity, country=code, name=next((name for name in names if name), identity),
             instrument=row['instrument'] or '', modality=row['modality'] or '',
             sector=row['sector'] or '', currency=row['currency'] or '',
-            funders=sorted(funders[identity]),
+            funders=sorted(parties['funder'][identity]),
+            channels=sorted(parties['channel'][identity]),
             coverage=review.get('review_status') or 'Not assessed',
             events=by_subject[('agreement', identity)],
             sources=cited('agreement', identity),
@@ -215,6 +276,18 @@ def country_view(ledger_dir, code, config, *, tables=None):
         needed.add(config['headline_source'])
     if missing := needed - sources.keys():
         raise ValueError(f'Unknown cited documents: {sorted(missing)}')
+    # Every other coverage row of this country is checked the same way, though
+    # no view lists its documents (Codex review, 2026-09-29): an agreement,
+    # asset, party or perimeter row citing an unknown document is a defect of
+    # the same kind, logged and counted here, once per country.
+    referents = country_subjects | {
+        (kind, row[key]) for kind, table, key in (('party', 'parties', 'party_id'),
+                                                  ('perimeter', 'perimeters', 'perimeter_id'))
+        for row in tables[table] if row['country'] == code}
+    for (kind, identity), review in coverage.items():
+        if kind != 'project' and (kind, identity) in referents:
+            _collected(review, kind, identity, sources, unknown)
+    print(f'coverage: {len(set(unknown))} unknown document ids, not served', file=sys.stderr)
     country_perimeters = {row['perimeter_id'] for row in tables['perimeters']
                           if row['country'] == code and row['status'] == 'accepted'}
     reported_counts = [dict(id=row['observation_id'], perimeter_id=row['subject_id'],

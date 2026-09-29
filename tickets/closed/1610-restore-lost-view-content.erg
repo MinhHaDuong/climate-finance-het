@@ -1,0 +1,99 @@
+%erg 0.1
+Title: Restore the project views' lost content and show each document's collection state
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1575
+
+--- log ---
+2026-09-29T12:00Z HDMX-coding-agent created
+
+2026-09-29T14:50Z HDMX-coding-agent note decision de l'auteur (2026-09-29) : une partie en role channel n'est pas un bailleur ; filtre role=funder sur les agreements et les projets (dix agreements ZAF et leurs dix statements servaient leur channel comme funder avant cette branche ; cpd4e-germany perd GIZ) ; aucun affichage des channels ajoute ; la verification de build sur un document_id de coverage inconnu reste en place, non tranchee
+2026-09-29T16:12Z HDMX-coding-agent closed — autoclosed — PR #1575
+--- body ---
+## Context
+
+Child of [[0870]]. The integration review of the served views (7aae8a9d
+against 881b1262) found that the retirement of the legacy readers
+([[0878]]) left `scripts/jetp/_country_views_v2.py` hard-coding
+`funders=[]`, `claims=[]` and `source_links=[]` for every project (entered
+at dc9a0645): totals before and after, source_links 315 to 0, claims 136
+to 0, project funders 84 to 0. The ledger holds 0 `refers_to` rows and 0
+discovery line-referents; the 304 legacy links sit in
+`data/jetp/migration/0874-link-candidates.csv`.
+
+Author decisions (2026-09-29):
+
+- Option D: the legacy links are not promoted now; M2 (tracker [[1500]])
+  resolves them into candidate rows after blind extraction.
+- A field is filled only from ledger rows (derived, never typed). A field
+  the ledger cannot support, or whose content is already served under
+  another name, is removed from the served contract together with the
+  reading code in `deliverables/jetp-observatory/app.js`.
+- A coverage row (`config/jetp-ledger.sql`, `coverage`) is a review
+  record: it says what was collected for a referent, not what a document
+  says. Its `document_ids` are shown on the project page in a block of
+  their own, labelled as collected in the coverage review of
+  `checked_at` and not cited, never merged into the cited documents and
+  never counted as support.
+- Recipe VN3 of [[0834]] (Bac Ai shows six sources) is amended to what
+  the ledger supports: one cited document and six collected in the
+  coverage block. VN3 stays a manual recipe step; no new automated guard
+  without a skeptical advisor first.
+- Each document shows the state of our collection and reading, derived at
+  build time from the ledger and stored nowhere: not collected (no
+  snapshot), collected but not extracted (a snapshot, no line), stub (the
+  one minimal line the migration minted to hold a locator,
+  `docs/jetp-ledger-migration.md` step 3), extracted (lines an extractor
+  read). "Fully ingested" and the terminal grey states come with M2 and
+  are not shown yet. Each state has a word and an icon, not colour alone,
+  reads in grayscale, and the legend is labelled "State of our collection
+  and reading".
+- `check_facts` in `tests/browser/jetp_observatory.py` is dead code
+  (never called by `check_site`, stale Bac Ai identifier, typed constant
+  3) and is deleted.
+- The navigation is not restructured here (a later ticket does that).
+- A party in the `channel` role is not a funder (author, 2026-09-29): the
+  funder rule keeps the `funder` role only, for agreements and for the
+  projects they are components of. The channel is served beside the
+  funders under its own name (`channels` on agreements, statements and
+  projects) and shown as a muted second line "through <channel>" under the
+  funder on the Funding page and the project page, and as the role Channel
+  on the Organisations page; the funder filters stay on funders.
+- A build-time assert fails loud and does not block (author, 2026-09-29):
+  a coverage `document_ids` entry the ledger does not hold is logged at
+  ERROR with the row citing it, counted once on stderr at the end of the
+  build ("coverage: N unknown document ids, not served"), left out of the
+  served list, and hidden nowhere.
+
+## Relevant files
+
+- `scripts/jetp/_country_views_v2.py`: the country views
+- `scripts/jetp/build_ledger_documents_view.py`: the documents view the
+  Documents page joins on the identifier, which carries the state
+- `deliverables/jetp-observatory/app.js`, `styles.css`
+- `tests/test_jetp_country_views_v2.py`, `tests/test_jetp_ledger_documents_view.py`,
+  `tests/test_jetp_observatory_render.py`, `tests/browser/jetp_observatory.py`
+- `docs/jetp-study/0834-integration-review-final-2026-09-22.md`: recipe VN3
+
+## Exit criteria
+
+- [ ] For each of `funders`, `claims`, `source_links`: either filled from
+      ledger rows (which rows, how many) or removed from the served
+      contract and from app.js, with the reason recorded in the PR
+- [ ] The project page shows a block "Collected in the coverage review of
+      <checked_at> (not cited)" listing the coverage row's `document_ids`
+      with links, separate from the cited documents and counted nowhere
+- [ ] `check_facts` is deleted; the VN3 recipe text reads: Bac Ai shows
+      one cited document and six collected in the coverage block
+- [ ] Every document carries a collection state (not collected, collected
+      but not extracted, stub, extracted), derived at build time, shown
+      with a word and an icon on the Documents page and wherever a
+      document is listed, under the legend "State of our collection and
+      reading"; the stub rule is stated and its count reported
+- [ ] Page copy uses no banned word (claims, deals, players, sources,
+      entities, records) in the text this ticket adds
+- [ ] Tests first for the builder changes; every served file byte-diffed
+      before and after, each change listed with counts; the build is
+      byte-identical when run twice and on padme; `make lint`,
+      `make check-fast`, `make check-jetp` on padme;
+      `tests/browser/jetp_observatory.py` passes against the built site

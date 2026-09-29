@@ -210,7 +210,16 @@ no earlier address is kept, and an internal page key is not an address.
   from the ledger's documents table, served alone as `data/ledger-documents.json`
   (`document_id`, `country`, `document_type`, `language`, `title`,
   `published_date`, `edition_of`) by `scripts/jetp/build_ledger_documents_view.py`
-  and joined by the page on the identifier; the search reads titles too. The archived copies
+  and joined by the page on the identifier; the search reads titles too. The
+  same view carries each document's `collection_state` (ticket 1610), derived
+  at build time from the retrievals and the lines and stored in no table:
+  `not_collected`, `collected`, `stub` (only the minimal line the migration
+  minted to hold a locator) or `extracted`. The page shows it as a shape and a
+  word under the legend "State of our collection and reading", on the
+  Documents page and wherever a document is listed. A project page also lists
+  the documents its `coverage` row collected, in a block of their own marked
+  "Collected in the coverage review of <date> (not cited)": a review record,
+  never merged into the cited documents. The archived copies
   themselves are staged locally by `make jetp-observatory-documents` into
   `documents/`, with the index of what was staged. That staging happens once;
   after a `dvc checkout` moves the snapshot to another revision, `make

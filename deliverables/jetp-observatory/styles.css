@@ -611,19 +611,34 @@ details.attempts summary {
 .timeline a {
   font-size: 11px;
 }
-.sources {
+.sources,
+.review-documents {
   list-style: none;
   padding: 0;
 }
-.sources li {
+.sources li,
+.review-documents li {
   padding: 13px 0;
   border-top: 1px solid var(--line);
   font-size: 12px;
 }
-.sources small {
+.sources small,
+.review-documents small {
   display: block;
   color: var(--muted);
   margin-top: 5px;
+}
+/* Ticket 1610: a document's reading state is a shape and a word in the
+ * surrounding text's colour, so it reads in grayscale. */
+.reading-state {
+  white-space: nowrap;
+}
+.reading-legend {
+  font-size: 12px;
+  margin: 18px 0 0;
+}
+.reading-legend strong {
+  color: var(--ink, inherit);
 }
 .badge {
   color: #547057;

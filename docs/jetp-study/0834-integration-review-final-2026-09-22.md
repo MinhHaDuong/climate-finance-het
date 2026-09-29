@@ -124,6 +124,17 @@ en donne six à Bac Ai (`vnm-eeas-jetp-project-progress-2025`, `vnm-eib-bac-ai-p
 archivées / quatre dans la fiche » est fortuite : ce ne sont pas les quatre mêmes. L'écart était
 déjà consigné au journal de 0839 (`2026-09-21T22:10Z`). `shots/PROBE-Q2-bac-ai-sources.png`.
 
+**Amendement de la recette VN3 (2026-09-29, ticket 1610, décision de l'auteur).** Le ledger v2
+ne soutient pour Bac Ai qu'une seule citation (`line-referents` :
+`vnm-evn-cdp-bac-ai-2025-discovery-1`) ; les cinq autres identifiants ne figurent que dans
+`document_ids` de sa ligne `coverage` (revue du 2026-09-12), qui est un enregistrement de revue
+et non une citation. La recette VN3 se lit désormais : *depuis Bac Ai, la fiche montre un
+document cité (`vnm-evn-cdp-bac-ai-2025`) et, dans le bloc « Collected in the coverage review of
+12 Sept 2026 (not cited) », six documents collectés dont le bulletin 5 du MOIT
+(`vnm-moit-newsletter-05-2025-07`), qui s'ouvre depuis ce bloc.* VN3 reste un pas manuel de la
+recette ; aucun garde automatique n'est ajouté. Les 304 liens hérités attendent M2
+(suiveur 1500).
+
 **Recette navigateur livrée : trois exécutions, trois succès.**
 `tests/browser/jetp_observatory.py --url http://127.0.0.1:8771` rend
 `Browser checks passed; 97 historical records` aux trois passages, exit 0 à chaque fois

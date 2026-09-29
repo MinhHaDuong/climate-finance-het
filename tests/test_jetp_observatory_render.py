@@ -170,6 +170,126 @@ def anchors(html):
             for href, text in re.findall(r'<a href="([^"]*)"[^>]*>(.*?)</a>', html)]
 
 
+@cache
+def ledger_documents():
+    return {row["document_id"]: row for row in served("ledger-documents")["documents"]}
+
+
+def test_the_project_page_lists_the_coverage_review_apart_from_the_cited_documents() -> None:
+    # Ticket 1610: a coverage row says what our review collected for the
+    # project, not what a document says. The project whose review gathered
+    # the most documents shows them in a block of their own, dated, marked
+    # not cited, each linked and carrying its reading state; the cited list
+    # beside it is unchanged, and a document only the review collected is
+    # in the block and nowhere in the cited list.
+    project = max(projects(), key=lambda p: len(p["coverage_documents"]))
+    only_collected = set(project["coverage_documents"]) - set(project["sources"])
+    assert only_collected, "the positive control: every collected document is also cited"
+
+    html = render("project/" + project["id"])["main"]
+    block = re.search(r'<div class="panel" id="coverage-review" data-coverage-review="(\d+)">(.*?)</ul>',
+                      html, re.DOTALL)
+    assert block and int(block.group(1)) == len(project["coverage_documents"])
+    # The legend that names the states sits in the block itself, not only on
+    # the Documents page: a reader lands here from a project.
+    assert 'id="reading-legend"' in html[block.end():block.end() + 2000]
+    heading = re.search(r"<h3>([^<]*)</h3>", block.group(2)).group(1)
+    assert heading.startswith("Collected in the coverage review of ") and heading.endswith("(not cited)")
+    assert project["coverage_checked_at"][:4] in heading
+    listed = re.findall(r'data-coverage-document="([^"]+)"', block.group(2))
+    assert listed == project["coverage_documents"]
+    for document_id in listed:
+        item = re.search(rf'<li data-coverage-document="{document_id}">(.*?)</li>', block.group(2), re.DOTALL).group(1)
+        assert ledger_documents()[document_id]["title"] in unescape(item)
+        assert f'data-reading-state="{ledger_documents()[document_id]["collection_state"]}"' in item
+    cited = re.search(r'<ul class="sources">(.*?)</ul>', html, re.DOTALL).group(1)
+    assert cited.count("<li>") == len(project["sources"])
+    assert not [d for d in only_collected if d in cited]
+
+
+def test_a_channel_is_a_second_line_under_the_funder_never_a_funder() -> None:
+    # Author, 2026-09-29: "through <channel>" under the funder on the Funding
+    # page and the project page; on the Organisations page the party is
+    # named as Channel, by the page's own grouping; the funder filters stay
+    # on funders. Data-driven on the served ZAF view.
+    zaf = served("ZAF")
+    with_channel = [a for a in zaf["agreements"] if a["channels"]]
+    assert with_channel, "the positive control: no served agreement has a channel"
+    statements = [s for s in zaf["statements"] if s["channels"] and s["status"] != "Need"]
+    assert statements
+
+    funding = render("funding/ZAF", {"funding-statements-filter-funder": statements[0]["funder"]})
+    table = funding["elements"]["funding-statements-results"]["innerHTML"]
+    shown = re.findall(r'data-channels="([^"]+)">through ([^<]+)</small>', table)
+    assert shown and all(name == data for data, name in shown), shown[:3]
+    # The funder filter lists the funders the statements name, exactly: a
+    # party that is a channel on one agreement and a funder on another
+    # would still be listed, as a funder.
+    options = re.search(r'id="funding-statements-filter-funder">(.*?)</select>', funding["main"], re.DOTALL).group(1)
+    listed = [unescape(v) for v in re.findall(r'<option value="([^"]+)"', options)]
+    financing = [s for s in zaf["statements"] if s["status"] != "Need"]
+    assert listed == sorted({s["funder"] for s in financing if s["funder"]})
+    # An agreement with a channel and no funder says so, and keeps the line.
+    cell = render("funding/ZAF", expression='funderCell({funder: "", instrument: "Grants", channels: "GIZ"})')["eval"]
+    assert cell.startswith("No funder recorded · Grants") and 'through GIZ</small>' in cell
+
+    project = next(p for p in zaf["projects"] if p["channels"])
+    html = render("project/" + project["id"])["main"]
+    funders = re.search(r"<dt>Funders</dt><dd>(.*?)</dd>", html, re.DOTALL).group(1)
+    # The first line is the served funders, the second the served channels:
+    # a party that is both, on different agreements, appears on both lines.
+    assert unescape(funders.split("<br>")[0]) == "; ".join(project["funders"])
+    assert f'through {"; ".join(project["channels"])}</small>' in funders
+
+    channel = project["channels"][0]
+    organisations = render("organisations", {"parties-search": channel})
+    rows = organisations["elements"]["parties-results"]["innerHTML"]
+    row = next(chunk for chunk in re.split(r"(?=<tr>)", rows) if f">{channel}<" in chunk)
+    pills = re.findall(r'<span class="pill">([^<]+)</span>', row)
+    assert "Channel" in pills and "Funder" not in pills, pills
+    assert project["name"] in unescape(row)
+
+
+def test_a_project_page_serves_no_field_the_ledger_cannot_fill() -> None:
+    # The sections the retired fields fed are gone with them (ticket 1610).
+    html = render("project/" + BAC_AI)["main"]
+    assert "What other documents say" not in html
+    assert "source-adjudication" not in html
+
+
+def test_every_document_shows_the_state_of_our_collection_and_reading() -> None:
+    # Ticket 1610: a word and a shape from the served view, under a legend
+    # that names the four states, on the Documents page; and the state
+    # rides along wherever a document is listed, here beside a statement's
+    # document on the Funding page.
+    rendered = render("documents")
+    legend = re.search(r'<div class="legend reading-legend" id="reading-legend">(.*?)</div>',
+                       rendered["main"], re.DOTALL).group(1)
+    assert legend.startswith("<strong>State of our collection and reading:</strong>")
+    assert re.findall(r'data-reading-state="(\w+)"', legend) == [
+        "not_collected", "collected", "stub", "extracted"]
+    words = re.findall(r'<span aria-hidden="true">(.)</span> ([^<—]+)', legend)
+    assert len({icon for icon, _ in words}) == 4, words
+    assert 'id="documents-filter-collection_state"' in rendered["main"]
+
+    results = rendered["elements"]["documents-results"]["innerHTML"]
+    rows = [chunk for chunk in re.split(r"(?=<tr>)", results) if "data-document-id=" in chunk]
+    assert rows
+    for row in rows:
+        document_id = re.search(r'data-document-id="([^"]+):\d+"', row).group(1)
+        state = ledger_documents()[document_id]["collection_state"]
+        shown = re.search(r'<span class="reading-state" data-reading-state="(\w+)"[^>]*><span aria-hidden="true">(.)</span> ([^<]+)</span>', row)
+        assert shown and shown.group(1) == state, (document_id, state)
+        assert shown.group(3).strip(), document_id
+
+    funding = render("funding/ZAF")
+    table = funding["elements"]["funding-statements-results"]["innerHTML"]
+    statement_rows = [chunk for chunk in re.split(r"(?=<tr>)", table) if "<td" in chunk]
+    assert statement_rows
+    for row in statement_rows:
+        assert row.count('class="reading-state" data-reading-state="') == 1, row[:200]
+
+
 def test_the_documents_view_is_a_table_of_collection_attempts_under_the_committed_file_cap() -> None:
     # Ticket 0858, author's decision of 2026-09-22: one served file is one
     # table.  The climb is a read-time join on the views that already serve
