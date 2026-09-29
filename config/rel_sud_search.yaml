@@ -9,6 +9,14 @@ year_max: 2026
 # forms in `en` T1/T3 were added after sentinels 16 and 56 were missed; those two,
 # and 21/23 (rescued by dropping the language filter), are TUNING sentinels.
 
+# Scope decision, author, 2026-09-29 (independent of any sentinel): the harvest
+# covers Kyoto instruments (CDM, JI, Green Investment Schemes, AAU trading) because the
+# review's rule admits international carbon mechanisms with an explicit climate
+# object, and REDD+ benefit sharing (harvested for recall; the article keeps it only
+# when the payment comes from an international mechanism). The phrases added under
+# this decision in `en` T2/T3 are 'Green Investment Scheme', 'assigned amount units',
+# 'REDD+ benefit sharing', 'carbon benefit sharing'. Sentinels 47 and 52 are tuning.
+
 themes:
   T1: international climate finance
   T2: instruments, private finance, international carbon
@@ -18,8 +26,8 @@ themes:
 queries:
   en:
     T1: '"climate finance" OR "Green Climate Fund" OR "climate funds" OR "Adaptation Fund" OR "Global Environment Facility" OR "Just Energy Transition Partnership" OR "climate change finance"'
-    T2: '"carbon market" OR "carbon credits" OR "Clean Development Mechanism" OR "blended finance" OR "private climate finance" OR "climate bonds" OR "Joint Implementation"'
-    T3: '"adaptation finance" OR "REDD" OR "forest finance" OR "payments for ecosystem services" OR "adaptation financing" OR "financing for adaptation" OR "financing for climate change adaptation" OR "adaptation aid" OR "aid for adaptation"'
+    T2: '"carbon market" OR "carbon credits" OR "Clean Development Mechanism" OR "blended finance" OR "private climate finance" OR "climate bonds" OR "Joint Implementation" OR "Green Investment Scheme" OR "assigned amount units"'
+    T3: '"adaptation finance" OR "REDD" OR "forest finance" OR "payments for ecosystem services" OR "adaptation financing" OR "financing for adaptation" OR "financing for climate change adaptation" OR "adaptation aid" OR "aid for adaptation" OR "REDD+ benefit sharing" OR "carbon benefit sharing"'
     T4: '"loss and damage" OR "climate justice" OR "climate debt" OR "Rio markers" OR "grant equivalent"'
   fr:
     T1: '"finance climat" OR "finance climatique" OR "financement climatique" OR "Fonds vert pour le climat" OR "financements climat" OR "financement de la lutte contre le changement climatique" OR "Fonds d''adaptation"'
