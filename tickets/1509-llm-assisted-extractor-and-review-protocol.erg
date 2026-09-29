@@ -1,0 +1,41 @@
+%erg 0.1
+Title: LLM-assisted extractor and its row-by-row review protocol
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Blocked-by: 1506
+Blocked-by: 1508
+
+--- log ---
+2026-09-29T09:14Z HDMX-coding-agent created — code child of [[1500]] (M2)
+
+--- body ---
+## Context
+
+Stage 4 for one-off documents (the nine plans and approval documents, most
+project pages and news), where no repeated series justifies a parser. An LLM
+read is not byte-reproducible: the committed CSV is the record, not the
+process. The extractor must therefore make the output reviewable and the
+provenance explicit.
+
+## Work
+
+- Prompt-plus-schema extractor that reads the adapter output and proposes
+  lines with a printed label, a locator that identifies the assertion (never
+  the whole document), and the fields of the document's `line-field-specs` row.
+- `decided_by` carries the model identifier and the prompt version; a
+  temperature and seed are recorded where the API allows.
+- Review protocol: proposals land as a diff in a PR for row-by-row review; a
+  stated budget per document; a rejected row is recorded, not dropped.
+- Check every proposed locator against the stored bytes automatically (the
+  locator must resolve to text that supports the label), so a hallucinated row
+  fails before review.
+- Positive control: feed a document with a known planted row and a known
+  absent row and confirm the first is found and the second is not invented.
+
+## Exit criteria
+
+- [ ] A named document goes from bytes to a reviewable proposal diff
+- [ ] Every proposed row's locator resolves to supporting text, or the row is rejected automatically (red test with a fabricated locator)
+- [ ] The planted-row control passes and no row is invented for the absent one
+- [ ] `decided_by` records model and prompt version on every line
+- [ ] `make jetp-ledger-check`, `make check-fast` and `make lint` pass

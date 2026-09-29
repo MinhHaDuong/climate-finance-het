@@ -1,0 +1,37 @@
+%erg 0.1
+Title: Replay harness: reproduce the lines of the 254 extracted documents
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Blocked-by: 1506
+
+--- log ---
+2026-09-29T09:14Z HDMX-coding-agent created — code child of [[1500]] (M2)
+
+--- body ---
+## Context
+
+The 254 extracted documents (13,089 lines, 253 snapshots) are the only oracle
+the pipeline has. Replaying them through the pipeline is what makes "works on
+all we hold" a testable claim, and it is the byte-invariance property the
+author wanted for the robust version. It binds parsers and the writer; an LLM
+read is not byte-reproducible, so lines that came from a hand or LLM read are
+compared, not regenerated (list them in the report).
+
+## Work
+
+- For each extracted document, run the pipeline from its snapshot and compare
+  to the committed lines and `line-fields/` row by row.
+- Classify every difference: the pipeline is wrong, the committed line is
+  wrong (then a ticket, under the severity floor), or the difference is
+  legitimate and explained.
+- Report which documents replay exactly, which differ, which cannot be
+  regenerated (hand-read), by country and type.
+- Positive control: a deliberately altered snapshot or line must make the
+  harness fail.
+
+## Exit criteria
+
+- [ ] Every one of the 254 documents is reported: replays exactly, differs (explained), or not regenerable (named)
+- [ ] The positive control fires
+- [ ] The harness runs in `make check-jetp` or is named as a slow gate, with its data requirement stated (needs the snapshot bytes: padme)
+- [ ] `make jetp-ledger-check` and `make lint` pass

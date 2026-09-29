@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Extract lines from 47 periodic and structured JETP documents (wave 1)
+Created: 2026-09-29
+Author: HDMX-coding-agent
+Blocked-by: 1501
+Blocked-by: 1507
+
+--- log ---
+2026-09-29T09:10Z HDMX-coding-agent created — child of [[1500]]
+
+2026-09-29T09:14Z HDMX-coding-agent note reshaped 2026-09-29 under milestone M2 of [[0725]]: run child, Blocked-by the replay harness 1507 so a parser proves itself on extracted documents first
+--- body ---
+## Context
+
+The highest-yield part of the backlog: status series over time are what
+observations and timings are made of. Scope, before dedup: progress updates 24
+(VNM 14, ZAF 9, SEN 1), annual reports 7 (ZAF 4, SEN 3), operator reports 8
+(IDN 6, SEN 1, ZAF 1) and project lists 8 (ZAF 5, SEN 2, VNM 1). 1501 removes
+duplicates and translations first. Some are Vietnamese (`vi`) or French.
+
+## Method (author decision, 2026-09-29)
+
+- Where a publisher repeats one format (for example the 14 VNM progress
+  updates), one purpose-built parser writes the lines of the whole series;
+  the parser is the artifact, its output is reviewed as a diff.
+- One-off PDFs: LLM-assisted reading with row-by-row diff review, at a stated
+  budget. `decided_by` names the model.
+- Each document gets a `line-field-specs` row at extraction; the field file
+  header is validated against it.
+- Lines only in this ticket. Observations follow the storage contract rules and
+  cite the lines; no referent or project is minted here beyond what
+  [[0875]]'s tables already hold.
+
+## Exit criteria
+
+- [ ] Every document cleared by 1501 for this wave has lines, or a recorded disposition with the reason
+- [ ] Lines of the 254 previously extracted documents are byte-identical before and after
+- [ ] Each parser has a test on a fixture drawn from a real snapshot, and was red-tested by replaying a defect it must reject
+- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-jetp` pass
+- [ ] New counts by country and document type stated in the PR
