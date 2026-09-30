@@ -601,7 +601,12 @@ observations (step D3). [M3b for all rules of this section]
 **How many.** A statement yields zero, one or several observations, one per
 measure it prints. A plan item that prints a capacity and a cost estimate
 yields a `capacity` and an `estimate`; a heading that only groups items
-yields none. Nothing is read that the statement does not print.
+yields none. Nothing is read that the statement does not print. A column
+the publisher derives from another by a printed rate (an amount in US
+dollars beside the same amount in rand) is the same measure, not a second
+one: the reading rule declares which column is the original, and each
+derived column becomes a conversion-rate record citing the statement when
+the rate can be recovered, and nothing otherwise.
 
 **Subject.** The subject is typed. It is the statement itself while no
 identity has been attached to it, and becomes a project, asset, agreement,
@@ -635,16 +640,19 @@ the statement to the observation, unchanged. A shared status comes only
 from the crosswalk.
 
 **Timings.** Each date the statement gives becomes a timing with a role
-(`event`, `approval`, `reporting_cutoff`, `register_date`, `report_date`,
-`planned`, `target`, or `period_start` and `period_end` for a flow over an
-interval), a precision (`day`, `month`, `quarter`, `year`, `unknown`) and
+from the closed list of date roles of the [ontology](jetp-ontology.md)
+(section 2, Observation), a precision (`day`, `month`, `quarter`, `year`, `unknown`) and
 bounds. "Q1 2026" is precision `quarter` with bounds on the first and last
 day of the quarter; "approved in 2024" is precision `year` with the year's
 bounds. A date printed elsewhere in the snapshot and governing the statement,
 such as a reporting cutoff on the cover of a register, becomes a timing that
 names the statement it was read from, which is then the group heading or
 another statement of the same snapshot. No date is invented: a value printed
-without a date has only the timings the document gives.
+without a date has only the timings the document gives. A figure printed as
+cumulative or "to date" is a flow whose `period_end` is its as-of date and
+whose `period_start` has precision `unknown`, bounded below by the
+agreement's earliest printed date when one exists; fusion section 7 treats
+it as a closing position, never a movement.
 
 **Methods.** Three methods may read observations, each signing with its name
 and version.
@@ -669,7 +677,9 @@ and version.
 - A reading rule is checked by replay and idempotence like a parser
   (section 10), and red-tested with defects it must reject: a scale applied
   twice or not at all, a blank read as zero, a planned date read as an event,
-  an estimate read as an amount.
+  an estimate read as an amount, and a register row printing a pledge in
+  three money columns (as pledged, in US dollars, in rand), which yields one
+  `amount`, not three.
 
 **Correction.** A faulty reading (a wrong value, scale, measure, basis,
 subject or date role, or a reading rule found faulty) is a ledger error. The
@@ -805,3 +815,4 @@ does well.
 | A cost field is blank. | Unknown, not zero; no observation value is invented. |
 | A reading rule applied the "USD billion" scale twice. | A ledger error: the observation is superseded with the reason, and the rule's new version is rerun over everything it read. |
 | A later snapshot prints a different amount. | A new statement and a new observation; the earlier observation is not superseded. |
+| A project page prints "disbursements to date as of 30 June 2026: USD 40 million". | One flow observation of measure `flow`, type `disbursement`, with `period_end` on 30 June 2026 and `period_start` of precision `unknown`; not a movement on 30 June. |

@@ -336,8 +336,8 @@ products on the run's branch. It gives: run identifier, job, commit of the
 code, machine, start and end times, declared budgets, spend per vendor and
 per LLM with token counts, GPU wall time, documents or rounds attempted,
 completed, failed and deferred with their reasons, the size of each queue
-for the author, and a final state (section 10). A run that found nothing
-says so. [M2 for extraction runs; M3a for discovery rounds, requirement Q14]
+for the author, and a final state (section 10). The report of a build lists
+the trails that do not resolve. A run that found nothing says so. [M2 for extraction runs; M3a for discovery rounds, requirement Q14]
 
 **Review minutes.** When the author works through a queue, the sitting
 records its start and end times, the run it belongs to and the number of

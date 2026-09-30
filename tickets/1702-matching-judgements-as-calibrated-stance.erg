@@ -10,6 +10,7 @@ Blocked-by: 1711
 2026-09-30T18:00Z HDMX-coding-agent note exit criterion added from the vocabulary pass (ticket 1703): proposed schema changes the specification documents cannot make
 2026-09-30T14:33Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M2 storage and extraction targets of the storage contract
 2026-09-30T14:48Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M3a collection targets of the storage contract
+2026-09-30T15:02Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M3b targets of the storage contract and ontology
 
 --- body ---
 ## Context
@@ -59,3 +60,9 @@ Author decisions (2026-09-30, interactive):
 - [ ] `retrievals` carries `archive_url`, the public archive capture of the document's address [M3a] (W1-28)
 - [ ] `documents` carries `class` (frozen, living, series) as a dated judgement [M3a] (W1-23, W1-54)
 - [ ] The M3a collection tables exist with their columns and validator rules: `frame-entries` keyed by kind and `party_id` or `line_id`, `rounds`, `candidates`, `triage-judgements` under the in-force rule, `known-items`, `tracker-claims` [M3a] (W1-23)
+- [ ] `assets.operator_party_id` is dropped, and the `party_in` term's range covers agreement, project and asset with the Party roles as its closed list [M3b] (W1-32)
+- [ ] `party-names` carries a `preferred` flag, the form type `preferred` is retired from the terms in force, and the validator keeps exactly one preferred form in force per party [M3b] (W1-33)
+- [ ] `adjudications.decision_type` accepts `revision` and `preference` as terms in force, with their member roles [M3b] (W1-38)
+- [ ] `status-crosswalk` and `sector-crosswalk` carry `mapping_relation`, required on accepted rows [M3b] (W1-64)
+- [ ] The validator refuses a `same_as` chain between referents deeper than one [M3b] (W1-31)
+- [ ] The as-of builder applies a named correction overlay (storage contract § 1) for a correction release [M3b] (W1-36)

@@ -44,7 +44,17 @@ sections: **The paper trail** · **The tallies** · **About**. [M3b]
 
 The Glossary sits under About: a reader consults it, and does not start
 from it. The release history is in no bar; Methods links to it and is
-marked current when it is open. [M3b]
+marked current when it is open. It lists every release with its status:
+current, superseded by a named correction, or withdrawn with the reason.
+[M3b]
+
+**Pending judgements.** The judgements still awaiting a decision (candidate
+matches and other decision rows with a candidate status, which the storage
+contract serves as the decision record sorted by confidence) are listed on a
+page linked from Methods, sorted by likelihood and confidence, so that the
+author and the agents see them where they look. Broken trails are not a page:
+the build refuses a release whose trails do not resolve, and the build and
+run reports list them. [M3b]
 
 **Page top: two bars.**
 
@@ -81,7 +91,9 @@ marked current when it is open. [M3b]
 unit, its perimeter and a link to what was counted. A number a publisher
 printed carries "As published", with the publisher and the date. The two
 labels are a pair: each kind of number carries its own, and neither kind
-goes unmarked. [M3b]
+goes unmarked. A range computed at two match thresholds carries the label
+"Sensitivity to matching", so it is never read as a probability interval.
+[M3b]
 
 **Addresses match labels.** Each page's address is its label's slug:
 `#documents`, `#document-rows`, `#statements`, `#projects`, `#funding`,

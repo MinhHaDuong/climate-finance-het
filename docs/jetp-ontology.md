@@ -130,8 +130,9 @@ may have none of its own. [M3b]
 ### Asset
 
 A physical thing at a site: a plant, a unit within a plant, a transmission line,
-a substation, a mini-grid. Carries capacity, technology, location and operator,
-and moves through an asset lifecycle aligned to Global Energy Monitor's
+a substation, a mini-grid. Carries capacity, technology and location; its
+operator is a party attached by a dated `party_in` row, so a change of
+operator is a new row, not an edited attribute. It moves through an asset lifecycle aligned to Global Energy Monitor's
 status list, so that early retirement, mothballing and fuel conversion are
 expressible as asset states. Coal retirement is a unit fact: an asset may be a
 unit whose `part_of` is a plant. Minted only by a reviewed match. An asset can
@@ -167,15 +168,21 @@ tariff reform at Senelec is one agreement, one condition, one party. [M3b]
 One organisation, whatever its roles: `funder`, `channel`, `promoter`,
 `implementing_entity`, `beneficiary`, `contractor`, `operator`, or publisher of
 a document. A funder and the channel its money passes through are two
-parties in two roles: "Canada via World Bank and ADB" names three. [M2]
+parties in two roles: "Canada via World Bank and ADB" names three. These
+roles attach to an agreement, a project or an asset through `party_in`; a
+mandate outside any of them (a lead agency, a guarantor, a signatory) goes
+through `role_in` (section 3). [M2 for publishers; M3b for the other roles]
 
 Parties are under authority control, as in a library's name authority file
 or the ROR and GLEIF registries. A party row holds no name;
 its names are party name rows, one per form as printed, each with a form type,
-`preferred`, `acronym`, `translation`, `spelling_or_case_variant` or
-`former_name`, a language, and the document or line it was read from. Exactly
-one form is preferred at a time; a form is revised by supersession like any
-decision row. [M2 for the names of publishers; M3b for other parties]
+`acronym`, `translation`, `spelling_or_case_variant` or `former_name` (or
+none for the plain form), a language, the document or line it was read
+from, and whether it is the preferred form. Being preferred is a flag, not a
+form type, so a preferred form can also be an acronym (SENELEC). Exactly one
+form is preferred at a time; a form is revised by supersession like any
+decision row. The form type `preferred` is kept in force until the schema
+carries the flag. [M2 for the names of publishers; M3b for other parties]
 
 ### Perimeter
 
@@ -215,8 +222,10 @@ agreement, a state of an asset, a stage of a project, a capacity, an estimate
 on a plan line, a count on a perimeter, an envelope on a partnership. The
 subject is typed, `(subject_kind, subject_id)`, and may be a line itself when
 no identity has been minted. An observation has one or more timings, each
-with a role (`event`, `approval`, `reporting_cutoff`, `register_date`,
-`report_date`, `planned`), a precision (`day`, `month`, `quarter`, `year`,
+with a role from one closed list of nine (`event`, `approval`,
+`reporting_cutoff`, `register_date`, `report_date`, `planned`, `target`,
+`period_start`, `period_end`; the last two bound a flow over an interval,
+section 4), a precision (`day`, `month`, `quarter`, `year`,
 `unknown`) and bounds, so that an approval known only to the year
 and the cutoff of the report that states it are both kept. Values are the
 publisher's, in the publisher's unit and currency; conversion is a
@@ -257,7 +266,7 @@ decided it and when. [M2 for keeping the publisher's word; M3b for the crosswalk
 | `concerns` | project | asset | zero or more |
 | `finances` | agreement | project | many-to-many |
 | `tranche_of` | agreement | agreement | at most one active parent |
-| `party_in` | party | agreement | one row per role; a party may fund one agreement and channel another |
+| `party_in` | party | agreement, project, asset | one row per role, dated, from the Party roles of section 2: `funder` and `channel` attach to an agreement; `promoter`, `implementing_entity`, `beneficiary` and `contractor` to an agreement or a project; `operator` to an asset or a project; a party may fund one agreement and channel another |
 | `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement: `lead_agency`, `coordinating_agency`, `guarantor`, `endorser`, `signatory`, `host`, `standards_body`; one row per role |
 | `cites` | line | document, line | a document's reference to another document or to a line of it, held or not; an observation's citation of its one line is the observation's `line_id` column, not a relation |
 | `member_of` | line, project, asset, agreement | perimeter | dated, justified membership; a line may be a member before any identity is minted |
@@ -313,7 +322,7 @@ now in the `marker-coefficients` table of section 5. A value may be a range: `va
 both equal. [M3b]
 
 Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow carries
-its interval through two timing roles, `period_start` and `period_end`, so a
+its interval through two of the timing roles of section 2, `period_start` and `period_end`, so a
 quarterly register total states the quarter it covers and the account
 of the [fusion rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
 `event` timing. [M3b]
@@ -378,7 +387,13 @@ as terms. [M2]
 `narrowMatch`, `relatedMatch`, or `local` for a word the ledger defines
 itself. Similar labels do not justify `exactMatch`. A crosswalk row maps a
 publisher's word onto a term; a perimeter row defines a population that
-counts are made against. Both name who decided and when. [M2]
+counts are made against. Both name who decided and when. A crosswalk row
+also states its mapping strength with the same SKOS relations, required when
+the row is accepted, since "D. Completed" onto `closed` and a word onto its
+identical label are not the same mapping; the two crosswalk tables gain
+`mapping_relation` as a target of the storage contract (section 1), and a
+result that counts by shared status or sector states the weakest mapping
+among the rows it used. [M2 for terms; M3b for crosswalk rows]
 
 **Revision.** The in-force rule of the decision tables applies (storage
 contract, section 1): a row is in force when it is the accepted terminal row
@@ -406,7 +421,9 @@ prose glossary. Alignment is checked, not trusted. A test (ticket 0880) fails
 when a value listed in sections 2 to 4 is not a term in force, or a term in
 force appears nowhere in this document, and when a table or column declared
 in the storage contract differs from the DDL. The Observatory's Glossary and a SKOS export
-(storage contract, section 3) are generated from the `terms` table, so the words a reader sees
+(storage contract, section 3) are generated from the `terms` table; the SKOS
+export covers the value lists only (`kind` = `value`), one concept scheme
+per `list`, since SKOS does not model classes and relations, so the words a reader sees
 are the words the validator enforces. [M2 for the DDL and the alignment test; M3b for the Glossary and M4 for the SKOS export]
 
 LinkML was considered as the single source instead, generating the DDL, JSON

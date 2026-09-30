@@ -380,7 +380,7 @@ classes. [M3a for the class, M4 for what each class needs over time]
 
 | Class | Examples | At M3a | At M4 |
 |---|---|---|---|
-| frozen | a signed agreement, a board report, a plan once issued | fetched once, and once more at the freeze (section 11) | its address is checked periodically; a disappearance triggers an archive capture or retry (link rot) |
+| frozen | a signed agreement, a board report, a plan once issued | fetched once, and once more at the freeze (section 11) | its address is checked periodically by a fetch: a disappearance triggers an archive capture or retry (link rot), and new bytes under the same address are registered as a new snapshot, so a silent replacement is seen |
 | living | a project data sheet updated as disbursements come, a portfolio portal, a ministry dashboard | fetched once at discovery; earlier snapshots held are kept | refetched at a declared frequency; each changed version is a new snapshot, so the document becomes a dated series of snapshots |
 | series | annual and quarterly reports, secretariat progress reports | each issue found is its own document, linked by `edition_of`; the series' publisher and stated periodicity are recorded | the date of the next issue is expected, and a late issue is reported |
 
@@ -408,8 +408,11 @@ retrieval date of the living documents it relies on beside the newest
 document date. [M3a]
 
 Both dates are published with the register. They differ from the knowledge
-cutoff of fusion section 1 ("two times"), which is the date up to which
-admissions and judgements count, here the date of the freeze. [M3a]
+cutoff of fusion section 1 ("two times"), the date up to which admissions and
+judgements count. The freeze fixes the register's membership; the knowledge
+cutoff is declared per release, at or after the discovery cutoff (results
+and releases, section 4), so the statements and judgements of M3b count in
+the release that declares a later cutoff. [M3a]
 
 **The freeze.** When the author accepts the recall estimate and the
 unreachable list, the register is frozen: its documents, their triage

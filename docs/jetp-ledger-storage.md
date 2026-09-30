@@ -94,6 +94,11 @@ so, and the table above changes when the DDL does.
 | `triage-judgements` | new table: the triage outcome of a candidate as a judgement of the one shape of section 4, with `status`, `supersedes` and `recorded_at`; a document's admission is its accepted admit row | collection section 9; as-of rule | M3a |
 | `known-items` | new table: the frozen known-item list, each item with what identifies it, the held document matched to it if any, and whether its recovery followed a revision of the frame | collection section 6 | M3a |
 | `tracker-claims` | new table: each examined claim of a declared tracker, with its outcome and the primary document it was traced to | collection section 7 | M3a |
+| `assets` | loses `operator_party_id`; an asset's operator is a dated `party_in` row | the Party roles of the ontology, section 3 | M3b |
+| `party-names` | gains a `preferred` flag; the value `preferred` leaves the form-type list, so a preferred form can also be an acronym | ontology section 2, Party | M3b |
+| `adjudications` | `decision_type` gains `revision` (members: the earlier and the later line; verdict: development, late report, correction or rounded restatement) and `preference` (members: candidates, the accepted one and the excluded ones; verdict: the reason of fusion section 5), as `terms` rows | fusion sections 2 and 5 | M3b |
+| `status-crosswalk` | gains `mapping_relation` (the SKOS mapping strength), required when a row is accepted | ontology section 5, traceability | M3b |
+| `sector-crosswalk` | gains `mapping_relation`, as for `status-crosswalk` | ontology section 5, traceability | M3b |
 <!-- wave-1 W1-29: pending author decision (terms, robots and registration columns on retrievals and documents) -->
 | `document-addresses` | new table: a document's recorded addresses, each with the date from which it holds, so a relocation is a new address of the same document | relocation rule (below) | M4 |
 <!-- wave-1 W1-01: pending author decision (where readings, dispositions and run records live; method, run and status columns on lines) -->
@@ -106,7 +111,9 @@ Adjudication member roles are typed by decision: `occurrence_membership`
 uses `occurrence`, `excluded` or `context`; `flow_coverage` uses
 `covering_flow`, `covered_movement`, `excluded`, `opening`, `closing` or
 `context`; `perimeter_compatibility` and `identity` use `candidate`,
-`accepted`, `excluded` or `context`. An accepted occurrence decision needs
+`accepted`, `excluded` or `context`; the target types `revision` and
+`preference` use, respectively, roles naming the earlier and the later line,
+and `candidate`, `accepted` and `excluded`. An accepted occurrence decision needs
 at least two occurrence observations; accepted flow coverage needs a covering
 flow and a covered movement. A rejected decision retains its members as
 history but contributes none to the in-force view. [M3b]
@@ -164,6 +171,11 @@ Rules that the validator enforces:
   today. So a row accepted before K and superseded after K is in the state
   at K. The DDL test replays that case: A accepted, B superseding A recorded
   after K, and the state at K returns A. [M2]
+- A correction release ([results](jetp-results.md) section 9) keeps its
+  cutoff K and adds a named correction overlay: supersession rows that
+  correct ledger errors, recorded after K, whose superseded rows were
+  recorded on or before K. Its state is the as-of state at K with those rows
+  applied, and nothing else recorded after K. [M3b]
 - A document is admitted, for the as-of rule, when the ledger first held it.
   At M2, holding is dated by the earliest retrieval that yielded one of its
   snapshots ([extraction](jetp-extraction.md) section 3). From M3a, admission
@@ -174,7 +186,8 @@ Rules that the validator enforces:
 - `measure`, `basis`, `flow_type`, `modality`, `classification`, `relation`,
   `date_role` and every axis take values from the terms in force ([ontology](jetp-ontology.md)
   section 5); a new value is a `terms` row, with its definition, before
-  the validator accepts it. [M2]
+  the validator accepts it. The date roles are the one closed list of nine
+  of ontology section 2. [M2]
 - A monetary conversion cites a `rates` row; a script never carries a rate. [M3b]
 - A locator has a syntax per format, and the validator checks it: for a
   PDF, the PDF page index and the printed folio when the adapter reads one,
@@ -192,8 +205,10 @@ Rules that the validator enforces:
   three places is three lines related by `same_as`. [M2]
 - A publisher's cell that lists several names stays verbatim in the
   per-document fields table; the no-list rule applies to the ledger's own
-  columns, and the parties in such a cell are minted through `role_in` or
-  `party_in` rows, one per name, citing the line. [M2 for keeping the cell; M3b for minting the parties]
+  columns, and the parties in such a cell are attached through `party_in`
+  rows (a funder, a channel, a promoter, an operator of the agreement,
+  project or asset the line is about) or `role_in` rows (a mandate), one per
+  name, citing the line. [M2 for keeping the cell; M3b for minting the parties]
 - A publisher's method note that governs a page or a table (a pro-rating,
   an exchange-rate policy, a footnote conditioning every row) is a line of
   classification `heading` that `groups` the lines it governs, so that an
@@ -236,10 +251,15 @@ Rules that the validator enforces:
   party that `document-publishers` links to a document, and a joint
   publication is one row per party. A party's names are `party-names` rows,
   one per form as printed, each citing the document or line it was read from;
-  exactly one `preferred` form is in force per party, under the in-force rule
-  of the decision tables. The party row carries no name of its own. A
+  exactly one preferred form is in force per party, under the in-force rule
+  of the decision tables (today a row of form type `preferred`; in the
+  target schema, a flag beside the form type). The party row carries no name of its own. A
   publication names the form its document prints (`name_row_id`), and a page
   that shows a document's publisher shows that form, not the preferred one. [M2]
+- Equality between referents is bounded to depth one: the source of an
+  accepted `same_as` between referents is never the target of another, and
+  a would-be chain is refused and raised as a conflict for review
+  ([fusion](jetp-fusion.md) section 3). [M3b]
 - `own_status` is copied, never normalised. `shared_status` appears only in
   `status-crosswalk`. [M2]
 - No column holds a semicolon-separated list; a list is rows in a relation
@@ -251,7 +271,9 @@ Rules that the validator enforces:
   line's verbatim fields; an unknown value is an empty field with a typed
   missingness reason, and `null` on export; zero is a measured value. [M3b]
 - `routes` maps identifiers from a published release (the pre-2026-09 site)
-  to their new kind and identifier, so no public page route breaks. The
+  to their new kind and identifier, so no public page route breaks. It is
+  reserved for identifiers retired after they appeared in a published
+  release; a fold before publication needs no route. The
   prepublication preview IDs were never public and are recorded as retired in
   the migration report, not redirected
   (author decision, 2026-09-24; PR #1492 removed the browser forwards). [M3b]
@@ -356,9 +378,13 @@ decisions are stored.
   `decisions.md`. [M3b]
 - Party name forms are `party-names` rows (a case or diacritic variant has
   form type `spelling_or_case_variant`); party identifiers are
-  `external-ids` rows of kind `party`. When an accepted `same_as` folds two
-  parties, the retained party gains the other's forms as `party-names` rows
-  and `routes` sends the retired identifier to it. [M3b]
+  `external-ids` rows of kind `party`. Two parties are folded physically
+  only under the rules that fusion section 3 says never make two parties
+  (the same external identifier, a case or diacritic variant): the retained
+  party gains the other's forms as `party-names` rows, its preferred form is
+  stated by superseding the other's, and the retired identifier is recorded.
+  Every other `same_as` between parties stays a judgement, and each result
+  computes its view of parties at its match threshold. [M3b]
 - Document relations (`same_as`, `edition_of`, `translation_of`) are
   `relations` rows between documents. [M2]
 

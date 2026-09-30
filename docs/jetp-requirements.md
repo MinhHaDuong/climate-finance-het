@@ -451,11 +451,15 @@ each resolving to its snapshot.
 error. Each report is recorded, answered by a judgement (accepted, with the
 correction made as a revision that names the report; or rejected, with the
 reason), and an accepted correction reaches every published claim it touches
-(Q7). The number of reports received and corrections made is published with
-each release, as a signal of use and of quality gained. *M3b* for receiving
-and tracing reports, *M4* for publishing the counts. Test: a report submitted
-against a released statement ends with a recorded judgement, and, if
-accepted, the next release shows the correction and names the report.
+(Q7). An accepted report that changes a released figure produces a
+correction release; otherwise it enters the next regular release (Results
+and releases § 9). The number of reports received and corrections made is
+published with each release, as a signal of use and of quality gained.
+*M3b* for receiving and tracing reports, *M4* for publishing the counts.
+Test: a report submitted against a released statement ends with a recorded
+judgement, and, if accepted, the correction release or the next release
+shows the correction and names the report.
+<!-- wave-1 W1-37: pending author decision (report record: a ticket per report or a served table) -->
 
 ### 4.3 Identities and judgements
 
@@ -487,7 +491,9 @@ Compute figures that state their unit, population, cutoff and basis.
 
 **F10. Results at a knowledge cutoff.** Any result can be computed as the
 Observer knew it at a cutoff K, using only what was admitted on or before K;
-a later discovery never changes an earlier result. *M3b.* Test: add a
+a later discovery, meaning a new record, never changes an earlier result. A
+correction release keeps K and applies only the named correction overlay of
+Fusion § 8. *M3b.* Test: add a
 statement dated after K; the result at K is unchanged.
 
 **F13. Counts name their unit and population.** Every count names its unit
@@ -498,9 +504,11 @@ never fills the strict one. No count is summed across countries. *M3b.*
 Test: every count in a release carries a unit and a scope; no strict-scope
 figure includes a statement lacking JETP attribution.
 
-**F14. Financial states are selected, not added.** Need, announced,
-memorandum, approved, signed and disbursed are a chronology; an aggregate
-selects one state explicitly. Physical state is a separate dimension and
+**F14. Financial states are selected, not added.** A need (a plan's estimate
+or an envelope), the agreement states of the ontology's money axis
+(announced, memorandum of understanding, approved, signed) and its flows
+(commitment, disbursement, expenditure) are a chronology, one closed list
+stated in Fusion § 7; an aggregate selects one state explicitly. Physical state is a separate dimension and
 never follows from a financial one. *M3b.* Test: no released figure adds
 signed and disbursed amounts; no physical state is inferred from a
 disbursement.
@@ -532,7 +540,8 @@ its amount once to the all-functions total.
 
 **F19. Matching to CRS and IATI, and the gaps between financial states.** Operations are matched to CRS and
 IATI records as candidate matches under F11; the gaps between announced,
-signed, reported and disbursed amounts are produced per country and funder;
+signed, reported and disbursed amounts are produced per country and funder,
+where *reported* is the amount a comparator record (CRS or IATI) reports;
 a public matching coverage rate (Fusion § 5) is computed; the reporting lag of the structured
 channels is measured, not assumed. Structured search channels have no precedence
 over the document closest to the event. *M3b.* Test: each matched aggregate
@@ -844,10 +853,12 @@ recorded version is byte-identical.
 the Observatory shows the author and the agents what needs attention: figures whose
 trail does not resolve, documents and countries without new statements,
 judgements awaiting the author, and changes between runs large enough to
-check. *M3b* for broken trails and pending judgements, *M4* for changes
-between runs. Test: a deliberately broken trail and a pending judgement both
-appear where the author looks; at M4, an injected jump in a total is
-flagged.
+check. *M3b* for broken trails, in the build and run reports, and for
+pending judgements, on a sorted page of the Observatory; *M4* for countries
+and documents without new statements and for changes between runs. Test: a
+deliberately broken trail appears in the build report and stops the
+release, and a pending judgement appears on the page of pending judgements;
+at M4, an injected jump in a total is flagged.
 
 **Q21. Decisions are traceable.** Every decision that shapes the Observer (a
 rule adopted, a scope changed, a value preferred by the author, a milestone
@@ -1020,7 +1031,7 @@ document that reads statements into observations.
 | F4 Living documents append | M2 | Extraction; Fusion § 2 |
 | F6 Disagreeing statements retrievable | M2, M3b | Fusion § 5; Extraction |
 | F21 Excerpts for qualitative work | M3b | Results and releases |
-| F25 Reported errors are traced | M3b, M4 | Fusion § 2; Results and releases; Operation |
+| F25 Reported errors are traced | M3b, M4 | Results and releases § 9; Fusion § 2 (the judgement); Operation (the intake, pending an author decision) |
 | **4.3 Identities and judgements** | | |
 | F11 Referents by decision, counted at a match threshold | M3b | Fusion § 3 |
 | F12 Organisations under authority control | M3b | Fusion § 3; Ontology |
@@ -1030,7 +1041,7 @@ document that reads statements into observations.
 | F13 Counts name unit and population | M3b | Fusion § 6–7; Results and releases |
 | F14 Financial states selected, not added | M3b | Extraction § observations; Fusion § 7; Ontology § 4 |
 | F15 Money in publisher's currency | M3b | Extraction § observations; Fusion § 7 |
-| F16 Operation timelines with honest dates | M3b | Extraction § observations; Ontology; Fusion § 4 |
+| F16 Operation timelines with honest dates | M3b | Fusion § 7 (timelines); Extraction § observations; Ontology |
 | F17 Funding roles kept apart | M3b | Extraction § observations; Ontology; Fusion § 7 |
 | F18 Transition functions | M3b | Extraction § observations; Ontology |
 | F19 Matching to CRS and IATI, gaps between financial states | M3b | Fusion § 5; Results and releases |
@@ -1076,7 +1087,7 @@ document that reads statements into observations.
 | Q16 A neutral documentary record | M2 | every document; Presentation |
 | Q18 Maintainable by agents and one researcher | M2 | Operation; every document |
 | Q19 Every change reviewable and reproducible | M2 | Operation; Results and releases |
-| Q20 Anomalies visible in the Observatory | M3b, M4 | Presentation; Operation |
+| Q20 Anomalies visible in the Observatory | M3b, M4 | Presentation (pending judgements); Results and releases § 5 and Operation § 8 (broken trails in the build and run reports); Operation § 11 (M4) |
 | Q21 Decisions traceable | M2 | Operation; every document |
 | Q14 No silent run | M3a, M4 | Operation; Collection |
 | Q15 Cost and effort measured | M3b | Operation |
