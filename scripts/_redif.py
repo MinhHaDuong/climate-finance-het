@@ -41,6 +41,7 @@ KNOWN_PREFIXES = ("author-", "editor-", "file-", "classification-", "provider-",
                   "contributor-", "name-", "primary-", "secondary-", "tertiary-",
                   "x-", "payment-", "restriction-")
 
+_KNOWN_TYPE = re.compile(r"^redif-(paper|article|book|chapter|series)(?![a-z])")
 _ATTR = re.compile(r"^([A-Za-z][A-Za-z0-9-]*)\s*:(.*)$")
 _SNIFF = re.compile(rb"(?im)^(?:\xef\xbb\xbf)?\s*template-type\s*:\s*redif-")
 _DOI = re.compile(r"(10\.\d{4,9}/[^\s\"<>]+)")
@@ -102,7 +103,9 @@ def iter_templates(text: str) -> Iterator[dict[str, list[str]]]:
 def template_type(tpl: dict[str, list[str]]) -> str:
     """``redif-paper`` etc. from ``ReDIF-Paper 1.0``; empty when absent."""
     v = (tpl.get("template-type") or [""])[0].split()
-    return v[0].lower() if v else ""
+    t = v[0].lower() if v else ""
+    m = _KNOWN_TYPE.match(t)  # "ReDIF-Paper:", "ReDIF-Article1.0" (28 in the mirror)
+    return "redif-" + m.group(1) if m else t
 
 
 def first(tpl: dict[str, list[str]], key: str) -> str:

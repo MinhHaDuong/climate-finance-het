@@ -169,3 +169,9 @@ def test_duplicate_handle_keeps_the_fuller_copy(tmp_path):
     assert d.abstract.tolist() == ["An abstract."]
     dups = pd.read_csv(tmp_path / "o" / "t.duplicates.csv")
     assert dups.source_file.tolist() == [os.path.join("eee", "jdevec", "a.rdf")]
+
+
+def test_template_type_tolerates_suffix_typos():
+    assert _redif.template_type({"template-type": ["ReDIF-Paper: 1.0"]}) == "redif-paper"
+    assert _redif.template_type({"template-type": ["ReDIF-Article1.0"]}) == "redif-article"
+    assert _redif.template_type({"template-type": ["ReDIF-Person 1.0"]}) == "redif-person"
