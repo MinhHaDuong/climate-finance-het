@@ -1,6 +1,9 @@
 # REL "Sud et langues" search pass (ticket 1530).
 # Query strings were translated by the assistant and have not been read by a
-# native speaker: treat non-English/French/Spanish/Portuguese strings as drafts.
+# native speaker. The zh, ru, hi, bn, id and ar strings were reviewed by two
+# models on 2026-09-30 (ticket 1790; per-string status in
+# config/rel_sud_sources_status.yaml, `translation_review`); `revisions` below
+# keeps every string that runs of record used before a fix.
 # Values feed OpenAlex `title_and_abstract.search`; keep commas out of them.
 year_min: 1990
 year_max: 2026
@@ -60,7 +63,7 @@ queries:
   zh:
     T1: '"气候融资" OR "气候金融" OR "气候资金" OR "绿色气候基金" OR "气候投融资" OR "全球环境基金" OR "适应基金" OR "气候变化南南合作"'
     T2: '"碳市场" OR "碳信用" OR "清洁发展机制" OR "混合融资" OR "碳金融"'
-    T3: '"适应资金" OR "适应融资" OR "森林融资" OR "生态系统服务付费" OR "REDD"'
+    T3: '"适应资金" OR "适应融资" OR "林业融资" OR "生态系统服务付费" OR "REDD"'
     T4: '"损失与损害" OR "气候正义" OR "气候债务" OR "损失和损害"'
   hi:
     T1: '"जलवायु वित्त" OR "जलवायु वित्तपोषण" OR "हरित जलवायु कोष" OR "ग्रीन क्लाइमेट फंड" OR "जलवायु वित्त पोषण"'
@@ -82,6 +85,18 @@ queries:
     T2: '"углеродный рынок" OR "углеродные кредиты" OR "механизм чистого развития" OR "смешанное финансирование" OR "углеродные единицы" OR "проекты совместного осуществления" OR "совместное осуществление" OR "механизма чистого развития"'
     T3: '"финансирование адаптации" OR "REDD" OR "финансирование лесов" OR "плата за экосистемные услуги" OR "платежи за экосистемные услуги" OR "финансирования адаптации"'
     T4: '"потери и ущерб" OR "климатическая справедливость" OR "климатический долг"'
+
+# Strings of record replaced after a run used them. A run is reproduced from
+# its own registry (which records the exact filter) or from `old` here; the
+# string under `queries` is the current one.
+revisions:
+  - date: 2026-09-30
+    ticket: "1790"
+    key: zh.T3
+    old: '"适应资金" OR "适应融资" OR "森林融资" OR "生态系统服务付费" OR "REDD"'
+    new: '"适应资金" OR "适应融资" OR "林业融资" OR "生态系统服务付费" OR "REDD"'
+    reason: "森林融资 is a calque; Chinese writes 林业融资 (both reviewers, 1790)"
+    runs_with_old: ["1530 OpenAlex pass (Q-china-zh-T3)"]  # no 1653 source used zh
 
 # Affiliation country codes (authorships.institutions.country_code). Country
 # studied and language are separate fields, handled in the reading step.

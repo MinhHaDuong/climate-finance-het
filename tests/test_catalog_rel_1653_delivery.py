@@ -8,6 +8,7 @@ import types
 import catalog_rel_1653_delivery as ex
 import pytest
 import qa_rel_intake
+import yaml
 
 pytestmark = pytest.mark.domain_corpus
 
@@ -277,3 +278,32 @@ def test_a_subtitle_or_encoding_variant_keeps_the_shared_doi():
                               "patterns of public spaces based on a sport for all x"]) == 1
     assert ex.title_clusters(["implementasi kebijakan pos pembinaan terpadu",
                               "implementasi bantuan pangan non tunai"]) == 2
+
+
+def test_per_string_review_status_replaces_the_bare_language_list():
+    """1790: unreviewed languages and disputed strings come from translation_review."""
+    status = {"translation_review": {
+        "zh": {"T1": {"status": "reviewed-ok"}, "T3": {"status": "reviewed-fixed"}},
+        "ru": {"T1": {"status": "unreviewed"}, "T2": {"status": "reviewed-disputed"}},
+        "bn": {"T1": {"status": "reviewed-disputed"}}}}
+    assert ex.unreviewed_languages(status) == ["ru"]
+    assert ex.disputed_strings(status) == ["ru T2", "bn T1"]
+    assert ex.unreviewed_languages({"unreviewed_languages": ["zh"]}) == ["zh"]
+    assert ex.disputed_strings({"unreviewed_languages": ["zh"]}) == []
+
+
+def test_the_source_register_reviews_every_non_latin_query_string():
+    """Every zh/ru/hi/bn/id/ar string of the search config carries a review status."""
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, "config", "rel_sud_sources_status.yaml"), encoding="utf-8") as fh:
+        review = yaml.safe_load(fh)["translation_review"]
+    with open(os.path.join(root, "config", "rel_sud_search.yaml"), encoding="utf-8") as fh:
+        queries = yaml.safe_load(fh)["queries"]
+    for lang in ["zh", "ru", "hi", "bn", "id", "ar"]:
+        assert set(review[lang]) == set(queries[lang]), lang
+        for theme, t in review[lang].items():
+            assert t["status"] in {"unreviewed", "reviewed-ok", "reviewed-fixed",
+                                   "reviewed-disputed"}, (lang, theme)
+            if t["status"] == "reviewed-fixed":
+                assert f'"{t["new"]}"' in queries[lang][theme], (lang, theme)
+                assert f'"{t["old"]}"' not in queries[lang][theme], (lang, theme)

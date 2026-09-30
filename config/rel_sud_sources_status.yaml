@@ -154,6 +154,44 @@ sources:
       publication page of the sitemap read at crawl-delay 10 s, some pages
       failed.
 
-# Languages whose query strings no competent reader has reviewed (exit
-# criterion 3): status "non résolu".
-unreviewed_languages: [zh, ru, hi, bn, id, ar]
+# Review of the machine-drafted zh, ru, hi, bn, id and ar query strings of
+# config/rel_sud_search.yaml (ticket 1790, author decision 2026-09-30: two
+# decorrelated strong models stand in for human readers). Reviewers: Claude
+# Opus 5.5 (verdict written first) and google/gemini-3.1-pro-preview via
+# OpenRouter. A string changes only where both object. Archive, with
+# checksums: ~/data/projets/climate-finance-het/rel_sud/2026-09-30/t1790-reader-review/
+#
+# status: unreviewed | reviewed-ok | reviewed-fixed (old -> new; the old
+#         string stays under `revisions` in rel_sud_search.yaml) |
+#         reviewed-disputed (one reviewer objected; string unchanged).
+translation_review:
+  zh:
+    T1: {status: reviewed-ok}
+    T2: {status: reviewed-ok}
+    T3: {status: reviewed-fixed, old: "森林融资", new: "林业融资", objection: "calque; Chinese writes 林业融资 (both)"}
+    T4: {status: reviewed-ok}
+  ru:
+    T1: {status: reviewed-ok}
+    T2: {status: reviewed-disputed, objection: "Opus: nominative углеродный рынок only, add углеродного рынка / углеродных рынков; Gemini: ok"}
+    T3: {status: reviewed-disputed, objection: "Gemini: финансирование лесов is a calque, финансирование лесного хозяйства; Opus: literal but understandable"}
+    T4: {status: reviewed-disputed, objection: "Opus: nominative only, add климатической справедливости / потерь и ущерба; Gemini: ok"}
+  hi:
+    T1: {status: reviewed-ok}
+    T2: {status: reviewed-ok}
+    T3: {status: reviewed-ok}
+    T4: {status: reviewed-ok}
+  bn:
+    T1: {status: reviewed-disputed, objection: "Opus: genitive জলবায়ু অর্থায়নের missing (OpenAlex matches whole words); Gemini: ok"}
+    T2: {status: reviewed-ok}
+    T3: {status: reviewed-ok}
+    T4: {status: reviewed-ok}
+  id:
+    T1: {status: reviewed-ok}
+    T2: {status: reviewed-ok}
+    T3: {status: reviewed-ok}
+    T4: {status: reviewed-ok}
+  ar:
+    T1: {status: reviewed-ok}
+    T2: {status: reviewed-ok}
+    T3: {status: reviewed-ok}
+    T4: {status: reviewed-ok}

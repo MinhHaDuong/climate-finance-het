@@ -326,6 +326,26 @@ def to_record(c, rid, qid, reg, label, enrich, stats):
     }
 
 
+def unreviewed_languages(status):
+    """Languages with a query string no reviewer has read.
+
+    Per-string review (``translation_review: {lang: {theme: {status: ...}}}``)
+    supersedes the older bare ``unreviewed_languages`` list, still accepted.
+    """
+    review = status.get("translation_review")
+    if review is None:
+        return list(status.get("unreviewed_languages", []))
+    return [lang for lang, themes in review.items()
+            if any(t["status"] == "unreviewed" for t in themes.values())]
+
+
+def disputed_strings(status):
+    """``lang T#`` of every string one reviewer objected to and nobody changed."""
+    return [f"{lang} {theme}"
+            for lang, themes in (status.get("translation_review") or {}).items()
+            for theme, t in themes.items() if t["status"] == "reviewed-disputed"]
+
+
 def manifest(records, registry, excluded, stats, status, producer, delivery, notes=""):
     incomplete, needs_human = [], []
     by_source = {}
@@ -344,7 +364,12 @@ def manifest(records, registry, excluded, stats, status, producer, delivery, not
                     "reason": "; ".join(f"{w} ({n})" for w, n in why)})
         if s.get("needs_human"):
             needs_human.append({"item": s["needs_human"], "reason": f"{name}: {s['status']}"})
-    langs = ", ".join(status.get("unreviewed_languages", []))
+    langs = ", ".join(unreviewed_languages(status))
+    disputed = disputed_strings(status)
+    if disputed:
+        incomplete.append({"unit": f"query strings {', '.join(disputed)}",
+                           "reason": "reviewed-disputed: one of two model reviewers "
+                                     "objected, string kept as run; no human reader"})
     if langs:
         incomplete.append({"unit": f"query strings in {langs}",
                            "reason": "machine-drafted, no competent reader reviewed them "
