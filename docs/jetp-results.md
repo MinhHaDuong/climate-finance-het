@@ -244,10 +244,13 @@ A branch name, a moving address or a pointer to the document store alone
 does not identify a release. *M3b* (Q8, F32).
 
 **Named formats.** The descriptor is a Frictionless Data Package
-(`datapackage.json`), and the data dictionary is its Table Schema for each
-file; both are generated from the DDL. The metadata record is the DataCite
+(`datapackage.json`), one resource per file, each shard its own resource
+with its own hash; the data dictionary is its Table Schema for each file,
+generated from the DDL for the common tables and from `line-field-specs`
+for the per-document fields tables. The metadata record is the DataCite
 record deposited through Zenodo, which relates the release chain and the
-code (IsNewVersionOf, IsPreviousVersionOf, IsSupplementTo). The persistent
+code (IsNewVersionOf, IsPreviousVersionOf, IsSupplementTo) and a correction
+to what it corrects (IsObsoletedBy, Obsoletes). The persistent
 identifier is reserved before the build, so the descriptor can name it.
 RO-Crate, with W3C PROV for the run record, is recorded as the M4 option.
 *M3b* for the Data Package and DataCite; *M4* for RO-Crate (F29, F31).
@@ -259,10 +262,11 @@ redistribution list excludes every document whose terms forbid it. A failed
 check stops the build and publishes nothing. The validation also screens the
 release's text for email addresses and telephone numbers, and the speaker
 and verbatim fields of prose statements for the names of natural persons
-other than signatories printed as such, and lists every hit for the author,
-who removes a natural person's contact details, or a name recorded where the
-office should be (extraction § 4), before acceptance; the screen reports, it
-does not block. *M3b* (Q6, Q8, C6, N2).
+other than signatories printed as such. Each hit is judged under the
+protocol of extraction § 6.3: a natural person's contact details, or a name
+recorded where the office should be (extraction § 4), are removed by
+supersession and recorded as readings; the build report counts the hits,
+and nothing is queued. *M3b* (Q6, Q8, C6, N2).
 
 **A reviewed act.** No program publishes a release on its own. A named
 reviewer accepts the validated package; acceptance is recorded in the
@@ -294,12 +298,13 @@ release identifier and the persistent identifier are recorded in each
 other's metadata. *M3b* (F28).
 
 **Metadata.** The deposit carries a metadata record in the DataCite schema,
-deposited through Zenodo (section 5, named formats), with at least: title, creator, version (the release
-identifier), countries, discovery cutoff, newest document date, knowledge
+deposited through Zenodo (section 5, named formats), with at least: title, creator, publisher (as the
+legal review names it), resource type, version (the release identifier), countries, discovery cutoff, newest document date, knowledge
 cutoff, method versions, licence, the related persistent identifiers (the
 previous release, the superseded release, the code), the papers that cite
-it, added as they appear, and a status: current, superseded by a named
-correction, or withdrawn with the reason. *M3b* (F29).
+it, added as they appear, and, as a version note since DataCite has no
+status field: current, superseded by a named correction, or withdrawn with
+the reason. *M3b* (F29).
 
 **Licence.** The release is published under an open licence that requires no
 more than attribution, stated in its metadata and in its files; the code
@@ -331,7 +336,7 @@ columns; *M3b* for the redistribution list (C6, F27, F30).
   provenance, reports and pages; the statements, including their verbatim
   labels and short excerpts, each attributed to its publisher, document and
   locator. *M3b* (F21, F30).
-- **Redistributed only where the source's terms allow**: the bytes of a
+- **Redistributed only where the publisher's terms allow**: the bytes of a
   document, and the records of a structured search channel. Where the terms do not
   allow it or are unknown, the release carries the address, the public
   archive record if one exists, the hash and the locator, so that a reader
@@ -386,10 +391,12 @@ deposit's metadata record, not its package, gains a pointer to the
 correction and the status "superseded". *M3b* (Q8, F28).
 
 **Withdrawal.** When a release must be withdrawn (a legal demand, content
-that should never have been published), its deposited files and its
-Observatory pages are removed; its descriptor, its file hashes and the
-reason are kept, the persistent identifier resolves to that record, and the
-metadata status says "withdrawn" with the reason. A withdrawal is followed by
+that should never have been published), the author removes its Observatory
+pages and asks the repository to remove its files, which only the
+repository can do, leaving a record to which the persistent identifier
+resolves; its descriptor, file hashes and reason are kept, and the version
+note says "withdrawn" with the reason. The screen of section 5 is the
+control that keeps this rare. A withdrawal is followed by
 a correction release where the data allow one; history is never rewritten.
 A banner on the pages of an earlier release that points to its correction is
 M4. *M3b* (F28).

@@ -94,7 +94,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Where do readings and run records live? (a) ledger CSV tables served or named not-served under F23, with a `runs` table; (b) DVC-tracked JSONL per run with only a run_id column on `lines` and the run report as the record; (c) tables for readings, no `runs` table (operation §8's committed report suffices). Recommended: (a); Q17 serves readings and AED-2/3 need them joinable, and a `runs` row is cheap.
 
-**Outcome.** decided by the author 2026-09-30: option (a): `readings` and `runs` as append-only journals in the storage contract's target schema, `run_id` plus method and version on lines, observations and decision tables, raw model responses stored under their hash beside the document bytes; exit criteria added to ticket 1702; applied in "docs(jetp): storage contract gains readings and runs journals and the ontology tables" and "docs(jetp): no ticket numbers or dates in normative text; History lines and index states" (language).
+**Outcome.** decided by the author 2026-09-30: option (a): `readings` and `runs` as append-only journals in the storage contract's target schema, `run_id` plus method and version on lines, observations and decision tables, raw model responses stored under their hash beside the document bytes; exit criteria added to ticket 1702; applied in "docs(jetp): storage contract gains readings and runs journals and the ontology tables" and "docs(jetp): no ticket numbers or dates in normative text; History lines and index states" (language). Parts (a) and (b) landed by half: the `dispositions` table and the `status`, `supersedes`, `hidden` and `adapter_version` columns of `lines` were written in wave 2 ([W2-01](../wave-2/ledger.md)).
 
 ### W1-02 (blocker, M2)
 
@@ -120,7 +120,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Set the audit parameters: sample floor per document (options: 3, 10, or a share such as 10% with floor 3) and the per-class precision floor that reopens a stratum (options: 90%, 95%). Recommended: floor 3 per document drawn to a target interval width, precision floor 95% lower bound per class, revisited after the first two logged sittings.
 
-**Outcome.** resolved by the author's rule of 2026-09-30 (autonomy; no author audit), in the commit "docs(jetp): autonomy correction, no machine judgement routed to the author" (branch `t1710-autonomy-correction`).
+**Outcome.** resolved by the author's rule of 2026-09-30 (autonomy; no author audit), in the commit "docs(jetp): autonomy correction, no machine judgement routed to the author" (branch `t1710-autonomy-correction`). Its item (e), a sample for recall, went with that rule; recall is measured on the held-out set from wave 2 ([W2-08](../wave-2/ledger.md)).
 
 ### W1-05 (major, M2)
 
@@ -516,7 +516,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Q17: the reference answers are the human-decided subset (disagreements, missed items, sampled rows); machine-agreed-only rows carry that flag; the reader and checker LLMs are named so a benchmark can exclude them. Operation §8: the run report records the sample rate and seed.
 
-**Outcome.** fixed in 954d6e84.
+**Outcome.** fixed in 954d6e84. An item both readers skip is counted from wave 2 by recall on the held-out set ([W2-08](../wave-2/ledger.md)).
 
 ### W1-51 (minor, M2)
 

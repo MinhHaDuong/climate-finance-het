@@ -8,10 +8,8 @@ Observatory see is
 words below are for the people who build the Observer, not for its readers.
 
 History: decided by the author on 2026-09-23 (decision 11 of the ontology
-design, [attic](attic/jetp-ontology-decisions-2026-09.md)), after the
-[ODEM acceptance review](attic/jetp-odem-acceptance-review-2026-09-23.md),
-and aligned across the ten specification documents on 2026-09-30 (ticket
-1703).
+design, [attic](attic/jetp-ontology-decisions-2026-09.md)); aligned under
+ticket 1703.
 
 ## The Observer, the ledger, the register, the Observatory
 
@@ -51,13 +49,12 @@ tables and never edits an upstream row. [M2]
 | Step | Name | Content | Tables |
 |---|---|---|---|
 | D1 | Register | What was fetched, byte for byte: publishers, documents, retrieval attempts, snapshots, and the record of how they were sought. A document is *registered* when it is in the register, and *held* when it is admitted and at least one of its retrievals yielded a snapshot | `parties`, `party-names`, `documents`, `document-publishers`, `retrievals`, `snapshots`, `coverage`, `dry-searches` |
-| D2 | Lines | One publisher's statement at one locator in one snapshot, with its own fields verbatim | `lines`, `line-fields/<document_id>`, `line-field-specs` |
+| D2 | Lines | One publisher's statement at one locator in one snapshot, with its own fields verbatim | `lines`, `line-fields/<document_id>`, `line-field-specs`; the target journals `dispositions` and `restatements` |
 | D3 | Observations | A line read into a typed statement, measure, value and timings, by a named method version | `observations`, `timings`, `external-ids`, `rates`, `deflators` |
-| D4 | Referents | Referents (projects, assets, agreements, parties, perimeters) minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `parties`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |
+| D4 | Referents | Referents (projects, assets, agreements, parties, perimeters) minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |
 
-The target journals `readings` and `runs` of the storage contract (section
-1) record how the rows of every step were read and by which run; they
-belong to no single step. [M2]
+The target journals `readings` and `runs` (storage contract, section 1)
+record how the rows of every step were read and by which run. [M2]
 
 D3 and D4 both read D2. An observation's subject is a line until matching
 attaches that line to a referent. The order of the [migration](attic/jetp-ledger-migration.md) builds D4

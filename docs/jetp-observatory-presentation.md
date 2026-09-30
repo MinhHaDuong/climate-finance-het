@@ -27,7 +27,9 @@ than suspicion, because the readers are researchers as well as journalists. [M3b
 
 **Evaluative words.** Outside a quoted statement, page copy never uses:
 *on track*, *off track*, *delayed*, *behind schedule*, *failed*, *broken
-promise*, *promise kept*, *underperforming*, *success*. A gap is written as
+promise*, *promise kept*, *underperforming*, *success*, nor, for cause and
+speed (requirement Q13), *because of*, *led to*, *resulted in*, *faster*,
+*slower*, *accelerated*. A gap is written as
 what was and was not found ("no public document found states a
 disbursement as of the knowledge cutoff"), and a publisher's own word of
 that kind is shown as the publisher's, in quotation. The build searches the
@@ -53,13 +55,15 @@ sections: **The paper trail** · **The tallies** · **About**. [M3b]
 The Glossary sits under About: a reader consults it, and does not start
 from it. The release history is in no bar; Methods links to it and is
 marked current when it is open. It lists every release with its status:
-current, superseded by a named correction, or withdrawn with the reason.
+current, superseded by a named correction, or withdrawn with the reason,
+generated at publication from the deposits' metadata records, outside any
+frozen package.
 [M3b]
 
-**Pending judgements.** The judgements still awaiting a decision (candidate
-matches and other decision rows with a candidate status, which the storage
-contract serves as the decision record sorted by confidence) are listed on a
-page linked from Methods, sorted by likelihood and confidence, so that the
+**Pending judgements.** The judgements still awaiting a decision (decision
+rows with a candidate status, and the undetermined items of the readings
+journal) are listed on a page linked from Methods, in the order of
+[fusion](jetp-fusion.md) section 3, so that the
 author and the agents see them where they look. Broken trails are not a page:
 the build refuses a release whose trails do not resolve, and the build and
 run reports list them. [M3b]
