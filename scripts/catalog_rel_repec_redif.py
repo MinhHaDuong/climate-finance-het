@@ -7,8 +7,9 @@ template (content sniffing: the mirror holds ReDIF under ``.rdf``, ``.redif``,
 per ReDIF-Paper, -Article, -Book or -Chapter template.
 
 The RePEc handle is the row key. A handle met in several files (editor backup
-copies such as ``*.rdf~``, a series mirrored twice) keeps the row from the
-first file in path order, backups last; the others are counted as
+copies such as ``*.rdf~``, a series mirrored twice, Elsevier's overlapping
+per-journal files) keeps the copy with the most non-empty fields, the first
+in path order (backups last) on a tie; the others are counted as
 ``duplicate_handle`` and listed in ``<output stem>.duplicates.csv``. A work
 template without a handle cannot be keyed and is counted, not kept.
 
@@ -125,6 +126,10 @@ def clean(value: str) -> str:
         return value.encode("utf-8", "replace").decode("utf-8")
 
 
+def _filled(r: dict) -> int:
+    return sum(1 for k in _redif.to_row({}) if r.get(k))
+
+
 def _backup_last(path: str) -> tuple[int, str]:
     return (1 if path.endswith("~") else 0, path)
 
@@ -152,16 +157,20 @@ def build(root: str, jobs: int) -> tuple[list[dict], list[dict], Counter]:
                 series[h] = n
     all_rows.sort(key=lambda r: _backup_last(r["source_file"]))
     kept: dict[str, dict] = {}
-    dups: list[dict] = []
+    dropped: list[dict] = []
     for r in all_rows:
         key = r["handle"].lower()
-        if key in kept:
-            dups.append({"handle": r["handle"], "source_file": r["source_file"],
-                         "kept_from": kept[key]["source_file"]})
-            continue
         if not r["journal"]:
             r["journal"] = series.get(r["series_handle"], "")
+        if key in kept:
+            old = kept[key]
+            if _filled(r) > _filled(old):  # the fuller copy wins; ties keep path order
+                kept[key], r = r, old
+            dropped.append(r)
+            continue
         kept[key] = r
+    dups = [{"handle": r["handle"], "source_file": r["source_file"],
+             "kept_from": kept[r["handle"].lower()]["source_file"]} for r in dropped]
     c["series_named"] = len(series)
     c["duplicate_handle"] = len(dups)
     rows = sorted(kept.values(), key=lambda r: r["handle"].lower())

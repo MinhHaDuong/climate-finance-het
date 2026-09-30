@@ -154,3 +154,18 @@ def test_clean_replaces_surrogates():
     assert cat.clean("a\udc92b") == "a\ufffdb"
     assert cat.clean("Café") == "Café"
     assert cat.clean("x\ud800y") == "x?y"
+
+
+def test_duplicate_handle_keeps_the_fuller_copy(tmp_path):
+    root = tmp_path / "RePEc"
+    (root / "eee" / "jdevec").mkdir(parents=True)
+    bare = "Template-Type: ReDIF-Article 1.0\nTitle: T\nYear: 2001\nHandle: RePEc:eee:jdevec:v:1:y:2001:i:1:p:1\n"
+    full = bare.replace("Year: 2001", "Year: 2001\nAbstract: An abstract.")
+    (root / "eee" / "jdevec" / "a.rdf").write_text(bare, encoding="utf-8")
+    (root / "eee" / "jdevec" / "b.rdf").write_text(full, encoding="utf-8")
+    out = tmp_path / "o" / "t.parquet"
+    assert cat.main(["--mirror", str(root), "--output", str(out)]) == 0
+    d = pd.read_parquet(out)
+    assert d.abstract.tolist() == ["An abstract."]
+    dups = pd.read_csv(tmp_path / "o" / "t.duplicates.csv")
+    assert dups.source_file.tolist() == [os.path.join("eee", "jdevec", "a.rdf")]
