@@ -109,7 +109,7 @@ def test_doi_from_url_and_records_without_any_identifier_are_listed_not_dropped(
     assert by["clacso:hdl:2"]["doi"] == "10.1234/abc.9"
     assert "DOI read from the record URL" in by["clacso:hdl:2"]["lane_note"]
     assert "clacso:hdl:3" not in by
-    [row] = [e for e in excluded if e["reason"] == "not_retrievable"]
+    [row] = [e for e in excluded if e["reason"] == "no_dedup_key"]
     assert row["record_id"] == "clacso:hdl:3"
     assert row["note"] == ex.NO_KEY_NOTE + "; Handle recorded: https://hdl.handle.net/3"
     assert row["url"] == "https://x/3" and row["platform_record_id"] == "hdl:3"
@@ -194,5 +194,5 @@ def test_a_record_without_doi_or_year_passes_the_checker_as_an_exclusion(runs, t
     assert qa_rel_intake.check_delivery(str(out)) == []
     man = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert man["counts"]["no_doi_no_openalex_no_year"] == 1
-    assert man["counts"]["excluded"] == {"duplicate_in_lane": 1, "not_retrievable": 1}
-    assert "1 record(s) carry no DOI" in man["notes"] and "bends" in man["notes"]
+    assert man["counts"]["excluded"] == {"duplicate_in_lane": 1, "no_dedup_key": 1}
+    assert "1 record(s) carry no DOI" in man["notes"] and "no_dedup_key" in man["notes"]

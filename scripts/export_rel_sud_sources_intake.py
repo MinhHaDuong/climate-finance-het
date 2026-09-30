@@ -25,7 +25,7 @@ A record with neither DOI nor year gets a DOI found in its URL, else a year
 from ``year_enrichment.csv`` in its run directory (written by the
 ``enrich-years`` subcommand from the GARUDA detail page); what still lacks
 both cannot enter ``records.csv`` (the checker refuses it): it is listed in
-``excluded.csv`` as ``not_retrievable`` with a note saying why, and counted in
+``excluded.csv`` as ``no_dedup_key`` with its Handle or URL, and counted in
 the manifest, never dropped silently.
 
 Usage:
@@ -77,11 +77,10 @@ REGISTRY_COLUMNS = ["query_id", "platform", "query", "run_at", "n_received",
                     "completed", "stop_reason", "filter", "n_expected",
                     "source", "route", "endpoint", "run_dir", "query_id_run",
                     "n_announced", "n_harvested", "n_delivered"]
-# The contract has no reason yet for a titled record without any dedup key;
-# not_retrievable is stretched to cover it until one lands (1655 asked).
+# A titled record whose source holds no DOI, OpenAlex id or year: contract
+# reason no_dedup_key (ticket 1730); the pool takes it in as a title-only work.
 NO_KEY_NOTE = ("no publication year, DOI or OpenAlex id in the source metadata (at most "
-               "deposit dates); not dedupable under the contract; title-level metadata exists in "
-               "the run archive")
+               "deposit dates)")
 # OAI-PMH identifier prefix of a DSpace repository, by source, so an excluded
 # record keeps every persistent identifier the pool may later accept as a key.
 OAI_PREFIX = {"uwi": "oai:uwispace.sta.uwi.edu:"}
@@ -207,10 +206,10 @@ def build(runs, root=None, languages=None):
         if rec["doi"] or rec["year"]:
             delivered.append(rec)
             continue
-        # No dedup key: the contract's checker (and the 1731 pool merge) refuse
-        # such a row in records.csv. Listed, not dropped (decision 2026-09-30).
+        # No dedup key: records.csv refuses the row; the contract lists it here
+        # and the pool merge still takes it in, as a title-only work.
         excluded.append({"record_id": rec["record_id"], "query_id": rec["query_id"],
-                         "reason": "not_retrievable", "title": rec["title"],
+                         "reason": "no_dedup_key", "title": rec["title"],
                          "note": no_key_note(rec), "url": rec["url"],
                          "platform_record_id": rec["platform_record_id"]})
         registry[rec["query_id"]]["n_delivered"] -= 1
@@ -341,10 +340,9 @@ def cmd_export(args):
     notes = args.notes or ""
     if stats["no_doi_no_year"]:
         notes += (f" {stats['no_doi_no_year']} record(s) carry no DOI, OpenAlex id or year "
-                  "anywhere in their source: listed in excluded.csv as not_retrievable, "
-                  "which bends that reason (it covers items without title-level metadata; "
-                  "these have titles, kept in the run archive) until the contract names "
-                  "a reason for records without a dedup key.")
+                  "anywhere in their source: listed in excluded.csv as no_dedup_key, "
+                  "with their Handle or stable URL, for the pool to take in as "
+                  "title-only works.")
     man = manifest(records, registry, excluded, stats, status, producer, delivery,
                    notes.strip())
     with open(os.path.join(args.output_dir, "manifest.json"), "w", encoding="utf-8") as fh:
