@@ -8,7 +8,7 @@ paths:
 # JETP observatory: structure and labels (project-specific)
 
 Before changing the site's navigation, page structure or labels, read
-`docs/jetp-language.md`, then `docs/jetp-ledger-migration.md`.
+`docs/jetp-language.md`, then `docs/jetp-observatory-presentation.md`.
 
 - **The navigation menu follows the data pipeline and the ontology** (author,
   2026-09-24). The paper trail is a viewer on the CSVs of steps D1–D4. The

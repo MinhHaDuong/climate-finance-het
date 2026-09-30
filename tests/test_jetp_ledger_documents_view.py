@@ -62,7 +62,7 @@ def test_each_document_carries_the_state_of_our_collection_and_reading(tmp_path)
     # Ticket 1610: derived at build time from the retrievals and the lines,
     # stored nowhere. No snapshot: not collected. A snapshot and no line:
     # collected. Only the minimal line the migration minted to hold a
-    # locator (docs/jetp-ledger-migration.md step 3, method=legacy_link in
+    # locator (docs/attic/jetp-ledger-migration.md step 3, method=legacy_link in
     # its notes): stub. Any other line: extracted, whatever else it holds.
     # A mirror whose retrieval yielded the same bytes as the read document is
     # in the same state: a line is read from bytes, not from an identifier.

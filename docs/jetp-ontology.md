@@ -10,7 +10,7 @@ no rule for combining statements, no storage and no presentation:
 
 - [`jetp-fusion.md`](jetp-fusion.md), how statements are combined, weighed and revised;
 - [`jetp-ledger-storage.md`](jetp-ledger-storage.md), the storage contract: tables, validation rules, engine, matching, translations;
-- [`jetp-ledger-migration.md`](jetp-ledger-migration.md), the migration from the previous tables;
+- [`attic/jetp-ledger-migration.md`](attic/jetp-ledger-migration.md), the migration from the previous tables;
 - [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md), what readers see.
 
 The author's design decisions of 2026-09-22 and 2026-09-23, with their

@@ -2,7 +2,7 @@
 
 How the ledger's design documents, schema and code speak about it. Decided by
 the author on 2026-09-23 (decision 11 of the ontology design, [attic](attic/jetp-ontology-decisions-2026-09.md)),
-after the [ODEM acceptance review](jetp-odem-acceptance-review-2026-09-23.md).
+after the [ODEM acceptance review](attic/jetp-odem-acceptance-review-2026-09-23.md).
 The ontology itself, what the ledger's classes, relations and values mean, is
 [`jetp-ontology.md`](jetp-ontology.md). What readers of the observatory see is
 [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md): the
@@ -35,7 +35,7 @@ tables and never edits an upstream row.
 | D4 | Referents | Identities minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `parties`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |
 
 D3 and D4 both read D2. An observation's subject is a line until matching
-attaches that line to a referent. The order of the [migration](jetp-ledger-migration.md) builds D4
+attaches that line to a referent. The order of the [migration](attic/jetp-ledger-migration.md) builds D4
 before rewriting D3 because the old tables key observations on old
 identities.
 

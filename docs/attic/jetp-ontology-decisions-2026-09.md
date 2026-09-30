@@ -14,7 +14,7 @@ The author's decisions of 2026-09-22 and 2026-09-23 shape it:
 5. Line identifiers are minted, not keyed on fingerprint and locator
    ([storage contract](../jetp-ledger-storage.md) section 1).
 6. The party table is built in the identity split, minimal, with funder and
-   channel roles populated first ([migration](../jetp-ledger-migration.md), step 4).
+   channel roles populated first ([migration](jetp-ledger-migration.md), step 4).
 7. Matching is a tiered, defeasible, traceable process ([storage contract](../jetp-ledger-storage.md) section 4).
    The record format is designed now; the matcher starts at its simplest tier.
 8. Translations are managed as document relations and derived text
@@ -39,7 +39,7 @@ The author's decisions of 2026-09-22 and 2026-09-23 shape it:
     section 6 list were proposed as defaults and approved by the author on
     2026-09-22.
 11. On 2026-09-23, after the ODEM acceptance review
-    ([`jetp-odem-acceptance-review-2026-09-23.md`](../jetp-odem-acceptance-review-2026-09-23.md)):
+    ([`jetp-odem-acceptance-review-2026-09-23.md`](jetp-odem-acceptance-review-2026-09-23.md)):
     the ledger is Data guided by Ontology, Evidence comes on top, and there
     is no Model (section 0). The ontology is a set of tables with
     definitions, external mappings and revisions (section 5). The builders'

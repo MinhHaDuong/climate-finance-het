@@ -19,7 +19,7 @@ reading of that document (ticket 1610), derived here from the retrievals and
 the lines and stored in no table: ``not_collected`` where no retrieval
 yielded a snapshot; ``collected`` where a snapshot exists and no line was
 read from it; ``stub`` where its only lines are the minimal line the
-migration minted to hold a locator (``docs/jetp-ledger-migration.md`` step
+migration minted to hold a locator (``docs/attic/jetp-ledger-migration.md`` step
 3, ``method=legacy_link`` in the line's notes); ``extracted`` where an
 extractor read at least one other line. The later states of the extraction
 backlog (tracker 1500) are not shown yet.
