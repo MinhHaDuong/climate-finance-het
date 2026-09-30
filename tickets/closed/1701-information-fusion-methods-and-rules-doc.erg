@@ -2,12 +2,14 @@
 Title: Information fusion methods and rules; docs attic; dissolve the JETP backend design
 Created: 2026-09-30
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1594
 
 --- log ---
 2026-09-30T08:27Z HDMX-coding-agent created
 2026-09-30T09:20Z HDMX-coding-agent decision author (2026-09-30): delete jetp-storage.md and jetp-backend-design.md outright after moving live content; destinies executed (fusion, storage contract, presentation, plan, 1506, 1184)
 2026-09-30T09:35Z HDMX-coding-agent note ontology sweep finished (author request): decisions and old-schema case to docs/attic/jetp-ontology-decisions-2026-09.md; counts, paper ties, storage and display detail moved or deleted. Open: perimeters.csv data split, storage § 4 matching into fusion
 2026-09-30T11:36Z HDMX-coding-agent note review of PR 1594 (5 panels) and author answers (2026-09-30) applied: judgements as calibrated stances on the IPCC scales, cutoff per result, "candidate match" for the thing judged, precedence never automatic, check table rewritten, no ticket references in fusion; storage and code follow-up is [[1702]]; storage § 4 matching moved to fusion § 3
+2026-09-30T11:47Z HDMX-coding-agent closed — autoclosed — PR #1594
 --- body ---
 ## Context
 
