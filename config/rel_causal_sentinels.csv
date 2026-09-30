@@ -1,0 +1,50 @@
+sentinel,family,set,source,lang,year,doi,openalex_id,title
+C01,cost_of_capital,tuning,knowledge,en,2014,10.1038/nclimate2112,W2042780616,Low-carbon investment risks and de-risking
+C02,cost_of_capital,holdout,knowledge,en,2021,10.1038/s41467-021-24305-3,W3176957609,Higher cost of finance exacerbates a climate investment trap in developing economies
+C03,cost_of_capital,holdout,pre-run title probe,en,2024,10.1016/j.enpol.2024.114104,W4394018845,Reducing the cost of capital through international climate finance to accelerate the renewable energy transition
+C04,private_mobilisation,tuning,pre-run title probe,en,2017,10.1080/20430795.2017.1318461,W2611517462,Climate mitigation finance in leveraging private investments in Indonesia
+C05,private_mobilisation,holdout,pre-run title probe,en,2025,10.1162/glep.a.700,W4416203524,Multilateral Climate Finance in Pursuit of Private Capital: How the De-Risking Agenda Is Changing International Climate Finance
+C06,implementation_capacity,tuning,causal map,en,2018,10.1016/j.enpol.2018.07.003,W2887530530,Technological capacity building through energy aid: Empirical evidence from renewable energy sector
+C07,implementation_capacity,holdout,pre-run title probe,en,2025,10.1371/journal.pone.0318170,W4408184326,Investigating the dynamics of climate finance disbursements: A panel data approach from 2003 to 2022
+C08,debt,tuning,causal map,en,2018,10.2139/ssrn.3198093,W2894548128,Climate Vulnerability and the Cost of Debt
+C09,debt,holdout,pre-run title probe,en,2021,10.1038/s41558-021-01194-4,W3205963851,Debt-for-climate swaps for small islands
+C10,debt,holdout,pre-run title probe,en,2021,10.1016/j.gloenvcha.2021.102407,W3208464842,Debt-for-climate swaps: Killing two birds with one stone?
+C11,end_use_efficiency,tuning,causal map,en,2013,10.1002/jid.1788,W2158236373,Does foreign aid reduce energy and carbon intensities of developing economies?
+C12,end_use_efficiency,holdout,pre-run title probe,en,2021,10.1080/21606544.2021.1882342,W3131229037,Does energy aid reduce CO2 emission intensities in developing countries?
+C13,land_spillovers,holdout,pre-run title probe,en,2026,10.1016/j.ecolecon.2026.109148,W4416957745,"Hydropower dams, deforestation, and land use change: Evidence from Brazil"
+C14,fossil_finance,tuning,knowledge,en,2018,10.1038/s41560-018-0280-3,W2899047886,A quantitative analysis of 10 multilateral development banks' investment in conventional and renewable power-generation technologies from 2006 to 2015
+C15,fossil_finance,holdout,knowledge,en,2020,10.1016/j.erss.2020.101827,W3107185256,"Banking on coal? Drivers of demand for Chinese overseas investments in coal in Bangladesh, India, Indonesia and Vietnam"
+C16,fossil_finance,holdout,pre-run title probe,en,2021,10.1016/j.enpol.2021.112334,W3160128519,The new coal champion of the world: The political economy of Chinese overseas development finance for coal-fired power plants
+C17,carbon_credits,tuning,causal map,en,2023,10.1126/science.ade3535,W4386127076,Action needed to make carbon offsets from forest conservation work for climate change mitigation
+C18,carbon_credits,tuning,knowledge,en,2024,10.1038/s41467-024-53645-z,W4404387314,Systematic assessment of the achieved emission reductions of carbon crediting projects
+C19,carbon_credits,holdout,knowledge,en,2021,10.2139/ssrn.3950103,W3210174799,Do Carbon Offsets Offset Carbon?
+C20,carbon_credits,holdout,knowledge,en,2020,10.1073/pnas.2004334117,W3087017120,Overstated carbon emission reductions from voluntary REDD+ projects in the Brazilian Amazon
+C21,carbon_credits,holdout,knowledge,en,2012,10.1016/j.gloenvcha.2012.10.010,W2094528089,Technology transfer in the clean development mechanism: Insights from wind power
+C22,carbon_credits,other-source,causal map,en,2016,,,How additional is the Clean Development Mechanism? (Cames et al. report for the European Commission)
+C23,forest_leakage,tuning,knowledge,en,2012,10.1007/s11027-011-9328-4,W2023030734,"A review of the state of research, policies and strategies in addressing leakage from reducing emissions from deforestation and forest degradation (REDD+)"
+C24,forest_leakage,holdout,pre-run title probe,en,2021,10.1080/14693062.2021.1920363,W3162353631,REDD+ and leakage: debunking myths and promoting integrated solutions
+C25,forest_leakage,holdout,pre-run title probe,en,2013,10.1007/s11027-013-9527-2,W2052766513,REDD+ and international leakage via food and timber markets: a CGE analysis
+C26,allocation,tuning,knowledge,en,2017,10.1007/s10784-016-9343-8,W2561644322,Allocation of aid for adaptation to climate change: Do vulnerable countries receive more support?
+C27,allocation,holdout,knowledge,en,2018,10.1016/j.worlddev.2017.11.001,W2774944491,"Vulnerability, good governance, or donor interests? The allocation of aid for climate change adaptation"
+C28,measurement,tuning,causal map,en,2022,10.1038/s41558-022-01482-7,W4296683578,Consistent and replicable estimation of bilateral climate finance
+C29,measurement,holdout,knowledge,en,2011,10.1016/j.worlddev.2011.07.020,W2008564321,Coding Error or Statistical Embellishment? The Political Economy of Reporting Climate Aid
+C30,donor_additionality,tuning,causal map,en,2011,10.1080/17565529.2011.599550,W2056541886,New and additional to what? Assessing options for baselines to assess climate finance pledges
+C31,growth_scale,tuning,causal map,en,2012,10.1111/j.1468-0297.2011.02482.x,W1888858538,Counting chickens when they hatch: Timing and the effects of aid on growth
+C32,growth_scale,holdout,causal map,en,2020,10.1111/caje.12455,W1919750199,Aid and growth: New evidence using an excludable instrument
+C33,growth_scale,holdout,causal map,en,2017,10.1007/s10887-016-9137-4,W3122851340,The effect of aid on growth: evidence from a quasi-experiment
+C34,policy_channel,tuning,pre-run title probe,en,2022,10.1016/j.envsci.2022.01.022,W4213255661,Revisiting the role of international climate finance (ICF) towards achieving the nationally determined contribution (NDC) goals
+C35,renewable_deployment,tuning,knowledge,en,2013,10.1016/j.eneco.2013.07.005,W2123532539,Explaining the diffusion of renewable energy technology in developing countries
+C36,renewable_deployment,holdout,pre-run title probe,en,2022,10.1080/00036846.2022.2044995,W4221120420,Does climate aid matter for reducing CO2 emissions? The case of foreign aid for renewable energy
+C37,renewable_deployment,holdout,pre-run title probe,en,2016,10.1016/j.enpol.2016.05.035,W2412533244,"Energy policy, aid, and the development of renewable energy resources in Small Island Developing States"
+C38,redd_results_payments,tuning,causal map,en,2019,10.1073/pnas.1904027116,W2990180051,"Evidence that a national REDD+ program reduces tree cover loss and carbon emissions in a high forest cover, low deforestation country"
+C39,redd_results_payments,holdout,pre-run title probe,en,2014,10.5700/rausp1146,W2172024371,Amazon Fund: financing deforestation avoidance
+C40,total_effect,tuning,causal map,en,2024,10.1016/j.rie.2024.100989,W4401841136,Effect of climate finance on environmental quality: A global analysis
+C41,total_effect,holdout,pre-run title probe,en,2020,10.1016/j.jclepro.2020.125204,W3104953728,Direct and indirect effects of climate aid on carbon emissions in recipient countries
+C42,adaptation,holdout,Sud sentinel S56,en,2017,10.1007/s10113-016-1085-1,W2566592515,International financing for climate change adaptation in small island developing states
+C43,loss_and_damage,holdout,Sud sentinel S41,en,2026,10.1080/17565529.2026.2674796,W7162189273,Operationalizing the loss and damage fund: equity and justice in India's climate response
+C44,justice,holdout,Sud sentinel S29,en,2023,10.4324/9781003397120-7,W4386442655,"Climate finance, public-private partnerships and climate injustice in Lesotho"
+C45,accounting_governance,holdout,Sud sentinel S10,en,2019,10.1080/17565529.2017.1410087,W2773736658,The international climate finance accounting muddle: is there hope on the horizon?
+C46,private_finance,holdout,Sud sentinel S05,en,2013,10.1080/14693062.2013.791146,W2019302301,Difficulties in accounting for private finance in international climate policy
+C47,carbon_markets,holdout,Sud sentinel S14,en,2009,10.3763/cpol.2008.0533,W1996545933,Assessing the additionality of CDM projects: practical experiences and lessons learned
+C48,critical_approaches,holdout,pre-run title probe,en,2023,10.1111/anti.12932,W4327729123,"Brazil's Amazon Fund: A ""Green Fix"" between Offset Pressures and Deforestation Crisis"
+C49,forest_beyond_map,holdout,Sud sentinel S20,en,2019,10.3390/f10030272,W2923073841,Amazon Fund 10 years later: lessons from the world's largest REDD+ program

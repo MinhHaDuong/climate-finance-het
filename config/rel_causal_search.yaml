@@ -1,0 +1,308 @@
+# REL causal-map lane, OpenAlex and EconLit (ticket 1652): the query matrix
+# question (family or theme) x base x formulation x language x sentinels.
+# Families, arcs and a-priori expectations: config/rel_causal_families.yaml.
+# Sentinels (tuning / hold-out, fixed before the run): config/rel_causal_sentinels.csv.
+#
+# Fixed 2026-09-30 before the run. French and Spanish strings were written by the
+# assistant and have not been read by a native speaker.
+#
+# Formulations (protocol, row "OpenAlex et EconLit"):
+#   IM  intervention + mediator        IO  intervention + outcome
+#   SY  synonyms of both               CS  country / sector
+#   SI  sentinel identifiers: works citing the family's TUNING sentinels
+#       (OpenAlex `cites:`), generated from the sentinel file; hold-outs never
+#       enter a query
+#   TH  map-free theme
+# `{NAME}` inside a string is replaced by `blocks[language][NAME]` before the
+# run; the expanded string is what the registry archives. Values feed OpenAlex
+# `title_and_abstract.search` (boolean AND/OR, quoted phrases): no commas.
+year_min: 1990
+year_max: 2026
+cap: 800            # records per query; a query stopped by it is incomplete
+budget:
+  lane_cap_usd: 0.40      # this lane's own spend, summed from x-ratelimit-cost-usd
+  daily_floor_usd: 0.30   # stop when x-ratelimit-remaining-usd falls below
+
+blocks:
+  en:
+    ICF: '"climate finance" OR "climate aid" OR "climate funds" OR "climate fund" OR "mitigation finance" OR "Green Climate Fund" OR "Global Environment Facility" OR "Climate Investment Funds" OR "energy aid" OR "aid for energy" OR "foreign aid" OR "official development assistance" OR "development finance" OR "multilateral development banks" OR "concessional finance"'
+    ICF_BROAD: '"climate finance" OR "development finance" OR "development bank" OR "development banks" OR "World Bank" OR "International Finance Corporation" OR "donor" OR "donors" OR "foreign aid" OR "official development assistance" OR "concessional"'
+    COUNTRIES: '"India" OR "South Africa" OR "Indonesia" OR "Vietnam" OR "Brazil" OR "Mexico" OR "Kenya" OR "Morocco" OR "Egypt" OR "Nigeria" OR "Bangladesh" OR "Philippines" OR "Pakistan" OR "sub-Saharan Africa" OR "Latin America" OR "small island developing states"'
+    FOREST: '"REDD" OR "results-based payments" OR "results-based finance" OR "forest carbon" OR "forest finance" OR "Amazon Fund" OR "payments for ecosystem services" OR "Forest Carbon Partnership Facility" OR "jurisdictional REDD"'
+    FOSSIL: '"export credit" OR "export credits" OR "export credit agencies" OR "overseas energy finance" OR "overseas development finance" OR "Chinese development finance" OR "China Development Bank" OR "Belt and Road" OR "development banks" OR "multilateral development banks" OR "international public finance"'
+    CREDITS: '"Clean Development Mechanism" OR "carbon offsets" OR "carbon offset" OR "carbon credits" OR "Article 6" OR "Joint Implementation" OR "voluntary carbon market" OR "international carbon market" OR "international carbon markets" OR "CORSIA" OR "internationally transferred mitigation outcomes"'
+  fr:
+    ICF: '"finance climat" OR "finance climatique" OR "financement climatique" OR "financements climat" OR "aide climatique" OR "Fonds vert pour le climat" OR "aide au développement" OR "aide publique au développement" OR "banques multilatérales de développement" OR "financement du développement" OR "aide énergétique"'
+    FOREST: '"REDD" OR "paiements aux résultats" OR "paiements basés sur les résultats" OR "paiements pour services environnementaux" OR "carbone forestier" OR "financement forestier"'
+    FOSSIL: '"crédits à l''exportation" OR "crédit à l''exportation" OR "financement international" OR "banques de développement" OR "financement chinois" OR "Nouvelles routes de la soie"'
+    CREDITS: '"mécanisme pour un développement propre" OR "mécanisme de développement propre" OR "crédits carbone" OR "crédits de carbone" OR "compensation carbone" OR "article 6" OR "marchés du carbone" OR "marché carbone"'
+  es:
+    ICF: '"financiamiento climático" OR "financiación climática" OR "finanzas climáticas" OR "Fondo Verde para el Clima" OR "Fondo Verde del Clima" OR "ayuda oficial al desarrollo" OR "ayuda al desarrollo" OR "cooperación internacional" OR "bancos multilaterales de desarrollo" OR "financiamiento para el desarrollo" OR "financiamiento del desarrollo"'
+    FOREST: '"REDD" OR "pagos por resultados" OR "pago por resultados" OR "pago por servicios ambientales" OR "pagos por servicios ambientales" OR "carbono forestal" OR "financiamiento forestal"'
+    FOSSIL: '"créditos a la exportación" OR "crédito a la exportación" OR "financiamiento internacional" OR "bancos de desarrollo" OR "financiamiento chino" OR "financiamiento de China" OR "Franja y la Ruta"'
+    CREDITS: '"mecanismo de desarrollo limpio" OR "mecanismo para un desarrollo limpio" OR "créditos de carbono" OR "bonos de carbono" OR "compensación de carbono" OR "artículo 6" OR "mercados de carbono" OR "mercado de carbono"'
+
+# Families of the protocol's three priority groups: IM, IO, SY, CS in English,
+# IM and IO in French and Spanish; SI from the sentinel file.
+# Other families: one IO string in English (traced search; for the three
+# theoretical families it is the check that no direct literature was missed).
+queries:
+  grid:
+    en:
+      IM: '({ICF}) AND ("electricity grid" OR "power grid" OR "transmission lines" OR "transmission network" OR "grid integration" OR "grid infrastructure" OR "grid extension" OR "curtailment" OR "electrification" OR "mini-grids" OR "mini-grid")'
+      IO: '({ICF}) AND ("renewable electricity generation" OR "renewable power generation" OR "electricity access" OR "access to electricity" OR "renewable energy share" OR "power sector emissions")'
+      SY: '("energy aid" OR "energy-related aid" OR "aid to the energy sector" OR "power sector finance" OR "electricity sector finance" OR "infrastructure finance") AND ("interconnector" OR "interconnection" OR "power lines" OR "electricity network" OR "distribution network" OR "rural electrification" OR "off-grid")'
+      CS: '({ICF_BROAD}) AND ("electricity grid" OR "transmission" OR "electrification" OR "mini-grids") AND ({COUNTRIES})'
+    fr:
+      IM: '({ICF}) AND ("réseau électrique" OR "réseaux électriques" OR "lignes de transport" OR "lignes électriques" OR "électrification" OR "mini-réseaux" OR "interconnexion")'
+      IO: '({ICF}) AND ("production d''électricité renouvelable" OR "énergies renouvelables" OR "accès à l''électricité" OR "électricité renouvelable")'
+    es:
+      IM: '({ICF}) AND ("red eléctrica" OR "redes eléctricas" OR "líneas de transmisión" OR "transmisión eléctrica" OR "electrificación" OR "minirredes" OR "interconexión")'
+      IO: '({ICF}) AND ("generación renovable" OR "energías renovables" OR "acceso a la electricidad" OR "electricidad renovable")'
+
+  cost_of_capital:
+    en:
+      IM: '({ICF}) AND ("cost of capital" OR "cost of financing" OR "financing costs" OR "financing cost" OR "cost of finance" OR "de-risking" OR "derisking" OR "risk premium" OR "weighted average cost of capital" OR "guarantees" OR "political risk insurance")'
+      IO: '({ICF}) AND ("renewable energy investment" OR "renewable investment" OR "clean energy investment" OR "renewable energy deployment" OR "levelized cost" OR "levelised cost" OR "coal power investment")'
+      SY: '("blended finance" OR "concessional finance" OR "public finance mechanisms" OR "credit enhancement" OR "first-loss" OR "risk mitigation instruments") AND ("investment risk" OR "financing conditions" OR "cost of debt" OR "risk perception" OR "bankability" OR "cost of capital")'
+      CS: '({ICF_BROAD}) AND ("cost of capital" OR "financing costs" OR "de-risking" OR "derisking") AND ({COUNTRIES})'
+    fr:
+      IM: '({ICF}) AND ("coût du capital" OR "coût de financement" OR "coûts de financement" OR "réduction des risques" OR "garanties" OR "taux d''intérêt" OR "prime de risque")'
+      IO: '({ICF}) AND ("investissement dans les énergies renouvelables" OR "investissements renouvelables" OR "énergies renouvelables" OR "énergie solaire" OR "énergie éolienne")'
+    es:
+      IM: '({ICF}) AND ("costo de capital" OR "coste de capital" OR "costo del financiamiento" OR "costos de financiamiento" OR "reducción de riesgos" OR "garantías" OR "tasas de interés" OR "prima de riesgo")'
+      IO: '({ICF}) AND ("inversión en energías renovables" OR "inversiones renovables" OR "energías renovables" OR "energía solar" OR "energía eólica")'
+
+  private_mobilisation:
+    en:
+      IM: '({ICF}) AND ("private finance mobilisation" OR "private finance mobilization" OR "mobilised private finance" OR "mobilized private finance" OR "private investment" OR "crowding in" OR "crowding-in" OR "crowding out" OR "leverage ratio" OR "co-financing" OR "cofinancing")'
+      IO: '({ICF}) AND ("private renewable investment" OR "renewable energy investment" OR "private power investment" OR "independent power producers" OR "clean energy investment")'
+      SY: '("blended finance" OR "public-private partnership" OR "public-private partnerships" OR "mobilisation ratio" OR "mobilization ratio" OR "private sector mobilisation" OR "private sector mobilization") AND ("climate" OR "renewable" OR "low-carbon")'
+      CS: '({ICF_BROAD}) AND ("private investment" OR "private finance" OR "crowding in" OR "private capital") AND ("renewable" OR "solar" OR "wind" OR "power") AND ({COUNTRIES})'
+    fr:
+      IM: '({ICF}) AND ("mobilisation de la finance privée" OR "financements privés" OR "investissement privé" OR "investissements privés" OR "effet de levier" OR "cofinancement" OR "effet d''entraînement")'
+      IO: '({ICF}) AND ("investissement dans les énergies renouvelables" OR "producteurs indépendants" OR "énergies renouvelables")'
+    es:
+      IM: '({ICF}) AND ("movilización de financiamiento privado" OR "financiamiento privado" OR "inversión privada" OR "apalancamiento" OR "cofinanciamiento" OR "efecto arrastre")'
+      IO: '({ICF}) AND ("inversión en energías renovables" OR "productores independientes" OR "energías renovables")'
+
+  implementation_capacity:
+    en:
+      IM: '({ICF}) AND ("technical assistance" OR "capacity building" OR "capacity-building" OR "absorptive capacity" OR "absorption capacity" OR "institutional capacity" OR "implementation capacity" OR "readiness" OR "disbursement" OR "disbursements")'
+      IO: '({ICF}) AND ("renewable energy capacity" OR "renewable energy deployment" OR "climate policy" OR "energy policy reform" OR "nationally determined contributions" OR "disbursement rates" OR "disbursement ratio")'
+      SY: '("technology transfer" OR "knowledge transfer" OR "readiness support" OR "Readiness Programme" OR "direct access" OR "accredited entities" OR "national implementing entities") AND ("climate finance" OR "Green Climate Fund" OR "Adaptation Fund" OR "energy aid" OR "climate funds")'
+      CS: '({ICF_BROAD}) AND ("technical assistance" OR "capacity building" OR "absorptive capacity" OR "disbursement") AND ("energy" OR "renewable" OR "climate") AND ({COUNTRIES})'
+    fr:
+      IM: '({ICF}) AND ("assistance technique" OR "renforcement des capacités" OR "capacité d''absorption" OR "capacités d''absorption" OR "décaissements" OR "décaissement" OR "capacités institutionnelles")'
+      IO: '({ICF}) AND ("énergies renouvelables" OR "politique climatique" OR "politique énergétique" OR "contributions déterminées au niveau national")'
+    es:
+      IM: '({ICF}) AND ("asistencia técnica" OR "fortalecimiento de capacidades" OR "creación de capacidades" OR "capacidad de absorción" OR "desembolsos" OR "desembolso" OR "capacidad institucional")'
+      IO: '({ICF}) AND ("energías renovables" OR "política climática" OR "política energética" OR "contribuciones determinadas a nivel nacional")'
+
+  debt:
+    en:
+      IM: '({ICF}) AND ("sovereign debt" OR "public debt" OR "external debt" OR "debt sustainability" OR "debt burden" OR "debt distress" OR "indebtedness" OR "loans versus grants" OR "grants versus loans")'
+      IO: '({ICF}) AND ("cost of debt" OR "borrowing costs" OR "fiscal space" OR "sovereign spreads" OR "sovereign risk" OR "credit ratings" OR "interest payments")'
+      SY: '("climate vulnerability" OR "physical climate risk" OR "concessional loans" OR "debt-for-climate swaps" OR "debt-for-nature swaps" OR "debt swaps" OR "climate-resilient debt clauses") AND ("cost of debt" OR "sovereign debt" OR "debt sustainability" OR "sovereign spreads" OR "borrowing costs" OR "cost of capital")'
+      CS: '({ICF_BROAD}) AND ("debt" OR "loans") AND ("climate" OR "adaptation" OR "renewable") AND ("small island developing states" OR "least developed countries" OR "sub-Saharan Africa" OR "Caribbean" OR "Pacific")'
+    fr:
+      IM: '({ICF}) AND ("dette souveraine" OR "dette publique" OR "dette extérieure" OR "soutenabilité de la dette" OR "endettement" OR "prêts ou dons")'
+      IO: '({ICF}) AND ("coût de la dette" OR "coûts d''emprunt" OR "espace budgétaire" OR "risque souverain" OR "notation")'
+    es:
+      IM: '({ICF}) AND ("deuda soberana" OR "deuda pública" OR "deuda externa" OR "sostenibilidad de la deuda" OR "endeudamiento" OR "préstamos o donaciones")'
+      IO: '({ICF}) AND ("costo de la deuda" OR "costos de endeudamiento" OR "espacio fiscal" OR "riesgo soberano" OR "calificación crediticia")'
+
+  fiscal_substitution:
+    en:
+      IM: '({ICF}) AND ("fungibility" OR "fungible" OR "fiscal response" OR "domestic spending" OR "public spending" OR "government spending" OR "public investment" OR "fiscal substitution" OR "crowd out")'
+      IO: '({ICF}) AND ("energy infrastructure" OR "electricity infrastructure" OR "public energy investment" OR "infrastructure investment" OR "renewable energy investment")'
+      SY: '("aid fungibility" OR "fungibility of aid" OR "fiscal effects of aid" OR "flypaper effect" OR "fiscal response to aid" OR "earmarked aid" OR "sector budget support") AND ("energy" OR "climate" OR "environmental" OR "infrastructure")'
+      CS: '({ICF_BROAD}) AND ("fungibility" OR "public spending" OR "domestic spending" OR "public investment") AND ("energy" OR "electricity" OR "climate") AND ({COUNTRIES})'
+    fr:
+      IM: '({ICF}) AND ("fongibilité" OR "dépenses publiques" OR "dépense publique" OR "investissement public" OR "effet d''éviction" OR "dépenses intérieures")'
+      IO: '({ICF}) AND ("infrastructures énergétiques" OR "infrastructures électriques" OR "investissement énergétique" OR "énergies renouvelables")'
+    es:
+      IM: '({ICF}) AND ("fungibilidad" OR "gasto público" OR "inversión pública" OR "efecto desplazamiento" OR "gasto interno")'
+      IO: '({ICF}) AND ("infraestructura energética" OR "infraestructura eléctrica" OR "inversión energética" OR "energías renovables")'
+
+  construction_emissions:
+    en:
+      IM: '({ICF}) AND ("construction" OR "cement" OR "steel" OR "clinker" OR "concrete" OR "building materials" OR "infrastructure construction")'
+      IO: '({ICF}) AND ("process emissions" OR "industrial emissions" OR "embodied emissions" OR "embodied carbon" OR "life cycle emissions" OR "life-cycle emissions" OR "life cycle assessment" OR "carbon footprint")'
+      SY: '("infrastructure finance" OR "infrastructure investment" OR "Belt and Road" OR "development projects" OR "aid projects" OR "infrastructure projects") AND ("cement" OR "steel" OR "embodied emissions" OR "construction emissions" OR "carbon lock-in")'
+      CS: '({ICF_BROAD}) AND ("cement" OR "steel" OR "dam construction" OR "road construction" OR "construction emissions") AND ({COUNTRIES})'
+    fr:
+      IM: '({ICF}) AND ("construction" OR "ciment" OR "acier" OR "béton" OR "matériaux de construction")'
+      IO: '({ICF}) AND ("émissions industrielles" OR "émissions de procédés" OR "émissions incorporées" OR "analyse du cycle de vie" OR "empreinte carbone")'
+    es:
+      IM: '({ICF}) AND ("construcción" OR "cemento" OR "acero" OR "hormigón" OR "materiales de construcción")'
+      IO: '({ICF}) AND ("emisiones industriales" OR "emisiones de procesos" OR "emisiones incorporadas" OR "análisis de ciclo de vida" OR "huella de carbono")'
+
+  end_use_efficiency:
+    en:
+      IM: '({ICF}) AND ("energy efficiency" OR "energy intensity" OR "energy savings" OR "demand-side management" OR "efficient lighting" OR "clean cooking" OR "cookstoves")'
+      IO: '({ICF}) AND ("carbon intensity" OR "emission intensity" OR "CO2 emissions" OR "carbon emissions" OR "energy consumption" OR "energy demand")'
+      SY: '("energy aid" OR "aid for energy efficiency" OR "energy-related aid" OR "environmental aid" OR "green aid" OR "energy efficiency finance") AND ("energy intensity" OR "energy efficiency" OR "carbon intensity" OR "emission intensity" OR "energy savings")'
+      CS: '({ICF_BROAD}) AND ("energy efficiency" OR "energy intensity") AND ("industry" OR "buildings" OR "households" OR "appliances") AND ({COUNTRIES})'
+    fr:
+      IM: '({ICF}) AND ("efficacité énergétique" OR "intensité énergétique" OR "économies d''énergie" OR "maîtrise de la demande" OR "foyers améliorés")'
+      IO: '({ICF}) AND ("intensité carbone" OR "émissions de CO2" OR "émissions de carbone" OR "consommation d''énergie" OR "demande d''énergie")'
+    es:
+      IM: '({ICF}) AND ("eficiencia energética" OR "intensidad energética" OR "ahorro de energía" OR "gestión de la demanda" OR "estufas mejoradas")'
+      IO: '({ICF}) AND ("intensidad de carbono" OR "emisiones de CO2" OR "emisiones de carbono" OR "consumo de energía" OR "demanda de energía")'
+
+  land_spillovers:
+    en:
+      IM: '({ICF}) AND ("hydropower" OR "dams" OR "reservoirs" OR "road construction" OR "roads" OR "transmission lines" OR "solar farms" OR "biofuels" OR "land acquisition") AND ("forest" OR "land use" OR "land-use")'
+      IO: '({ICF}) AND ("hydropower" OR "dams" OR "roads" OR "transmission lines" OR "energy infrastructure" OR "infrastructure projects") AND ("deforestation" OR "forest loss" OR "forest cover" OR "tree cover loss" OR "land-use emissions")'
+      SY: '("development projects" OR "World Bank projects" OR "Chinese development finance" OR "aid projects" OR "infrastructure projects" OR "Chinese aid") AND ("deforestation" OR "forest cover" OR "forest loss" OR "tree cover")'
+      CS: '({ICF_BROAD}) AND ("hydropower" OR "dams" OR "reservoir emissions" OR "roads") AND ("deforestation" OR "forest loss" OR "flooded") AND ("Brazil" OR "Amazon" OR "Laos" OR "Mekong" OR "Congo" OR "Ethiopia" OR "Indonesia" OR "Myanmar")'
+    fr:
+      IM: '({ICF}) AND ("hydroélectricité" OR "barrages" OR "routes" OR "lignes électriques" OR "changement d''affectation des terres") AND ("forêt" OR "forêts" OR "terres")'
+      IO: '({ICF}) AND ("déforestation" OR "couvert forestier" OR "perte de forêt") AND ("barrages" OR "routes" OR "infrastructures" OR "hydroélectricité")'
+    es:
+      IM: '({ICF}) AND ("hidroeléctrica" OR "represas" OR "carreteras" OR "líneas de transmisión" OR "cambio de uso del suelo") AND ("bosque" OR "bosques" OR "tierras")'
+      IO: '({ICF}) AND ("deforestación" OR "cobertura forestal" OR "pérdida de bosques") AND ("represas" OR "carreteras" OR "infraestructura" OR "hidroeléctrica")'
+
+  fossil_finance:
+    en:
+      IM: '({FOSSIL}) AND ("coal power" OR "coal-fired" OR "coal plants" OR "coal power plants" OR "fossil fuel finance" OR "fossil fuel investment" OR "gas-fired" OR "oil and gas")'
+      IO: '({FOSSIL}) AND ("coal capacity" OR "coal power capacity" OR "power sector emissions" OR "carbon lock-in" OR "stranded assets" OR "debt") AND ("coal" OR "fossil")'
+      SY: '("energy finance" OR "power sector finance" OR "public finance for energy" OR "energy lending" OR "energy investment") AND ("coal" OR "fossil fuels") AND ("overseas" OR "abroad" OR "international" OR "developing countries")'
+      CS: '({FOSSIL}) AND ("coal") AND ("Pakistan" OR "Bangladesh" OR "Vietnam" OR "Indonesia" OR "South Africa" OR "Kenya" OR "Zimbabwe" OR "India" OR "Philippines")'
+    fr:
+      IM: '({FOSSIL}) AND ("charbon" OR "centrales à charbon" OR "combustibles fossiles" OR "gaz naturel" OR "pétrole et gaz")'
+      IO: '({FOSSIL}) AND ("capacités au charbon" OR "verrouillage carbone" OR "actifs échoués" OR "dette") AND ("charbon" OR "fossiles")'
+    es:
+      IM: '({FOSSIL}) AND ("carbón" OR "centrales de carbón" OR "combustibles fósiles" OR "gas natural" OR "petróleo y gas")'
+      IO: '({FOSSIL}) AND ("capacidad de carbón" OR "bloqueo de carbono" OR "activos varados" OR "deuda") AND ("carbón" OR "fósiles")'
+
+  carbon_credits:
+    en:
+      IM: '({CREDITS}) AND ("additionality" OR "baseline" OR "baselines" OR "over-crediting" OR "overcrediting" OR "leakage" OR "permanence" OR "double counting" OR "corresponding adjustments")'
+      IO: '({CREDITS}) AND ("emission reductions" OR "buyer emissions" OR "offset use" OR "net emissions" OR "technology transfer" OR "renewable capacity" OR "host country")'
+      SY: '("offset credits" OR "certified emission reductions" OR "emission reduction units" OR "carbon crediting" OR "crediting mechanism" OR "offsetting") AND ("additional" OR "quality" OR "integrity" OR "real emission reductions" OR "over-crediting")'
+      CS: '({CREDITS}) AND ("wind" OR "hydropower" OR "cookstoves" OR "landfill gas" OR "forest" OR "REDD") AND ("China" OR "India" OR "Brazil" OR "Indonesia" OR "Kenya" OR "Colombia" OR "Peru")'
+    fr:
+      IM: '({CREDITS}) AND ("additionnalité" OR "scénario de référence" OR "fuites" OR "permanence" OR "double comptage" OR "ajustements correspondants")'
+      IO: '({CREDITS}) AND ("réductions d''émissions" OR "transfert de technologie" OR "pays hôte" OR "émissions nettes")'
+    es:
+      IM: '({CREDITS}) AND ("adicionalidad" OR "línea base" OR "línea de base" OR "fugas" OR "permanencia" OR "doble contabilidad" OR "ajustes correspondientes")'
+      IO: '({CREDITS}) AND ("reducciones de emisiones" OR "transferencia de tecnología" OR "país anfitrión" OR "emisiones netas")'
+
+  forest_leakage:
+    en:
+      IM: '({FOREST}) AND ("leakage" OR "displacement" OR "spillover" OR "spillovers" OR "spatial spillovers" OR "activity shifting")'
+      IO: '({FOREST}) AND ("net deforestation" OR "avoided deforestation" OR "emission reductions" OR "neighbouring" OR "neighboring" OR "buffer zones")'
+      SY: '("activity shifting" OR "market leakage" OR "displaced deforestation" OR "deforestation displacement" OR "leakage effects") AND ("forest" OR "conservation" OR "deforestation")'
+      CS: '({FOREST}) AND ("leakage" OR "displacement" OR "spillover") AND ("Brazil" OR "Amazon" OR "Indonesia" OR "Guyana" OR "Peru" OR "Colombia" OR "Congo")'
+    fr:
+      IM: '({FOREST}) AND ("fuites" OR "déplacement" OR "effets de débordement" OR "report de la déforestation")'
+      IO: '({FOREST}) AND ("déforestation évitée" OR "déforestation nette" OR "réductions d''émissions")'
+    es:
+      IM: '({FOREST}) AND ("fugas" OR "desplazamiento" OR "efectos de derrame" OR "desplazamiento de la deforestación")'
+      IO: '({FOREST}) AND ("deforestación evitada" OR "deforestación neta" OR "reducciones de emisiones")'
+
+  allocation:
+    en:
+      IO: '({ICF}) AND ("allocation" OR "determinants" OR "donor motives" OR "donor interests" OR "recipient needs" OR "vulnerability" OR "selectivity")'
+  measurement:
+    en:
+      IO: '("climate finance" OR "climate aid" OR "climate-related development finance" OR "adaptation finance" OR "mitigation finance") AND ("Rio markers" OR "accounting" OR "reporting" OR "over-reporting" OR "overreporting" OR "grant equivalent" OR "double counting" OR "tracking")'
+  donor_additionality:
+    en:
+      IO: '({ICF}) AND ("new and additional" OR "additionality" OR "aid diversion" OR "diversion" OR "substitution" OR "reallocation" OR "budget")'
+  growth_scale:
+    en:
+      IO: '("climate finance" OR "climate aid" OR "energy aid" OR "foreign aid" OR "official development assistance") AND ("economic growth" OR "GDP") AND ("emissions" OR "energy demand" OR "energy consumption" OR "scale effect")'
+  policy_channel:
+    en:
+      IO: '({ICF}) AND ("nationally determined contributions" OR "NDC ambition" OR "climate policy" OR "fossil fuel subsidy reform" OR "subsidy reform" OR "policy conditionality" OR "development policy loans" OR "policy-based lending")'
+  renewable_deployment:
+    en:
+      IO: '({ICF}) AND ("renewable energy capacity" OR "renewable capacity" OR "renewable energy deployment" OR "installed capacity" OR "solar power" OR "wind power" OR "learning curves" OR "renewable energy diffusion")'
+  redd_results_payments:
+    en:
+      IO: '({FOREST}) AND ("deforestation" OR "avoided deforestation" OR "forest reference level" OR "reference levels" OR "tree cover loss" OR "land policy")'
+  confounding:
+    en:
+      IO: '("climate finance" OR "climate aid" OR "energy aid" OR "foreign aid") AND ("emissions" OR "renewable") AND ("governance" OR "endogeneity" OR "selection bias" OR "confounding" OR "reverse causality")'
+  physical_identities:
+    en:
+      IO: '("climate finance" OR "climate aid" OR "energy aid") AND ("capacity factor" OR "dispatch" OR "merit order" OR "emission factor" OR "grid emission factor" OR "carbon density")'
+  deforestation_drivers:
+    en:
+      IO: '({FOREST}) AND ("commodity prices" OR "land rent" OR "agricultural rent" OR "drivers of deforestation" OR "opportunity cost")'
+
+# Map-free themes: one English string each. The Sud lane (1530) already ran
+# the corresponding French, Spanish and other-language T1-T4 theme strings.
+themes:
+  total_effect:
+    en:
+      TH: '({ICF}) AND ("CO2 emissions" OR "carbon emissions" OR "carbon dioxide emissions" OR "environmental quality" OR "ecological footprint" OR "greenhouse gas emissions")'
+  transport_other_sectors:
+    en:
+      TH: '({ICF}) AND ("urban transport" OR "public transport" OR "bus rapid transit" OR "electric vehicles" OR "railways" OR "transport emissions" OR "industrial decarbonisation" OR "industrial decarbonization" OR "green buildings")'
+  adaptation:
+    en:
+      TH: '("adaptation finance" OR "adaptation aid" OR "adaptation funding" OR "Adaptation Fund" OR "financing adaptation" OR "adaptation financing") AND ("effectiveness" OR "impact" OR "evaluation" OR "outcomes" OR "allocation" OR "access")'
+  forest_beyond_map:
+    en:
+      TH: '("forest finance" OR "forest aid" OR "Amazon Fund" OR "Forest Carbon Partnership Facility" OR "jurisdictional REDD" OR "REDD") AND ("benefit sharing" OR "governance" OR "tenure" OR "rights" OR "livelihoods" OR "safeguards")'
+  loss_and_damage:
+    en:
+      TH: '("loss and damage") AND ("finance" OR "fund" OR "funding" OR "compensation" OR "liability")'
+  justice:
+    en:
+      TH: '("climate justice" OR "climate debt" OR "fair share" OR "fair shares" OR "historical responsibility" OR "burden sharing") AND ("climate finance" OR "adaptation finance" OR "climate funds" OR "climate aid")'
+  critical_approaches:
+    en:
+      TH: '("climate finance" OR "carbon markets" OR "carbon offsets" OR "climate funds") AND ("political economy" OR "neoliberal" OR "financialization" OR "financialisation" OR "Wall Street Consensus" OR "postcolonial" OR "decolonial" OR "green grabbing")'
+  accounting_governance:
+    en:
+      TH: '("climate finance" OR "100 billion" OR "new collective quantified goal" OR "NCQG" OR "long-term finance") AND ("definition" OR "definitions" OR "history" OR "negotiations" OR "UNFCCC" OR "governance" OR "architecture")'
+  private_finance:
+    en:
+      TH: '("private climate finance" OR "mobilised private finance" OR "mobilized private finance" OR "green bonds" OR "climate bonds" OR "institutional investors") AND ("developing countries" OR "emerging markets" OR "cross-border" OR "international")'
+  carbon_markets:
+    en:
+      TH: '("international carbon market" OR "international carbon markets" OR "Article 6" OR "Clean Development Mechanism" OR "Joint Implementation" OR "linking emissions trading" OR "voluntary carbon market") AND ("finance" OR "financial flows" OR "revenues" OR "prices" OR "demand" OR "investment")'
+
+# EconLit adaptation (EBSCOhost). Syntax verified 2026-09-30 by the parallel
+# probe (sources in docs/rel-causal-map-search-2026-09-30.md): TI, AB, SU, KW,
+# DE fields; CC = JEL code, four characters with a trailing 0 (`CC F350`) or a
+# wildcard (`CC Q5*`); PT publication type; DT = CCYYMM; "phrase", AND/OR/NOT
+# with parentheses. Every OpenAlex row gets a twin: each boolean group is
+# searched in the text fields below, then the date limiter is added. EconLit
+# has no citation index, so an SI twin searches the sentinels' titles instead.
+# Per family, two EconLit-only rows: JEL (the family's JEL codes AND its
+# mediator group) and WP (the IO twin limited to working papers).
+econlit:
+  text_fields: [TI, AB, SU, KW]
+  allowed_fields: [TI, AB, SU, KW, DE, CC, PT, DT]
+  date: 'DT 199001-202612'
+  working_paper: 'PT "Working Paper"'
+  export: RIS (EBSCOhost Export > RIS format), one file per search id
+  jel:
+    grid: ['CC Q4*', 'CC L94*', 'CC F35*', 'CC O13*']
+    cost_of_capital: ['CC G3*', 'CC Q42*', 'CC F35*', 'CC Q56*']
+    private_mobilisation: ['CC G2*', 'CC F21*', 'CC Q42*', 'CC F35*']
+    implementation_capacity: ['CC F35*', 'CC O19*', 'CC Q48*']
+    debt: ['CC H63*', 'CC F34*', 'CC Q54*']
+    fiscal_substitution: ['CC F35*', 'CC H5*', 'CC O23*']
+    construction_emissions: ['CC L61*', 'CC L74*', 'CC Q54*', 'CC F35*']
+    end_use_efficiency: ['CC Q4*', 'CC F35*', 'CC Q54*']
+    land_spillovers: ['CC Q23*', 'CC Q15*', 'CC Q42*', 'CC F35*']
+    fossil_finance: ['CC F34*', 'CC Q4*', 'CC F35*']
+    carbon_credits: ['CC Q54*', 'CC Q58*', 'CC F53*']
+    forest_leakage: ['CC Q23*', 'CC Q54*', 'CC Q57*']
+    allocation: ['CC F35*', 'CC O19*', 'CC Q54*']
+    measurement: ['CC F35*', 'CC Q54*', 'CC M4*']
+    donor_additionality: ['CC F35*', 'CC H5*']
+    growth_scale: ['CC F35*', 'CC O4*', 'CC Q43*']
+    policy_channel: ['CC F35*', 'CC Q48*', 'CC Q58*']
+    renewable_deployment: ['CC F35*', 'CC Q42*']
+    redd_results_payments: ['CC Q23*', 'CC Q57*', 'CC F35*']
+    confounding: ['CC F35*', 'CC C2*']
+    physical_identities: ['CC Q41*', 'CC Q4*']
+    deforestation_drivers: ['CC Q23*', 'CC Q15*']

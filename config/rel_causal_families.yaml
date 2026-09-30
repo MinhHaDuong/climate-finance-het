@@ -1,0 +1,448 @@
+# REL causal-map lane (ticket 1652): the 126 arcs of Annex A of
+# conception/carte-causale-icf-co2.md grouped into mechanism families.
+# Fixed on 2026-09-30, BEFORE any search of this lane was run.
+#
+# Every arc belongs to exactly one family (tests/test_rel_causal_families.py
+# parses Annex A and fails on an unassigned, duplicated or unknown arc).
+#
+# group: the protocol's priority groups (conception/rel-audit-finalisation-corpus.md,
+#   § "Premières familles à vérifier sur pièces"):
+#   1 = finance routed to grid, cost of capital, private investment and
+#       implementation capacity; debt and public-spending substitution
+#   2 = emissions outside electricity (construction/process, end-use efficiency,
+#       transport) and induced land/forest effects
+#   3 = comparators and leakage (concurrent fossil finance, carbon credits and
+#       buyer emissions, spatial displacement of deforestation)
+#   0 = not a priority family
+# a_priori: the outcome expected before searching.
+#   empirical   = a literature with ICF (or aid) as treatment may exist; the search decides
+#   theoretical = accounting identity, confounding structure or intermediate
+#                 relation without ICF as treatment: the outcome "theoretical arc
+#                 not meant for direct evidence" is expected (§ 3.2, 7.1-7.3 of the map)
+# kind: mechanism | identity | confounding | intermediate
+# mechanism: the one-paragraph statement handed to the family-relevance judge.
+
+families:
+  grid:
+    label: Finance routed to grid and integration
+    group: 1
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      International climate or energy finance pays for transmission, distribution,
+      interconnection or electrification, which raises the share of zero-carbon
+      electricity actually produced (less curtailment, more access).
+    arcs:
+      - ICF_E_dec -> Reseau
+      - Reseau -> Prod_zero
+
+  cost_of_capital:
+    label: Cost of capital and de-risking
+    group: 1
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Concessional terms, guarantees or policy reforms backed by international
+      climate/development finance lower the cost of capital of low-carbon
+      (or fossil) power projects, which changes which capacity gets built.
+    arcs:
+      - ICF_E -> WACC
+      - Politique -> WACC
+      - WACC -> Cap_zero
+      - WACC -> Cap_charbon
+      - WACC -> Cap_gaz
+
+  private_mobilisation:
+    label: Private investment mobilisation
+    group: 1
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Public international climate finance mobilises (crowds in) or displaces
+      private investment in power capacity and construction, through a lower cost
+      of capital, blended structures or co-financing.
+    arcs:
+      - WACC -> Invest_prive
+      - Invest_prive -> Construction
+      - Invest_prive -> Cap_zero
+      - Invest_prive -> Cap_gaz
+      - Invest_prive -> Cap_charbon
+
+  implementation_capacity:
+    label: Implementation capacity, technical assistance and disbursement
+    group: 1
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Technical assistance and capacity building funded by international climate
+      finance change recipient policy, absorptive capacity and renewable
+      deployment; governance and tranche conditions govern how commitments turn
+      into disbursements.
+    arcs:
+      - ICF_E -> ICF_E_dec
+      - Gouv -> ICF_E_dec
+      - Politique -> ICF_E_dec
+      - ICF_L -> ICF_L_dec
+      - Gouv -> ICF_L_dec
+      - ICF -> Cap_tech
+      - Cap_tech -> Politique
+      - Cap_tech -> Cap_zero
+      - Cap_tech -> ICF_E_dec
+
+  debt:
+    label: Sovereign debt and the cost of debt
+    group: 1
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Loans counted as international climate finance create sovereign debt;
+      debt and climate vulnerability raise the cost of capital and squeeze
+      domestic spending.
+    note: >-
+      Vuln -> WACC and Dette -> WACC have a non-ICF tail: their direct evidence
+      (e.g. Kling et al. 2018) is not ICF-treated and is reported apart.
+    arcs:
+      - ICF_E_dec -> Dette
+      - Dette -> Depense_dom
+      - Dette -> WACC
+      - Vuln -> WACC
+
+  fiscal_substitution:
+    label: Substitution of domestic public spending (fungibility)
+    group: 1
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      International climate/energy finance substitutes for (or adds to) the
+      recipient government's own spending on power capacity, grids and
+      construction: aid fungibility and fiscal response.
+    arcs:
+      - ICF_E_dec -> Depense_dom
+      - Depense_dom -> Cap_zero
+      - Depense_dom -> Reseau
+      - Depense_dom -> Construction
+
+  construction_emissions:
+    label: Construction and process emissions
+    group: 2
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Projects financed by international climate/energy finance trigger
+      construction (cement, steel, works) whose combustion and process CO2 is
+      emitted in the recipient country.
+    arcs:
+      - ICF_E_dec -> Construction
+      - Construction -> CO2_energie_autre
+      - Construction -> CO2_procedes
+
+  end_use_efficiency:
+    label: End-use energy efficiency and energy intensity
+    group: 2
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      International climate/energy finance and policy support raise end-use
+      energy efficiency, lowering energy demand, energy intensity and
+      non-power combustion CO2.
+    arcs:
+      - ICF_E_dec -> Efficacite
+      - Politique -> Efficacite
+      - Efficacite -> Demande
+      - Efficacite -> CO2_energie_autre
+
+  land_spillovers:
+    label: Induced land and forest effects of energy finance
+    group: 2
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Energy infrastructure financed internationally (hydropower reservoirs,
+      transmission lines and roads, land-hungry solar or biomass) changes land
+      rent and access and so deforestation and land-use CO2.
+    arcs:
+      - Cap_zero -> Reservoirs
+      - Reservoirs -> CO2_LULUCF
+      - Reseau -> Acces
+      - Construction -> Acces
+      - Cap_zero -> Demande_terres
+      - Demande_terres -> Rente
+      - Acces -> Rente
+
+  fossil_finance:
+    label: Concurrent international fossil finance
+    group: 3
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      International public finance for coal and gas (export credits, Chinese
+      overseas finance, development banks before exclusion policies) builds
+      fossil capacity and debt in recipient countries, competing with or
+      confounding climate finance.
+    arcs:
+      - Bailleurs -> Fin_fossile_int
+      - Fin_fossile_int -> Cap_charbon
+      - Fin_fossile_int -> Cap_gaz
+      - Fin_fossile_int -> Dette
+
+  carbon_credits:
+    label: Carbon credits and buyer emissions
+    group: 3
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      International carbon crediting (CDM, Article 6, offsets) finances projects
+      in host countries while transferring a claim to the buyer; additionality,
+      baselines and use of credits decide the physical effect.
+    arcs:
+      - Bailleurs -> Credits_carbone
+      - Credits_carbone -> Cap_zero
+      - Credits_carbone -> RBP
+      - Credits_carbone -> Emissions_acheteur
+
+  forest_leakage:
+    label: Spatial displacement of deforestation (leakage)
+    group: 3
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Forest finance (REDD+, results-based payments, offsets) that protects one
+      jurisdiction displaces deforestation to neighbouring ones through land
+      policy and rent.
+    arcs:
+      - Pol_fonciere -> Fuites
+      - Rente -> Fuites
+      - Fuites -> CO2_LULUCF
+
+  allocation:
+    label: Allocation and its determinants
+    group: 0
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Donors allocate international climate finance across countries and sectors
+      according to income, vulnerability, governance, past policy and
+      deforestation.
+    arcs:
+      - Bailleurs -> ICF
+      - Bailleurs -> Alloc
+      - PIB_lag -> ICF
+      - Gouv -> ICF
+      - Vuln -> Alloc
+      - Defor_lag -> Alloc
+      - ICF -> Alloc
+      - Alloc -> ICF_E
+      - Alloc -> ICF_L
+      - Politique_lag -> ICF
+
+  measurement:
+    label: Measurement and accounting of climate finance
+    group: 0
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Accounting conventions (Rio markers, grant equivalent, reporting bases) and
+      relabelling of aid make declared climate finance differ from the finance
+      actually delivered.
+    arcs:
+      - Bailleurs -> Requalif
+      - Conventions -> Requalif
+      - Conventions -> ICF_decl
+      - APD_autre -> APD_autre_decl
+      - Requalif -> APD_autre_decl
+      - ICF -> ICF_decl
+      - Requalif -> ICF_decl
+
+  donor_additionality:
+    label: Donor-side additionality ("new and additional")
+    group: 0
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Climate finance is carved out of the donor's aid budget or added to it: the
+      budget response of other development assistance to climate finance.
+    arcs:
+      - Bailleurs -> Budget_aide
+      - Budget_aide -> ICF
+      - Budget_aide -> APD_autre
+      - ICF -> APD_autre
+
+  growth_scale:
+    label: Scale effect through growth
+    group: 0
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      International climate finance and other aid raise GDP, which raises energy
+      demand, fossil and zero-carbon capacity and emissions (aid-growth
+      literature transposed to climate finance).
+    arcs:
+      - APD_autre -> PIB
+      - ICF_E_dec -> PIB
+      - PIB -> Demande
+      - PIB -> Cap_charbon
+      - PIB -> Cap_gaz
+      - PIB -> Cap_zero
+      - PIB -> CO2_energie_autre
+
+  policy_channel:
+    label: Policy channel (NDCs, subsidy reform, conditionality)
+    group: 0
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      International climate finance changes recipient climate and energy policy
+      (NDC ambition, fossil subsidy reform, policy-based loans), which moves fuel
+      prices and energy demand.
+    arcs:
+      - ICF -> Politique
+      - Politique -> Prix_comb
+      - Politique -> Demande
+
+  renewable_deployment:
+    label: Renewable and fossil capacity financed directly (quantity channel)
+    group: 0
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      Disbursed international climate/energy finance pays for zero-carbon, gas or
+      coal capacity; global technology costs shift zero-carbon deployment.
+    arcs:
+      - ICF_E_dec -> Cap_zero
+      - ICF_E_dec -> Cap_gaz
+      - ICF_E_dec -> Cap_charbon
+      - Couts_techno -> Cap_zero
+
+  redd_results_payments:
+    label: REDD+ and results-based payments
+    group: 0
+    a_priori: empirical
+    kind: mechanism
+    mechanism: >-
+      International forest finance (REDD+, results-based payments against a
+      reference level) changes land policy and deforestation; payments follow
+      measured performance.
+    arcs:
+      - Defor_lag -> Niveau_ref
+      - Deforestation -> ICF_L_dec
+      - ICF_L -> RBP
+      - ICF_L -> Pol_fonciere
+      - Politique -> Pol_fonciere
+      - Niveau_ref -> RBP
+      - RBP -> Pol_fonciere
+      - Pol_fonciere -> Deforestation
+
+  confounding:
+    label: Confounding and pre-treatment structure
+    group: 0
+    a_priori: theoretical
+    kind: confounding
+    mechanism: >-
+      Latent governance, lagged GDP, lagged policy, fossil stock, lagged
+      deforestation and world interest rates act as common causes of finance and
+      outcomes; these arcs define adjustment sets, not ICF effects.
+    arcs:
+      - PIB_lag -> PIB
+      - Gouv -> Politique
+      - Gouv -> WACC
+      - Gouv -> Pol_fonciere
+      - Stock_fossile_lag -> ICF
+      - Stock_fossile_lag -> Cap_charbon
+      - Defor_lag -> Deforestation
+      - Taux_mondiaux -> WACC
+      - Politique_lag -> Politique
+
+  physical_identities:
+    label: Physical and accounting identities (build-out, dispatch, inventory)
+    group: 0
+    a_priori: theoretical
+    kind: identity
+    mechanism: >-
+      Construction adds capacity, capacity and demand set production, the merit
+      order sets the fossil share, production times emission factors gives CO2,
+      deforestation times carbon density gives land-use CO2.
+    arcs:
+      - Construction -> Cap_charbon
+      - Construction -> Cap_gaz
+      - Construction -> Cap_zero
+      - Construction -> Reseau
+      - Cap_charbon -> Prod_charbon
+      - Cap_gaz -> Prod_gaz
+      - Cap_zero -> Prod_zero
+      - Demande -> Prod_charbon
+      - Demande -> Prod_gaz
+      - Demande -> Prod_zero
+      - Prix_comb -> Prod_charbon
+      - Prix_comb -> Prod_gaz
+      - Prod_zero -> Prod_charbon
+      - Prod_zero -> Prod_gaz
+      - Prod_charbon -> CO2_elec
+      - Prod_gaz -> CO2_elec
+      - Deforestation -> CO2_LULUCF
+
+  deforestation_drivers:
+    label: Deforestation drivers without ICF (land rent)
+    group: 0
+    a_priori: theoretical
+    kind: intermediate
+    mechanism: >-
+      Commodity prices and income raise agricultural land rent, which drives
+      deforestation; an intermediate relation with a large literature of its
+      own but no ICF treatment.
+    arcs:
+      - Prix_commodites -> Rente
+      - PIB -> Rente
+      - Rente -> Deforestation
+
+# Map-free themes (protocol: "voie de recherche libre de la carte"; § 1 and 10
+# of the map). No arc; searched so the map does not hide what it does not draw.
+themes:
+  total_effect:
+    label: Reduced-form total effect of climate aid on emissions (a path, not an arc)
+    mechanism: >-
+      Panels or other designs relating international climate or energy finance
+      directly to recipient CO2 emissions, carbon intensity or environmental quality.
+  transport_other_sectors:
+    label: Transport, buildings and industry (sectors outside the map)
+    mechanism: >-
+      International climate or development finance for transport, buildings or
+      industry and its effects on energy use or emissions.
+  adaptation:
+    label: Adaptation finance
+    mechanism: >-
+      International finance for climate adaptation: allocation, effectiveness,
+      delivery, access or evaluation.
+  forest_beyond_map:
+    label: International forest finance beyond the drawn paths
+    mechanism: >-
+      International forest finance (funds, bilateral partnerships, jurisdictional
+      programmes) studied for governance, benefit sharing, rights or livelihoods
+      rather than deforestation outcomes.
+  loss_and_damage:
+    label: Loss and damage finance
+    mechanism: "International finance for loss and damage: funds, liability, compensation."
+  justice:
+    label: Climate justice and fair shares of climate finance
+    mechanism: >-
+      Equity, responsibility, fair shares or justice in the provision and
+      distribution of international climate finance.
+  critical_approaches:
+    label: Critical approaches to climate finance
+    mechanism: >-
+      Political economy, financialisation, postcolonial or other critical analyses
+      of international climate finance or carbon markets.
+  accounting_governance:
+    label: Accounting categories and governance of climate finance
+    mechanism: >-
+      Definitions, history, negotiation and governance of climate finance
+      categories and goals (USD 100 billion, NCQG, UNFCCC reporting).
+  private_finance:
+    label: Private climate finance across borders
+    mechanism: >-
+      Private or mobilised finance flowing to developing countries for an explicit
+      climate purpose (green bonds, institutional investors, mobilisation).
+  carbon_markets:
+    label: International carbon markets as finance
+    mechanism: >-
+      International carbon markets (CDM, JI, Article 6, voluntary market) as a
+      source of finance: flows, prices, revenues, demand.

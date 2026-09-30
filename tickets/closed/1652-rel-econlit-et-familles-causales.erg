@@ -1,0 +1,31 @@
+%erg 0.1
+Title: REL — recherches EconLit et familles de la carte causale
+Created: 2026-09-29
+Author: haduong
+Closed: autoclosed — PR #1609
+
+--- log ---
+2026-09-29T15:00Z haduong created
+
+2026-09-30T14:56Z HDMX-coding-agent note 126 arcs in 22 families (config/rel_causal_families.yaml), matrix of 132 OpenAlex rows and 166 EconLit strings with 49 sentinels (17 tuning, 31 hold-out); OpenAlex run on padme, 0.362 USD
+2026-09-30T14:56Z HDMX-coding-agent note EconLit not licensed via bibCNRS (INSHS/INEE, probe 2026-09-30); strings archived unrun, replayed on RePEc and ECONIS through bibCNRS EDS (295 searches, 11,352 records)
+2026-09-30T14:56Z HDMX-coding-agent note yields, sentinel recall and per-family outcomes in docs/rel-causal-map-search-2026-09-30.md; delivery data/rel_intake/t1652-causal-econlit/2026-09-30 (33,531 records, intake checker passes); archive ~/data/projets/climate-finance-het/rel_causal/2026-09-30
+2026-09-30T15:43Z HDMX-coding-agent note round 2 (PR #1609 review) supersedes the counts above: reruns now keep the union of retrievals; OpenAlex spend 0.383 USD incl. run d finishing construction_emissions; EDS 308 searches, 304 complete; 20 of 132 OpenAlex rows incomplete (19 cap, 1 short cursor); delivery 34,725 records, 18,701 duplicate_in_lane, 16 not_retrievable, conservation check passes
+2026-09-30T16:00Z HDMX-coding-agent closed — autoclosed — PR #1609
+--- body ---
+## Contexte
+
+Enfant de 0700. Voies « Carte causale » et « OpenAlex et EconLit » du protocole,
+hors strate Sud (1530, 1653). Regrouper les 126 arcs par familles de mécanismes,
+puis lancer plusieurs formulations par famille prioritaire (intervention +
+médiateur, intervention + résultat, synonymes, pays/secteur, sentinelles), avec
+recherche libre de la carte pour adaptation, forêt, pertes et préjudices,
+justice, approches critiques. EconLit : adapter champs, descripteurs, JEL,
+filtres et export ; vérifier l'accès et les working papers via bibCNRS.
+
+## Exit criteria
+- [x] Matrice question × base × formulation × langue × sentinelles, chaînes exactes archivées
+- [x] Adaptation EconLit écrite et testée ; accès bibCNRS et export vérifiés, ou impossibilité documentée
+- [x] Rendement de chaque voie mesuré (références uniques et pertinentes)
+- [x] Trois issues distinguées pour chaque famille : aucune étude retrouvée après recherches tracées / présente mais non reconnue par les mots-clés / arc théorique sans preuve directe attendue
+- [x] Résultats livrés à l'injection (1655) avec provenance

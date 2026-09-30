@@ -48,6 +48,8 @@ RECLASSIFIED_DUAL_ROLE = {
     "compute_changepoints",        # convergence computation reused by compute_convergence
     "corpus_merge_citations",      # merge_citations reused by the cache-migration one-off
     "enrich_dois",                 # find_doi cached-lookup API reused by syllabi_process
+    "catalog_rel_sud_search",      # OpenAlex filter/slim/fetch helpers reused by the REL causal lane (1652)
+    "corpus_rel_sud_screen",       # LLM batch-screen helpers reused by the REL family judge (1652)
 }
 
 # The full flat library surface = private `_` modules (matched by prefix) plus
