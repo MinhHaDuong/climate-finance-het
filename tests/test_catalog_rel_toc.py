@@ -45,6 +45,54 @@ def test_classify_item_records_the_type_instead_of_dropping(title, expected):
     assert toc.classify_item(title) == expected
 
 
+@pytest.mark.parametrize("title", [
+    # real articles that prefix patterns sent to excluded.csv (gaze round 1, PR 1615)
+    "Index-based insurance for climate risk management and rural development in Syria",
+    "Index insurance and basis risk: A reconsideration",
+    "Covered Interest Parity Arbitrage",
+    "Coverage and framing of climate change adaptation in the media",
+    "Corrections of Systematic Errors in the Padova series",
+    "Contents and determinants of climate pledges",
+    "Announcement effects of green bond issuance",
+    "Subscription models for solar home systems",
+    "Retraction of climate pledges and the credibility of policy",
+    "Review of carbon pricing evidence across countries",
+])
+def test_classify_item_keeps_articles_that_start_like_notices(title):
+    assert toc.classify_item(title) == "article"
+
+
+@pytest.mark.parametrize("title", [
+    "Index", "Author Index", "Subject index", "Index to Volume 12", "Cover 2/Editorial Board",
+    "Contents", "Contents of Volume 30", "ANNOUNCEMENTS", "Announcement - call for abstracts",
+    "Subscription information", "Instructions for Authors", "Masthead",
+])
+def test_classify_item_front_matter_shapes(title):
+    assert toc.classify_item(title) == "front-back-matter"
+
+
+@pytest.mark.parametrize("title", [
+    "Erratum", "ERRATUM", "Corrigendum to “Carbon taxes”", "Correction", "Correction to: Carbon taxes",
+    "Retraction notice to “Carbon taxes”", "Expression of concern: Carbon taxes",
+])
+def test_classify_item_erratum_shapes(title):
+    assert toc.classify_item(title) == "erratum"
+
+
+def test_untitled_item_is_front_matter_only_when_it_is_an_issue_record():
+    assert toc.exclusion_reason({"item_class": "untitled", "crossref_type": "journal-issue"}) \
+        == "front_matter"
+    assert toc.exclusion_reason({"item_class": "untitled", "crossref_type": "journal-article"}) \
+        == "not_retrievable"
+
+
+def test_merge_toc_takes_the_openalex_title_when_crossref_has_none():
+    (rec,) = toc.merge_toc([_crrec(title="", item_class="untitled")],
+                           [_oa(doi="10.1/a", title="Carbon pricing works")])
+    assert rec["title"] == "Carbon pricing works"
+    assert rec["item_class"] == "article"
+
+
 def _cr(**kw):
     item = {"DOI": "10.1257/AER.1", "title": ["A title"], "type": "journal-article",
             "author": [{"given": "Ann", "family": "Smith"}, {"given": "Bo", "family": "Li"}],
@@ -241,7 +289,7 @@ def test_unit_id_for_online_first_and_volume_only():
 
 @pytest.mark.parametrize("item_class,reason", [
     ("front-back-matter", "front_matter"), ("erratum", "front_matter"),
-    ("untitled", "front_matter"), ("book-review", ""), ("editorial", ""),
+    ("untitled", "not_retrievable"), ("book-review", ""), ("editorial", ""),
     ("society-report", ""), ("article", ""),
 ])
 def test_only_non_items_are_excluded(item_class, reason):

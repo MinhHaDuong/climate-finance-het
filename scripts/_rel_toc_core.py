@@ -55,16 +55,27 @@ def surname_key(name):
     return tokens[-1] if tokens else ""
 
 
+# Patterns run on the normalised title (lowercase, punctuation as spaces) and
+# describe the whole shape of a notice, never a bare prefix: "Index insurance
+# and basis risk" and "Covered interest parity" are articles (gaze, PR 1615).
+# When a title is ambiguous the item stays an article and is delivered.
 _CLASSES = [
-    ("front-back-matter", r"^(front|back) matter|^issue information|^editorial board"
-                          r"|^masthead|^table of contents|^contents|^cover|^index\b"
-                          r"|^subscription|^instructions? (to|for) authors|^announcement"),
-    ("book-review", r"^books? (reviews?|received)|^review of\b|^book notes?"),
-    ("erratum", r"^(erratum|errata|corrigend|correction|retraction|expression of concern)"),
-    ("editorial", r"^editorial\b|^editors?'? (note|introduction)|^introduction to the (special )?issue"
-                  r"|^foreword|^preface"),
-    ("society-report", r"^report of the\b|^minutes of\b|^annual report|^program of\b"
-                       r"|^papers and proceedings\b|^list of members|^in memoriam|^obituary"),
+    ("front-back-matter",
+     r"^(front|back) matter( .*)?$|^issue information( .*)?$|^editorial board( .*)?$"
+     r"|^masthead$|^(table of )?contents( of volume \S+| list)?$"
+     r"|^cover [0-9]( .*)?$|^(author |subject )?index( to volume \S+)?$"
+     r"|^subscription (information|page)$|^instructions (to|for) (authors|contributors)$"
+     r"|^announcements?$|^announcements? call for .*$"),
+    ("book-review", r"^books? (reviews?|received)( .*)?$|^book notes?( .*)?$"),
+    ("erratum",
+     r"^(erratum|errata|corrigendum|corrigenda)( .*)?$|^corrections?$|^correction to .*$"
+     r"|^retraction( notice)?$|^retraction notice to .*$|^notice of retraction( .*)?$"
+     r"|^expression of concern( .*)?$"),
+    ("editorial", r"^editorial( .*)?$|^editors? (note|introduction)( .*)?$"
+                  r"|^introduction to the (special )?issue( .*)?$|^foreword( .*)?$|^preface( .*)?$"),
+    ("society-report", r"^report of the .*$|^minutes of .*$|^annual report( .*)?$|^program of .*$"
+                       r"|^papers and proceedings( .*)?$|^list of members( .*)?$"
+                       r"|^in memoriam( .*)?$|^obituary( .*)?$"),
 ]
 
 
@@ -239,6 +250,8 @@ def merge_toc(cr_recs, oa_recs):
             hit["openalex_id"] = hit["openalex_id"] or o["openalex_id"]
             hit["in_openalex"] = True
             hit["openalex_type"] = o["openalex_type"]
+            if not hit["title"] and o["title"]:
+                hit["title"], hit["item_class"] = o["title"], classify_item(o["title"])
             if not hit["abstract"] and o["abstract"]:
                 hit["abstract"], hit["abstract_provenance"] = o["abstract"], "openalex"
             continue
@@ -278,8 +291,16 @@ _FRONT_MATTER = {"front-back-matter", "erratum", "untitled"}
 
 
 def exclusion_reason(rec):
-    """``front_matter`` for a non-item, else '' (the record is delivered)."""
-    return "front_matter" if rec.get("item_class") in _FRONT_MATTER else ""
+    """Contract reason for leaving a record out, else '' (the record is delivered).
+
+    An untitled record is an issue record (front matter) when Crossref types it
+    ``journal-issue``; otherwise it is an item whose title neither Crossref nor
+    OpenAlex holds (``not_retrievable``), often a short untitled book review.
+    """
+    cls = rec.get("item_class")
+    if cls == "untitled" and rec.get("crossref_type") != "journal-issue":
+        return "not_retrievable"
+    return "front_matter" if cls in _FRONT_MATTER else ""
 
 
 def lane_status(rec):
@@ -309,14 +330,15 @@ def build_register(records):
     for qid, recs in groups.items():
         journal, year, volume, issue = issue_key(recs[0])
         n_pool = sum(1 for r in recs if r["in_pool"])
-        n_front = sum(1 for r in recs if exclusion_reason(r))
+        reasons = collections.Counter(exclusion_reason(r) for r in recs)
         rows.append({
             "query_id": qid, "journal_key": journal, "year": year if year is not None else "",
             "volume": volume, "issue": issue,
             "expected": len(recs), "scanned": len(recs),
             "crossref_n": sum(1 for r in recs if r.get("toc_source", "crossref") == "crossref"),
             "openalex_only_n": sum(1 for r in recs if r.get("toc_source") == "openalex-only"),
-            "front_matter": n_front,
+            "front_matter": reasons["front_matter"],
+            "not_retrievable": reasons["not_retrievable"],
             "in_pool": n_pool,
             "candidates": sum(1 for r in recs if not r["in_pool"] and not exclusion_reason(r)),
             "unresolved": sum(1 for r in recs if r.get("toc_source") == "openalex-only"

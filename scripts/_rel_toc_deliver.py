@@ -47,13 +47,14 @@ RECORD_FIELDS = [
 REGISTRY_FIELDS = [
     "query_id", "platform", "query", "filter", "run_at", "n_expected", "n_received",
     "completed", "stop_reason", "stratum", "journal_key", "year", "volume", "issue",
-    "expected", "scanned", "crossref_n", "openalex_only_n", "front_matter", "in_pool",
-    "candidates", "unresolved",
+    "expected", "scanned", "crossref_n", "openalex_only_n", "front_matter",
+    "not_retrievable", "in_pool", "candidates", "unresolved",
 ]
 EXCLUDED_FIELDS = ["record_id", "query_id", "reason", "title", "note"]
 SUMMARY_FIELDS = [
     "journal_key", "sweep_mode", "units", "expected", "crossref_n", "openalex_only_n",
-    "front_matter", "in_pool", "candidates", "unresolved", "out_of_window", "complete",
+    "front_matter", "not_retrievable", "in_pool", "candidates", "unresolved", "out_of_window",
+    "complete",
 ]
 
 
@@ -188,10 +189,11 @@ def deliver(args, manifest, steps):
         if not reason and rid in seen:
             reason = "duplicate_in_lane"
         if reason:
-            excluded.append({"record_id": rid if reason == "front_matter" else f"{rid}#{qid}",
+            dup = reason == "duplicate_in_lane"
+            excluded.append({"record_id": f"{rid}#{qid}" if dup else rid,
                              "query_id": qid, "reason": reason, "title": rec.get("title", ""),
-                             "note": rec.get("item_class", "") if reason == "front_matter"
-                             else f"kept under {seen[rid]}"})
+                             "note": f"kept under {seen[rid]}" if dup
+                             else rec.get("crossref_type") or rec.get("item_class", "")})
             return
         seen[rid] = qid
         records.append(record_row(rec, qid, retrieved_at, sweep_mode))
@@ -223,7 +225,7 @@ def deliver(args, manifest, steps):
         summary.append({"journal_key": key, "sweep_mode": "full", "units": len(units),
                         **{k: sum(u[k] for u in units) for k in
                            ("expected", "crossref_n", "openalex_only_n", "front_matter",
-                            "in_pool", "candidates", "unresolved")},
+                            "not_retrievable", "in_pool", "candidates", "unresolved")},
                         "out_of_window": sum(1 for r in recs if not in_window(r)),
                         "complete": str(complete).lower()})
 
@@ -232,7 +234,7 @@ def deliver(args, manifest, steps):
     for q in thematic_queries(mega):
         s = status.get(("thematic", q["query_id"]), {})
         works = _read_jsonl(os.path.join(run_dir, f"thematic_{q['query_id']}.jsonl.gz"))
-        n_pool = n_cand = n_front = 0
+        n_pool = n_cand = n_front = n_nr = 0
         for w in works:
             src = ((w.get("primary_location") or {}).get("source") or {})
             key = next((by_issn[i] for i in src.get("issn") or [] if i in by_issn), "")
@@ -242,7 +244,8 @@ def deliver(args, manifest, steps):
                        year_source="openalex", alias_dois="", abstract_provenance="")
             rec["in_pool"] = pool.match(rec)
             n_pool += bool(rec["in_pool"])
-            n_front += bool(exclusion_reason(rec))
+            n_front += exclusion_reason(rec) == "front_matter"
+            n_nr += exclusion_reason(rec) == "not_retrievable"
             n_cand += not rec["in_pool"] and not exclusion_reason(rec)
             add(rec, q["query_id"], s.get("at") or _now(), "thematic")
         registry.append({
@@ -252,12 +255,13 @@ def deliver(args, manifest, steps):
             "completed": str(bool(s.get("complete"))).lower(),
             "stop_reason": "" if s.get("complete") else (s.get("stop_reason") or "not run"),
             "stratum": "megajournal-thematic", "expected": len(works), "scanned": len(works),
-            "front_matter": n_front, "in_pool": n_pool, "candidates": n_cand,
-            "openalex_only_n": len(works), "crossref_n": 0, "unresolved": 0})
+            "front_matter": n_front, "not_retrievable": n_nr, "in_pool": n_pool,
+            "candidates": n_cand, "openalex_only_n": len(works), "crossref_n": 0,
+            "unresolved": 0})
         summary.append({"journal_key": q["query_id"], "sweep_mode": "thematic", "units": 1,
                         "expected": len(works), "crossref_n": 0, "openalex_only_n": len(works),
-                        "front_matter": n_front, "in_pool": n_pool, "candidates": n_cand,
-                        "unresolved": 0, "out_of_window": 0,
+                        "front_matter": n_front, "not_retrievable": n_nr, "in_pool": n_pool,
+                        "candidates": n_cand, "unresolved": 0, "out_of_window": 0,
                         "complete": str(bool(s.get("complete"))).lower()})
 
     _write_csv(os.path.join(out, "records.csv"), records, RECORD_FIELDS)
