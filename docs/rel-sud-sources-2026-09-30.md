@@ -53,7 +53,7 @@ deduplication); n_kept is the unique records in `records.csv`.
 | Redalyc | api | `www.redalyc.org/service/r2020/getArticles/` | lexicon string of a language x theme sent verbatim (`"financiamiento climático" OR ...`), es/pt/en | 12 (12) | 8,185 | 8,185 | 4,450 | `t1653-latam/` |
 | CLACSO | api | `biblioteca-repositorio.clacso.edu.ar/server/api/discover/search/objects` | `query=<lexicon string>&dsoType=ITEM`, es/pt | 8 (8) | 719 | 719 | 410 | `t1653-latam-dspace-b/` |
 | Ipea (TD) | api | `repositorio.ipea.gov.br/server/api/discover/search/objects`, collection hdl 11058/17462 | same, pt/en | 8 (8) | 135 | 135 | 87 | `t1653-latam/` |
-| UWI | api | `uwispace.sta.uwi.edu/server/api/discover/search/objects` | same, en | 4 (4) | 50 | 50 | 16 (+30 without key) | `t1653-latam-dspace-b/` |
+| UWI | api | `uwispace.sta.uwi.edu/server/api/discover/search/objects` | same, en | 4 (4) | 50 | 50 | 16 (+30 `no_dedup_key`) | `t1653-latam-dspace-b/` |
 | SciELO | oai-pmh | `<collection>/oai/scielo-oai.php` (mex, ven, bol, cri, pry) | `ListRecords metadataPrefix=oai_dc set=<ISSN>` per social-science journal, lexicon es/pt/en | 216 (212) | 69,283 | 26 | 26 | `t1653-latam-scielo-b/` |
 | GARUDA | api | `garuda.kemdiktisaintek.go.id/documents` | `select=<title\|abstract>&q=<phrase>&from=1990&to=2026`, one query per phrase and field (server matches all words), id/en | 116 (107) | 97,342 | 18,987 | 13,169 | `t1653-asia/garuda/` |
 | CyberLeninka | oai-pmh | `cyberleninka.ru/oai` | `ListRecords set=repec`; `ListSets` for journal sets, lexicon ru/en on titles | 2 (0) | 9,830 | 0 | 0 | `t1653-asia/cyberleninka-b/`, `-c/` |
@@ -171,7 +171,7 @@ manifest's `producer.runs`), DVC-tracked and pushed to padme.
 | --- | --- |
 | `records.csv` | 18,238 records: GARUDA 13,169; Redalyc 4,450; CLACSO 410; Ipea 87; CEEW 52; SciELO 26; CPD 18; UWI 16; ADB 5; South Centre 4; ERSA 1. 12,615 carry a DOI, the other 5,623 a year. 1,564 carry a lexicon phrase in title or abstract. |
 | `registry.csv` | 387 query rows with route, endpoint, run directory, `n_announced`, `n_harvested`, `n_delivered` |
-| `excluded.csv` | 9,914 `duplicate_in_lane`; 32 `not_retrievable` (see below) |
+| `excluded.csv` | 9,914 `duplicate_in_lane`; 32 `no_dedup_key` (see below) |
 | `manifest.json` | `coverage: incomplete`, eleven incomplete units, nine `needs_human` items |
 | `sentinels.csv` | the class-b sentinel table above |
 
@@ -185,10 +185,8 @@ publication year anywhere in their source: 30 UWI DSpace items (real items,
 the discovery query asks `dsoType=ITEM`, whose metadata holds only deposit
 dates; `dc.identifier.other` values such as 1953 look like CERIS record
 numbers, not years) and 2 CEEW pages without a date. The checker refuses
-such a row in `records.csv`, and the pool merge (1731) aborts on a failing
-delivery. They are therefore listed in `excluded.csv` as `not_retrievable`,
-with their Handle URL and OAI identifier (UWI) or stable URL (CEEW). This
-bends that reason, which the contract defines for items without title-level
-metadata: these have titles, archived with the run. The MOE has asked 1655 to
-let the contract accept a persistent identifier as dedup key; when it does,
-a new delivery moves them back to `records.csv`.
+such a row in `records.csv`, so they are listed in `excluded.csv` with the
+contract's `no_dedup_key` reason (added for them, commit 3cc392fa), their
+Handle URL and OAI identifier (UWI) or stable URL (CEEW) in `note` and in
+the extra `url` column. The pool merge takes them in as title-only works:
+they are not dropped from the ICF screen.

@@ -1,6 +1,6 @@
 outs:
-- md5: 3504fbcae77c70a07b0f9e024d8b4b9f.dir
-  size: 46909399
+- md5: 9e613217c6594f7457842bb870d33dde.dir
+  size: 46906475
   nfiles: 5
   hash: md5
   path: t1653-sud-hors-openalex
