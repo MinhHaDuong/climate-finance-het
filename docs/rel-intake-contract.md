@@ -115,7 +115,9 @@ DOIs or two different OpenAlex ids: a landing page common to several works,
 such as a journal issue page, leaves them apart. Different URLs, on the other
 hand, never keep records apart: one work often has several (publisher page,
 repository copy), so only a DOI or OpenAlex id disagreement vetoes a title +
-year join. A titled record whose source holds none
+year join. Known limits: a non-Handle URL keeps its query string, `http` and
+`https` spellings of one URL are two keys, and a generic title can join a
+`no_dedup_key` title-only row to the wrong work. A titled record whose source holds none
 of them goes to `excluded.csv` with reason `no_dedup_key` (see above).
 
 ## `registry.csv`
