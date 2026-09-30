@@ -54,4 +54,4 @@ l'archive `~/data/projets/climate-finance-het/rel_causal/2026-09-30/`) :
 - [x] La complétude est jugée sur les identifiants distincts, avec un état explicite « curseur épuisé » distinct de « plafond » et de « curseur court » ; test rejouant le run d (1 946 lignes, 1 940 distincts, 1 944 annoncés)
 - [x] Phrases corrigées dans `docs/rel-causal-map-search-2026-09-30.md` ~84-87 (implementation_capacity-IM-en non repris ; lignes IM parmi les plafonnées)
 - [x] Test de la garde `--force-intake` (refus sans l'option, écrasement avec)
-- [x] Livraison de remplacement régénérée sur padme (`supersedes` = 2026-09-30, la livraison remplacée dont le hash DVC était `fb4bb39e…` ; nouveau pointeur du répertoire de voie, qui contient les deux livraisons : `2db89178…`), `scripts/qa_rel_intake.py` passe, `dvc push`, pointeur `.dvc` mis à jour dans la PR
+- [x] Livraison de remplacement régénérée sur padme (`supersedes` = 2026-09-30, la livraison remplacée dont le hash DVC était `fb4bb39e…` ; nouveau pointeur du répertoire de voie, qui contient les deux livraisons : `98207e39…`), `scripts/qa_rel_intake.py` passe, `dvc push`, pointeur `.dvc` mis à jour dans la PR
