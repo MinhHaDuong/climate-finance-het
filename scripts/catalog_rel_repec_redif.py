@@ -160,11 +160,39 @@ def build(root: str, jobs: int) -> tuple[list[dict], list[dict], Counter]:
     return rows, dups, c
 
 
+def rsync_counts(log_path: str) -> dict:
+    """Itemized counts of an ``rsync --itemize-changes`` log: new files
+    (``>f+++``), updated files (any other ``>f``), deletions (``*deleting``),
+    and whether the log ends with rsync's summary (a finished transfer)."""
+    c: Counter = Counter()
+    tail: list[str] = []
+    with open(log_path, encoding="utf-8", errors="replace") as fh:
+        for line in fh:
+            if line.startswith(">f+++"):
+                c["new_files"] += 1
+            elif line.startswith(">f"):
+                c["updated_files"] += 1
+                if line.startswith(">f.st"):
+                    c["updated_size_and_time"] += 1
+                elif line.startswith(">f..t"):
+                    c["updated_time_only"] += 1
+            elif line.startswith("*deleting"):
+                c["deleted"] += 1 if not line.rstrip().endswith("/") else 0
+                c["deleted_dirs"] += 1 if line.rstrip().endswith("/") else 0
+            elif line.startswith("cd+++"):
+                c["new_dirs"] += 1
+            tail = (tail + [line.rstrip("\n")])[-3:]
+    finished = any(t.startswith("total size is") for t in tail)
+    return {"log": os.path.abspath(log_path), "finished": finished, "summary": tail,
+            **dict(sorted(c.items()))}
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--mirror", required=True)
     ap.add_argument("--output", required=True, help="Parquet table path")
     ap.add_argument("--provenance", help="JSON file merged into counts.json (refresh date, rsync itemized counts)")
+    ap.add_argument("--rsync-log", help="the refresh log; its itemized counts go to counts.json")
     ap.add_argument("--jobs", type=int, default=8)
     a = ap.parse_args(argv)
     import pandas as pd
@@ -182,6 +210,8 @@ def main(argv: list[str] | None = None) -> int:
     counts = {"mirror": os.path.abspath(a.mirror), "parsed_at": t0.isoformat(timespec="seconds"),
               "finished_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
               "counts": dict(sorted(c.items()))}
+    if a.rsync_log:
+        counts["rsync"] = rsync_counts(a.rsync_log)
     if a.provenance:
         with open(a.provenance, encoding="utf-8") as fh:
             counts["provenance"] = json.load(fh)

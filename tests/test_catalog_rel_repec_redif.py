@@ -136,3 +136,15 @@ def test_build_table_dedups_handles_and_names_series(tmp_path):
     assert counts["templates:redif-series"] == 1
     dups = pd.read_csv(tmp_path / "out" / "redif.duplicates.csv")
     assert dups.source_file.tolist() == [os.path.join("wbk", "wbrwps", "1002.rdf~")]
+
+
+def test_rsync_counts(tmp_path):
+    log = tmp_path / "r.log"
+    log.write_text(".d..t...... ./\n>f+++++++++ a/x.rdf\n>f.st...... a/y.rdf\n>f..t...... a/z.rdf\n"
+                   "*deleting   a/old.rdf\n*deleting   a/olddir/\ncd+++++++++ b/\n\n"
+                   "sent 1 bytes  received 2 bytes  3.00 bytes/sec\ntotal size is 10  speedup is 1.00\n")
+    c = cat.rsync_counts(str(log))
+    assert (c["new_files"], c["updated_files"], c["updated_size_and_time"], c["updated_time_only"],
+            c["deleted"], c["deleted_dirs"], c["new_dirs"], c["finished"]) == (1, 2, 1, 1, 1, 1, 1, True)
+    log.write_text(">f+++++++++ a/x.rdf\n")
+    assert cat.rsync_counts(str(log))["finished"] is False
