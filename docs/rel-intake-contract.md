@@ -130,7 +130,7 @@ closed list above.
 }
 ```
 
-- `counts.records` equals the number of rows of `records.csv`;
+- `counts.records` is a JSON integer equal to the number of rows of `records.csv`;
   `counts.excluded` equals the per-reason counts of `excluded.csv`.
 - `coverage` is `complete` or `incomplete`. `incomplete` lists what was not
   covered and why (`{"unit": "...", "reason": "..."}`): a paywall, a licence, a

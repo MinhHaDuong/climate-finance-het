@@ -19,6 +19,7 @@ import os
 import re
 import sys
 from collections import Counter
+from datetime import date
 
 RECORD_COLUMNS = [
     "record_id", "query_id", "platform", "retrieved_at", "title",
@@ -62,6 +63,18 @@ def _read_csv(path, errors):
     return header, rows
 
 
+def _is_iso_date(value):
+    """True when ``value`` matches ISO_DATE and its date part is a real calendar day."""
+    value = str(value)
+    if not ISO_DATE.match(value):
+        return False
+    try:
+        date.fromisoformat(value[:10])
+    except ValueError:
+        return False
+    return True
+
+
 def _missing_columns(header, wanted, name):
     missing = [c for c in wanted if c not in header]
     return [f"{name}: missing column(s) {', '.join(missing)}"] if missing else []
@@ -83,7 +96,7 @@ def check_records(header, rows, query_ids):
                 errors.append(f"{where}: {col} is empty")
         if query_ids is not None and r["query_id"] and r["query_id"] not in query_ids:
             errors.append(f"{where}: query_id {r['query_id']!r} not in registry.csv")
-        if r["retrieved_at"] and not ISO_DATE.match(r["retrieved_at"]):
+        if r["retrieved_at"] and not _is_iso_date(r["retrieved_at"]):
             errors.append(f"{where}: retrieved_at {r['retrieved_at']!r} is not ISO 8601")
         if r["doi"] and not DOI.match(r["doi"]):
             errors.append(f"{where}: doi {r['doi']!r} is not a bare 10.xxxx/... DOI")
@@ -152,7 +165,7 @@ def _check_identity(manifest, delivery_dir):
         errors.append(f"manifest.json: delivery {manifest['delivery']!r} is not YYYY-MM-DD[suffix]")
     elif manifest["delivery"] != delivery:
         errors.append(f"manifest.json: delivery {manifest['delivery']!r} differs from directory {delivery!r}")
-    if not ISO_DATE.match(str(manifest["delivered_at"])):
+    if not _is_iso_date(manifest["delivered_at"]):
         errors.append("manifest.json: delivered_at is not ISO 8601")
     producer = manifest["producer"]
     if not isinstance(producer, dict) or not all(
@@ -165,7 +178,11 @@ def _check_counts(manifest, n_records, excluded_counts):
     """Declared counts must equal the rows actually delivered and excluded."""
     errors = []
     counts = manifest["counts"] if isinstance(manifest["counts"], dict) else {}
-    if n_records is not None and counts.get("records") != n_records:
+    declared_records = counts.get("records")
+    # bool is an int subclass and True == 1: a JSON true must not pass as one row.
+    if isinstance(declared_records, bool) or not isinstance(declared_records, int):
+        errors.append(f"manifest.json: counts.records {declared_records!r} is not an integer")
+    elif n_records is not None and declared_records != n_records:
         errors.append(
             f"manifest.json: counts.records is {counts.get('records')!r}, "
             f"records.csv has {n_records} rows")

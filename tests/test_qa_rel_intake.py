@@ -158,3 +158,20 @@ def test_records_header_failure_skips_the_row_count_check(tmp_path):
     errors = ric.check_delivery(str(d))
     assert any("records.csv: missing column(s)" in e for e in errors)
     assert not any("counts.records" in e for e in errors)
+
+
+@pytest.mark.parametrize("bad", ["2026-13-45", "2026-02-30T10:00:00Z"])
+def test_dates_must_be_real_calendar_days(tmp_path, bad):
+    d = _delivery(tmp_path, records=[_record("r1", retrieved_at=bad), _record("r2")],
+                  manifest={"delivered_at": bad})
+    text = "\n".join(ric.check_delivery(str(d)))
+    assert f"retrieved_at {bad!r} is not ISO 8601" in text
+    assert "delivered_at is not ISO 8601" in text
+
+
+@pytest.mark.parametrize("declared", [True, "2", 2.0, None])
+def test_counts_records_must_be_an_integer(tmp_path, declared):
+    d = _delivery(tmp_path, records=[_record("r1")],
+                  manifest={"counts": {"records": declared, "excluded": {"front_matter": 1}}})
+    assert any("counts.records" in e and "is not an integer" in e
+               for e in ric.check_delivery(str(d)))
