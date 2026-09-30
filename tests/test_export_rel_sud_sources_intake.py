@@ -78,9 +78,9 @@ def test_search_routes_deliver_every_hit_deduplicated_in_lane(runs):
     root, spec = runs
     records, registry, excluded, stats = ex.build(spec, root=str(root), languages=LANGS)
     ids = [r["record_id"] for r in records]
-    assert ids == ["clacso:hdl:1", "clacso:hdl:2", "clacso:hdl:3", "scielo:oai:scielo:1"]
+    assert ids == ["clacso:hdl:1", "clacso:hdl:2", "scielo:oai:scielo:1"]  # hdl:3 has no key
     assert "uwi" not in {r["platform"] for r in records}  # source filter honoured
-    assert excluded == [{"record_id": "clacso:hdl:1", "query_id": "S-clacso-es-T2",
+    assert excluded[:1] == [{"record_id": "clacso:hdl:1", "query_id": "S-clacso-es-T2",
                          "reason": "duplicate_in_lane", "title": "Title hdl:1",
                          "note": "also retrieved by S-clacso-es-T1"}]
     first = records[0]
@@ -102,14 +102,18 @@ def test_harvest_route_counts_the_lexicon_match_as_what_the_query_returned(runs)
     assert search["n_received"] == "3" and "lexicon" not in search["query"]
 
 
-def test_doi_from_url_and_records_without_any_identifier_are_kept_and_counted(runs):
+def test_doi_from_url_and_records_without_any_identifier_are_listed_not_dropped(runs):
     root, spec = runs
-    records, _, _, stats = ex.build(spec, root=str(root), languages=LANGS)
+    records, registry, excluded, stats = ex.build(spec, root=str(root), languages=LANGS)
     by = {r["record_id"]: r for r in records}
     assert by["clacso:hdl:2"]["doi"] == "10.1234/abc.9"
     assert "DOI read from the record URL" in by["clacso:hdl:2"]["lane_note"]
-    assert by["clacso:hdl:3"]["year"] == "" and by["clacso:hdl:3"]["doi"] == ""
+    assert "clacso:hdl:3" not in by
+    [row] = [e for e in excluded if e["reason"] == "not_retrievable"]
+    assert row["record_id"] == "clacso:hdl:3" and row["note"] == ex.NO_KEY_NOTE
     assert stats["no_doi_no_year"] == 1 and stats["doi_from_url"] == 1
+    t1 = next(r for r in registry if r["query_id"] == "S-clacso-es-T1")
+    assert t1["n_delivered"] == 2
 
 
 def test_enrichment_year_fills_a_record_with_neither_doi_nor_year(runs):
@@ -165,8 +169,8 @@ def test_export_writes_a_delivery_the_checker_accepts(runs, tmp_path):
     assert found == {"S01": "True", "S02": "False"}
 
 
-def test_a_record_without_doi_or_year_fails_the_checker_and_is_named(runs, tmp_path):
-    """Kept, not dropped: the checker then reports it, the manifest counts it."""
+def test_a_record_without_doi_or_year_passes_the_checker_as_an_exclusion(runs, tmp_path):
+    """Listed in excluded.csv, counted and explained in the manifest."""
     root, spec = runs
     status = tmp_path / "status.yaml"
     status.write_text("sources: {}\nunreviewed_languages: [zh]\n", encoding="utf-8")
@@ -176,8 +180,8 @@ def test_a_record_without_doi_or_year_fails_the_checker_and_is_named(runs, tmp_p
     ex.main(["export", f"--run={spec[0][0]}:clacso", "--output-dir", str(out),
              "--status", str(status), "--sentinels", str(sentinels),
              "--commit", "abc", "--machine", "t"])
-    errors = qa_rel_intake.check_delivery(str(out))
-    assert errors == ["records.csv line 4: needs at least one of doi, openalex_id, year"]
+    assert qa_rel_intake.check_delivery(str(out)) == []
     man = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert man["counts"]["no_doi_no_openalex_no_year"] == 1
-    assert "1 record(s) carry no DOI" in man["notes"]
+    assert man["counts"]["excluded"] == {"duplicate_in_lane": 1, "not_retrievable": 1}
+    assert "1 record(s) carry no DOI" in man["notes"] and "bends" in man["notes"]

@@ -24,7 +24,9 @@ What is delivered, per route (decision of 2026-09-30, see
 A record with neither DOI nor year gets a DOI found in its URL, else a year
 from ``year_enrichment.csv`` in its run directory (written by the
 ``enrich-years`` subcommand from the GARUDA detail page); what still lacks
-both is kept and counted in the manifest, never dropped.
+both cannot enter ``records.csv`` (the checker refuses it): it is listed in
+``excluded.csv`` as ``not_retrievable`` with a note saying why, and counted in
+the manifest, never dropped silently.
 
 Usage:
     python scripts/export_rel_sud_sources_intake.py export \\
@@ -75,6 +77,11 @@ REGISTRY_COLUMNS = ["query_id", "platform", "query", "run_at", "n_received",
                     "completed", "stop_reason", "filter", "n_expected",
                     "source", "route", "endpoint", "run_dir", "query_id_run",
                     "n_announced", "n_harvested", "n_delivered"]
+# The contract has no reason yet for a titled record without any dedup key;
+# not_retrievable is stretched to cover it until one lands (1655 asked).
+NO_KEY_NOTE = ("no publication year, DOI or OpenAlex id in the source (deposit dates "
+               "only); not dedupable under the contract; title-level metadata exists in "
+               "the run archive")
 ENRICHMENT_FIELDS = ["record_id", "year", "source_url", "fetched_at", "status"]
 
 # Language labels the sources use, to ISO 639-1. Anything else stays empty in
@@ -176,7 +183,18 @@ def build(runs, root=None, languages=None):
                 continue
             records[rid] = to_record(c, rid, qid, registry[qid], label, enrich, stats)
             registry[qid]["n_delivered"] += 1
-    return list(records.values()), list(registry.values()), excluded, stats
+    delivered = []
+    for rec in records.values():
+        if rec["doi"] or rec["year"]:
+            delivered.append(rec)
+            continue
+        # No dedup key: the contract's checker (and the 1731 pool merge) refuse
+        # such a row in records.csv. Listed, not dropped (decision 2026-09-30).
+        excluded.append({"record_id": rec["record_id"], "query_id": rec["query_id"],
+                         "reason": "not_retrievable", "title": rec["title"],
+                         "note": NO_KEY_NOTE})
+        registry[rec["query_id"]]["n_delivered"] -= 1
+    return delivered, list(registry.values()), excluded, stats
 
 
 def to_record(c, rid, qid, reg, label, enrich, stats):
@@ -302,8 +320,10 @@ def cmd_export(args):
     notes = args.notes or ""
     if stats["no_doi_no_year"]:
         notes += (f" {stats['no_doi_no_year']} record(s) carry no DOI, OpenAlex id or year "
-                  "anywhere in their source; kept, not dropped (the contract lists no "
-                  "exclusion reason for them).")
+                  "anywhere in their source: listed in excluded.csv as not_retrievable, "
+                  "which bends that reason (it covers items without title-level metadata; "
+                  "these have titles, kept in the run archive) until the contract names "
+                  "a reason for records without a dedup key.")
     man = manifest(records, registry, excluded, stats, status, producer, delivery,
                    notes.strip())
     with open(os.path.join(args.output_dir, "manifest.json"), "w", encoding="utf-8") as fh:
