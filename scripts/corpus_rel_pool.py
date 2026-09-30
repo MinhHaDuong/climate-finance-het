@@ -23,10 +23,11 @@ Deduplication is one union-find over all rows, catalogue and lanes alike:
 3. same normalized title and same year, decided on the components steps 1-2b
    left: the rows sharing a title + year join when their identifier-bearing
    rows form at most one component, or components that cannot disagree (no
-   identifier kind, DOI, OpenAlex id or URL, on both sides). When two
-   components both carry DOIs (or both OpenAlex ids, or both URLs), the title
-   is **ambiguous**: nothing joins them, and rows with no identifier join only
-   one another. A working paper and
+   identifier kind, DOI or OpenAlex id, on both sides). When two components
+   both carry DOIs (or both OpenAlex ids), the title is **ambiguous**: nothing joins them, and rows with no identifier join only
+   one another. A URL is no veto: the same work often has several (publisher
+   page, repository copy), so rows differing only in URL join on title + year.
+   A working paper and
    its article with their own DOIs therefore stay two works, an id-less
    "Editorial" cannot fuse distinct DOIs, and a title never joins across
    years. Each row's ``version_hint`` is carried so the counting-unit decision
@@ -169,11 +170,10 @@ def keys_of(row):
 
 
 def _compatible(a, b):
-    """Two rows that no identifier sets apart."""
+    """Two rows whose DOIs and OpenAlex ids do not disagree (a URL never does)."""
     return not ((a["doi"] and b["doi"] and a["doi"] != b["doi"])
                 or (a["openalex_id"] and b["openalex_id"]
-                    and a["openalex_id"] != b["openalex_id"])
-                or (a.get("url") and b.get("url") and a["url"] != b["url"]))
+                    and a["openalex_id"] != b["openalex_id"]))
 
 
 class _UnionFind:
@@ -238,15 +238,16 @@ def _title_unions(rows, uf, group):
     """Unions one title + year group allows, judged on the identifier components.
 
     Returns the index pairs to join and whether the group was ambiguous.
-    Distinct components never share a DOI, an OpenAlex id or a URL key (they
-    would have joined), so two components disagree exactly when both carry
-    an identifier of the same kind.
+    Distinct components never share a DOI or an OpenAlex id (they would have
+    joined), so two components disagree exactly when both carry an
+    identifier of the same kind. A URL is not such a kind: two URLs for one
+    work are normal, so a URL mismatch never vetoes a title + year join.
     """
     def ident(i):
-        return (bool(rows[i]["doi"]), bool(rows[i]["openalex_id"]), bool(rows[i].get("url")))
+        return (bool(rows[i]["doi"]), bool(rows[i]["openalex_id"]))
 
     free = [i for i in group if not any(ident(i))]
-    comps = defaultdict(lambda: [False, False, False])
+    comps = defaultdict(lambda: [False, False])
     for i in group:
         if any(ident(i)):
             flags = comps[uf.find(i)]

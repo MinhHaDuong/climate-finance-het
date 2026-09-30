@@ -110,7 +110,10 @@ unregistered DSpace default prefix `123456789` a repository Handle keeps its
 host, since many repositories reuse that prefix; a DOI resolver or OpenAlex URL counts as that DOI
 or id), then normalized title + year. A shared URL never joins two different
 DOIs or two different OpenAlex ids: a landing page common to several works,
-such as a journal issue page, leaves them apart. A titled record whose source holds none
+such as a journal issue page, leaves them apart. Different URLs, on the other
+hand, never keep records apart: one work often has several (publisher page,
+repository copy), so only a DOI or OpenAlex id disagreement vetoes a title +
+year join. A titled record whose source holds none
 of them goes to `excluded.csv` with reason `no_dedup_key` (see above).
 
 ## `registry.csv`

@@ -349,3 +349,11 @@ def _crow(doi="", url="", title="x", year="", openalex_id="", origin="l"):
     return {"origin": origin, "delivery": f"{origin}/1", "doi": doi,
             "openalex_id": openalex_id, "url": rp.norm_url(url), "title": title,
             "year": year, "version_hint": ""}
+
+
+
+def test_different_urls_do_not_veto_a_title_year_join():
+    rows = [_crow(doi="10.1/a", url="https://publisher.com/a", title="Carbon funds", year="2001"),
+            _crow(url="https://repo.org/handle/9/9", title="Carbon funds", year="2001")]
+    assert len(set(rp.cluster(rows))) == 1
+    assert rp._compatible(rows[0], rows[1])
