@@ -66,8 +66,10 @@ or more publishers. The document types are `political_declaration`,
 register, an EVN project page. Publication is a relation, not a column, so a
 declaration co-signed by a government and the International Partners Group, or
 a report issued jointly by a secretariat and a ministry, names every publisher.
-A document may have editions; an edition is a document row related to its
-predecessor. [M2]
+A document may have editions; an edition is a document related to its
+predecessor, either a revised edition or the next issue of a series. The
+successive versions of a living page are snapshots of one document, not
+editions. [M2]
 
 ### Retrieval
 
@@ -243,8 +245,7 @@ decided it and when. [M2 for keeping the publisher's word; M3b for the crosswalk
 | Relation | From | To | Meaning |
 |---|---|---|---|
 | `published_by` | document | party | many-to-many; role optional (`author`, `co_signatory`, `host`, `commissioner`); a joint publication is one row per party; in a text "X / Y" the publisher X is `commissioner` and the consulting firm Y `author` |
-| `edition_of` | document | document | succeeds a previous edition |
-| `same_as` (document) | document | document | one publication under two URLs or two exports; the lines belong to the canonical one |
+| `edition_of` | document | document | succeeds a previous edition; the relation's role says whether it is a revised edition or the next issue of a series; the successive versions of a living page are its snapshots, not editions |
 | `translation_of` | document | document | the same publication in another language; lines are extracted from one and cross-referenced, never doubled |
 | `retrieval_of` | retrieval | document | one fetch attempt |
 | `yields` | retrieval | snapshot | the bytes a successful retrieval returned; absent on failure |
@@ -258,12 +259,10 @@ decided it and when. [M2 for keeping the publisher's word; M3b for the crosswalk
 | `tranche_of` | agreement | agreement | at most one active parent |
 | `party_in` | party | agreement | one row per role; a party may fund one agreement and channel another |
 | `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement: `lead_agency`, `coordinating_agency`, `guarantor`, `endorser`, `signatory`, `host`, `standards_body`; one row per role |
-| `same_as` (line) | line | line | the same published item in two places: a CRS activity across reporting years (keyed on donor and donor project id), one amount printed in a headline, a table and a chart |
-| `cites` (line) | line | document, line | a document's reference to another document or to a line of it, held or not |
+| `cites` | line | document, line | a document's reference to another document or to a line of it, held or not; an observation's citation of its one line is the observation's `line_id` column, not a relation |
 | `member_of` | line, project, asset, agreement | perimeter | dated, justified membership; a line may be a member before any identity is minted |
-| `same_as` | any | same kind | a justified equality claim; does not choose a route |
+| `same_as` | any | same kind | a justified equality claim; does not choose a route. Its cases: two documents, one publication under two URLs or two exports (which member is extracted is extraction's rule, not the relation's); two lines, the same published item in two places, such as a CRS activity across reporting years (keyed on donor and donor project id) or one amount printed in a headline, a table and a chart |
 | `about` | observation | any subject | typed |
-| `cites` | observation | line | exactly one |
 | `timed` | observation | timing | one row per date role; the amount lives once on the observation | 
 
 [M2 for the relations among documents, retrievals, snapshots and lines; M3b for the others]
@@ -381,8 +380,11 @@ itself. Similar labels do not justify `exactMatch`. A crosswalk row maps a
 publisher's word onto a term; a perimeter row defines a population that
 counts are made against. Both name who decided and when. [M2]
 
-**Revision.** The in-force rule of the decision tables applies: a row is in
-force when it is the accepted terminal row of its chain. Rewording a
+**Revision.** The in-force rule of the decision tables applies (storage
+contract, section 1): a row is in force when it is the accepted terminal row
+of its chain, or an accepted row whose only successors are proposals not yet
+accepted or rejected, so a proposed revision leaves the adopted row in
+force. Rewording a
 definition or correcting a mapping supersedes the row under the same chain
 key. A change of meaning mints a new `term_id` or `perimeter_id`, and the old
 one stays valid for every row that used it; a count made against the old

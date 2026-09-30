@@ -48,7 +48,7 @@ tables and never edits an upstream row. [M2]
 
 | Step | Name | Content | Tables |
 |---|---|---|---|
-| D1 | Register | What was fetched, byte for byte: publishers, documents, retrieval attempts, snapshots, and the record of how they were sought. A document is *held* when it is admitted and at least one of its retrievals yielded a snapshot | `parties`, `party-names`, `documents`, `document-publishers`, `retrievals`, `snapshots`, `coverage`, `dry-searches` |
+| D1 | Register | What was fetched, byte for byte: publishers, documents, retrieval attempts, snapshots, and the record of how they were sought. A document is *registered* when it is in the register, and *held* when it is admitted and at least one of its retrievals yielded a snapshot | `parties`, `party-names`, `documents`, `document-publishers`, `retrievals`, `snapshots`, `coverage`, `dry-searches` |
 | D2 | Lines | One publisher's statement at one locator in one snapshot, with its own fields verbatim | `lines`, `line-fields/<document_id>`, `line-field-specs` |
 | D3 | Observations | A line read into a typed statement, measure, value and timings, by a named method version | `observations`, `timings`, `external-ids`, `rates`, `deflators` |
 | D4 | Referents | Referents (projects, assets, agreements, parties, perimeters) minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `parties`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |
@@ -106,7 +106,7 @@ weighing and revising ([fusion](jetp-fusion.md)); results are computed as E
 | *reader*, for code | **parser** for purpose-built code that extracts one publisher's series; **extractor** for any extraction method; **reader** only for an LLM reader or a person reading | *Reader* named a program, a parser, an LLM and a person |
 | *reading*, for bytes to lines | **extraction** for bytes to lines (D2); **reading** for lines to observations (D3) | One word named two steps |
 | *fixed*, for a document class | **frozen**, **living** and **series**, the three document classes of [collection](jetp-collection.md) section 10 | Two documents named one class two ways |
-| *disposition*, for a candidate's outcome | **triage outcome** (admit, context only, reject, duplicate) for a candidate; **disposition** only for a held document or snapshot that yields no lines ([extraction](jetp-extraction.md) section 7) | Two closed lists shared one name and the value `duplicate` |
+| *disposition*, for a candidate's outcome | **triage outcome** (admit, context only, reject, duplicate) for a candidate; **disposition** only for a registered document, or a snapshot of a held one, that yields no lines ([extraction](jetp-extraction.md) section 7) | Two closed lists shared one name and the value `duplicate` |
 | *channel*, for a way of finding documents | **search channel**; the ontology's party role `channel` keeps its sense | One word named a search route and a party role |
 
 Domain words that coincide are unaffected: a *project stage* is a value of

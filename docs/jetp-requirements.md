@@ -398,9 +398,10 @@ statements or a recorded disposition and its reason (duplicate of a
 canonical document, non-canonical translation, no snapshot, no extractable
 content). *M2.* Test: the count of documents with neither is zero.
 
-**F5. The pending work is computable.** The set of snapshots without
-statements or disposition is derivable at any time and is the input of every
-run, so that later recurring passes reuse the M2 pipeline. *M2.* Test: after
+**F5. The pending work is computable.** The pending list, as the extraction
+document defines it (a snapshot with no statements and no disposition of its
+own, whose document has no document-level disposition), is derivable at any
+time and is the input of every run, so that later recurring passes reuse the M2 pipeline. *M2.* Test: after
 a new snapshot is registered, the pending set contains exactly it.
 
 ### 4.2 Statements and traceability
@@ -421,6 +422,9 @@ statements never change; content restated unchanged is kept under the later
 date as persistence, not corroboration. *M2.* Test: a second snapshot of a
 living document runs through the pipeline; the earlier statements are
 byte-identical afterwards and the restated ones appear under the new date.
+Since no held document has yet changed between snapshots, the test runs on
+a fixture (a held snapshot with one value changed) and on a held page whose
+bytes change on every request without a change of text.
 
 **F6. All disagreeing statements stay retrievable.** No statement is deleted
 or replaced because another disagrees with it; a result that prefers one
@@ -600,9 +604,32 @@ Test: every document and statement belongs to one of the four, or to no
 recipient country for global method sources.
 
 **DA2. The documents held.** 392 registered documents, 369 with a snapshot,
-254 already extracted (13,089 statements from 253 snapshots), 115 with a
+254 already extracted (13,092 statements from 253 snapshots), 115 with a
 snapshot and nothing extracted yet (South Africa 49, Senegal 28, Viet Nam 25, Indonesia
 13), 23 without a snapshot. *M2.* Test: every one of the 392 satisfies F2.
+
+The counts reconcile as follows. At M2 the table is produced by a script over
+the register and cited here, from Operation § 7.1 and from the storage
+contract § 3; the figures below were counted from the ledger tables when the
+specification was reviewed.
+
+| Count | Value |
+|---|---|
+| Registered documents | 392 |
+| Documents with a snapshot (held) | 369 |
+| Distinct snapshots | 369 |
+| Snapshots shared by two documents (a mirror) | 1 |
+| Documents with two snapshots | 1 |
+| Snapshots in the document store | 278 |
+| Snapshots kept outside the document store | 91: 81 CRS extracts and 6 World Bank and ledger exports recorded by hand (`local-record`), 4 IATI country files fetched by script, each under the comparator data directories |
+| Documents without a snapshot | 23 |
+| Statements (lines) | 13,092 |
+| Snapshots with statements | 253 |
+| Documents with statements | 254 (the mirror shares its snapshot) |
+| Documents with a snapshot and no statement | 115 |
+
+The number of statements per identifier family and extraction method is
+added here once the first replay has counted it (Q1).
 
 **DA3. Document types.** At least: progress updates, project pages, data
 portals, official news, annual reports, operator reports, project lists,
@@ -610,7 +637,8 @@ implementation plans, investment plans, approval documents, secondary news.
 Repeated series get a dedicated parser; one-off documents get an assisted
 reading with row-by-row review. *M2.* Test: every type among the 115 has
 an extraction path, and each document extracted by a dedicated parser
-belongs to a repeated series.
+belongs to a repeated series or a repeated format of one publisher (a page
+template).
 
 **DA4. Formats.** HTML, PDF with a text layer, scanned PDF read by
 transcription, spreadsheets, JSON, JavaScript data files, and bytes of
@@ -673,7 +701,10 @@ strict-scope figure recomputed without this scope is unchanged.
 
 **Q1. Replay.** The pipeline reproduces the statements of the 254 documents
 already extracted, byte for byte, or every difference is explained. *M2.* Test:
-the replay report lists zero unexplained differences.
+the replay report lists zero unexplained differences for statements minted
+by extractors and written by ingestion runs, and, for the others, the result
+of the locator-and-text check, listed by method; it counts the statements
+of each identifier family and method.
 
 **Q2. Idempotence.** Re-running on a snapshot already extracted changes nothing and
 never renumbers a statement's identifier. *M2.* Test: two consecutive runs
@@ -713,7 +744,8 @@ a failure.
 
 **Q9. Every method has a version.** Every extraction, reading, judgement,
 scope and calculation names its method and version; changing one produces a
-new result under a new version. *M2* for extraction methods, *M3b* for judgements and
+new result under a new version. *M2* for extraction methods and document
+judgements, *M3a* for triage, *M3b* for the other judgements and for
 calculations. Test: every result names the versions it was computed under.
 
 **Q10. Recall is stated.** Discovery follows a stopping rule stated before
@@ -732,8 +764,9 @@ recorded with their likelihood and confidence, and presented sorted by
 them. The author examines a bounded share, not every item. The composition
 of the panel, the share the author examines and the milestone at which each
 part applies are specified in Extraction and in Fusion § 3. *M2* for
-statements extracted, *M3a* for discovery and admission judgements, *M3b* for
-identity and preference judgements. Test: every LLM judgement in
+statements extracted and for document identity judgements, *M3a* for
+discovery and admission judgements, *M3b* for the other identity judgements
+and for preference judgements. Test: every LLM judgement in
 a release carries readings from more than one vendor with likelihood and
 confidence; the share the author examined is stated and bounded.
 

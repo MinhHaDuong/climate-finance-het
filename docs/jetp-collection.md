@@ -115,7 +115,8 @@ fusion section 3: one publication under two addresses is one document
 (`same_as`), a later issue is an `edition_of`, the same text in another
 language is a `translation_of`. A mirror kept by a third party, such as a web
 archive copy or a partner's re-hosting, names that party in a hosting role.
-[M3a]
+[M2 for the documents held, with the proposers fusion section 3 tags M2; M3a
+for the candidates discovery brings, with its proposers 4 and 5]
 
 The register held before the M3a campaign is its round zero. Those documents
 were not found under this protocol; their search routes are recorded where known, and
@@ -332,7 +333,10 @@ a quoted basis, who or what judged, by which method and version, and when,
 as fusion section 3 requires of identity judgements, with a likelihood and
 a confidence on the calibrated scales of fusion section 1. [M3a]
 
-**Checking at M3a.** One LLM reader proposes each triage outcome. A second
+**Checking at M3a.** LLM readers are called without tools, network or file
+access, and receive a candidate's text as quoted data, never as
+instructions, since the documents are written by interested parties. One
+LLM reader proposes each triage outcome. A second
 LLM reader, from another vendor and blind to the first answer, checks every candidate.
 Where both agree, the triage outcome is in force. The author sees only the
 disagreements and a random sample of the agreements, sorted by likelihood and
@@ -362,13 +366,24 @@ A figure extracted from a living document's snapshot is a statement of that date
 like any other; the next version is a new statement beside it (fusion section
 2). [M3a]
 
+**Relocation.** A held document whose publisher moves it to a new address
+stays one document: the new address is recorded as a change of the
+document's address, never registered as a second document folded by
+`same_as`, and a retrieval of any of its recorded addresses is a retrieval
+of that document. [M4, written now so that the identity model does not
+change when site migrations begin]
+
 ## 11. Two published dates and the freeze
 
 **Discovery cutoff.** The date of the last round counted in the campaign.
 [M3a]
 
 **Newest document date.** The latest publication date, as its publisher
-dates it, among the admitted documents. [M3a]
+dates it, among the admitted documents. For a living document, the
+publication date of a snapshot is the date its publisher prints in it, else
+the date of the retrieval that yielded it; a release states the latest
+retrieval date of the living documents it relies on beside the newest
+document date. [M3a]
 
 Both dates are published with the register. They differ from the knowledge
 cutoff of fusion section 1 ("two times"), which is the date up to which
@@ -390,7 +405,9 @@ outcomes and their access outcomes are fixed for M3b. After the freeze: [M3a]
 **M2 before the campaign.** M2 discovers nothing. It may retry, on the access
 ladder, the retrieval of documents already registered that have no snapshot,
 because that is fetching, not discovery; every such document ends with a
-snapshot or a recorded access outcome. [M2]
+snapshot or the disposition `no_snapshot` of
+[extraction](jetp-extraction.md) section 7, whose reason cites the latest
+retrieval status. [M2]
 
 **After M3.** Recurring discovery, the weekly watch beyond known sites,
 link-rot checks and the tracking of living documents and series each run on

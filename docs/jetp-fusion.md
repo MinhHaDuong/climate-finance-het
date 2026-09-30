@@ -223,9 +223,23 @@ a translation pair; the other members remain citable. Proposers:
    detection, a translation.
 4. A reading by LLMs of the remaining pairs, given both first
    pages.
-5. A person. 
+5. A person.
 
-[M2]
+Proposers 1 and 2 are deterministic and run at M2; proposer 3 runs at M2 as
+a bounded list of candidate pairs sorted by likelihood, which the author
+decides; proposers 4 and 5 start at M3a, with the checking rule of
+[extraction](jetp-extraction.md) section 6.3, when discovery brings
+mirrors. [M2 for proposers 1 to 3; M3a for proposers 4 and 5]
+
+**Content check before a document judgement.** Before a `translation_of` or
+a `same_as` between non-identical documents reaches "likely", the judgement
+compares the two documents' content: the multiset of numerals with their
+units, dates, percentages and printed identifiers, and the page and table
+counts. The comparison is recorded as the quoted basis. Beyond a declared
+tolerance the judgement is "different": a re-export that changed a figure
+is an `edition_of`, both members are extracted, and the same-publisher rule
+of section 5 handles their non-independence. An abridged or revised
+translation with a different annex is two documents. [M2]
 
 ## 4. Occurrence
 
@@ -388,3 +402,5 @@ well.
 | A later snapshot prints a different value. | A new dated statement beside the old one, and a judgement on whether it is a correction or a development. |
 | Two primary documents disagree and a judgement prefers one. | The other remains, with the stated reason for the preference. |
 | A candidate match is judged "about as likely as not". | It counts in no result whose match threshold is "likely" or stricter, and it stays listed. |
+| An accepted match has a later revision that is only proposed. | The accepted match stays in force and counts; the proposal is listed as pending until it is itself accepted or rejected. |
+| A match accepted before cutoff K is superseded by a judgement admitted after K. | A result at K counts the accepted match; a result at a later cutoff applies the revision. |

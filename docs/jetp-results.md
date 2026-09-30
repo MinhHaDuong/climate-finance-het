@@ -214,7 +214,10 @@ does not identify a release. *M3b* (Q8, F32).
 published, that every result carries section 2 in full, that every trail
 resolves, that every file listed exists with its hash, and that the
 redistribution list excludes every document whose terms forbid it. A failed
-check stops the build and publishes nothing. *M3b* (Q6, Q8, C6).
+check stops the build and publishes nothing. The validation also screens the
+release's text for email addresses and telephone numbers and lists every hit
+for the author, who removes a natural person's contact details before
+acceptance; the screen reports, it does not block. *M3b* (Q6, Q8, C6, N2).
 
 **A reviewed act.** No program publishes a release on its own. A named
 reviewer accepts the validated package; acceptance is recorded in the

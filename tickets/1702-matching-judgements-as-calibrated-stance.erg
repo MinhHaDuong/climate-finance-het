@@ -8,6 +8,7 @@ Blocked-by: 1711
 2026-09-30T11:35Z HDMX-coding-agent created
 2026-09-30T15:10Z HDMX-coding-agent note two exit criteria added from the extraction spec review (author, 2026-09-30): reading method, version and reviewer on every line; ordinal continuation across snapshots in the line identifier scheme
 2026-09-30T18:00Z HDMX-coding-agent note exit criterion added from the vocabulary pass (ticket 1703): proposed schema changes the specification documents cannot make
+2026-09-30T14:33Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M2 storage and extraction targets of the storage contract
 
 --- body ---
 ## Context
@@ -44,3 +45,12 @@ Author decisions (2026-09-30, interactive):
 - [ ] A statement (line) records the method, method version and reviewer (checking reader, and the author where they decided) that read it, as `docs/jetp-extraction.md` § 3 requires
 - [ ] The statement identifier scheme says how ordinals continue across snapshots of one document, so a new snapshot's statements get new identifiers without collision (`docs/jetp-extraction.md` § 9)
 - [ ] Proposed schema changes from the vocabulary pass (ticket 1703) are decided and, where accepted, migrated: the D1 `coverage` table, which records the search per listed referent, is renamed to say search (for example `referent-searches`), and the round log and unreachable list of `docs/jetp-collection.md` § 5 and § 8 get tables of their own; the authority category `secondary_source` is renamed so that the retired word *source* leaves the schema; the retrieval statuses `not_published` and `not_applicable`, which are verdicts rather than fetch outcomes, are related to collection's terminal verdicts; the report's proposed rename of the row status `candidate` to `proposed` is decided (its verifier advised against it)
+- [ ] `line-referents` and `relations` carry `recorded_at` (ledger write time) beside `decided_at`, and a DDL test replays the as-of case of the storage contract § 1: A accepted, B superseding A recorded after K, the state at K returns A (review wave 1, W1-06)
+- [ ] `line-referents` and `relations` carry `basis` (the quoted basis) beside stance, likelihood and confidence, and `adjudications` carries `method`, `method_version`, stance, likelihood, confidence, basis and a justification (W1-08)
+- [ ] `line-referents.justification_line_ids` is replaced by rows of a relation table, one per decision row and justification line (W1-08)
+- [ ] `line-field-specs` is keyed by document and table segment and maps each printed header, with its unit and scale wording, to a field name under a versioned mapping (W1-13)
+- [ ] `lines.classification` is NOT NULL in the DDL (W1-40)
+- [ ] `documents.edition_of` is dropped; the `relations` row is the one home of an edition relation (W1-44)
+- [ ] The writer splits an oversized `line-fields/<document_id>` into numbered `.d/NN.csv` shards, and a living document's fields table by year of `recorded_at` (W1-14, W1-53)
+- [ ] The validator checks prose locators as start and end anchors derived from the verbatim quote (extraction § 5) on lines admitted after the rule, and accepts `text` as the table segment of a prose line identifier (W1-02, W1-09)
+- [ ] A `document-addresses` table records a document's addresses with the date from which each holds, and the validator counts a retrieval of any recorded address as a retrieval of the document [M4] (W1-51)
