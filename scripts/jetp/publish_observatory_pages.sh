@@ -15,8 +15,8 @@
 # gh-pages to chain onto it and pushes without force, so a concurrent publish
 # is refused rather than overwritten.
 #
-# Pushing gh-pages publishes nothing while GitHub Pages is disabled. Enabling
-# Pages is the author's step, described in deliverables/jetp-observatory/README.md.
+# GitHub Pages serves gh-pages, so a push goes live once GitHub rebuilds; the
+# branch's role is described in deliverables/jetp-observatory/README.md.
 # There is no CI in this repository (ticket 0321): this script is the whole path.
 set -euo pipefail
 
@@ -87,7 +87,7 @@ fi
 
 if [ "$push" -eq 1 ]; then
     git push "$remote" "$commit:refs/heads/$branch"
-    echo "Pushed to $remote/$branch. Pages stays off until the author enables it."
+    echo "Pushed to $remote/$branch. GitHub Pages rebuilds the site from it within minutes."
 else
     echo "Dry run: nothing pushed. To publish: make jetp-observatory-publish JETP_PAGES_REF=$ref"
 fi
