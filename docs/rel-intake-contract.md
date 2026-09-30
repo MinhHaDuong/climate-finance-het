@@ -171,3 +171,15 @@ Then the pool totals after deduplication, the works per number of sources, and
 the works still to screen. Records enter the ICF screen (ticket 1733) with the
 same rule and prompts as every other record; nothing is admitted to REL by the
 lane that found it.
+
+The ICF labels live in `data/rel_screen/icf_screen.csv`, an append-only table
+with its sidecar `icf_screen.manifest.jsonl` (byte length and sha256 after
+each append). Both are tracked together by `data/rel_screen.dvc` (`dvc add`,
+never a `dvc.yaml` out): the manifest only anchors the table to itself, so the
+DVC hash committed to git is the real tamper anchor. Fetch the table before
+writing (`make rel-pool-data`); the writers refuse to start a new table where
+`data/rel_screen.dvc` tracks one, unless `--new-table` is given.
+`make rel-screen-import-1530` appends the ticket 1530 labels (idempotent), and
+`make rel-view` regenerates `data/rel_pool/rel_view.csv` and `rel_counts.json`
+from the pool and the table. Paths, the 1530 archive, the stage-2 chunking and
+the audit sample are set in `config/rel_screen.yaml`.

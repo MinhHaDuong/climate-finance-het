@@ -332,7 +332,8 @@ corpus-validate: $(REFINED)
 REL_SUD_RUNS ?= $(HOME)/data/projets/climate-finance-het/rel_sud/2026-09-29/padme-rel_sud_runs
 .PHONY: rel-pool rel-pool-data rel-intake-1530
 rel-pool-data:
-	$(UV_RUN) dvc pull data/catalogs/unified_works_rel_pin.csv.dvc $(wildcard data/rel_intake/*.dvc)
+	$(UV_RUN) dvc pull data/catalogs/unified_works_rel_pin.csv.dvc $(wildcard data/rel_intake/*.dvc) \
+		$(wildcard data/rel_screen.dvc)
 
 rel-pool:
 	$(PYTHON) scripts/corpus_rel_pool.py --output-dir data/rel_pool
@@ -343,6 +344,19 @@ rel-intake-1530:
 	$(PYTHON) scripts/catalog_rel_1530_delivery.py \
 		--run-dir $(REL_SUD_RUNS)/20260929f --run-dir $(REL_SUD_RUNS)/20260929g \
 		--output-dir data/rel_intake/t1530-sud-openalex/2026-09-29
+
+# ── ICF screen (ticket 1732) ──
+# data/rel_screen/icf_screen.csv is append-only and tracked with
+# `dvc add data/rel_screen` (never a dvc.yaml out, never rebuilt). Fetch it
+# first (make rel-pool-data); the writers refuse to start a new table where
+# data/rel_screen.dvc tracks one. The import is idempotent; the view is
+# regenerable from pool + table.
+.PHONY: rel-screen-import-1530 rel-view
+rel-screen-import-1530:
+	$(PYTHON) scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv t1530
+
+rel-view:
+	$(PYTHON) scripts/corpus_rel_view.py --output-dir data/rel_pool
 
 # ── Corpus reporting (Phase 2 — reads only refined data) ──
 # The periodised coverage metric is computed once, here, and rendered by the
