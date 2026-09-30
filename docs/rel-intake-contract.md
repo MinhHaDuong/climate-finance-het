@@ -176,7 +176,7 @@ delivery, per source (a work two lanes found counts in both):
 | `with_doi`, `doi_malformed`, `with_openalex_id`, `with_url`, `title_year_only` | identifier coverage (DOIs are compared as strings, never resolved) |
 | `title_only_from_excluded`, `title_only_joined` | `no_dedup_key` rows taken in as title-only works, and how many joined the one existing work with the same normalized title (several such works: ambiguous, kept separate, counted in the pool reconciliation as `ambiguous_title_only`) |
 | `dup_within_delivery` | rows (records and title-only rows) that land in the same pool work as another row of the same delivery |
-| `in_catalogue` | matched to the catalogue (by DOI, OpenAlex id, URL, then title + year, or `via_other_lane` when only another lane's record bridges them; each count reported) |
+| `in_catalogue` | matched to the catalogue (by DOI, OpenAlex id, URL, then title + year, `by_title_only` when a `no_dedup_key` row joined on the catalogue row's title, or `via_other_lane` when only another lane's record bridges them; each count reported) |
 | `in_other_lane_only` | not in the catalogue, matched to another delivery |
 | `new_to_pool` | matched to nothing else: the lane's unique yield |
 | `already_screened` | of the delivery's works, how many already carry an ICF label in `icf_screen` |

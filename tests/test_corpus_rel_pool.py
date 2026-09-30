@@ -144,7 +144,7 @@ def test_per_source_report_reconciles(tmp_path):
     assert a["records"] == 6 and a["dup_within_delivery"] == 1 and a["works"] == 5
     assert a["with_doi"] == 4 and a["with_openalex_id"] == 1 and a["title_year_only"] == 1
     assert a["in_catalogue"] == {"total": 3, "by_doi": 1, "by_openalex_id": 1, "by_url": 0,
-                                 "by_title_year": 1, "via_other_lane": 0}
+                                 "by_title_year": 1, "by_title_only": 0, "via_other_lane": 0}
     assert a["in_other_lane_only"] == 1 and a["new_to_pool"] == 1
     b = report["deliveries"]["t1653-sud/2026-10-02"]
     assert (b["in_other_lane_only"], b["new_to_pool"]) == (1, 1)
@@ -367,3 +367,14 @@ def test_resolver_url_without_id_is_refused_before_the_merge(tmp_path):
     with pytest.raises(rp.RelPoolError, match="intake contract"):
         _run(tmp_path, [], [("t1653-sud", "2026-10-02", recs),
                             ("t1650-toc", "2026-10-03", other)])
+
+
+
+def test_title_only_join_to_the_catalogue_is_named_by_title_only(tmp_path):
+    cat = [{"source": "openalex", "source_id": "W1", "doi": "", "title": "Carbon funds",
+            "year": "2001"}]
+    excl = {"record_id": "x1", "query_id": "q1", "reason": rp.NO_DEDUP_KEY,
+            "title": "Carbon funds", "note": ""}
+    report, _ = _run(tmp_path, cat, [("t1653-sud", "2026-10-02", [_rec("r1")], [excl])])
+    c = report["deliveries"]["t1653-sud/2026-10-02"]["in_catalogue"]
+    assert c["by_title_only"] == 1 and c["via_other_lane"] == 0 and c["total"] == 1

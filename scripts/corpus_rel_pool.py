@@ -556,12 +556,15 @@ def _direct_catalogue_method(row, cat_index):
         return "by_url"
     if ty and any(_compatible(row, c) for c in cat_index["title"].get(ty, [])):
         return "by_title_year"
+    if row.get("title_only") and normalize_title(row["title"]) in cat_index["title_any_year"]:
+        return "by_title_only"
     return None
 
 
 def _catalogue_index(rows):
     """Catalogue keys, for naming the method of a direct catalogue match."""
-    index = {"doi": set(), "openalex_id": set(), "url": set(), "title": defaultdict(list)}
+    index = {"doi": set(), "openalex_id": set(), "url": set(), "title": defaultdict(list),
+             "title_any_year": set()}
     for r in rows:
         if r["origin"] != CATALOGUE:
             continue
@@ -574,6 +577,8 @@ def _catalogue_index(rows):
             index["url"].add(r["url"])
         if ty:
             index["title"][ty].append(r)
+        if normalize_title(r["title"]):
+            index["title_any_year"].add(normalize_title(r["title"]))
     return index
 
 
@@ -584,8 +589,9 @@ def delivery_counts(did, idx, rows, roots, comp, cat_index):
     always add up with the pool; ``dup_within_delivery`` counts rows that land
     in the same work as another row of the delivery. Each work is placed with
     a catalogue row (named by the first direct match method of the delivery's
-    rows, cascade order; ``via_other_lane`` when only another lane's record
-    bridges them), with another delivery only, or alone (``new_to_pool``).
+    rows, cascade order, ``by_title_only`` for a ``no_dedup_key`` row joined on
+    the catalogue row's title; ``via_other_lane`` when only another lane's
+    record bridges them), with another delivery only, or alone (``new_to_pool``).
     """
     drows = [rows[i] for i in idx if not rows[i].get("title_only")]
     title_only = [i for i in idx if rows[i].get("title_only")]
@@ -593,7 +599,7 @@ def delivery_counts(did, idx, rows, roots, comp, cat_index):
     for i in idx:
         works[roots[i]].append(i)
     in_cat = Counter({"by_doi": 0, "by_openalex_id": 0, "by_url": 0, "by_title_year": 0,
-                      "via_other_lane": 0})
+                      "by_title_only": 0, "via_other_lane": 0})
     other_lane_only = new = 0
     for root, members in works.items():
         full = comp[root]
@@ -694,6 +700,8 @@ def make_report(rows, roots, deliveries, excluded, catalogue_meta, superseded, s
         "reconciliation": recon,
         "notes": ("Per-delivery counts are per source, before cross-source deduplication: a "
                   "work two lanes found counts in both. "
+                  "in_catalogue.by_title_only: a no_dedup_key row joined a catalogue work on "
+                  "its title alone (any year). "
                   "in_catalogue.via_other_lane: the delivery's work joins a catalogue work only "
                   "through another lane's record. already_screened and still_to_screen wait for "
                   "the icf_screen table (ticket 1732)."),
@@ -702,7 +710,7 @@ def make_report(rows, roots, deliveries, excluded, catalogue_meta, superseded, s
 
 def report_markdown(report):
     head = ["delivery", "records", "excluded", "title_only_from_excluded", "with_doi", "doi_malformed", "with_openalex_id",
-            "title_year_only", "dup_within_delivery", "in_catalogue (doi/oa/url/title/via lane)",
+            "title_year_only", "dup_within_delivery", "in_catalogue (doi/oa/url/title/title-only/via lane)",
             "in_other_lane_only", "new_to_pool"]
     lines = ["# REL pool merge report", "",
              f"Catalogue: `{report['catalogue']['path']}`, md5 `{report['catalogue']['md5']}`, "
@@ -715,7 +723,7 @@ def report_markdown(report):
             did, p["records"], exc, p["title_only_from_excluded"], p["with_doi"], p["doi_malformed"], p["with_openalex_id"], p["title_year_only"],
             p["dup_within_delivery"],
             f"{c['total']} ({c['by_doi']}/{c['by_openalex_id']}/{c['by_url']}/{c['by_title_year']}/"
-            f"{c['via_other_lane']})",
+            f"{c['by_title_only']}/{c['via_other_lane']})",
             p["in_other_lane_only"], p["new_to_pool"]])) + " |")
     pool = report["pool"]
     lines += ["", f"Pool: {pool['works']} works ({pool['in_catalogue']} with a catalogue row, "
