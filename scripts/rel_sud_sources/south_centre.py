@@ -12,6 +12,7 @@ Papers are published in English with French, Spanish and Portuguese
 translations, so the Portuguese lexicon is matched too.
 """
 
+import re
 import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
 
@@ -56,12 +57,15 @@ LABEL_LANGUAGE = [("Research Paper", "en"), ("Document de recherche", "fr"),
 
 
 def label_language(label):
-    return next((lang for prefix, lang in LABEL_LANGUAGE if label.startswith(prefix)), "")
+    low = label.casefold()
+    return next((lang for prefix, lang in LABEL_LANGUAGE
+                 if low.startswith(prefix.casefold())), "")
 
 
 def to_record(item, match):
     label = (item.findtext("title") or "").strip()
-    subtitle = html_text(item.findtext("description") or "")
+    # some descriptions open with the theme's "Read more" link text
+    subtitle = re.sub(r"^Read more\s*", "", html_text(item.findtext("description") or ""))
     body = html_text(item.findtext(NS_CONTENT) or "")
     tags = [c.text.strip() for c in item.findall("category") if c.text]
     title = f"{subtitle} [{label}]" if subtitle else label

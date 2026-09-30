@@ -136,8 +136,8 @@ def rss(items):
 def test_south_centre_reads_every_feed_page_at_crawl_delay():
     p1 = rss([("Research Paper 180, 12 May 2023", "Loss and damage finance", "abstract"),
               ("Research Paper 181, 1 June 2023", "Patents", "TRIPS")])
-    p2 = rss([("Documento de investigación 180, 12 de mayo de 2023",
-               "Financiamiento climático y pérdidas", "resumen")])
+    p2 = rss([("Documento de Investigación 180, 12 de mayo de 2023",
+               "Read moreFinanciamiento climático y pérdidas", "resumen")])
     feed = south_centre.FEED
     get = FakeGet({(feed, (("paged", 1),)): Resp(p1), (feed, (("paged", 2),)): Resp(p2)})
     evs = events(south_centre, get)
@@ -146,6 +146,7 @@ def test_south_centre_reads_every_feed_page_at_crawl_delay():
     assert [r["language"] for r in recs] == ["en", "es"]
     assert recs[0]["title"] == "Loss and damage finance [Research Paper 180, 12 May 2023]"
     assert recs[0]["year"] == 2023  # from the label, not the 2026 post date
+    assert recs[1]["title"].startswith("Financiamiento climático")
     assert all(d >= south_centre.CRAWL_DELAY for _, _, d in get.calls)
 
 
