@@ -1,5 +1,6 @@
 """The REL screen: strict parsing, resumable output, no silent label loss."""
 
+import hashlib
 import json
 import os
 import types
@@ -150,3 +151,81 @@ def test_resume_skips_an_unreadable_line_and_duplicate_input_ids(tmp_path):
     assert asked == [1]  # W1 is done; W2 is asked once despite the duplicate row
     last = [json.loads(x) for x in open(out / "screen.jsonl", encoding="utf-8") if x.strip().endswith("}")]
     assert last[-1]["label"] == "icf" and last[-1]["doc"] == "research"
+
+
+# ── Record key (ticket 1733) ─────────────────────────────
+
+GOLDEN = [  # records whose prompt hashes were taken before --id-field existed
+    {"openalex_id": "W1", "title": "Finance climat : le Fonds vert " * 10,
+     "abstract": "Résumé " * 200, "language": "fr", "year": 2019,
+     "journal": "Revue Tiers Monde", "countries": ["FR", "SN"]},
+    {"openalex_id": "W2", "title": "No abstract here", "abstract": "", "language": "",
+     "year": None, "journal": "", "countries": []}]
+
+
+def _sha(text):
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def test_prompt_is_byte_identical_to_the_1530_screener_whatever_the_key():
+    cfg = _cfg()
+    local = {**cfg, **cfg["local"]}
+    assert _sha(sc.build_prompt(GOLDEN, cfg)) == (
+        "b6e6848e80ede5a23f8a82c9a48bb5413b7850855fd240162704c3a7473f97be")
+    assert _sha(sc.build_prompt(GOLDEN, local)) == (
+        "d9c1edccd296c7d3901fc2b3f90a68d952946b2cf83779a1b0e048e10a319a98")
+    # a pool record as the stage-1 input builder writes it shows the same text
+    pool_recs = [{**r, "work_key": f"openalex:{r['openalex_id']}", "doi": "10.1/x",
+                  "year": "" if r["year"] is None else str(r["year"])} for r in GOLDEN]
+    assert sc.build_prompt(pool_recs, local) == sc.build_prompt(GOLDEN, local)
+
+
+def _pool_recs(n):
+    return [{**r, "work_key": f"title:t{i}|2020", "openalex_id": ""}
+            for i, r in enumerate(_recs(n), 1)]
+
+
+def _label_lines(prompt, model, max_tokens):
+    return "\n".join(f"{i}|out|research|" for i in range(1, prompt.count("Title:") + 1))
+
+
+def _args(inp, out, id_field):
+    return types.SimpleNamespace(input=str(inp), output_dir=str(out), limit=0, sample_seed=7,
+                                 id_field=id_field)
+
+
+def test_work_key_run_writes_work_key_lines_and_header(tmp_path):
+    inp = tmp_path / "in.jsonl"
+    inp.write_text("".join(json.dumps(r) + "\n" for r in _pool_recs(3)), encoding="utf-8")
+    sc.run({**_cfg(), "batch_size": 2, "workers": 1}, _args(inp, tmp_path / "o", "work_key"),
+           call=_label_lines)
+    lines = [json.loads(x) for x in open(tmp_path / "o" / "screen.jsonl", encoding="utf-8")]
+    assert [x["work_key"] for x in lines] == ["title:t1|2020", "title:t2|2020", "title:t3|2020"]
+    assert all("openalex_id" not in x for x in lines)
+    (head,) = [json.loads(x) for x in open(tmp_path / "o" / "screen_runs.jsonl", encoding="utf-8")]
+    assert head["id_field"] == "work_key" and head["n_todo"] == 3
+
+
+def test_resume_under_another_key_is_refused(tmp_path):
+    inp = tmp_path / "in.jsonl"
+    inp.write_text("".join(json.dumps(r) + "\n" for r in _pool_recs(2)), encoding="utf-8")
+    out = tmp_path / "o"
+    out.mkdir()
+    (out / "screen.jsonl").write_text(json.dumps({"openalex_id": "W1", "label": "out"}) + "\n",
+                                      encoding="utf-8")
+    asked = []
+
+    def call(prompt, model, max_tokens):
+        asked.append(1)
+        return ""
+
+    with pytest.raises(SystemExit, match="keyed otherwise"):
+        sc.run({**_cfg(), "batch_size": 5, "workers": 1}, _args(inp, out, "work_key"), call=call)
+    assert asked == []
+
+
+def test_input_record_without_the_key_is_refused(tmp_path):
+    inp = tmp_path / "in.jsonl"
+    inp.write_text("".join(json.dumps(r) + "\n" for r in _recs(2)), encoding="utf-8")
+    with pytest.raises(SystemExit, match="line 1 has no 'work_key'"):
+        sc.select_records(str(inp), set(), 0, 7, "work_key")
