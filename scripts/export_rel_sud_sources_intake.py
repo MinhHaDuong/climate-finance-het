@@ -79,9 +79,28 @@ REGISTRY_COLUMNS = ["query_id", "platform", "query", "run_at", "n_received",
                     "n_announced", "n_harvested", "n_delivered"]
 # The contract has no reason yet for a titled record without any dedup key;
 # not_retrievable is stretched to cover it until one lands (1655 asked).
-NO_KEY_NOTE = ("no publication year, DOI or OpenAlex id in the source (deposit dates "
-               "only); not dedupable under the contract; title-level metadata exists in "
+NO_KEY_NOTE = ("no publication year, DOI or OpenAlex id in the source metadata (at most "
+               "deposit dates); not dedupable under the contract; title-level metadata exists in "
                "the run archive")
+# OAI-PMH identifier prefix of a DSpace repository, by source, so an excluded
+# record keeps every persistent identifier the pool may later accept as a key.
+OAI_PREFIX = {"uwi": "oai:uwispace.sta.uwi.edu:"}
+
+
+def no_key_note(rec):
+    """``NO_KEY_NOTE`` plus the persistent identifiers the record does have."""
+    ids = []
+    pid = rec["platform_record_id"]
+    if pid.startswith("hdl:"):
+        handle = pid[4:]
+        ids.append(f"Handle recorded: https://hdl.handle.net/{handle}")
+        if rec["platform"] in OAI_PREFIX:
+            ids.append(f"OAI identifier {OAI_PREFIX[rec['platform']]}{handle}")
+    elif rec["url"]:
+        ids.append(f"stable URL recorded: {rec['url']}")
+    return "; ".join([NO_KEY_NOTE, *ids])
+
+
 ENRICHMENT_FIELDS = ["record_id", "year", "source_url", "fetched_at", "status"]
 
 # Language labels the sources use, to ISO 639-1. Anything else stays empty in
@@ -192,7 +211,8 @@ def build(runs, root=None, languages=None):
         # such a row in records.csv. Listed, not dropped (decision 2026-09-30).
         excluded.append({"record_id": rec["record_id"], "query_id": rec["query_id"],
                          "reason": "not_retrievable", "title": rec["title"],
-                         "note": NO_KEY_NOTE})
+                         "note": no_key_note(rec), "url": rec["url"],
+                         "platform_record_id": rec["platform_record_id"]})
         registry[rec["query_id"]]["n_delivered"] -= 1
     return delivered, list(registry.values()), excluded, stats
 
@@ -306,7 +326,8 @@ def cmd_export(args):
     write_csv(os.path.join(args.output_dir, "records.csv"),
               RECORD_COLUMNS + EXTRA_RECORD_COLUMNS, records)
     write_csv(os.path.join(args.output_dir, "registry.csv"), REGISTRY_COLUMNS, registry)
-    write_csv(os.path.join(args.output_dir, "excluded.csv"), EXCLUDED_COLUMNS, excluded)
+    write_csv(os.path.join(args.output_dir, "excluded.csv"),
+              EXCLUDED_COLUMNS + ["url", "platform_record_id"], excluded)
     with open(args.sentinels, encoding="utf-8", newline="") as fh:
         sentinels = list(csv.DictReader(fh))
     report = sentinel_report(sentinels, [{**r, "query_id": r["query_ids_all"]} for r in records])

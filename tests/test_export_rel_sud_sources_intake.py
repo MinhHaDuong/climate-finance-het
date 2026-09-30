@@ -110,7 +110,9 @@ def test_doi_from_url_and_records_without_any_identifier_are_listed_not_dropped(
     assert "DOI read from the record URL" in by["clacso:hdl:2"]["lane_note"]
     assert "clacso:hdl:3" not in by
     [row] = [e for e in excluded if e["reason"] == "not_retrievable"]
-    assert row["record_id"] == "clacso:hdl:3" and row["note"] == ex.NO_KEY_NOTE
+    assert row["record_id"] == "clacso:hdl:3"
+    assert row["note"] == ex.NO_KEY_NOTE + "; Handle recorded: https://hdl.handle.net/3"
+    assert row["url"] == "https://x/3" and row["platform_record_id"] == "hdl:3"
     assert stats["no_doi_no_year"] == 1 and stats["doi_from_url"] == 1
     t1 = next(r for r in registry if r["query_id"] == "S-clacso-es-T1")
     assert t1["n_delivered"] == 2
@@ -125,6 +127,15 @@ def test_enrichment_year_fills_a_record_with_neither_doi_nor_year(runs):
     rec = next(r for r in records if r["record_id"] == "clacso:hdl:3")
     assert rec["year"] == "2012" and "year from https://d/3" in rec["lane_note"]
     assert stats["no_doi_no_year"] == 0
+
+
+def test_no_key_note_names_the_handle_and_the_oai_identifier():
+    rec = {"platform_record_id": "hdl:2139/51529", "platform": "uwi", "url": ""}
+    assert ex.no_key_note(rec).endswith(
+        "Handle recorded: https://hdl.handle.net/2139/51529; "
+        "OAI identifier oai:uwispace.sta.uwi.edu:2139/51529")
+    page = {"platform_record_id": "https://c/p", "platform": "ceew", "url": "https://c/p"}
+    assert ex.no_key_note(page).endswith("stable URL recorded: https://c/p")
 
 
 def test_contract_columns_are_the_checkers():
