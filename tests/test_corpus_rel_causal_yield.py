@@ -244,6 +244,12 @@ def test_an_eds_record_with_a_truncated_doi_joins_its_openalex_twin(lane):
     cy.assign_work_keys(records)
     keys = {r.get("eds_an") or r["openalex_id"]: r["work_key"] for r in records}
     assert keys["zbw.2"] == keys["W1"] == "doi:10.1111/a"
+    # an exact EDS DOI still joins when the titles differ (working paper retitled)
+    recs = cy.assign_work_keys([
+        {"doi": "10.1111/abc", "openalex_id": "W1", "title": T1, "year": 2015},
+        {"doi": "", "doi_eds": "10.1111/abc", "openalex_id": "", "eds_an": "e",
+         "title": "Another title for the same working paper", "year": 2014}])
+    assert recs[1]["work_key"] == "doi:10.1111/abc"
     assert keys["zbw.1"] == keys["W2"] == "oa:W2"
 
 

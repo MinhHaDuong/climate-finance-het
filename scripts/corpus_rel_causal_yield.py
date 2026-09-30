@@ -206,6 +206,7 @@ def assign_work_keys(records):
     carrying one, which an id-first rule would keep apart."""
     by_oa = {r["openalex_id"]: "doi:" + r["doi"] for r in records
              if r.get("doi") and r.get("openalex_id")}
+    known_dois = {r["doi"] for r in records if r.get("doi")}
     doi_by_title, oa_by_title = {}, {}
     for r in records:
         k = title_key(r.get("title"), r.get("year"))
@@ -220,6 +221,9 @@ def assign_work_keys(records):
         elif r.get("openalex_id"):
             r["work_key"] = (by_oa.get(r["openalex_id"]) or doi_by_title.get(k)
                              or "oa:" + r["openalex_id"])
+        elif r.get("doi_eds") in known_dois:
+            # an EDS DOI that equals a DOI another record carries is not truncated
+            r["work_key"] = "doi:" + r["doi_eds"]
         else:
             r["work_key"] = (doi_by_title.get(k) or oa_by_title.get(k)
                              or ("ty:" + k if k else "")
