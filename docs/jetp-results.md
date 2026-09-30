@@ -138,8 +138,12 @@ match thresholds, both declared in advance:
 - a **cautious** threshold, counting only what the judgements support strongly
   (default: likely or more, medium confidence or more);
 - an **inclusive** threshold, counting also what they support weakly (default:
-  about as likely as not or more, any confidence).
-<!-- wave-1 W1-30: pending author decision (confidence floor of the inclusive threshold) -->
+  about as likely as not or more, low confidence or more).
+
+Both are conjunctions of a likelihood of sameness and a confidence level
+(fusion § 3); an undetermined judgement counts at neither. The verbal terms
+carry meaning through their calibration (fusion § 1), which publishes the
+observed precision of each term with the method version.
 
 The result's range runs from the smaller to the larger of the two figures.
 Which threshold gives which end depends on the kind of result: accepting

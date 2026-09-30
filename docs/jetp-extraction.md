@@ -436,10 +436,11 @@ record, and no item waits for the author.
   whether the item is right, with a quoted basis. A proposal marked as
   failed is never admitted; a person may read the item directly (section
   6.4). [M2]
-- **Every item ends with a stance.** Admitted, rejected, or undetermined,
-  with a likelihood and a confidence on the calibrated scales of
-  [fusion](jetp-fusion.md) section 1, mapped from the models' raw scores by
-  their calibration. An undetermined item is recorded and counted, never
+- **Every item ends with a stance.** Admitted or rejected, with a
+  likelihood that the proposal is right and a confidence on the calibrated
+  scales of [fusion](jetp-fusion.md) section 1, mapped from the models' raw
+  scores by their calibration; or undetermined, an abstention that carries
+  no likelihood. An undetermined item is recorded and counted, never
   admitted and never dropped; a rejected proposal is recorded with its
   reason. Nothing is queued for the author. [M2]
 - **Recorded and served by confidence.** Every reader's and the arbiter's
