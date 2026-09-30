@@ -37,6 +37,12 @@ directory), the Qwen runs on padme.
 DOI and title). Refused while the run has not finished (``run.log`` has no
 closing ``labelled N, unlabelled M`` line) and when its invocations disagree
 on model or prompt hash. ``labelled_at`` is the first invocation's start.
+A run is keyed by ``openalex_id`` (1530 input, the catalogue run) or by
+``work_key`` (``--id-field work_key``, the pool input of
+``corpus_icf_stage1_input.py``, ticket 1733). The key is read from the run
+header (``id_field``), or from the label lines of runs older than that field;
+every label line must carry exactly that key, else the run is refused. A
+``work_key`` label keeps the pool's key and the record's OpenAlex id, if any.
 ``--skip-ids`` leaves out labels whose input id is not a real OpenAlex id: the
 throwaway builder of the 2026-09-30 catalogue run took the first "W + digits"
 inside any ``source_id``, so 7 EconBiz ids (``EDSZBW…``) and 3 SciSpace URLs came in
@@ -86,13 +92,14 @@ def _json(path):
         return json.load(fh)
 
 
-def work_meta(rec: dict) -> dict:
-    """Identifier columns of a screened OpenAlex record."""
-    oid = rec["openalex_id"]
+def work_meta(rec: dict, id_field: str = "openalex_id") -> dict:
+    """Identifier columns of a screened record (OpenAlex record or pool work)."""
+    oid = rec.get("openalex_id") or ""
     title = normalize_title(rec.get("title") or "")
     year = rec.get("year")
     year = str(int(year)) if year not in (None, "") else ""
-    return {"work_key": f"openalex:{oid}", "openalex_id": oid,
+    key = rec["work_key"] if id_field == "work_key" else f"openalex:{oid}"
+    return {"work_key": key, "openalex_id": oid,
             "doi": normalize_doi(rec.get("doi")),
             "title_norm_year": f"{title}|{year}" if title else ""}
 
@@ -204,14 +211,40 @@ def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
     _require(len(models) == 1 and len(prompts) == 1,
              f"{run_dir}: invocations disagree on model {models} or prompt {prompts}")
     started = min(i["started"] for i in invocations)
-    inputs = {r["openalex_id"]: r for r in _jsonl(input_path)}
     labels = _jsonl(os.path.join(run_dir, "screen.jsonl"))
-    missing = [lab["openalex_id"] for lab in labels if lab["openalex_id"] not in inputs]
+    field = run_id_field(invocations, labels, run_dir)
+    inputs = {r[field]: r for r in _jsonl(input_path)}
+    missing = [lab[field] for lab in labels if lab[field] not in inputs]
     _require(not missing, f"{len(missing)} labels outside the run input, e.g. {missing[:3]}")
     (model,), (prompt,) = models, prompts
-    return [_stage1_row(work_meta(inputs[lab["openalex_id"]]), lab, run_id, model, prompt,
+    return [_stage1_row(work_meta(inputs[lab[field]], field), lab, run_id, model, prompt,
                         machine, started, source) for lab in labels
-            if lab["openalex_id"] not in skip_ids]
+            if lab[field] not in skip_ids]
+
+
+ID_FIELDS = ("openalex_id", "work_key")
+
+
+def run_id_field(invocations: list[dict], labels: list[dict], run_dir: str) -> str:
+    """The record key of a run: its header's ``id_field``, else the label lines'.
+
+    Refused when the invocations disagree, or when a label line does not carry
+    exactly that key: a run keyed two ways would attach labels to the wrong
+    works or drop them silently.
+    """
+    declared = {i.get("id_field") for i in invocations} - {None}
+    _require(len(declared) <= 1 and declared <= set(ID_FIELDS),
+             f"{run_dir}: invocations declare id fields {sorted(declared)}")
+    keyed = {tuple(f for f in ID_FIELDS if f in lab) for lab in labels}
+    if declared:
+        field = next(iter(declared))
+    elif len(keyed) == 1 and len(next(iter(keyed))) == 1:
+        field = next(iter(keyed))[0]
+    else:
+        field = "openalex_id"
+    _require(keyed <= {(field,)},
+             f"{run_dir}: label lines are keyed {sorted(keyed)}, not by {field!r} alone")
+    return field
 
 
 def main(argv=None):
