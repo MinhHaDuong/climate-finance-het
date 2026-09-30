@@ -325,6 +325,25 @@ check-manuscript-data:
 corpus-validate: $(REFINED)
 	$(PYTHON) -m pytest tests/test_corpus_acceptance.py -v -s --tb=long
 
+# ── REL pool (Phase 1, ticket 1731) ──
+# Pinned catalogue + lane deliveries (docs/rel-intake-contract.md) -> data/rel_pool/.
+# Not a dvc.yaml stage: the catalogue is pinned by hash, never rebuilt, so
+# dvc repro must not reach the catalog_merge chain from here.
+REL_SUD_RUNS ?= $(HOME)/data/projets/climate-finance-het/rel_sud/2026-09-29/padme-rel_sud_runs
+.PHONY: rel-pool rel-pool-data rel-intake-1530
+rel-pool-data:
+	$(UV_RUN) dvc pull data/catalogs/unified_works_rel_pin.csv.dvc $(wildcard data/rel_intake/*.dvc)
+
+rel-pool:
+	$(PYTHON) scripts/corpus_rel_pool.py --output-dir data/rel_pool
+
+# One-off conversion of the final 1530 search (runs f and g) into its delivery;
+# refuses to overwrite an existing delivery.
+rel-intake-1530:
+	$(PYTHON) scripts/catalog_rel_1530_delivery.py \
+		--run-dir $(REL_SUD_RUNS)/20260929f --run-dir $(REL_SUD_RUNS)/20260929g \
+		--output-dir data/rel_intake/t1530-sud-openalex/2026-09-29
+
 # ── Corpus reporting (Phase 2 — reads only refined data) ──
 # The periodised coverage metric is computed once, here, and rendered by the
 # export script below — two computations of one number is how the v1.0 prose
