@@ -176,6 +176,35 @@ def test_merge_toc_redates_misdated_openalex_item_by_annual_volume():
     assert not toc.in_window(old)
 
 
+def test_merge_toc_never_redates_from_an_absurd_volume():
+    cr = [_crrec(volume="89", year=1999, doi="10.1/a"),
+          _crrec(volume="90", year=2000, doi="10.1/b", title="Other paper here")]
+    recs = toc.merge_toc(cr, [_oa(title="Odd record", volume="11420", issue="", year=2021)])
+    odd = [r for r in recs if r["toc_source"] == "openalex-only"][0]
+    assert (odd["year"], odd["year_source"]) == (2021, "openalex")
+
+
+def test_thematic_pass_is_one_ored_issn_filter_per_query():
+    import catalog_rel_toc as cli
+
+    mega = cli.load_manifest("thematic")
+    queries = cli.thematic_queries(mega)
+    assert [q["query_id"] for q in queries] == [
+        "MJ-en-T1", "MJ-en-T2", "MJ-en-T3", "MJ-en-T4", "MJ-en-gap-fill"]
+    all_issns = {i for j in mega for i in cli.issns(j)}
+    for q in queries:
+        issn_part = q["filter"].split("primary_location.source.issn:")[1]
+        assert set(issn_part.split("|")) == all_issns
+        assert "title_and_abstract.search:" in q["filter"]
+
+
+def test_openalex_filter_uses_every_issn():
+    import catalog_rel_toc as cli
+
+    flt = cli.openalex_filter({"pissn": "0944-1344", "eissn": "1614-7499"})
+    assert flt.startswith("primary_location.source.issn:0944-1344|1614-7499,")
+
+
 def test_crossref_filter_queries_both_issns():
     # ESPR deposits 2023+ under its eISSN only: 13,125 works a pISSN sweep misses.
     flt = toc.crossref_filter({"pissn": "0944-1344", "eissn": "1614-7499"})
@@ -183,44 +212,66 @@ def test_crossref_filter_queries_both_issns():
     assert toc.crossref_filter({"pissn": "", "eissn": "2071-1050"}).startswith("issn:2071-1050,")
 
 
-def test_register_never_counts_a_needs_human_issue_as_scanned():
-    recs = [
-        {"journal_key": "j", "year": 2001, "volume": "1", "issue": "1", "online_first": False,
-         "in_pool": "doi", "doi": "a"},
-        {"journal_key": "j", "year": 2001, "volume": "1", "issue": "1", "online_first": False,
-         "in_pool": "", "doi": "b"},
-        {"journal_key": "j", "year": 2001, "volume": "1", "issue": "2", "online_first": False,
-         "in_pool": "", "doi": "c"},
-    ]
-    checks = {("j", 2001, "1", "1"): {"status": "verified", "reason": "", "toc_source": "pub",
-                                      "publisher_n": 2, "publisher_only": 0},
-              ("j", 2001, "1", "2"): {"status": "needs-human", "reason": "http 403",
-                                      "toc_source": "pub", "publisher_n": "",
-                                      "publisher_only": ""}}
-    rows = {(r["volume"], r["issue"]): r for r in toc.build_register(recs, checks)}
-    assert rows[("1", "1")]["expected"] == 2
-    assert rows[("1", "1")]["scanned"] == 2
-    assert rows[("1", "1")]["in_pool"] == 1
-    assert rows[("1", "1")]["candidates"] == 1
-    assert rows[("1", "2")]["scanned"] == 0
-    assert rows[("1", "2")]["status"] == "needs-human"
-    assert rows[("1", "2")]["reason"] == "http 403"
+def _reg(**kw):
+    rec = {"journal_key": "j", "year": 2001, "volume": "1", "issue": "1", "online_first": False,
+           "in_pool": "", "doi": "10.1/x", "item_class": "article", "toc_source": "crossref"}
+    rec.update(kw)
+    return rec
 
 
-def test_register_marks_unchecked_issue_not_scanned():
-    recs = [{"journal_key": "j", "year": 2001, "volume": "1", "issue": "3",
-             "online_first": False, "in_pool": "", "doi": "d"}]
-    (row,) = toc.build_register(recs, {})
-    assert row["status"] == "not-checked"
-    assert row["scanned"] == 0
+def test_register_counts_per_toc_unit():
+    recs = [_reg(in_pool="doi", doi="10.1/a"), _reg(doi="10.1/b"),
+            _reg(item_class="front-back-matter", doi="10.1/c"),
+            _reg(toc_source="openalex-only", doi="", openalex_id="W1"),
+            _reg(issue="2", doi="10.1/d")]
+    rows = {r["query_id"]: r for r in toc.build_register(recs)}
+    one = rows["TOC-j-2001-v1-i1"]
+    assert (one["expected"], one["scanned"], one["in_pool"]) == (4, 4, 1)
+    assert one["front_matter"] == 1
+    assert one["candidates"] == 2  # absent from the pool and not front matter
+    assert one["unresolved"] == 1  # OpenAlex-only, no DOI
+    assert rows["TOC-j-2001-v1-i2"]["candidates"] == 1
 
 
-def test_manifest_has_61_unique_titles_with_provenance_and_rank_scale():
+def test_unit_id_for_online_first_and_volume_only():
+    assert toc.unit_id(_reg(online_first=True, volume="", issue="online-first")) == \
+        "TOC-j-2001-online-first"
+    assert toc.unit_id(_reg(issue="")) == "TOC-j-2001-v1-ina"
+
+
+@pytest.mark.parametrize("item_class,reason", [
+    ("front-back-matter", "front_matter"), ("erratum", "front_matter"),
+    ("untitled", "front_matter"), ("book-review", ""), ("editorial", ""),
+    ("society-report", ""), ("article", ""),
+])
+def test_only_non_items_are_excluded(item_class, reason):
+    assert toc.exclusion_reason({"item_class": item_class}) == reason
+
+
+def test_lane_status_is_information():
+    assert toc.lane_status({"in_pool": "doi"}) == "already_in_pool"
+    assert toc.lane_status({"in_pool": ""}) == "candidate"
+
+
+def test_record_id_prefers_doi():
+    assert toc.record_id({"doi": "10.1/a", "openalex_id": "W1"}) == "doi:10.1/a"
+    assert toc.record_id({"doi": "", "openalex_id": "W1"}) == "openalex:W1"
+
+
+def test_manifest_is_frozen_with_ranks_and_six_thematic_titles():
     with open(os.path.join(ROOT, "config", "rel_toc_manifest.csv"), encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh))
-    assert len(rows) == 61
-    assert len({r["journal_key"] for r in rows}) == 61
+    assert len(rows) == 63  # 61 + AEA P&P + AER: Insights
+    assert len({r["journal_key"] for r in rows}) == 63
+    assert {r["journal_key"] for r in rows if r["sweep_mode"] == "thematic"} == {
+        "sustainability", "energies", "environmental-science-and-pollution-research",
+        "journal-of-cleaner-production", "journal-of-environmental-management",
+        "applied-energy"}
     for r in rows:
         assert r["provenance"], r["title"]
-        assert r["rank_scale"], r["title"]
+        assert r["rank_sources"], r["title"]
         assert r["pissn"] or r["eissn"], r["title"]
+        assert r["manifest_status"].startswith("frozen"), r["title"]
+    by = {r["journal_key"]: r for r in rows}
+    assert by["aer"]["cnrs37_2020_rank"] == "1e"
+    assert by["aer"]["abdc_2025_rating"] == "A*"

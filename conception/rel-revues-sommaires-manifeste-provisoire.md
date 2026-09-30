@@ -1,4 +1,16 @@
-# REL — manifeste provisoire des sommaires à contrôler
+# REL — manifeste des sommaires à contrôler (figé le 30 septembre 2026)
+
+## Gel du 30 septembre 2026 (ticket 1650)
+
+Le manifeste est figé dans [`config/rel_toc_manifest.csv`](../config/rel_toc_manifest.csv) : **63 titres**, les 61 ci-dessous plus deux ajouts décidés par l'auteur après le pilote. *AEA Papers and Proceedings* (2574-0768) reprend depuis 2018 le numéro de mai de l'*American Economic Review*, qui a changé d'ISSN : sans lui la série de l'AER serait tronquée. *American Economic Review: Insights* (2640-205X, depuis 2019) est la revue d'articles courts du même comité. Pour chaque titre : pISSN et eISSN vérifiés dans Crossref, provenance, et **rangs dans leur échelle native**, rapprochés par ISSN : liste CNRS section 37 de juin 2020 (v5.07 ; 42 titres classés), ABDC 2025 (v3 du 21 septembre 2026 ; 49), FNEGE 2025 (26). Une case vide signifie « non classé dans cette liste ». L'AJG 2024 n'est pas transcrit : la liste n'est accessible qu'avec un compte Chartered ABS. Les titres historiques n'ont pas été recherchés titre par titre : les requêtes portent sur les ISSN, et les changements d'éditeur (par exemple *Climate Policy*, passé d'Elsevier à Earthscan puis à Taylor & Francis) sont traités par le rapprochement des DOI alias.
+
+Décisions de l'auteur du 30 septembre, après le pilote chronométré :
+
+- Les sommaires viennent de **Crossref et OpenAlex, sans vérification sur les pages des éditeurs**. 95 % des numéros sont derrière des blocages de robots ; ce contrôle est une limite déclarée du dépouillement, jamais une saturation.
+- Les six mégarevues (*Sustainability*, *Energies*, *Environmental Science and Pollution Research*, *Journal of Cleaner Production*, *Journal of Environmental Management*, *Applied Energy* : 328 861 articles dans Crossref, 60 % du volume) ne sont **pas dépouillées** : elles sont interrogées par les requêtes thématiques anglaises de la recherche REL (`config/rel_sud_search.yaml`, T1 à T4 et requête complémentaire), restreintes à leurs ISSN.
+- Les 57 autres titres sont livrés en entier. *Economic and Political Weekly* n'a pas de DOI avant 2024 : cette période ne compte que ce qu'OpenAlex en tient, et reste à contrôler par l'auteur.
+
+Les tableaux ci-dessous restent le texte de constitution du 28 septembre.
 
 *28 septembre 2026. Extraction nominative pour le contrôle **intégral des sommaires**, distincte de la liste des lieux où la recherche REL peut paraître. Aucun sommaire n'a encore été dépouillé.*
 

@@ -108,6 +108,7 @@ def crossref_record(item, journal_key, issn):
         "title": title, "item_class": classify_item(title),
         "crossref_type": item.get("type") or "",
         "authors": "; ".join(names),
+        "first_author": names[0] if names else "",
         "first_author_surname": surname_key(names[0]) if names else "",
         "year": year, "pub_date": date,
         "volume": volume, "issue": "" if online_first else (item.get("issue") or "").strip(),
@@ -129,6 +130,7 @@ def openalex_record(work, journal_key):
         "title": title, "item_class": classify_item(title),
         "openalex_type": work.get("type") or "",
         "authors": "; ".join(names),
+        "first_author": names[0] if names else "",
         "first_author_surname": surname_key(names[0]) if names else "",
         "year": work.get("publication_year"), "pub_date": work.get("publication_date") or "",
         "volume": biblio.get("volume") or "", "issue": biblio.get("issue") or "",
@@ -203,7 +205,8 @@ def merge_toc(cr_recs, oa_recs):
     by title alone. Such a record adopts the year of its Crossref issue if any.
     """
     out = [{**r, "toc_source": "crossref", "in_openalex": False, "alias_dois": "",
-            "openalex_type": "", "year_source": "crossref"} for r in cr_recs]
+            "openalex_type": "", "year_source": "crossref",
+            "abstract_provenance": ""} for r in cr_recs]
     by_doi = {r["doi"]: r for r in out if r["doi"]}
     by_title = collections.defaultdict(list)
     issue_year = {}
@@ -236,17 +239,21 @@ def merge_toc(cr_recs, oa_recs):
             hit["openalex_id"] = hit["openalex_id"] or o["openalex_id"]
             hit["in_openalex"] = True
             hit["openalex_type"] = o["openalex_type"]
-            hit["abstract"] = hit["abstract"] or o["abstract"]
+            if not hit["abstract"] and o["abstract"]:
+                hit["abstract"], hit["abstract_provenance"] = o["abstract"], "openalex"
             continue
         online_first = not o["volume"]
         year, source = o["year"], "openalex"
         if not online_first and (o["volume"], o["issue"]) in issue_year:
             year, source = issue_year[(o["volume"], o["issue"])], "crossref-issue"
-        elif not online_first and offset is not None and o["volume"].isdigit():
+        elif (not online_first and offset is not None and o["volume"].isdigit()
+              and 1900 <= int(o["volume"]) + offset <= 2030):
+            # a volume field holding a page or article number must not redate
             year, source = int(o["volume"]) + offset, "volume-offset"
         extra.append({**o, "issn": "", "journal": "", "crossref_type": "",
                       "online_first": online_first, "year": year, "year_source": source,
-                      "toc_source": "openalex-only", "in_openalex": True, "alias_dois": ""})
+                      "toc_source": "openalex-only", "in_openalex": True, "alias_dois": "",
+                      "abstract_provenance": ""})
     return out + extra
 
 
@@ -255,33 +262,64 @@ def in_window(rec):
     return rec["year"] is None or int(FROM_DATE[:4]) <= rec["year"] <= int(UNTIL_DATE[:4])
 
 
-def build_register(records, checks):
-    """One row per journal/year/volume/issue.
+def unit_id(rec):
+    """Registry id of the TOC unit holding a record (one issue, or online-first by year)."""
+    journal, year, volume, issue = issue_key(rec)
+    y = year if year is not None else "na"
+    if issue == "online-first":
+        return f"TOC-{journal}-{y}-online-first"
+    return f"TOC-{journal}-{y}-v{volume or 'na'}-i{issue or 'na'}"
 
-    ``checks`` maps (journal, year, volume, issue) to the publisher check. Only a
-    ``verified`` issue counts its items as scanned.
+
+# The contract (docs/rel-intake-contract.md) leaves out only what is not an item:
+# covers, boards, contents pages, issue records and erratum notices. Book reviews,
+# editorials and society reports are delivered.
+_FRONT_MATTER = {"front-back-matter", "erratum", "untitled"}
+
+
+def exclusion_reason(rec):
+    """``front_matter`` for a non-item, else '' (the record is delivered)."""
+    return "front_matter" if rec.get("item_class") in _FRONT_MATTER else ""
+
+
+def lane_status(rec):
+    """Information only, never a filter: in the pool already, or a candidate."""
+    return "already_in_pool" if rec.get("in_pool") else "candidate"
+
+
+def record_id(rec):
+    if rec.get("doi"):
+        return f"doi:{rec['doi']}"
+    return f"openalex:{rec['openalex_id']}"
+
+
+def build_register(records):
+    """One row per TOC unit: expected, scanned, in pool, candidates, unresolved.
+
+    Scope (author, 2026-09-30): the TOC is what Crossref and OpenAlex hold, not
+    verified against publisher pages, so every retrieved item counts as scanned.
+    ``unresolved`` counts OpenAlex-only items without a DOI, which no second
+    source confirms.
     """
     groups = collections.OrderedDict()
     for rec in sorted(records, key=lambda r: (r["journal_key"], r["year"] or 0,
                                               str(r["volume"]), str(r["issue"]))):
-        groups.setdefault(issue_key(rec), []).append(rec)
+        groups.setdefault(unit_id(rec), []).append(rec)
     rows = []
-    for key, recs in groups.items():
-        chk = checks.get(key) or {"status": "not-checked", "reason": "",
-                                  "toc_source": "crossref", "publisher_n": "",
-                                  "publisher_only": ""}
+    for qid, recs in groups.items():
+        journal, year, volume, issue = issue_key(recs[0])
         n_pool = sum(1 for r in recs if r["in_pool"])
+        n_front = sum(1 for r in recs if exclusion_reason(r))
         rows.append({
-            "journal_key": key[0], "year": key[1], "volume": key[2], "issue": key[3],
-            "expected": len(recs),
+            "query_id": qid, "journal_key": journal, "year": year if year is not None else "",
+            "volume": volume, "issue": issue,
+            "expected": len(recs), "scanned": len(recs),
             "crossref_n": sum(1 for r in recs if r.get("toc_source", "crossref") == "crossref"),
             "openalex_only_n": sum(1 for r in recs if r.get("toc_source") == "openalex-only"),
-            "scanned": len(recs) if chk["status"] == "verified" else 0,
-            "in_pool": n_pool, "candidates": len(recs) - n_pool,
-            "candidate_articles": sum(1 for r in recs if not r["in_pool"]
-                                      and r.get("item_class", "article") == "article"),
-            "status": chk["status"], "reason": chk["reason"],
-            "toc_source": chk["toc_source"], "publisher_n": chk["publisher_n"],
-            "publisher_only": chk["publisher_only"],
+            "front_matter": n_front,
+            "in_pool": n_pool,
+            "candidates": sum(1 for r in recs if not r["in_pool"] and not exclusion_reason(r)),
+            "unresolved": sum(1 for r in recs if r.get("toc_source") == "openalex-only"
+                              and not r.get("doi")),
         })
     return rows
