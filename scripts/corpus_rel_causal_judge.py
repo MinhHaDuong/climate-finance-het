@@ -17,6 +17,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
@@ -40,10 +41,20 @@ def build_prompt(batch, cfg):
             .replace("{records}", records))
 
 
+_LINE = re.compile(r"^\s*(\d+)\s*\|\s*(\w+)\s*(?:\|(.*))?$")
+
+
+def extract_lines(text):
+    """Records from `n|label|why` lines, as the dicts the JSON form yields."""
+    return [{"n": int(m.group(1)), "label": m.group(2), "why": (m.group(3) or "").strip()}
+            for line in (text or "").splitlines() if (m := _LINE.match(line))]
+
+
 def parse_answer(text, batch):
-    """{pair_id: result} for the records the answer labels validly."""
+    """{pair_id: result} for the records the answer labels validly (JSON list
+    or one `n|label|why` line per record)."""
     out = {}
-    for item in extract_list(text) or []:
+    for item in extract_list(text) or extract_lines(text):
         if not isinstance(item, dict):
             continue
         n = item.get("n")

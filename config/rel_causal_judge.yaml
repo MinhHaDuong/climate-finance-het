@@ -4,15 +4,22 @@
 # family or theme whose search retrieved it, with international climate,
 # energy or forest finance or aid as the treatment; it measures lane yield.
 model: openrouter/anthropic/claude-haiku-4.5
-batch_size: 20
+# About 45,000 (work, question) pairs on 2026-09-30: the answer is one short
+# line per record and the abstract is cut at 500 characters to keep the run
+# near 10 USD (derived from Haiku list prices, not measured).
+batch_size: 25
 workers: 6
-max_tokens: 1800
+max_tokens: 1200
 title_max_chars: 220
-abstract_max_chars: 700
+abstract_max_chars: 500
 
 answer_format: |-
-  Answer with ONLY a JSON list, one object per record, in the same order:
-  [{"n": 1, "label": "relevant", "why": "<max 12 words>"}, ...]
+  Answer with ONLY one line per record, in the same order, no other text:
+  n|label|why
+  "why" (max 10 words) is given only when the label is relevant or unsure,
+  and left empty otherwise. Example:
+  1|not|
+  2|relevant|GCF loans raise sovereign debt in small islands
 
 prompt_template: |
   You judge bibliographic records retrieved by a search for ONE mechanism of a

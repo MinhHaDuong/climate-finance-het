@@ -207,6 +207,9 @@ def test_judge_batches_one_mechanism_and_parses_labels(tmp_path):
     assert judge.build_prompt(batches[0], cfg).startswith("a|M a|F|")
     got = judge.parse_answer('[{"n": 1, "label": "Relevant"}, {"n": 2, "label": "icf"}]', batches[0])
     assert got == {"a::0": {"label": "relevant", "why": ""}}
+    got = judge.parse_answer("1|not|\n2|relevant|GCF loans and debt\nnoise", batches[0])
+    assert got == {"a::0": {"label": "not", "why": ""},
+                   "a::1": {"label": "relevant", "why": "GCF loans and debt"}}
     inp = tmp_path / "in.jsonl"
     inp.write_text("\n".join(json.dumps(r) for r in recs) + "\n", encoding="utf-8")
     args = types.SimpleNamespace(input=str(inp), output_dir=str(tmp_path / "j"), limit=0)
