@@ -7,13 +7,16 @@ and writes, in a fresh output directory:
   date, count announced, count received, count matched, completion flag and
   stop reason. A query cut short is ``completed`` False, never silently full.
 - ``raw/<source>.jsonl.gz``: every record received, normalized (the export).
-- ``candidates.csv``: the records handed to pooling (ticket 1655), each row
+- ``candidates.csv``: the records handed to the intake exporter
+  (``export_rel_sud_sources_intake.py``, pool ticket 1655), each row
   carrying its provenance (source, query id, query string, route, endpoint,
   date, export file). Search routes keep every record the server returned;
   harvest and listing routes keep the records whose title or abstract matched
   the lexicon (``HARVEST_ROUTES``).
 
-An output directory that already holds a registry is refused.
+An output directory that already holds a registry or a non-empty ``raw/`` is
+refused. An adapter that raises still gets its registry row (incomplete,
+stop reason ``exception: <type>``) before the run stops.
 
 Usage:
     python scripts/catalog_rel_sud_sources.py --output-dir DIR [--source NAME ...]
@@ -61,23 +64,30 @@ def run_source(mod, cfg, out_dir, reg, cand, cap, delay):
                    "completed": False, "stop_reason": "no response"}
             prov = {k: row[k] for k in PROVENANCE_FIELDS if k in row}
             prov["export_file"] = export
-            for kind, val in mod.fetch(spec, delay):
-                if kind == "meta":
-                    row["n_expected"] = val
-                elif kind == "work":
-                    raw.write(json.dumps({"query_id": spec["query_id"], **val},
-                                         ensure_ascii=False) + "\n")
-                    row["n_received"] += 1
-                    if keep(src["route"], val):
-                        row["n_matched"] += 1
-                        cand.writerow({**prov, **{k: val.get(k, "") for k in RECORD_FIELDS}})
-                    if cap and row["n_received"] >= cap:
-                        row["stop_reason"] = "record cap"
-                        break
-                else:
-                    row["stop_reason"] = val
-                    row["completed"] = val == ""
-            reg.writerow(row)
+            try:
+                for kind, val in mod.fetch(spec, delay):
+                    if kind == "meta":
+                        row["n_expected"] = val
+                    elif kind == "work":
+                        raw.write(json.dumps({"query_id": spec["query_id"], **val},
+                                             ensure_ascii=False) + "\n")
+                        row["n_received"] += 1
+                        if keep(src["route"], val):
+                            row["n_matched"] += 1
+                            cand.writerow({**prov,
+                                           **{k: val.get(k, "") for k in RECORD_FIELDS}})
+                        if cap and row["n_received"] >= cap:
+                            row["stop_reason"] = "record cap"
+                            break
+                    else:
+                        row["stop_reason"] = val
+                        row["completed"] = val == ""
+            except BaseException as exc:  # the row is written, then the run stops
+                row["completed"] = False
+                row["stop_reason"] = f"exception: {type(exc).__name__}"
+                raise
+            finally:
+                reg.writerow(row)
             log.info("%s expected=%s received=%s kept=%s %s", spec["query_id"],
                      row["n_expected"], row["n_received"], row["n_matched"],
                      row["stop_reason"] or "complete")
@@ -114,8 +124,10 @@ def main(argv=None):
     if not args.output_dir:
         ap.error("--output-dir is required")
     reg_path = os.path.join(args.output_dir, "registry.csv")
-    if os.path.exists(reg_path):
-        log.error("%s already holds a registry; use a new --output-dir", args.output_dir)
+    raw_dir = os.path.join(args.output_dir, "raw")
+    if os.path.exists(reg_path) or (os.path.isdir(raw_dir) and os.listdir(raw_dir)):
+        log.error("%s already holds a registry or raw exports; use a new --output-dir",
+                  args.output_dir)
         return 2
     os.makedirs(os.path.join(args.output_dir, "raw"), exist_ok=True)
     with open(reg_path, "w", encoding="utf-8", newline="") as reg_fh, \

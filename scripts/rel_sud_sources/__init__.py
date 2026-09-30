@@ -12,7 +12,7 @@ Each adapter module defines ``SOURCE`` (a dict: ``name``, ``region``,
     The protocol of ``catalog_rel_sud_search.fetch``: ``('meta', n_expected)``
     at most once, then ``('work', record)`` per record, then exactly one
     ``('end', reason)`` where ``reason`` is ``''`` when the last page was
-    reached. ``record`` is a dict over ``common.RECORD_FIELDS``.
+    reached. ``record`` is a dict over ``_common.RECORD_FIELDS``.
 
 Search routes keep every record the server returned. Harvest routes (OAI-PMH
 sets, ``oai-pmh``) and listing routes (a whole series or catalogue,

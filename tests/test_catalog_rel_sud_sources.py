@@ -180,3 +180,71 @@ def test_sentinel_matching_by_fragments_and_doi():
 def test_existing_registry_is_refused(tmp_path):
     (tmp_path / "registry.csv").write_text("x")
     assert runner.main(["--output-dir", str(tmp_path)]) == 2
+
+
+def test_non_oai_xml_or_a_repeated_token_is_incomplete_never_complete():
+    html = b'<html xmlns="http://www.w3.org/1999/xhtml"><body>Maintenance</body></html>'
+    assert list(common.oai_list_records("u", get=fake_get([html])))[-1] == (
+        "end", "error: not an OAI-PMH ListRecords answer")
+    loop = OAI_PAGE1  # its token is "tok", served again and again
+    events = list(common.oai_list_records("u", get=fake_get([loop, loop, loop])))
+    assert events[-1] == ("end", "error: repeated resumptionToken")
+    assert sum(1 for k, _ in events if k == "dc") == 2
+    capped = list(common.oai_list_records("u", get=fake_get([loop]), max_pages=1))
+    assert capped[-1] == ("end", "error: page guard (1 pages)")
+
+
+def test_xml_clean_honours_the_declared_encoding_and_forbidden_references():
+    latin = ('<?xml version="1.0" encoding="ISO-8859-1"?>'
+             '<a>Financiación climática&#xFFFE;&#233;&#1;</a>').encode("latin-1")
+    root = common.ET.fromstring(common.xml_clean(latin))
+    assert root.text == "Financiación climáticaé"
+
+
+def test_matching_is_unicode_normalized_and_cyrillic_needs_boundaries():
+    import unicodedata
+
+    match = common.term_matcher(["financiación climática", "климат", ""])
+    nfd = unicodedata.normalize("NFD", "La financiación climática en ALC")
+    assert match(nfd) == ["financiación climática"]
+    assert match("климатический фонд") == []
+    assert match("климат и финансы") == ["климат"]
+    assert common.term_matcher([])("anything") == []
+
+
+def test_sentinel_brackets_are_notes_fragments_are_whole_words_dois_normalized():
+    sentinels = [
+        {"sentinel": "S58", "class": "b", "doi": "",
+         "title": "Pacific Climate Change Financing Assessment (framework, Nauru case)"},
+        {"sentinel": "S98", "class": "b", "doi": "https://doi.org/10.1/ABC", "title": "Z"},
+        {"sentinel": "S97", "class": "b", "doi": "", "title": "Finance ... ai"},
+    ]
+    rows = [{"source": "p", "query_id": "P1", "doi": "",
+             "title": "Nauru: Pacific Climate Change Financing Assessment"},
+            {"source": "d", "query_id": "D1", "doi": "10.1/abc", "title": "Other"},
+            {"source": "w", "query_id": "W1", "doi": "", "title": "Finance and aid"}]
+    rep = {r["sentinel"]: r for r in common.sentinel_report(sentinels, rows)}
+    assert rep["S58"]["found"] and rep["S98"]["query_ids"] == "D1"
+    assert not rep["S97"]["found"]  # "ai" is not a word of "aid"
+
+
+def test_an_adapter_that_raises_still_gets_its_registry_row(tmp_path):
+    def fetch(spec, delay):
+        yield ("meta", 3)
+        yield ("work", common.empty_record(title="a"))
+        raise KeyError("boom")
+    mod = types.SimpleNamespace(
+        SOURCE={"name": "fake", "route": "api", "endpoint": "http://fake"},
+        plan=lambda cfg: [{"query_id": "F-1", "query_string": "q"}], fetch=fetch)
+    with pytest.raises(KeyError):
+        _run(tmp_path, mod)
+    with open(tmp_path / "registry.csv") as fh:
+        [row] = list(csv.DictReader(fh))
+    assert row["completed"] == "False" and row["stop_reason"] == "exception: KeyError"
+    assert row["n_received"] == "1"
+
+
+def test_leftover_raw_exports_are_refused(tmp_path):
+    (tmp_path / "raw").mkdir()
+    (tmp_path / "raw" / "x.jsonl.gz").write_bytes(b"")
+    assert runner.main(["--output-dir", str(tmp_path)]) == 2
