@@ -53,7 +53,7 @@ const SECTIONS = {
   "the-paper-trail": ["the-paper-trail", "documents", "entries", "on-the-record", "projects",
     "project", "referents", "funding", "whos-who"],
   "the-tallies": ["counts", "money", "comparisons"],
-  about: ["about", "glossary", "methods", "who-we-are", "release-history"],
+  about: ["about", "glossary", "methods", "who-we-are", "legal", "release-history"],
 };
 /* Where each header tab lands: a section's landing page, or its first page
  * where a landing page would be empty ceremony (The tallies has two). */
@@ -86,6 +86,7 @@ const SUB_PAGES = {
     plain("glossary", "Glossary", { object: "O" }),
     plain("methods", "Methods", { object: "methods" }),
     plain("who-we-are", "Who we are"),
+    plain("legal", "Legal"),
   ],
 };
 /* The page a sub-bar marks as current: a project under Projects, the release
@@ -1928,6 +1929,7 @@ const ABOUT_NOTES = {
   glossary: "The words these pages use, grouped by theme.",
   methods: "What we collected, how we read it, what we counted, and what this observatory does not do; the release history is linked from there.",
   "who-we-are": "Who makes this observatory.",
+  legal: "Legal notice, licence and attribution, publishers' terms, corrections and takedown, privacy.",
 };
 function aboutPage() {
   main.innerHTML =
@@ -1946,6 +1948,42 @@ function whoWeArePage() {
     `<div class="who-we-are" data-who-we-are><p>He works on energy, climate change, society, economics and uncertainty. He was a lead author of the IPCC's Fourth and Fifth Assessment Reports, founded the Vietnam Initiative for the Energy Transition (VIET) in 2018, and set up the Clean Energy and Sustainable Development lab at the University of Science and Technology of Hanoi in 2014.</p>` +
     `<p>The observatory reads what the four partnerships and their funders publish, archives every document it relies on, and shows how each figure was reached. Its data and code are open.</p>` +
     `<p>Homepage: <a href="https://minh.haduong.com" target="_blank" rel="noopener">https://minh.haduong.com</a> · ORCID: <a href="https://orcid.org/0000-0001-9988-2100" target="_blank" rel="noopener">https://orcid.org/0000-0001-9988-2100</a></p></div>`;
+}
+/* Legal: the French legal notice (LCEN art. 6-III), the licence and
+ * attribution statement, the publishers' terms, the correction and takedown
+ * route and the privacy statement (author, 2026-09-30: "add the legalese
+ * page to the MVP"; docs/jetp-legal-note.md). What the author has not yet
+ * supplied is a visible [TO CONFIRM]; nothing here is guessed. */
+const TO_CONFIRM = (what) => `<mark class="to-confirm">[TO CONFIRM: ${esc(what)}]</mark>`;
+function legalPage() {
+  main.innerHTML =
+    header("Legal", "Who publishes this site, under which licence its own work is offered, whose terms the quoted documents keep, and how to ask for a correction.") +
+    `<div class="legal" data-legal>
+<section data-legal="notice"><h2>Legal notice <small>(<i>mentions légales</i>, LCEN art. 6-III)</small></h2>
+<dl class="facts">
+<dt>Publisher</dt><dd>${TO_CONFIRM("CNRS as legal person, or the researcher; registered office and telephone")}</dd>
+<dt>Director of publication</dt><dd>${TO_CONFIRM("name")}</dd>
+<dt>Host</dt><dd>GitHub Pages, operated by GitHub, Inc. ${TO_CONFIRM("postal address and telephone, copied from GitHub's legal page")}</dd>
+<dt>Contact</dt><dd>${TO_CONFIRM("an institutional address for legal and correction requests")}</dd>
+</dl></section>
+<section data-legal="licence"><h2>Licence and attribution</h2>
+<p>The tables, counts, glossary, provenance and pages produced by the JETP Observatory are offered under the Creative Commons Attribution 4.0 International licence (CC BY 4.0) ${TO_CONFIRM("or Licence Ouverte 2.0, if the CNRS is the licensor")}. Cite them as: JETP Observatory, release named on the <a href="#methods">Methods</a> page, CNRS–CIRED, with the address of the page or download used.</p>
+<p>That licence covers the Observatory's own work only. A label or sentence printed here in a publisher's words is a short quotation with its author and location shown (<i>Code de la propriété intellectuelle</i>, art. L122-5 3° a). A name, an amount or a date taken from a document is not the Observatory's to license. A document's own file is served only where its publisher's terms allow it; otherwise the pages give its address, its fingerprint and the location cited.</p></section>
+<section data-legal="publishers"><h2>Publishers and their terms</h2>
+<p>Every document is collected from a page the public can open, and the publisher's stated position on re-use is kept with it. As known at this release, to be checked against each publisher's current terms:</p>
+<div class="table-wrap"><table><thead><tr><th>Publisher</th><th>Terms</th><th>What these pages take</th></tr></thead><tbody>
+<tr><td>Governments of South Africa, Indonesia, Viet Nam and Senegal; the JETP secretariats</td><td>Official decisions and decrees are free of copyright; plans and reports are their authors'; no licence stated</td><td>Short quotations, the printed fields of tables, addresses and fingerprints; no file</td></tr>
+<tr><td>OECD (Creditor Reporting System)</td><td>CC BY 4.0 ${TO_CONFIRM("that the CRS bulk export is covered")}</td><td>Rows, with attribution</td></tr>
+<tr><td>IATI publishers</td><td>Each publisher's own open licence, named in the IATI Registry</td><td>Rows, with the publisher's licence named per row ${TO_CONFIRM("per-publisher licences")}</td></tr>
+<tr><td>World Bank</td><td>CC BY 4.0 for datasets and the Projects &amp; Operations API; project documents under their own notice</td><td>Rows, with attribution; document quotations</td></tr>
+<tr><td>Development banks and agencies</td><td>Each bank's disclosure policy and site terms</td><td>Short quotations, addresses and fingerprints</td></tr>
+<tr><td>News</td><td>All rights reserved</td><td>A headline and a sentence at most, with the address</td></tr>
+</tbody></table></div></section>
+<section data-legal="takedown"><h2>Corrections and takedown</h2>
+<p>A publisher who finds its material quoted beyond a short quotation, a person who finds personal information about them on these pages, or a reader who finds an error, writes to the contact above with the page address and the reason. The request is acknowledged within five working days and answered within one month ${TO_CONFIRM("delays, with the CNRS legal service")}. A correction to a published release is listed on the <a href="#release-history">release history</a> with its reason; material removed at a publisher's request is replaced by its address and fingerprint.</p></section>
+<section data-legal="privacy"><h2>Privacy</h2>
+<p>These pages set no cookie, run no analytics and load nothing from a third party. The host keeps the connection logs (visitor IP address) that its own privacy statement describes; the Observatory receives none of them. Names of officials and signatories appearing inside quoted documents are processed by the CNRS as part of its public research mission (GDPR art. 6(1)(e) and art. 89); no contact detail of a person is extracted or served. Questions about personal data go to the contact above or to the CNRS data-protection officer ${TO_CONFIRM("DPO address")}.</p></section>
+</div>`;
 }
 function methodsPage() {
   main.innerHTML =
@@ -2032,6 +2070,7 @@ const TITLES = {
   about: "About",
   methods: "Methods",
   "who-we-are": "Who we are",
+  legal: "Legal",
 };
 /* The header's three section tabs: the current section is selected, and
  * aria-current says "page" when the tab's landing page is the page itself,
@@ -2187,6 +2226,7 @@ function render() {
   else if (page === "glossary") glossaryPage(params.get("term"));
   else if (page === "about") aboutPage();
   else if (page === "who-we-are") whoWeArePage();
+  else if (page === "legal") legalPage();
   else if (page === "methods") methodsPage();
   else notFound();
   document.title = pageTitle(page, id);

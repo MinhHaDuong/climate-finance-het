@@ -40,7 +40,7 @@ sections: **The paper trail** · **The tallies** · **About**. [M3b]
 |---|---|---|
 | The paper trail | Documents · Document rows · Statements; a separate side group for Projects · Funding · Organisations | `#the-paper-trail`, a short page on the three steps and what their statements describe |
 | The tallies | Counts · Non-JETP energy operations (the accounts page of ticket 0877 joins as Money) | `#counts`: two pages need no landing page |
-| About | Glossary · Methods · Who we are | `#about`, one line per page |
+| About | Glossary · Methods · Who we are · Legal (author, 2026-09-30; [legal note](jetp-legal-note.md)) | `#about`, one line per page |
 
 The Glossary sits under About: a reader consults it, and does not start
 from it. The release history is in no bar; Methods links to it and is
@@ -98,7 +98,7 @@ goes unmarked. A range computed at two match thresholds carries the label
 **Addresses match labels.** Each page's address is its label's slug:
 `#documents`, `#document-rows`, `#statements`, `#projects`, `#funding`,
 `#organisations`, `#counts`, `#non-jetp-energy-operations`, `#glossary`, `#methods`,
-`#who-we-are`, and the landing pages `#the-paper-trail` and `#about`; the
+`#who-we-are`, `#legal`, and the landing pages `#the-paper-trail` and `#about`; the
 release history is `#release-history`. A country's page nests under its step
 (`#funding/<CODE>`, `#document-rows/<CODE>`, `#statements/<CODE>`); a project is
 `#project/<project_id>`. The full table is in the Observatory's

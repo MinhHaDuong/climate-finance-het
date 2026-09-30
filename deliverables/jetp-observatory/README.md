@@ -160,7 +160,10 @@ three sections.
   shown elsewhere links to `#glossary?term=<list>/<term_id>`. **Methods**: what was done, what the observatory does not do, and
   the downloads; the release history is linked from here. **Who we are**:
   the author's own text, from his published homepage bio, with links to his
-  homepage and ORCID.
+  homepage and ORCID. **Legal**: the French legal notice, the licence and
+  attribution statement, the publishers' terms, the correction and takedown
+  route and the privacy statement (`docs/jetp-legal-note.md`); what the
+  author has not supplied is a visible `[TO CONFIRM]`. The footer links it.
 
 Breadcrumbs appear on detail pages only. The title block is an h1 and a
 one-sentence lede, with the page's longer explanation folded under "About
@@ -188,6 +191,7 @@ no earlier address is kept, and an internal page key is not an address.
 | Glossary | `#glossary` |
 | Methods | `#methods` |
 | Who we are | `#who-we-are` |
+| Legal | `#legal` |
 | Release history | `#release-history` |
 
 ## What is included
