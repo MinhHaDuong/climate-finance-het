@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-28T18:27Z
+Last updated: 2026-09-30T06:26Z
 
 ## Current goal
 
@@ -17,23 +17,21 @@ Next: sweep; Gavard/Schoch; DAG and independent EconLit/OpenAlex searches;
 
 ## JETP checkpoint
 
-No deployment; no causal model (0729 DEFER). MVP unpublished. The 0870 integration review ran on 2026-09-29:
-full suite green on padme, criteria 3, 5 and 6 unmet; merged fixes #1570 (digest), #1571 (numba), #1572 (CRS builders),
-#1575 (lost view content, channels, collection state). Decisions are logged on 0870 and on branch `t0870-integration-testing`.
-**Next, 2026-09-30:** #1574 (register dispositions, cross-model panel: rebase, regenerate views, padme gates, merge);
-child C (trail of three + "Projects and organisations", served tables, decisions page by confidence); child D (Viet Nam
-drill-down); closing PR from `t0870-integration-testing`; `/verify-gate` on 0870; then M1b (0833).
-`make all` still awaits the figure handoff (1491); the Markdown blocker 0673 merged (#1561).
+No deployment; no causal model (0729 DEFER). MVP unpublished. The ontology-v2 migration closed (0870, #1587),
+with #1574 (register dispositions) merged, and the bounded M1b catalogue is published (0833, #1586).
+**Next:** M3a (following newer sources, remaining candidates; ladder in 0725).
+`make all` still awaits the figure handoff (1491).
 
 ## Status
-<!-- generated 2026-09-28T18:27Z · as of 370a0842 -->
+<!-- generated 2026-09-30T06:26Z · as of 8e83d940 -->
 
-**Tickets:** 60 ready · 61 blocked · 11 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 66 ready · 73 blocked · 12 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
+**In flight:** no open PRs
 **Recent (first-parent):**
-  370a0842 Merge pull request #1561 from MinhHaDuong/t0673-track-render-includes
-  425242c2 Merge pull request #1562 from MinhHaDuong/state-jetp-0878-20260928
-  93ba3edc Merge pull request #1558 from MinhHaDuong/t0701-rel-research-plan
+  8e83d940 Merge pull request #1587 from MinhHaDuong/t0870-closeout
+  dd98e868 Merge pull request #1586 from MinhHaDuong/t0833-m1b-canonical-catalog
+  26cb05d3 Merge pull request #1585 from MinhHaDuong/close-1490-after-review
 
 ## Corpus and submissions
 
