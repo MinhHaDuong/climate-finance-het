@@ -27,6 +27,11 @@ When analysis parameters change (e.g., K=6→8):
 4. `manuscript-vars.yml` stays pinned to v1; create `manuscript-vars-v2.yml` for revised numbers
 5. Both versions coexist — needed for response letter comparisons
 
+Once a journal's process ends, its submission branch becomes a tag and is
+deleted. `submission/oeconomia-varia` (rejected 2026-09-16) survives as the tags
+`v1.0-submission` (submitted, `859c8f6b`) and `v1.1-oeconomia-revised` (R&R
+round 1 freeze with Errata 1, `3334f760`).
+
 ## 3. Scenario playbook
 
 ### A. Prose-only
@@ -36,7 +41,7 @@ Reviewer asks for text changes (framing, citations, wording).
 1. Create ticket branch: `t{N}-prose-revision`
 2. Edit `content/manuscript.qmd`
 3. `make manuscript` to verify PDF builds clean
-4. PR → main → cherry-pick to `submission/oeconomia-varia`
+4. PR → main → cherry-pick to `submission/{journal}-{document}`
 5. No config/figure changes needed
 
 ### B. Figure fix
