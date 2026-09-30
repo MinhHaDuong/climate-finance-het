@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Explore TypeSafe Jev for fast, structured classification in the Observer
+Created: 2026-09-30
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-30T21:35Z HDMX-coding-agent created — author request, interactive
+
+--- body ---
+## Context
+
+The author asked (2026-09-30) to explore TypeSafe's Jev model for fast,
+structured classification tasks. On OpenRouter on 2026-09-30 the listing
+shows `typesafe/jev-router` ("picks the best model and reasoning effort for
+each request ... runs on Jev, TypeSafe's first System One model"), context
+1M tokens, pricing reported as variable (the API returns no fixed price) and
+no supported-parameter list; the model page links a `jev-latest` that the
+public models list does not return. Not established: whether Jev itself is
+callable directly, its price, structured-output support, data retention.
+
+Candidate uses in the specification: the classification steps of extraction
+(line classification, dispositions) and collection triage, where the two
+readers answer from a closed list; the specification selects readers and the
+arbiter on OpenRouter against held-out reference answers before use
+(`docs/jetp-operation.md`, selection and calibration; `docs/jetp-extraction.md`,
+reading and calibration). A router that changes the underlying model per
+request conflicts with reproducible, calibrated readers unless the chosen
+model is recorded per call.
+
+## Exit criteria
+
+- [ ] Callable routes, price, structured-output (JSON schema) support and data-handling terms of Jev and Jev Router established and recorded
+- [ ] Jev scored on the held-out reference answers for one classification task, beside the current candidates, with cost and latency
+- [ ] A recommendation recorded in the model-selection record: candidate reader, arbiter, or not used, with the router's reproducibility question answered
