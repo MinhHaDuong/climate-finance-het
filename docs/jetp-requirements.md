@@ -368,15 +368,20 @@ does not appear as a missing event or a stalled project.
 **F27. Open sources only.** The Observer is an open-source intelligence
 instrument: it ingests only material that the public can legitimately
 reach, and must be able to prove that its dataset comes from such sources
-and from no other. Every document records its public access route: the
-address at which the public can reach it, or the public archive record that
-preserves it. A check fails when any document lacks one. A retrieval may use
-the author's own browser session to pass a technical check on a page the
-public can open; content behind a paywall, or behind a login that the public
-cannot freely obtain, is not ingested (N13). *M2* for the documents held,
-*M3a* for discovery. Test: the check runs over the whole registry and
-reports zero documents without a public access route; a document added
-without one makes it fail.
+and from no other. A source is public when anyone can reach it without
+payment or selection: an open page, a public archive record, or a site
+behind a login that anyone can obtain by free public registration (a
+procurement portal, for example). Content the public cannot reach is
+excluded: paid subscriptions, invitation-only or institution-only access,
+leaked or private material (N13). Every document records its public access
+route: the address at which it can be reached, or the public archive record
+that preserves it, and, for a registration site, the free registration used,
+never its credentials. A check fails when any document lacks a route. A
+retrieval may use the author's own browser session or registered account to
+reach a public source. *M2* for the documents held, *M3a* for discovery.
+Test: the check runs over the whole registry and reports zero documents
+without a public access route; a document added without one makes it fail;
+no access route contains a credential.
 
 **F3. Duplicates are resolved before reading.** One publication under two
 addresses or two exports is one document; succession and translation are
@@ -634,7 +639,7 @@ the list predates the first round and its recovery rate is reported.
 **D9. Unreachable sources are data.** The list of sources that could not be
 reached, with the reason, is released with the registry. *M3a.* Test: the
 release contains it, including sources excluded by robots rules, terms of
-use, paywalls or logins.
+use or restricted access.
 
 **D10. Structured channels.** CRS and IATI records for the four countries,
 held as comparator records beside the documentary statements, never merged
@@ -844,10 +849,12 @@ citation and deposit identifier.
 **C6. Terms of use of sources.** Automated link-following obeys each site's
 robots rules. A single fetch of a known document that the public can open
 in a browser goes ahead, and the site's stated position (robots rules, terms
-of use) is recorded with the retrieval. Technical checks on public pages
-are passed by the author in person, never by automation; content behind a
-paywall or a login the public cannot freely obtain is not fetched (F27,
-N13). A change of a site's terms or robots rules is signalled, never
+of use) is recorded with the retrieval. Technical checks and logins on
+public sources, including sites behind a free public registration, are
+passed by the author in person, never by automation, and the registration
+used is recorded without its credentials; content the public cannot reach
+(paid subscription, invitation-only or institution-only access) is not
+fetched (F27, N13). A change of a site's terms or robots rules is signalled, never
 silent. Document bytes are redistributed only where the source's terms
 allow; otherwise a release carries the address, hash and locator. *M3a.*
 Test: no automated crawl fetches a path the site's robots rules exclude;
@@ -931,9 +938,11 @@ and reproducible results; manuscripts and journal submission are outside it.
 to the Just Energy Transition Partnerships. The climate-finance article and
 the book use it as a case study; they do not extend its scope.
 
-**N13. No closed material.** No leaked, confidential, paywalled or
-members-only document, no non-public dataset and no private communication
-enters the Observer, whoever offers it. Such material, where known to
+**N13. No closed material.** Nothing the public cannot reach enters the
+Observer, whoever offers it: no content behind a paid subscription, no
+invitation-only or institution-only access, no leaked or confidential
+document, no non-public dataset, no private communication. A site behind a
+free public registration is not closed (F27). Such material, where known to
 exist, may be listed as unreachable (D9); it is never read.
 
 ## 9. Requirements and the documents expected to meet them
