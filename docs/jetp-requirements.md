@@ -396,8 +396,8 @@ Know what exists, what was fetched, by which route, and what became of it.
 
 **F7. Discovery proposes, a decision admits.** A candidate document found by
 any search is admitted only by a recorded decision, never automatically.
-*M3a.* Test: a candidate from a discovery run is absent from the register
-until an admission decision, which may be a checked LLM judgement under Q5,
+*M3a.* Test: a candidate from a discovery run is absent from the admitted
+documents until an admission decision, which may be a checked LLM judgement under Q5,
 exists.
 
 **F8. What was sought is recorded.** For each authority and listed

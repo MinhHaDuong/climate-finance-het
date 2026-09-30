@@ -18,13 +18,9 @@ snapshot, publisher and edition have the meaning the
 [ontology](jetp-ontology.md) gives them (section 2 and the relations of
 section 3); this document does not restate them.
 
-**Milestones.** Every rule ends with the milestone that needs it:
-[M2] the extraction pipeline over what is held, [M3a] one discovery campaign
-to a cutoff and the freeze of the register (D1), [M3b] extraction of the new
-documents and matching to CRS and IATI, [M4] recurring operation, [later] beyond M4. M2
-does no new discovery. M3a is one campaign, not a service. Recurring refresh,
-link rot and the tracking of living documents and series are M4. A rule tagged
-M4 or later is not built before that milestone.
+**Milestones.** Tags follow the [index](jetp-spec.md). M2 does no new
+discovery; M3a is one campaign, not a service; recurring refresh, link rot
+and the tracking of living documents and series are M4.
 
 ## 1. Principles
 
@@ -102,7 +98,9 @@ except *held*, defined here.
 - A **candidate** is a pointer to something that may be a document in scope:
   a URL, a title with a publisher, a reference printed in another document.
   It is not in the register. [M3a]
-- A **document** is admitted by triage (section 9) and then sought.
+- A **document** is admitted by triage (section 9: the outcome admit, or
+  context only, which registers it with the disposition `out_of_scope`)
+  and then sought.
   Admission and fetching are distinct: a document can be admitted and remain
   unfetched, and it then carries its access outcome (section 8). [M3a]
 - A **retrieval** is one attempt to fetch one document. [M2]
@@ -117,8 +115,9 @@ except *held*, defined here.
 Duplicates are settled before anything is extracted, by the document judgements of
 fusion section 3: one publication under two addresses is one document
 (`same_as`), a later issue is an `edition_of`, the same text in another
-language is a `translation_of`. A mirror kept by a third party, such as a web
-archive copy or a partner's re-hosting, names that party in a hosting role.
+language is a `translation_of`. A mirror kept by a third party, such as a
+partner's re-hosting, names that party in a hosting role; a web archive copy
+is a retrieval of the document itself (section 8, rung 5).
 [M2 for the documents held, with the proposers fusion section 3 tags M2; M3a
 for the candidates discovery brings, with its proposers 4 and 5]
 
@@ -226,7 +225,8 @@ stops when all three conditions hold. [M3a]
    were each quiet. A round is quiet when its yield is at most 2 % of the
    country's admitted documents at the start of the round, and at most one
    document when that 2 % is below one.
-3. **Recall.** The campaign's known-item recall (section 6) is at least 90 %
+3. **Recall.** The campaign's known-item recall (section 6), under the
+   frame as widened with round-zero holdings included, is at least 90 %
    as a point estimate: at least 36 of 40 items on a list of 40. The gate is
    the point estimate, not the lower bound of its interval; the Wilson
    interval and the known biases (section 6) are published beside it.
@@ -262,7 +262,8 @@ from the searches, by an agent or a session that takes no part in them, and
 its file's hash is recorded in the round log before the first round, so
 that nobody can show later that it was drawn up after the fact. [M3a]
 
-**Blind use.** Those who search do not see the list. It is compared with the
+**Blind use.** Those who search do not see the list: it is kept outside the
+repository, sealed by its hash, until the freeze, and compared with the
 register only at declared checkpoints and at the end. [M3a]
 
 **Recall.** Recall is the share of known items found by the campaign's
@@ -346,7 +347,10 @@ retried, rung by rung, within public access (section 1). [M3a]
 5. A web archive copy, which is a snapshot of the archived document with the
    archive named as host.
 
-Each retrieval records the rung it used. A site whose certificate is invalid
+Each retrieval records the rung it used. At each successful retrieval of a
+document whose bytes may not be redistributed, a capture of its address is
+requested from the Internet Archive and recorded as its `archive_url`; a
+failed request is recorded and retried at M4. A site whose certificate is invalid
 is still fetched, and the error is recorded with the retrieval. Credentials,
 cookies and tokens never appear in any record. Sending a request for a
 document to its publisher needs the author's explicit authorisation, case by
@@ -356,10 +360,11 @@ case. [M3a]
 section 6.4), collection searches hard for a born-digital copy of the same
 document that stayed digital: the official gazette, the ministry's portal,
 the national legal database (for Viet Nam, Công báo, the Ministry of
-Industry and Trade's portal, vbpl.vn and similar). The search is recorded
-like any recorded search (section 7). A born-digital copy found is
-registered and extracted instead, and related to the scan; the scan is
-transcribed only when none is found. [M2 for the scans held; M3a for scans
+Industry and Trade's portal, vbpl.vn and similar). At M2 it is one bounded
+look-up recorded as a dry search; later, a recorded search (section 7). A
+born-digital copy found enters the register by a register change, is
+extracted instead and is related to the scan by `edition_of` or `same_as`;
+the scan is transcribed only when none is found. [M2 for the scans held; M3a for scans
 found by discovery]
 
 **Unreachable documents are data.** The unreachable list is released with
@@ -430,7 +435,7 @@ classes. [M3a for the class, M4 for what each class needs over time]
 |---|---|---|---|
 | frozen | a signed agreement, a board report, a plan once issued | fetched once, and once more at the freeze (section 11) | its address is checked periodically by a fetch: a disappearance triggers an archive capture or retry (link rot), and new bytes under the same address are registered as a new snapshot, so a silent replacement is seen |
 | living | a project data sheet updated as disbursements come, a portfolio portal, a ministry dashboard | fetched once at discovery; earlier snapshots held are kept | refetched at a declared frequency; each changed version is a new snapshot, so the document becomes a dated series of snapshots |
-| series | annual and quarterly reports, secretariat progress reports | each issue found is its own document, linked by `edition_of`; the series' publisher and stated periodicity are recorded | the date of the next issue is expected, and a late issue is reported |
+| series | annual and quarterly reports, secretariat progress reports | each issue found is its own document, linked by `edition_of` | the series' stated periodicity is recorded, the next issue expected, and a late issue reported |
 
 A figure extracted from a living document's snapshot is a statement of that date,
 like any other; the next version is a new statement beside it (fusion section
@@ -478,7 +483,8 @@ snapshot. After the freeze: [M3a]
   by supersession, as fusion section 2 allows for the ledger's own errors,
   and the correction is reported with the release.
 
-**M2 before the campaign.** M2 discovers nothing. It may retry, on the first
+**M2 before the campaign.** M2 discovers nothing beyond the look-up for a
+held scan (section 8). It may retry, on the first
 two rungs of the access ladder (a plain automated request, then the author's
 browser session), the retrieval of documents already registered that have no snapshot,
 because that is fetching, not discovery; every such document ends with a
