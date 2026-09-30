@@ -214,6 +214,37 @@ def test_malformed_catalogue_doi_is_kept_and_counted(tmp_path):
     assert report["reconciliation"]["catalogue_doi_malformed"] == 2
 
 
+def test_unparsable_manifest_aborts(tmp_path):
+    intake = tmp_path / "rel_intake"
+    d = _delivery(intake, "t1650-toc", "2026-10-01", [_rec("r1")])
+    (d / "manifest.json").write_text("{not json", encoding="utf-8")
+    with pytest.raises(rp.RelPoolError, match="not valid JSON"):
+        rp.find_deliveries(str(intake))
+
+
+def test_supersedes_naming_no_delivery_aborts(tmp_path):
+    intake = tmp_path / "rel_intake"
+    _delivery(intake, "t1650-toc", "2026-10-02", [_rec("r1")], (), "2026-10-0l")
+    with pytest.raises(rp.RelPoolError, match="no existing delivery"):
+        rp.find_deliveries(str(intake))
+
+
+def test_supersedes_cycle_aborts(tmp_path):
+    intake = tmp_path / "rel_intake"
+    _delivery(intake, "t1650-toc", "2026-10-01", [_rec("r1")], (), "2026-10-02")
+    _delivery(intake, "t1650-toc", "2026-10-02", [_rec("r2")], (), "t1650-toc/2026-10-01")
+    with pytest.raises(rp.RelPoolError, match="cycle"):
+        rp.find_deliveries(str(intake))
+
+
+def test_duplicate_catalogue_record_id_is_refused(tmp_path):
+    cat, cfg = _catalogue(tmp_path, [
+        {"source": "istex", "source_id": "x", "title": "A", "year": "2001"},
+        {"source": "istex", "source_id": "x", "title": "B", "year": "2002"}])
+    with pytest.raises(rp.RelPoolError, match="not unique"):
+        rp.run(cfg, str(cat), str(tmp_path / "none"), str(tmp_path / "out"))
+
+
 def test_norm_year_and_openalex():
     assert rp.norm_year("2026.0") == "2026"
     assert rp.norm_year("") == rp.norm_year("n.d.") == ""

@@ -228,6 +228,9 @@ def load_catalogue(path, expected_md5, expected_rows):
             "version_hint": "",
             "catalogue_source": r.get("source") or "",
         })
+    dup = [k for k, n in Counter(r["record_id"] for r in rows).items() if n > 1]
+    if dup:
+        raise RelPoolError(f"catalogue record ids (source:source_id) not unique: {dup[:5]}")
     return rows, md5
 
 
@@ -256,17 +259,43 @@ def find_deliveries(intake_dir):
             manifest = {}
             mpath = os.path.join(path, "manifest.json")
             if os.path.isfile(mpath):
+                # A missing manifest is left to the contract check; an unreadable
+                # one would silently drop the delivery's supersedes, so it aborts.
                 try:
                     with open(mpath, encoding="utf-8") as fh:
                         manifest = json.load(fh)
-                except json.JSONDecodeError:
-                    manifest = {}
-            found.append((f"{lane}/{delivery}", path, manifest if isinstance(manifest, dict) else {}))
-    superseded = set()
-    for did, _, manifest in found:
-        superseded |= _supersedes(manifest, did.split("/")[0])
+                except json.JSONDecodeError as exc:
+                    raise RelPoolError(f"{mpath}: not valid JSON ({exc})") from exc
+                if not isinstance(manifest, dict):
+                    raise RelPoolError(f"{mpath}: top level must be an object")
+            found.append((f"{lane}/{delivery}", path, manifest))
+    edges = {did: _supersedes(manifest, did.split("/")[0]) for did, _, manifest in found}
+    _check_supersedes(edges)
+    superseded = set().union(*edges.values()) if edges else set()
     live = [d for d in found if d[0] not in superseded]
-    return live, sorted(superseded & {d[0] for d in found})
+    return live, sorted(superseded)
+
+
+def _check_supersedes(edges):
+    """A supersedes target must exist and the relation must have no cycle."""
+    missing = sorted(f"{did} -> {t}" for did, targets in edges.items()
+                     for t in targets if t not in edges)
+    if missing:
+        raise RelPoolError("supersedes names no existing delivery: " + "; ".join(missing))
+    state = {}
+
+    def visit(did, path):
+        state[did] = "open"
+        for t in sorted(edges[did]):
+            if state.get(t) == "open":
+                raise RelPoolError("supersedes cycle: " + " -> ".join(path + [t]))
+            if t not in state:
+                visit(t, path + [t])
+        state[did] = "done"
+
+    for did in sorted(edges):
+        if did not in state:
+            visit(did, [did])
 
 
 def check_deliveries(deliveries):
