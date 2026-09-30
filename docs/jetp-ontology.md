@@ -256,11 +256,14 @@ prints, and the preferred form where no document is in view.
 
 ### Perimeter
 
-A coverage definition the ledger can count against: the partnership pledge
-envelope and its revisions, a source-defined portfolio of 24 records of which
-21 are unnamed, a procurement quota of 250 MW, a plan's list at a cutoff.
+A coverage definition stated by a publisher: the partnership pledge envelope
+and its revisions, a publisher-defined portfolio of 24 records of which 21 are
+unnamed, a procurement quota of 250 MW, a plan's list at a cutoff.
 Membership is a justified relation, not a list. A count slot is a perimeter observation,
-"this publisher counted 24 at this date", not 21 rows in a registry.
+"this publisher counted 24 at this date", not 21 rows in a registry. A scope
+that the analysis defines to count against, such as a reference pool of
+comparator operations, is a method choice, not a perimeter of the ontology
+([fusion](jetp-fusion.md), section 6).
 
 ### External identifier
 
@@ -269,8 +272,8 @@ World Bank P-number, a CRS `crs_id` or `donor_project_id`, an IATI activity
 identifier, a GEM unit id; for a party, an IATI organisation identifier, a ROR
 identifier, an LEI or a Wikidata item. One table holds them all, typed by
 scheme, so a comparator record and a ledger identity meet on a key rather than
-on a name. For a party the identifier decides: two names that carry the same
-one are one organisation.
+on a name. What an identifier decides is a fusion rule
+([fusion](jetp-fusion.md), section 3).
 
 ### Comparator record
 
@@ -298,9 +301,12 @@ derivation through the sourced `rates` table. An observation names its
 `measure` from the closed list of section 4, its `basis` (`gross`, `net`,
 `unknown`) where money is involved, and its `flow_type` from the IATI list when
 the measure is a flow. It carries `recorded_at`, the date the ledger wrote
-it, and the same `status` and `supersedes` as a decision row, so a corrected
-publication is a new observation that supersedes the old one and an as-of
-state at cutoff K is the set of rows recorded on or before K and in force.
+it, and the same `status` and `supersedes` as a decision row. Supersession
+corrects the ledger's own errors (a misread value, a false match, a faulty
+extraction rule), never a publisher: a later statement that prints a
+different value is a new observation beside the old one, and one that prints
+the same value again is a dated restatement ([fusion](jetp-fusion.md),
+section 2).
 Subjects also include `country`, for the macro-fiscal indicators the
 absorbability block reads (GDP, external debt, a utility's debt ratio on a
 `party`), each with its indicator code from the publisher's own list.
@@ -379,10 +385,9 @@ A marker is the donor's own scoring of an activity, at a reporting year,
 under the marker definition of that year. The "climate finance" that a
 marker yields is the score times a coefficient, 100 percent for principal
 and 40, 50 or 100 percent for significant depending on the donor and the
-year; the coefficient is a rule, not an observation, so it belongs to the
-ontology (section 5). It is recorded in the sourced `marker-coefficients`
-table and applied only in a derived account, so that the same loan can be shown moving from 40 to 100 percent climate finance
-without any change in the loan. A value may be a range: `value_low` and
+year. The coefficient is a sourced parameter of a derived account, not a
+word of the ontology ([fusion](jetp-fusion.md), section 7); it is kept for
+now in the `marker-coefficients` table of section 5. A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
 both equal.
 

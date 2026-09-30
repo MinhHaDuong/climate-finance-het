@@ -1,0 +1,41 @@
+%erg 0.1
+Title: Information fusion methods and rules; docs attic; dissolve the JETP backend design
+Created: 2026-09-30
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-30T08:27Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+A sweep of `docs/jetp-ontology.md` (2026-09-30) found resolution rules inside
+the ontology: party identity by identifier, supersession of a publisher's
+corrected value, marker coefficients as "a rule, so ontology", analyst
+perimeters. The rules for combining statements from several sources are
+scattered over the ontology, `jetp-ledger-storage.md` § 4,
+`jetp-backend-design.md` § 3–6 and 10, and tickets 1180 and 0721, and two of
+them pull against each other (1180: the primary source closest to the event
+prevails; backend design: never select by publisher rank alone).
+
+Author decisions (2026-09-30, interactive):
+
+1. `docs/attic/` keeps old planning notes we do not delete outright, even
+   though git tracks them.
+2. "Fusion methods and rules are conceptual, they make sense independently of
+   the storage and presentation: RDF triples, SPARQL, flat text sentences,
+   rows. The file does NOT talk about storage and presentation."
+3. The fusion file opens with principles: defeasible, traceable, uncertainty
+   accepting, pedigree, storage and presentation independence.
+4. Supersession is restricted to ledger errors; perimeters are split into
+   publisher-defined (data) and analyst-defined (method).
+5. Review `jetp-storage.md` and `jetp-backend-design.md` for an update,
+   dissolve, attic or delete destiny.
+
+## Exit criteria
+
+- [ ] `docs/attic/` exists with a README saying what goes there and that nothing in it governs
+- [ ] `docs/jetp-fusion.md` opens with the principles and names no table, file, column, page or format
+- [ ] The ontology restricts `supersedes` to ledger errors and keeps only publisher-defined perimeters; the rules it held point to the fusion file
+- [ ] Each section of `jetp-storage.md` and `jetp-backend-design.md` has a recorded destiny, approved by the author, and is executed; no live content (the worktree snapshot procedure) lands in the attic
+- [ ] Every inbound link to a moved file still resolves
