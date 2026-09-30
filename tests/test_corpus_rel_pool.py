@@ -250,3 +250,29 @@ def test_norm_year_and_openalex():
     assert rp.norm_year("") == rp.norm_year("n.d.") == ""
     assert rp.norm_openalex("https://openalex.org/W123") == "W123"
     assert rp.norm_openalex("abc") == ""
+
+
+def test_no_dedup_key_rows_enter_the_pool_as_title_only_works(tmp_path, monkeypatch):
+    # The reason joined the contract in PR #1614; accept it here whatever the base.
+    monkeypatch.setattr(ric, "EXCLUSION_REASONS", ric.EXCLUSION_REASONS | {rp.NO_DEDUP_KEY})
+    cat = [{"source": "openalex", "source_id": "W1", "doi": "", "title": "Carbon funds", "year": "2001"},
+           {"source": "grey", "source_id": "g1", "doi": "", "title": "Twice seen", "year": "2002"},
+           {"source": "grey", "source_id": "g2", "doi": "10.1111/b", "title": "Twice seen", "year": "2003"}]
+
+    def excl(rid, title):
+        return {"record_id": rid, "query_id": "q1", "reason": rp.NO_DEDUP_KEY, "title": title,
+                "note": "no DOI, id or year"}
+    report, pool = _run(tmp_path, cat, [("t1653-sud", "2026-10-02", [_rec("r1")], [
+        excl("x1", "CARBON funds."),       # joins the one catalogue work with that title
+        excl("x2", "Twice seen"),          # two works carry the title: ambiguous, separate
+        excl("x3", "Nowhere else"),        # no match: its own work
+        excl("x4", "Nowhere  else")])])    # same title as x3: one work with it
+    d = report["deliveries"]["t1653-sud/2026-10-02"]
+    assert d["records"] == 1 and d["title_only_from_excluded"] == 4
+    assert d["title_only_joined"] == 1
+    assert "t1653-sud" in _row(pool, "openalex:W1")["sources"]
+    assert _row(pool, "title:twice seen|")["member_record_ids"] == \
+        "t1653-sud/2026-10-02:excluded:x2"
+    assert _row(pool, "title:nowhere else|")["member_record_ids"].count("excluded:") == 2
+    assert report["reconciliation"]["ambiguous_title_only"] == 1
+    assert all(v == "ok" for v in report["reconciliation"]["checks"].values())
