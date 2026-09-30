@@ -29,3 +29,13 @@ immutable; issue a new correction edition instead of changing the old files.
 for offline recovery before migration. It is not a public edition. Its capture
 revision, embedded input revision, source-recovery limitations and candidate
 workflow are documented in [the recovery note](../../../docs/jetp-mvp-baseline-0761.md).
+
+## Restoration
+
+When a publication fails, restore the last accepted complete package; never
+replace a few live files mid-build, and never re-enable a retired writer or
+reverse a migration to recover the site. Newer justification and its
+ownership are kept. A restored release shows its real cutoff, and a later
+correction is a new release. (Carried from the backend implementation plan of
+2026-09-14, deleted by ticket 1701.)
+

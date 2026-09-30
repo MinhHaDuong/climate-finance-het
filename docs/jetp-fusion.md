@@ -136,6 +136,9 @@ the criterion it applied.
   primary source nearest to the event prevails over one further from it
   (ticket 1180). It is a criterion an adjudication applies and records, not an
   automatic selection, and it never reduces to the rank of a publisher.
+- Secondary reporting is a lead toward a primary document. It stands as the
+  only support of an event only when no primary document is public, and the
+  event is then marked as supported by secondary sources only.
 - Structured channels (OECD CRS, IATI) have no precedence of their own. They
   report one to three years late, and that lag is measured, not assumed.
 - Where no adjudication selects, a result carries the disagreement: both
@@ -155,7 +158,9 @@ enter fusion differently.
   evidence, not a list.
 - **Defined by the analysis**: the scopes a study or account counts against,
   such as a strict JETP scope and an extended scope of partner energy
-  finance. It is a method choice with a version; changing its definition
+  finance. The strict scope requires explicit JETP attribution in the
+  source; the extended scope is reported separately and never fills the
+  strict one. It is a method choice with a version; changing its definition
   makes a new perimeter, and a count made against the old one is never moved
   silently to the new one.
 
@@ -170,11 +175,16 @@ identities of a kind, or a count a publisher stated. There is no default sum
 of projects, programmes and components, and a publisher's count of records is
 not relabelled a count of assets. Overlapping hierarchies need an explicit
 selection before any aggregate, and a hierarchy never splits money: a
-project's share needs a statement that gives it.
+project's share needs a statement that gives it. Financial states (need,
+announced, memorandum, approved, signed, disbursed) form a chronology, not
+additive categories: an aggregate selects one state explicitly. A physical
+state never follows from a financial one, and a plan's priority ranking
+implies neither finance nor physical progress.
 
 **Money.** Values stay the publisher's, in its unit and currency. A
 conversion uses a rate that a document printed, cited like any statement; no
-rate is assumed and no conversion is implicit. Gross flows are not reduced by
+rate is assumed and no conversion is implicit. A conversion made by a third
+party is kept as its statement and excluded from sums in original currency. Gross flows are not reduced by
 refunds, repayments or cancellations, which remain their own measures. Rounded
 inputs carry their bounds, and a rounding difference is not a discrepancy.
 

@@ -53,7 +53,4 @@ Domain words that coincide are unaffected: a *project stage* is a value of
 the OC4IDS axis, and a PDF's *text layer* is its extractable text.
 
 This document governs the design documents and the schema: the DDL (ticket 0871) declares no table or column named `evidence`,
-`model`, `reconcil*`, `layer` or `fact`. The older design documents
-([`jetp-backend-implementation-plan.md`](jetp-backend-implementation-plan.md),
-[`jetp-tracking.md`](jetp-tracking.md))
-predate it and carry a note mapping their terms onto this one.
+`model`, `reconcil*`, `layer` or `fact`.

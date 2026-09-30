@@ -31,7 +31,8 @@ The current ledger tables and their storage locations are listed in
 collection appends to `retrievals.csv` and `snapshots.csv`; it never rewrites
 the reviewed `documents.csv` identities. The collection commands are
 `make jetp-harvest`, `make jetp-harvest-blocked`, and
-`make jetp-collect-downloads`. The static observatory reads the v2 ledger.
+`make jetp-collect-downloads` (§ Collection below). The static observatory
+reads the v2 ledger.
 The historical design notes in this directory describe earlier ingestion
 steps; they are not instructions to regenerate retired tables.
 
@@ -63,3 +64,35 @@ For an existing worktree with no documents directory, rerun
 to read worktree-relative paths. Tests that open archived PDFs or HTML are in
 the slow tier (`make check`); their content and hash assertions remain strict,
 so that gate requires the snapshots. `make check-fast` needs no archived bytes.
+
+## Collection
+
+`make jetp-harvest` sends conditional HTTP requests, appends each attempt to
+`retrievals.csv` and stores new bytes by SHA-256. At a stable URL, changed
+bytes create a second immutable object; a `304 Not Modified` points back to
+the previous one. HTML error pages cannot enter the PDF pool. A later refresh
+appends; it never rewrites an earlier state to make the latest value look
+timeless.
+
+Sources that refuse the collector (`blocked`) but open in the author's browser
+are retried at two further rungs (ticket 0926), always within the author's own
+access and never past a paywall or a login the author does not have:
+
+1. `make jetp-harvest-blocked` retries every source whose latest attempt was
+   `blocked`, sending the author's Firefox cookies for those hosts only (a
+   copy of `cookies.sqlite`; `cf_clearance` carries a Cloudflare clearance)
+   with the matching Firefox User-Agent, 2.5 s apart. No cookie value is
+   logged.
+2. What still resists, the author opens and saves in Firefox.
+   `make jetp-collect-downloads` scans the download directory
+   (`xdg-user-dir DOWNLOAD`), reads in `places.sqlite` the address each file
+   came from, and records a file only when that address is the registered or
+   recorded URL of a source not yet collected. Any other file is reported and
+   left alone; the download directory is never modified.
+
+Every retrieval says how it was sought in `collection_method` (`script`,
+`browser-session`, `browser-manual`, or `local-record` for research records
+written in the repository). Bytes collected on doudou reach padme before
+`make jetp-documents-track`: DVC objects are pushed from padme only, after
+review of redirects, invalid content and dry searches.
+
