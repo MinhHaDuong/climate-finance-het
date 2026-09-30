@@ -43,7 +43,7 @@ SOURCE = {
     "terms": "https://garuda.kemdiktisaintek.go.id/ (no terms page; robots.txt 404)",
 }
 
-FOUND_RE = re.compile(r"Found\s+([\d.,]+)\s+documents")
+FOUND_RE = re.compile(r"Found\s+([\d.,]+)\s+documents?")
 ITEM_SPLIT = '<div class="article-item">'
 DETAIL_RE = re.compile(r'class="title-article"\s+href="(/documents/detail/(\d+))"\s*>\s*<xmp>(.*?)</xmp>', re.S)
 AUTHOR_RE = re.compile(r'class="author-article"[^>]*><xmp>(.*?)</xmp>', re.S)
@@ -62,9 +62,10 @@ def _clean(s):
 
 def plan(cfg):
     lex = cfg["lexicon"]
+    terms = lexicon_terms(lex, LANGUAGES)
     specs = []
     for lang in LANGUAGES:
-        for theme, query in lex[lang].items():
+        for theme, query in sorted(lex[lang].items()):
             for i, phrase in enumerate(split_terms(query), 1):
                 for field in FIELDS:
                     params = {"select": field, "q": phrase,
@@ -75,7 +76,7 @@ def plan(cfg):
                                          f"&to={YEAR_TO} (server matches all words, "
                                          f"not the phrase)"),
                         "params": params,
-                        "terms": lexicon_terms(lex, LANGUAGES),
+                        "terms": terms,
                     })
     return specs
 
@@ -112,8 +113,11 @@ def parse_page(text, match):
 
 
 def fetch(spec, delay):
+    """Pages to the announced count. Records are counted once by id (the sort
+    is not guaranteed stable across pages), and a result block the parser
+    cannot read ends the query incomplete, never complete."""
     match = term_matcher(spec["terms"])
-    page, received, n_found = 1, 0, None
+    page, n_found, seen, unparsed = 1, None, set(), 0
     while True:
         params = {**spec["params"], "page": page}
         try:
@@ -124,7 +128,9 @@ def fetch(spec, delay):
         if resp.status_code != 200:
             yield ("end", f"http {resp.status_code}")
             return
-        found, records = parse_page(resp.content.decode("utf-8", "replace"), match)
+        text = resp.content.decode("utf-8", "replace")
+        found, records = parse_page(text, match)
+        unparsed += text.count(ITEM_SPLIT) - len(records)
         if page == 1:
             if found is None:
                 yield ("end", "error: no result count on page 1")
@@ -132,10 +138,11 @@ def fetch(spec, delay):
             n_found = found
             yield ("meta", n_found)
         for rec in records:
-            yield ("work", rec)
-        received += len(records)
-        if received >= n_found:
-            yield ("end", "")
+            if rec["record_id"] not in seen:
+                seen.add(rec["record_id"])
+                yield ("work", rec)
+        if len(seen) >= n_found:
+            yield ("end", f"{unparsed} result blocks not parsed" if unparsed else "")
             return
         if not records:
             yield ("end", f"empty page {page} before {n_found} records")
@@ -144,7 +151,8 @@ def fetch(spec, delay):
 
 
 # The detail page states the publication date ("Publish Date <br>01 Jul 2023")
-# where the search page's venue line carries no year (about 100 records).
+# where the search page's venue line carries no year (about 100 records). fetch
+# does not read it: the intake exporter's enrich-years step calls publish_year.
 PUBLISH_DATE_RE = re.compile(r"Publish Date\s*<br\s*/?>\s*([^<]+?)\s*<", re.I)
 
 

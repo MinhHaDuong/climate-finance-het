@@ -249,3 +249,57 @@ def test_redalyc_empty_page_before_total_is_incomplete():
     get, _ = recorder([resp({"totalResultados": "5", "resultados": [redalyc_art("1", "A")]}),
                        resp({"totalResultados": "5", "resultados": []})])
     assert list(redalyc.fetch(spec, 0, get=get))[-1] == ("end", "short: 1 of 5")
+
+
+# ---------------------------------------------------------------------------
+# Review fixes (#1624): answers that must never read as complete
+# ---------------------------------------------------------------------------
+
+def test_redalyc_missing_count_is_an_error_not_an_empty_complete_answer():
+    spec = redalyc.plan({"lexicon": LEXICON})[0]
+    get, _ = recorder([resp({"error": "service down"})])
+    assert list(redalyc.fetch(spec, 0, get=get)) == [("end", "error: no result count")]
+    get, _ = recorder([resp({"totalResultados": "0", "resultados": []})])
+    assert list(redalyc.fetch(spec, 0, get=get)) == [("meta", 0), ("end", "")]
+
+
+def test_redalyc_non_string_fields_and_articles_without_id():
+    spec = redalyc.plan({"lexicon": LEXICON})[0]
+    arts = [redalyc_art(7, "A", year=2019), redalyc_art("", "No id")]
+    get, _ = recorder([resp({"totalResultados": 2, "resultados": arts})])
+    events = list(redalyc.fetch(spec, 0, get=get))
+    [rec] = [v for k, v in events if k == "work"]
+    assert rec["record_id"] == "redalyc:7" and rec["year"] == 2019
+    assert events[-1] == ("end", "1 articles without cveArticulo")
+
+
+def test_dspace_page_without_counts_or_items_without_metadata_are_incomplete():
+    spec = latam_dspace.lexicon_plan(clacso.SOURCE, LEXICON)[0]
+    no_counts = {"_embedded": {"searchResult": {"_embedded": {"objects": []}}}}
+    get, _ = recorder([resp(no_counts)])
+    assert list(latam_dspace.search("https://h", spec, 0, get=get)) == [
+        ("end", "error: no page counts")]
+    page = dspace_page([dspace_item("1", "A"), {"_embedded": {}}], 0, 1, 2)
+    get, _ = recorder([resp(page)])
+    events = list(latam_dspace.search("https://h", spec, 0, get=get))
+    assert len([e for e in events if e[0] == "work"]) == 1
+    assert events[-1] == ("end", "1 results without item metadata")
+
+
+def test_dspace_unparseable_issue_date_still_falls_back_to_dc_date():
+    md = {"dc.title": [{"value": "T"}], "dc.date.issued": [{"value": "s.f."}],
+          "dc.date": [{"value": "2012"}]}
+    assert latam_dspace.item_to_record({"metadata": md}, "https://h")["year"] == 2012
+
+
+def test_scielo_one_failing_collection_is_one_incomplete_row():
+    def get(url, params=None, delay=0):
+        if params["collection"] == "ven":
+            raise ConnectionError("down")
+        return types.SimpleNamespace(
+            status_code=200, raise_for_status=lambda: None,
+            json=lambda: [am_journal("0301-7036", "P", area="Applied Social Sciences")])
+    specs = scielo.plan({"lexicon": LEXICON}, get=get)
+    [bad] = [s for s in specs if s["query_id"] == "H-scielo-ven-journals"]
+    assert list(scielo.fetch(bad, 0)) == [("end", "error: journal list: ConnectionError")]
+    assert len(specs) == len(scielo.COLLECTIONS)  # one row per collection either way

@@ -38,6 +38,7 @@ from rel_sud_sources._common import (
     lexicon_terms,
     oai_list_records,
     term_matcher,
+    xml_clean,
 )
 
 ENDPOINT = "https://cyberleninka.ru/oai"
@@ -62,8 +63,6 @@ SOURCE = {
 
 get = polite_get  # tests replace this
 
-# XML 1.0 forbids these control characters; stripped defensively.
-_BAD_XML = re.compile(rb"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 # After about 980 pages at one request a second (2026-09-30), /oai answered
 # HTTP 200 with an HTML captcha page ("Вы точно человек?") instead of XML.
 _CAPTCHA = re.compile("Вы точно человек|captcha".encode(), re.IGNORECASE)
@@ -78,19 +77,27 @@ class Captcha(Exception):
 
 
 def _checked(resp):
-    if resp.status_code == 200 and not resp.content.lstrip().startswith(b"<?xml") \
+    """The response, or ``Captcha`` when a 200 answer is not an OAI-PMH page
+    but the captcha. XML cleaning is left to ``_common.xml_clean``."""
+    body = resp.content.lstrip(b"\xef\xbb\xbf \t\r\n")
+    if resp.status_code == 200 and b"<OAI-PMH" not in body[:2000] \
             and _CAPTCHA.search(resp.content):
         raise Captcha
-    return types.SimpleNamespace(status_code=resp.status_code,
-                                 content=_BAD_XML.sub(b"", resp.content))
+    return types.SimpleNamespace(status_code=resp.status_code, content=resp.content)
 
 
 def list_journal_sets(delay=1.0):
-    """``[(setSpec, setName)]`` of the journal sets, in server order."""
+    """``[(setSpec, setName)]`` of the journal sets, in server order.
+
+    Raises on anything but a complete, single-page answer (a resumption token
+    would mean sets this reader does not follow)."""
     resp = _checked(get(ENDPOINT, params={"verb": "ListSets"}, delay=delay))
     if resp.status_code != 200:
         raise RuntimeError(f"ListSets: http {resp.status_code}")
-    root = ET.fromstring(resp.content)
+    root = ET.fromstring(xml_clean(resp.content))
+    token = (root.findtext("oai:ListSets/oai:resumptionToken", "", NS) or "").strip()
+    if token:
+        raise RuntimeError("ListSets: resumption token not followed")
     out = []
     for s in root.iterfind("oai:ListSets/oai:set", NS):
         spec = s.findtext("oai:setSpec", "", NS)
@@ -118,7 +125,11 @@ def plan(cfg):
     except Captcha:
         return [{"query_id": "S-cyberleninka-listsets",
                  "query_string": "OAI-PMH ListSets (journal-set selection)",
-                 "blocked": True}]
+                 "blocked": "blocked: captcha page (not solved)"}]
+    except Exception as exc:  # any other failure: one incomplete row, not a crash
+        return [{"query_id": "S-cyberleninka-listsets",
+                 "query_string": "OAI-PMH ListSets (journal-set selection)",
+                 "blocked": f"error: {exc}"}]
     specs = []
     for spec, name, tier in journals:
         specs.append({
@@ -136,11 +147,16 @@ def plan(cfg):
 
 
 def fetch(spec, delay):
+    """One journal set. Once a captcha has answered, every later journal ends
+    blocked without a request (the budget is shared and closed)."""
     if spec.get("blocked"):
-        yield ("end", "blocked: captcha page (not solved)")
+        yield ("end", spec["blocked"])
         return
     match = term_matcher(spec["terms"])
     budget = spec["budget"]
+    if budget.get("captcha"):
+        yield ("end", "blocked: captcha page earlier in the run (not solved)")
+        return
 
     def counting_get(url, params=None, delay=0):
         if budget["left"] <= 0:
@@ -156,6 +172,7 @@ def fetch(spec, delay):
         elif kind == "end" and val == "error: PageBudget":
             yield ("end", "page budget reached")
         elif kind == "end" and val == "error: Captcha":
+            budget["captcha"] = True
             yield ("end", "blocked: captcha page (not solved)")
         else:
             yield (kind, val)

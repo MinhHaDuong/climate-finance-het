@@ -16,7 +16,7 @@ SOURCE = {
     "languages": ["en"],
     "route": "api",
     "endpoint": f"{BASE}/server/api/discover/search/objects",
-    "terms": "1530 lexicon, en",
+    "terms": "https://uwispace.sta.uwi.edu/robots.txt",
 }
 
 

@@ -34,7 +34,7 @@ SOURCE = {
     "languages": ["es", "pt", "en"],
     "route": "api",
     "endpoint": BASE,
-    "terms": "1530 lexicon, es, pt and en",
+    "terms": "https://www.redalyc.org/robots.txt",
 }
 
 
@@ -52,19 +52,29 @@ def plan(cfg):
             for theme, query in sorted(cfg["lexicon"][lang].items())]
 
 
+def _text(art, key):
+    """A JSON field as stripped text, whatever type the service sent."""
+    value = art.get(key)
+    return "" if value is None else str(value).strip()
+
+
 def to_record(art, match=None):
-    cve = str(art.get("cveArticulo", "")).strip()
-    title = (art.get("titulo") or "").strip()
-    abstract = (art.get("resumen") or "").strip()
+    """Normalized record, or None when the article has no ``cveArticulo``
+    (no stable id: it would collide with every other such record)."""
+    cve = _text(art, "cveArticulo")
+    if not cve:
+        return None
+    title = _text(art, "titulo")
+    abstract = _text(art, "resumen")
     return empty_record(
         record_id=f"redalyc:{cve}",
-        url=f"https://www.redalyc.org/articulo.oa?id={cve}" if cve else "",
-        doi=find_doi([art.get("doiTitulo") or ""]),
+        url=f"https://www.redalyc.org/articulo.oa?id={cve}",
+        doi=find_doi([_text(art, "doiTitulo")]),
         title=title,
-        authors=(art.get("autores") or "").strip(),
-        year=find_year([art.get("anioArticulo") or ""]),
-        language=(art.get("idiomaArticulo") or "").strip(),
-        venue=(art.get("nomRevista") or "").strip(),
+        authors=_text(art, "autores"),
+        year=find_year([_text(art, "anioArticulo")]),
+        language=_text(art, "idiomaArticulo"),
+        venue=_text(art, "nomRevista"),
         doc_type="article",
         abstract=abstract[:3000],
         matched_terms="; ".join(match(title + " " + abstract)) if match else "",
@@ -72,8 +82,10 @@ def to_record(art, match=None):
 
 
 def fetch(spec, delay, get=polite_get):
+    """Pages to the announced ``totalResultados``. A missing count, an article
+    without id or a short count ends the query incomplete, never complete."""
     match = term_matcher(spec["terms"]) if spec.get("terms") else None
-    page, total, received = 1, None, 0
+    page, total, received, no_id = 1, None, 0, 0
     while True:
         try:
             resp = get(page_url(spec["query"], page), delay=delay)
@@ -90,13 +102,24 @@ def fetch(spec, delay, get=polite_get):
             yield ("end", "error: bad json")
             return
         if total is None:
-            total = int(data.get("totalResultados") or 0)
+            try:
+                total = int(data["totalResultados"])
+            except (KeyError, TypeError, ValueError):
+                yield ("end", "error: no result count")
+                return
             yield ("meta", total)
         arts = data.get("resultados") or []
         for art in arts:
             received += 1
-            yield ("work", to_record(art, match))
+            rec = to_record(art, match)
+            if rec is None:
+                no_id += 1
+                continue
+            yield ("work", rec)
         if not arts or received >= total:
             break
         page += 1
-    yield ("end", "" if received >= total else f"short: {received} of {total}")
+    if received < total:
+        yield ("end", f"short: {received} of {total}")
+    else:
+        yield ("end", f"{no_id} articles without cveArticulo" if no_id else "")

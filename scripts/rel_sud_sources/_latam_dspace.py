@@ -1,8 +1,10 @@
 """DSpace 7 REST search shared by the CLACSO, Ipea and UWI adapters (ticket 1653).
 
 No ``SOURCE`` here: the runner skips this module. DSpace 7 exposes its Solr
-discovery as ``/server/api/discover/search/objects``; robots.txt of the three
-repositories disallows the ``/search`` user interface, not ``/server/api``.
+discovery as ``/server/api/discover/search/objects``. robots.txt (checked
+2026-09-30): Ipea and UWI disallow the ``/search`` user interface; CLACSO
+disallows only authn, eperson and statistics under ``/server/api``; none
+disallows ``/server/api/discover``.
 The lexicon string (``"a" OR "b"``) is sent verbatim as ``query``: the
 discovery index accepts quoted phrases and ``OR``. No server-side date filter:
 ``f.dateIssued`` silently drops items without an issue date (31 -> 23 on a
@@ -68,8 +70,8 @@ def item_to_record(obj, base_url, match=None):
         doi=find_doi(ids),
         title=title,
         authors="; ".join(_values(md, "dc.contributor.author") + _values(md, "dc.creator")),
-        year=find_year(_values(md, "dc.date.issued")
-                       or [v for k in PUBLICATION_DATE_KEYS for v in _values(md, k)]),
+        year=(find_year(_values(md, "dc.date.issued"))
+              or find_year([v for k in PUBLICATION_DATE_KEYS for v in _values(md, k)])),
         language="; ".join(_values(md, "dc.language.iso") + _values(md, "dc.language")),
         venue="; ".join(_values(md, "dc.relation.ispartofseries")
                         + _values(md, "dc.relation.ispartof")
@@ -85,11 +87,12 @@ def search(base_url, spec, delay, get=polite_get):
 
     ``base_url`` is the site root (``https://host``); the API sits under
     ``/server/api``. The end reason is ``''`` only when every announced item
-    arrived; a short count is reported, never passed off as complete.
+    arrived; a short count, a page without its counts, or a result that is not
+    an item is reported, never passed off as complete.
     """
     endpoint = f"{base_url}/server/api/discover/search/objects"
     match = term_matcher(spec["terms"]) if spec.get("terms") else None
-    page, total, received = 0, None, 0
+    page, total, received, empty = 0, None, 0, 0
     while True:
         params = {**spec["params"], "page": page, "size": PAGE_SIZE}
         try:
@@ -106,15 +109,26 @@ def search(base_url, spec, delay, get=polite_get):
             yield ("end", "error: bad json")
             return
         info = result.get("page", {})
-        if total is None:
-            total = int(info.get("totalElements", 0))
-            yield ("meta", total)
+        try:
+            total_pages = int(info["totalPages"])
+            if total is None:
+                total = int(info["totalElements"])
+                yield ("meta", total)
+        except (KeyError, TypeError, ValueError):
+            yield ("end", "error: no page counts")
+            return
         objects = result.get("_embedded", {}).get("objects", [])
         for o in objects:
-            obj = o.get("_embedded", {}).get("indexableObject", {})
+            obj = o.get("_embedded", {}).get("indexableObject") or {}
             received += 1
+            if not obj.get("metadata"):
+                empty += 1
+                continue
             yield ("work", item_to_record(obj, base_url, match))
         page += 1
-        if not objects or page >= int(info.get("totalPages", 0)):
+        if not objects or page >= total_pages:
             break
-    yield ("end", "" if received >= total else f"short: {received} of {total}")
+    if received < total:
+        yield ("end", f"short: {received} of {total}")
+    else:
+        yield ("end", f"{empty} results without item metadata" if empty else "")

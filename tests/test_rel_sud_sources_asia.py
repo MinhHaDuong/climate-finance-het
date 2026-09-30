@@ -253,3 +253,44 @@ def test_cyberleninka_strips_xml_invalid_control_characters(monkeypatch):
     events = list(cyberleninka.fetch(spec, 0))
     assert events[-1] == ("end", "")
     assert [v["title"] for k, v in events if k == "work"] == ["Климатическое финансирование"]
+
+
+
+def test_garuda_repeated_records_are_counted_once_and_unparsed_blocks_flagged(monkeypatch):
+    spec = garuda.plan({"lexicon": LEXICON})[0]
+    p1 = _page(2, [_item(1, "a", "V (2010)")])
+    p2 = _page(2, [_item(1, "a", "V (2010)")])  # the server repeats itself
+    p3 = _page(2, [_item(2, "b", "V (2011)")])
+    monkeypatch.setattr(garuda, "get", fake_get([p1, p2, p3]))
+    events = list(garuda.fetch(spec, 0))
+    assert [v["record_id"] for k, v in events if k == "work"] == ["garuda:1", "garuda:2"]
+    assert events[-1] == ("end", "")
+    broken = _page(1, ['<div class="article-item"><a href="/x">no title link</a></div>'])
+    monkeypatch.setattr(garuda, "get", fake_get([broken]))
+    assert list(garuda.fetch(spec, 0))[-1] == ("end", "empty page 1 before 1 records")
+    one = _page(1, [_item(1, "a", "V (2010)"), '<div class="article-item">junk</div>'])
+    monkeypatch.setattr(garuda, "get", fake_get([one]))
+    assert list(garuda.fetch(spec, 0))[-1] == ("end", "1 result blocks not parsed")
+    assert garuda.FOUND_RE.search("Found 1 document").group(1) == "1"
+
+
+def test_cyberleninka_a_captcha_closes_the_run_for_later_journals(monkeypatch):
+    calls = []
+    specs = _plan(monkeypatch, [CAPTCHA], calls)
+    assert list(cyberleninka.fetch(specs[0], 0))[-1] == (
+        "end", "blocked: captcha page (not solved)")
+    n = len(calls)
+    assert list(cyberleninka.fetch(specs[1], 0)) == [
+        ("end", "blocked: captcha page earlier in the run (not solved)")]
+    assert len(calls) == n  # no request after the captcha
+
+
+def test_cyberleninka_listsets_failure_or_token_is_one_incomplete_row(monkeypatch):
+    monkeypatch.setattr(cyberleninka, "get", fake_get([503]))
+    (spec,) = cyberleninka.plan({"lexicon": LEXICON})
+    assert list(cyberleninka.fetch(spec, 0)) == [("end", "error: ListSets: http 503")]
+    paged = LISTSETS.replace(b"</ListSets>", b"<resumptionToken>t2</resumptionToken></ListSets>")
+    monkeypatch.setattr(cyberleninka, "get", fake_get([paged]))
+    (spec,) = cyberleninka.plan({"lexicon": LEXICON})
+    assert list(cyberleninka.fetch(spec, 0)) == [
+        ("end", "error: ListSets: resumption token not followed")]

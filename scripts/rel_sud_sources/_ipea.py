@@ -17,7 +17,7 @@ SOURCE = {
     "languages": ["pt", "en"],
     "route": "api",
     "endpoint": f"{BASE}/server/api/discover/search/objects",
-    "terms": "1530 lexicon, pt and en",
+    "terms": "https://repositorio.ipea.gov.br/robots.txt",
 }
 
 

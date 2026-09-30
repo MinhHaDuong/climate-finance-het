@@ -18,7 +18,7 @@ SOURCE = {
     "languages": ["es", "pt"],
     "route": "api",
     "endpoint": f"{BASE}/server/api/discover/search/objects",
-    "terms": "1530 lexicon, es and pt",
+    "terms": "https://biblioteca-repositorio.clacso.edu.ar/robots.txt",
 }
 
 

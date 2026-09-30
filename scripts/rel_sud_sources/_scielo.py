@@ -51,7 +51,7 @@ SOURCE = {
     "languages": LANGUAGES,
     "route": "oai-pmh",
     "endpoint": "per-collection /oai/scielo-oai.php (" + ", ".join(COLLECTIONS) + ")",
-    "terms": "1530 lexicon, es, pt and en, matched locally",
+    "terms": "https://search.scielo.org/robots.txt (Disallow: /); OAI per collection",
 }
 
 
@@ -66,7 +66,10 @@ def selected(journal):
 
 
 def journals(collection, get=polite_get, delay=1.0):
-    """``[(issn, title)]`` of the selected journals of one collection."""
+    """``[(issn, title)]`` of the selected journals of one collection.
+
+    ArticleMeta returns a collection's whole journal list in one answer (mex:
+    281 of total 281, checked 2026-09-30); no pagination to follow."""
     resp = get(ARTICLEMETA, params={"collection": collection}, delay=delay)
     resp.raise_for_status()
     return [(j["code"], _text(j, "v100")) for j in resp.json() if selected(j)]
@@ -76,7 +79,15 @@ def plan(cfg, get=polite_get):
     terms = lexicon_terms(cfg["lexicon"], LANGUAGES)
     specs = []
     for col, endpoint in COLLECTIONS.items():
-        for issn, title in journals(col, get=get):
+        try:
+            selected_journals = journals(col, get=get)
+        except Exception as exc:  # one collection lost, recorded; the others run
+            specs.append({"query_id": f"H-scielo-{col}-journals",
+                          "query_string": f"ArticleMeta journal list, collection={col}",
+                          "endpoint": ARTICLEMETA,
+                          "error": f"error: journal list: {type(exc).__name__}"})
+            continue
+        for issn, title in selected_journals:
             specs.append({
                 "query_id": f"H-scielo-{col}-{issn}",
                 "query_string": (f"ListRecords metadataPrefix=oai_dc set={issn} ({title}); "
@@ -89,6 +100,9 @@ def plan(cfg, get=polite_get):
 
 
 def fetch(spec, delay, get=polite_get):
+    if spec.get("error"):
+        yield ("end", spec["error"])
+        return
     match = term_matcher(spec["terms"])
     for kind, val in oai_list_records(spec["endpoint"], set_spec=spec["set"],
                                       delay=delay, get=get):
