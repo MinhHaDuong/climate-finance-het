@@ -320,7 +320,9 @@ marker yields is the score times a coefficient, 100 percent for principal
 and 40, 50 or 100 percent for significant depending on the donor and the
 year. The coefficient is a sourced parameter of a derived account, not a
 word of the ontology ([fusion](jetp-fusion.md), section 7); it is kept for
-now in the `marker-coefficients` table (section 5). A value may be a range: `value_low` and
+now in the `marker-coefficients` table (section 5), which is used from M4,
+or from M3b if the comparison of requirement F19 uses climate-marked
+amounts. A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
 both equal. [M3b]
 

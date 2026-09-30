@@ -206,6 +206,15 @@ decide one, his decision is recorded as a judgement like any other
 (section 5). Decisions are batched: an agent collects the foreseeable
 questions of a run into one round, each with a recommended default. [M2]
 
+**Reported errors.** A report of an error, received through the channel
+named on the Observatory's methods page, is recorded as one ticket; the
+ticket number is the report identifier, which the correction row cites.
+The reporter's identity stays in the ticket and never enters a ledger
+table. The report ends in one of the three outcomes of
+[results and releases](jetp-results.md) § 9, "reported, awaiting a public
+source" included. A table of reports may be derived from the tickets at M4
+if their volume warrants it. [M3b; M4 for the derived table]
+
 ## 5. LLM readers and the checking rule
 
 **Two local readers, a hosted arbiter.** An LLM judgement (a statement

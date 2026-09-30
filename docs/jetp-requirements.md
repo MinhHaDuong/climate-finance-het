@@ -462,9 +462,12 @@ country, a list of excerpts about negotiation or ownership can be produced,
 each resolving to its snapshot.
 
 **F25. Reported errors are traced.** A publisher or a reader can report an
-error. Each report is recorded, answered by a judgement (accepted, with the
-correction made as a revision that names the report; or rejected, with the
-reason), and an accepted correction reaches every published claim it touches
+error. Each report is recorded as one ticket, whose number identifies it,
+and answered by a judgement: accepted, with the correction made as a
+revision that names the report; rejected, with the reason; or reported,
+awaiting a public source, when only a publisher's revision not yet public
+would settle it. No personal data of a reporter enters the ledger. An
+accepted correction reaches every published claim it touches
 (Q7). An accepted report that changes a released figure produces a
 correction release; otherwise it enters the next regular release (Results
 and releases § 9). The number of reports received and corrections made is
@@ -473,7 +476,6 @@ published with each release, as a signal of use and of quality gained.
 Test: a report submitted against a released statement ends with a recorded
 judgement, and, if accepted, the correction release or the next release
 shows the correction and names the report.
-<!-- wave-1 W1-37: pending author decision (report record: a ticket per report or a served table) -->
 
 ### 4.3 Identities and judgements
 
@@ -709,8 +711,9 @@ the list predates the first round and its recovery rate is reported.
 channels that could not be reached, with the reason, is released with the
 register. *M3a.* Test: the M3a collection report contains it, and from M3b
 the release does, with each entry's reason taken from the reasons of
-Collection § 8.
-<!-- wave-1 W1-29: pending author decision (whether and how documents excluded by robots rules or terms of use are listed) -->
+Collection § 8, including documents reachable only through paths the
+site's robots rules exclude, with the robots position recorded on their
+retrieval.
 
 **DA10. Structured search channels.** CRS and IATI records for the four countries,
 held as comparator records beside the documentary statements, never merged
@@ -1069,7 +1072,7 @@ document that reads statements into observations.
 | F4 Living documents append | M2 | Extraction; Fusion § 2 |
 | F6 Disagreeing statements retrievable | M2, M3b | Fusion § 5; Extraction |
 | F21 Excerpts for qualitative work | M3b | Results and releases |
-| F25 Reported errors are traced | M3b, M4 | Results and releases § 9; Fusion § 2 (the judgement); Operation (the intake, pending an author decision) |
+| F25 Reported errors are traced | M3b, M4 | Results and releases § 9; Fusion § 2 (the judgement); Operation § 4 (the intake: a ticket per report) |
 | **4.3 Identities and judgements** | | |
 | F11 Referents by decision, counted at a match threshold | M3b | Fusion § 3 |
 | F12 Organisations under authority control | M3b | Fusion § 3; Ontology |

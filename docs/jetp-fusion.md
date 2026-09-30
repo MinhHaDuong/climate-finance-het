@@ -430,7 +430,8 @@ difference is not a discrepancy. [M3b]
 times a coefficient that depends on the donor and the year. The coefficient is
 a sourced parameter of the account, cited to the document that states it; it
 is applied only in the account, so the same loan can move from 40 to 100
-percent climate finance without any change in the loan. [M3b]
+percent climate finance without any change in the loan. [M4, or M3b if the
+comparison of requirement F19 uses CRS climate-marked amounts]
 
 **Reconstruction.** An account of a subject between two dates starts from an
 opening position with an exact cutoff (zero needs a justification), adds the

@@ -73,7 +73,7 @@ the lines' `recorded_at` instead (`<document_id>.d/<year>.csv`, with numbered
 | `perimeters` | `perimeter_row_id` | *perimeter_id*, country, name, scope, definition, recorded_at, decided_by, status, supersedes, notes |
 | `marker-coefficients` | `coefficient_row_id` | *(donor_party_id, marker, score, year)*, coefficient, line_id, recorded_at, decided_by, status, supersedes |
 
-[M2 for the D1 and D2 tables and the ontology tables; M3a for the record of searches; M3b for the D3 and D4 tables]
+[M2 for the D1 and D2 tables and the ontology tables; M3a for the record of searches; M3b for the D3 and D4 tables, except `deflators`, later, and the rows of `marker-coefficients`, M4 unless the comparison of requirement F19 uses climate-marked amounts]
 
 The last five rows are the ontology tables, one file each under
 `data/jetp/ontology/` (`terms.csv`, `status-crosswalk.csv`,
