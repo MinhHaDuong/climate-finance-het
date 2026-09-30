@@ -17,6 +17,8 @@ import html
 import re
 
 import requests
+from openalex_corpus import retry_get
+from pipeline_io import MAILTO, POLITE_MAX_RETRIES
 
 from rel_sud_sources.common import lexicon_terms, term_matcher
 
@@ -96,3 +98,16 @@ def soft(get):
                 raise
             return exc.response
     return wrapped
+
+
+def no_mailto_get(url, params=None, delay=1.0):
+    """``polite_get`` without the ``mailto`` query parameter.
+
+    ``polite_get`` appends ``mailto=...`` to every request (an OpenAlex
+    courtesy). An OAI-PMH server must reject unknown arguments, and OJS does:
+    ``badArgument`` on every AJOL journal (2026-09-30). Same retries, same
+    identifying User-Agent, no extra parameter.
+    """
+    return retry_get(url, params=params, delay=delay, max_retries=POLITE_MAX_RETRIES,
+                     timeout=30, mailto=None,
+                     user_agent=f"ClimateFinancePipeline/1.0 (mailto:{MAILTO})")

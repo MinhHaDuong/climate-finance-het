@@ -327,6 +327,23 @@ def test_ajol_waits_out_a_waf_challenge_then_skips_once_it_persists(monkeypatch)
     assert len(blocked.calls) == n  # no request once the challenge persists
 
 
+def test_oai_requests_carry_no_mailto_argument(monkeypatch):
+    """OJS answers badArgument to the mailto parameter polite_get appends."""
+    import openalex_corpus.crawl as crawl
+
+    sent = []
+
+    def fake_requests_get(url, params=None, headers=None, timeout=None):
+        sent.append((dict(params or {}), headers))
+        return Resp(OAI)
+
+    monkeypatch.setattr(crawl.requests, "get", fake_requests_get)
+    listing.no_mailto_get("https://oai", params={"verb": "ListRecords"}, delay=0)
+    assert sent[0][0] == {"verb": "ListRecords"}
+    assert "mailto:" in sent[0][1]["User-Agent"]
+    assert ajol.fetch.__defaults__[0] is listing.no_mailto_get
+
+
 def test_every_adapter_honours_the_contract():
     for mod in (ajol, adb_ewp, ceew, cpd, ersa, south_centre):
         src = mod.SOURCE

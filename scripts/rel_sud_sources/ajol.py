@@ -19,15 +19,16 @@ solved here). Seen on 2026-09-30 at one request per 2 s; hence 4 s between
 requests, a pause and retry on a challenge, and once the challenge persists
 across ``MAX_CHALLENGED`` journals in a row the remaining journals are
 skipped (registered incomplete) instead of pressing on.
+
+Requests go through ``listing.no_mailto_get``: the ``mailto`` query parameter
+that ``polite_get`` appends makes OJS answer ``badArgument``.
 """
 
 import re
 import time
 
-from pipeline_io import polite_get
-
 from rel_sud_sources.common import dc_to_record, oai_list_records
-from rel_sud_sources.listing import matcher
+from rel_sud_sources.listing import matcher, no_mailto_get
 
 SITE = "https://www.ajol.info/index.php"
 LANGUAGES = ["en", "fr", "pt", "ar"]
@@ -71,7 +72,7 @@ def category_journals(slug, get, delay):
     return paths, ""
 
 
-def plan(cfg, get=polite_get):
+def plan(cfg, get=no_mailto_get):
     """One query per journal of the chosen categories (network: category pages)."""
     match = matcher(cfg, LANGUAGES)
     journals = {}
@@ -116,7 +117,7 @@ def patient(get, sleep=time.sleep):
 _state = {"challenged_in_a_row": 0}
 
 
-def fetch(spec, delay, get=polite_get, sleep=time.sleep):
+def fetch(spec, delay, get=no_mailto_get, sleep=time.sleep):
     if _state["challenged_in_a_row"] >= MAX_CHALLENGED:
         yield ("end", "skipped: WAF challenge persisted on previous journals")
         return
