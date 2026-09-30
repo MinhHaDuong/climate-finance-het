@@ -320,13 +320,19 @@ The bundle and the push use the same tree object, so what was previewed is what
 goes out. Both refuse a tree holding `documents/`. The push is not forced: if
 `gh-pages` moved meanwhile, it is refused rather than overwritten.
 
-**Pushing `gh-pages` publishes nothing while GitHub Pages is disabled.**
-Enabling it is the author's step, taken after the demonstration and his
-explicit go-ahead: in the repository's Settings → Pages, set *Source* to
-*Deploy from a branch*, branch `gh-pages`, folder `/ (root)`. The site then
-serves at <https://minhhaduong.github.io/climate-finance-het/>. Check that
-address in a browser, including the release and input revision shown on the
-Methods page. `.nojekyll` keeps GitHub from running Jekyll over the tree.
+GitHub Pages is enabled (Settings → Pages: *Deploy from a branch*, branch
+`gh-pages`, folder `/ (root)`), so each push goes live at
+<https://minhhaduong.github.io/climate-finance-het/> once GitHub's build
+finishes. Check that address in a browser, including the release and input
+revision shown on the Methods page. The address has been shared privately
+only; until the author announces it, the site counts as unpublished and page
+renames need no redirects. `.nojekyll` keeps GitHub from running Jekyll over
+the tree.
+
+`gh-pages` is a long-lived deployment branch with its own history, one commit
+per publication, each holding exactly the tree published. It is never merged
+into `main`, so it is never an ancestor of `main`, and branch sweeps must leave
+it alone. Nothing but the publish command writes to it.
 
 ## Validation
 
