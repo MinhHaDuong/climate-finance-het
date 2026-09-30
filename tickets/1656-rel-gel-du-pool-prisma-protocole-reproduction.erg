@@ -12,6 +12,7 @@ Blocked-by: 1655
 2026-09-30T16:00Z HDMX-coding-agent note blocker 1652 closed — Blocked-by removed.
 2026-09-30T17:52Z HDMX-coding-agent note blocker 1650 closed — Blocked-by removed.
 2026-09-30T19:30Z HDMX-coding-agent note blocker 1653 closed — Blocked-by removed.
+2026-09-30T19:48Z HDMX-coding-agent note blocker 1653 closed; its unlock requests (CNKI, Wanfang, eLIBRARY, CyberLeninka, AJOL, USP, Shodhganga, SciELO, readers) moved to 1790 (needs-human). Whether the freeze waits on 1790 is the author's call; not added as a blocker.
 --- body ---
 ## Contexte
 
