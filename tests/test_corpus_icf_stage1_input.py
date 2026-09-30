@@ -12,6 +12,9 @@ import pytest
 pytestmark = pytest.mark.domain_corpus
 
 PRIORITY = ["catalogue", "t1530", "t1651", "t1653", "t1652", "t1650"]
+# Unscreened works do not depend on the exit rule; any valid rule will do.
+RULE = rv.screen_rule({"stage1_exit_labels": ["out"], "stage2_labels": ["icf", "unsure", "aux"],
+                       "stage2_unsure_in_rel": True})
 
 
 def _work(key, sources, title="A title", **kw):
@@ -68,7 +71,7 @@ def test_run_writes_the_screener_input_from_pool_and_table(tmp_path):
                              "doc_type": "research", "labelled_at": "2026-09-30",
                              "source": "s"}], new_table=True)
     out = tmp_path / "in" / "screen_input.jsonl"
-    summary = si.run(str(pool_path), table, str(out), PRIORITY)
+    summary = si.run(str(pool_path), table, str(out), PRIORITY, RULE)
     (rec,) = [json.loads(x) for x in open(out, encoding="utf-8")]
     assert rec["work_key"] == "openalex:W2"
     assert summary["works"] == 1 and summary["per_lane"] == {"t1650": 1}
@@ -92,7 +95,7 @@ def test_title_less_works_are_named_residue_in_the_summary(tmp_path):
                              "model": "q", "prompt_sha256": "p", "run_id": "r",
                              "machine": "padme", "label": "out", "doc_type": "research",
                              "labelled_at": "2026-09-30", "source": "s"}], new_table=True)
-    summary = si.run(str(pool_path), table, str(tmp_path / "in.jsonl"), PRIORITY)
+    summary = si.run(str(pool_path), table, str(tmp_path / "in.jsonl"), PRIORITY, RULE)
     assert summary["per_lane"] == {"catalogue": 1}
     res = summary["residue_no_title"]
     assert (res["works"], res["per_lane"], res["work_keys"]) == (1, {"unknown": 1}, ["doi:10.9/z"])

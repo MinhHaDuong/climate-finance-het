@@ -94,10 +94,12 @@ def select(pool: list[dict], view_rows: list[dict], priority: list[str]
     return picked, Counter(lane for lane, _ in picked), {k: sorted(v) for k, v in skipped.items()}
 
 
-def run(pool_path: str, table_path: str, output: str, priority: list[str]) -> dict:
+def run(pool_path: str, table_path: str, output: str, priority: list[str],
+        rule: dict) -> dict:
+    """``rule``: ``_rel_view.screen_rule``; unscreened works do not depend on it."""
     ics.require_table(table_path)
     pool = rv.read_pool(pool_path)
-    view, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config())
+    view, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config(), rule)
     picked, per_lane, skipped = select(pool, view, priority)
     os.makedirs(os.path.dirname(os.path.abspath(output)), exist_ok=True)
     with open(output, "w", encoding="utf-8") as fh:
@@ -135,7 +137,7 @@ def main(argv=None):
         cfg = yaml.safe_load(fh)
     try:
         summary = run(args.pool or cfg["pool"], args.table or cfg["table"], args.output,
-                      list(cfg["stage1"]["lane_priority"]))
+                      list(cfg["stage1"]["lane_priority"]), rv.screen_rule(cfg))
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1
