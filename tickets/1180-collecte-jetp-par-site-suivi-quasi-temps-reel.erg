@@ -10,6 +10,7 @@ Label: deferred
 2026-09-25T10:30Z HDMX-coding-agent note rapprochement demandé par l'auteur : [[1140]], [[1141]] et [[1060]] partagent le lanceur de passes de [[1184]] ; section « Passes voisines »
 
 2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
+2026-09-30T12:40Z HDMX-coding-agent note décision de l'auteur (2026-09-30) : la fusion prévaut ; « la source primaire la plus proche prime » réécrit en première considération d'un jugement, jamais un rang automatique (docs/jetp-fusion.md § 5), PR #1598
 --- body ---
 ## Context
 
@@ -39,7 +40,8 @@ trois ans de retard.
   échouer en silence.
 - Méthodes de collecte : `script`, `script-cookies`, `browser-automated`,
   `browser-manual`, `archive-record`, `local-record`.
-- La source primaire la plus proche de l'événement prime ; le retard des
+- La proximité de l'événement est la première considération d'un jugement,
+  jamais un rang automatique (`docs/jetp-fusion.md` § 5) ; le retard des
   canaux structurés est à mesurer, pas à supposer.
 
 ## Enfants

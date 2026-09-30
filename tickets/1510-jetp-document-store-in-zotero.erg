@@ -9,7 +9,7 @@ Label: deferred
 2026-09-29T12:00Z HDMX-coding-agent note Milestone M4 (author); feasibility of the group library checked in 1511
 2026-09-29T13:00Z HDMX-coding-agent decision Design decisions recorded (scope, versions, review, publishers, observatory links, storage locations, sync direction); M2 storage seam noted in [[1140]], [[1180]], [[1184]]
 2026-09-29T14:00Z HDMX-coding-agent decision Second round agreed by the author: page locators via Web Archive, SHA-256 key, Connector for manual collection, link durability, multilingual titles, annotations later
-
+2026-09-30T12:40Z HDMX-coding-agent note author decision (2026-09-30): the author is not the triager; inbox review follows the checking rule of docs/jetp-collection.md § 9 (M4: full reader panel with positive controls), PR #1598
 --- body ---
 ## Milestone
 
@@ -71,8 +71,12 @@ To settle before the pilot, so that 1511 does not settle them by accident.
    (`translation_of`) is its own Zotero item, linked by "Related". A byte
    change with no editorial change (republished file, new metadata) is one
    more attachment on the same item, its title carrying the retrieval date.
-3. **Review.** The harvester writes new items into an inbox collection; the
-   author reviews in Zotero and tags reviewed items `reviewed`. The export
+3. **Review.** The harvester writes new items into an inbox collection.
+   Each item is checked under the rule of `docs/jetp-collection.md` § 9, at
+   M4 the full reader panel with positive controls (`docs/jetp-fusion.md`
+   § 3); the author sees in Zotero only the disagreements and a random
+   sample, sorted by likelihood and confidence. Items whose admission is in
+   force are tagged `reviewed`. The export
    keeps only reviewed items, which replaces the "reviewed identities" role of
    `documents.csv`.
 4. **Publishers.** Party links (`document-publishers.csv` to `parties.csv`,
@@ -95,7 +99,8 @@ To settle before the pilot, so that 1511 does not settle them by accident.
    so the parsers do not change. Releases freeze the files they cite in DVC on
    padme, as evidence independent of Zotero.
 7. **Sync direction.** Two writers into Zotero (the harvester creates items
-   and attachments; the author reviews, edits and annotates), one reader (the
+   and attachments; the author checks disagreements and samples, edits and
+   annotates), one reader (the
    pipeline). The repo never pushes metadata back to Zotero. Edits are watched
    by polling, not live: a scheduled pass on the runner of [[1184]] asks the
    Web API for what changed since the last library version

@@ -49,6 +49,12 @@ not pass. A site's stated position on automated access (its terms of use,
 its crawler rules) is recorded with the attempts made there, and any change in
 it is reported, never passed over. [M3a]
 
+**Crawler rules.** Automated link-following, where a program walks a site
+from page to page, obeys the site's crawler rules (robots.txt). A single fetch
+of a known document that the author could open in a browser goes ahead
+whatever those rules say, and the site's stated position is recorded with the
+retrieval. [M3a]
+
 **The route does not colour the document.** A decree found through a news
 article is the ministry's decree. A document's pedigree in the sense of
 [fusion](jetp-fusion.md) section 1 attaches to its publisher and to how it was
@@ -119,6 +125,11 @@ expected to publish about its partnership. The starting frame is:
 
 Each expected authority, and each listed project, ends the campaign with one
 terminal verdict. [M3a]
+
+A listed project gets one bounded round of its own, on the disclosure sites
+of the partners named for it (partner disclosure, section 4), beside what the
+other rounds find about it. Deeper searches for a single project are later
+work. [M3a for the bounded round, later for deeper searches]
 
 | Verdict | Meaning |
 |---|---|
@@ -210,10 +221,12 @@ accepts the recall estimate and the unreachable list before M3b starts. [M3a]
 **The known-item list** is a list of documents that ought to be found, built
 and frozen before the first round from outside the channel frame:
 the reference lists of academic and grey literature on the partnerships, and
-documents named by the author or by people who know the field. Each item is
-identified well enough to decide whether a held document is it. The list aims
-at 40 items or more across the four countries so that its interval (below) is
-informative; the size is tunable. [M3a]
+documents named by the author or by people who know the field. It is never
+drawn from the declared secondary trackers, which the secondary-to-primary
+pass searches (section 7): recall measured on them would be circular. Each
+item is identified well enough to decide whether a held document is it. The
+list holds at least 40 items across the four countries, so that its interval
+(below) is informative; the size is tunable upward. [M3a]
 
 **Blind use.** Those who search do not see the list. It is compared with the
 register only at declared checkpoints and at the end. [M3a]
@@ -305,13 +318,20 @@ Each candidate gets one disposition. [M3a]
 
 **Who decides.** A disposition is a judgement, recorded with the candidate,
 a quoted basis, who or what judged, by which method and version, and when,
-as fusion section 3 requires of identity judgements. At M3a a reader, a
-language model or a person, proposes each disposition with a likelihood and a
-confidence on the calibrated scales. The author examines the proposals sorted
-by confidence and confirms or overturns them; a disposition counts, for yield
-and for the register, once it is in force. Independent readers from two
-vendors, with only their disagreements sent to the author, are M4. [M3a for
-the recorded judgement and author confirmation, M4 for the reader panel]
+as fusion section 3 requires of identity judgements, with a likelihood and
+a confidence on the calibrated scales of fusion section 1. [M3a]
+
+**Checking at M3a.** One reader proposes each disposition. A second reader,
+from another vendor and blind to the first answer, checks every candidate.
+Where both agree, the disposition is in force. The author sees only the
+disagreements and a random sample of the agreements, sorted by likelihood and
+confidence, and may overturn any of them. A disposition counts, for yield and
+for the register, once it is in force. The same checking applies to every
+other language-model judgement collection makes at M3a: a document's class, a
+claim's outcome in the secondary-to-primary pass, a duplicate. [M3a]
+
+**Checking at M4.** The full reader panel of fusion section 3, with positive
+controls run first and readers who miss them weighted out. [M4]
 
 A disposition is defeasible like any judgement: a rejected candidate can be
 admitted later by a judgement that says why. [M3a]
@@ -374,7 +394,8 @@ The minimum that yields a citable recall estimate:
    language, known-item list (frozen, hidden), tracker list, thresholds and
    caps.
 2. The round log, empty rounds included, with effort and yield per round.
-3. Triage judgements for every candidate, confirmed by the author.
+3. A checked judgement on every candidate: two readers from different
+   vendors, the author seeing their disagreements and a random sample.
 4. Terminal verdicts for every expected authority and listed project.
 5. The recall estimate with its interval, the traceability rate, the
    unreachable list, the discovery cutoff and the newest document date.
@@ -399,6 +420,8 @@ produces.
 | A tracker reports a disbursement and cites nothing; the recorded search finds no primary document. | The claim is untraced and lowers the traceability rate; the event may stand on the secondary document only as fusion section 5 allows, marked as such. |
 | A page opens only after a login the author does not have. | No bypass; the document enters the unreachable list with "login required", after the web archive rung is tried. |
 | A page behind a bot wall opens in the author's browser. | It is fetched with the author's session; the retrieval records that rung; the bytes kept are the server's response. |
+| A site's crawler rules forbid automated access; the needed report's address is known and opens in the author's browser. | The report is fetched once and the site's position recorded; no program walks the site's other pages. |
+| The two readers disagree on whether a candidate is in scope. | The candidate goes to the author with both answers; it adds no yield until a disposition is in force. |
 | A site's certificate is invalid. | The document is fetched and the certificate error recorded with the retrieval. |
 | A secretariat publishes nothing that any channel can find. | Its verdict is "not published", backed by the recorded search; it is not on the unreachable list. |
 | A listed project appears in no document other than the plan that lists it. | Its verdict is "not published"; the plan's line stays the only document about it. |
