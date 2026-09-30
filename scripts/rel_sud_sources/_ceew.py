@@ -35,7 +35,12 @@ SOURCE = {
 
 LOC_RE = re.compile(r"<loc>([^<]+)</loc>")
 META_RE = re.compile(r'<meta (?:property|name)="([^"]+)" content="([^"]*)"', re.I)
-DROP_RE = re.compile(r"<(script|style|noscript)\b.*?</\1>", re.I | re.S)
+# The <head> goes too: its <title> repeats the page title, and a date searched
+# after the first occurrence of the title then lands in the navigation menu and
+# falls back to the upload timestamp (ticket 1790: "Negotiating around
+# Trade-offs", December 2010, read as 2010 by 1653 and as 2021 by the first
+# 1790 run: the menu differs between loads).
+DROP_RE = re.compile(r"<(head|script|style|noscript)\b.*?</\1>", re.I | re.S)
 MONTH_YEAR_RE = re.compile(r"\b(?:January|February|March|April|May|June|July|August|"
                            r"September|October|November|December) ((?:19|20)\d{2})\b")
 

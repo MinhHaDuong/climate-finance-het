@@ -340,6 +340,19 @@ def test_ceew_skips_disallowed_paths_site_suffix_and_titleless_pages():
     assert works(evs) == [] and evs[-1] == ("end", "1 of 1 pages failed")
 
 
+def test_ceew_year_is_read_after_the_heading_not_the_head_title():
+    """The <title> repeats the page title; a date searched after it lands in the
+    menu and fell back to the upload timestamp (2021 for a 2010 paper, 1790)."""
+    page = ('<html><head><title>Negotiating around Trade-offs | CEEW</title>'
+            '<meta property="og:title" content="Negotiating around Trade-offs" />'
+            '<meta property="article:published_time" content="2021-03-18T17:03:16" />'
+            '</head><body>Topics Energy Transitions Sustainable Finance ' + "menu " * 150
+            + '<h1>Negotiating around Trade-offs</h1> Arunabha Ghosh December 2010 | '
+            'Sustainable Finance Overview Trade-offs. Download</body></html>')
+    title, meta, text = ceew.parse_page(page)
+    assert ceew.to_record("u", title, meta, text, lambda s: [])["year"] == 2010
+
+
 def test_ceew_rereads_a_failed_page_once_and_recovers_it():
     url = "https://www.ceew.in/publications/myth-private-finance"
     answers = {url: [Resp("", 503), Resp(CEEW_PAGE)]}
