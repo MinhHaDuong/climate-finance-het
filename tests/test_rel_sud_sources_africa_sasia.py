@@ -1,15 +1,24 @@
 """REL south sources, Africa / South Asia lane (ticket 1653): canned responses only.
 
-Each adapter must report the listing size, yield only lexicon matches (the
-runner keeps every record of a non-OAI route), and end incomplete whenever a
-page was lost.
+Each adapter must report the listing size, yield every listed item with its
+lexicon matches marked (the runner archives them all and keeps the matches:
+``listing`` is a harvest route), and end incomplete whenever a page was lost.
 """
 
 import json
 
 import catalog_rel_sud_sources as runner
 import pytest
-from rel_sud_sources import adb_ewp, ajol, ceew, cpd, ersa, listing, south_centre
+from rel_sud_sources import (
+    adb_ewp,
+    ajol,
+    ceew,
+    common,
+    cpd,
+    ersa,
+    listing,
+    south_centre,
+)
 
 pytestmark = pytest.mark.domain_corpus
 
@@ -85,7 +94,7 @@ def test_wp_listing_follows_pages_and_reports_a_lost_page():
     assert listing.wp_listing(broken, url, {}, 0) == ([{"id": 1}], "http 500 on page 2")
 
 
-def test_ersa_yields_matches_only_with_listing_size_and_author_names():
+def test_ersa_yields_every_item_with_listing_size_and_author_names():
     page = [wp_item(1, "Climate finance in South Africa", "<p><strong>Working Paper 9</strong></p>"
                     "<p>Abstract.</p>", **{"author-name": [7]}),
             wp_item(2, "Tax incidence", "<p>Nothing relevant.</p>", **{"author-name": [8]})]
@@ -93,12 +102,12 @@ def test_ersa_yields_matches_only_with_listing_size_and_author_names():
                    f"{ersa.BASE}/author-name": Resp([{"id": 7, "name": "Doe, J."}])})
     evs = events(ersa, get)
     assert evs[0] == ("meta", 2) and evs[-1] == ("end", "")
-    [rec] = works(evs)
-    assert rec["matched_terms"] == "climate finance"
+    rec, other = works(evs)
+    assert rec["matched_terms"] == "climate finance" and other["matched_terms"] == ""
     assert rec["authors"] == "Doe, J." and rec["year"] == 2019
     assert "Working Paper 9" in rec["abstract"]
-    # only the matched record's authors are resolved
-    assert get.calls[-1][1]["include"] == "7"
+    # every listed item's authors are resolved, in one request
+    assert get.calls[-1][1]["include"] == "7,8"
 
 
 def test_cpd_takes_publication_year_and_matches_bengali():
@@ -112,7 +121,8 @@ def test_cpd_takes_publication_year_and_matches_bengali():
                                                         headers=one)})
     evs = events(cpd, get)
     assert evs[0] == ("meta", 2)
-    [rec] = works(evs)
+    rec, other = works(evs)
+    assert other["matched_terms"] == ""
     assert rec["year"] == 2011 and rec["language"] == "bn"
     assert rec["doc_type"] == "Working Paper" and rec["matched_terms"] == "জলবায়ু অর্থায়ন"
 
@@ -143,10 +153,11 @@ def test_south_centre_reads_every_feed_page_at_crawl_delay():
     evs = events(south_centre, get)
     assert evs[0] == ("meta", 3) and evs[-1] == ("end", "")
     recs = works(evs)
-    assert [r["language"] for r in recs] == ["en", "es"]
+    assert [r["language"] for r in recs] == ["en", "en", "es"]
+    assert [bool(r["matched_terms"]) for r in recs] == [True, False, True]
     assert recs[0]["title"] == "Loss and damage finance [Research Paper 180, 12 May 2023]"
     assert recs[0]["year"] == 2023  # from the label, not the 2026 post date
-    assert recs[1]["title"].startswith("Financiamiento climático")
+    assert recs[2]["title"].startswith("Financiamiento climático")
     assert all(d >= south_centre.CRAWL_DELAY for _, _, d in get.calls)
 
 
@@ -234,7 +245,7 @@ def test_ceew_reads_title_overview_and_display_year():
                    "https://www.ceew.in/hindi-publications/niji-vitt": Resp(hindi)})
     evs = events(ceew, get)
     assert evs[0] == ("meta", 3)
-    en, hi = works(evs)
+    en, hi = works(evs)  # the third page failed: no record
     assert en["abstract"] == "This paper examines private capital."
     assert en["year"] == 2023  # the display date, not the upload timestamp
     assert hi["language"] == "hi" and hi["matched_terms"] == "जलवायु वित्त"
@@ -339,10 +350,10 @@ def test_oai_requests_carry_no_mailto_argument(monkeypatch):
         return Resp(OAI)
 
     monkeypatch.setattr(crawl.requests, "get", fake_requests_get)
-    listing.no_mailto_get("https://oai", params={"verb": "ListRecords"}, delay=0)
+    common.oai_get("https://oai", params={"verb": "ListRecords"}, delay=0)
     assert sent[0][0] == {"verb": "ListRecords"}
     assert "mailto:" in sent[0][1]["User-Agent"]
-    assert ajol.fetch.__defaults__[0] is listing.no_mailto_get
+    assert ajol.fetch.__defaults__[0] is common.oai_get
 
 
 def test_ajol_survives_a_character_xml_forbids(monkeypatch):
@@ -357,7 +368,10 @@ def test_ajol_survives_a_character_xml_forbids(monkeypatch):
 def test_every_adapter_honours_the_contract():
     for mod in (ajol, adb_ewp, ceew, cpd, ersa, south_centre):
         src = mod.SOURCE
-        assert src["route"] in {"api", "oai-pmh", "export"}
+        assert src["route"] in {"api", "oai-pmh", "listing"}
         assert set(src["languages"]) <= set(LEXICON)
         assert src["name"] in runner.discover()
     assert "listing" not in runner.discover()
+    # listing routes have no server-side search: the runner keeps matches only
+    for mod in (adb_ewp, ceew, cpd, ersa, south_centre):
+        assert mod.SOURCE["route"] in runner.HARVEST_ROUTES

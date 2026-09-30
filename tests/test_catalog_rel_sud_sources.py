@@ -65,6 +65,35 @@ def test_oai_error_is_incomplete_and_no_records_match_is_complete():
     assert list(common.oai_list_records("u", get=fake_get([none]))) == [("meta", 0), ("end", "")]
 
 
+def test_oai_reader_removes_characters_xml_forbids():
+    """One U+FFFE in an abstract used to end the whole set with 'bad xml'."""
+    dirty = OAI_PAGE2.replace(b"Soil moisture", "Soil\ufffe moisture".encode("utf-8"))
+    events = list(common.oai_list_records("u", get=fake_get([OAI_PAGE1, dirty])))
+    assert events[-1] == ("end", "")
+    titles = [v["title"] for k, v in events if k == "dc"]
+    assert titles[1] == ["Soil moisture of maize"]
+
+
+def test_oai_reader_takes_an_explicit_getter_and_oai_get_sends_no_mailto(monkeypatch):
+    import inspect
+
+    import openalex_corpus.crawl as crawl
+
+    param = inspect.signature(common.oai_list_records).parameters["get"]
+    assert param.default is inspect.Parameter.empty
+    assert param.kind is inspect.Parameter.KEYWORD_ONLY
+    sent = []
+
+    def fake_requests_get(url, params=None, headers=None, timeout=None):
+        sent.append(dict(params or {}))
+        return types.SimpleNamespace(status_code=200, content=OAI_PAGE2, headers={})
+
+    monkeypatch.setattr(crawl.requests, "get", fake_requests_get)
+    events = list(common.oai_list_records("https://oai", delay=0, get=common.oai_get))
+    assert events[-1] == ("end", "")
+    assert sent == [{"verb": "ListRecords", "metadataPrefix": "oai_dc"}]
+
+
 def test_latin_terms_need_word_boundaries():
     match = common.term_matcher(["REDD", "气候融资"])
     assert match("REDDITO agricolo") == []

@@ -27,7 +27,7 @@ SOURCE = {
     "name": "cpd",
     "region": "South Asia (Bangladesh)",
     "languages": LANGUAGES,
-    "route": "export",
+    "route": "listing",
     "endpoint": f"{BASE}/publication",
     "terms": "https://cpd.org.bd/robots.txt",
 }

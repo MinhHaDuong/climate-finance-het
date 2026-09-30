@@ -20,10 +20,10 @@ requests, a pause and retry on a challenge, and once the challenge persists
 across ``MAX_CHALLENGED`` journals in a row the remaining journals are
 skipped (registered incomplete) instead of pressing on.
 
-Requests go through ``listing.no_mailto_get``: the ``mailto`` query parameter
-that ``polite_get`` appends makes OJS answer ``badArgument``.
-Characters XML forbids (U+FFFE in an abstract) are removed before parsing
-(``listing.xml_clean``); otherwise one of them loses the rest of a journal.
+Requests go through ``common.oai_get``: the ``mailto`` query parameter that
+``polite_get`` appends makes OJS answer ``badArgument``. Characters XML
+forbids (U+FFFE in an abstract) are removed by ``common.oai_list_records``
+before parsing; otherwise one of them loses the rest of a journal.
 """
 
 import re
@@ -31,8 +31,8 @@ import time
 
 from utils import get_logger
 
-from rel_sud_sources.common import dc_to_record, oai_list_records
-from rel_sud_sources.listing import matcher, no_mailto_get, xml_clean
+from rel_sud_sources.common import dc_to_record, oai_get, oai_list_records
+from rel_sud_sources.listing import matcher
 
 log = get_logger("rel_sud_sources")
 
@@ -78,7 +78,7 @@ def category_journals(slug, get, delay):
     return paths, ""
 
 
-def plan(cfg, get=no_mailto_get):
+def plan(cfg, get=oai_get):
     """One query per journal of the chosen categories (network: category pages)."""
     match = matcher(cfg, LANGUAGES)
     journals = {}
@@ -124,12 +124,12 @@ def patient(get, sleep=time.sleep):
 _state = {"challenged_in_a_row": 0}
 
 
-def fetch(spec, delay, get=no_mailto_get, sleep=time.sleep):
+def fetch(spec, delay, get=oai_get, sleep=time.sleep):
     if _state["challenged_in_a_row"] >= MAX_CHALLENGED:
         yield ("end", "skipped: WAF challenge persisted on previous journals")
         return
     stream = oai_list_records(spec["endpoint"], delay=max(delay, MIN_DELAY),
-                              get=xml_clean(patient(get, sleep)))
+                              get=patient(get, sleep))
     for kind, val in stream:
         if kind == "end":
             hit = val == "http 202"

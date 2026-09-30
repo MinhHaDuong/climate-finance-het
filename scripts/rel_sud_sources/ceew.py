@@ -25,7 +25,7 @@ SOURCE = {
     "name": "ceew",
     "region": "South Asia (India)",
     "languages": LANGUAGES,
-    "route": "export",
+    "route": "listing",
     "endpoint": SITEMAP,
     "terms": "https://www.ceew.in/robots.txt",
 }
@@ -103,7 +103,5 @@ def fetch(spec, delay, get=polite_get):
             failed += 1
             continue
         title, meta, text = parse_page(page.text)
-        rec = to_record(url, title, meta, text, spec["match"])
-        if rec["matched_terms"]:
-            yield ("work", rec)
+        yield ("work", to_record(url, title, meta, text, spec["match"]))
     yield ("end", f"{failed} of {len(urls)} pages failed" if failed else "")

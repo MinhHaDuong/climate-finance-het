@@ -10,7 +10,8 @@ and writes, in a fresh output directory:
 - ``candidates.csv``: the records handed to pooling (ticket 1655), each row
   carrying its provenance (source, query id, query string, route, endpoint,
   date, export file). Search routes keep every record the server returned;
-  harvest routes keep the records whose title or abstract matched the lexicon.
+  harvest and listing routes keep the records whose title or abstract matched
+  the lexicon (``HARVEST_ROUTES``).
 
 An output directory that already holds a registry is refused.
 
@@ -47,7 +48,9 @@ PROVENANCE_FIELDS = [
 ]
 CANDIDATE_FIELDS = PROVENANCE_FIELDS + RECORD_FIELDS
 
-HARVEST_ROUTES = {"oai-pmh"}
+# Routes with no server-side search: the whole set or listing is read and
+# archived, and the local 1530 lexicon match selects the candidates.
+HARVEST_ROUTES = {"oai-pmh", "listing"}
 
 
 def discover():

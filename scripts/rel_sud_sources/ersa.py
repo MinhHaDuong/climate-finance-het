@@ -20,7 +20,7 @@ SOURCE = {
     "name": "ersa",
     "region": "Southern Africa",
     "languages": LANGUAGES,
-    "route": "export",
+    "route": "listing",
     "endpoint": f"{BASE}/publications?publication-types={WORKING_PAPER}",
     "terms": "https://econrsa.org/robots.txt",
 }
@@ -65,11 +65,7 @@ def fetch(spec, delay, get=polite_get):
     items, error = wp_listing(get, f"{BASE}/publications",
                               {"publication-types": WORKING_PAPER, "_fields": FIELDS},
                               delay)
-    match = spec["match"]
-    recs = [to_record(it, match, {}) for it in items]
-    ids = {a for it, r in zip(items, recs) if r["matched_terms"]
-           for a in it.get("author-name", [])}
+    ids = {a for it in items for a in it.get("author-name", [])}
     names = author_names(ids, delay, get) if ids else {}
-    recs = [to_record(it, match, names) if r["matched_terms"] else r
-            for it, r in zip(items, recs)]
-    yield from emit(recs, len(items), error)
+    yield from emit((to_record(it, spec["match"], names) for it in items),
+                    len(items), error)

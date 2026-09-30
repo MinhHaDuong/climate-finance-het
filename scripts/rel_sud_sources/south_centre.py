@@ -32,7 +32,7 @@ SOURCE = {
     "name": "south_centre",
     "region": "Global South (intergovernmental, Geneva)",
     "languages": LANGUAGES,
-    "route": "export",
+    "route": "listing",
     "endpoint": FEED,
     "terms": "https://www.southcentre.int/robots.txt",
 }

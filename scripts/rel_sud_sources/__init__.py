@@ -15,6 +15,8 @@ Each adapter module defines ``SOURCE`` (a dict: ``name``, ``region``,
     reached. ``record`` is a dict over ``common.RECORD_FIELDS``.
 
 Search routes keep every record the server returned. Harvest routes (OAI-PMH
-sets with no server-side search) mark ``matched_terms`` locally; the runner
-keeps only matched records as candidates and archives the full harvest.
+sets, ``oai-pmh``) and listing routes (a whole series or catalogue,
+``listing``) have no server-side search: they yield every item read, with
+``matched_terms`` set locally; the runner archives the full harvest and keeps
+only matched records as candidates.
 """

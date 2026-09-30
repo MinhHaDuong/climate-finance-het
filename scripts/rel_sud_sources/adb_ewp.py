@@ -25,7 +25,7 @@ SOURCE = {
     "name": "adb_ewp",
     "region": "Asia-Pacific (ADB)",
     "languages": LANGUAGES,
-    "route": "export",
+    "route": "listing",
     "endpoint": f"{SERIES}.html",
     "terms": "https://ideas.repec.org/robots.txt",
 }
@@ -109,9 +109,7 @@ def fetch(spec, delay, get=polite_get):
                 failed += 1
         except Exception:  # one paper page lost: matched on its title alone
             failed += 1
-        rec = to_record(path, title, authors, meta, spec["match"])
-        if rec["matched_terms"]:
-            yield ("work", rec)
+        yield ("work", to_record(path, title, authors, meta, spec["match"]))
     if failed and not error:
         error = f"{failed} paper pages failed (matched on title only)"
     yield ("end", error)

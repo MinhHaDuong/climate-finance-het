@@ -5,7 +5,8 @@ import xml.etree.ElementTree as ET
 
 import yaml
 from catalog_rel_sud_search import spelling_variants, split_terms
-from pipeline_io import polite_get
+from openalex_corpus import retry_get
+from pipeline_io import MAILTO, POLITE_MAX_RETRIES
 from pipeline_text import normalize_doi_safe
 
 # One normalized record, whatever the source.
@@ -118,12 +119,44 @@ def dc_to_record(dc, match):
         matched_terms="; ".join(match(title + " " + abstract)))
 
 
+def oai_get(url, params=None, delay=1.0):
+    """The OAI-PMH getter: ``polite_get`` without the ``mailto`` query parameter.
+
+    ``polite_get`` appends ``mailto=...`` to every request (an OpenAlex
+    courtesy). OAI-PMH servers must reject arguments outside the protocol, and
+    OJS does: ``badArgument`` on every AJOL journal (2026-09-30). Same retries,
+    same identifying User-Agent (which carries the contact address instead).
+    """
+    return retry_get(url, params=params, delay=delay, max_retries=POLITE_MAX_RETRIES,
+                     timeout=30, mailto=None,
+                     user_agent=f"ClimateFinancePipeline/1.0 (mailto:{MAILTO})")
+
+
+# Characters XML 1.0 forbids. OJS lets them through from pasted abstracts
+# (U+FFFE inside an AJOL abstract broke a whole OAI page, 2026-09-30).
+XML_INVALID_RE = re.compile("[^\x09\x0a\x0d\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]")
+
+
+def xml_clean(content):
+    """UTF-8 bytes with XML-forbidden characters removed (undecodable bytes
+    become U+FFFD). One forbidden character otherwise makes a whole OAI page,
+    and with it every later page of the set, unreadable."""
+    text = content.decode("utf-8", errors="replace")
+    return XML_INVALID_RE.sub("", text).encode("utf-8")
+
+
 def oai_list_records(endpoint, metadata_prefix="oai_dc", set_spec=None,
-                     date_from=None, delay=1.0, get=polite_get):
+                     date_from=None, delay=1.0, *, get):
     """Yield ('meta', completeListSize|''), ('dc', dict)*, ('end', reason).
 
     Follows resumption tokens to the end. ``noRecordsMatch`` is a complete,
-    empty answer, not an error.
+    empty answer, not an error. Each page is cleaned of XML-forbidden
+    characters before parsing (``xml_clean``).
+
+    ``get`` has no default: the caller chooses. ``oai_get`` is the
+    protocol-conformant choice (no extra argument); ``polite_get`` adds
+    ``mailto``, which a strict server rejects (OJS) and a lenient one ignores
+    (SciELO, CyberLeninka ran with it on 2026-09-30).
     """
     params = {"verb": "ListRecords", "metadataPrefix": metadata_prefix}
     if set_spec:
@@ -141,7 +174,7 @@ def oai_list_records(endpoint, metadata_prefix="oai_dc", set_spec=None,
             yield ("end", f"http {resp.status_code}")
             return
         try:
-            root = ET.fromstring(resp.content)
+            root = ET.fromstring(xml_clean(resp.content))
         except ET.ParseError:
             yield ("end", "error: bad xml")
             return

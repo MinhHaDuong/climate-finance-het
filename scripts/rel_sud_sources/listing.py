@@ -5,10 +5,11 @@ catalogue is small (hundreds to a few thousand items): the adapter fetches its
 full listing and the 1530 lexicon selects candidates locally, the way the
 OAI-PMH harvest routes do.
 
-The runner keeps every record of a non-OAI route, so a listing adapter yields
-only the records that matched (``yield_matches``). ``n_expected`` in the
-registry is then the size of the listing, ``n_received`` the number of matches:
-the gap is the local selection, not a loss. The query string says so.
+A listing adapter yields every listed item with ``matched_terms`` set, and
+declares ``route: "listing"``: the runner treats it as a harvest route,
+archives the whole listing in ``raw/`` and keeps the matches as candidates.
+``n_expected`` is the size of the listing, ``n_received`` the items read and
+``n_matched`` the local selection. The query string says so.
 
 No ``SOURCE`` here: the runner's discovery skips this module.
 """
@@ -17,8 +18,6 @@ import html
 import re
 
 import requests
-from openalex_corpus import retry_get
-from pipeline_io import MAILTO, POLITE_MAX_RETRIES
 
 from rel_sud_sources.common import lexicon_terms, term_matcher
 
@@ -38,8 +37,8 @@ def matcher(cfg, languages):
 def listing_query(what, languages, extra=""):
     """The query string of a listing route: what was fetched, how selected."""
     s = (f"{what}; full listing fetched, candidates selected by the local 1530 "
-         f"lexicon ({'/'.join(languages)}) on title+abstract; only matches are "
-         f"yielded, so n_expected is the listing size and n_received the matches")
+         f"lexicon ({'/'.join(languages)}) on title+abstract; the whole listing is "
+         f"archived, n_matched counts the selection")
     return s + (f"; {extra}" if extra else "")
 
 
@@ -76,11 +75,10 @@ def wp_listing(get, url, params, delay, per_page=100):
 
 
 def emit(records, n_listing, error):
-    """Runner protocol over built records: listing size, matches only, end."""
+    """Runner protocol over built records: listing size, every record, end."""
     yield ("meta", n_listing)
     for rec in records:
-        if rec.get("matched_terms"):
-            yield ("work", rec)
+        yield ("work", rec)
     yield ("end", error)
 
 
@@ -97,42 +95,4 @@ def soft(get):
             if exc.response is None:
                 raise
             return exc.response
-    return wrapped
-
-
-def no_mailto_get(url, params=None, delay=1.0):
-    """``polite_get`` without the ``mailto`` query parameter.
-
-    ``polite_get`` appends ``mailto=...`` to every request (an OpenAlex
-    courtesy). An OAI-PMH server must reject unknown arguments, and OJS does:
-    ``badArgument`` on every AJOL journal (2026-09-30). Same retries, same
-    identifying User-Agent, no extra parameter.
-    """
-    return retry_get(url, params=params, delay=delay, max_retries=POLITE_MAX_RETRIES,
-                     timeout=30, mailto=None,
-                     user_agent=f"ClimateFinancePipeline/1.0 (mailto:{MAILTO})")
-
-
-# Characters XML 1.0 forbids; OJS lets them through from pasted abstracts
-# (U+FFFE inside an AJOL abstract broke a whole OAI page, 2026-09-30).
-XML_INVALID_RE = re.compile("[^\x09\x0a\x0d\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]")
-
-
-class _Cleaned:
-    def __init__(self, resp):
-        self.status_code, self.headers, self.url = resp.status_code, resp.headers, getattr(resp, "url", "")
-        text = resp.content.decode("utf-8", errors="replace")
-        self.text = XML_INVALID_RE.sub("", text)
-        self.content = self.text.encode("utf-8")
-
-
-def xml_clean(get):
-    """``get`` whose 200 responses have XML-forbidden characters removed.
-
-    ``common.oai_list_records`` parses the raw bytes, and one forbidden
-    character makes the whole page (and the rest of the journal) unreadable.
-    """
-    def wrapped(url, params=None, delay=0):
-        resp = get(url, params=params, delay=delay)
-        return _Cleaned(resp) if resp.status_code == 200 else resp
     return wrapped
