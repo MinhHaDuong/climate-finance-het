@@ -105,7 +105,9 @@ At least one of `doi`, `openalex_id`, `year` or an http(s) `url` must be
 non-empty on every row: a record with none of them cannot be deduplicated. The
 merge joins records on DOI, OpenAlex id, then normalized URL (scheme and host
 lowercased, trailing slash dropped, `hdl.handle.net/X` and `<host>/handle/X`
-both read as the Handle `X`; a DOI resolver or OpenAlex URL counts as that DOI
+both read as the Handle `X`, its query string and fragment dropped; under the
+unregistered DSpace default prefix `123456789` a repository Handle keeps its
+host, since many repositories reuse that prefix; a DOI resolver or OpenAlex URL counts as that DOI
 or id), then normalized title + year. A titled record whose source holds none
 of them goes to `excluded.csv` with reason `no_dedup_key` (see above).
 

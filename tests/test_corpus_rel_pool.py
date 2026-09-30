@@ -299,3 +299,20 @@ def test_url_joins_two_lanes_and_keys_a_url_only_work(tmp_path):
     assert (a["in_other_lane_only"], a["new_to_pool"]) == (1, 1)
     assert len(pool) == 3
     assert all(v == "ok" for v in report["reconciliation"]["checks"].values())
+
+
+
+def test_dspace_default_handle_prefix_keeps_the_host():
+    # 123456789 is DSpace's unregistered default prefix: two repositories reuse it.
+    a = rp.norm_url("https://a.org/handle/123456789/1")
+    b = rp.norm_url("https://b.org/handle/123456789/1")
+    assert a != b and a == "hdl:a.org/123456789/1"
+    assert rp.norm_url("https://hdl.handle.net/123456789/1") == "hdl:123456789/1"
+    assert rp.norm_url("https://repo.org/handle/2139/99") == "hdl:2139/99"
+
+
+
+def test_handle_url_query_and_fragment_are_dropped():
+    assert rp.norm_url("https://repo.org/handle/2139/99?show=full") == "hdl:2139/99"
+    assert rp.norm_url("https://repo.org/handle/2139/99/#a") == "hdl:2139/99"
+    assert rp.norm_url("http://hdl.handle.net/2139/99?locatt=view:master") == "hdl:2139/99"

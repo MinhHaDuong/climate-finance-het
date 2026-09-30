@@ -13,7 +13,9 @@ Deduplication is one union-find over all rows, catalogue and lanes alike:
    work and whose OpenAlex id matches another joins the two);
 2b. same normalized ``url`` (``norm_url``: scheme and host lowercased,
    trailing slash dropped, ``hdl.handle.net/X`` and ``<host>/handle/X`` both
-   ``hdl:X``). A resolver URL is not a URL key: ``doi.org/…`` fills an empty
+   ``hdl:X``, query and fragment dropped; under the unregistered DSpace
+   default prefix ``123456789`` a repository Handle keeps its host,
+   ``hdl:<host>/123456789/…``). A resolver URL is not a URL key: ``doi.org/…`` fills an empty
    DOI and ``openalex.org/W…`` an empty OpenAlex id instead;
 3. same normalized title and same year, decided on the components steps 1-2b
    left: the rows sharing a title + year join when their identifier-bearing
@@ -117,17 +119,31 @@ DOI_RESOLVERS = {"doi.org", "dx.doi.org", "www.doi.org"}
 OPENALEX_HOSTS = {"openalex.org", "api.openalex.org"}
 
 
+# DSpace's default local prefix: unregistered, reused by many repositories, so
+# ``<host>/handle/123456789/X`` names X only on that host.
+DSPACE_DEFAULT_PREFIX = "123456789"
+
+
 def norm_url(v):
-    """Normalized URL key, ``hdl:<handle>`` for a Handle, ``""`` if not http(s)."""
+    """Normalized URL key, ``hdl:<handle>`` for a Handle, ``""`` if not http(s).
+
+    A Handle URL drops its query string and fragment (``?show=full`` is a view
+    of the same item). Under the DSpace default prefix a repository Handle
+    keeps its host: ``hdl:<host>/123456789/X``.
+    """
     m = _URL.match(str(v or "").strip())
     if not m:
         return ""
     scheme, host, path = m.group(1).lower(), m.group(2).lower(), m.group(3).rstrip("/")
-    if host == "hdl.handle.net" and path.strip("/"):
-        return "hdl:" + path.lstrip("/")
-    hm = _HANDLE_PATH.match(path)
+    handle_path = re.split(r"[?#]", path, maxsplit=1)[0].rstrip("/")
+    if host == "hdl.handle.net" and handle_path.strip("/"):
+        return "hdl:" + handle_path.lstrip("/")
+    hm = _HANDLE_PATH.match(handle_path)
     if hm:
-        return "hdl:" + hm.group(1)
+        handle = hm.group(1)
+        if handle.split("/", 1)[0] == DSPACE_DEFAULT_PREFIX:
+            return f"hdl:{host}/{handle}"
+        return "hdl:" + handle
     return f"{scheme}://{host}{path}"
 
 
