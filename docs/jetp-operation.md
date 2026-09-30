@@ -67,7 +67,9 @@ minutes. [M2]
 - **doudou never has to hold all the bytes.** No job, test gate or review
   step requires the laptop to hold the document store. The fast test tier
   (`make check-fast`, `make lint`) needs no archived bytes and is the gate
-  that runs on doudou; the slow tier (`make check`) runs on padme. [M2]
+  that runs on doudou; the slow tier (`make check`) runs on padme. The fast
+  tier on doudou does not resolve locators, which needs the bytes and the
+  pinned text adapter. [M2]
 - **The primary checkout on padme is not a work area.** It may sit on
   another session's branch. Runs use a worktree (populated with
   `make jetp-data`, a local copy from the DVC cache with no network), or
@@ -123,8 +125,8 @@ verified by hash against the DVC pointers, and never a synchronisation.
 
 ## 4. The repository as control plane
 
-The Observer is built and run through its repository. Coding agents write
-the code and launch the runs; tickets record decisions and their reasons;
+The Observer is built and run through its repository. Development agents
+write the code and launch the runs; tickets record decisions and their reasons;
 tests and reviews by LLMs from another vendor gate every change; the
 author steers, arbitrates and accepts each milestone (requirements § 3.2).
 
@@ -144,6 +146,7 @@ author steers, arbitrates and accepts each milestone (requirements § 3.2).
 (statements, dispositions, candidates, retrievals, its report) on a branch
 and opens a pull request. Nothing a run produces reaches `main`, the ledger
 of record or the Observatory without that review. [M2]
+<!-- wave-1 W1-20: pending author decision (a lighter gate for run-output pull requests) -->
 
 **What agents may do.** [M2]
 
@@ -188,8 +191,15 @@ another vendor, blind to the first answer where the method allows. The
 author sees the disagreements, the items the checker says were missed, and a
 random sample of the agreements, sorted by likelihood and confidence. The
 rules are those of extraction § 6.3 and collection § 9; this section only
-says what runs where. [M2 for statements extracted; M3a for discovery and
-triage; M3b for identity and preference judgements]
+says what runs where. [M2 for statements extracted and document identity
+judgements; M3a for discovery and triage; M3b for the other identity
+judgements and for preference judgements]
+
+**Replacing a reader.** A reader or checker that is retired, repriced or
+unavailable is replaced only under extraction § 6.3: the replacement passes
+the controls of extraction § 12 and reaches a stated minimum agreement with
+the author-checked statements on a fixed sample stratified by language
+before it reads, and the change is a new method version. [M2]
 
 **Vendor means LLM family, not billing channel.** An LLM reached through
 an aggregator (OpenRouter) counts under its maker. The local Qwen LLM
@@ -255,7 +265,9 @@ author's minutes]
 ### 7.1 The measurements
 
 - **Size of the held documents** (measured on padme, on the document store
-  of record: 278 objects, 282 MB). The 84 PDFs have a text layer of 11.65
+  of record: 278 objects, 282 MB; the 91 other snapshots, CRS and World Bank
+  extracts and IATI country files, are kept under the comparator data
+  directories; the reconciliation of these counts is requirements DA2). The 84 PDFs have a text layer of 11.65
   million characters in all (median 54,000 per document, 90th percentile
   463,000, largest 947,000). The 194 other objects (HTML, spreadsheets,
   structured records) total 31.9 MB of bytes; their text share was not
@@ -271,14 +283,16 @@ author's minutes]
   mid tier, Anthropic Sonnet 3 / 15 and Qwen3.7-max 2.5 / 7.5; economy tier,
   Mistral Large 0.5 / 1.5, DeepSeek V3.2 0.26 / 0.38, Gemini Flash-Lite
   0.1 / 0.4. Prices move; the run records the actual cost.
-- **One full assisted pass over every held document** (derived). Reader and
-  checker each read the whole text (about 9 million input tokens with
-  prompts) and write about 1 million output tokens between them. At mid tier
-  this costs about USD 42; with a frontier pair (GPT-5.5 reader, Opus
-  checker) about USD 55; with an economy pair about USD 5. With the local
-  LLM as reader, only the checker is paid, roughly half. Replay does not
-  call an LLM again (extraction § 10), so a rerun of the pipeline costs
-  nothing in LLM spend.
+- **The M2 assisted pass** (derived). The LLM readers read only the 115
+  documents with a snapshot and nothing extracted (requirements DA2); the
+  254 documents already extracted are replayed without an LLM (extraction
+  § 10), so a rerun of the pipeline costs nothing in LLM spend. The
+  prototype run measured USD 0.03 to 0.08 per document with hosted readers;
+  with a margin for parts and repair calls, the M2 pass costs about USD 15
+  to 30. For scale only: a full assisted pass over every held object, reader
+  and checker each reading the whole text (about 9 million input tokens with
+  prompts and 1 million output tokens), would cost about USD 42 at mid tier,
+  USD 55 with a frontier pair and USD 5 with an economy pair.
 - **Local LLM throughput** (measured on padme, short-record screening with
   thinking disabled): about 1.7 records per second, decoding about 95 % of
   the time, against about 19 records per second for a hosted small LLM
@@ -295,7 +309,7 @@ author's minutes]
 | Budget | Proposed default | Basis |
 |---|---|---|
 | Paid LLM spend per document (reader and checker together) | USD 3 | Derived: covers the largest held PDF (about 240,000 tokens) read once by a frontier pair; the median document costs well under USD 0.10 |
-| Paid LLM spend per run | USD 20 for an ordinary batch; USD 60 for the full M2 pass | Derived: the full pass is about USD 55 at frontier tier, so USD 60 covers the worst case once with no margin for a second attempt |
+| Paid LLM spend per run | USD 20 for an ordinary batch; USD 60 for the full M2 pass | Derived: the M2 pass over the 115 pending documents is about USD 15 to 30, so USD 60 covers it with room for a second attempt |
 | Paid LLM spend per calendar month, all vendors | USD 150 | Judgement: a full pass at frontier tier plus a partial rerun and the M3a discovery rounds |
 | Paid LLM spend per vendor per month | USD 80 | Judgement: no single maker can take more than about half the month, which keeps the second vendor funded |
 | Paid web search (discovery) per campaign | USD 25, and a query count per round declared in the round's protocol | Judgement: no measurement in the repository |
@@ -324,14 +338,17 @@ products on the run's branch. It gives: run identifier, job, commit of the
 code, machine, start and end times, declared budgets, spend per vendor and
 per LLM with token counts, GPU wall time, documents or rounds attempted,
 completed, failed and deferred with their reasons, the size of each queue
-for the author, and a final state (section 10). A run that found nothing
-says so. [M2 for extraction runs; M3a for discovery rounds, requirement Q14]
+for the author, the rate and the seed of the random sample shown to the
+author, and a final state (section 10). The report of a build lists the
+trails that do not resolve. A run that found nothing says so. [M2 for extraction runs; M3a for discovery rounds, requirement Q14]
 
 **Review minutes.** When the author works through a queue, the sitting
 records its start and end times, the run it belongs to and the number of
-items decided; minutes are attributed to the document class of the items.
-[M2, so that the M3b release can state spend and review time per document
-class, requirement Q15, including for the documents extracted at M2]
+items decided; minutes are attributed per run and per document, and the
+document's class, type and extraction method are joined later, since classes
+are assigned only from M3a. [M2, so that the M3b release can state spend
+and review time per document class, document type and extraction method,
+requirement Q15, including for the documents extracted at M2]
 
 **Monthly tally.** Spend per vendor against the monthly budgets, and review
 minutes against the weekly budget, are tallied from the run reports and
@@ -346,6 +363,7 @@ supervision view]
 |---|---|---|
 | Code, rules, tickets, ledger tables (the register included), run reports | The git repository | GitHub; every checkout |
 | Document bytes, structured bulk data | DVC cache on padme | The DVC remote, on the same padme disk |
+| Retained text layers of snapshots with admitted statements | DVC cache on padme, beside the document bytes | As for the document bytes; a lost layer is regenerated only by the same adapter version |
 | Public copies of document addresses | The Internet Archive | — |
 | A frozen release | The release deposit [M3b] | Zenodo |
 | Local LLM weights | Downloaded | Re-downloadable |
@@ -360,6 +378,7 @@ doudou pulls them (`dvc pull data/jetp/documents.dvc`), in the permitted
 direction; this copy is a backup only, which no job reads, and the laptop may
 drop it without harm to operation. The author may prefer an external or
 institutional disk instead; either satisfies the rule. [M2]
+<!-- wave-1 W1-22: pending author decision (where the retained second copy lives) -->
 
 **Recovery.** [M2]
 
@@ -480,6 +499,7 @@ Each has a default, applied unless the author decides otherwise.
   alternative, an external or institutional disk.
 - **Local LLM as bulk reader.** Default: decided by the M2 pilot on
   throughput and checker agreement; until then paid readers.
+  <!-- wave-1 W1-52: pending author decision (keep the local-reader pilot at M2, bounded to one long document, or defer it to M4) -->
 - **Paid web search provider for discovery.** Default: the search API whose
   key is already in the keystore, under the per-campaign budget.
 - **Review time per item.** Default: 30 seconds assumed, replaced by the
@@ -504,6 +524,6 @@ Each has a default, applied unless the author decides otherwise.
 | A run report is about to include a request header with an API key. | The report names the provider and the LLM only; the key never appears. A key found in a tracked file is revoked first, then removed. |
 | An agent's branch adds 12 new document objects. | They are tracked and pushed to DVC from padme only after the branch's review passes; doudou then pulls them as the backup copy. |
 | padme's disk fails. | Code and ledger are cloned from GitHub; document bytes are restored from the backup copy and checked against their hashes; an object that fails is refetched as a new retrieval and the losses are listed in a recovery report. |
-| The author reviews a queue of 80 items in 45 minutes. | The sitting records 45 minutes, its run and 80 items, attributed by document class. |
+| The author reviews a queue of 80 items in 45 minutes. | The sitting records 45 minutes, its run and 80 items, attributed per document; class, type and method are joined later. |
 | An agent proposes to publish the Observatory after merging a run. | It does not: publication is the author's act, from `main`, after the release is accepted. |
 | At M2, someone proposes a weekly cron job for discovery. | Declined as M4; M2 and M3 runs are launched by hand. |

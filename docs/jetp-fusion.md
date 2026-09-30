@@ -74,19 +74,27 @@ that knows nothing is "about as likely as not, very low confidence", never a
 made-up point value. Finer formalisms (possibility, belief functions, lower
 and upper probabilities) coincide at this grain and are not needed. [M2]
 
-**Pedigree.** Each statement carries a qualitative assessment of where it
-comes from, in the sense of the NUSAP pedigree: how close its publisher is to
-the event (the party that did it, the party that paid, a secretariat that
+**Pedigree.** Pedigree, in the sense of NUSAP, is not a stored score. It is
+what a judgement reads from what the ledger already records about a
+statement: its publisher's authority category (how close the publisher is to
+the event: the party that did it, the party that paid, a secretariat that
 compiled, a statistician who harmonised, a database that aggregated, a
-newspaper that reported), how independent it is of other statements, how it
-was produced (a register, a plan estimate, a press release), and how it
-entered the ledger (parser, assisted reading, transcription, human review).
-Pedigree informs judgement; it never deletes a statement. [M3b]
+newspaper that reported), its document type (a register, a plan estimate, a
+press release), its extraction method (parser, assisted reading,
+transcription, a person's reading), and the relations that fold copies. A
+judgement records, in its basis, which of these it weighed. Pedigree informs
+judgement; it never deletes a statement. [M3b]
 
 **Independence of publishers.** Two statements corroborate each other only
-if they are independent. A mirror, a reprint, a translation, a copied report
-or a secondary document quoting a primary one adds no corroboration, and one
-payment described by several documents stays one payment. [M3b]
+if they are independent. Two statements are independent supports when, after
+folding the documents related by `same_as` and `translation_of` and the
+statements related by a citation, they have different publishers. A mirror,
+a reprint, a translation, a copied report or a secondary document quoting a
+primary one adds no corroboration, and one payment described by several
+documents stays one payment. Copying that no relation records is not
+detected, and the rule does not claim to exclude it. Counts of independent
+supports are published from M4, or at M3b if the comparison of requirement
+F19 needs them. [M3b]
 
 **Two times.** Every conclusion is dated twice: the time of the world it
 describes, and the time the ledger knew it. A result at knowledge cutoff K
@@ -119,6 +127,18 @@ extraction rule found faulty. The superseded entry stays readable; what is in
 force is the end of the chain. A revision that is only proposed does not take
 the place of what it would revise until it is itself adopted. [M2]
 
+The judgement on a change between two statements of one publisher is a
+revision judgement: its members are the earlier and the later statement,
+and its verdict is a development in the world, a late report, a correction
+by the publisher, or a rounded restatement. A judgement that prefers one
+statement over others for a result (section 5) is a preference judgement:
+its members are the candidates, the one preferred and the ones excluded, and
+its verdict names the reason. Both are recorded from M3b, so that the change
+between releases can later be attributed to a reason (section 8). A
+publisher's correction notice, when one is first met, is related to the
+statement it corrects by a citation whose role says so; no document type or
+status is added for errata before a case needs one. [M3b]
+
 ## 3. Identity
 
 Matching mints a referent from statements, attaches a statement to an
@@ -149,6 +169,17 @@ to count, for example "likely or more, medium confidence or more". A result
 may report its figures at two thresholds, a cautious and an inclusive one,
 which turns matching uncertainty into a range on the figure. Candidate
 matches below a result's threshold stay listed and counted apart; they never change the result's figure. [M3b]
+<!-- wave-1 W1-30: pending author decision (one judged quantity, abstention for undetermined, calibration of verbal terms, confidence floor of the inclusive threshold) -->
+
+**Referents at a threshold.** Matching is pairwise, and a result needs
+clusters. At a result's threshold, the members of a referent are the
+statements whose in-force attachment to it meets the threshold, and two
+referents joined by an in-force `same_as` that meets it are one. Equality
+between referents is bounded to depth one: the source of an accepted
+`same_as` is never the target of another, so a chain of three (A same as B,
+B same as C) is raised as a conflict for review, and resolved by judging A
+against C, never closed by transitivity. A rejected `same_as` between two
+members of one would-be cluster is such a conflict too. [M3b]
 
 - An equality claim (`same_as`) is a justified claim that two things are one; it does
   not choose which name or route prevails. [M2]
@@ -160,7 +191,12 @@ matches below a result's threshold stay listed and counted apart; they never cha
 what the previous ones left open and signing with its own method name.
 
 1. Exact identifier: a register's unique identifier, a plan's ordinal within
-   an edition, an operator's project code. Virtually certain.
+   an edition, an operator's project code. Virtually certain for a
+   register's unique identifier; a plan ordinal or an operator's code,
+   which publishers leave with gaps, repeat and reuse (extraction section
+   3), is virtually certain only when the countries agree and one other
+   attribute corroborates it (capacity, location or technology), and very
+   likely otherwise.
 2. Normalised label: case, diacritics, technology prefixes and units removed
    (PLTU, PLTS, PLTBg; Nhà máy Thuỷ điện; centrale, poste), tokens compared
    within a country and a technology group. Likelihood from the string
@@ -174,7 +210,20 @@ what the previous ones left open and signing with its own method name.
 5. A person, for what the readers decline or contradict each other on.
 
 A proposer's settings are part of its method version, and are tested against
-matches already judged by hand before its judgements are used. [M3b]
+matches already judged by hand before its judgements are used. Each method
+version publishes, on the hand-judged set, its blocking recall (the share of
+true pairs that the proposers put up at all), its pairwise precision and
+recall, and one cluster metric. [M3b]
+
+**Judgement by adopted rule.** A program records an accepted judgement only
+under a rule the author adopted, by version, in a recorded decision: identical
+bytes, the same external identifier, a case or diacritic variant of one
+name. Such a rule is the author's judgement applied by a program, and its
+rows name the rule as their method. Every other proposal, by a program or an
+LLM, is recorded as a candidate match until the checking rule of
+[extraction](jetp-extraction.md) section 6.3 or the author accepts it. This
+is how the first principle ("no rule below selects a value or merges two
+things on its own") and the proposers above hold together. [M2]
 
 **Reading and verification.** The author is not the checker. A reading is
 done by independent readers from different vendors, on the same inputs, blind
@@ -223,9 +272,23 @@ a translation pair; the other members remain citable. Proposers:
    detection, a translation.
 4. A reading by LLMs of the remaining pairs, given both first
    pages.
-5. A person. 
+5. A person.
 
-[M2]
+Proposers 1 and 2 are deterministic and run at M2; proposer 3 runs at M2 as
+a bounded list of candidate pairs sorted by likelihood, which the author
+decides; proposers 4 and 5 start at M3a, with the checking rule of
+[extraction](jetp-extraction.md) section 6.3, when discovery brings
+mirrors. [M2 for proposers 1 to 3; M3a for proposers 4 and 5]
+
+**Content check before a document judgement.** Before a `translation_of` or
+a `same_as` between non-identical documents reaches "likely", the judgement
+compares the two documents' content: the multiset of numerals with their
+units, dates, percentages and printed identifiers, and the page and table
+counts. The comparison is recorded as the quoted basis. Beyond a declared
+tolerance the judgement is "different": a re-export that changed a figure
+is an `edition_of`, both members are extracted, and the same-publisher rule
+of section 5 handles their non-independence. An abridged or revised
+translation with a different annex is two documents. [M2]
 
 ## 4. Occurrence
 
@@ -238,8 +301,8 @@ on the rank of a publisher. [M3b for all]
 - A quarterly total is not split into months unless a statement does so.
 - An observed completed state invents neither a commissioning date nor a
   payment.
-- Signing, approval and disbursement are different measures, not successive
-  states of one chronology.
+- An occurrence is never inferred from a state change: an observed later
+  state implies no earlier one and no payment.
 
 ## 5. Conflicting values
 
@@ -270,6 +333,10 @@ preference is ever automatic. [M2 for keeping every statement; M3b for preferenc
   only.
 - Structured search channels (OECD CRS, IATI) have no precedence of their own. They
   report one to three years late, and that lag is measured, not assumed.
+- The **matching coverage rate** is the share of a result's operations that
+  have an accepted match to a CRS or IATI record at the result's match
+  threshold, reported per country and funder; it is distinct from the
+  tracker traceability rate of discovery (collection section 7).
 - Where no judgement prefers one statement, a result carries the
   disagreement: both statements, and the condition that stops them from being
   compared (different scope, basis, currency, cutoff or measure).
@@ -304,9 +371,14 @@ referents of a kind, or a count a publisher stated. There is no default sum
 of projects, programmes and components, and a publisher's count of records is
 not relabelled a count of assets. Overlapping hierarchies need an explicit
 selection before any aggregate, and a hierarchy never splits money: a
-project's share needs a statement that gives it. Financial states (need,
-announced, memorandum, approved, signed, disbursed) form a chronology, not
-additive categories: an aggregate selects one state explicitly. A physical
+project's share needs a statement that gives it. Financial states form a
+chronology, not additive categories: in the terms of the
+[ontology](jetp-ontology.md) (section 4), a need (a plan's estimate or an
+envelope), then the agreement states of the money axis (announced, a
+memorandum of understanding, approved, signed), then the flows of the IATI
+list (commitment, disbursement, expenditure); an amount *reported* is the
+amount a comparator record (CRS or IATI) reports for the same operation. An
+aggregate selects one state explicitly. A physical
 state never follows from a financial one, and a plan's priority ranking
 implies neither finance nor physical progress. [M3b]
 
@@ -343,6 +415,17 @@ position. [M3b for all]
 - A residual (reported closing minus reconstructed closing) exists only when
   the two share cutoff, currency, coverage and basis; otherwise both are kept
   with the condition that failed.
+- A figure printed as cumulative or "to date" is a closing-position
+  candidate, never a movement: it is read as a flow over an interval whose
+  end is its as-of date and whose start is unknown (extraction section 11),
+  so successive snapshots of it are successive positions and are never
+  added.
+
+**Timelines.** A timeline is Evidence, built from observations and their
+timings. An event stated without a date of its own gets an upper bound equal
+to the report date or reporting cutoff of the statement that reports it, and
+an open lower bound: a milestone known only from a report is an interval
+ending at that report, never a day. [M3b]
 
 Example: a verified zero opening and complete coverage of EUR 15m against an
 exact reported closing of EUR 20m give a EUR 5m residual. The same EUR 15m
@@ -362,6 +445,12 @@ A result at knowledge cutoff K is computed as follows. [M3b]
 3. Apply the result's declared match thresholds to identity, occurrence, coverage and
    scope judgements, then the account's rules. An open question that matters
    to a figure blocks that figure, not the others.
+
+A correction of a result keeps its cutoff K. It adds a named correction
+overlay: the revisions admitted after K that correct ledger errors in
+entries admitted on or before K. The state is the one at K with those
+revisions applied, and nothing else admitted after K; a later discovery
+never enters through an overlay. [M3b]
 
 When a new cutoff changes a result, the change is attributed to one of: a
 development in the world, a late report of an old event, a publisher's
@@ -388,3 +477,8 @@ well.
 | A later snapshot prints a different value. | A new dated statement beside the old one, and a judgement on whether it is a correction or a development. |
 | Two primary documents disagree and a judgement prefers one. | The other remains, with the stated reason for the preference. |
 | A candidate match is judged "about as likely as not". | It counts in no result whose match threshold is "likely" or stricter, and it stays listed. |
+| An agreement is observed as signed, and no document states its approval or any disbursement. | No approval and no disbursement is inferred; a count of approved agreements does not include it unless a statement says it was approved. |
+| A project page prints "disbursed to date: USD 40 million" in two successive snapshots, then USD 55 million. | Three closing-position candidates at three as-of dates; no movement of 95 million, and a movement of 15 million only if an account judges the two positions comparable. |
+| A report of March 2026 says a plant was commissioned, without a date. | The commissioning is an interval with an open start ending in March 2026, not a day. |
+| An accepted match has a later revision that is only proposed. | The accepted match stays in force and counts; the proposal is listed as pending until it is itself accepted or rejected. |
+| A match accepted before cutoff K is superseded by a judgement admitted after K. | A result at K counts the accepted match; a result at a later cutoff applies the revision. |

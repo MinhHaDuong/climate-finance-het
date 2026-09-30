@@ -41,9 +41,9 @@ place in it, so that anyone holding the bytes can find the text it rests on.
 A statement whose place cannot be found again in its snapshot is not a
 statement. [M2]
 
-**Every held document accounted for.** A run ends with statements or a
-recorded disposition for every document the ledger holds. Silence is never an
-outcome. [M2]
+**Every registered document accounted for.** A run ends with statements or
+a recorded disposition for every document the register holds, whether or not
+the ledger holds its bytes. Silence is never an outcome. [M2]
 
 **Complete within a declared extraction scope.** An extraction states in
 advance which parts of a document it covers. Inside that scope every item is
@@ -80,8 +80,11 @@ the cases it would serve. [M2]
 
 ## 2. Scope and preconditions
 
-Extraction receives a held document with at least one snapshot, and returns
-statements citing that snapshot or a disposition. It does not fetch
+Extraction receives a registered document and returns statements citing one
+of its snapshots, or a disposition. A document is *registered* when it is in
+the register, and *held* when at least one of its retrievals yielded a
+snapshot ([collection](jetp-collection.md) section 2); a registered document
+that is not held receives the disposition `no_snapshot`. It does not fetch
 anything: fetching, retries and the choice of what to collect belong to the
 collection specification. Reading statements into observations is a
 later step with its own rules (section 11). [M2]
@@ -96,9 +99,14 @@ Three things are settled before any statement is extracted.
   Extraction applies the outcome; it does not restate the proposers. If a
   document judgement is later revoked, the document it had folded becomes
   pending again and is extracted like any other. [M2]
-- **Canonical member.** In a `same_as` group, the member already extracted
+- **Canonical member.** The canonical member is chosen among the members
+  that hold a snapshot. In a `same_as` group, the member already extracted
   stays canonical, so that no statement moves; when none has been extracted, the
   publisher's own address is canonical over a mirror. [M2]
+- **Annex held alone and inside a bundle.** When an annex is held as a
+  document of its own and also inside a bundle, the bundle's declared
+  extraction scope excludes the annex and names the document where it was
+  extracted, so its statements are not extracted twice. [M2]
 - **Language extracted in a translation pair.** The version the publisher
   designates as authoritative is extracted; failing that, the member already
   extracted; failing that, the version in the country's official language, whose
@@ -109,11 +117,18 @@ Three things are settled before any statement is extracted.
 - **Edition.** A document that is a later edition of one already extracted is its
   own document, related by `edition_of`. Its statements are new statements
   of the new document; they are never merged into the earlier edition's.
-  [M2]
+  Statements of two editions, or of two issues of a series, are paired only
+  as candidate matches of [fusion](jetp-fusion.md) section 3, never as
+  restatements (section 8). [M2; the pairing, M3b]
 
-The input of every run is the pending list: the snapshots of held documents
-that have neither statements nor a disposition. A backlog run and a later
-periodic run start from the same list and use the same pipeline. [M2]
+The input of every run is the pending list. A snapshot is pending when it
+has no statements and no snapshot-level disposition, and its document has no
+document-level disposition (section 7): so a snapshot of a `duplicate` or
+`out_of_scope` document is never pending. A registered document with no
+snapshot and no disposition is pending as a document, and its only outcome
+is `no_snapshot`. A backlog run and a later periodic run start from the same
+list and use the same pipeline. Sections 7 and 12 and requirement F5 use
+this definition. [M2]
 
 ## 3. What a statement carries
 
@@ -128,33 +143,52 @@ required of it at this step.
   be unique within the snapshot and never the whole document. Its syntax per
   format is fixed by the storage contract; its meaning is fixed in section 5.
   [M2]
-- **Ordinal**: the statement's position within its sequence in the snapshot,
-  in reading order, counted from one. A number the publisher prints beside
-  the item is a verbatim field and may differ from the ordinal (gaps,
-  repeats, restarts). [M2]
+- **Ordinal**: the counter under which the statement was minted within its
+  document and sequence, in extraction order, counted from one and never
+  reassigned. Its position in the document is carried by the locator, not
+  by the ordinal, so a missed item found later takes the next ordinal
+  wherever it stands on the page. A number the publisher prints beside the
+  item is a verbatim field and may differ from the ordinal (gaps, repeats,
+  restarts). [M2]
 - **Label as printed**: the item's name or description in the publisher's
   language and spelling, with whitespace joined but no other change. [M2]
 - **Classification**: one value from the closed list of the
   [ontology](jetp-ontology.md) (section 4): `named_item`, `unnamed_item`,
   `quota`, `heading`, `submission`, `evaluation`, `register_allocation`,
   `count`, `envelope`, `absence`. It is assigned by the extraction from what the
-  publisher presents, never inferred from words in the label. When the
-  extraction cannot tell, the statement waits for review rather than taking a
-  default. [M2]
-- **The publisher's own status word**, copied as printed, and the axis it
-  belongs to, when the publisher prints one. The shared status is never
-  assigned here; it lives only in the crosswalk. [M2]
+  publisher presents, never inferred from words in the label. A statement
+  is admitted only with a classification. When the extraction cannot tell,
+  the proposal waits for review rather than taking a default: for an
+  assisted reading it stays in the author's queue of the run (section 6.3);
+  for a parser, the document is not admitted (section 6.1). A classification
+  is never added to an admitted statement afterwards. [M2]
+  <!-- wave-1 W1-12: pending author decision (whether the closed list grows now, and a reader's 'cannot classify' answer) -->
+- **The publisher's own status word**, copied as printed, when the publisher
+  prints one. The axis it belongs to is set only by a parser's reviewed,
+  versioned status list for its series (adopted as crosswalk rows at M3b);
+  it is empty for an assisted reading, a transcription and a person's
+  reading, and an LLM reader is never asked for it. Replay reproduces the
+  axis from the parser's configuration. The shared status is never assigned
+  here; it lives only in the crosswalk. [M2]
 - **The publisher's own sector word**, copied as printed, when there is one.
   [M2]
 - **Group**: the heading statement that governs it, when one does (a
   programme heading, a method note, a section title that conditions every
   item under it). The heading is a statement of the same snapshot. [M2]
 - **Verbatim fields**: everything else the publisher printed for the item,
-  field by field, under the publisher's own field names as printed. The list
-  of field names is declared once per document at extraction, and every
-  statement of that document conforms to it. A value keeps its printed form:
-  "3.92" under a heading "USD billion" stays 3.92 with the heading, and a
-  cell naming several funders stays one cell. [M2]
+  field by field. The list of fields is declared per document and per table
+  (the table segment of the statement identifier), and every statement of
+  that table conforms to it. Each field keeps the header as printed, with
+  its unit and scale wording; a parser may map a printed header to a field
+  name under a declared, versioned mapping, and the printed header stays
+  beside the mapped name. Replay treats a mapped rename as explained. A
+  mapping shared across publishers (one publisher's annex read under
+  another's field names) is a defect, corrected by a new declaration, not an
+  explained difference. A value keeps its printed form: "3.92" under a
+  heading "USD billion" stays 3.92 with the heading, and a cell naming
+  several funders stays one cell. Contact details (an email address, a
+  telephone number, a personal postal address) are out of the declared
+  extraction scope of every document and are not extracted. [M2]
 - **Method and version** that extracted it, and, for an assisted reading or a
   transcription, the checking reader and any person who decided on it
   (section 6.3). [M2]
@@ -187,9 +221,22 @@ cases that recur in the documents held. [M2 for all]
   judgement of fusion, not a merge at extraction.
 - Prose is extracted when it asserts something in scope: a signature, an approval,
   an amount, a date, a state. Each assertion is one statement anchored on its
-  own words, attributed to its speaker when the publisher quotes someone.
+  own words, attributed to its speaker when the publisher quotes someone. A
+  quoted speaker is recorded as the office or institution the publisher
+  prints; a person's name is recorded only when the publisher prints it as
+  the signatory of an in-scope document.
+  <!-- wave-1 W1-12: pending author decision (statement shape for prose: label span, fixed field list per class, typed values at M2) -->
+- A record page (a project page of a development bank, a portal's entry for
+  one project) is one item statement for its subject; its labelled fields
+  are its verbatim fields under the printed labels, and its description
+  follows the rule for prose.
 - Navigation, boilerplate, legal notices, contents pages and repeated
   page furniture are out of scope unless the extraction declares otherwise.
+  Page furniture that carries a date, an issue number, a period or the
+  publisher's name governing the statements (a dateline, a masthead date, an
+  issue period) is in scope by default, and is extracted as a heading
+  statement that the statements it governs name as their group. Nothing
+  missing from the page is completed from the register.
 
 **Declared extraction scope.** Before extracting, the extraction names the
 parts of the document it covers (an appendix, the list of submissions, the body of a news
@@ -207,11 +254,33 @@ recorded as the publisher's own inconsistency with both figures kept. [M2]
 
 A text layer is what a method reads when it does not read the bytes
 directly: characters with their positions, cells, records. It is derived
-from the snapshot, regenerable, and never the record. Each text layer names
-the snapshot it came from and the adapter and version that produced it; a
-locator resolves against the stored bytes through a named adapter version.
-A text layer may be kept to save time, keyed by snapshot and adapter
-version, and is discarded when either changes. [M2]
+from the snapshot and never the record. Each text layer names the snapshot
+it came from and the adapter and exact version that produced it; a locator
+resolves against the stored bytes through that named adapter version. The
+adapter is pinned by exact version with the pipeline's other dependencies.
+[M2]
+
+**Retained layers.** A locator resolves only against the text layer of one
+adapter version, and an adapter version may become unavailable, so the text
+layer of every snapshot with admitted statements is retained beside its
+snapshot, keyed by snapshot, adapter, version and the layer's own hash. A
+later adapter version produces a second layer beside the first; moving a
+statement to it goes through the reviewed mapping of section 9, old layer to
+new layer. A layer is never discarded while a statement resolves through it.
+[M2]
+
+**Locators.** A locator is derived by the pipeline, never written freehand.
+For a table cell, it is the page (or sheet), the table and the row. For
+prose, it is the page index plus start and end anchors that code derives
+from the reader's verbatim quote, after whitespace is normalised and the
+page furniture the method declares is removed; the anchors must be unique in
+the text layer, or carry an occurrence index. The folio the publisher
+printed is recorded only when the adapter reads it. The locator check
+(section 6.3) resolves the anchors in the text layer and compares the text
+between them with the quote under the same normalisation; there is no
+character cap on the quote. Locators admitted before this rule stay valid
+under their method version, and replay lists them as outside the reach of
+the new check (section 10). [M2]
 
 The declared content type of a retrieval is a hint. The format is decided
 from the bytes, so an object served as a generic byte stream that is in fact
@@ -223,7 +292,11 @@ received. [M2]
   offset. What a browser would have loaded afterwards is not in the bytes
   and is not read; a page whose data arrives by script is a shell unless the
   data is inline (below). A capture of the rendered page is a separate
-  snapshot, and collecting one is collection's business. [M2]
+  snapshot, and collecting one is collection's business. Text that the
+  markup itself hides (the `hidden` attribute, an inline `display:none`)
+  is marked as hidden in the text layer, and a statement read from it
+  records that it was hidden; finer detection of invisible text is M4.
+  [M2]
 - **PDF with a text layer.** The decoded characters with their page and
   position. Decoding is not a facsimile: ligatures, rotated pages, wrapped
   cells and reading order are reconstructed by the adapter, and the adapter
@@ -250,6 +323,7 @@ received. [M2]
   activity identifier, an SDMX key), and the record's fields are the
   verbatim fields. [M2 for the documents held; the comparator records of
   CRS and IATI, M3b]
+  <!-- wave-1 W1-15: pending author decision (whether replay of the held comparator lines is part of M2 acceptance) -->
 - **Scripts.** Data embedded as a literal inside a script (an array behind a
   dashboard) is read as a structured record from the literal. A script is
   never executed to obtain data. [M2]
@@ -264,8 +338,9 @@ version, and each has its own check of correctness. [M2 for all four]
 ### 6.1 A parser per repeated series
 
 Where a publisher repeats one format (a quarterly progress update, a monthly
-register, the appendices of successive plans), one purpose-built parser reads
-the whole series. The parser is the artifact under review; its output is
+register, the appendices of successive plans, or a page template shared by
+its project pages or portal entries), one purpose-built parser reads the
+whole series. The parser is the artifact under review; its output is
 reviewed as a difference against what was there before.
 
 - A parser declares which snapshots it can read and refuses others: it checks
@@ -276,8 +351,9 @@ reviewed as a difference against what was there before.
   fails the whole document when a control fails. No partial set of
   statements is admitted from a failed extraction. [M2]
 - It assigns classifications from the publisher's own presentation or from a
-  reviewed list of items, and leaves a statement unclassified for review
-  rather than choosing a value it cannot justify. [M2]
+  reviewed list of items. When it cannot justify a value for an item, it
+  does not choose one: the document fails and is not admitted until the
+  parser or its list is revised (section 3, classification). [M2]
 - A new parser version is run over every snapshot the previous version read
   before it is adopted, and the difference is reviewed under the rules of
   section 9. [M2]
@@ -290,8 +366,10 @@ read, the declared fields and the counts it rejected, and the reviewer
 reviews that statement of the run rather than each record. A bulk statement
 is examined individually when an observation first cites it. Before a
 portal is read, its snapshot is inspected and given a verdict: it holds
-data, it is a shell around a service, or it holds nothing to read. [M2 for
-the portals held; the comparator records, M3b]
+data, it is a shell around a service, or it holds nothing to read. The
+verdict precedes any LLM call on the portal's content, so a portal bundle
+that is a shell is never sent to an LLM reader. [M2 for the portals held;
+the comparator records, M3b]
 
 ### 6.3 Assisted reading of one-off documents
 
@@ -299,19 +377,30 @@ Where no series justifies a parser (a single investment plan, an approval
 document, a project page, a news item), an LLM reads and a second LLM from
 another vendor checks every row. The checked statements are the record.
 
+- **Untrusted input.** Documents are written by interested parties. LLM
+  readers and checkers are called without tools, network or file access,
+  and receive the text layer as quoted data, never as instructions. [M2]
 - The LLM reader is given the document's text layer, the declared scope and the
-  declared field list, and proposes statements with a label, a locator that
-  identifies the assertion, a classification and the verbatim fields. [M2]
-- Every proposed locator is checked automatically against the stored bytes:
-  it must resolve, and the text there must contain the proposed label and
-  values. A proposal that fails is rejected before any further check, and
-  the rejection is recorded. [M2]
+  declared field list, and proposes statements with a label, a verbatim
+  quote of the assertion, a classification and the verbatim fields. [M2]
+- The locator of every proposal is derived by code from its quote, as
+  section 5 states, and checked against the text layer: it must resolve, and
+  the text there must contain the proposed label and values. A proposal
+  whose locator fails gets one repair call to the reader, with the failure
+  stated; if it still fails, it is marked as failed. The failure and its
+  reason are recorded. [M2]
 - A checker, an LLM from a vendor other than the reader's, examines every
-  surviving proposal against the document, in the document's language,
-  whatever that language is. For each it states whether the proposal is
-  right, with a likelihood and a confidence on the calibrated scales of
-  [fusion](jetp-fusion.md) section 1, and a quoted basis. It also lists
-  items of the declared scope that the LLM reader missed. [M2]
+  proposal against the document, in the document's language, whatever that
+  language is, with the failed ones marked as such, so that a rejection by
+  the pipeline is not mistaken for a miss by the reader. For each it states
+  whether the proposal is right, with a likelihood and a confidence on the
+  calibrated scales of [fusion](jetp-fusion.md) section 1, and a quoted
+  basis. It also lists items of the declared scope that the LLM reader
+  missed; that list is de-duplicated against the proposals and the failed
+  proposals before anyone sees it. A proposal marked as failed is never
+  admitted: the author may correct it, and the correction is checked like a
+  person's reading (section 6.4). [M2]
+  <!-- wave-1 W1-04: pending author decision (definition of disagree, audit sample size and precision floor) -->
 - The author sees only the proposals on which reader and checker disagree,
   the items the checker says were missed, and a random sample of the
   proposals they agree on, all sorted by likelihood and confidence. The
@@ -327,9 +416,26 @@ another vendor checks every row. The checked statements are the record.
   document that would exceed it is split into parts with their own scope, or
   deferred with that reason (section 7); it is never admitted unchecked.
   [M2]
+  <!-- wave-1 W1-05: pending author decision (attention total per milestone, per-document cap, deferral stance) -->
+- **Parts.** A document too long for one reading, or for one queue, is read
+  in parts, and a part is a declared scope part (section 4: an appendix, a
+  section, a page range), so parts never overlap. An item that runs across
+  the boundary of two parts is one statement whose locator spans the
+  boundary, owned by the part where it starts, as for a page break; the
+  statements of adjacent parts are de-duplicated on their derived locators.
+  Each part inherits the headings and method notes that govern it. The
+  checker lists missed items within its part only. The queue of every part
+  counts against the document's budget, and a printed total that covers
+  several parts is checked after the parts are merged. [M2]
 - Before the method is used on held documents it passes a test: a document
   with a planted item that must be found and a named absent item that must
   not be invented (section 12). [M2]
+- **Replacement readers.** A reader or checker replaced by another LLM (a
+  retired, repriced or unavailable one) is a new method version. It is
+  admitted only after passing the controls of section 12 and reaching a
+  stated minimum agreement with the statements the author checked
+  (requirement Q17) on a fixed sample stratified by language. The coverage
+  report states which method version read each document class. [M2]
 - The full panel of [fusion](jetp-fusion.md) section 3 replaces the single
   checker: independent readers from different vendors reading blind, with
   positive controls run first and a reader that misses one weighted out.
@@ -350,11 +456,11 @@ check of locators applies. [M2]
 
 ## 7. Dispositions
 
-A disposition here is the outcome of a held document or snapshot that yields
-no statements; a candidate's outcome before admission is collection's triage
+A disposition here is the outcome of a registered document, or of a
+snapshot of a held one, that yields no statements; a candidate's outcome before admission is collection's triage
 outcome, a different list. [M2]
 
-Every held document ends with statements or a disposition, and every
+Every registered document ends with statements or a disposition, and every
 snapshot of a document that is extracted ends with statements or a disposition of
 its own. A disposition is a record, like a judgement: it names its kind, its
 reason in words, who or what decided it, by which method and version, and
@@ -366,7 +472,7 @@ The kinds, closed and grown only by decision:
 |---|---|---|
 | `duplicate` | document | a non-canonical member of a `same_as` group; its statements are those of the canonical member, and its snapshots stay citable |
 | `translation_not_canonical` | document | the member of a translation pair that is not extracted |
-| `no_snapshot` | document | the ledger holds no bytes for it; collection owns the gap |
+| `no_snapshot` | document | the document is registered and the ledger holds no bytes for it; the reason cites the latest retrieval status, and collection owns the gap |
 | `wrong_content` | snapshot | the bytes are not the document (an error page, a login wall, a consent screen), which is handed back to collection |
 | `unreadable` | snapshot | corrupt, truncated or in a format no adapter handles, with the format named |
 | `no_extractable_content` | snapshot | readable, but nothing in scope is stated in text: a shell around a service, a page of links, a chart with no text behind it; the reason says which |
@@ -374,7 +480,8 @@ The kinds, closed and grown only by decision:
 | `deferred` | snapshot | held and in scope, not extracted yet; names the milestone it waits for and why (a scan awaiting transcription, a review budget exceeded) |
 
 A snapshot that is byte-identical to one already extracted is not a new snapshot
-and needs neither statements nor a disposition (section 8). [M2]
+and needs neither statements nor a disposition; nor does a new snapshot
+whose normalised text is identical (section 8). [M2]
 
 A `deferred` disposition closes a document for the purpose of a run's
 completeness, but a run reports the deferred documents apart, by country and
@@ -390,15 +497,29 @@ a register) changes between fetches. The rules below apply
   the earlier snapshot. Nothing is extracted again. The later retrieval date is
   itself the dated justification that the publisher still printed every statement
   of that snapshot on that date. [M2]
-- **New bytes.** A later retrieval that returns different bytes forms a new
+- **Identical text.** Bytes can differ where the text does not: a page that
+  carries a new token or timestamp on every request. A new snapshot whose
+  normalised text within the declared scope, under a named adapter version
+  and furniture rule, equals that of the last extracted snapshot is treated
+  as identical bytes: nothing is extracted, and the persistence of every
+  statement is dated by the new retrieval and recorded as a restatement of
+  the whole snapshot, carrying the adapter version so that replay
+  regenerates the verdict. [M2]
+- **New bytes.** A later retrieval whose normalised text differs forms a new
   snapshot, which is extracted in full, as if for the first time, under the same
   declared scope. Its statements cite the new snapshot. The statements of
   earlier snapshots are not touched. [M2]
 - **Restatement.** A statement of the new snapshot whose item and verbatim
   content match a statement of an earlier snapshot of the same document is a
-  restatement. It is kept, under its own snapshot, and linked to the earlier
-  statement, so the ledger can answer every date on which a content was
-  printed. A restatement is persistence, not corroboration. [M2]
+  restatement. It is kept, under its own snapshot, and linked to the
+  statement where that content first appeared (its origin), never to the
+  previous restatement, so every restatement is one step from its origin.
+  The ledger can then answer every date on which a content was printed. A
+  restatement is persistence, not corroboration. Restatement is judged
+  between snapshots of one document only; statements of two editions or two
+  issues of a series are paired as candidate matches (section 2). The
+  *statements of a document*, wherever they are counted, are its origin
+  statements; restatements are counted apart. [M2]
 - **Change.** A statement of the new snapshot whose item matches an earlier
   one but whose content differs is a new statement beside the old one.
   Whether it is a development, a late report or a correction is a judgement
@@ -456,7 +577,11 @@ These are the correctness oracle of extraction. [M2 for all]
   extraction. For statements produced by those methods, replay verifies instead
   that each locator still resolves in its bytes and that the text there
   still contains the label and values of record. Replay lists these
-  statements by method, so the reach of the oracle is stated.
+  statements by method, so the reach of the oracle is stated. Statements
+  admitted before the method columns existed are attributed to a method by
+  their identifier family (storage contract, section 1), and statements
+  whose locators predate the anchor rule of section 5 are listed as outside
+  the reach of the locator check.
 - **Positive control.** The replay itself is shown to fail when a snapshot or
   a statement of record is deliberately altered.
 
@@ -472,11 +597,17 @@ statement's printed fields into that typed form. It is a step after
 extraction, with its own methods and checks, and it never changes the
 statement it reads. The Observatory's Statements page shows these
 observations (step D3). [M3b for all rules of this section]
+<!-- wave-1 W1-39: pending author decision (M3b scoping: read only measure-bearing statements in a declared counting scope; match only lines feeding a declared result) -->
 
 **How many.** A statement yields zero, one or several observations, one per
 measure it prints. A plan item that prints a capacity and a cost estimate
 yields a `capacity` and an `estimate`; a heading that only groups items
-yields none. Nothing is read that the statement does not print.
+yields none. Nothing is read that the statement does not print. A column
+the publisher derives from another by a printed rate (an amount in US
+dollars beside the same amount in rand) is the same measure, not a second
+one: the reading rule declares which column is the original, and each
+derived column becomes a conversion-rate record citing the statement when
+the rate can be recovered, and nothing otherwise.
 
 **Subject.** The subject is typed. It is the statement itself while no
 identity has been attached to it, and becomes a project, asset, agreement,
@@ -510,16 +641,19 @@ the statement to the observation, unchanged. A shared status comes only
 from the crosswalk.
 
 **Timings.** Each date the statement gives becomes a timing with a role
-(`event`, `approval`, `reporting_cutoff`, `register_date`, `report_date`,
-`planned`, `target`, or `period_start` and `period_end` for a flow over an
-interval), a precision (`day`, `month`, `quarter`, `year`, `unknown`) and
+from the closed list of date roles of the [ontology](jetp-ontology.md)
+(section 2, Observation), a precision (`day`, `month`, `quarter`, `year`, `unknown`) and
 bounds. "Q1 2026" is precision `quarter` with bounds on the first and last
 day of the quarter; "approved in 2024" is precision `year` with the year's
 bounds. A date printed elsewhere in the snapshot and governing the statement,
 such as a reporting cutoff on the cover of a register, becomes a timing that
 names the statement it was read from, which is then the group heading or
 another statement of the same snapshot. No date is invented: a value printed
-without a date has only the timings the document gives.
+without a date has only the timings the document gives. A figure printed as
+cumulative or "to date" is a flow whose `period_end` is its as-of date and
+whose `period_start` has precision `unknown`, bounded below by the
+agreement's earliest printed date when one exists; fusion section 7 treats
+it as a closing position, never a movement.
 
 **Methods.** Three methods may read observations, each signing with its name
 and version.
@@ -537,13 +671,16 @@ and version.
 
 - Every value is found in its statement: the printed digits appear in the
   statement's label or verbatim fields, and the scale applied is one the
-  statement or its heading prints. A value that cannot be found is refused.
+  statement, its heading or the printed header of its field states, never a
+  mapped field name. A value that cannot be found is refused.
 - Measure, basis, flow type, date role and precision are values of the
   terms in force.
 - A reading rule is checked by replay and idempotence like a parser
   (section 10), and red-tested with defects it must reject: a scale applied
   twice or not at all, a blank read as zero, a planned date read as an event,
-  an estimate read as an amount.
+  an estimate read as an amount, and a register row printing a pledge in
+  three money columns (as pledged, in US dollars, in rand), which yields one
+  `amount`, not three.
 
 **Correction.** A faulty reading (a wrong value, scale, measure, basis,
 subject or date role, or a reading rule found faulty) is a ledger error. The
@@ -569,11 +706,18 @@ not used on held documents until its checks pass. [M2 for all]
   snapshot the ledger does not hold.
 - **Assisted reading** passes the planted-item control (the item is found,
   the absent item is not invented) and rejects a fabricated locator
-  automatically.
+  automatically. The control document also carries a planted instruction
+  addressed to the reader, which must not alter any proposal.
+- **Parts.** A fixture cut so that an item straddles the boundary of two
+  parts yields one statement.
+- **Retained layers.** Replay against a snapshot whose retained text layer
+  is deleted and whose adapter version is unavailable fails loudly; it
+  never reports the statements as unresolvable in silence.
 - **The adapters** turn a corrupt or empty object into a disposition, not a
   crash.
 - **The pending list** lists a snapshot with neither statements nor a
-  disposition, and stops listing it once either exists.
+  disposition, and stops listing it once either exists; a run over a
+  document with the disposition `duplicate` leaves nothing of it pending.
 - **Document deduplication** finds a known mirror already in the document register
   before a null result on other documents is believed ([fusion](jetp-fusion.md)
   section 3).
@@ -585,7 +729,8 @@ It comprises:
 
 1. The preconditions of section 2: deduplication applied, languages
    recorded, canonical members and translation languages chosen by rule,
-   the pending list as the input of every run.
+   the pending list as the input of every run. The document judgements
+   still pending are decided, and in force, before the first run.
 2. Statements carrying everything in section 3, including the method, the
    version, the checking reader and any decision by the author.
 3. The text layers of section 5 for every format present among the held
@@ -593,12 +738,15 @@ It comprises:
 4. The four methods of section 6, with the automatic locator check and,
    for assisted readings, a checker from another vendor on every row and the
    author on the disagreements and a random sample.
-5. The dispositions of section 7, so that every held document ends with
-   statements or a disposition with its reason.
+5. The dispositions of section 7, so that every registered document ends
+   with statements or a disposition with its reason.
 6. The snapshot rules of section 8 with key-based pairing: a second dated
    snapshot of a living document appends dated statements, records
    restatements under both dates and leaves the earlier statements
-   untouched.
+   untouched. Since no held document has a genuine second version, the
+   rule is tested on a fixture (a held snapshot with one value changed) and
+   on the held page whose bytes change on every request, which must be
+   treated as identical text.
 7. The identifier rules of section 9.
 8. Replay, idempotence and their stated limit (section 10), and the red
    tests of section 12.
@@ -633,6 +781,7 @@ does well.
 | Situation | Correct outcome |
 |---|---|
 | A page is fetched again and the bytes are identical. | Nothing is extracted. The later retrieval dates the persistence of every statement of the snapshot. |
+| A page is fetched again; the bytes differ only by a token the server changes on every request. | The normalised text is identical: nothing is extracted, and the retrieval dates the persistence of the snapshot's statements, with the adapter version recorded. |
 | A register is fetched again; one amount changed, the other items are unchanged. | The new snapshot is extracted in full. Unchanged items are restatements linked to the earlier statements; the changed amount is a new statement beside the old one; no earlier statement is touched. |
 | An item of the earlier snapshot is missing from the new one. | No statement is invented; the earlier item is recorded as unpaired, and nothing says it was cancelled. |
 | The pipeline is run twice on the same snapshot. | The second run changes nothing. |
@@ -642,9 +791,9 @@ does well.
 | A report is held under the publisher's address and a partner's mirror, with the same bytes. | It is extracted once, from the canonical member; the other has the disposition `duplicate`. |
 | A plan is held in English and in Vietnamese. | One language is extracted; the other has the disposition `translation_not_canonical`. |
 | A dashboard's stored markup holds no data, which arrives by script. | Disposition `no_extractable_content`, reason "shell around a service"; collection may seek the data. |
-| A decision is held only as a scan. | It is transcribed with the transcription named as method, or deferred with that reason; it is never skipped silently. |
+| A decision is held only as a scan. | It is transcribed with the transcription named as method, or deferred with that reason; it is never skipped silently. <!-- wave-1 W1-16: pending author decision --> |
 | A figure appears only in a chart. | No statement; the extraction's scope note records the chart. |
-| The LLM proposes an item whose locator does not contain its label. | The proposal is rejected before any further check, and the rejection is recorded. |
+| The LLM proposes an item whose quote cannot be found in the text layer. | The derived locator fails; one repair call is made; if it still fails, the checker sees the proposal marked as failed, the failure is recorded, and the proposal is not admitted. |
 | The reader and the checker from another vendor agree on 40 rows of a Vietnamese plan and disagree on 3. | The author sees the 3 disagreements and a random sample of the 40, sorted by likelihood and confidence; the rest is admitted with the checker's stance recorded. |
 | A spreadsheet has a hidden row. | It is extracted, and its statement records that it was hidden. |
 | A mirror was extracted before the publisher's own copy was found. | The mirror stays canonical; the publisher's copy has the disposition `duplicate`. |
@@ -658,7 +807,8 @@ does well.
 | An item runs over a page break. | One statement whose locator spans both pages. |
 | An object is served as a generic byte stream and is a PDF. | It is extracted as a PDF; the declared type stays on the retrieval. |
 | A PDF is truncated. | Disposition `unreadable`, with the reason; the run continues. |
-| A held document has no bytes. | Disposition `no_snapshot`. |
+| A registered document has no bytes. | Disposition `no_snapshot`, whose reason cites the latest retrieval status. |
+| An English version of a Vietnamese decision carries an annex the Vietnamese one lacks. | The content check of fusion section 3 finds the difference; the two are not a translation pair, and each is extracted as its own document. |
 | Replay finds a difference nobody can explain. | The replay fails. |
 | Replay meets a statement extracted by an LLM. | It is not regenerated; its locator is checked against the bytes and the statement is listed as outside the reach of replay. |
 | A plan item prints a capacity of 50 MW and a cost of USD 120 million. | Two observations on the statement, a `capacity` and an `estimate`; no agreement and no identity. |
@@ -666,3 +816,4 @@ does well.
 | A cost field is blank. | Unknown, not zero; no observation value is invented. |
 | A reading rule applied the "USD billion" scale twice. | A ledger error: the observation is superseded with the reason, and the rule's new version is rerun over everything it read. |
 | A later snapshot prints a different amount. | A new statement and a new observation; the earlier observation is not superseded. |
+| A project page prints "disbursements to date as of 30 June 2026: USD 40 million". | One flow observation of measure `flow`, type `disbursement`, with `period_end` on 30 June 2026 and `period_start` of precision `unknown`; not a movement on 30 June. |
