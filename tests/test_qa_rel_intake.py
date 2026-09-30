@@ -117,6 +117,29 @@ def test_excluded_record_cannot_also_be_delivered(tmp_path):
     assert any("is also delivered" in e for e in ric.check_delivery(str(d)))
 
 
+def _no_dedup_key_delivery(tmp_path, record_id="r3", title="Climate finance in the Caribbean"):
+    row = {"record_id": record_id, "query_id": "q1", "reason": "no_dedup_key",
+           "title": title, "note": "https://hdl.handle.net/2139/12345"}
+    return _delivery(tmp_path, excluded=[row],
+                     manifest={"counts": {"records": 2, "excluded": {"no_dedup_key": 1}}})
+
+
+def test_titled_record_without_dedup_key_is_a_valid_exclusion(tmp_path):
+    assert ric.check_delivery(str(_no_dedup_key_delivery(tmp_path))) == []
+
+
+def test_no_dedup_key_row_needs_a_title(tmp_path):
+    d = _no_dedup_key_delivery(tmp_path, title="  ")
+    assert ric.check_delivery(str(d)) == [
+        "excluded.csv line 2: no_dedup_key row needs a title "
+        "(it enters the pool as a title-only work)"]
+
+
+def test_no_dedup_key_record_cannot_also_be_delivered(tmp_path):
+    d = _no_dedup_key_delivery(tmp_path, record_id="r1")
+    assert any("is also delivered" in e for e in ric.check_delivery(str(d)))
+
+
 @pytest.mark.parametrize("excluded", [["front_matter"], 1])
 def test_malformed_counts_excluded_is_a_violation_not_a_crash(tmp_path, excluded):
     d = _delivery(tmp_path, manifest={"counts": {"records": 2, "excluded": excluded}})
