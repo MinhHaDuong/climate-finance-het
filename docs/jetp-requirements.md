@@ -175,6 +175,19 @@ document that serves no requirement is removed or moved to a later
 milestone. Where a requirement and another document disagree, the
 disagreement is resolved in one of them, never left standing.
 
+### 2.5 Documents in scope
+
+A document is in scope, and is admitted to the register, when it states
+something about a Just Energy Transition Partnership's projects, money,
+perimeters, parties or states, or when it belongs to the reference pool of
+DA12 (milestones of JETP operations dated before the partnership, and
+operations of partner lenders in the four countries that carry no JETP
+attribution). A document of the reference pool is counted in its own
+counting scope and never in a strict JETP figure (F13). A document kept for
+context only is registered and given the disposition `out_of_scope`
+(Collection § 9, Extraction § 7). N2, N12 and N13 still exclude what they
+name. *M3a* for triage; *M2* for the documents held.
+
 ## 3. Users and their questions
 
 ### 3.1 Observatory readers
