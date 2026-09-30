@@ -13,12 +13,21 @@ Guards, each one tested:
   ``_open`` refuses any mode that could truncate or rewrite (``w``, ``+``);
 - the header must be exactly ``COLUMNS``;
 - a row whose key ``(work_key, stage, model, run_id)`` is already in the table
-  (or twice in the batch) is refused, so a re-import cannot double-count;
+  (or twice in the batch) is refused, so a re-import cannot double-count.
+  Keys compare byte-exact: no case folding, no whitespace trimming, no
+  identifier normalisation (``openalex:W1`` and ``openalex:w1`` are two keys);
+  a caller that wants folding normalises before it builds the row;
 - the sidecar ``icf_screen.manifest.jsonl`` (also append-only, one line per
   append) records the file's byte length and sha256 after every append.
   Before reading or appending, the table must match the last manifest line
   exactly: a shorter file is a truncation, a longer file an unrecorded write,
-  a same-length file with another hash a rewrite. Any of them aborts.
+  a same-length file with another hash a rewrite. Any of them aborts;
+- a table missing where a ``.dvc`` pointer tracks it is an unfetched table:
+  creating it is refused unless ``new_table`` is passed.
+
+The manifest is self-anchored: it catches accidents, not a writer who edits
+both files. The real tamper anchor is the DVC hash of ``data/rel_screen``
+(table and manifest together) committed in git.
 
 Readers go through ``read_table``, which runs the same verification.
 """
