@@ -2,12 +2,14 @@
 Title: Spec review wave 2 and author acceptance of spec v1
 Created: 2026-09-30
 Author: HDMX-coding-agent
-Blocked-by: 1710
+Closed: autoclosed — PR #1635
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
-
 2026-09-30T19:58Z HDMX-coding-agent note wave-2 ledger merged critically: 54 of 57 rows applied (13 in part), 2 deferred to M4, W2-04 pending author; E2-01..E2-09 from three external reviews; spec words 82773 -> 82727
+2026-09-30T20:40Z HDMX-coding-agent decision author accepted spec v1 on 2026-09-30 ("Accept defaults. Merge everything"): wave 2 (seven fresh lenses; external Grok 4.7, GLM-5.3, Qwen3.8-Max) found one blocker (W2-01), fixed in PR #1629; simplicity pass PR #1631; last defaults PR #1634; tag jetp-spec-v1 on 0217a024
+2026-09-30T20:40Z HDMX-coding-agent note blocker 1710 closed — Blocked-by removed.
+2026-09-30T20:40Z HDMX-coding-agent closed — autoclosed — PR #1635
 --- body ---
 ## Context
 
@@ -30,6 +32,6 @@ built before it.
 
 ## Exit criteria
 
-- [ ] A second review round (same lenses, fresh reviewers) finds no unresolved blocker
-- [ ] The author accepts the specification; acceptance recorded in [[1703]]
-- [ ] Tag `jetp-spec-v1` on the accepted commit
+- [x] A second review round (same lenses, fresh reviewers) finds no unresolved blocker
+- [x] The author accepts the specification; acceptance recorded in [[1703]]
+- [x] Tag `jetp-spec-v1` on the accepted commit

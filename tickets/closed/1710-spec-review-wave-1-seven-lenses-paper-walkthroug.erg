@@ -2,16 +2,18 @@
 Title: Spec review wave 1: seven lenses, paper walkthrough, external pass
 Created: 2026-09-30
 Author: HDMX-coding-agent
-Blocked-by: 1704
 Blocked-by: 1705
 Blocked-by: 1706
 Blocked-by: 1707
-Blocked-by: 1708
+Closed: autoclosed — PR #1635
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
-
 2026-09-30T13:54Z HDMX-coding-agent note blocker 1709 closed — Blocked-by removed.
+2026-09-30T20:40Z HDMX-coding-agent note wave 1 complete: seven lenses and two external batches archived under docs/jetp-spec-review/wave-1/ (ledger, agent results, external/); every row has an outcome (applied, decided by the author, moot or deferred); fixes merged
+2026-09-30T20:40Z HDMX-coding-agent note blocker 1704 closed — Blocked-by removed.
+2026-09-30T20:40Z HDMX-coding-agent note blocker 1708 closed — Blocked-by removed.
+2026-09-30T20:40Z HDMX-coding-agent closed — autoclosed — PR #1635
 --- body ---
 ## Context
 
@@ -56,6 +58,6 @@ then one external cross-vendor pass (OpenAI, Mistral) on the assembled spec.
 
 ## Exit criteria
 
-- [ ] Seven lens reports and one external report, archived under `docs/jetp-spec-review/wave-1/`
-- [ ] A findings ledger with one row per finding: lens, file, severity, proposed fix
-- [ ] The author has marked every finding fixed, deferred with a reason, or rejected, and the fixes are merged
+- [x] Seven lens reports and one external report, archived under `docs/jetp-spec-review/wave-1/`
+- [x] A findings ledger with one row per finding: lens, file, severity, proposed fix
+- [x] The author has marked every finding fixed, deferred with a reason, or rejected, and the fixes are merged

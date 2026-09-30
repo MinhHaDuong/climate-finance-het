@@ -2,7 +2,6 @@
 Title: Matching judgements as calibrated stances with a cutoff per result; storage and code follow fusion
 Created: 2026-09-30
 Author: HDMX-coding-agent
-Blocked-by: 1711
 
 --- log ---
 2026-09-30T11:35Z HDMX-coding-agent created
@@ -16,6 +15,7 @@ Blocked-by: 1711
 2026-09-30T18:47Z HDMX-coding-agent note exit criterion added from spec review wave 1, batch 2 (ticket 1710): documents.hosted_reading and the hosted-call settings on runs (X-07)
 2026-09-30T23:00Z HDMX-coding-agent note exit criteria added and amended from spec review wave 2 (ticket 1711): dispositions and restatements journals, line status columns, readings and runs corrections, journal terms, locator syntax, candidate_id, observation columns (W2-01 to W2-23, W2-56)
 
+2026-09-30T20:40Z HDMX-coding-agent note blocker 1711 closed — Blocked-by removed.
 --- body ---
 ## Context
 
