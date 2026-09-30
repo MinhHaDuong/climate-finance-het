@@ -159,6 +159,8 @@ def run(cfg, args, call=None):
                 try:
                     lab = json.loads(line)
                 except ValueError:
+                    lab = None
+                if not isinstance(lab, dict):
                     log.warning("skipping an unreadable line in %s (killed mid-write?)", out_path)
                     continue
                 if id_field not in lab:

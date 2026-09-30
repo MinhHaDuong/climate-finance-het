@@ -28,6 +28,7 @@ def test_lane_of_takes_the_highest_priority_source():
     assert si.lane_of("t1653-scielo", PRIORITY) == "t1653"
     assert si.lane_of("t16500-x", PRIORITY) == "t16500-x", "a prefix needs the dash"
     assert si.lane_of("t9999-new;t1650-sommaires", PRIORITY) == "t1650"
+    assert si.lane_of("", PRIORITY) == "unknown"
 
 
 def test_select_keeps_unscreened_orders_by_lane_and_counts_skips():
@@ -45,7 +46,7 @@ def test_select_keeps_unscreened_orders_by_lane_and_counts_skips():
     assert [r["work_key"] for _, r in picked] == [
         "openalex:W1", "doi:10.1/a", "doi:10.1/b", "openalex:W4", "openalex:W5", "openalex:W9"]
     assert per_lane == {"catalogue": 1, "t1530": 2, "t1652": 1, "t1650": 1, "t9999-new": 1}
-    assert skipped == {"t1650": 1}
+    assert skipped == {"t1650": ["title:x|2020"]}
     rec = picked[0][1]
     assert rec["countries"] == ["MX", "BR"]
     assert set(rec) == {"work_key", "openalex_id", "doi", "title", "year", "language", "journal",
@@ -70,9 +71,28 @@ def test_run_writes_the_screener_input_from_pool_and_table(tmp_path):
     summary = si.run(str(pool_path), table, str(out), PRIORITY)
     (rec,) = [json.loads(x) for x in open(out, encoding="utf-8")]
     assert rec["work_key"] == "openalex:W2"
-    assert summary["works"] == 1 and summary["per_lane"] == {
-        "t1650": {"works": 1, "skipped_no_title": 0}}
+    assert summary["works"] == 1 and summary["per_lane"] == {"t1650": 1}
+    assert summary["residue_no_title"]["works"] == 0
     assert json.loads((tmp_path / "in" / "screen_input.summary.json").read_text()) == summary
     # the screener reads it under --id-field work_key
     assert [r["work_key"] for r in sc.select_records(str(out), set(), 0, 7, "work_key")] == [
         "openalex:W2"]
+
+
+def test_title_less_works_are_named_residue_in_the_summary(tmp_path):
+    pool = [_work("openalex:W1", "catalogue", openalex_id="W1", all_openalex_ids="W1"),
+            _work("doi:10.9/z", "", title="", doi="10.9/z", all_dois="10.9/z")]
+    pool_path = tmp_path / "pool.csv"
+    with open(pool_path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=rv.POOL_FIELDS)
+        w.writeheader()
+        w.writerows(pool)
+    table = str(tmp_path / "rel_screen" / "icf_screen.csv")
+    ics.append_rows(table, [{"work_key": "openalex:W9", "stage": "1", "labeller": "llm",
+                             "model": "q", "prompt_sha256": "p", "run_id": "r",
+                             "machine": "padme", "label": "out", "doc_type": "research",
+                             "labelled_at": "2026-09-30", "source": "s"}], new_table=True)
+    summary = si.run(str(pool_path), table, str(tmp_path / "in.jsonl"), PRIORITY)
+    assert summary["per_lane"] == {"catalogue": 1}
+    res = summary["residue_no_title"]
+    assert (res["works"], res["per_lane"], res["work_keys"]) == (1, {"unknown": 1}, ["doi:10.9/z"])

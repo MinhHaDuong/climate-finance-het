@@ -43,6 +43,9 @@ A run is keyed by ``openalex_id`` (1530 input, the catalogue run) or by
 header (``id_field``), or from the label lines of runs older than that field;
 every label line must carry exactly that key, else the run is refused. A
 ``work_key`` label keeps the pool's key and the record's OpenAlex id, if any.
+A ``work_key`` run is imported only against the pool its input was built on
+and a table that has only grown since (``check_input_basis``, from the
+input's ``.summary.json``); ``--allow-input-drift`` overrides.
 ``--skip-ids`` leaves out labels whose input id is not a real OpenAlex id: the
 throwaway builder of the 2026-09-30 catalogue run took the first "W + digits"
 inside any ``source_id``, so 7 EconBiz ids (``EDSZBW…``) and 3 SciSpace URLs came in
@@ -59,6 +62,7 @@ Usage:
 
 import argparse
 import glob
+import hashlib
 import json
 import os
 import re
@@ -87,6 +91,14 @@ def _jsonl(path):
         return [json.loads(line) for line in fh if line.strip()]
 
 
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def _json(path):
     with open(path, encoding="utf-8") as fh:
         return json.load(fh)
@@ -97,7 +109,7 @@ def work_meta(rec: dict, id_field: str = "openalex_id") -> dict:
     oid = rec.get("openalex_id") or ""
     title = normalize_title(rec.get("title") or "")
     year = rec.get("year")
-    year = str(int(year)) if year not in (None, "") else ""
+    year = str(int(float(year))) if year not in (None, "") else ""
     key = rec["work_key"] if id_field == "work_key" else f"openalex:{oid}"
     return {"work_key": key, "openalex_id": oid,
             "doi": normalize_doi(rec.get("doi")),
@@ -197,8 +209,35 @@ def t1530_rows(archive: str, stage2_prompt_md: str) -> list[dict]:
 # ── One finished stage-1 run ─────────────────────────────
 
 
+def check_input_basis(input_path: str, pool_path: str, table_path: str) -> None:
+    """Refuse a work_key run whose input was built on another pool or table.
+
+    ``corpus_icf_stage1_input.py`` records the sha256 of the pool and of the
+    table it read (``<input stem>.summary.json``). The pool must be the same
+    file: a rebuilt pool can re-key works (a new DOI turns a ``title:`` work
+    into a ``doi:`` one), and the labels would then match nothing. The table
+    may only have grown since: its recorded hash must be one the manifest
+    logged after an append, since appends are the only allowed change.
+    """
+    summary_path = os.path.splitext(input_path)[0] + ".summary.json"
+    _require(os.path.exists(summary_path),
+             f"{summary_path} is missing: the pool and table the input was built on are unknown")
+    summary = _json(summary_path)
+    _require(os.path.exists(pool_path) and _sha256(pool_path) == summary["pool_sha256"],
+             f"{pool_path} is not the pool the run input was built on "
+             f"(sha256 {summary['pool_sha256'][:12]}…): rebuild that pool first")
+    grown_from = {e["sha256"] for e in ics._manifest_entries(table_path)} if os.path.exists(
+        ics.manifest_path(table_path)) else set()
+    _require(summary["table_sha256"] in grown_from,
+             f"{table_path} did not grow from the table the run input was built on "
+             f"(sha256 {summary['table_sha256'][:12]}…)")
+
+
 def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
-                    source: str, skip_ids: frozenset = frozenset()) -> list[dict]:
+                    source: str, skip_ids: frozenset = frozenset(),
+                    basis: tuple[str, str] | None = None) -> list[dict]:
+    """Table rows of a finished run; ``basis`` = (pool, table) checks a work_key
+    run's input against them (``check_input_basis``), None skips that check."""
     log_path = os.path.join(run_dir, "run.log")
     text = open(log_path, encoding="utf-8").read() if os.path.exists(log_path) else ""
     _require(bool(FINISHED.search(text)),
@@ -213,7 +252,12 @@ def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
     started = min(i["started"] for i in invocations)
     labels = _jsonl(os.path.join(run_dir, "screen.jsonl"))
     field = run_id_field(invocations, labels, run_dir)
-    inputs = {r[field]: r for r in _jsonl(input_path)}
+    if field == "work_key" and basis:
+        check_input_basis(input_path, *basis)
+    records = _jsonl(input_path)
+    bad = [n for n, r in enumerate(records, 1) if not isinstance(r, dict) or not r.get(field)]
+    _require(not bad, f"{input_path}: {len(bad)} input records lack {field!r}, e.g. line {bad[:1]}")
+    inputs = {r[field]: r for r in records}
     missing = [lab[field] for lab in labels if lab[field] not in inputs]
     _require(not missing, f"{len(missing)} labels outside the run input, e.g. {missing[:3]}")
     (model,), (prompt,) = models, prompts
@@ -264,6 +308,11 @@ def main(argv=None):
     p2.add_argument("--machine", required=True)
     p2.add_argument("--input", default=None, help="default: RUN_DIR/screen_input.jsonl")
     p2.add_argument("--run-id", default=None, help="default: the run directory name")
+    p2.add_argument("--pool", default=None,
+                    help="work_key runs: the pool the input was built on (default: config pool)")
+    p2.add_argument("--allow-input-drift", action="store_true",
+                    help="import a work_key run although pool or table differ from those its "
+                         "input was built on")
     p2.add_argument("--skip-ids", default=None,
                     help="file of input ids (one per line) whose labels are not imported, "
                          "e.g. ids that are not real OpenAlex ids")
@@ -283,8 +332,10 @@ def main(argv=None):
             if args.skip_ids:
                 with open(args.skip_ids, encoding="utf-8") as fh:
                     skip = frozenset(line.strip() for line in fh if line.strip())
-            rows = stage1_run_rows(run_dir, args.input or os.path.join(run_dir, "screen_input.jsonl"),
-                                   args.machine, run_id, f"{run_id}/screen.jsonl", skip)
+            input_path = args.input or os.path.join(run_dir, "screen_input.jsonl")
+            basis = None if args.allow_input_drift else (args.pool or cfg["pool"], table)
+            rows = stage1_run_rows(run_dir, input_path, args.machine, run_id,
+                                   f"{run_id}/screen.jsonl", skip, basis)
             log.info("skipped %d ids listed in --skip-ids", len(skip))
             note = f"import stage-1 run {run_id}"
         added, skipped = ics.append_new(table, rows, note, args.new_table)

@@ -229,3 +229,21 @@ def test_input_record_without_the_key_is_refused(tmp_path):
     inp.write_text("".join(json.dumps(r) + "\n" for r in _recs(2)), encoding="utf-8")
     with pytest.raises(SystemExit, match="line 1 has no 'work_key'"):
         sc.select_records(str(inp), set(), 0, 7, "work_key")
+
+
+def test_resume_skips_valid_json_lines_that_are_not_objects(tmp_path):
+    inp = tmp_path / "in.jsonl"
+    inp.write_text("".join(json.dumps(r) + "\n" for r in _pool_recs(2)), encoding="utf-8")
+    out = tmp_path / "o"
+    out.mkdir()
+    (out / "screen.jsonl").write_text(
+        json.dumps({"work_key": "title:t1|2020", "label": "out"}) + "\n12\n[1]\nnull\n",
+        encoding="utf-8")
+    asked = []
+
+    def call(prompt, model, max_tokens):
+        asked.append(prompt.count("Title:"))
+        return _label_lines(prompt, model, max_tokens)
+
+    sc.run({**_cfg(), "batch_size": 5, "workers": 1}, _args(inp, out, "work_key"), call=call)
+    assert asked == [1]

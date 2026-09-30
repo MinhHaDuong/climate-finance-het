@@ -14,11 +14,14 @@ so that small, complete lanes finish before the long ones, then by
 ``work_key``. A work belongs to the highest-priority lane among its
 ``sources``; an entry ``t1650`` matches the lane directories ``t1650`` and
 ``t1650-<slug>``. A lane the list does not name ranks after it, by name, with a
-warning. Works without a title are skipped and counted: the rule cannot be
-applied to an empty record.
+warning; a work without sources is lane ``unknown``. Works without a title are
+not written: the rule cannot be applied to an empty record. They are accepted
+residue, not unscreened work: the summary names them (count per lane and
+work keys), so a completeness check of stage 1 subtracts them by name.
 
 Outputs: ``--output`` (JSONL) and ``<output stem>.summary.json`` (inputs'
-sha256, works written and skipped per lane, in order).
+sha256, works written per lane in order, and the residue).
+``corpus_icf_import.py stage1-run`` checks a run against those hashes.
 
 Usage:
     python scripts/corpus_icf_stage1_input.py --output DIR/screen_input.jsonl \\
@@ -29,7 +32,7 @@ import argparse
 import json
 import os
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 
 import _icf_screen as ics
 import _rel_view as rv
@@ -39,6 +42,7 @@ from utils import get_logger
 
 log = get_logger("corpus_icf_stage1_input")
 
+UNKNOWN_LANE = "unknown"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_screen.yaml")
 
@@ -53,7 +57,7 @@ def lane_of(sources: str, priority: list[str]) -> str:
 
     srcs = [s for s in sources.split(";") if s]
     if not srcs:
-        return ""
+        return UNKNOWN_LANE
     best = min(srcs, key=rank)
     k = rank(best)[0]
     return priority[k] if k < len(priority) else best
@@ -70,23 +74,24 @@ def record(p: dict) -> dict:
 
 def select(pool: list[dict], view_rows: list[dict], priority: list[str]
            ) -> tuple[list[tuple[str, dict]], Counter, Counter]:
-    """``[(lane, record)]`` in screening order, works per lane, skipped per lane."""
+    """``[(lane, record)]`` in screening order, works per lane, and the
+    ``{lane: [work_key]}`` of title-less works left out."""
     unscreened = {r["work_key"] for r in view_rows if r["status"] == "unscreened"}
     order = {p: k for k, p in enumerate(priority)}
-    picked, skipped = [], Counter()
+    picked, skipped = [], defaultdict(list)
     for p in pool:
         if p["work_key"] not in unscreened:
             continue
         lane = lane_of(p["sources"], priority)
         if not p["title"].strip():
-            skipped[lane] += 1
+            skipped[lane].append(p["work_key"])
             continue
         picked.append((lane, record(p)))
     unknown = sorted({lane for lane, _ in picked} - set(priority))
     if unknown:
         log.warning("lanes not in stage1.lane_priority, ranked after it by name: %s", unknown)
     picked.sort(key=lambda lr: (order.get(lr[0], len(priority)), lr[0], lr[1]["work_key"]))
-    return picked, Counter(lane for lane, _ in picked), skipped
+    return picked, Counter(lane for lane, _ in picked), {k: sorted(v) for k, v in skipped.items()}
 
 
 def run(pool_path: str, table_path: str, output: str, priority: list[str]) -> dict:
@@ -103,9 +108,14 @@ def run(pool_path: str, table_path: str, output: str, priority: list[str]) -> di
         "pool": os.path.basename(pool_path), "pool_sha256": rv.sha256_file(pool_path),
         "table": os.path.basename(table_path), "table_sha256": rv.sha256_file(table_path),
         "lane_priority": priority,
-        "works": len(picked), "skipped_no_title": sum(skipped.values()),
-        "per_lane": {lane: {"works": per_lane[lane], "skipped_no_title": skipped[lane]}
-                     for lane in lanes},
+        "works": len(picked),
+        "per_lane": {lane: per_lane[lane] for lane in lanes if per_lane[lane]},
+        "residue_no_title": {
+            "note": "not screened: no title to apply the rule to; accepted residue of stage 1, "
+                    "not unscreened work",
+            "works": sum(len(v) for v in skipped.values()),
+            "per_lane": {lane: len(skipped[lane]) for lane in lanes if lane in skipped},
+            "work_keys": sorted(k for v in skipped.values() for k in v)},
     }
     with open(os.path.splitext(output)[0] + ".summary.json", "w", encoding="utf-8") as fh:
         json.dump(summary, fh, ensure_ascii=False, indent=2)
@@ -129,8 +139,9 @@ def main(argv=None):
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1
-    log.info("%d unscreened works written to %s (%d skipped, no title); per lane %s",
-             summary["works"], args.output, summary["skipped_no_title"], summary["per_lane"])
+    log.info("%d unscreened works written to %s; per lane %s; residue without title %s",
+             summary["works"], args.output, summary["per_lane"],
+             summary["residue_no_title"]["per_lane"])
     return 0
 
 
