@@ -5,26 +5,31 @@
   "year_tolerance": 1,
   "pools": {
     "unified": {
+      "kind": "catalogue",
       "file": "unified_works.csv",
       "md5": "3633ad9f4517c02618a0ecab722a8051",
       "records": 43179
     },
     "refined": {
+      "kind": "catalogue",
       "file": "refined_works.csv",
       "md5": "a2cdab95c82026b567b83947236321bd",
       "records": 33344
     },
     "extended": {
+      "kind": "catalogue",
       "file": "extended_works.csv",
       "md5": "ba45adeb6020f034972271ab5060d7a5",
       "records": 43179
     },
     "rel_sud_1530_union": {
+      "kind": "candidates",
       "file": "screen_input_union.jsonl",
       "md5": "3001396fad97dcf1f554039b53963445",
       "records": 25693
     },
     "rel_sud_1530_final": {
+      "kind": "candidates",
       "file": "screen_input_final.jsonl",
       "md5": "89c3fe81185625b3f458714c8f375f69",
       "records": 30480
