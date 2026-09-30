@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
+2026-09-30T14:30Z HDMX-coding-agent note draft docs/jetp-extraction.md written (14 sections, checks table, 6 open questions); criteria 1-2 met; criterion 3 left open: lines carry no reading method in the storage contract while the spec, 1509 and fusion pedigree require one
 
 --- body ---
 ## Context
@@ -30,6 +31,6 @@ built before it.
 
 ## Exit criteria
 
-- [ ] `docs/jetp-extraction.md`, conceptual, covers document deduplication before reading, text layers per format, parsers per repeated series, assisted reading with row-by-row review for one-offs, dispositions with reasons, dated snapshots and restatements, replay and idempotence, red tests per extractor
-- [ ] Every rule carries its milestone; the M2 slice is the minimum that extracts all held documents correctly and traceably
+- [x] `docs/jetp-extraction.md`, conceptual, covers document deduplication before reading, text layers per format, parsers per repeated series, assisted reading with row-by-row review for one-offs, dispositions with reasons, dated snapshots and restatements, replay and idempotence, red tests per extractor
+- [x] Every rule carries its milestone; the M2 slice is the minimum that extracts all held documents correctly and traceably
 - [ ] [[1500]] and [[1506]] exit criteria are consistent with it
