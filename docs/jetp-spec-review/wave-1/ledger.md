@@ -120,7 +120,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Set the audit parameters: sample floor per document (options: 3, 10, or a share such as 10% with floor 3) and the per-class precision floor that reopens a stratum (options: 90%, 95%). Recommended: floor 3 per document drawn to a target interval width, precision floor 95% lower bound per class, revisited after the first two logged sittings.
 
-**Outcome.** open, needs author.
+**Outcome.** resolved by the author's rule of 2026-09-30 (autonomy; no author audit), in the commit "docs(jetp): autonomy correction, no machine judgement routed to the author" (branch `t1710-autonomy-correction`).
 
 ### W1-05 (major, M2)
 
@@ -130,7 +130,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Fix the M2 attention total and the deferral stance. Options: (a) a milestone total (e.g. 40 h) with residue deferred by part and accepted by list; (b) no total, accept the deferred list at milestone review; (c) add a third reader with a two-of-three rule to cut disagreements before setting a total. Recommended: (a) with 40 h provisional, re-set after the first two sittings; (c) goes to a later round once real minutes are logged.
 
-**Outcome.** open, needs author.
+**Outcome.** resolved by the author's rule of 2026-09-30 (autonomy; no author audit), in the commit "docs(jetp): autonomy correction, no machine judgement routed to the author" (branch `t1710-autonomy-correction`).
 
 ### W1-06 (major, M2)
 
@@ -534,7 +534,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Keep the local-reader pilot at M2 (bounded to one long document) or defer it to M4? Recommended: keep it bounded at M2 since C3 asks for local compute first and the cost is one run; defer if GPU time on padme is contended.
 
-**Outcome.** partly fixed in 954d6e84 (M2 cost derived from the 115 pending documents); rest pending author.
+**Outcome.** M2 cost corrected in 954d6e84; the rest resolved by the author's rule of 2026-09-30 (autonomy; no author audit), in the commit "docs(jetp): autonomy correction, no machine judgement routed to the author" (branch `t1710-autonomy-correction`): the local readers are the default, one model per GPU, selected and calibrated on OpenRouter before installation, and the hosted model is the arbiter.
 
 ### W1-53 (minor, M2)
 

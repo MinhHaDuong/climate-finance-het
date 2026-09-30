@@ -205,9 +205,10 @@ what the previous ones left open and signing with its own method name.
 3. Named entities in the label languages (Indonesian, Vietnamese, French,
    English): place, operator, technology and capacity as typed spans, matched
    as tuples. Likelihood from the agreement of the tuples.
-4. A reading by LLMs of the remaining candidate matches, given
+4. A reading by two LLM readers of the remaining candidate matches, given
    both statements and the pages they come from.
-5. A person, for what the readers decline or contradict each other on.
+5. The arbiter, a stronger LLM given both readings and the pages, for what
+   the readers contradict each other on or hold below the threshold.
 
 A proposer's settings are part of its method version, and are tested against
 matches already judged by hand before its judgements are used. Each method
@@ -220,23 +221,35 @@ under a rule the author adopted, by version, in a recorded decision: identical
 bytes, the same external identifier, a case or diacritic variant of one
 name. Such a rule is the author's judgement applied by a program, and its
 rows name the rule as their method. Every other proposal, by a program or an
-LLM, is recorded as a candidate match until the checking rule of
-[extraction](jetp-extraction.md) section 6.3 or the author accepts it. This
+LLM, is recorded as a candidate match until the judgement protocol of
+[extraction](jetp-extraction.md) section 6.3 accepts it, or the author,
+when he chooses to, decides it. This
 is how the first principle ("no rule below selects a value or merges two
 things on its own") and the proposers above hold together. [M2]
 
-**Reading and verification.** The author is not the checker. A reading is
-done by independent readers from different vendors, on the same inputs, blind
-to each other's answers, choosing from a closed list of options with a quoted
-basis and a calibrated likelihood. Positive controls with a known answer run
-first, and a reader that misses one is weighted out. A versioned rule turns
-the readings into one judgement: the likelihood the readers support, and a
-confidence that falls when they disagree. Every candidate match gets a
-judgement, with the readers' answers kept beside it; the author examines the
-results sorted by likelihood and confidence ("take a stance, keep track of
-the confidence level, and let me examine the results sorted by confidence
-level"). A judgement that implies a change in what a term means is a proposed
-revision of that term, never an edit of the adopted definition. [M4 for the full panel of independent readers with positive controls; until then one reader and one checker from another vendor, as extraction section 6.3 provides]
+**Reading and verification.** The author is not the checker, and no
+machine judgement is routed to him. A reading is one answer to one
+candidate match, choosing from a closed list of options with a quoted basis
+and a calibrated likelihood, and it names its role: *reader* and *second
+reader*, two LLMs from different model families reading the same inputs
+independently, blind to each other's answers; *arbiter*, a stronger LLM
+given both readings and the source pages when the readers disagree or
+either is below the match threshold; *author*, only when he chooses to
+decide. Every reader and the arbiter are calibrated on held-out reference
+answers before use (the accepted and rejected match judgements of the M1b
+catalogue), their raw self-scores mapped to the likelihood terms, and a
+model that fails its positive controls is weighted out. A versioned rule
+turns the readings into one judgement: where the two readers agree at or
+above the threshold, their stance; otherwise the arbiter's, possibly
+undetermined; with a confidence that falls when they disagree. Every
+candidate match gets a judgement, with every reading kept beside it, and
+the results are served sorted by likelihood and confidence ("take a stance,
+keep track of the confidence level, and let me examine the results sorted
+by confidence level"). A decision the author makes is recorded as a reading
+of the role *author* and a judgement like any other. Only a question that
+changes what a term or the contract means goes to him, with the panel's
+stance: a judgement that implies such a change is a proposed revision of
+that term, never an edit of the adopted definition. [M2]
 
 **Organisations.** Parties are under authority control, as in a library's
 name authority file or the ROR and GLEIF registries: one identity per
@@ -270,13 +283,14 @@ a translation pair; the other members remain citable. Proposers:
 3. Agreement of title, publisher, publication date, page count and any
    identifier the document prints: a partner's mirror and, with language
    detection, a translation.
-4. A reading by LLMs of the remaining pairs, given both first
+4. A reading by two LLM readers of the remaining pairs, given both first
    pages.
-5. A person.
+5. The arbiter, for what the readers leave open.
 
 Proposers 1 and 2 are deterministic and run at M2; proposer 3 runs at M2 as
-a bounded list of candidate pairs sorted by likelihood, which the author
-decides; proposers 4 and 5 start at M3a, with the checking rule of
+a bounded list of candidate pairs sorted by likelihood, judged under the
+protocol of [extraction](jetp-extraction.md) section 6.3; proposers 4 and
+5 start at M3a, with the checking rule of
 [extraction](jetp-extraction.md) section 6.3, when discovery brings
 mirrors. [M2 for proposers 1 to 3; M3a for proposers 4 and 5]
 

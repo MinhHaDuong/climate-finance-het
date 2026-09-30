@@ -105,12 +105,13 @@ the author's order of priority.
   gap to fill by inference.
 - *A neutral record is trusted by all sides.* This holds only if the
   Observer never takes a position of its own (design rule below).
-- *Machine reading is accurate enough at a bearable cost.* Two LLM readers
-  from different vendors and a sampled human check (Q5) test this continuously,
-  and the costs are logged (Q15, Q17).
+- *Machine reading is accurate enough at a bearable cost.* Diverse readers
+  calibrated on held-out reference answers, with escalation of what they
+  leave open (Q5), test this continuously, and the costs are logged (Q15,
+  Q17).
 - *One researcher can sustain it to the horizon.* The horizon is declared
-  and ends with an archived release (C10); the design keeps the author's
-  review bounded (C1).
+  and ends with an archived release (C10); no machine judgement is routed
+  to the author (C1).
 - *The partnerships continue.* A partner withdrawing or a partnership
   lapsing is a development the record documents, not a reason to stop
   documenting.
@@ -211,8 +212,8 @@ it and by a researcher who cannot read every line. Maintainability is
 therefore a first-class requirement, not an operational afterthought
 (Q18 to Q21, C1, C2).
 
-- **OP-1** What is pending, what failed, and which judgements need me, in
-  order of likelihood and confidence?
+- **OP-1** What is pending, what failed, and which judgements are least
+  certain, in order of likelihood and confidence?
 - **OP-2** Did every launched or scheduled run finish, and if not, why?
 - **OP-3** Does something look wrong (a total that jumped, a country with no
   new documents, a figure whose trail does not resolve), and where does it
@@ -651,7 +652,7 @@ added here once the first replay has counted it (Q1).
 portals, official news, annual reports, operator reports, project lists,
 implementation plans, investment plans, approval documents, secondary news.
 Repeated series get a dedicated parser; one-off documents get an assisted
-reading with row-by-row review. *M2.* Test: every type among the 115 has
+reading judged row by row (Q5). *M2.* Test: every type among the 115 has
 an extraction path, and each document extracted by a dedicated parser
 belongs to a repeated series or a repeated format of one publisher (a page
 template).
@@ -776,18 +777,28 @@ and the unreachable list before M3b starts.
 
 ### 6.2 Judgement and uncertainty
 
-**Q5. Machine judgements are automated, diverse and recorded.** Judgements
-made by LLMs (a statement extracted, a match, a preference, a
-classification) are made without the author, by a panel diverse in vendor,
-recorded with their likelihood and confidence, and presented sorted by
-them. The author examines a bounded share, not every item. The composition
-of the panel, the share the author examines and the milestone at which each
-part applies are specified in Extraction and in Fusion § 3. *M2* for
-statements extracted and for document identity judgements, *M3a* for
-discovery and admission judgements, *M3b* for the other identity judgements
-and for preference judgements. Test: every LLM judgement in
-a release carries readings from more than one vendor with likelihood and
-confidence; the share the author examined is stated and bounded.
+**Q5. Machine judgements are automated, diverse, calibrated and recorded.**
+Judgements made by LLMs (a statement extracted, a match, a preference, a
+classification) are made without the author. They are automated; diverse,
+read independently by models of different families; calibrated, since
+readers are selected and calibrated on held-out reference answers before
+use and a reader that fails its positive controls is weighted out;
+escalated, since what the readers disagree on or hold with too little
+likelihood goes to a stronger arbiter; recorded, since every item ends with
+a stance, possibly undetermined, and a calibrated likelihood and
+confidence, with every reader's answer; and served sorted by likelihood and
+confidence. No item is queued for the author: he examines the results when
+he chooses, and a decision he makes is recorded like any other judgement.
+Only a question that changes what a term or the contract means goes to
+him, with the panel's stance. The readers, the escalation and the
+milestone at which each part applies are specified in Extraction,
+Collection and Fusion § 3. *M2* for statements extracted and for document
+identity judgements, *M3a* for discovery and admission judgements, *M3b*
+for the other identity judgements and for preference judgements. Test:
+every LLM judgement in a release carries readings from more than one model
+family, a stance and a calibrated likelihood and confidence; every reader
+used has a recorded calibration on held-out reference answers; no design
+rule queues an item for the author.
 
 **Q11. Uncertainty is never hidden.** A value may be a range and a date an
 interval; judgements use the calibrated likelihood and confidence scales;
@@ -803,11 +814,12 @@ reading of a statement or judgement, and every human decision on it, is
 kept; neither overwrites the other, and each names its method, version and
 cost. A decision that rejects a reading names the step at fault (retrieval,
 extraction, reading, matching), so that errors are locatable. The reference
-answers for research on machine reading (AEDIST) are the human-decided
-subset: the disagreements, the missed items and the sampled rows the author
-decided. A statement admitted on the agreement of two LLMs alone carries
-that flag and is not a reference answer, and the reader and checker LLMs
-are named, so that a benchmark can exclude the Observer's own readers. The
+answers for research on machine reading (AEDIST) are the hand-made
+readings: lines read by hand, match judgements decided by hand, and any
+decision the author chose to make. A statement admitted on machine readings
+alone carries that flag and is not a reference answer, and the readers and
+the arbiter are named, so that a benchmark can exclude the Observer's own
+readers. The
 cost per method can be compared. *M2.* Test: for a sample
 of checked statements, every machine reading and the decision are
 retrievable with method, version and cost; a decision that disagrees with a
@@ -856,13 +868,13 @@ recorded version is byte-identical.
 **Q20. Anomalies are visible in the Observatory.** Besides its public role,
 the Observatory shows the author and the agents what needs attention: figures whose
 trail does not resolve, documents and countries without new statements,
-judgements awaiting the author, and changes between runs large enough to
-check. *M3b* for broken trails, in the build and run reports, and for
-pending judgements, on a sorted page of the Observatory; *M4* for countries
-and documents without new statements and for changes between runs. Test: a
-deliberately broken trail appears in the build report and stops the
-release, and a pending judgement appears on the page of pending judgements;
-at M4, an injected jump in a total is flagged.
+the least certain and the undetermined judgements, and changes between runs
+large enough to check. *M3b* for broken trails, in the build and run
+reports, and for judgements, on a page sorted by likelihood and confidence;
+*M4* for countries and documents without new statements and for changes
+between runs. Test: a deliberately broken trail appears in the build report
+and stops the release, and an undetermined judgement appears on the sorted
+page of judgements; at M4, an injected jump in a total is flagged.
 
 **Q21. Decisions are traceable.** Every decision that shapes the Observer (a
 rule adopted, a scope changed, a value preferred by the author, a milestone
@@ -878,19 +890,20 @@ for discovery rounds, *M4* for scheduled passes. Test: kill a run midway; the fa
 report reads as an all-clear.
 
 **Q15. Cost and effort are measured.** Each run records its LLM spend and
-the human minutes spent on its review, so that the cost of an accepted
-change can be computed. *M2* for the record, *M3b* for stating it in the
-release. Test: the M3b release states spend and review time per document
-class, document type and extraction method.
+its local compute time, so that the cost of an accepted change can be
+computed. *M2* for the record, *M3b* for stating it in the release. Test:
+the M3b release states spend and compute time per document class, document
+type and extraction method.
 
 ## 7. Constraints
 
 **C1. One researcher's attention.** The author is the only person working on
 the Observer, and the author's attention is its scarcest resource.
-Decisions are batched, and the author's review of machine judgements is
-bounded (Q5). *M2.* Test: no design rule requires the author to review every
-item of a class; each queue for the author states its expected size and is
-sorted by likelihood and confidence.
+Decisions are batched, and no machine judgement is routed to the author
+(Q5): he examines results sorted by likelihood and confidence when he
+chooses. *M2.* Test: no design rule requires the author to review, audit or
+sample any item of a class; only questions that change what a term or the
+contract means are put to him, batched with a recommended default.
 
 **C2. Two machines, one direction.** padme, a personal workstation with GPUs
 and the document bytes, runs every job that reads bytes or runs LLMs; doudou, a
@@ -899,10 +912,10 @@ says so. Data flows from padme to doudou only. *M2* for jobs, *M4* for
 supervision of scheduled runs. Test: no design rule moves data from doudou
 to padme or requires the laptop to hold all document bytes.
 
-**C3. Local compute first.** padme serves a local LLM on two
-consumer GPUs (16 GB and 12 GB). Bulk reading fits that LLM or a paid
-interface within budget (C4); cross-vendor judgement panels use paid
-interfaces. *M2.* Test: each reading method names where it runs.
+**C3. Local compute first.** padme serves local LLM readers on two
+consumer GPUs (16 GB and 12 GB). Bulk reading runs on them, or on a paid
+interface within budget (C4); escalation to a stronger model uses a paid
+interface. *M2.* Test: each reading method names where it runs.
 
 **C4. Budgets.** Paid interfaces (LLM readers, search, bibliographic
 APIs) run under a budget stated before the run, per document and per run; a
@@ -1086,7 +1099,7 @@ document that reads statements into observations.
 | Q8 Releases frozen and reproducible | M3b | Results and releases |
 | Q9 Every method has a version | M2, M3b | Extraction; Extraction § observations; Fusion § 1 |
 | Q10 Recall stated | M3a | Collection |
-| Q5 Machine judgements automated, diverse, recorded | M2, M3a, M3b | Extraction; Collection; Fusion § 3 |
+| Q5 Machine judgements automated, diverse, calibrated, recorded | M2, M3a, M3b | Extraction; Collection; Fusion § 3 |
 | Q11 Uncertainty never hidden | M2, M3b | Extraction § observations; Fusion § 1; Results and releases |
 | Q17 Machine readings and human decisions side by side | M2 | Extraction; Fusion § 3; Storage |
 | Q12 Computed and published numbers apart | M3b | Presentation; Results and releases |
@@ -1166,7 +1179,7 @@ requirements of the sections they test.
 | Operation § 4 The repository as control plane | Q19, Q21 |
 | Operation § 5 LLM readers and the checking rule | Q5, Q17, C3 |
 | Operation § 6 Secrets | C9 |
-| Operation § 7 and § 8 Budgets, logging spend and review time | C1, C4, Q14, Q15 |
+| Operation § 7 and § 8 Budgets, logging spend and compute time | C1, C4, Q14, Q15 |
 | Operation § 9 Backups and recovery | Q19 |
 | Operation § 10 Failure handling | Q14, C2 |
 | Language | Q13, Q18 |

@@ -48,16 +48,19 @@ there reaches the laptop by the repository and DVC, never the other way.
 data enters the record through a branch, a review and passing tests. A
 decision is a ticket entry or a commit message, not a conversation. [M2]
 
-**The author's attention is a budget like money.** Every queue for the
-author states its size before it is presented, and a run that would exceed
-the author's budget splits or defers work rather than asking for more
-minutes. [M2]
+**No machine judgement waits for the author.** Runs work in complete
+autonomy: every item ends with a stance, possibly undetermined, and a
+calibrated likelihood and confidence, recorded with every reader's and the
+arbiter's answer. Nothing is queued for the author; the results are served
+sorted by likelihood and confidence, and he examines them when he chooses.
+Only a question that changes what a term or the contract means goes to
+him, with the panel's stance. [M2]
 
 ## 2. Machines
 
 | Machine | What it is | What it holds | What runs there |
 |---|---|---|---|
-| padme | Personal workstation: two consumer GPUs (RTX A4000 16 GB, RTX 3060 12 GB), 125 GB RAM, one 953 GB NVMe disk | The primary checkout, the DVC cache and the DVC remote, every document byte, the local LLM, the credentials for paid services | Every job that reads document bytes or calls an LLM: fetch runs, extraction runs, replay, discovery rounds, matching to CRS and IATI, the release build, the Observatory build, the full test suite |
+| padme | Personal workstation: two consumer GPUs (RTX A4000 16 GB, RTX 3060 12 GB), 125 GB RAM, one 953 GB NVMe disk | The primary checkout, the DVC cache and the DVC remote, every document byte, the two local LLM readers (one per GPU), the credentials for paid services | Every job that reads document bytes or calls an LLM: fetch runs, extraction runs, replay, discovery rounds, matching to CRS and IATI, the release build, the Observatory build, the full test suite |
 | doudou | Laptop | A checkout of the repository; DVC data only as pulled from padme | The author's sessions; development agents editing code, rules and tickets; the fast test tier; supervision of runs on padme; viewing padme's browser on its own screen |
 
 - **padme runs the jobs.** A job that reads bytes or runs LLMs is launched on
@@ -177,46 +180,66 @@ of record or the Observatory without that review. [M2]
 - Delete the `gh-pages` branch, which is the live Observatory.
 
 **The author's decisions.** The author decides scope, budgets, milestone
-acceptance, protocol changes, the random-sample size shown for review, and
-every admission or rejection that the checking rule of section 5 routes to
-the author. Decisions are batched: an agent collects the foreseeable
+acceptance, protocol changes, and the questions that change what a term or
+the contract means. No item of a run is routed to him; when he chooses to
+decide one, his decision is recorded as a judgement like any other
+(section 5). Decisions are batched: an agent collects the foreseeable
 questions of a run into one round, each with a recommended default. [M2]
 
 ## 5. LLM readers and the checking rule
 
-**One reader, one checker from another vendor.** An LLM judgement
-(a statement extracted, a disposition proposed, a candidate triaged, a match) is
-made by one reader and checked on every item by a second reader from
-another vendor, blind to the first answer where the method allows. The
-author sees the disagreements, the items the checker says were missed, and a
-random sample of the agreements, sorted by likelihood and confidence. The
-rules are those of extraction § 6.3 and collection § 9; this section only
-says what runs where. [M2 for statements extracted and document identity
+**Two local readers, a hosted arbiter.** An LLM judgement (a statement
+extracted, a disposition proposed, a candidate triaged, a match) is made on
+every item by two LLM readers on padme, from different model families,
+each blind to the other. Where they agree at a calibrated likelihood at or
+above the level the method declares, the result stands; where they
+disagree, or either is below that level, a stronger model reached through
+OpenRouter arbitrates, given both readings and the source pages. Every
+item ends with a stance and a calibrated likelihood and confidence, and
+nothing is queued for the author. The rules are those of extraction § 6.3,
+collection § 9 and fusion § 3; this section only says what runs where. [M2 for statements extracted and document identity
 judgements; M3a for discovery and triage; M3b for the other identity
 judgements and for preference judgements]
 
-**Replacing a reader.** A reader or checker that is retired, repriced or
-unavailable is replaced only under extraction § 6.3: the replacement passes
-the controls of extraction § 12 and reaches a stated minimum agreement with
-the author-checked statements on a fixed sample stratified by language
-before it reads, and the change is a new method version. [M2]
+**One model per GPU.** Each local reader is one model sized to fit its
+card: one on the RTX A4000 (16 GB), the other on the RTX 3060 (12 GB), the
+two from different families, served side by side. [M2]
+
+**Selection and calibration before installation.** Model selection and
+calibration run first on OpenRouter, over candidate open-weight models of
+the sizes that fit each card, scored on held-out reference answers: lines
+of the extracted documents made by hand, for extraction; the accepted and
+rejected match judgements of the M1b catalogue, for matching. Each
+candidate's raw self-scores are mapped to the likelihood terms of fusion
+§ 1 from those scores, and a candidate that fails its positive controls is
+weighted out. Only the winning pair, the best-scoring model for each card
+with the two from different families, is installed on padme. The arbiter, a
+stronger hosted model, is calibrated on the same answers. The scores, the
+mapping and the models chosen are recorded as a method version, and no
+unattended run starts before them. [M2, before the first unattended run]
+
+**Replacing a reader.** A reader or the arbiter that is retired, repriced
+or unavailable is replaced only under extraction § 6.3: the replacement
+passes the controls of extraction § 12 and its calibration on the held-out
+reference answers, stratified by language, before it reads, and the change
+is a new method version. [M2]
 
 **Vendor means LLM family, not billing channel.** An LLM reached through
-an aggregator (OpenRouter) counts under its maker. The local Qwen LLM
-counts as Alibaba; when it reads, the checker is from another maker. [M2]
+an aggregator (OpenRouter) counts under its maker, and so does a local
+model: a Qwen model counts as Alibaba. The two readers are from different
+makers. [M2]
 
 **Where each reader runs.** [M2]
 
 | Role | Default | Alternatives |
 |---|---|---|
-| Reader, long documents in bulk | Local Qwen3.8-27B on padme, when the part fits its context and a pilot shows its readings pass the checker at a rate the author accepts | A paid mid-tier LLM |
-| Reader, one-off documents | A paid mid-tier LLM (Anthropic, OpenAI or Mistral) | Local Qwen |
-| Checker | A paid LLM from another maker than the reader | — |
-| Full panel with positive controls | — | [M4]: independent blind readers from several makers, controls run first (fusion § 3) |
+| Reader | The selected open-weight model on padme's RTX A4000 (16 GB) | The same model through OpenRouter |
+| Second reader | The selected open-weight model, of another family, on padme's RTX 3060 (12 GB) | The same model through OpenRouter |
+| Arbiter | A stronger hosted model through OpenRouter, calibrated like the readers | Another hosted model that passed calibration |
 
-A document longer than the reader's context is split into parts with their
+A document longer than a reader's context is split into parts with their
 own scope, as extraction § 6.3 provides; the largest held PDF has a text
-layer of about 950,000 characters, beyond the local LLM's context. [M2]
+layer of about 950,000 characters, beyond a local reader's context. [M2]
 
 **Every call is recorded.** Each LLM call records the run, the LLM
 identifier, the prompt version, the sampling settings where the service
@@ -259,8 +282,7 @@ run: a paid call that would take the run past its budget is not made, and
 the run stops, reports what it completed, and leaves the rest pending
 (requirement C4). The amounts below are **proposed defaults, for the
 author to set**. Each says whether its basis is measured, derived from
-measurements, or a judgement. [M2 for money, OpenAlex and GPU; M2 for the
-author's minutes]
+measurements, or a judgement. [M2]
 
 ### 7.1 The measurements
 
@@ -290,14 +312,14 @@ author's minutes]
   prototype run measured USD 0.03 to 0.08 per document with hosted readers;
   with a margin for parts and repair calls, the M2 pass costs about USD 15
   to 30. For scale only: a full assisted pass over every held object, reader
-  and checker each reading the whole text (about 9 million input tokens with
+  and second reader each reading the whole text (about 9 million input tokens with
   prompts and 1 million output tokens), would cost about USD 42 at mid tier,
   USD 55 with a frontier pair and USD 5 with an economy pair.
 - **Local LLM throughput** (measured on padme, short-record screening with
   thinking disabled): about 1.7 records per second, decoding about 95 % of
   the time, against about 19 records per second for a hosted small LLM
-  with six workers. Throughput on long documents has not been measured; the
-  M2 pilot measures it before the local LLM is chosen as a bulk reader.
+  with six workers. Throughput on long documents has not been measured;
+  the first run of the installed readers measures it on padme.
 - **OpenAlex** (measured): the project key carries a free allowance of
   USD 1 per day, reported in every response header with the remaining
   balance and the reset time; a full 88-query search pass costs about
@@ -308,7 +330,7 @@ author's minutes]
 
 | Budget | Proposed default | Basis |
 |---|---|---|
-| Paid LLM spend per document (reader and checker together) | USD 3 | Derived: covers the largest held PDF (about 240,000 tokens) read once by a frontier pair; the median document costs well under USD 0.10 |
+| Paid LLM spend per document (hosted readers and arbiter together) | USD 3 | Derived: covers the largest held PDF (about 240,000 tokens) read once by a frontier pair; the median document costs well under USD 0.10 |
 | Paid LLM spend per run | USD 20 for an ordinary batch; USD 60 for the full M2 pass | Derived: the M2 pass over the 115 pending documents is about USD 15 to 30, so USD 60 covers it with room for a second attempt |
 | Paid LLM spend per calendar month, all vendors | USD 150 | Judgement: a full pass at frontier tier plus a partial rerun and the M3a discovery rounds |
 | Paid LLM spend per vendor per month | USD 80 | Judgement: no single maker can take more than about half the month, which keeps the second vendor funded |
@@ -316,8 +338,7 @@ author's minutes]
 | OpenAlex | Within the free USD 1 per day; no draw on the prepaid balance | Measured allowance; the prepaid balance is not the Observer's |
 | Internet Archive captures | No money; captures paced and stopped on the service's rate-limit responses | The account is free |
 | Local GPU time per run | 10 hours of wall time; runs longer than 2 hours start in the evening or at the weekend | Judgement: the service is shared, and the author's daytime sessions need it responsive |
-| The author's review per run | 100 items presented (disagreements, missed items and random sample together) | Judgement: at an assumed 30 seconds an item, about 50 minutes, one sitting |
-| The author's review per week | 3 hours | Judgement; replaced by the measured rate once logged review minutes exist |
+| Model selection and calibration on OpenRouter | USD 20 per selection run, counted in the monthly budget | Judgement: candidate models of 12 to 16 GB are economy-tier priced, and the reference answers are a few hundred items |
 
 **Development sessions are not run spend.** The coding agents that build
 the Observer work under the author's subscriptions, not under per-call
@@ -331,28 +352,27 @@ new paid run starts until the author raises it or the month turns. A run
 never switches vendor to stay under a vendor budget without the author's
 agreement, since that changes the method. [M2]
 
-## 8. Logging spend and review time
+## 8. Logging spend and compute time
 
 **The run report.** Every run writes one report, committed with its
 products on the run's branch. It gives: run identifier, job, commit of the
 code, machine, start and end times, declared budgets, spend per vendor and
 per LLM with token counts, GPU wall time, documents or rounds attempted,
-completed, failed and deferred with their reasons, the size of each queue
-for the author, the rate and the seed of the random sample shown to the
-author, and a final state (section 10). The report of a build lists the
+completed, failed and deferred with their reasons, the number of items
+that stood on the readers' agreement, went to the arbiter and ended
+undetermined, the calibration version in force, and a final state
+(section 10). The report of a build lists the
 trails that do not resolve. A run that found nothing says so. [M2 for extraction runs; M3a for discovery rounds, requirement Q14]
 
-**Review minutes.** When the author works through a queue, the sitting
-records its start and end times, the run it belongs to and the number of
-items decided; minutes are attributed per run and per document, and the
-document's class, type and extraction method are joined later, since classes
-are assigned only from M3a. [M2, so that the M3b release can state spend
-and review time per document class, document type and extraction method,
-requirement Q15, including for the documents extracted at M2]
+**Compute time.** Each run records its local GPU wall time and its paid
+spend per document; the document's class, type and extraction method are
+joined later, since classes are assigned only from M3a. [M2, so that the
+M3b release can state spend and compute time per document class, document
+type and extraction method, requirement Q15, including for the documents
+extracted at M2]
 
-**Monthly tally.** Spend per vendor against the monthly budgets, and review
-minutes against the weekly budget, are tallied from the run reports and
-shown to the author. [M2 as a computed table; M4 on the Observatory's
+**Monthly tally.** Spend per vendor against the monthly budgets, and GPU
+time, are tallied from the run reports and shown to the author. [M2 as a computed table; M4 on the Observatory's
 supervision view]
 
 ## 9. Backups and recovery
@@ -465,9 +485,10 @@ earlier.
   to a Zotero group library, the pipeline reading a committed export, never
   live Zotero. The Zotero cloud copy then also closes part of the backup gap
   of section 9.
-- **The full panel.** Independent blind readers from several makers with
-  positive controls replace the single checker (fusion § 3); the budgets of
-  section 7 are revised on the measured cost of the first run.
+- **Recalibration.** Before a scheduled pass whose models or prompts
+  changed, the readers and the arbiter are scored again on the held-out
+  reference answers; the budgets of section 7 are revised on the measured
+  cost of the first run.
 - **Supervision view.** Changes between runs large enough to check, and the
   monthly tally of section 8, appear on the Observatory's supervision pages.
 - **Horizon.** The Observer is maintained through 2030, with an extension
@@ -485,10 +506,11 @@ earlier.
    review, a backup copy of document bytes off padme.
 3. The repository gates of section 4, and the agents' permissions and
    prohibitions.
-4. One reader and one checker from another vendor on every LLM
-   judgement, every call recorded with its cost.
+4. Two local readers from different model families, one per GPU,
+   selected and calibrated on OpenRouter before installation, and a hosted
+   arbiter, on every LLM judgement; every call recorded with its cost.
 5. Budgets enforced per document, per run, per month and per vendor;
-   review minutes logged per sitting; secrets read at use only.
+   GPU time logged per run; secrets read at use only.
 
 ## 13. Open questions
 
@@ -497,13 +519,8 @@ Each has a default, applied unless the author decides otherwise.
 - **Budget amounts** (section 7.2). Default: the table as proposed.
 - **Backup location.** Default: a copy on doudou pulled after each push;
   alternative, an external or institutional disk.
-- **Local LLM as bulk reader.** Default: decided by the M2 pilot on
-  throughput and checker agreement; until then paid readers.
-  <!-- wave-1 W1-52: pending author decision (keep the local-reader pilot at M2, bounded to one long document, or defer it to M4) -->
 - **Paid web search provider for discovery.** Default: the search API whose
   key is already in the keystore, under the per-campaign budget.
-- **Review time per item.** Default: 30 seconds assumed, replaced by the
-  logged rate after the first sittings.
 
 ## 14. Checks an operation must pass
 
@@ -515,8 +532,9 @@ Each has a default, applied unless the author decides otherwise.
 | The author finds a relevant report on the laptop and has the PDF in the download folder. | The document enters as a register change on a branch; padme fetches it, or the author saves it through padme's browser on doudou's screen. No file is copied from doudou to padme. |
 | A run reaches its USD 20 budget after 40 of 60 documents. | No further paid call is made; the report says `partial`, lists 20 documents pending, and the 40 completed documents may be admitted whole through the pull request. |
 | The monthly tally shows USD 80 spent with one vendor. | No new run using that vendor starts this month; the run does not switch vendor on its own. |
-| A run's queue for the author would hold 240 items. | The run splits its scope or defers documents so that each queue presented holds at most 100 items; nothing is admitted unchecked. |
-| The local Qwen LLM reads a document. | The checker is from another maker than Alibaba; the call records tokens and GPU time with a cost of zero. |
+| The readers of a run leave 240 items open. | All 240 go to the arbiter within the run's budget; at the budget the run stops with the rest pending; nothing is queued for the author and nothing is admitted unjudged. |
+| The two local readers read a document. | They are from different makers, one per GPU; each call records tokens and GPU time with a cost of zero. |
+| A candidate reader fails its positive controls during selection on OpenRouter. | It is weighted out and never installed on padme. |
 | A run is killed midway by a power cut. | The report, written as the run goes, has no final state and is treated as failed; the rerun takes the pending list, and nothing already admitted is renumbered. |
 | An extraction run completes over half the countries of a release's scope. | No release and no Observatory publication are built until every run in the scope is complete. |
 | An agent needs more parallel slots from the local LLM. | It asks the author; it does not restart `llama-server.service`. |
@@ -524,6 +542,6 @@ Each has a default, applied unless the author decides otherwise.
 | A run report is about to include a request header with an API key. | The report names the provider and the LLM only; the key never appears. A key found in a tracked file is revoked first, then removed. |
 | An agent's branch adds 12 new document objects. | They are tracked and pushed to DVC from padme only after the branch's review passes; doudou then pulls them as the backup copy. |
 | padme's disk fails. | Code and ledger are cloned from GitHub; document bytes are restored from the backup copy and checked against their hashes; an object that fails is refetched as a new retrieval and the losses are listed in a recovery report. |
-| The author reviews a queue of 80 items in 45 minutes. | The sitting records 45 minutes, its run and 80 items, attributed per document; class, type and method are joined later. |
+| The author, browsing results sorted by confidence, overturns 3 of 80 low-confidence items. | Each decision is recorded as a judgement of the role author, beside the readers' and the arbiter's answers, superseding the earlier judgement with his reason; no run waited for him. |
 | An agent proposes to publish the Observatory after merging a run. | It does not: publication is the author's act, from `main`, after the release is accepted. |
 | At M2, someone proposes a weekly cron job for discovery. | Declined as M4; M2 and M3 runs are launched by hand. |

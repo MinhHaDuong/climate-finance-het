@@ -356,20 +356,22 @@ a quoted basis, who or what judged, by which method and version, and when,
 as fusion section 3 requires of identity judgements, with a likelihood and
 a confidence on the calibrated scales of fusion section 1. [M3a]
 
-**Checking at M3a.** LLM readers are called without tools, network or file
+**Checking.** LLM readers are called without tools, network or file
 access, and receive a candidate's text as quoted data, never as
-instructions, since the documents are written by interested parties. One
-LLM reader proposes each triage outcome. A second
-LLM reader, from another vendor and blind to the first answer, checks every candidate.
-Where both agree, the triage outcome is in force. The author sees only the
-disagreements and a random sample of the agreements, sorted by likelihood and
-confidence, and may overturn any of them. A triage outcome counts, for yield
-and for the register, once it is in force. The same checking applies to every
-other LLM judgement collection makes at M3a: a document's class, a
+instructions, since the documents are written by interested parties. Each
+candidate is judged under the protocol of
+[extraction](jetp-extraction.md) section 6.3: two LLM readers from
+different model families, each blind to the other, judge every candidate.
+Where both give the same triage outcome at a calibrated likelihood at or
+above the acceptance level, that outcome is in force; otherwise the
+arbiter, a stronger model given both answers and the candidate's text,
+decides, and a candidate may end undetermined. Nothing is queued for the
+author: the outcomes are served sorted by likelihood and confidence, and a
+decision he chooses to make is recorded as a judgement like any other. A
+triage outcome counts, for yield and for the register, once it is in
+force; an undetermined candidate adds no yield. The same protocol applies
+to every other LLM judgement collection makes: a document's class, a
 claim's outcome in the secondary-to-primary pass, a duplicate. [M3a]
-
-**Checking at M4.** The full LLM reader panel of fusion section 3, with positive
-controls run first and readers who miss them weighted out. [M4]
 
 A triage outcome is defeasible like any judgement: a rejected candidate can be
 admitted later by a judgement that says why. [M3a]
@@ -456,8 +458,10 @@ that yields a citable recall estimate:
    language, known-item list (frozen, hidden), tracker list, thresholds and
    caps.
 2. The round log, empty rounds included, with effort and yield per round.
-3. A checked judgement on every candidate: two LLM readers from different
-   vendors, the author seeing their disagreements and a random sample.
+3. A judgement on every candidate under the protocol of extraction
+   section 6.3: two LLM readers from different model families, the arbiter
+   on what they leave open, each outcome with its likelihood and
+   confidence.
 4. Terminal verdicts for every expected authority and listed project.
 5. The recall estimate with its interval, the tracker traceability rate with
    the distribution of claim outcomes, the unreachable list, the discovery
@@ -485,7 +489,7 @@ produces.
 | A page opens only after a login the public cannot freely obtain. | No bypass; the document enters the unreachable list with "login required", after the web archive rung is tried. |
 | A page behind a bot wall opens in the author's browser. | It is fetched with the author's session; the retrieval records that rung; the bytes kept are the server's response. |
 | A site's crawler rules forbid automated access; the needed report's address is known and opens in the author's browser. | The report is fetched once and the site's position recorded; no program walks the site's other pages. |
-| The two LLM readers disagree on whether a candidate is in scope. | The candidate goes to the author with both answers; it adds no yield until a triage outcome is in force. |
+| The two LLM readers disagree on whether a candidate is in scope. | The arbiter decides with both answers and the candidate's text; the candidate adds no yield until a triage outcome is in force, and none if it ends undetermined. |
 | A site's certificate is invalid. | The document is fetched and the certificate error recorded with the retrieval. |
 | A secretariat publishes nothing that any search channel can find. | Its verdict is "not published", backed by the recorded search; it is not on the unreachable list. |
 | A listed project appears in no document other than the plan that lists it. | Its verdict is "not published"; the plan's line stays the only document about it. |
