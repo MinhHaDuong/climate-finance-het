@@ -25,7 +25,7 @@ investment_plan 3, approval_document 2, secondary_news 2. All 115 are active;
 languages en 59, vi 20, fr 16, empty 20. Snapshot formats over the 115: HTML 66,
 PDF 38, octet-stream 6, xlsx 2, JSON 2, JavaScript 2.
 
-Dedup pass done at planning time (documents only, storage contract § 4): no
+Dedup pass done at planning time (documents only, storage contract § 4, now `docs/jetp-fusion.md` § 3): no
 tier-1 group (same fingerprint) touches the 115; no `edition_of` row exists;
 one title matches an already extracted document (to be checked by 1501). Tier 2
 (normalised text) was not run: the snapshot bytes are not in a fresh worktree

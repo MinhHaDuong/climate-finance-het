@@ -90,27 +90,108 @@ force is the end of the chain.
 
 ## 3. Identity
 
-An identity (project, asset, agreement, party, perimeter) exists only because
-a reviewed decision minted it from statements; reading a document never mints
-one. Each decision carries its method, version, confidence, the statements
-that justify it, and who decided. A statement with no identity yet keeps its
-own place as a subject of observations; it does not dissolve into an aggregate.
+Matching mints an identity from statements, attaches a statement to an
+existing identity, or relates a statement to one in another edition. An
+identity (project, asset, agreement, party, perimeter) exists only because a
+reviewed decision minted it; reading a document never mints one. A statement
+with no identity yet stays a subject of observations in its own right; it
+does not dissolve into an aggregate.
+
+The author set the requirements on 2026-09-22: multilingual recognition of
+named entities in the labels, matching with a confidence, escalation to a
+large language model (LLM) and then to a person, defeasibility and
+traceability. What is fixed now is the shape of a decision, so that one taken
+by the simplest matcher today and one taken by a person in two years can be
+compared and overturned the same way.
+
+**The decision.** A matching decision names who or what decided (a program, an
+LLM, a person), by which method and version, with what confidence between 0
+and 1, on which justifying statements, and when. It is accepted, a candidate
+or rejected. A decision is never altered: a later decision names the one it
+revises, and what is in force is the end of the chain when that end is
+accepted. A false match is revoked by a rejection that revises it, and
+nothing else needs to be created. A candidate below the acceptance threshold
+stays a candidate, counted apart; it never changes a count of accepted
+identities.
 
 - An equality claim (`same_as`) is evidence that two things are one; it does
-  not choose which name or route prevails. A wrong equality is revoked by a
-  later decision, never erased.
-- For a party, an external identifier decides: two names that carry the same
-  identifier (IATI organisation identifier, ROR, LEI, Wikidata) are one
-  organisation. Case, diacritic and spacing variants are merged when the party
-  is minted. Acronyms, translations and former names are candidates for review,
-  never merged automatically.
-- Classification of an identity (project, programme or component) is a dated
-  decision; a later classification does not change what earlier statements
-  were about.
+  not choose which name or route prevails.
+- The classification of an identity (project, programme or component) is a
+  dated decision; a later classification does not change what earlier
+  statements were about.
 
-The tiers of the matching procedure (identifier, fuzzy name, assisted
-reading with the source pages, human adjudication) are described in the
-[storage contract](jetp-ledger-storage.md), section 4, until they move here.
+**The tiers.** Each tier works only on what the previous ones left undecided,
+and signs its decisions with its own method name.
+
+1. Exact identifier: a register's unique identifier, a plan's ordinal within
+   an edition, an operator's project code. Confidence 1.
+2. Normalised label: case, diacritics, technology prefixes and units removed
+   (PLTU, PLTS, PLTBg; Nhà máy Thuỷ điện; centrale, poste), tokens compared
+   within a country and a technology group. Confidence from the string
+   distance and from the agreement of capacity and location where both
+   statements give them.
+3. Named entities in the four label languages (Indonesian, Vietnamese, French,
+   English): place, operator, technology and capacity as typed spans, matched
+   as tuples. Confidence from the agreement of the tuples.
+4. LLM adjudication of the remaining candidates, given both statements and
+   the pages they come from, returning a verdict, a confidence and a quoted
+   basis. The LLM is named as the decider.
+5. Adjudication by a person of what the LLM declines or contradicts.
+
+A tier's thresholds are part of its method version. Before a tier may accept
+matches unattended, its thresholds are tested on the hand-matched cases held
+out as a test set; until it passes, it proposes candidates only.
+
+**Verification and confidence (author, 2026-09-29).** The author is not the
+checker. A tier-4 reading is verified by independent readers from different
+vendors, on the same inputs, blind to each other's answers, choosing from a
+closed list of options with a quoted basis and a self-assessed score.
+Positive controls with a certain answer run first, and a reader that misses
+one is weighted out. A versioned rule turns the readings into a stance and a
+confidence. Every case gets a stance, applied as a defeasible decision that
+names the panel and its version as decider, never as a silent overwrite, with
+the confidence and the readers' verdicts kept beside it. In the author's
+words: "take a stance, keep track of the confidence level, and let me examine
+the results sorted by confidence level". A stance that implies a change in
+what a term means is a proposed revision of that term, a candidate with the
+same confidence, never an edit of the accepted definition.
+
+**Organisations.** Parties are under authority control, as in a library's
+name authority file or the ROR and GLEIF registries: one identity per
+organisation, every form of its name attached to it, one form preferred
+(author, 2026-09-23). Two rules of their own apply.
+
+- Tier 1 is an external identifier: an IATI organisation identifier, a ROR
+  identifier, an LEI or a Wikidata item. Two names that carry the same
+  identifier are one organisation.
+- Forms that differ only by case, diacritics or spacing (Senelec and
+  SENELEC) are merged when the party is minted: one party with several name
+  forms, never two parties joined by an equality claim.
+- Tier 2 runs only on real variants: an acronym against its expansion (AFD
+  and Agence française de développement, PLN and Perusahaan Listrik Negara),
+  a translation (Vietnam Electricity and Tập đoàn Điện lực Việt Nam), a former
+  name. It proposes equality claims between two parties, reviewed by a person.
+  Accepting one folds the parties: the retained party gains the other's name
+  forms, and the retired identity leads to it.
+
+**Documents.** The same decisions apply one level up, to documents, and run
+before any statement is read from them, because a duplicate document read
+twice doubles every statement and every count downstream. One publication
+under two addresses or two exports is `same_as`; succession is `edition_of`;
+the same publication in another language is `translation_of`. Statements are
+read from the canonical member of a `same_as` group and from one language of
+a translation pair; the other members remain citable bytes. The tiers:
+
+1. Identical fingerprint under two documents: one set of bytes, two
+   addresses. Confidence 1.
+2. Identical text after normalisation, or a near-duplicate fingerprint of the
+   text with the same page count. Catches a re-export and a page whose
+   timestamp changes on every visit.
+3. Agreement of title, publisher, publication date, page count and any
+   identifier the document prints. Catches a partner's mirror and, with a
+   language detector, a translation.
+4. LLM adjudication of the remaining pairs, given both first pages.
+5. Adjudication by a person.
 
 ## 4. Occurrence
 

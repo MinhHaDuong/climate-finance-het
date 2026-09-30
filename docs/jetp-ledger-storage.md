@@ -48,7 +48,7 @@ error; a missing first or numbered shard also fails validation.
 | `relations` | `relation_id` | from_kind, from_id, relation, to_kind, to_id, role, valid_from, valid_to, status, method, method_version, confidence, decided_at, decided_by, supersedes, line_id |
 | `observations` | `observation_id` | subject_kind, subject_id, axis, measure, flow_type, basis, value, value_low, value_high, unit, currency, own_status, indicator_code, line_id, method, method_version, recorded_at, status, supersedes, notes |
 | `timings` | `timing_id` | observation_id, date_role, date, date_precision, lower_bound, upper_bound, line_id, recorded_at |
-| `external-ids` | (scheme, external_id) | kind, id, line_id, recorded_at (for a party: its IATI organisation identifier, ROR, LEI or Wikidata item, tier 1 of section 4) |
+| `external-ids` | (scheme, external_id) | kind, id, line_id, recorded_at (for a party: its IATI organisation identifier, ROR, LEI or Wikidata item, tier 1 of fusion section 3) |
 | `adjudications` | `adjudication_id` | decision_type (`occurrence_membership`, `flow_coverage`, `perimeter_compatibility`, `identity`), subject_kind, subject_id, verdict, status, decided_at, decided_by, recorded_at, supersedes, notes |
 | `adjudication-members` | (adjudication_id, kind, id) | role (one of `candidate`, `accepted`, `excluded`, `occurrence`, `covering_flow`, `covered_movement`, `opening`, `closing`, `context`) |
 | `rates` | (currency, date, basis) | rate_to_usd, line_id, recorded_at (a publisher's own conversion, printed beside the original, is a `rates` row citing that line, so the ledger records that the publisher converted, at what rate) |
@@ -232,130 +232,42 @@ crosswalk is a derived export, built when a consumer asks for it, and it costs
 one script. If that consumer ever runs SPARQL over several ledgers, the
 engine question reopens on their data, not on this one.
 
-## 4. Matching
+## 4. Matching records
 
-Matching is the step that mints an identity from lines, attaches a line
-to an existing identity, or relates a line to a line in another edition. The
-author named it on 2026-09-22 as one of the hard points and set its
-requirements: multilingual named-entity recognition over the labels, matching
-with a confidence, escalation to a large language model (LLM) and then to human
-adjudication, defeasibility, and traceability. The perfect system is not the
-target now. What is fixed now is the record, so that a decision taken by the
-simplest matcher today and one taken by a person in two years sit in the same
-table with the same columns and can be overturned the same way.
+The matching rules (decision shape, tiers, panel verification,
+organisations, document deduplication) are
+[fusion](jetp-fusion.md) section 3. This section says only how their
+decisions are stored.
 
-**The record.** A `line-referents` row or a `relations` row is a decision. It
-carries who or what decided (`decided_by`: a script name, an LLM identifier,
-or a person), by which method and version, with what confidence in [0, 1], on
-which justification lines, and when. Its `status` is `accepted`, `candidate` or
-`rejected`. A decision is never edited or deleted: a later row names the
-earlier one in `supersedes`, and what is in force is the terminal row of the
-chain when its status is `accepted` (section 1, rules). A reviewer revokes a
-false match by appending a `rejected` row that supersedes it; nothing else
-has to be minted for the revocation to take effect. A candidate below the
-acceptance threshold stays a candidate, counted and visible, as ticket 0833
-already requires for its `possible_matches`; it never alters a count of
-accepted identities.
+- A matching decision is a `line-referents` row or a `relations` row, with
+  `decided_by` (a script name, an LLM identifier, or a person), `method`,
+  `method_version`, `confidence`, `justification_line_ids`, `decided_at`,
+  `status` and `supersedes`, under the in-force rule of section 1. A
+  candidate stays a row, counted, as ticket 0833 requires of its
+  `possible_matches`.
+- Tier thresholds live in configuration, versioned with the method. The
+  panel's stance-and-confidence rule is `matching.panel` in
+  `config/jetp_tracking.yaml`; the observatory serves the decision record
+  sorted by confidence.
+- A person's adjudication is recorded in the same row shape and in
+  `decisions.md`.
+- Party name forms are `party-names` rows (a case or diacritic variant has
+  form type `spelling_or_case_variant`); party identifiers are
+  `external-ids` rows of kind `party`. When an accepted `same_as` folds two
+  parties, the retained party gains the other's forms as `party-names` rows
+  and `routes` sends the retired identifier to it.
+- Document relations (`same_as`, `edition_of`, `translation_of`) are
+  `relations` rows between documents.
 
-**The tiers.** Each tier runs only on what the previous one left undecided,
-and each writes its rows with its own method name.
-
-1. Exact identifier: the register's unique id, a plan's ordinal within an
-   edition, an operator's project code. Confidence 1. This is the first
-   implementation and covers the 257 register rows and the 67 plan lines
-   already matched by hand.
-2. Normalised label: case, diacritics, technology prefixes and units stripped
-   (PLTU, PLTS, PLTBg; Nhà máy Thuỷ điện; centrale, poste), tokens compared
-   within a country and a technology group. Confidence from the string
-   distance and the agreement of capacity and location where both lines
-   carry them.
-3. Named-entity recognition over the four label languages, Indonesian,
-   Vietnamese, French and English, yielding place, operator, technology and
-   capacity as typed spans, matched as tuples. Confidence from the tuple
-   agreement.
-4. LLM adjudication of the remaining candidates, given both lines
-   and their snapshot pages, returning a verdict, a confidence and a quoted
-   basis. The LLM identifier is the `decided_by`.
-5. Human adjudication of what the LLM declines or contradicts, recorded in
-   the same row shape and in `decisions.md`.
-
-Thresholds per tier live in configuration, are versioned with the method, and
-are tested on the hand-matched rows as a held-out set before a tier is allowed
-to write `accepted` rows unattended on matching. Until a tier passes that test
-it writes candidates only.
-
-**Verification and confidence (author decision, 2026-09-29).** The author is
-not the checker. A tier-4 reading is verified by independent readers of
-different vendors on the same inputs, blind to each other's answer, against a
-closed option list with a quoted basis and a self-score; positive controls with
-a certain answer run first, and a reader that misses one is weighted out. The
-rule that turns the readings into a stance and a confidence is versioned in
-`config/jetp_tracking.yaml` (`matching.panel`). Every row gets a stance; the
-stance is applied to the ledger as a defeasible decision whose `decided_by`
-names the panel and its version, never as a silent overwrite, and the
-confidence is recorded with the readers' verdicts. In the author's words:
-"take a stance, keep track of the confidence level, and let me examine the
-results sorted by confidence level"; the observatory serves the decision
-record sorted by confidence (ticket C). A stance that implies a change of
-what a term means is written as a proposed revision row of the term, status
-`candidate`, with the same confidence, not as an edit of the accepted
-definition.
-
-**Scope of the first implementation.** Tier 1 in the identity split, tier 2 as
-a candidate generator whose rows are reviewed by hand, tiers 3 to 5 as method
-names reserved in the vocabulary. The Indonesian edition relation between the
-437 CIPP lines and the 1 142 progress-report lines, where the literal name
-intersection is 3, is the test bed for tier 2 and the first case for tier 3,
-and it is not attempted in the migration.
-
-**Organisations.** Parties are under authority control, in the manner of
-a library's name authority file or the ROR and GLEIF registries: one record
-per organisation, every form of its name attached to it, one form preferred
-(decided by the author on 2026-09-23). The tiers apply with two rules of
-their own.
-
-- Tier 1 is an external identifier: an IATI organisation identifier, a ROR
-  identifier, an LEI or a Wikidata item, held in `external-ids` with kind
-  `party`. Two names carrying the same identifier are one party.
-- Forms that differ only by case, diacritics or spacing (Senelec and
-  SENELEC) are merged when the party is minted: one party, several
-  `party-names` rows of form type `spelling_or_case_variant`, never two
-  parties and a `same_as`.
-- Tier 2 runs only on real variants: an acronym against its expansion (AFD
-  and Agence française de développement, PLN and Perusahaan Listrik Negara),
-  a translation (Vietnam Electricity and Tập đoàn Điện lực Việt Nam), a
-  former name. It writes `same_as` candidates between the two parties,
-  reviewed by hand. Accepting one folds the parties: the retained party
-  gains the other's forms as `party-names` rows of the matching form type,
-  and `routes` sends the retired party identifier to it.
-
-**Document deduplication.** The same matching record applies one level
-up, to documents, and runs before any line is extracted, because a duplicate
-document extracted twice doubles every line and every count downstream. The
-registry already holds three mirrors and two repeated titles; the harvests
-will add re-exported PDFs, pages that change a timestamp on every retrieval,
-and the Vietnamese and English versions of one plan. The relations are
-`same_as` between documents for one publication under two URLs or two exports,
-`edition_of` for succession, and `translation_of` for the same publication in
-another language. Lines are extracted from the canonical document of a
-`same_as` cluster and from one language of a translation pair, and the other
-members keep their snapshots as citable bytes. The tiers, in the same row
-shape and with the same defeasibility:
-
-1. Identical fingerprint under two documents: one snapshot, two URLs.
-   Confidence 1.
-2. Identical extracted text after normalisation, or a near-duplicate hash of
-   the text layer with the same page count. Catches the re-export and the
-   timestamped page.
-3. Metadata agreement: title, publisher, publication date, page count, and
-   any identifier the document prints. Catches the mirror hosted by a partner
-   and the translation, when paired with a language detector.
-4. LLM adjudication of the remaining pairs, given both first pages.
-5. Human adjudication.
-
-The first implementation is tiers 1 and 2 at harvest time, so a snapshot
-whose text already exists is registered as a `same_as` candidate before it is
-extracted; tier 3 as a candidate generator on the current 301 documents.
+**Scope of the first implementation.** For lines: tier 1 in the identity
+split, covering the 257 register rows and the 67 plan lines matched by hand;
+tier 2 as a candidate generator reviewed by hand; tiers 3 to 5 as method names
+reserved in the vocabulary. The Indonesian edition relation between the 437
+CIPP lines and the 1 142 progress-report lines, whose literal name
+intersection is 3, is the test bed for tier 2 and the first case for tier 3.
+For documents: tiers 1 and 2 at harvest time, so a snapshot whose text already
+exists is registered as a `same_as` candidate before extraction; tier 3 as a
+candidate generator over the registered documents.
 
 ## 5. Language, translation and summaries
 
@@ -368,7 +280,7 @@ The four partnerships publish in Indonesian, Vietnamese, French and English,
 and some documents exist in two languages. The ledger records the language of
 every document and keeps every line's label in the language it was printed
 in. A translation pair is two documents related by `translation_of`, with one
-of them canonical for extraction (section 4). Nothing in the ledger is a
+of them canonical for extraction ([fusion](jetp-fusion.md) section 3). Nothing in the ledger is a
 translation presented as an original.
 
 Translated labels and summaries are derived text, produced by an LLM or a
