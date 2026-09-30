@@ -2,10 +2,12 @@
 Title: REL — sources du Sud hors OpenAlex (SciELO, Redalyc, AJOL, autres)
 Created: 2026-09-29
 Author: haduong
+Closed: Livré au pool 1655 : data/rel_intake/t1653-sud-hors-openalex/2026-09-30 (qa_rel_intake OK), registre docs/rel-sud-sources-2026-09-30.md ; code en PR #1622, #1624, #1625, #1628 (scission de #1619) ; strates incomplètes et déblocages humains suivis dans 1790
 
 --- log ---
 2026-09-29T15:00Z haduong created
 
+2026-09-30T19:30Z HDMX-coding-agent closed — Livré au pool 1655 : data/rel_intake/t1653-sud-hors-openalex/2026-09-30 (qa_rel_intake OK), registre docs/rel-sud-sources-2026-09-30.md ; code en PR #1622, #1624, #1625, #1628 (scission de #1619) ; strates incomplètes et déblocages humains suivis dans 1790
 --- body ---
 ## Contexte
 
