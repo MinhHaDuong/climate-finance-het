@@ -1,22 +1,14 @@
 # JETP collection: how documents are found and fetched
 
 Collection is how the documents the Observer extracts are found, judged
-worth extracting and fetched, when discovery stops, and how much of what exists it
-found. It fills the register, step D1 (Register) of the Data pipeline in the
+worth extracting and fetched, when discovery stops, and how much of what
+exists it found. It fills the register, step D1 of the
 [language](jetp-language.md) document: publishers, documents, retrievals,
 snapshots and the record of searches. Its output feeds
-[extraction](jetp-extraction.md), which extracts statements from what
-collection holds; the [fusion](jetp-fusion.md) rules then weigh those statements. What
-the Observer is for, and so what is in scope, is the
-[purpose and requirements](jetp-requirements.md) document.
-
-Its rules are conceptual. They name what must happen, not how the repository
-does it: commands, schedules, machines, budgets in numbers and the place where
-bytes are kept belong to the operation document and to the
-[storage contract](jetp-ledger-storage.md). The words document, retrieval,
-snapshot, publisher and edition have the meaning the
-[ontology](jetp-ontology.md) gives them (section 2 and the relations of
-section 3); this document does not restate them.
+[extraction](jetp-extraction.md). What is in scope is the
+[purpose and requirements](jetp-requirements.md) document (§ 2.5). The words
+document, retrieval, snapshot, publisher and edition have the meaning the
+[ontology](jetp-ontology.md) gives them.
 
 **Milestones.** Tags follow the [index](jetp-spec.md). M2 does no new
 discovery; M3a is one campaign, not a service; recurring refresh, link rot
@@ -26,34 +18,30 @@ and the tracking of living documents and series are M4.
 
 **Discovery proposes, review admits.** A document enters the register only
 by a recorded judgement that it is in scope. Finding it, by any route, makes
-it a candidate and nothing more. No search, crawler, agent or watch admits a
-document on its own. [M3a]
+it a candidate and nothing more. [M3a]
 
 **Every attempt is recorded.** Each fetch is a retrieval with its outcome,
-failures included. Each search is recorded with its search routes, the identifiers
-and terms it used, its date, its effort and its yield, and a search that finds
-nothing is recorded as such. A failed search route means "not found through
-this route on this date", never "does not exist". A silent run is not an all-clear.
-[M2 for retrievals, M3a for searches]
+failures included. Each search is recorded with its search routes, the
+identifiers and terms it used, its date, its effort and its yield, and a
+search that finds nothing is recorded as such. A failed search route means
+"not found through this route on this date", never "does not exist". [M2
+for retrievals, M3a for searches]
 
-**Public access only.** A login website is allowed, if public. Collection
-uses only what the public can legitimately reach: open pages, public archive
-records, and sites behind a login that anyone can obtain by free public
-registration (a procurement portal, for example), opened with the author's
-own browser session or registered account. Excluded are paid subscriptions,
-invitation-only or institution-only access, and leaked or private material
-([requirements](jetp-requirements.md) F27, N13). A check or a login is passed
-by the author in person, never by automation, and the document's public
-access route records the free registration used, never its credentials
-(requirements C6). Collection never circumvents a technical measure that a
-member of the public could not pass. A site's stated position on automated access (its terms of use,
-its crawler rules) is recorded with the attempts made there, and any change in
-it is reported, never passed over. Terms that forbid third-party processing
-by an explicit reservation keep the document's reading local
-([operation](jetp-operation.md) section 5). The legal basis for holding the copies
-(the research text-and-data-mining exception, CPI art. L122-5-3 II and R122-23,
-conditional on the Observer being recorded as a CNRS research activity) and the
-lawful-access record are stated in the [legal note](jetp-legal-note.md) §1. [M3a]
+**Public access only.** Collection uses only what the public can
+legitimately reach, as requirement F27 defines it, opened where needed with
+the author's own browser session or registered account. A check or a login
+is passed by the author in person, never by automation, and the document's
+public access route records the free registration used, never its
+credentials (requirements C6). Collection never circumvents a technical
+measure that a member of the public could not pass. A site's stated
+position on automated access (its terms of use, its crawler rules) is
+recorded with the attempts made there, and any change in it is reported.
+Terms that forbid third-party processing by an explicit reservation keep
+the document's reading local ([operation](jetp-operation.md) section 5).
+The legal basis for holding the copies (the research text-and-data-mining
+exception, CPI art. L122-5-3 II and R122-23, conditional on the Observer
+being recorded as a CNRS research activity) and the lawful-access record
+are stated in the [legal note](jetp-legal-note.md) §1. [M3a]
 
 **Crawler rules.** Automated link-following, where a program walks a site
 from page to page, obeys the site's crawler rules (robots.txt). A single fetch
@@ -64,10 +52,9 @@ retrieval. [M3a]
 **The route does not colour the document.** A decree found through a news
 article is the ministry's decree. A document's pedigree in the sense of
 [fusion](jetp-fusion.md) section 1 attaches to its publisher and to how it was
-produced, not to the search channel that led to it. Search channels have a pedigree of their
-own only in one sense: some lead more often, and faster, to documents close to
-the event. That guides where to search first; it never ranks a statement.
-[M3a]
+produced, not to the search channel that led to it. That some channels lead
+more often, and faster, to documents close to the event guides where to
+search first; it never ranks a statement. [M3a]
 
 **Secondary documents are leads.** A tracker, a news article or a study that
 reports a figure points toward the primary document behind it. Collection
@@ -75,10 +62,10 @@ follows the lead. Whether the secondary document may stand alone is decided
 by fusion section 5, on the strength of the search recorded here (section 7).
 [M3a]
 
-**Structured search channels have no precedence.** OECD CRS and IATI are search channels
-like others: they point to documents and supply comparator records. They
-report late, and that lag is measured when comparator records are matched,
-not assumed. [M3b]
+**Structured search channels have no precedence.** OECD CRS and IATI are
+search channels like others: they point to documents and supply comparator
+records. Their lag is measured when comparator records are matched, not
+assumed. [M3b]
 
 **Budgeted and declared in advance.** Discovery effort is budgeted per round
 and per campaign, and spent effort is logged beside yield. The protocol of a
@@ -87,43 +74,39 @@ first round. A change after the start is a recorded revision with its reason,
 reported with the results. [M3a]
 
 **Storage and presentation independence.** No rule here depends on where
-bytes are kept or how the register is shown. A change of document store
-changes nothing in these rules. [M3a]
+bytes are kept or how the register is shown. [M3a]
 
 ## 2. What collection handles
 
-Collection handles the following. Their definitions are the ontology's,
-except *held*, defined here.
+Definitions are the ontology's, except *held*, defined here.
 
 - A **candidate** is a pointer to something that may be a document in scope:
   a URL, a title with a publisher, a reference printed in another document.
   It is not in the register. [M3a]
 - A **document** is admitted by triage (section 9: the outcome admit, or
-  context only, which registers it with the disposition `out_of_scope`)
-  and then sought.
-  Admission and fetching are distinct: a document can be admitted and remain
-  unfetched, and it then carries its access outcome (section 8). [M3a]
+  context only, which registers it with the disposition `out_of_scope`) and
+  then sought. Admission and fetching are distinct: a document can be
+  admitted and remain unfetched, and it then carries its access outcome
+  (section 8). [M3a]
 - A **retrieval** is one attempt to fetch one document. [M2]
-- A **snapshot** is the bytes a successful retrieval returned. The bytes kept
-  are the server's response. A rendered page is captured only when the
-  response alone does not carry the content (tabs built by a script, for
-  example), and the capture is a retrieval of its own, yielding a snapshot of
-  its own. [M2]
+- A **snapshot** is the bytes a successful retrieval returned: the server's
+  response. A rendered page is captured only when the response alone does
+  not carry the content (tabs built by a script, for example), and the
+  capture is a retrieval of its own, yielding a snapshot of its own. [M2]
 - A document is **held** when it is admitted and at least one of its
   retrievals yielded a snapshot. [M2]
 
-Duplicates are settled before anything is extracted, by the document judgements of
-fusion section 3: one publication under two addresses is one document
-(`same_as`), a later issue is an `edition_of`, the same text in another
-language is a `translation_of`. A mirror kept by a third party, such as a
-partner's re-hosting, names that party in a hosting role; a web archive copy
-is a retrieval of the document itself (section 8, rung 5).
-[M2 for the documents held, with the proposers fusion section 3 tags M2; M3a
-for the candidates discovery brings, with its proposers 4 and 5]
+Duplicates are settled before anything is extracted, by the document
+judgements of fusion section 3 (`same_as`, `edition_of`, `translation_of`).
+A mirror kept by a third party, such as a partner's re-hosting, names that
+party in a hosting role; a web archive copy is a retrieval of the document
+itself (section 8, rung 5). [M2 for the documents held, with the proposers
+fusion section 3 tags M2; M3a for the candidates discovery brings, with its
+proposers 4 and 5]
 
 The register held before the M3a campaign is its round zero. Those documents
-were not found under this protocol; their search routes are recorded where known, and
-later rounds measure their yield against them. [M3a]
+were not found under this protocol; their search routes are recorded where
+known, and later rounds measure their yield against them. [M3a]
 
 ## 3. The authority frame
 
@@ -139,12 +122,10 @@ expected to publish about its partnership. The starting frame is:
 5. every project in an official plan, pipeline or progress list.
 
 Each expected authority, and each listed project, ends the campaign with one
-terminal verdict. [M3a]
-
-A listed project gets one bounded round of its own, on the disclosure sites
-of the partners named for it (partner disclosure, section 4), beside what the
-other rounds find about it. Deeper searches for a single project are later
-work. [M3a for the bounded round, later for deeper searches]
+terminal verdict. A listed project gets one bounded round of its own, on the
+disclosure sites of the partners named for it (partner disclosure, section
+4); deeper searches for a single project are later work. [M3a for the
+bounded round, later for deeper searches]
 
 | Verdict | Meaning |
 |---|---|
@@ -154,25 +135,22 @@ work. [M3a for the bounded round, later for deeper searches]
 | not applicable | the authority or project turns out to be outside the frame, with the reason |
 
 "Not published" is a finding about the authority, not a gap in collection.
-"Blocked" is a gap, and it is published as one (section 8). [M3a]
-
-The recorded search of section 7 is the standard behind "not published". Its
-three parts read as follows. For an authority, the publisher's own search
-channel is the authority's portal or site, the partner disclosure channel is
-searched when the authority is a partner or is named in a partner's
-disclosure, and the general web search is run in each language of the
-country; the authority's own channel is the one being tested, so a search
-that did not reach it cannot close the entry. For a listed project, the
-publisher's own channel is that of its operator or promoter where one is
-named, the partner disclosure channel is that of the partners named for it
-(the bounded round above), and the general web search is run likewise.
-[M3a]
+"Blocked" is a gap, and it is published as one (section 8). The recorded
+search of section 7 is the standard behind "not published". For an
+authority, the publisher's own channel is the authority's portal or site,
+the partner disclosure channel is searched when the authority is a partner
+or is named in a partner's disclosure, and the general web search is run in
+each language of the country; a search that did not reach the authority's
+own channel cannot close the entry. For a listed project, the publisher's
+own channel is that of its operator or promoter where one is named, the
+partner disclosure channel is that of the partners named for it, and the
+general web search is run likewise. [M3a]
 
 ## 4. Search channel classes
 
-A search channel is a way of finding documents. The frame of a campaign is a fixed
-list of search channel classes for each country, and each is searched in each of the
-country's languages that it serves. The classes are:
+The frame of a campaign is a fixed list of search channel classes for each
+country, and each is searched in each of the country's languages that it
+serves:
 
 | Class | What it covers | Closeness it tends to lead to |
 |---|---|---|
@@ -190,41 +168,41 @@ Indonesian, Vietnamese and French beside English, and English for South
 Africa. A partner's own language is searched only on that partner's
 disclosure search channel. [M3a]
 
-Every search channel class of the frame is searched at least once per country and
-language before the stopping rule may fire (section 5). A class may be
-declared not applicable to a country, with the reason, before the first
-round. [M3a]
+Every search channel class of the frame is searched at least once per
+country and language before the stopping rule may fire (section 5). A class
+may be declared not applicable to a country, with the reason, before the
+first round. [M3a]
 
-Search beyond the search channels and sites already known, run periodically by a
-local agent, is M4. Its candidates join the same triage and are never
+Search beyond the search channels and sites already known, run periodically
+by a local agent, is M4. Its candidates join the same triage and are never
 admitted automatically. [M4]
 
 ## 5. Rounds and the stopping rule
 
-A **round** is one bounded search, in one search channel class, for one country and
-language, with its routes declared, its effort budget stated and its
-candidates triaged before the next round's yield is counted. [M3a]
+A **round** is one bounded search, in one search channel class, for one
+country and language, with its routes declared, its effort budget stated
+and its candidates triaged before the next round's yield is counted. [M3a]
 
-**The round log** records for each round: country, language, search channel class,
-routes and terms, date, effort spent, candidates found, and the number newly
-admitted after triage. Rounds that admit nothing are logged like the others.
-[M3a]
+**The round log** records for each round: country, language, search channel
+class, routes and terms, date, effort spent, candidates found, and the
+number newly admitted after triage. Rounds that admit nothing are logged
+like the others. [M3a]
 
 **Yield.** A round's yield is the number of documents it newly admits.
-Duplicates and mirrors of held documents add nothing. A translation of a held
-document adds nothing. A new edition is a new document and counts. A
-candidate kept as context only (section 9) does not count. [M3a]
+Duplicates, mirrors and translations of held documents add nothing. A new
+edition is a new document and counts. A candidate kept as context only
+(section 9) does not count. [M3a]
 
 **Stopping rule.** Stopping is judged per country. A country's discovery
 stops when all three conditions hold. [M3a]
 
-1. **Frame covered.** Every search channel class of the frame has been searched in
-   every language it serves, and every expected authority and listed project
-   has a terminal verdict.
-2. **Quiet tail.** The last two rounds, in two different search channel classes,
-   were each quiet. A round is quiet when its yield is at most 2 % of the
-   country's admitted documents at the start of the round, and at most one
-   document when that 2 % is below one.
+1. **Frame covered.** Every search channel class of the frame has been
+   searched in every language it serves, and every expected authority and
+   listed project has a terminal verdict.
+2. **Quiet tail.** The last two rounds, in two different search channel
+   classes, were each quiet. A round is quiet when its yield is at most 2 %
+   of the country's admitted documents at the start of the round, and at
+   most one document when that 2 % is below one.
 3. **Recall.** The campaign's known-item recall (section 6), under the
    frame as widened with round-zero holdings included, is at least 90 %
    as a point estimate: at least 36 of 40 items on a list of 40. The gate is
@@ -254,13 +232,11 @@ and frozen before the first round from outside the search channel frame:
 the reference lists of academic and grey literature on the partnerships, and
 documents named by the author or by people who know the field. It is never
 drawn from the declared secondary trackers, which the secondary-to-primary
-pass searches (section 7): recall measured on them would be circular. Each
-item is identified well enough to decide whether a held document is it. The
-list holds at least 40 items across the four countries, so that its interval
-(below) is informative; the size is tunable upward. It is compiled apart
-from the searches, by an agent or a session that takes no part in them, and
-its file's hash is recorded in the round log before the first round, so
-that nobody can show later that it was drawn up after the fact. [M3a]
+pass searches (section 7). Each item is identified well enough to decide
+whether a held document is it. The list holds at least 40 items across the
+four countries; the size is tunable upward. It is compiled apart from the
+searches, by an agent or a session that takes no part in them, and its
+file's hash is recorded in the round log before the first round. [M3a]
 
 **Blind use.** Those who search do not see the list: it is kept outside the
 repository, sealed by its hash, until the freeze, and compared with the
@@ -274,25 +250,24 @@ Recall is reported under the frame as declared before the first round and
 under the frame as widened, each with its interval, and the share of the
 list already held at round zero is stated. Recovery is also given per
 country, publisher's authority category, document type and language, as
-counts without intervals, since strata of a list of 40 are too small for
-them. The published figure is named *known-item recovery*, an estimate of
-recall with the bias stated below, never recall without qualification. If
-the list is enlarged, a held-out part is reserved that no diagnosis reads.
-[M3a]
+counts without intervals. The published figure is named *known-item
+recovery*, an estimate of recall with the bias stated below, never recall
+without qualification. If the list is enlarged, a held-out part is reserved
+that no diagnosis reads. [M3a]
 
 **A missed item is a diagnosis.** At a checkpoint, a missed item is examined
-for the search channel that would have found it. If that search channel is missing from the
-frame, the frame is revised (a recorded revision) and the new search channel is
-searched like the others. The item whose diagnosis widened the frame
-counts as missed, even when the new search channel then finds it. An item
-fetched by looking it up from the list enters the register if in scope but
-never counts as recovered. [M3a]
+for the search channel that would have found it. If that search channel is
+missing from the frame, the frame is revised (a recorded revision) and the
+new search channel is searched like the others. The item whose diagnosis
+widened the frame counts as missed, even when the new search channel then
+finds it. An item fetched by looking it up from the list enters the
+register if in scope but never counts as recovered. [M3a]
 
 **Limits stated.** Known items are more visible than the average document,
-since someone cited them, so known-item recall tends to overstate recall. The
-results say so. A second estimate from the overlap between two independent
-search channel classes (capture and recapture) is later work. [M3a for the caveat,
-later for the second estimate]
+since someone cited them, so known-item recall tends to overstate recall.
+The results say so. A second estimate from the overlap between two
+independent search channel classes (capture and recapture) is later work.
+[M3a for the caveat, later for the second estimate]
 
 <!-- batch-2 X-17: pending author decision -->
 
@@ -315,22 +290,21 @@ document. Each claim ends with one outcome. [M3a]
 to a primary document the Observer read (held or admitted), reported with
 its interval in the M3a collection report, beside the distribution of all
 five outcomes; "traced, unreachable" is shown beside the rate and not
-counted in it, since nobody read that document. When a tracker makes more
-claims than the budget allows, the pass examines a random sample drawn
-before it starts, and says so. The tracker traceability rate is distinct
-from the matching coverage rate of fusion section 5. [M3a]
+counted in it. When a tracker makes more claims than the budget allows, the
+pass examines a random sample drawn before it starts, and says so. The
+tracker traceability rate is distinct from the matching coverage rate of
+fusion section 5. [M3a]
 
 **The recorded search.** "No primary document found", here and in fusion
-section 5, means a search that covered at least the publisher's own search channel,
-the partner disclosure search channel when a partner is named, and one general web
-search in each relevant language, with the routes and terms recorded. A
-claim is untraced only after that search. [M3a]
+section 5, means a search that covered at least the publisher's own search
+channel, the partner disclosure search channel when a partner is named, and
+one general web search in each relevant language, with the routes and terms
+recorded. A claim is untraced only after that search. [M3a]
 
 The pass is how the class "secondary trackers and news" of section 4 is
 searched: the claims of the declared trackers traced for one country in one
 language are that class's round, and the documents admitted from them are
-that round's yield, for frame coverage and for the quiet tail of the
-stopping rule alike. [M3a]
+that round's yield, for frame coverage and for the quiet tail alike. [M3a]
 
 ## 8. Access and unreachable documents
 
@@ -350,32 +324,32 @@ retried, rung by rung, within public access (section 1). [M3a]
 Each retrieval records the rung it used. At each successful retrieval of a
 document whose bytes may not be redistributed, a capture of its address is
 requested from the Internet Archive and recorded as its `archive_url`; a
-failed request is recorded and retried at M4. A site whose certificate is invalid
-is still fetched, and the error is recorded with the retrieval. Credentials,
-cookies and tokens never appear in any record. Sending a request for a
-document to its publisher needs the author's explicit authorisation, case by
-case. [M3a]
+failed request is recorded and retried at M4. A site whose certificate is
+invalid is still fetched, and the error is recorded with the retrieval.
+Credentials, cookies and tokens never appear in any record. Sending a
+request for a document to its publisher needs the author's explicit
+authorisation, case by case. [M3a]
 
 **Scans.** Before any scan is transcribed ([extraction](jetp-extraction.md)
-section 6.4), collection searches hard for a born-digital copy of the same
-document that stayed digital: the official gazette, the ministry's portal,
-the national legal database (for Viet Nam, Công báo, the Ministry of
-Industry and Trade's portal, vbpl.vn and similar). At M2 it is one bounded
-look-up recorded as a dry search; later, a recorded search (section 7). A
-born-digital copy found enters the register by a register change, is
-extracted instead and is related to the scan by `edition_of` or `same_as`;
-the scan is transcribed only when none is found. [M2 for the scans held; M3a for scans
-found by discovery]
+section 6.4), collection searches for a born-digital copy of the same
+document: the official gazette, the ministry's portal, the national legal
+database (for Viet Nam, Công báo, the Ministry of Industry and Trade's
+portal, vbpl.vn and similar). At M2 it is one bounded look-up recorded as a
+dry search; later, a recorded search (section 7). A born-digital copy found
+enters the register by a register change, is extracted instead and is
+related to the scan by `edition_of` or `same_as`; the scan is transcribed
+only when none is found. [M2 for the scans held; M3a for scans found by
+discovery]
 
 **Unreachable documents are data.** The unreachable list is released with
 the frozen register. Each entry names what is missing (an expected document,
-or a search channel of an expected authority), why it is expected, the rungs tried
-with their dates, and the reason it stopped: login required, paywall, bot wall
-not cleared, certificate or server failure, removed with no archive copy, or
-named but never found (a document that another document says exists, which
-the recorded search did not find). An authority that publishes nothing is
-not on the list: its verdict is "not published" (section 3). It is a result:
-it tells the reader where the register is blind. [M3a]
+or a search channel of an expected authority), why it is expected, the rungs
+tried with their dates, and the reason it stopped: login required, paywall,
+bot wall not cleared, certificate or server failure, removed with no archive
+copy, or named but never found (a document that another document says
+exists, which the recorded search did not find). An authority that
+publishes nothing is not on the list: its verdict is "not published"
+(section 3). [M3a]
 
 ## 9. Candidate triage
 
@@ -383,35 +357,26 @@ Each candidate gets one triage outcome. [M3a]
 
 | Triage outcome | Meaning |
 |---|---|
-| admit | in scope as the requirements define it (requirements § 2.5: statements about a partnership's projects, money, perimeters, parties or states, or the reference pool of DA12, counted in its own counting scope); it becomes a document of the register and is extracted |
+| admit | in scope as the requirements define it (requirements § 2.5); it becomes a document of the register and is extracted |
 | context only | registered as a document and given the disposition `out_of_scope` (extraction § 7), so it stays citable and is not extracted: a general news item, background reading, a document about the partnership but with no statement the ledger records |
 | reject | out of scope, with the reason |
 | duplicate | the same document as one held, judged as in fusion section 3; recorded against the held document |
 
-**Who decides.** A triage outcome is a judgement, recorded with the candidate,
-a quoted basis, who or what judged, by which method and version, and when,
-as fusion section 3 requires of identity judgements, with a likelihood and
-a confidence on the calibrated scales of fusion section 1. [M3a]
-
-**Checking.** LLM readers are called without tools, network or file
-access, and receive a candidate's text as quoted data, never as
-instructions, since the documents are written by interested parties. Each
-candidate is judged under the protocol of
-[extraction](jetp-extraction.md) section 6.3: two LLM readers from
-different model families, each blind to the other, judge every candidate.
-Where both give the same triage outcome at a calibrated likelihood at or
-above the acceptance level, that outcome is in force; otherwise the
-arbiter, a stronger model given both answers and the candidate's text,
-decides, and a candidate may end undetermined. Nothing is queued for the
-author: the outcomes are served in the order of fusion section 3, and a
-decision he chooses to make is recorded as a judgement like any other. A
-triage outcome counts, for yield and for the register, once it is in
-force; an undetermined candidate adds no yield. The same protocol applies
-to every other LLM judgement collection makes: a document's class, a
-claim's outcome in the secondary-to-primary pass, a duplicate. [M3a]
-
-A triage outcome is defeasible like any judgement: a rejected candidate can be
-admitted later by a judgement that says why. [M3a]
+**Who decides.** A triage outcome is a judgement, recorded with the
+candidate, a quoted basis, who or what judged, by which method and version,
+and when, with a likelihood and a confidence on the calibrated scales of
+fusion section 1. Each candidate is judged under the protocol of
+[extraction](jetp-extraction.md) section 6.3 (two LLM readers from
+different model families, blind to each other, the arbiter on what they
+leave open, the readers called without tools and given the candidate's text
+as quoted data), and a candidate may end undetermined. Nothing is queued
+for the author; a decision he chooses to make is recorded as a judgement
+like any other. A triage outcome counts, for yield and for the register,
+once it is in force; an undetermined candidate adds no yield. The same
+protocol applies to every other LLM judgement collection makes: a
+document's class, a claim's outcome in the secondary-to-primary pass, a
+duplicate. A triage outcome is defeasible like any judgement: a rejected
+candidate can be admitted later by a judgement that says why. [M3a]
 
 **Material later found closed.** A held document later found not to have
 been public when it was retrieved (leaked, confidential, reached through
@@ -422,9 +387,9 @@ store, from its off-site copies and from every release not yet published;
 its register row, retrievals, hash and the reason stay, so the removal is
 itself on record. A published release that carried its content is withdrawn
 and corrected ([results](jetp-results.md) section 9). Two limits are
-stated, not hidden: verbatim fields already committed stay in the
-repository's history, and machine backups age out on their own schedule.
-[M3a; M2 for the documents held]
+stated: verbatim fields already committed stay in the repository's history,
+and machine backups age out on their own schedule. [M3a; M2 for the
+documents held]
 
 ## 10. Document classes
 
@@ -436,10 +401,6 @@ classes. [M3a for the class, M4 for what each class needs over time]
 | frozen | a signed agreement, a board report, a plan once issued | fetched once, and once more at the freeze (section 11) | its address is checked periodically by a fetch: a disappearance triggers an archive capture or retry (link rot), and new bytes under the same address are registered as a new snapshot, so a silent replacement is seen |
 | living | a project data sheet updated as disbursements come, a portfolio portal, a ministry dashboard | fetched once at discovery; earlier snapshots held are kept | refetched at a declared frequency; each changed version is a new snapshot, so the document becomes a dated series of snapshots |
 | series | annual and quarterly reports, secretariat progress reports | each issue found is its own document, linked by `edition_of` | the series' stated periodicity is recorded, the next issue expected, and a late issue reported |
-
-A figure extracted from a living document's snapshot is a statement of that date,
-like any other; the next version is a new statement beside it (fusion section
-2). [M3a]
 
 **Relocation.** A held document whose publisher moves it to a new address
 stays one document: the new address is recorded as a change of the
@@ -461,11 +422,11 @@ retrieval date of the living documents it relies on beside the newest
 document date. [M3a]
 
 Both dates are published with the register. They differ from the knowledge
-cutoff of fusion section 1 ("two times"), the date up to which admissions and
-judgements count. The freeze fixes the register's membership; the knowledge
-cutoff is declared per release, at or after the discovery cutoff (results
-and releases, section 4), so the statements and judgements of M3b count in
-the release that declares a later cutoff. [M3a]
+cutoff of fusion section 1, the date up to which admissions and judgements
+count: the freeze fixes the register's membership; the knowledge cutoff is
+declared per release, at or after the discovery cutoff (results and
+releases, section 4), so the statements and judgements of M3b count in the
+release that declares a later cutoff. [M3a]
 
 **The freeze.** When the author accepts the recall estimate and the
 unreachable list, the register is frozen: its documents, their triage
@@ -480,44 +441,35 @@ snapshot. After the freeze: [M3a]
 - a document published after the discovery cutoff does not enter the frozen
   register, even when found before the freeze;
 - a ledger error (a document wrongly admitted, a wrong address) is corrected
-  by supersession, as fusion section 2 allows for the ledger's own errors,
-  and the correction is reported with the release.
+  by supersession, as fusion section 2 allows, and the correction is
+  reported with the release.
 
 **M2 before the campaign.** M2 discovers nothing beyond the look-up for a
-held scan (section 8). It may retry, on the first
-two rungs of the access ladder (a plain automated request, then the author's
-browser session), the retrieval of documents already registered that have no snapshot,
-because that is fetching, not discovery; every such document ends with a
-snapshot or the disposition `no_snapshot` of
-[extraction](jetp-extraction.md) section 7, whose reason cites the latest
-retrieval status. [M2]
+held scan (section 8). It may retry, on the first two rungs of the access
+ladder, the retrieval of documents already registered that have no
+snapshot; every such document ends with a snapshot or the disposition
+`no_snapshot` of [extraction](jetp-extraction.md) section 7. [M2]
 
 **After M3.** Recurring discovery, the weekly watch beyond known sites,
 link-rot checks and the tracking of living documents and series each run on
-their own cadence, not under this campaign's stopping rule. Their stopping and
-coverage rules are to be written when M4 opens. [M4]
+their own cadence, not under this campaign's stopping rule. Their stopping
+and coverage rules are to be written when M4 opens. [M4]
 
 ## 12. What M3a must produce
 
 M3a produces a collection report, which the author accepts; it is the
 vehicle of everything this document says is published at M3a, and the first
-release (results and releases, section 13) carries its content. The minimum
-that yields a citable recall estimate:
+release (results and releases, section 4) carries its content:
 
-1. A declared protocol: authority frame, search channel classes per country and
-   language, known-item list (frozen, hidden), tracker list, thresholds and
-   caps.
+1. A declared protocol: authority frame, search channel classes per country
+   and language, known-item list (frozen, hidden), tracker list, thresholds
+   and caps.
 2. The round log, empty rounds included, with effort and yield per round.
-3. A judgement on every candidate under the protocol of extraction
-   section 6.3: two LLM readers from different model families, the arbiter
-   on what they leave open, each outcome with its likelihood and
-   confidence.
+3. A judgement on every candidate under the protocol of section 9.
 4. Terminal verdicts for every expected authority and listed project.
 5. The recall estimate with its interval, the tracker traceability rate with
    the distribution of claim outcomes, the unreachable list, the discovery
    cutoff and the newest document date.
-
-Everything else in this document tagged M4 or later is not needed for it.
 
 ## 13. Checks a protocol must pass
 
@@ -526,21 +478,15 @@ produces.
 
 | Situation | Correct outcome |
 |---|---|
-| A search finds a report that looks relevant; nobody has judged it yet. | It is a candidate: not in the register, not extracted, no yield. |
-| A web search round returns twelve hits, all mirrors or duplicates of held documents. | Yield zero; the round is quiet and logged with its effort. |
-| A round finds nothing at all. | It is logged with routes, terms, date and effort, and counts as quiet. |
 | Two consecutive quiet rounds are both general web searches. | The quiet-tail condition is not met: the two rounds must be in different search channel classes. |
 | Two quiet rounds in different classes, but the operator search channel was never searched for that country. | Discovery does not stop: the frame is not covered. |
 | A known item was missed; examining it shows a partner portal missing from the frame. | The frame is revised with a recorded reason and the portal searched; the item looked up directly does not count as recovered. |
 | The effort cap is reached with 34 of 40 known items found. | Discovery stops; the results publish 85 % with its interval, "stopped by cap", and the unmet conditions; the author decides whether to accept. |
-| A ministry decree is found through a newspaper article. | The decree is a primary document of the ministry; the route is recorded but does not lower its pedigree. |
 | A tracker reports a disbursement and cites nothing; the recorded search finds no primary document. | The claim is untraced and lowers the tracker traceability rate; the event may stand on the secondary document only as fusion section 5 allows, marked as such. |
 | The secondary-to-primary pass traces the claims of the declared trackers for Senegal in French and admits nothing new. | That is a quiet round of the class "secondary trackers and news" for Senegal in French, counted in frame coverage and in the quiet tail. |
 | A page opens only after a login the public cannot freely obtain. | No bypass; the document enters the unreachable list with "login required", after the web archive rung is tried. |
 | A page behind a bot wall opens in the author's browser. | It is fetched with the author's session; the retrieval records that rung; the bytes kept are the server's response. |
 | A site's crawler rules forbid automated access; the needed report's address is known and opens in the author's browser. | The report is fetched once and the site's position recorded; no program walks the site's other pages. |
-| The two LLM readers disagree on whether a candidate is in scope. | The arbiter decides with both answers and the candidate's text; the candidate adds no yield until a triage outcome is in force, and none if it ends undetermined. |
-| A site's certificate is invalid. | The document is fetched and the certificate error recorded with the retrieval. |
 | A secretariat publishes nothing that any search channel can find. | Its verdict is "not published", backed by the recorded search; it is not on the unreachable list. |
 | A listed project appears in no document other than the plan that lists it. | Its verdict is "not published"; the plan's line stays the only document about it. |
 | A project data sheet changes a week after the M3a fetch. | The register holds the M3a snapshot; the new version is M4's to fetch, as a new snapshot beside the old. |

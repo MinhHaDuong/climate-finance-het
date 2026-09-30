@@ -5,16 +5,9 @@ runs, who launches and supervises it, how the repository governs what
 development agents may do, what each run may spend, where secrets live, what
 happens when a run fails, and how the record is backed up and recovered. It
 is the one document of the specification that names machines, commands,
-schedules and budgets concretely; the conceptual documents
-([collection](jetp-collection.md), [extraction](jetp-extraction.md),
-[fusion](jetp-fusion.md)) state what must be done and leave these to it.
-
-It serves the author and the development agents of
-[purpose and requirements](jetp-requirements.md) § 3.2 (questions OP-1 to OP-6) and the constraints C1 to C4, C9 and C10
-there, with Q14, Q15, Q17 and Q19. The Observatory, the public website, is
-also the author's instrument for noticing anomalies (requirement Q20); how
-it shows them is the [presentation](jetp-observatory-presentation.md)'s
-business.
+schedules and budgets concretely. It serves the author and the development
+agents of [purpose and requirements](jetp-requirements.md) § 3.2 (OP-1 to
+OP-6), the constraints C1 to C4, C9 and C10, and Q14, Q15, Q17 and Q19.
 
 Milestone tags in square brackets follow the [index](jetp-spec.md): M2 and
 M3 need only what makes a run correct, reproducible and affordable;
@@ -23,9 +16,9 @@ move of the document store to Zotero are M4.
 
 ## 1. Principles
 
-**Hand-launched runs until M4.** Until M4 every run is launched by a person
-or an agent in a session, watched to its end, and reported. Nothing runs on
-a timer. [M2]
+**Hand-launched runs until M4.** Every run is launched by a person or an
+agent in a session, watched to its end, and reported. Nothing runs on a
+timer. [M2]
 
 **One run, one report, one budget.** A run is one bounded execution of one
 job (an extraction batch, a discovery round, a fetch run, a replay). It has an
@@ -34,9 +27,8 @@ reached, and ends with a report, including when it fails or finds nothing.
 [M2]
 
 **Bytes and LLMs on padme, supervision anywhere, data one way.** Jobs that
-read document bytes or call an LLM run on padme. Data produced
-there reaches the laptop by the repository and DVC, never the other way.
-[M2]
+read document bytes or call an LLM run on padme. Data produced there
+reaches the laptop by the repository and DVC, never the other way. [M2]
 
 **The repository is the control plane.** Every change to code, rules or
 data enters the record through a branch, a review and passing tests. A
@@ -53,28 +45,24 @@ the author (requirement C1). [M2]
 | padme | Personal workstation: two consumer GPUs (RTX A4000 16 GB, RTX 3060 12 GB), 125 GB RAM, one 953 GB NVMe disk | The primary checkout, the DVC cache and the DVC remote, every document byte, the two local LLM readers (one per GPU), the credentials for paid services | Every job that reads document bytes or calls an LLM: fetch runs, extraction runs, replay, discovery rounds, matching to CRS and IATI, the release build, the Observatory build, the full test suite |
 | doudou | Laptop | A checkout of the repository; DVC data only as pulled from padme | The author's sessions; development agents editing code, rules and tickets; the fast test tier; supervision of runs on padme; viewing padme's browser on its own screen |
 
-- **padme runs the jobs.** A job that reads bytes or runs LLMs is launched on
-  padme, in a git worktree or, from M4, in the persistent checkout of
-  section 11. A development agent on doudou reaches padme over `ssh padme`.
-  [M2]
-- **doudou never has to hold all the bytes.** No job, test gate or review
-  step requires the laptop to hold the document store. The fast test tier
+- **padme runs the jobs**, in a git worktree or, from M4, in the persistent
+  checkout of section 11. A development agent on doudou reaches padme over
+  `ssh padme`. [M2]
+- **doudou never has to hold all the bytes.** The fast test tier
   (`make check-fast`, `make lint`) needs no archived bytes and is the gate
   that runs on doudou; the slow tier (`make check`) runs on padme. The fast
-  tier on doudou does not resolve locators, which needs the bytes and the
-  pinned text adapter. [M2]
-- **The primary checkout on padme is not a work area.** It may sit on
-  another session's branch. Runs use a worktree (populated with
-  `make jetp-data`, a local copy from the DVC cache with no network), or
-  from M4 the persistent checkout. [M2]
+  tier does not resolve locators, which needs the bytes and the pinned text
+  adapter. [M2]
+- **The primary checkout on padme is not a work area.** Runs use a worktree
+  (populated with `make jetp-data`, a local copy from the DVC cache with no
+  network), or from M4 the persistent checkout. [M2]
 - **Non-interactive shells.** A command sent to padme over SSH does not get
   the interactive environment, so it sets the tool path itself (section 15).
-  A run that fails because a tool is not found has not started and is
-  reported as not started, not as failed. [M2]
+  A run that fails because a tool is not found is reported as not started,
+  not as failed. [M2]
 - **Long runs survive the session.** padme has no systemd user linger, so a
-  user timer or `systemd-run --user` unit dies when the last session closes.
-  A run expected to outlast the launching session runs inside a named
-  `tmux` session on padme (one per run, named after the run identifier) and
+  run expected to outlast the launching session runs inside a named `tmux`
+  session on padme (one per run, named after the run identifier) and
   writes its progress to its report as it goes. [M2]
 - **The local LLM is a shared service.** padme serves its local models
   through a system service that other projects use (section 15). A run
@@ -98,8 +86,8 @@ the author opens padme's browser on doudou's screen (remote display), passes
 the check in person, and the bytes land on padme. The browser rungs of
 collection (`make jetp-harvest-blocked`, which reuses the browser's
 cookies for the hosts concerned, and `make jetp-collect-downloads`, which
-records files the author saved) therefore run on padme, against padme's
-browser profile. [M3a; the documents held at M2 are already on padme]
+records files the author saved) run on padme, against padme's browser
+profile. [M3a; the documents held at M2 are already on padme]
 
 **DVC is pushed from padme only, after review.** New objects are tracked
 with `make jetp-documents-track` and pushed from padme once the branch that
@@ -112,11 +100,6 @@ verified by hash against the DVC pointers, and never a synchronisation.
 [M2]
 
 ## 4. The repository as control plane
-
-The Observer is built and run through its repository. Development agents
-write the code and launch the runs; tickets record decisions and their reasons;
-tests and reviews by LLMs from another vendor gate every change; the
-author steers, arbitrates and accepts each milestone (requirements § 3.2).
 
 **Gates.** [M2]
 
@@ -134,8 +117,8 @@ author steers, arbitrates and accepts each milestone (requirements § 3.2).
 (statements, dispositions, candidates, retrievals, readings, its report) on
 a branch and opens one pull request per run. Nothing a run produces reaches
 `main`, the ledger of record or the Observatory without that review. A
-run-output pull request carries no code; its gate is lighter than a code
-change's and checks the run rather than its rows: [M2]
+run-output pull request carries no code; its gate checks the run rather
+than its rows: [M2]
 
 - the validator over the ledger with the run's rows;
 - the planted-item and fabricated-locator controls of extraction § 12;
@@ -143,12 +126,11 @@ change's and checks the run rather than its rows: [M2]
 - the run report (section 8), which carries a table-aware summary: rows
   added, superseded and rejected per table and per document.
 
-The reviewer (requirement Q19), of a family other than the readers' and
-the arbiter's, reads the run report and a
-sample of traceability chains, each from a statement or judgement down to
-its readings, its locator and its snapshot, not every row; the row check is
-the readers' protocol of section 5. A pull request that changes code, rules
-or configuration keeps the full gate above.
+The reviewer (requirement Q19), of a family other than the readers' and the
+arbiter's, reads the run report and a sample of traceability chains, each
+from a statement or judgement down to its readings, its locator and its
+snapshot, not every row. A pull request that changes code, rules or
+configuration keeps the full gate above.
 
 Ledger tables and bulky raw material are kept as storage contract § 3
 states. [M2]
@@ -169,9 +151,9 @@ states. [M2]
 
 - Raise a budget, draw on prepaid credit, or top up a paid account.
 - Admit a document by hand, outside the triage of collection § 9; accept a
-  milestone, freeze the register, cut a release,
-  or publish the Observatory (`make jetp-observatory-publish` is run by the
-  author, from `main`, after a release is accepted).
+  milestone, freeze the register, cut a release, or publish the Observatory
+  (`make jetp-observatory-publish` is run by the author, from `main`, after
+  a release is accepted).
 - Pass a site's human check, use a login the public cannot freely obtain, or
   fetch past a paywall (requirement C6).
 - Restart or reconfigure the shared local LLM service (section 15).
@@ -194,21 +176,19 @@ named on the Observatory's methods page, is recorded as one ticket; the
 ticket number is the report identifier, which the correction row cites.
 The reporter's identity stays in the ticket and never enters a ledger
 table. The report ends in one of the three outcomes of
-[results and releases](jetp-results.md) § 9, "reported, awaiting a public
-source" included. A table of reports may be derived from the tickets at M4
-if their volume warrants it. [M3b; M4 for the derived table]
+[results and releases](jetp-results.md) § 9. A table of reports may be
+derived from the tickets at M4 if their volume warrants it. [M3b; M4 for
+the derived table]
 
 ## 5. LLM readers and the checking rule
 
 **Two local readers, a hosted arbiter.** An LLM judgement (a statement
 extracted, a disposition proposed, a candidate triaged, a match) is made on
 every item by two LLM readers on padme, from different model families,
-each blind to the other. Where they agree at a calibrated likelihood at or
-above the level the method declares, the result stands; where they
-disagree, or either is below that level, a stronger model reached through
-OpenRouter arbitrates, given both readings and the source pages. The rules
-are those of extraction § 6.3,
-collection § 9 and fusion § 3; this section only says what runs where. [M2 for statements extracted and document identity
+each blind to the other; what they leave open or hold below the acceptance
+level goes to a stronger model reached through OpenRouter. The rules are
+those of extraction § 6.3, collection § 9 and fusion § 3; this section only
+says what runs where. [M2 for statements extracted and document identity
 judgements; M3a for discovery and triage; M3b for the other identity
 judgements and for preference judgements]
 
@@ -231,10 +211,7 @@ local and hosted, is a new method version. [M2, before the first
 unattended run]
 
 **Replacing a reader.** A reader or the arbiter that is retired, repriced
-or unavailable is replaced only under extraction § 6.3: the replacement
-passes the controls of extraction § 12 and its calibration on the held-out
-reference answers, stratified by language, before it reads, and the change
-is a new method version. [M2]
+or unavailable is replaced only under extraction § 6.3. [M2]
 
 **Vendor means LLM family, not billing channel.** An LLM reached through
 an aggregator (OpenRouter) counts under its maker, and so does a local
@@ -277,9 +254,9 @@ the GPU budget. [M2, requirement Q17]
 
 - **Where they live.** Each credential is in
   `~/.config/keys/<provider>.env`, mode 0600, outside the repository, on the
-  machine that uses it. Runs happen on padme, so padme holds the keys for
-  paid services; doudou holds only those its own sessions need (the
-  repository-scoped GitHub token). [M2]
+  machine that uses it: padme holds the keys for paid services; doudou holds
+  only those its own sessions need (the repository-scoped GitHub token).
+  [M2]
 - **Providers in use.** LLMs: `openrouter`; a direct provider key only when
   a role uses one. Search and bibliography: `openalex`, `tavily`,
   `semanticscholar`. Archiving: `archive` (Internet Archive account). Forge:
@@ -312,30 +289,28 @@ measurements, or a judgement. [M2]
 ### 7.1 The measurements
 
 - **Size of the held documents** (measured on padme, on the document store
-  of record: 278 objects, 282 MB; the 91 other snapshots, CRS and World Bank
-  extracts and IATI country files, are kept under the comparator data
-  directories; the counts add up in requirements DA2). The 84 PDFs have a text layer of 11.65
-  million characters in all (median 54,000 per document, 90th percentile
-  463,000, largest 947,000). The 194 other objects (HTML, spreadsheets,
-  structured records) total 31.9 MB of bytes; their text share was not
-  measured.
+  of record: 278 objects, 282 MB; the 91 other snapshots are kept under the
+  comparator data directories; the counts add up in requirements DA2). The
+  84 PDFs have a text layer of 11.65 million characters in all (median
+  54,000 per document, 90th percentile 463,000, largest 947,000). The 194
+  other objects (HTML, spreadsheets, structured records) total 31.9 MB of
+  bytes; their text share was not measured.
 - **Tokens** (derived). At about four characters per token for English, the
   PDFs hold about 2.9 million tokens; assuming the non-PDF objects yield 10 to
-  20 % of their bytes as text, they add about 1 million. The held documents
-  are therefore about 4 million tokens. Vietnamese and Indonesian text uses
-  more tokens per character, so this is a floor.
+  20 % of their bytes as text, they add about 1 million: about 4 million
+  tokens in all, a floor since Vietnamese and Indonesian text uses more
+  tokens per character.
 - **The M2 assisted pass.** The readers read only the 115 documents with a
   snapshot and nothing extracted (requirements DA2); the 254 already
-  extracted are replayed without an LLM (extraction § 10). The readers are
-  local, so the paid spend is the arbiter's calls on what they leave open,
-  the transcription of the held scan and the selection runs. None is
-  measured yet: the first calibration run measures the arbiter's rate and
-  cost, and the first run of the installed readers their GPU time.
+  extracted are replayed without an LLM (extraction § 10). The paid spend
+  is the arbiter's calls on what the local readers leave open, the
+  transcription of the held scan and the selection runs; none is measured
+  yet. The first calibration run measures the arbiter's rate and cost, and
+  the first run of the installed readers their GPU time.
 - **Local LLM throughput** (measured on padme, short-record screening with
-  thinking disabled): about 1.7 records per second, decoding about 95 % of
-  the time, against about 19 records per second for a hosted small LLM
-  with six workers. Throughput on long documents has not been measured;
-  the first run of the installed readers measures it on padme.
+  thinking disabled): about 1.7 records per second, against about 19
+  records per second for a hosted small LLM with six workers. Throughput on
+  long documents is measured by the first run of the installed readers.
 - **OpenAlex** (measured): the project key carries a free allowance of
   USD 1 per day, reported in every response header with the remaining
   balance and the reset time; a full 88-query search pass costs about
@@ -358,15 +333,15 @@ measurements, or a judgement. [M2]
 
 **Development sessions are not run spend.** The coding agents that build
 the Observer work under the author's subscriptions, not under per-call
-billing. Their cost is not charged to a run; the number of sessions and
-their wall time are what the author can report. [M2]
+billing; the number of sessions and their wall time are what the author
+can report. [M2]
 
 **Reaching a budget.** At the per-document budget the document is left
-pending, with the reason in the run report. At the per-run
-budget the run stops and reports. At the monthly or per-vendor budget, no
-new paid run starts until the author raises it or the month turns. A run
-never switches vendor to stay under a vendor budget without the author's
-agreement, since that changes the method. [M2]
+pending, with the reason in the run report. At the per-run budget the run
+stops and reports. At the monthly or per-vendor budget, no new paid run
+starts until the author raises it or the month turns. A run never switches
+vendor to stay under a vendor budget without the author's agreement, since
+that changes the method. [M2]
 
 ## 8. Logging spend and compute time
 
@@ -378,19 +353,20 @@ completed, failed and deferred with their reasons, the number of items
 that stood on the readers' agreement, went to the arbiter and ended
 undetermined, the calibration version in force, the declared scope, its
 notes and the part plan of each snapshot read, any reviewed locator or
-layer mapping (extraction §§ 5, 9), and a final state (section 10). The report of a build lists the
-trails that do not resolve. A run that found nothing says so. [M2 for extraction runs; M3a for discovery rounds, requirement Q14]
+layer mapping (extraction §§ 5, 9), and a final state (section 10). The
+report of a build lists the trails that do not resolve. A run that found
+nothing says so. [M2 for extraction runs; M3a for discovery rounds,
+requirement Q14]
 
 **Compute time.** Each run records its local GPU wall time and its paid
 spend per document; the document's class, type and extraction method are
-joined later, since classes are assigned only from M3a. [M2, so that the
-M3b release can state spend and compute time per document class, document
-type and extraction method, requirement Q15, including for the documents
-extracted at M2]
+joined later, since classes are assigned only from M3a, so that the M3b
+release can state spend and compute time per document class, document type
+and extraction method (requirement Q15). [M2]
 
 **Monthly tally.** Spend per vendor against the monthly budgets, and GPU
-time, are tallied from the run reports and shown to the author. [M2 as a computed table; M4 on the Observatory's
-supervision view]
+time, are tallied from the run reports and shown to the author. [M2 as a
+computed table; M4 on the Observatory's supervision view]
 
 ## 9. Backups and recovery
 
@@ -405,24 +381,23 @@ supervision view]
 | A frozen release | The release deposit [M3b] | Zenodo |
 | Local LLM weights | Downloaded | Re-downloadable |
 
-**Why two copies off the disk.** The DVC cache and the DVC remote are on
-the same NVMe partition of padme, and the Internet Archive holds only the
-documents it captured, not those collected by browser or behind a check. A
-disk failure must not lose a document byte.
+Two copies off the disk are required because the DVC cache and the DVC
+remote share one NVMe partition, and the Internet Archive holds only the
+documents it captured.
 
 **The off-site copy: Zotero.** Each snapshot is uploaded, one way, to the
 project's Zotero group, with its SHA-256 in the item's metadata, when it is
 pushed to DVC; the objects pushed before the rule are uploaded once. The
 group is private, its attachments visible to members only. No job reads
-from Zotero: DVC stays the working store until
-the document store moves behind the same interface at M4 (section 11). [M2]
+from Zotero: DVC stays the working store until the document store moves
+behind the same interface at M4 (section 11). [M2]
 
 **The machine backup.** padme runs a nightly restic backup of
 `/home/haduong`, `/data` and `/etc` to a Hetzner Storage Box, keeping 7
 daily, 4 weekly, 12 monthly and 5 yearly snapshots. It covers the DVC cache
-and remote, the retained layers and the repository checkouts. A backup that
-stops silently is the failure to guard against: the test of recovery reads
-the date of the latest backup snapshot. [M2]
+and remote, the retained layers and the repository checkouts. The test of
+recovery reads the date of the latest backup snapshot, so that a backup
+that stops silently is seen. [M2]
 
 **Recovery.** [M2]
 
@@ -445,9 +420,8 @@ pass. [M2, then before the M3a freeze and before each release]
 the repository states where each credential lives (by provider, never the
 value), who owns the repository, the release deposits and the Observatory's
 domain, and the restore steps of this section, so that the cited releases
-stay retrievable and a withdrawal, which needs a removal request to the
-repository (results § 9), can be carried out when the author cannot act.
-It is reread at each release. [M3b]
+stay retrievable and a withdrawal (results § 9) can be carried out when the
+author cannot act. It is reread at each release. [M3b]
 
 <!-- batch-2 X-24: pending author decision -->
 
@@ -476,9 +450,9 @@ extracted are not extracted or renumbered again. [M2]
 the attempt, and does not advance the last successful coverage. It is
 retried at the next rung (the browser's cookies, then the author's manual
 save on padme's browser), never by circumventing the check. What remains
-blocked joins the unreachable list, which is data (collection § 8). A change
-of a site's robots rules or terms is flagged in the report. [M2 for the
-record of an attempt; M3a for the rungs and the unreachable list]
+blocked joins the unreachable list (collection § 8). A change of a site's
+robots rules or terms is flagged in the report. [M2 for the record of an
+attempt; M3a for the rungs and the unreachable list]
 
 **Service failures.** An LLM service that errors or times out is retried
 with backoff a bounded number of times (default: three), then the document
@@ -495,8 +469,8 @@ elsewhere: it is deferred, and the deferral is said in the session and noted
 on the ticket it serves. At M4, a check from doudou reads the reports of
 scheduled runs, flags a run whose report is missing, late or not complete,
 and surfaces it in the end-of-day wrap-up; a scheduled run that padme could
-not start leaves a report saying so. No run disappears in silence. [M2 for
-hand-launched runs; M4 for scheduled runs]
+not start leaves a report saying so. [M2 for hand-launched runs; M4 for
+scheduled runs]
 
 ## 11. What changes at M4
 
@@ -507,8 +481,7 @@ earlier.
   worktree area, fast-forwarded to `origin/main` before each pass, with one
   wrapper per pass and one report per pass in the format of section 8. A
   pass refuses to run while the previous result of the same pass is still
-  unreviewed. Scheduled by cron, which needs no linger; the alternative is
-  enabling linger for the user account.
+  unreviewed. Scheduled by cron, which needs no linger.
 - **Schedules.** Link-rot check and capture retry monthly, on the first of
   the month (`make jetp-link-check jetp-web-archive jetp-link-views`);
   discovery beyond the known sites weekly, by an agent on the local LLM,
@@ -520,7 +493,7 @@ earlier.
 - **The storage seam used.** Every retrieval already writes through the
   single document-write function; at M4 the document store behind it moves
   to a Zotero group library, the pipeline reading a committed export, never
-  live Zotero. The Zotero copy of section 9 then becomes the store.
+  live Zotero.
 - **Drift register.** A register of what moves under the Observer between
   releases, reviewed at each release: sources (addresses, formats, a site
   that stopped publishing), publishers' schemas and field lists, the models
@@ -529,9 +502,7 @@ earlier.
   method version that answers it.
 - **Adaptive cadence.** A living document is refetched at an interval set
   from its observed rate of change, within the weekly maximum of
-  requirement N6: a page unchanged over several fetches is fetched less
-  often, one that changed is fetched sooner, so restatements do not
-  multiply with no change behind them.
+  requirement N6.
 - **Recalibration.** Before a scheduled pass whose models or prompts
   changed, the readers and the arbiter are scored again on the held-out
   reference answers; the budgets of section 7 are revised on the measured
@@ -547,18 +518,14 @@ earlier.
 
 ## 12. The M2 and M3 slice
 
-1. Runs launched by hand on padme, each with an identifier, declared
-   budgets, a `tmux` session when long, and a report with a final state.
-2. Bytes and LLMs on padme, data one way, DVC pushed from padme after
-   review, two copies of document bytes off padme's disk (the Zotero group
-   and the machine backup), each restored once.
-3. The repository gates of section 4, and the agents' permissions and
-   prohibitions.
-4. Two local readers from different model families, one per GPU,
-   selected and calibrated on OpenRouter before installation, and a hosted
-   arbiter, on every LLM judgement; every call recorded with its cost.
-5. Budgets enforced per document, per run, per month and per vendor;
-   GPU time logged per run; secrets read at use only.
+Runs launched by hand on padme with an identifier, declared budgets, a
+`tmux` session when long, and a report with a final state; bytes and LLMs on
+padme, data one way, DVC pushed from padme after review, two copies of
+document bytes off padme's disk, each restored once; the repository gates of
+section 4; two local readers from different model families and a hosted
+arbiter on every LLM judgement, every call recorded with its cost; budgets
+enforced per document, per run, per month and per vendor; secrets read at
+use only.
 
 ## 13. Open questions
 
@@ -572,33 +539,23 @@ Each has a default, applied unless the author decides otherwise.
 
 | Constructed situation | Correct outcome |
 |---|---|
-| An agent on doudou starts an extraction run while the laptop holds no document bytes. | The run is launched on padme over SSH; nothing requires the bytes on doudou. |
 | `ssh padme` times out when a run is due to start. | The run is not attempted on doudou; it is deferred, and the deferral is said in the session and noted on its ticket. |
 | A run is launched over SSH and fails with "uv: command not found". | The report says `not started`, not `failed`; the command is corrected with the PATH prefix. |
 | The author finds a relevant report on the laptop and has the PDF in the download folder. | The document enters as a register change on a branch; padme fetches it, or the author saves it through padme's browser on doudou's screen. No file is copied from doudou to padme. |
 | A run reaches its USD 20 budget after 40 of 60 documents. | No further paid call is made; the report says `partial`, lists 20 documents pending, and the 40 completed documents may be admitted whole through the pull request. |
 | The monthly tally shows USD 80 spent with one vendor. | No new run using that vendor starts this month; the run does not switch vendor on its own. |
 | The readers of a run leave 240 items open. | All 240 go to the arbiter within the run's budget; at the budget the run stops with the rest pending; nothing is queued for the author and nothing is admitted unjudged. |
-| The two local readers read a document. | They are from different makers, one per GPU; each call records tokens and GPU time with a cost of zero. |
-| A candidate reader fails its positive controls during selection on OpenRouter. | It is weighted out and never installed on padme. |
 | A run is killed midway by a power cut. | The report, written as the run goes, has no final state and is treated as failed; the rerun takes the pending list, and nothing already admitted is renumbered. |
 | An extraction run completes over half the countries of a release's scope. | No release and no Observatory publication are built until every run in the scope is complete. |
-| An agent needs more parallel slots from the local LLM. | It asks the author; it does not restart the shared service. |
-| The OpenRouter key is missing on padme. | The run stops before its first paid call and reports the missing provider; it does not fall back to another vendor. |
-| A run report is about to include a request header with an API key. | The report names the provider and the LLM only; the key never appears. A key found in a tracked file is revoked first, then removed. |
-| An agent's branch adds 12 new document objects. | They are tracked and pushed to DVC from padme only after the branch's review passes, and uploaded one way to the Zotero group with their SHA-256. |
 | padme's disk fails. | Code and ledger are cloned from GitHub; document bytes are restored from the machine backup or the Zotero group and checked against their hashes; an object that fails is refetched as a new retrieval and the losses are listed in a recovery report. |
 | The latest machine backup snapshot is two weeks old at a test of recovery. | The test fails and the backup is repaired before the milestone is accepted. |
 | A run writes 3,000 rows and opens its pull request. | The gate runs the validator, the controls, replay and idempotence, and reads the run report; the cross-family reviewer reads the report and a sample of traceability chains, not the 3,000 rows. |
 | The author, browsing results sorted by confidence, overturns 3 of 80 low-confidence items. | Each decision is recorded as a judgement of the role author, beside the readers' and the arbiter's answers, superseding the earlier judgement with his reason; no run waited for him. |
-| An agent proposes to publish the Observatory after merging a run. | It does not: publication is the author's act, from `main`, after the release is accepted. |
-| At M2, someone proposes a weekly cron job for discovery. | Declined as M4; M2 and M3 runs are launched by hand. |
 
 ## 15. Runbook: facts of the current machines
 
 The facts below describe padme and doudou as they are today. They are not
-rules: they change without a change of the specification, and the rules of
-sections 2 and 3 name only the roles they fill.
+rules: they change without a change of the specification.
 
 - **Tool path.** `uv` is at `~/.local/bin/uv`, not on the non-interactive
   PATH. A command sent over SSH prepends it:

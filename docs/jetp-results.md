@@ -1,27 +1,20 @@
 # JETP Observer: results and releases
 
 A **result** is what the JETP Observer computes from the ledger: a count, an
-account, a timeline, a gap between financial states, a descriptive table, a list of
-excerpts. In the ODEM frame of the [language](jetp-language.md) it is
-Evidence: it comes on top of Data and never edits it. A **release** is a
+account, a timeline, a gap between financial states, a descriptive table, a
+list of excerpts. In the ODEM frame of the [language](jetp-language.md) it
+is Evidence: it comes on top of Data and never edits it. A **release** is a
 frozen package of results, the data they were computed from and the
 Observatory pages that show them, identified once and never changed. The
-release is the Observer's unit of citation: papers, the book and the
-Observatory all point to one.
+release is the Observer's unit of citation.
 
 This document states what a result must carry, how results are frozen into a
 release, and how a release is identified, cited, corrected, restored and
-finally archived. It says what must hold, not how it is built. How
-statements are combined into results is the business of
-[fusion](jetp-fusion.md); how the ledger and the release files are kept, of
-the [storage contract](jetp-ledger-storage.md); how a release is shown, of
-the [presentation](jetp-observatory-presentation.md); which machine builds
-it and on what schedule, of Operation. Each rule names the milestone that
-first needs it and, in parentheses, the requirements of
-[purpose and requirements](jetp-requirements.md) it serves.
-
-The minimum for one correct, citable release is the M3b slice (section 13).
-Monthly releases and the attribution of change between them are M4.
+finally archived. Each rule names the milestone that first needs it and, in
+parentheses, the requirements of [purpose and
+requirements](jetp-requirements.md) it serves. The minimum for one correct,
+citable release is the M3b slice (section 13); monthly releases and the
+attribution of change between them are M4.
 
 ## 1. Principles
 
@@ -66,8 +59,7 @@ names its input version in the same way. *M2* (Q19).
   (fusion § 7). *M3b* (F10, F16).
 - *Knowledge time*: the knowledge cutoff K. The result uses only statements
   and judgements admitted on or before K, and each chain of judgements is
-  taken to its state at K. A later discovery never changes a result at K.
-  *M3b* (F10).
+  taken to its state at K. *M3b* (F10).
 
 **The ontology version** under which it was computed, identified so that
 the definitions of every term, measure and perimeter in force can be
@@ -75,17 +67,15 @@ retrieved as they stood. A result is never recomputed under a later ontology
 without becoming a new result. *M3b* (Q9, OBS-4).
 
 **Its method versions.** Every method that selected, weighed, transformed or
-counted: the extraction and reading methods of the statements it uses, the proposers and
-the rule that turned readings into judgements, the counting scope, the
-account rules, the conversion rule. Changing any of them makes a new result
-under a new version. *M3b* (Q9).
+counted: the extraction and reading methods of the statements it uses, the
+proposers and the rule that turned readings into judgements, the counting
+scope, the account rules, the conversion rule. *M3b* (Q9).
 
 **Its match threshold.** The likelihood and confidence a candidate match, an
 occurrence, a coverage or a compatibility judgement needs in order to count
-(fusion § 3, Threshold per result), for example "likely or more, medium
-confidence or more". The candidate matches below the threshold that would have
-changed the result are listed and counted apart; they never enter its
-figure. *M3b* (F11).
+(fusion § 3, Threshold per result). The candidate matches below the
+threshold that would have changed the result are listed and counted apart.
+*M3b* (F11).
 
 **Likelihood and confidence where judgements enter.** A result resting on
 judgements carries, or resolves to, the calibrated likelihood and confidence
@@ -96,8 +86,7 @@ inputs carry their bounds, a date its interval, a figure at two match
 thresholds its low and high values (section 3). An unresolved disagreement is
 carried with both values and the condition that blocks comparison. Unknown
 is never zero, and a figure blocked by an open question is reported as
-blocked, with the reason, while the others stand. No preferred figure is
-manufactured to fill a gap. *M3b* (Q11, F6).
+blocked, with the reason, while the others stand. *M3b* (Q11, F6).
 
 **Its unit and population.** Every count names its unit (statements,
 referents of a kind, a publisher's stated count) and its perimeter or
@@ -121,21 +110,20 @@ release identifier and the result's identifier. *M3b* (Q6).
 
 The kinds of result the M3b release must contain are those the requirements
 name: counts per country, state and scope (F13); accounts, the opening,
-movements, closing and residual of fusion § 7, which serve OBS-1 and F19;
-operation timelines (F16); the gaps between announced, signed, reported and
-disbursed amounts and the matching coverage rate to CRS and IATI (F19,
-fusion § 5); lists of excerpts for qualitative work (F21); and the
-coverage report (DP-3). Other results are added when a product needs them.
-Accounts at M3b are in the publishers' currencies and current prices:
-deflators are deferred. The Markers account and its coefficients
-(fusion § 7) are M4, unless the comparison of F19 uses CRS climate-marked
-amounts, in which case they are M3b.
+movements, closing and residual of fusion § 7 (OBS-1, F19); operation
+timelines (F16); the gaps between announced, signed, reported and disbursed
+amounts and the matching coverage rate to CRS and IATI (F19, fusion § 5);
+lists of excerpts for qualitative work (F21); and the coverage report
+(DP-3). Other results are added when a product needs them. Accounts at M3b
+are in the publishers' currencies and current prices: deflators are
+deferred. The Markers account and its coefficients (fusion § 7) are M4,
+unless the comparison of F19 uses CRS climate-marked amounts, in which case
+they are M3b.
 
 ## 3. Two match thresholds
 
-Matching uncertainty is reported, not resolved away. A result whose figure
-depends on identity, occurrence or coverage judgements is computed at two
-match thresholds, both declared in advance:
+A result whose figure depends on identity, occurrence or coverage judgements
+is computed at two match thresholds, both declared in advance:
 
 - a **cautious** threshold, counting only what the judgements support strongly
   (default: likely or more, medium confidence or more);
@@ -143,21 +131,18 @@ match thresholds, both declared in advance:
   about as likely as not or more, low confidence or more).
 
 Both are conjunctions of a likelihood of sameness and a confidence level
-(fusion § 3); an undetermined judgement counts at neither. The verbal terms
-carry meaning through their calibration (fusion § 1), which publishes the
-observed precision of each term with the method version.
-
-The result's range runs from the smaller to the larger of the two figures.
-Which threshold gives which end depends on the kind of result: accepting
+(fusion § 3); an undetermined judgement counts at neither. The result's
+range runs from the smaller to the larger of the two figures; which
+threshold gives which end depends on the kind of result, since accepting
 more matches raises a sum of matched amounts but lowers a count of referents
-or a de-duplicated sum. The range is the result's sensitivity to the declared
-thresholds, not a probability interval on the true value. Where the two
-figures coincide, one figure is shown with the note that matching does not
-move it. The candidate matches between the two thresholds are listed with the
-result, so a reader sees what the range is made of. *M3b* (F11, Q11).
+or a de-duplicated sum. The range is the result's sensitivity to the
+declared thresholds, not a probability interval on the true value. Where the
+two figures coincide, one figure is shown with the note that matching does
+not move it. The candidate matches between the two thresholds are listed
+with the result. *M3b* (F11, Q11).
 
-A result may declare a single threshold when it does not depend on matching; it
-says so. The two defaults are method choices with a version, set by the
+A result may declare a single threshold when it does not depend on matching;
+it says so. The two defaults are method choices with a version, set by the
 author before the M3b release and not moved afterwards without a new
 version.
 
@@ -192,8 +177,7 @@ stated.
 - **The share of support by public copy**: for each result and for the
   release as a whole, the share of the supporting statements whose document
   has its bytes redistributed, a public archive capture, a live address
-  only, a registration route only, or no public copy, so that a reader
-  knows how far a figure can be checked from outside. (Q8, C6, F27)
+  only, a registration route only, or no public copy. (Q8, C6, F27)
 - **The validation and coverage reports**, and an editorial note in plain
   language saying what the release contains and what it does not. The
   validation reports include the calibration record of every method version
@@ -222,9 +206,9 @@ date. The publication date is a fifth, recorded in the descriptor. *M3b*
 committed before it is built: the ledger rows, the ontology, the method
 settings, the editorial texts. The package is built from that committed
 state, verified, and only then is the descriptor written and committed,
-naming the input version. The input version cannot contain its own
-identifier, so the descriptor is never part of the inputs it describes, and
-no file of the package refers to the descriptor's hash. *M3b* (Q8, Q19).
+naming the input version. The descriptor is never part of the inputs it
+describes, and no file of the package refers to the descriptor's hash.
+*M3b* (Q8, Q19).
 
 **The descriptor** pins the written bytes. It records:
 
@@ -250,10 +234,10 @@ generated from the DDL for the common tables and from `line-field-specs`
 for the per-document fields tables. The metadata record is the DataCite
 record deposited through Zenodo, which relates the release chain and the
 code (IsNewVersionOf, IsPreviousVersionOf, IsSupplementTo) and a correction
-to what it corrects (IsObsoletedBy, Obsoletes). The persistent
-identifier is reserved before the build, so the descriptor can name it.
-RO-Crate, with W3C PROV for the run record, is recorded as the M4 option.
-*M3b* for the Data Package and DataCite; *M4* for RO-Crate (F29, F31).
+to what it corrects (IsObsoletedBy, Obsoletes). The persistent identifier
+is reserved before the build, so the descriptor can name it. RO-Crate, with
+W3C PROV for the run record, is the M4 option. *M3b* for the Data Package
+and DataCite; *M4* for RO-Crate (F29, F31).
 
 **Validation before publication.** The build checks, before anything is
 published, that every result carries section 2 in full, that every trail
@@ -279,17 +263,15 @@ release in place. *M3b* (Q8).
 
 **Rebuildable.** Any release can be rebuilt from the repository at its input
 version and the archived documents, byte-identical for its deterministic
-parts; recorded LLM readings are reused, never redone. *M3b*
-(Q4, Q19).
+parts; recorded LLM readings are reused, never redone. *M3b* (Q4, Q19).
 
 ## 6. How a release is identified
 
 **Release identifier.** A regular release is named `YYYY-MM`, the year and
 month of its knowledge cutoff. A correction is `YYYY-MM-rN`, where N is an
 ordinal counted from r1, keeps the knowledge cutoff of the release it
-corrects, and names the release it supersedes. The M3b release takes the first form.
-Every file of a release carries its identifier, so a file taken out of the
-package still says where it came from. *M3b* (Q8).
+corrects, and names the release it supersedes. Every file of a release
+carries its identifier. *M3b* (Q8).
 
 **Persistent identifier.** Each release is deposited in a public data
 repository under a persistent identifier that resolves to the deposit, and
@@ -298,13 +280,13 @@ release identifier and the persistent identifier are recorded in each
 other's metadata. *M3b* (F28).
 
 **Metadata.** The deposit carries a metadata record in the DataCite schema,
-deposited through Zenodo (section 5, named formats), with at least: title, creator, publisher (as the
-legal review names it), resource type, version (the release identifier), countries, discovery cutoff, newest document date, knowledge
-cutoff, method versions, licence, the related persistent identifiers (the
-previous release, the superseded release, the code), the papers that cite
-it, added as they appear, and, as a version note since DataCite has no
-status field: current, superseded by a named correction, or withdrawn with
-the reason. *M3b* (F29).
+deposited through Zenodo, with at least: title, creator, publisher (as the
+legal review names it), resource type, version (the release identifier),
+countries, discovery cutoff, newest document date, knowledge cutoff, method
+versions, licence, the related persistent identifiers (the previous release,
+the superseded release, the code), the papers that cite it, added as they
+appear, and, as a version note since DataCite has no status field: current,
+superseded by a named correction, or withdrawn with the reason. *M3b* (F29).
 
 **Licence.** The release is published under an open licence that requires no
 more than attribution, stated in its metadata and in its files; the code
@@ -312,42 +294,40 @@ that produced it is under an open-source licence, stated likewise. *M3b*
 (F30, C5).
 
 **Open formats.** Tables are in open, plain-text formats readable with free
-software; every field is in the dictionary (the Table Schema of section 5); country, currency, organisation,
-CRS and IATI codes follow their external standards or are marked as local.
-*M3b* (F31).
+software; every field is in the dictionary (the Table Schema of section 5);
+country, currency, organisation, CRS and IATI codes follow their external
+standards or are marked as local. *M3b* (F31).
 
 ## 7. What is redistributed and what is only cited
 
 The Observer publishes what it made and cites what others made. The legal
-basis for each case (short quotation assessed per use, database right assessed
-per table and producer, public-sector re-use, per-publisher terms) and the
-export review at each release are stated in the [legal note](jetp-legal-note.md) §2 and §6.
-The open licence of the release (CC BY) covers the Observer's own
-contributions; publisher text reproduced in the release (verbatim labels,
-excerpts, the per-document fields) is quoted data, reproduced under
-attribution to its publisher, and is not relicensed. The legal position is
-assessed under French law. Each retrieval records the site's terms
-position, robots position and the free registration used, and each
-document its access route kind (storage contract § 1, target schema), so
-that the redistribution list reads its cases from the ledger. *M2* for the
-columns; *M3b* for the redistribution list (C6, F27, F30).
+basis for each case (short quotation assessed per use, database right
+assessed per table and producer, public-sector re-use, per-publisher terms)
+and the export review at each release are stated in the [legal
+note](jetp-legal-note.md) §2 and §6. The open licence of the release (CC BY)
+covers the Observer's own contributions; publisher text reproduced in the
+release (verbatim labels, excerpts, the per-document fields) is quoted data,
+reproduced under attribution to its publisher, and is not relicensed. Each
+retrieval records the site's terms position, robots position and the free
+registration used, and each document its access route kind (storage
+contract § 1, target schema), so that the redistribution list reads its
+cases from the ledger. *M2* for the columns; *M3b* for the redistribution
+list (C6, F27, F30).
 
 - **Redistributed**: the Observer's own tables, results, dictionary,
   provenance, reports and pages; the statements, including their verbatim
   labels and short excerpts, each attributed to its publisher, document and
   locator. *M3b* (F21, F30).
 - **Redistributed only where the publisher's terms allow**: the bytes of a
-  document, and the records of a structured search channel. Where the terms do not
-  allow it or are unknown, the release carries the address, the public
-  archive record if one exists, the hash and the locator, so that a reader
-  who obtains the document can check that it holds the same bytes. The
-  public archive record is the capture of the document's address recorded
-  with its retrieval. The redistribution list states, for every document,
-  which case applies and why, and whether a public copy exists. A document
-  with no public copy cannot be checked by a third party; the reconstruction
-  test of Q8 is stated over documents that have one. *M3b* (C6, F27).
-- **Never in a release**: closed material of any kind, which never enters
-  the Observer in the first place, and credentials. *M2* (N13, C9).
+  document, and the records of a structured search channel. Where the terms
+  do not allow it or are unknown, the release carries the address, the
+  public archive record if one exists (the capture recorded with the
+  retrieval), the hash and the locator. The redistribution list states, for
+  every document, which case applies and why, and whether a public copy
+  exists; the reconstruction test of Q8 is stated over documents that have
+  one. *M3b* (C6, F27).
+- **Never in a release**: closed material of any kind, and credentials.
+  *M2* (N13, C9).
 
 Terms unknown are treated as terms that forbid redistribution. *M3b* (C6).
 
@@ -384,21 +364,19 @@ correction is published as a new release `YYYY-MM-rN` that names what it
 supersedes and why. It keeps the knowledge cutoff K of the release it
 corrects and applies a named correction overlay: the supersession rows that
 correct ledger errors, recorded after K, in rows recorded on or before K
-(fusion § 8). Nothing else recorded after K enters it, so a correction never
-ships a discovery. The bytes at the old release's addresses are never
-replaced, and its persistent identifier keeps resolving to them; the old
-deposit's metadata record, not its package, gains a pointer to the
-correction and the status "superseded". *M3b* (Q8, F28).
+(fusion § 8). Nothing else recorded after K enters it. The bytes at the old
+release's addresses are never replaced, and its persistent identifier keeps
+resolving to them; the old deposit's metadata record, not its package, gains
+a pointer to the correction and the status "superseded". *M3b* (Q8, F28).
 
 **Withdrawal.** When a release must be withdrawn (a legal demand, content
 that should never have been published), the author removes its Observatory
 pages and asks the repository to remove its files, which only the
 repository can do, leaving a record to which the persistent identifier
 resolves; its descriptor, file hashes and reason are kept, and the version
-note says "withdrawn" with the reason. The screen of section 5 is the
-control that keeps this rare. A withdrawal is followed by
-a correction release where the data allow one; history is never rewritten.
-A banner on the pages of an earlier release that points to its correction is
+note says "withdrawn" with the reason. A withdrawal is followed by a
+correction release where the data allow one; history is never rewritten. A
+banner on the pages of an earlier release that points to its correction is
 M4. *M3b* (F28).
 
 **A correction reaches every claim it touches.** Before a correction is
@@ -416,12 +394,11 @@ the reporter's identity stays in the ticket and no personal data enters the
 ledger ([operation](jetp-operation.md) § 4). A report ends in one of three
 outcomes: a ledger error accepted and corrected; rejected, with the reason;
 or reported, awaiting a public source, when only a publisher's revision not
-yet public would settle it (N13, F27). A table of reports may be derived
-from the tickets at M4. A request to remove personal data or content (a
-takedown) is a report like any other: when granted, the ledger rows are
-superseded with the reason and released content is withdrawn as above,
-followed by a correction release. *M3b* for tracing, *M4* for publishing the counts
-and a derived table (F25).
+yet public would settle it (N13, F27). A request to remove personal data or
+content (a takedown) is a report like any other: when granted, the ledger
+rows are superseded with the reason and released content is withdrawn as
+above, followed by a correction release. *M3b* for tracing, *M4* for
+publishing the counts and a table derived from the tickets (F25).
 
 **Restoration after a failed publication.** When a publication fails midway,
 the last accepted complete release is served again, whole. A failed
@@ -454,19 +431,15 @@ From the second regular release onwards, each release explains how it
 differs from the previous one. *M4* (F22, OBS-5, DP-5).
 
 - Every figure that differs between two consecutive releases carries an
-  attribution to the reasons of fusion § 8: a development in the world, a
-  late report of an old event, a publisher's correction, a changed
-  interpretation, a ledger error, or a changed method. Where several reasons
-  combine, the change is split into parts, each with one reason; different
-  reasons are never reported as one.
+  attribution to the reasons of fusion § 8. Where several reasons combine,
+  the change is split into parts, each with one reason.
 - A change of method is isolated by recomputing the previous release's inputs
   under the new method, so that what the method changed is told apart from
   what the new inputs changed.
 - A failed retrieval is not a change in the world: a referent present in the
   previous release is kept in the next one, with its last known state and
   the failed retrieval recorded, unless a judgement retires it.
-- A release with no scientific change is a legitimate release and says so;
-  no change is manufactured to fill it.
+- A release with no scientific change is a legitimate release and says so.
 
 The cadence of regular releases (monthly), the review calendar and the
 reviewer's duties belong to Operation. *M4*.
@@ -482,48 +455,32 @@ pages remain readable from the deposited files alone. *M4* (C10, C7).
 
 ## 13. The M3b slice
 
-The first correct, citable release needs, and needs only:
-
-1. Results that carry their inputs, both times, ontology and method versions,
-   match thresholds, ranges and trails (sections 2 and 3), with the
-   collection record of the M3a collection report the author accepted.
-2. One release built inputs first and descriptor after, validated and
-   accepted before the current release advances (sections 4 and 5).
-3. A persistent identifier, a harvestable metadata record, an open licence
-   and open formats (section 6), with document bytes redistributed only where
-   terms allow (section 7).
-4. Citation by release and input version, and correction as a new release
-   that lists the claims it touches (sections 8 and 9).
-5. An Observatory that shows that one release and nothing else (section 10).
-
-Everything else here (the counts of error reports, serving earlier releases
-beside the current one, change attribution, the monthly cadence, the
-horizon) is M4 and is not built before it.
+The first correct, citable release needs, and needs only: results that
+carry section 2 and section 3, with the collection record of the M3a
+collection report; one release built inputs first and descriptor after,
+validated and accepted before the current release advances (sections 4 and
+5); a persistent identifier, a harvestable metadata record, an open licence
+and open formats (section 6), with document bytes redistributed only where
+terms allow (section 7); citation by release and input version, and
+correction as a new release that lists the claims it touches (sections 8
+and 9); an Observatory that shows that one release and nothing else
+(section 10). Everything else here is M4.
 
 ## 14. Checks a release must pass
 
-Each check is a small constructed situation and the outcome a correct release
+Each check is a constructed situation and the outcome a correct release
 process produces.
 
 | Situation | Correct outcome |
 |---|---|
-| A statement is admitted the day after a release's knowledge cutoff. | No result of that release changes; the statement first counts in a later release. |
-| A result is found that names no method version for its counting scope. | The build fails validation and nothing is published. |
 | A candidate match judged "about as likely as not" joins two projects. | The project count differs between the inclusive and the cautious threshold; the candidate is listed between the two. |
-| A figure's judgements all meet both thresholds. | One figure, with the note that matching does not move it. |
 | An error is found in release `2026-11` after publication. | A new release `2026-11-r1` names what it supersedes and keeps the cutoff of `2026-11`; the bytes of `2026-11` are unchanged, and its deposit's metadata record points to the correction. |
 | A ledger error in a row of `2026-11` is corrected after its cutoff, when new statements have also been admitted. | `2026-11-r1` carries the correction as a named overlay row and none of the new statements. |
 | A line is extracted after the cutoff of `2026-11` from a snapshot retrieved before it. | It is a new line, not a correction: `2026-11-r1` does not carry it, and it first counts in the next regular release. |
-| A release must be withdrawn. | Its files and pages are removed; its descriptor, hashes and reason stay, its persistent identifier resolves to them, and its status reads "withdrawn". |
 | A revoked match touches three country totals and one paper figure. | The correction's editorial note lists all four before it is published. |
 | The build of a new release fails halfway through writing the site. | The previous accepted release is served whole; no page mixes the two; the ledger keeps its newer rows. |
 | A release is restored a week after its cutoff. | It shows its own cutoffs, not the restoration date. |
-| A publisher's terms forbid redistribution, or state none. | The document's bytes are absent from the release; its address, hash and locator are present; the redistribution list says why. |
 | A paper cites "the latest data" at the Observatory's current address. | Not a valid citation; the paper must pin a release identifier and its input version. |
-| The descriptor is written into the input state it names. | Impossible by construction: the descriptor is committed after the inputs and is not one of them. |
-| A file is taken out of a release package. | It still carries its release identifier, and its hash matches the descriptor. |
-| An Observatory page shows a figure absent from the release it states. | Validation fails; the page is not published. |
 | The book pins a release; two later releases revise a figure it quotes. | The book's figure still reproduces from its pinned release. |
 | A figure rises between two releases because of a new disbursement and a revised match. | M4: the change is split into a development in the world and a changed interpretation, each with its share. |
 | A living page could not be fetched for the new release. | M4: the referents it supported stay, with their last known state and the failed retrieval recorded. |
-| The horizon is reached. | M4: a final release is archived; every cited release identifier still resolves. |
