@@ -246,8 +246,9 @@ def test_ajol_plan_lists_every_category_page_once_per_journal(monkeypatch):
             Resp(category_page(["eje"], 1)),
     })
     specs = ajol.plan(CFG, get=get)
-    assert [s["query_id"] for s in specs] == ["S-ajol-ajer", "S-ajol-eje", "S-ajol-gje"]
-    eje = specs[1]
+    # category priority order, each journal once
+    assert [s["query_id"] for s in specs] == ["S-ajol-eje", "S-ajol-ajer", "S-ajol-gje"]
+    eje = specs[0]
     assert eje["endpoint"] == f"{ajol.SITE}/eje/oai"
     assert "economics-and-development, earth-sciences" in eje["query_string"]
 
@@ -275,7 +276,8 @@ OAI = """<?xml version="1.0"?>
 </ListRecords></OAI-PMH>"""
 
 
-def test_ajol_fetch_keeps_the_window_and_the_runner_keeps_matches(tmp_path):
+def test_ajol_fetch_keeps_the_window_and_the_runner_keeps_matches(monkeypatch):
+    monkeypatch.setattr(ajol, "_state", {"challenged_in_a_row": 0})
     spec = {"query_id": "S-ajol-eje", "endpoint": "https://oai", "query_string": "q",
             "match": listing.matcher(CFG, ajol.LANGUAGES)}
     evs = events(ajol, FakeGet({"https://oai": Resp(OAI)}), spec)
@@ -283,6 +285,29 @@ def test_ajol_fetch_keeps_the_window_and_the_runner_keeps_matches(tmp_path):
     recs = works(evs)
     assert [r["matched_terms"] for r in recs] == ["climate finance", ""]  # 1985 out of window
     assert all(runner.keep(ajol.SOURCE["route"], r) == bool(r["matched_terms"]) for r in recs)
+
+
+def test_ajol_waits_out_a_waf_challenge_then_skips_once_it_persists(monkeypatch):
+    monkeypatch.setattr(ajol, "_state", {"challenged_in_a_row": 0})
+    waf = Resp("", 202, {"x-amzn-waf-action": "challenge"})
+    spec = {"endpoint": "https://oai", "match": listing.matcher(CFG, ajol.LANGUAGES)}
+    pauses = []
+
+    class Flaky(FakeGet):  # challenged once, then served
+        def __call__(self, url, params=None, delay=0):
+            super().__call__(url, params, delay)
+            return waf if len(self.calls) == 1 else Resp(OAI)
+
+    evs = list(ajol.fetch(spec, 0, get=Flaky({}), sleep=pauses.append))
+    assert pauses == [120] and evs[-1] == ("end", "")
+    blocked = FakeGet({"https://oai": waf})
+    for _ in range(ajol.MAX_CHALLENGED):
+        evs = list(ajol.fetch(spec, 0, get=blocked, sleep=pauses.append))
+        assert evs[-1] == ("end", "http 202 (WAF challenge)")
+    n = len(blocked.calls)
+    evs = list(ajol.fetch(spec, 0, get=blocked, sleep=pauses.append))
+    assert evs == [("end", "skipped: WAF challenge persisted on previous journals")]
+    assert len(blocked.calls) == n  # no request once the challenge persists
 
 
 def test_every_adapter_honours_the_contract():

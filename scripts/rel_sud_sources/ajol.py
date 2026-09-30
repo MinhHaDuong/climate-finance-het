@@ -12,9 +12,17 @@ The journals are listed from AJOL's subject categories
 serves 20 records per OAI page, so the whole of AJOL (about 1000 journal
 sitemaps) is out of a 3-hour budget: only the categories in ``CATEGORIES``
 are harvested, and that restriction is written into every query string.
+
+AJOL sits behind an AWS WAF whose rate rule answers HTTP 202 with an empty
+body and ``x-amzn-waf-action: challenge`` (a JavaScript challenge, never
+solved here). Seen on 2026-09-30 at one request per 2 s; hence 4 s between
+requests, a pause and retry on a challenge, and once the challenge persists
+across ``MAX_CHALLENGED`` journals in a row the remaining journals are
+skipped (registered incomplete) instead of pressing on.
 """
 
 import re
+import time
 
 from pipeline_io import polite_get
 
@@ -23,11 +31,13 @@ from rel_sud_sources.listing import matcher
 
 SITE = "https://www.ajol.info/index.php"
 LANGUAGES = ["en", "fr", "pt", "ar"]
-MIN_DELAY = 2.0
+MIN_DELAY = 4.0
+CHALLENGE_PAUSES = (120, 300)  # seconds to wait before each retry
+MAX_CHALLENGED = 3
 CATEGORIES = [
-    "economics-and-development", "environmental-sciences", "finance-and-management",
+    "economics-and-development", "finance-and-management", "environmental-sciences",
     "political-science-and-law", "earth-sciences",
-]
+]  # in priority order: journals are harvested category by category
 YEARS = (1990, 2026)
 
 SOURCE = {
@@ -66,7 +76,7 @@ def plan(cfg, get=polite_get):
     match = matcher(cfg, LANGUAGES)
     journals = {}
     for slug in CATEGORIES:
-        paths, error = category_journals(slug, get, MIN_DELAY)
+        paths, error = category_journals(slug, patient(get), MIN_DELAY)
         if error:
             raise RuntimeError(f"AJOL journal list incomplete: {error}")
         for p in paths:
@@ -79,15 +89,45 @@ def plan(cfg, get=polite_get):
                               f"selected by the local 1530 lexicon ({'/'.join(LANGUAGES)}) "
                               f"on title+abstract, years {YEARS[0]}-{YEARS[1]}"),
              "match": match}
-            for path, cats in sorted(journals.items())]
+            for path, cats in journals.items()]  # insertion order = category priority
 
 
 def in_window(rec):
     return rec["year"] is None or YEARS[0] <= rec["year"] <= YEARS[1]
 
 
-def fetch(spec, delay, get=polite_get):
-    for kind, val in oai_list_records(spec["endpoint"], delay=max(delay, MIN_DELAY), get=get):
+def challenged(resp):
+    return resp.status_code == 202 and resp.headers.get("x-amzn-waf-action") == "challenge"
+
+
+def patient(get, sleep=time.sleep):
+    """``get`` that waits out a WAF challenge (``CHALLENGE_PAUSES``), then gives up."""
+    def wrapped(url, params=None, delay=0):
+        resp = get(url, params=params, delay=delay)
+        for pause in CHALLENGE_PAUSES:
+            if not challenged(resp):
+                break
+            sleep(pause)
+            resp = get(url, params=params, delay=delay)
+        return resp
+    return wrapped
+
+
+_state = {"challenged_in_a_row": 0}
+
+
+def fetch(spec, delay, get=polite_get, sleep=time.sleep):
+    if _state["challenged_in_a_row"] >= MAX_CHALLENGED:
+        yield ("end", "skipped: WAF challenge persisted on previous journals")
+        return
+    stream = oai_list_records(spec["endpoint"], delay=max(delay, MIN_DELAY),
+                              get=patient(get, sleep))
+    for kind, val in stream:
+        if kind == "end":
+            hit = val == "http 202"
+            _state["challenged_in_a_row"] = _state["challenged_in_a_row"] + 1 if hit else 0
+            yield ("end", "http 202 (WAF challenge)" if hit else val)
+            return
         if kind == "dc":
             if val.get("_deleted"):
                 continue
