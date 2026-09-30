@@ -98,7 +98,7 @@ Country-placebo ranks can be useful diagnostics. They are not exact randomisatio
 
 ## First acquisition exercise and decision rules
 
-The current audit reports 383 named identities, 21 unnamed slots, and 301 sources. Its 451 timing observations include six exact days and two approval-year intervals; 443 have unknown event precision. Those are registry-coding counts, not an audit of everything available in the underlying sources. The 97 closed World Bank operations are discovery leads and cannot define a risk set of all proposals. [Local progress audit](../docs/jetp-programme-progress-2026-09-14.md).
+The current audit reports 383 named identities, 21 unnamed slots, and 301 sources. Its 451 timing observations include six exact days and two approval-year intervals; 443 have unknown event precision. Those are registry-coding counts, not an audit of everything available in the underlying sources. The 97 closed World Bank operations are discovery leads and cannot define a risk set of all proposals. [Local progress audit](../docs/attic/jetp-programme-progress-2026-09-14.md).
 
 Start with a bounded documentary exercise supporting several designs simultaneously. The existing three-case triad should remain: a mature-on-entry JETP operation, a pending JETP proposal, and an ordinary historical operation. Add a frame test: can the same lender enumerate all relevant operations at an earlier date, including cancellations and proposals that disappeared? Three detailed success stories do not answer that denominator question.
 

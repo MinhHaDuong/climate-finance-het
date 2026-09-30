@@ -28,7 +28,7 @@ checked against the already archived PDF. Direct page/PDF routes failed through
 the browsing tool, so no claim of successful live PDF retrieval is made. The
 Senegal candidate domain failed; retain the accepted plan fallback without claiming
 an exhaustive new Senegal search. South Africa's Q2 check is recorded separately
-in `jetp-zaf-q1-baseline-2026-09-14.md`.
+in `attic/jetp-zaf-q1-baseline-2026-09-14.md`.
 
 - Indonesia report index: https://jetp.id/news/jetp-reports-2025
 - Indonesia official homepage: https://jetp.id/

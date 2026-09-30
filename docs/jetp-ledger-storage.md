@@ -5,7 +5,7 @@ engine, the matching record and the derived translation tables. Split from
 [`jetp-ontology.md`](jetp-ontology.md) on 2026-09-23. How statements are
 combined and judged is [fusion](jetp-fusion.md). What the ledger's words mean is the
 [ontology](jetp-ontology.md); how the current tables become these is the
-[migration](jetp-ledger-migration.md).
+[migration](attic/jetp-ledger-migration.md).
 
 ## 1. Tables and rules
 
