@@ -1,0 +1,43 @@
+# REL pool merge (ticket 1731): catalogue + lane deliveries -> data/rel_pool/.
+# Read by scripts/corpus_rel_pool.py and scripts/catalog_rel_1530_delivery.py.
+
+# The pinned merged catalogue the REL protocol cites: catalog_merge run
+# 20260729T161924Z, 43,179 works. Fetched by hash through
+# data/catalogs/unified_works_rel_pin.csv.dvc, never regenerated: dvc.lock's
+# catalog_merge output is a different file (refined_works stays pinned for the
+# other deliverables). The merge refuses a catalogue whose md5 or row count
+# differs.
+catalogue:
+  path: data/catalogs/unified_works_rel_pin.csv
+  md5: 3633ad9f4517c02618a0ecab722a8051
+  rows: 43179
+  run: 20260729T161924Z
+
+intake_dir: data/rel_intake
+
+# Metadata priority after the catalogue: a pooled work takes each field from
+# its first non-empty member, catalogue rows first, then lanes in this order.
+# A lane missing from this list is appended in name order, with a warning;
+# each lane PR (1650 to 1654) adds its directory name here.
+lane_order:
+  - t1530-sud-openalex
+
+# Lane 1530 conversion (scripts/catalog_rel_1530_delivery.py). The limits are
+# those ticket 1530 documented at closure; every query of runs f and g
+# completed, so none comes from the registries.
+t1530_delivery:
+  lane: t1530-sud-openalex
+  ticket: 1530
+  notes: >-
+    Final 1530 search: runs 20260929f (87 queries) and 20260929g (gap-fill
+    query G-gap-fill-en), frozen queries, padme, 2026-09-29. Their works
+    absent from refined v2 reproduce screen_input_final.jsonl (30,480).
+  incomplete:
+    - unit: "SciELO, Redalyc, CNKI, AJOL, eLIBRARY, GARUDA, CLACSO, working-paper series"
+      reason: "not reachable through OpenAlex in this pass; lane 1653"
+    - unit: "affiliation-country filter"
+      reason: "applied to the English queries only"
+    - unit: "non-English queries"
+      reason: "translated by the assistant and corrected by two advisors, not reviewed by a native reader"
+    - unit: "tuning sentinels S23 (es) and S55 (fr)"
+      reason: "not retrieved by any query of runs f and g"
