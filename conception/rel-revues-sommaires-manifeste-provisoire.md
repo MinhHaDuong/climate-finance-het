@@ -1,4 +1,18 @@
-# REL — manifeste provisoire des sommaires à contrôler
+# REL — manifeste des sommaires à contrôler (figé le 30 septembre 2026)
+
+## Gel du 30 septembre 2026 (ticket 1650)
+
+Le manifeste est figé dans [`config/rel_toc_manifest.csv`](../config/rel_toc_manifest.csv) : **63 titres**, les 61 ci-dessous plus deux ajouts décidés par l'auteur après le pilote. *AEA Papers and Proceedings* (2574-0768) reprend depuis 2018 le numéro de mai de l'*American Economic Review*, qui a changé d'ISSN : sans lui la série de l'AER serait tronquée. *American Economic Review: Insights* (2640-205X, depuis 2019) est la revue d'articles courts du même comité. Pour chaque titre : pISSN et eISSN vérifiés dans Crossref, provenance, et **rangs dans leur échelle native**, rapprochés par ISSN : liste CNRS section 37 de juin 2020 (v5.07 ; 42 titres classés), ABDC 2025 (v3 du 21 septembre 2026 ; 49), FNEGE 2025 (26). Une case vide signifie « non classé dans cette liste ». L'AJG 2024 n'est pas transcrit : la liste n'est accessible qu'avec un compte Chartered ABS. Les titres historiques n'ont pas été recherchés titre par titre : les requêtes portent sur les ISSN, et les changements d'éditeur (par exemple *Climate Policy*, passé d'Elsevier à Earthscan puis à Taylor & Francis) sont traités par le rapprochement des DOI alias.
+
+Décisions de l'auteur du 30 septembre, après le pilote chronométré :
+
+- Les sommaires viennent de **Crossref et OpenAlex, sans vérification sur les pages des éditeurs**. 95 % des numéros sont derrière des blocages de robots ; ce contrôle est une limite déclarée du dépouillement, jamais une saturation.
+- Les six mégarevues (*Sustainability*, *Energies*, *Environmental Science and Pollution Research*, *Journal of Cleaner Production*, *Journal of Environmental Management*, *Applied Energy* : 328 861 articles dans Crossref, 60 % du volume) ne sont **pas dépouillées** : elles sont interrogées par les requêtes thématiques anglaises de la recherche REL (`config/rel_sud_search.yaml`, T1 à T4 et requête complémentaire), restreintes à leurs ISSN.
+- Les 57 autres titres sont livrés en entier. *Economic and Political Weekly* n'a pas de DOI avant 2024 : cette période ne compte que ce qu'OpenAlex en tient, et reste à contrôler par l'auteur.
+
+**Livraison du 30 septembre 2026** (`data/rel_intake/t1650-sommaires/2026-09-30/`, DVC ; synthèse par revue dans [`docs/rel-toc-1650-summary.csv`](../docs/rel-toc-1650-summary.csv)). Registre des 57 titres dépouillés : 12 746 numéros ou groupes « en ligne sans numéro », 223 834 éléments attendus et parcourus (217 308 Crossref, 6 526 seulement dans OpenAlex). Parmi eux, 9 986 non-articles (couvertures, comités, listes de relecteurs, notices d'erratum, numéros eux-mêmes) sont écartés comme `front_matter` et 241 éléments sans titre dans Crossref comme dans OpenAlex comme `not_retrievable`. Sur les 213 607 notices livrées, 2 981 sont déjà au pool et 210 626 sont des candidates absentes du pool. 3 700 éléments OpenAlex sans DOI restent non résolus (pour l'essentiel l'AER de 1990 à 1998) ; *Economic and Political Weekly* manque avant 2024. Requêtes thématiques des six mégarevues : 1 313 œuvres retrouvées, 1 256 livrées après dédoublonnage entre requêtes, dont 972 déjà au pool et 284 candidates. Au total 214 863 notices livrées, sans tri de pertinence.
+
+Les tableaux ci-dessous restent le texte de constitution du 28 septembre.
 
 *28 septembre 2026. Extraction nominative pour le contrôle **intégral des sommaires**, distincte de la liste des lieux où la recherche REL peut paraître. Aucun sommaire n'a encore été dépouillé.*
 

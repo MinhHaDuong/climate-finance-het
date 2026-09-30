@@ -1,0 +1,38 @@
+%erg 0.1
+Title: REL — sommaires intégraux des 61 revues du manifeste
+Created: 2026-09-29
+Author: haduong
+Closed: done
+
+--- log ---
+2026-09-29T15:00Z haduong created
+2026-09-30T14:14Z HDMX-coding-agent note Pilot phase 1 (AER, JEEM, Climate Policy) and Crossref census of all 61 titles, 2026-09-30: 544,556 Crossref items, 15,141 issues, 3,109 online-first; 0.9% in pool by DOI; publisher TOC pages automatable for AEA, Brill, Nature, EPW only (721 issues), 14,420 issues needs-human (Elsevier, Springer link, Wiley, OUP, T&F, MDPI, Chicago, SAGE, MIT, JSTOR block bots). Raw outputs ~/data/projets/climate-finance-het/rel_toc/ (MANIFEST.sha256). Scope decision pending.
+2026-09-30T17:52Z HDMX-coding-agent note Scope (author 2026-09-30): Crossref+OpenAlex TOCs without publisher check; six megajournals by REL thematic queries; +AEA P&P, AER Insights. Delivered data/rel_intake/t1650-sommaires/2026-09-30: 215,252 records (211,301 candidates), qa exit 0.
+2026-09-30T17:52Z HDMX-coding-agent closed — done
+2026-09-30T18:19Z HDMX-coding-agent note Final delivery (after gaze and a second review, same raw run): 214,863 records (210,910 candidates, 3,953 already in pool); excluded 9,989 front_matter, 241 not_retrievable, 54 duplicate_in_lane; supersedes the counts of the 17:52Z note.
+--- body ---
+## Contexte
+
+Enfant de 0700. Voie « sommaires » du protocole
+(`conception/rel-audit-finalisation-corpus.md`, tableau « Une collecte finale »)
+et du manifeste provisoire de 61 revues
+(`conception/rel-revues-sommaires-manifeste-provisoire.md`) : contrôle intégral
+de tous les numéros de 1990 à la date finale de recherche, sans échantillonnage
+de numéros. Le manifeste est un contrôle du Nord ; la couverture du Sud relève de
+1530 et 1653.
+
+Le balayage par ISSN d'OpenAlex existe (`scripts/catalog_rel_sud_search.py`, genre `e`).
+Il ne remplace pas la vérification côté éditeur : une liste de DOI déposés n'est
+pas un sommaire complet.
+
+## Actions
+1. Chronométrer un pilote sur au moins trois revues contrastées (généraliste,
+   domaine connexe, complément bibliométrique) avant de figer le volume.
+2. Figer le manifeste : ISSN, eISSN, titres historiques, rang natif.
+3. Balayer les revues, rapprocher du pool par DOI puis titre/auteurs/année.
+
+## Exit criteria
+- [x] Manifeste figé, avec provenance et rang natif de chaque titre
+- [x] Registre par revue/année/numéro : attendus, parcourus, candidats, absents à intégrer, non résolus
+- [x] Candidats absents du pool livrés à l'injection (1655), avec provenance
+- [x] Numéros introuvables et lacunes d'éditeur listés, jamais comptés comme saturation
