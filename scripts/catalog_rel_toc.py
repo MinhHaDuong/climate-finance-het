@@ -30,27 +30,27 @@ Usage:
 """
 
 import argparse
-import csv
 import gzip
 import json
 import os
 import random
 import sys
 import time
-from datetime import datetime, timezone
 
 import requests
-import yaml
-from _rel_toc_core import FROM_DATE, UNTIL_DATE, crossref_filter
-from catalog_rel_sud_search import build_filter, expand_query
+from _rel_toc_core import crossref_filter
+from _rel_toc_plan import (
+    ROOT,
+    _now,
+    load_manifest,
+    openalex_filter,
+    thematic_queries,
+)
 from pipeline_keystore import read_credential
 from utils import get_logger
 
 log = get_logger("rel_toc")
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MANIFEST = os.path.join(ROOT, "config", "rel_toc_manifest.csv")
-THEMATIC_CONFIG = os.path.join(ROOT, "config", "rel_sud_search.yaml")
 CR_API = "https://api.crossref.org"
 OA_API = "https://api.openalex.org"
 CR_SELECT = ",".join(["DOI", "title", "author", "issued", "published-print",
@@ -59,44 +59,6 @@ CR_SELECT = ",".join(["DOI", "title", "author", "issued", "published-print",
 OA_SELECT = ",".join(["id", "doi", "display_name", "publication_year", "publication_date",
                       "type", "biblio", "authorships", "abstract_inverted_index",
                       "primary_location"])
-
-
-def load_manifest(spec="all"):
-    """Manifest rows: ``all``, ``full``, ``thematic`` or comma-separated keys."""
-    with open(MANIFEST, encoding="utf-8") as fh:
-        rows = list(csv.DictReader(fh))
-    if spec in ("all", None):
-        return rows
-    if spec in ("full", "thematic"):
-        return [r for r in rows if r["sweep_mode"] == spec]
-    by = {r["journal_key"]: r for r in rows}
-    keys = spec.split(",")
-    missing = [k for k in keys if k not in by]
-    if missing:
-        raise SystemExit(f"unknown journal keys: {missing}")
-    return [by[k] for k in keys]
-
-
-def issns(journal):
-    return list(dict.fromkeys(i for i in (journal["pissn"], journal["eissn"]) if i))
-
-
-def openalex_filter(journal):
-    return (f"primary_location.source.issn:{'|'.join(issns(journal))},"
-            f"from_publication_date:{FROM_DATE},to_publication_date:{UNTIL_DATE}")
-
-
-def thematic_queries(journals, config_path=THEMATIC_CONFIG):
-    """The REL English thematic queries (T1-T4 and the gap-fill), one OR'd ISSN filter."""
-    with open(config_path, encoding="utf-8") as fh:
-        cfg = yaml.safe_load(fh)
-    all_issns = [i for j in journals for i in issns(j)]
-    searches = [(f"MJ-en-{t}", s) for t, s in cfg["queries"]["en"].items()]
-    searches.append(("MJ-en-gap-fill", cfg["gap_fill"]))
-    return [{"query_id": qid, "search": expand_query(s),
-             "filter": build_filter(expand_query(s), cfg["year_min"], cfg["year_max"],
-                                    issns=all_issns)}
-            for qid, s in searches]
 
 
 def agent_mailto():
@@ -110,10 +72,6 @@ def agent_mailto():
                 if line.startswith("AGENT_GIT_EMAIL="):
                     return line.split("=", 1)[1].strip().strip('"')
     raise SystemExit("AGENT_GIT_EMAIL not set (.env)")
-
-
-def _now():
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def _get(session, url, params=None, tries=5):

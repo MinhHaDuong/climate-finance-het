@@ -185,7 +185,7 @@ def test_merge_toc_never_redates_from_an_absurd_volume():
 
 
 def test_thematic_pass_is_one_ored_issn_filter_per_query():
-    import catalog_rel_toc as cli
+    import _rel_toc_plan as cli
 
     mega = cli.load_manifest("thematic")
     queries = cli.thematic_queries(mega)
@@ -199,7 +199,7 @@ def test_thematic_pass_is_one_ored_issn_filter_per_query():
 
 
 def test_openalex_filter_uses_every_issn():
-    import catalog_rel_toc as cli
+    import _rel_toc_plan as cli
 
     flt = cli.openalex_filter({"pissn": "0944-1344", "eissn": "1614-7499"})
     assert flt.startswith("primary_location.source.issn:0944-1344|1614-7499,")

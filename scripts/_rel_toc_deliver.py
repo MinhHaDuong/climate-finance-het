@@ -28,7 +28,7 @@ from _rel_toc_core import (
     record_id,
     unit_id,
 )
-from catalog_rel_toc import ROOT, _now, issns, openalex_filter, thematic_queries
+from _rel_toc_plan import ROOT, _now, issns, openalex_filter, thematic_queries
 from utils import get_logger
 
 log = get_logger("rel_toc_deliver")
