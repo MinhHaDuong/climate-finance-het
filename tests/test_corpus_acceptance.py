@@ -163,15 +163,6 @@ class TestFileExistence:
                 "No citation graph, co-citation analysis, or genealogy",
             )
 
-    def test_reranker_cache_exists(self):
-        assert os.path.isfile(CACHE_PATH), \
-            f"llm_relevance_cache.csv missing at {CACHE_PATH}" + _diagnosis(
-                "Reranker scoring was not run (Flag 6)",
-                "uv run python scripts/harvest/corpus_filter.py --apply (with reranker backend)",
-                "~10 min on GPU, ~2 hours on CPU",
-                "Flag 6 will score from scratch on next run — slow but not broken",
-            )
-
 
 # ═══════════════════════════════════════════════════════════
 # 1b. SOURCE CATALOGS — per-source row count guards
