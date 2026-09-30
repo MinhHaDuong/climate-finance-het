@@ -108,7 +108,9 @@ lowercased, trailing slash dropped, `hdl.handle.net/X` and `<host>/handle/X`
 both read as the Handle `X`, its query string and fragment dropped; under the
 unregistered DSpace default prefix `123456789` a repository Handle keeps its
 host, since many repositories reuse that prefix; a DOI resolver or OpenAlex URL counts as that DOI
-or id), then normalized title + year. A titled record whose source holds none
+or id), then normalized title + year. A shared URL never joins two different
+DOIs or two different OpenAlex ids: a landing page common to several works,
+such as a journal issue page, leaves them apart. A titled record whose source holds none
 of them goes to `excluded.csv` with reason `no_dedup_key` (see above).
 
 ## `registry.csv`

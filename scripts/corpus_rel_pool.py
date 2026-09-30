@@ -15,8 +15,11 @@ Deduplication is one union-find over all rows, catalogue and lanes alike:
    trailing slash dropped, ``hdl.handle.net/X`` and ``<host>/handle/X`` both
    ``hdl:X``, query and fragment dropped; under the unregistered DSpace
    default prefix ``123456789`` a repository Handle keeps its host,
-   ``hdl:<host>/123456789/…``). A resolver URL is not a URL key: ``doi.org/…`` fills an empty
-   DOI and ``openalex.org/W…`` an empty OpenAlex id instead;
+   ``hdl:<host>/123456789/…``). A resolver URL is not a URL key: ``doi.org/…``
+   fills an empty DOI and ``openalex.org/W…`` an empty OpenAlex id instead.
+   A URL never overrides an identifier disagreement: it joins only rows whose
+   components (after steps 1-2) carry no two DOIs and no two OpenAlex ids, a
+   shared landing page such as a journal issue URL cannot fuse two DOIs;
 3. same normalized title and same year, decided on the components steps 1-2b
    left: the rows sharing a title + year join when their identifier-bearing
    rows form at most one component, or components that cannot disagree (no
@@ -189,6 +192,48 @@ class _UnionFind:
             self.parent[max(ri, rj)] = min(ri, rj)
 
 
+def _url_unions(rows, uf, url_groups):
+    """Step 2b: URL unions that join no two DOIs and no two OpenAlex ids.
+
+    Judged on the components steps 1-2 left, so row order does not matter. A
+    URL group whose components carry at most one DOI and one OpenAlex id joins
+    whole; otherwise only its identifier-less rows join one another. The
+    accepted edges are then taken as clusters: a cluster that would still
+    gather two DOIs (or two OpenAlex ids) through a chain of URLs keeps only
+    its identifier-less edges.
+    """
+    ids = defaultdict(lambda: (set(), set()))
+    for i, r in enumerate(rows):
+        dois, oas = ids[uf.find(i)]
+        if r["doi"]:
+            dois.add(r["doi"])
+        if r["openalex_id"]:
+            oas.add(r["openalex_id"])
+
+    def consistent(comps):
+        return (len(set().union(*(ids[c][0] for c in comps))) <= 1
+                and len(set().union(*(ids[c][1] for c in comps))) <= 1)
+
+    def idless(c):
+        return not (ids[c][0] or ids[c][1])
+
+    edges = []
+    for group in url_groups:
+        comps = sorted({uf.find(i) for i in group})
+        if not consistent(comps):
+            comps = [c for c in comps if idless(c)]
+        edges += [(comps[0], c) for c in comps[1:]]
+    clusters = _UnionFind(len(rows))
+    for a, b in edges:
+        clusters.union(a, b)
+    members = defaultdict(set)
+    for a, b in edges:
+        members[clusters.find(a)].update((a, b))
+    ok = {root for root, comps in members.items() if consistent(comps)}
+    return [(a, b) for a, b in edges
+            if clusters.find(a) in ok or (idless(a) and idless(b))]
+
+
 def _title_unions(rows, uf, group):
     """Unions one title + year group allows, judged on the identifier components.
 
@@ -217,7 +262,8 @@ def _title_unions(rows, uf, group):
 def cluster(rows, stats=None):
     """Union-find over ``rows``: component root index per row.
 
-    Steps 1-2b (DOI, OpenAlex id, URL key) join unconditionally. Step 3 decides every
+    Steps 1-2 (DOI, OpenAlex id) join unconditionally; step 2b (URL key)
+    joins only components no identifier sets apart. Step 3 decides every
     title + year group on the components steps 1-2 left, then applies all
     its unions at once, so the result does not depend on row order.
     ``stats`` (a dict), when given, receives ``ambiguous_title_groups``.
@@ -235,9 +281,11 @@ def cluster(rows, stats=None):
             by_url[r["url"]].append(i)
         if ty:
             by_title[ty].append(i)
-    for group in list(by_doi.values()) + list(by_oa.values()) + list(by_url.values()):
+    for group in list(by_doi.values()) + list(by_oa.values()):
         for j in group[1:]:
             uf.union(group[0], j)
+    for i, j in _url_unions(rows, uf, by_url.values()):
+        uf.union(i, j)
     pending, ambiguous = [], 0
     for group in by_title.values():
         if len(group) > 1:

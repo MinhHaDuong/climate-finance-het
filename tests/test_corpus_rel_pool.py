@@ -316,3 +316,36 @@ def test_handle_url_query_and_fragment_are_dropped():
     assert rp.norm_url("https://repo.org/handle/2139/99?show=full") == "hdl:2139/99"
     assert rp.norm_url("https://repo.org/handle/2139/99/#a") == "hdl:2139/99"
     assert rp.norm_url("http://hdl.handle.net/2139/99?locatt=view:master") == "hdl:2139/99"
+
+
+
+def test_shared_landing_url_never_joins_distinct_dois():
+    rows = [_crow(doi="10.1/a", url="https://j.org/issue/5", title="A"),
+            _crow(doi="10.1/b", url="https://j.org/issue/5", title="B"),
+            _crow(url="https://j.org/issue/5", title="C")]
+    for order in (rows, rows[::-1]):
+        roots = rp.cluster(order)
+        by_doi = {r["doi"]: roots[i] for i, r in enumerate(order) if r["doi"]}
+        assert by_doi["10.1/a"] != by_doi["10.1/b"]
+    same = [_crow(doi="10.1/a", url="https://j.org/p/1"), _crow(url="https://j.org/p/1")]
+    assert len(set(rp.cluster(same))) == 1, "a URL still joins rows it does not set apart"
+
+
+
+def test_url_chain_never_joins_distinct_dois():
+    # A and B each share a URL with C (OpenAlex id only): the chain must not fuse them.
+    rows = [_crow(doi="10.1/a", url="https://x.org/1"),
+            _crow(openalex_id="W7", url="https://x.org/1"),
+            _crow(openalex_id="W7", url="https://x.org/2"),
+            _crow(doi="10.1/b", url="https://x.org/2")]
+    for order in (rows, rows[::-1]):
+        roots = rp.cluster(order)
+        by_doi = {r["doi"]: roots[i] for i, r in enumerate(order) if r["doi"]}
+        assert by_doi["10.1/a"] != by_doi["10.1/b"]
+
+
+
+def _crow(doi="", url="", title="x", year="", openalex_id="", origin="l"):
+    return {"origin": origin, "delivery": f"{origin}/1", "doi": doi,
+            "openalex_id": openalex_id, "url": rp.norm_url(url), "title": title,
+            "year": year, "version_hint": ""}
