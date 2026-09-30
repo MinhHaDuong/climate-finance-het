@@ -6,6 +6,7 @@ Label: needs-human
 
 --- log ---
 2026-09-30T13:10Z HDMX-coding-agent created — found by the operation spec draft (ticket 1708), verified
+2026-09-30T19:10Z HDMX-coding-agent note author decision (spec review wave 1, W1-22): padme's nightly restic backup to a Hetzner Storage Box exists, was found failing and repaired the same day; Zotero is the off-site copy of snapshots now; docs/jetp-operation.md section 9 states both; restore test pending
 
 --- body ---
 ## Context
@@ -22,8 +23,21 @@ would lose evidence the M3 release is built from.
 Not established: whether padme has a machine-level backup outside DVC. Only
 the DVC configuration was inspected; the author knows.
 
+Author's statement (2026-09-30, spec review wave 1, W1-22):
+
+- padme runs a nightly restic backup of `/home/haduong`, `/data` and `/etc`
+  to a Hetzner Storage Box, keeping 7 daily, 4 weekly, 12 monthly and 5
+  yearly snapshots. It was found failing on 2026-09-30 (last snapshot around
+  13 September; the exclude-file symlink was broken after the padme
+  repository moved) and repaired by the author the same day.
+- Zotero is the off-site copy now [M2]: each snapshot is uploaded one way to
+  the Zotero group with its sha256 in the item metadata; DVC stays the
+  working store until the M4 move (ticket 1510).
+- `docs/jetp-operation.md` section 9 states both copies and the M2 test
+  restore of one snapshot from each.
+
 ## Exit criteria
 
-- [ ] The author states whether a machine-level backup of padme's `/data` exists, and where
+- [x] The author states whether a machine-level backup of padme's `/data` exists, and where
 - [ ] If none: the document bytes have a copy on another physical device or site (the operation spec draft proposes doudou pulling a copy after each push; an institutional or cloud store is an alternative), and a restore of one snapshot from it is tested
-- [ ] `docs/jetp-operation.md` (backups section) states the arrangement
+- [x] `docs/jetp-operation.md` (backups section) states the arrangement

@@ -358,15 +358,19 @@ pair, and the comparator pools add 1 100 World Bank records now and, for the
 four countries' energy sector, about 8 000 CRS rows and 1 301 IATI country
 lines in the September 2026 draw. The steady state is tens of thousands of
 lines a year, and the record format has to be designed for it, in two ways.
-Lines of hand-read documents stay per-document files reviewed row by row in a
-pull request.
-<!-- wave-1 W1-20: pending author decision (gate for run-output pull requests) -->
+Lines of assisted readings are reviewed through their readings and the run
+report, in one pull request per run under the run-output gate of
+[operation](jetp-operation.md) section 4, not row by row.
 Lines of bulk API snapshots are written by the ingestion script with a
 manifest naming the snapshot, the row count and the field spec, and the
 pull request reviews the manifest; a bulk line is adjudicated only when an
 observation cites it. The common `lines` table is chunked by country and
 year. Review by diff holds where it matters, on what the ledger asserts, and
-not on what a database published. [M2]
+not on what a database published. Bulky raw material (raw model responses,
+text layers) is stored under DVC by its hash and named from the tables. If
+the volume of rows or their review outgrows git, Dolt, a SQL database
+versioned like git with row-level differences, is the option recorded for
+M4. [M2; M4 for the Dolt option]
 
 The one DDL of section 1 declares the common tables. It does not declare
 the per-document field tables, whose headers are the publisher's; each is
