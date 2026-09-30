@@ -11,6 +11,7 @@ Author: HDMX-coding-agent
 2026-09-17T17:05Z HDMX-coding-agent note M1a redefined by the author: exploration in the MVP, not downloads — tracker 0834, children 0835–0839
 2026-09-22T11:05Z HDMX-coding-agent note M1a accepted by the author on 2026-09-22 after the final integration review of [[0834]] (docs/jetp-study/0834-integration-review-final-2026-09-22.md) and a four-country provenance measurement; page-level anchors exist for Viet Nam only, follow-up [[0861]]. M1b ([[0833]]) may start.
 2026-09-29T09:13Z HDMX-coding-agent decision milestones after M1 redefined by the author (2026-09-29, interactive): M2 = an extraction pipeline that works on every document held (replay of the 254 extracted, idempotence, full run over the 115, dispositions); M3a = discover to a cutoff date under a stopping rule, then freeze the registry; M3b = extract the new documents, reconcile with CRS and IATI (0721), join events and outcomes (0723), release; M4 = operate it: scheduled refresh, link-rot, launcher, shared code for AEDIST. The former M2 (live monitoring) is now M4 except its scientific parts. See section 'Milestones after M1'; children in tracker [[1500]].
+2026-09-30T12:40Z HDMX-coding-agent note author decision (2026-09-30): fusion governs; M3b sentence reworded so closeness to the event is the first consideration of a judgement, never an automatic rank (docs/jetp-fusion.md § 5), PR #1598
 --- body ---
 
 ## Context
@@ -71,8 +72,9 @@ operation.
 - **M3b, extract, reconcile, release.** Extract the documents new since M2,
   reconcile with CRS and IATI ([[0721]]), join events, assets and outcomes
   ([[0723]]), release a dataset that cites its `release_id`. Reconciliation
-  checks the ledger; it gives CRS and IATI no precedence over the source
-  closest to the event (rule of [[1180]]).
+  checks the ledger; CRS and IATI have no precedence of their own, and
+  closeness to the event is the first consideration of a judgement, never an
+  automatic rank (`docs/jetp-fusion.md` § 5).
 - **M4, operation.** Scheduled refresh, link-rot, the pass launcher, shared code
   for AEDIST; the recurring machinery, whose deterministic part is checked by
   replay over the M3 release ([[1141]], [[1184]], weekly cadence of [[1140]]).
