@@ -1,4 +1,4 @@
-"""Build the REL pool: pinned catalogue + every lane delivery (ticket 1731).
+"""Build the REL pool: pinned catalogue + every lane delivery (tickets 1731, 1655).
 
 Reads the pinned merged catalogue (``config/rel_pool.yaml`` → ``catalogue``;
 refused unless its md5 and row count match) and every delivery under
@@ -6,37 +6,24 @@ refused unless its md5 and row count match) and every delivery under
 delivery is checked against the intake contract (``qa_rel_intake``); one
 failing delivery aborts the merge with its violations.
 
-Deduplication is one union-find over all rows, catalogue and lanes alike:
-
-1. same normalized DOI;
-2. same OpenAlex id (the union is transitive: a record whose DOI matches one
-   work and whose OpenAlex id matches another joins the two);
-3. same normalized title and same year, decided on the components steps 1-2
-   left: the rows sharing a title + year join when their identifier-bearing
-   rows form at most one component, or components that cannot disagree (one
-   with DOIs only, one with OpenAlex ids only). When two components both carry
-   DOIs (or both OpenAlex ids), the title is **ambiguous**: nothing joins them,
-   and rows with neither identifier join only one another. A working paper and
-   its article with their own DOIs therefore stay two works, an id-less
-   "Editorial" cannot fuse distinct DOIs, and a title never joins across
-   years. Each row's ``version_hint`` is carried so the counting-unit decision
-   (open, ticket 1655) can be applied later.
-
-DOIs are compared as normalized strings, never resolved: a DOI field that is
-not a well-formed ``10.xxxx/...`` DOI is kept and counted (``doi_malformed``).
+Keys (``_rel_pool_keys``): normalized DOI, OpenAlex id, Handle (the only URL
+that is a key), title + year; ``no_dedup_key`` rows of ``excluded.csv`` enter
+as title-only works. Deduplication (``_rel_pool_dedup``) is one union-find
+over all rows, catalogue and lanes alike; its module docstring gives the
+cascade. DOIs are compared as normalized strings, never resolved: a malformed
+DOI is kept and counted (``doi_malformed``).
 
 Outputs (``--output-dir``, default ``data/rel_pool``):
 
 - ``pool.csv``: one row per work. ``work_key`` is ``openalex:W…`` when a member
-  carries an OpenAlex id, else ``doi:<doi>``, else ``title:<title>|<year>``.
-  Metadata come from the first non-empty member: catalogue rows first, then
-  lanes in ``lane_order``. Provenance: ``in_catalogue``, ``sources``
-  (``catalogue`` then lane ids), ``n_sources``, ``member_record_ids``.
-- ``merge_report.json``: per delivery, before cross-source deduplication, the
-  fields of the contract's merge-report table; then pool totals, works per
-  number of sources and a reconciliation that must add up (the script fails
-  otherwise).
-- ``merge_report.md``: the same per-delivery table, readable.
+  carries an OpenAlex id, else ``doi:<doi>``, else ``url:<handle key>``, else
+  ``title:<title>|<year>``; title keys that two works share (generic
+  title-only rows kept apart) get ``#<first member record id>``. Metadata come
+  from the first non-empty member: catalogue rows first, then lanes in
+  ``lane_order``. Provenance: ``in_catalogue``, ``sources`` (``catalogue``
+  then lane ids), ``n_sources``, ``member_record_ids``.
+- ``merge_report.json`` / ``merge_report.md``: the per-delivery report
+  (``_rel_pool_report``).
 
 Usage:
     python scripts/corpus_rel_pool.py [--config config/rel_pool.yaml] \\
@@ -48,12 +35,14 @@ import csv
 import hashlib
 import json
 import os
-import re
 import sys
 from collections import Counter, defaultdict
 
 import qa_rel_intake as ric
 import yaml
+from _rel_pool_dedup import cluster
+from _rel_pool_keys import norm_openalex, norm_year, url_ids
+from _rel_pool_report import CATALOGUE, RelPoolError, make_report, report_markdown
 from utils import get_logger, normalize_doi, normalize_title
 
 log = get_logger("corpus_rel_pool")
@@ -61,9 +50,8 @@ log = get_logger("corpus_rel_pool")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_pool.yaml")
 
-OPENALEX_ID = re.compile(r"^W\d+$")
-DOI = ric.DOI
-CATALOGUE = "catalogue"
+# Exclusion reason whose rows are kept in the pool as title-only works.
+NO_DEDUP_KEY = "no_dedup_key"
 
 # Pool metadata columns, filled from the first non-empty member.
 META_COLUMNS = ["doi", "openalex_id", "title", "first_author", "all_authors",
@@ -72,115 +60,6 @@ META_COLUMNS = ["doi", "openalex_id", "title", "first_author", "all_authors",
 POOL_COLUMNS = (["work_key"] + META_COLUMNS
                 + ["version_hint", "all_dois", "all_openalex_ids", "in_catalogue",
                    "catalogue_sources", "sources", "n_sources", "member_record_ids"])
-
-
-class RelPoolError(Exception):
-    """A refused input: wrong catalogue, failing delivery, broken reconciliation."""
-
-
-# ── Identifiers ──────────────────────────────────────────
-
-
-def norm_year(v):
-    """``2026.0`` / ``2026`` → ``2026``; anything else → ``""``."""
-    s = str(v or "").strip()
-    try:
-        y = int(float(s))
-    except ValueError:
-        return ""
-    return str(y) if 1000 <= y <= 2999 else ""
-
-
-def norm_openalex(v):
-    s = str(v or "").strip()
-    s = s.rsplit("/", 1)[-1]
-    return s.upper() if OPENALEX_ID.match(s.upper()) else ""
-
-
-def keys_of(row):
-    """(doi, openalex_id, title|year) keys of a normalized row; blanks omitted."""
-    title = normalize_title(row["title"])
-    return (row["doi"], row["openalex_id"],
-            f"{title}|{row['year']}" if title and row["year"] else "")
-
-
-def _compatible(a, b):
-    """Two rows that no identifier sets apart."""
-    return not ((a["doi"] and b["doi"] and a["doi"] != b["doi"])
-                or (a["openalex_id"] and b["openalex_id"]
-                    and a["openalex_id"] != b["openalex_id"]))
-
-
-class _UnionFind:
-    def __init__(self, n):
-        self.parent = list(range(n))
-
-    def find(self, i):
-        while self.parent[i] != i:
-            self.parent[i] = self.parent[self.parent[i]]
-            i = self.parent[i]
-        return i
-
-    def union(self, i, j):
-        ri, rj = self.find(i), self.find(j)
-        if ri != rj:
-            self.parent[max(ri, rj)] = min(ri, rj)
-
-
-def _title_unions(rows, uf, group):
-    """Unions one title + year group allows, judged on the identifier components.
-
-    Returns the index pairs to join and whether the group was ambiguous.
-    Distinct components never share a DOI or an OpenAlex id (they would have
-    joined), so two components disagree exactly when both carry DOIs or both
-    carry OpenAlex ids.
-    """
-    free = [i for i in group if not rows[i]["doi"] and not rows[i]["openalex_id"]]
-    comps = defaultdict(lambda: [False, False])
-    for i in group:
-        if rows[i]["doi"] or rows[i]["openalex_id"]:
-            flags = comps[uf.find(i)]
-            flags[0] |= bool(rows[i]["doi"])
-            flags[1] |= bool(rows[i]["openalex_id"])
-    kinds = list(comps.values())
-    ambiguous = any((a[0] and b[0]) or (a[1] and b[1])
-                    for n, a in enumerate(kinds) for b in kinds[n + 1:])
-    members = free if ambiguous else group
-    return [(members[0], j) for j in members[1:]], ambiguous
-
-
-def cluster(rows, stats=None):
-    """Union-find over ``rows``: component root index per row.
-
-    Steps 1-2 (DOI, OpenAlex id) join unconditionally. Step 3 decides every
-    title + year group on the components steps 1-2 left, then applies all
-    its unions at once, so the result does not depend on row order.
-    ``stats`` (a dict), when given, receives ``ambiguous_title_groups``.
-    """
-    uf = _UnionFind(len(rows))
-    by_doi, by_oa, by_title = defaultdict(list), defaultdict(list), defaultdict(list)
-    for i, r in enumerate(rows):
-        doi, oa, ty = keys_of(r)
-        if doi:
-            by_doi[doi].append(i)
-        if oa:
-            by_oa[oa].append(i)
-        if ty:
-            by_title[ty].append(i)
-    for group in list(by_doi.values()) + list(by_oa.values()):
-        for j in group[1:]:
-            uf.union(group[0], j)
-    pending, ambiguous = [], 0
-    for group in by_title.values():
-        if len(group) > 1:
-            pairs, amb = _title_unions(rows, uf, group)
-            pending += pairs
-            ambiguous += amb
-    for i, j in pending:
-        uf.union(i, j)
-    if stats is not None:
-        stats["ambiguous_title_groups"] = ambiguous
-    return [uf.find(i) for i in range(len(rows))]
 
 
 # ── Inputs ───────────────────────────────────────────────
@@ -199,6 +78,13 @@ def _read_csv(path):
         return list(csv.DictReader(fh))
 
 
+def _ids(r, openalex_field):
+    """DOI, OpenAlex id and Handle of a raw row; a resolver URL fills a blank id."""
+    u_doi, u_oa, handle = url_ids(r.get("url"))
+    return {"doi": normalize_doi(r.get("doi")) or normalize_doi(u_doi),
+            "openalex_id": norm_openalex(openalex_field) or u_oa, "handle": handle}
+
+
 def load_catalogue(path, expected_md5, expected_rows):
     """Catalogue rows, normalized; refuse any file but the pinned one."""
     md5 = _md5(path)
@@ -212,8 +98,7 @@ def load_catalogue(path, expected_md5, expected_rows):
         rows.append({
             "origin": CATALOGUE, "delivery": CATALOGUE,
             "record_id": f"{r.get('source', '')}:{r.get('source_id') or i}",
-            "doi": normalize_doi(r.get("doi")),
-            "openalex_id": norm_openalex(r.get("source_id")),
+            **_ids(r, r.get("source_id")),
             "title": r.get("title") or "",
             "first_author": r.get("first_author") or "",
             "all_authors": r.get("all_authors") or "",
@@ -313,8 +198,7 @@ def load_delivery(did, path):
         rows.append({
             "origin": did.split("/")[0], "delivery": did,
             "record_id": f"{did}:{r['record_id']}",
-            "doi": normalize_doi(r.get("doi")),
-            "openalex_id": norm_openalex(r.get("openalex_id")),
+            **_ids(r, r.get("openalex_id")),
             **{c: r.get(c) or "" for c in ("title", "first_author", "all_authors",
                                             "journal", "abstract", "language", "doc_type",
                                             "affiliation_countries", "version_hint")},
@@ -323,18 +207,33 @@ def load_delivery(did, path):
             "cited_by_count": r.get("cited_by_count") or "",
             "catalogue_source": "",
         })
-    excluded = Counter(r.get("reason") for r in _read_csv(os.path.join(path, "excluded.csv")))
+    excl_rows = _read_csv(os.path.join(path, "excluded.csv"))
+    for r in excl_rows:
+        if r.get("reason") == NO_DEDUP_KEY and (r.get("title") or "").strip():
+            rows.append({
+                "origin": did.split("/")[0], "delivery": did,
+                "record_id": f"{did}:excluded:{r['record_id']}",
+                "doi": "", "openalex_id": "", "handle": "", "year": "", "title": r["title"],
+                **{c: "" for c in ("first_author", "all_authors", "journal", "abstract",
+                                   "language", "doc_type", "affiliation_countries",
+                                   "version_hint", "affiliations", "cited_by_count",
+                                   "catalogue_source")},
+                "title_only": True,
+            })
+    excluded = Counter(r.get("reason") for r in excl_rows)
     return rows, dict(sorted(excluded.items()))
 
 
 # ── Pool ─────────────────────────────────────────────────
 
 
-def _work_key(merged):
+def _work_key(merged, handle=""):
     if merged["openalex_id"]:
         return f"openalex:{merged['openalex_id']}"
     if merged["doi"]:
         return f"doi:{merged['doi']}"
+    if handle:
+        return f"url:{handle}"
     return f"title:{normalize_title(merged['title'])}|{merged['year']}"
 
 
@@ -365,183 +264,19 @@ def build_pool(rows, roots, lane_rank):
             "n_sources": len(origins),
             "member_record_ids": ";".join(m["record_id"] for m in mem),
         })
-        merged["work_key"] = _work_key(merged)
+        merged["work_key"] = _work_key(merged, next((m["handle"] for m in mem
+                                                     if m.get("handle")), ""))
         pool.append(merged)
     keys = Counter(p["work_key"] for p in pool)
-    dup = [k for k, n in keys.items() if n > 1]
+    for p in pool:
+        # Works with no identifier and one title (generic title-only rows kept
+        # apart, id-less catalogue rows) are told apart by their first member.
+        if keys[p["work_key"]] > 1 and p["work_key"].startswith("title:"):
+            p["work_key"] += "#" + p["member_record_ids"].split(";", 1)[0]
+    dup = [k for k, n in Counter(p["work_key"] for p in pool).items() if n > 1]
     if dup:
         raise RelPoolError(f"work_key not unique: {dup[:5]}")
     return pool
-
-
-# ── Report ───────────────────────────────────────────────
-
-
-def _direct_catalogue_method(row, cat_index):
-    """How a lane row matches the catalogue directly, cascade order, or None."""
-    doi, oa, ty = keys_of(row)
-    if doi and doi in cat_index["doi"]:
-        return "by_doi"
-    if oa and oa in cat_index["openalex_id"]:
-        return "by_openalex_id"
-    if ty and any(_compatible(row, c) for c in cat_index["title"].get(ty, [])):
-        return "by_title_year"
-    return None
-
-
-def _catalogue_index(rows):
-    """Catalogue keys, for naming the method of a direct catalogue match."""
-    index = {"doi": set(), "openalex_id": set(), "title": defaultdict(list)}
-    for r in rows:
-        if r["origin"] != CATALOGUE:
-            continue
-        doi, oa, ty = keys_of(r)
-        if doi:
-            index["doi"].add(doi)
-        if oa:
-            index["openalex_id"].add(oa)
-        if ty:
-            index["title"][ty].append(r)
-    return index
-
-
-def delivery_counts(did, idx, rows, roots, comp, cat_index):
-    """Contract merge-report counts of one delivery.
-
-    A delivery's works are the pool works its rows land in, so the counts
-    always add up with the pool; ``dup_within_delivery`` counts rows that land
-    in the same work as another row of the delivery. Each work is placed with
-    a catalogue row (named by the first direct match method of the delivery's
-    rows, cascade order; ``via_other_lane`` when only another lane's record
-    bridges them), with another delivery only, or alone (``new_to_pool``).
-    """
-    drows = [rows[i] for i in idx]
-    works = defaultdict(list)
-    for i in idx:
-        works[roots[i]].append(i)
-    in_cat = Counter({"by_doi": 0, "by_openalex_id": 0, "by_title_year": 0, "via_other_lane": 0})
-    other_lane_only = new = 0
-    for root, members in works.items():
-        full = comp[root]
-        if any(rows[j]["origin"] == CATALOGUE for j in full):
-            method = next((m for m in (_direct_catalogue_method(rows[i], cat_index)
-                                       for i in members) if m), "via_other_lane")
-            in_cat[method] += 1
-        elif any(rows[j]["delivery"] != did for j in full):
-            other_lane_only += 1
-        else:
-            new += 1
-    return {
-        "records": len(drows),
-        "with_doi": sum(bool(r["doi"]) for r in drows),
-        "doi_malformed": sum(bool(r["doi"]) and not DOI.match(r["doi"]) for r in drows),
-        "with_openalex_id": sum(bool(r["openalex_id"]) for r in drows),
-        "title_year_only": sum(not r["doi"] and not r["openalex_id"] for r in drows),
-        "dup_within_delivery": len(drows) - len(works),
-        "works": len(works),
-        "in_catalogue": {"total": sum(in_cat.values()), **dict(in_cat)},
-        "in_other_lane_only": other_lane_only,
-        "new_to_pool": new,
-    }
-
-
-def make_report(rows, roots, deliveries, excluded, catalogue_meta, superseded, stats=None):
-    """Assemble merge_report.json; raise if the reconciliation does not add up."""
-    comp = defaultdict(list)
-    for i, root in enumerate(roots):
-        comp[root].append(i)
-    cat_index = _catalogue_index(rows)
-    by_delivery = defaultdict(list)
-    for i, r in enumerate(rows):
-        if r["origin"] != CATALOGUE:
-            by_delivery[r["delivery"]].append(i)
-
-    per = {}
-    for did, _, manifest in deliveries:
-        counts = delivery_counts(did, by_delivery.get(did, []), rows, roots, comp, cat_index)
-        per[did] = {"lane": did.split("/")[0], "coverage": manifest.get("coverage"),
-                    "records": counts.pop("records"), "excluded": excluded[did],
-                    **counts, "already_screened": None}
-
-    n_cat_rows = sum(r["origin"] == CATALOGUE for r in rows)
-    comps_with_cat = [c for c in comp.values() if any(rows[j]["origin"] == CATALOGUE for j in c)]
-    lane_only = [c for c in comp.values() if not any(rows[j]["origin"] == CATALOGUE for j in c)]
-    multi_delivery_lane_only = sum(len({rows[j]["delivery"] for j in c}) > 1 for c in lane_only)
-    n_sources = Counter(len({rows[j]["origin"] for j in c}) for c in comp.values())
-    conflicting = sum(len({rows[j]["doi"] for j in c if rows[j]["doi"]}) > 1 for c in comp.values())
-
-    recon = {
-        "pool_works": len(comp),
-        "catalogue_rows": n_cat_rows,
-        "catalogue_works": len(comps_with_cat),
-        "catalogue_rows_joined": n_cat_rows - len(comps_with_cat),
-        "lane_only_works": len(lane_only),
-        "lane_only_works_single_delivery": len(lane_only) - multi_delivery_lane_only,
-        "lane_only_works_several_deliveries": multi_delivery_lane_only,
-        "works_with_several_dois": conflicting,
-        "ambiguous_title_groups": (stats or {}).get("ambiguous_title_groups"),
-        "catalogue_doi_malformed": sum(r["origin"] == CATALOGUE and bool(r["doi"])
-                                       and not DOI.match(r["doi"]) for r in rows),
-    }
-    checks = {
-        "pool = catalogue works + lane-only works":
-            recon["pool_works"] == recon["catalogue_works"] + recon["lane_only_works"],
-        "sum of new_to_pool = lane-only works from a single delivery":
-            sum(p["new_to_pool"] for p in per.values()) == recon["lane_only_works_single_delivery"],
-        "works per n_sources sum to the pool": sum(n_sources.values()) == recon["pool_works"],
-    }
-    for did, p in per.items():
-        checks[f"{did}: records - dup_within_delivery = works"] = (
-            p["records"] - p["dup_within_delivery"] == p["works"])
-        checks[f"{did}: works = in_catalogue + in_other_lane_only + new_to_pool"] = (
-            p["works"] == p["in_catalogue"]["total"] + p["in_other_lane_only"] + p["new_to_pool"])
-    failed = [k for k, ok in checks.items() if not ok]
-    if failed:
-        raise RelPoolError("merge report does not reconcile: " + "; ".join(failed))
-    recon["checks"] = {k: "ok" for k in checks}
-
-    return {
-        "catalogue": catalogue_meta,
-        "deliveries": per,
-        "superseded_deliveries": superseded,
-        "pool": {
-            "works": len(comp),
-            "in_catalogue": len(comps_with_cat),
-            "lane_only": len(lane_only),
-            "works_per_n_sources": {str(k): n_sources[k] for k in sorted(n_sources)},
-            "still_to_screen": None,
-        },
-        "reconciliation": recon,
-        "notes": ("Per-delivery counts are per source, before cross-source deduplication: a "
-                  "work two lanes found counts in both. "
-                  "in_catalogue.via_other_lane: the delivery's work joins a catalogue work only "
-                  "through another lane's record. already_screened and still_to_screen wait for "
-                  "the icf_screen table (ticket 1732)."),
-    }
-
-
-def report_markdown(report):
-    head = ["delivery", "records", "excluded", "with_doi", "doi_malformed", "with_openalex_id",
-            "title_year_only", "dup_within_delivery", "in_catalogue (doi/oa/title/via lane)",
-            "in_other_lane_only", "new_to_pool"]
-    lines = ["# REL pool merge report", "",
-             f"Catalogue: `{report['catalogue']['path']}`, md5 `{report['catalogue']['md5']}`, "
-             f"{report['catalogue']['rows']} rows.", "",
-             "| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
-    for did, p in report["deliveries"].items():
-        c = p["in_catalogue"]
-        exc = ", ".join(f"{k} {v}" for k, v in p["excluded"].items()) or "0"
-        lines.append("| " + " | ".join(map(str, [
-            did, p["records"], exc, p["with_doi"], p["doi_malformed"], p["with_openalex_id"], p["title_year_only"],
-            p["dup_within_delivery"],
-            f"{c['total']} ({c['by_doi']}/{c['by_openalex_id']}/{c['by_title_year']}/{c['via_other_lane']})",
-            p["in_other_lane_only"], p["new_to_pool"]])) + " |")
-    pool = report["pool"]
-    lines += ["", f"Pool: {pool['works']} works ({pool['in_catalogue']} with a catalogue row, "
-              f"{pool['lane_only']} from lanes only).",
-              "Works per number of sources: "
-              + ", ".join(f"{k}: {v}" for k, v in pool["works_per_n_sources"].items()) + ".", ""]
-    return "\n".join(lines)
 
 
 def _write_pool(path, pool):

@@ -21,6 +21,8 @@ import sys
 from collections import Counter
 from datetime import date
 
+from _rel_pool_keys import url_is_key
+
 RECORD_COLUMNS = [
     "record_id", "query_id", "platform", "retrieved_at", "title",
     "platform_record_id", "doi", "openalex_id", "title_original",
@@ -48,7 +50,6 @@ LANE = re.compile(r"^t\d{4}-[a-z0-9][a-z0-9-]*$")
 DELIVERY = re.compile(r"^\d{4}-\d{2}-\d{2}[a-z]?$")
 
 FILES = ["records.csv", "registry.csv", "excluded.csv", "manifest.json"]
-
 
 def _read_csv(path, errors):
     """Return (header, rows); on a decode error, record it and return (None, [])."""
@@ -105,8 +106,13 @@ def check_records(header, rows, query_ids):
             errors.append(f"{where}: openalex_id {r['openalex_id']!r} is not W + digits")
         if r["year"] and not YEAR.match(r["year"]):
             errors.append(f"{where}: year {r['year']!r} is not four digits")
-        if not (r["doi"] or r["openalex_id"] or r["year"]):
-            errors.append(f"{where}: needs at least one of doi, openalex_id, year")
+        url = (r.get("url") or "").strip()
+        if not (r["doi"] or r["openalex_id"] or r["year"] or url_is_key(url)):
+            errors.append(
+                f"{where}: needs at least one of doi, openalex_id, year, or a persistent "
+                f"url (Handle, DOI or OpenAlex work URL); got url {url!r}; a titled "
+                f"record with none of them goes to excluded.csv as no_dedup_key" if url else
+                f"{where}: needs at least one of doi, openalex_id, year, url")
     return errors
 
 

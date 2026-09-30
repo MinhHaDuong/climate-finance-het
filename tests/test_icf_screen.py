@@ -57,6 +57,12 @@ def test_same_work_other_run_or_stage_is_a_new_label(table):
     assert len(ics.read_table(table)) == 4
 
 
+def test_every_pool_work_key_kind_is_accepted(table):
+    keys = ["openalex:W9", "doi:10.1/x", "url:hdl:2139/1", "url:repo.org:hdl:1/2", "title:t|2020"]
+    ics.append_rows(table, [_row(k) for k in keys])
+    assert [r["work_key"] for r in ics.read_table(table)] == keys
+
+
 def test_truncated_table_is_detected(table):
     ics.append_rows(table, [_row(), _row("openalex:W2")])
     data = open(table, "rb").read()

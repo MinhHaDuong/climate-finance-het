@@ -4,6 +4,8 @@ import csv
 import hashlib
 import json
 
+import _rel_pool_dedup as rd
+import _rel_pool_keys as rk
 import corpus_rel_pool as rp
 import pytest
 import qa_rel_intake as ric
@@ -88,7 +90,7 @@ def test_cascade_doi_then_openalex_then_title_year():
         {"origin": "l", "delivery": "l/1", "doi": "", "openalex_id": "",
          "title": "Alpha", "year": "2019", "version_hint": ""},
     ]
-    roots = rp.cluster(rows)
+    roots = rd.cluster(rows)
     assert roots[0] == roots[1] == roots[2] == roots[3]
     assert roots[4] != roots[0], "a title never joins across years"
 
@@ -143,8 +145,8 @@ def test_per_source_report_reconciles(tmp_path):
     a = report["deliveries"]["t1650-toc/2026-10-01"]
     assert a["records"] == 6 and a["dup_within_delivery"] == 1 and a["works"] == 5
     assert a["with_doi"] == 4 and a["with_openalex_id"] == 1 and a["title_year_only"] == 1
-    assert a["in_catalogue"] == {"total": 3, "by_doi": 1, "by_openalex_id": 1,
-                                 "by_title_year": 1, "via_other_lane": 0}
+    assert a["in_catalogue"] == {"total": 3, "by_doi": 1, "by_openalex_id": 1, "by_handle": 0,
+                                 "by_title_year": 1, "by_title_only": 0, "via_other_lane": 0}
     assert a["in_other_lane_only"] == 1 and a["new_to_pool"] == 1
     b = report["deliveries"]["t1653-sud/2026-10-02"]
     assert (b["in_other_lane_only"], b["new_to_pool"]) == (1, 1)
@@ -246,7 +248,158 @@ def test_duplicate_catalogue_record_id_is_refused(tmp_path):
 
 
 def test_norm_year_and_openalex():
-    assert rp.norm_year("2026.0") == "2026"
-    assert rp.norm_year("") == rp.norm_year("n.d.") == ""
-    assert rp.norm_openalex("https://openalex.org/W123") == "W123"
-    assert rp.norm_openalex("abc") == ""
+    assert rk.norm_year("2026.0") == "2026"
+    assert rk.norm_year("") == rk.norm_year("n.d.") == ""
+    assert rk.norm_openalex("https://openalex.org/W123") == "W123"
+    assert rk.norm_openalex("abc") == ""
+
+
+# ── Title-only rows (no_dedup_key) ───────────────────────
+
+
+def _excl(rid, title):
+    return {"record_id": rid, "query_id": "q1", "reason": rp.NO_DEDUP_KEY, "title": title,
+            "note": "no DOI, id, year or Handle"}
+
+
+def test_no_dedup_key_rows_enter_the_pool_as_title_only_works(tmp_path):
+    cat = [{"source": "openalex", "source_id": "W1", "doi": "",
+            "title": "Carbon funds for African adaptation", "year": "2001"},
+           {"source": "grey", "source_id": "g1", "doi": "", "title": "Twice seen climate finance",
+            "year": "2002"},
+           {"source": "grey", "source_id": "g2", "doi": "10.1111/b",
+            "title": "Twice seen climate finance", "year": "2003"}]
+    report, pool = _run(tmp_path, cat, [("t1653-sud", "2026-10-02", [_rec("r1")], [
+        _excl("x1", "CARBON funds for African adaptation."),  # joins the one catalogue work
+        _excl("x2", "Twice seen climate finance"),            # two works: ambiguous, separate
+        _excl("x3", "Nowhere else in the pool"),              # no match: its own work
+        _excl("x4", "Nowhere  else in the pool")])])          # same title as x3: one work
+    d = report["deliveries"]["t1653-sud/2026-10-02"]
+    assert d["records"] == 1 and d["title_only_from_excluded"] == 4
+    assert d["title_only_joined"] == 1
+    assert "t1653-sud" in _row(pool, "openalex:W1")["sources"]
+    assert _row(pool, "title:twice seen climate finance|")["member_record_ids"] == \
+        "t1653-sud/2026-10-02:excluded:x2"
+    assert _row(pool, "title:nowhere else in the pool|")["member_record_ids"].count("excluded:") == 2
+    assert report["reconciliation"]["ambiguous_title_only"] == 1
+    assert all(v == "ok" for v in report["reconciliation"]["checks"].values())
+
+
+def test_title_only_join_to_the_catalogue_is_named_by_title_only(tmp_path):
+    # Reviewer repro: the join was reported as via_other_lane.
+    cat = [{"source": "openalex", "source_id": "W1", "doi": "",
+            "title": "Carbon funds for African adaptation", "year": "2001"}]
+    report, _ = _run(tmp_path, cat, [("t1653-sud", "2026-10-02", [_rec("r1")],
+                                      [_excl("x1", "Carbon funds for African adaptation")])])
+    c = report["deliveries"]["t1653-sud/2026-10-02"]["in_catalogue"]
+    assert c["by_title_only"] == 1 and c["via_other_lane"] == 0 and c["total"] == 1
+
+
+@pytest.mark.parametrize("title", ["Introduction", "Book reviews", "Editorial", "Short title"])
+def test_generic_title_only_row_never_joins(tmp_path, title):
+    cat = [{"source": "openalex", "source_id": "W1", "doi": "", "title": title, "year": "2001"}]
+    report, pool = _run(tmp_path, cat, [("t1653-sud", "2026-10-02", [_rec("r1")],
+                                         [_excl("x1", title), _excl("x2", title)])])
+    assert "t1653-sud" not in _row(pool, "openalex:W1")["sources"]
+    assert len(pool) == 1 + 1 + 2, "catalogue work, lane record, two generic rows apart"
+    assert report["reconciliation"]["generic_title_only"] == 2
+    assert all(v == "ok" for v in report["reconciliation"]["checks"].values())
+
+
+def test_colliding_title_keys_no_longer_crash():
+    # Reviewer repro: two id-less, year-less works with one title gave
+    # "work_key not unique"; the contract check now refuses them before the
+    # merge, and the pool tells such works apart by their first member.
+    rows = [{"origin": "l", "delivery": "l/1", "record_id": f"l/1:{k}", "doi": "",
+             "openalex_id": "", "handle": "", "title": "Same", "year": "",
+             "version_hint": "", "catalogue_source": "",
+             **{c: "" for c in rp.META_COLUMNS if c not in ("doi", "openalex_id", "title", "year")}}
+            for k in ("a", "b")]
+    pool = rp.build_pool(rows, rd.cluster(rows), {"l": 0})
+    assert sorted(p["work_key"] for p in pool) == ["title:same|#l/1:a", "title:same|#l/1:b"]
+
+
+# ── URL keys: Handles only ───────────────────────────────
+
+
+def test_handle_keys_and_resolvers():
+    assert rk.handle_key("http://hdl.handle.net/2139/99/") == "hdl:2139/99"
+    assert rk.handle_key("https://handle.net/2139/99") == "hdl:2139/99"
+    assert rk.handle_key("https://www.Repo.org/handle/2139/99") == "repo.org:hdl:2139/99"
+    assert rk.url_ids("https://doi.org/10.1111/AB") == ("10.1111/AB", "", "")
+    assert rk.url_ids("https://openalex.org/W12") == ("", "W12", "")
+    for not_a_key in ("https://ceew.in/pub/x", "https://j.org/issue/5", "https://repo.org",
+                      "https://doi.org/", "https://openalex.org/authors/A1", "ftp://x/y",
+                      "https://hdl.handle.net/", "https://repo.org/handle/about"):
+        assert not rk.url_is_key(not_a_key), not_a_key
+
+
+def test_cross_host_handle_collision_stays_apart():
+    # Reviewer repro: DSpace's default prefix 123456789 is reused by repositories.
+    a = rk.handle_key("https://a.org/handle/123456789/1")
+    b = rk.handle_key("https://b.org/handle/123456789/1")
+    assert a == "a.org:hdl:123456789/1" and a != b
+    rows = [_crow(url="https://a.org/handle/123456789/1", title="Alpha work"),
+            _crow(url="https://b.org/handle/123456789/1", title="Beta work")]
+    assert len(set(rd.cluster(rows))) == 2
+
+
+def test_query_string_handle_joins_the_bare_handle():
+    assert rk.handle_key("https://repo.org/handle/2139/99?show=full") == \
+        rk.handle_key("http://repo.org/handle/2139/99/#a")
+    rows = [_crow(url="https://repo.org/handle/2139/99?show=full", title="One"),
+            _crow(url="https://repo.org/handle/2139/99", title="Other title")]
+    assert len(set(rd.cluster(rows))) == 1
+
+
+def test_shared_landing_page_never_joins_two_dois():
+    rows = [_crow(doi="10.1/a", url="https://j.org/issue/5", title="A"),
+            _crow(doi="10.1/b", url="https://j.org/issue/5", title="B")]
+    assert len(set(rd.cluster(rows))) == 2
+
+
+def test_idless_yearless_works_on_one_issue_page_stay_apart(tmp_path):
+    rows = [_crow(url="https://j.org/issue/5", title="First article on funds"),
+            _crow(url="https://j.org/issue/5", title="Second article on loans")]
+    assert len(set(rd.cluster(rows))) == 2
+    recs = [_rec("r1", year="", url="https://j.org/issue/5")]
+    with pytest.raises(rp.RelPoolError, match="no_dedup_key"):
+        _run(tmp_path, [], [("t1653-sud", "2026-10-02", recs)])
+
+
+def test_url_bearing_catalogue_row_joins_a_lane_row_on_title_year(tmp_path):
+    rows = [_crow(url="https://publisher.com/a", title="Carbon funds", year="2001", origin="catalogue"),
+            _crow(doi="10.1/a", url="https://repo.org/handle/9/9", title="Carbon funds", year="2001")]
+    assert len(set(rd.cluster(rows))) == 1
+    assert rd.compatible(rows[0], rows[1])
+
+
+def test_handle_chain_never_joins_distinct_dois():
+    rows = [_crow(doi="10.1/a", url="https://hdl.handle.net/1/1"),
+            _crow(openalex_id="W7", url="https://hdl.handle.net/1/1"),
+            _crow(openalex_id="W7", url="https://hdl.handle.net/1/2"),
+            _crow(doi="10.1/b", url="https://hdl.handle.net/1/2")]
+    for order in (rows, rows[::-1]):
+        roots = rd.cluster(order)
+        by_doi = {r["doi"]: roots[i] for i, r in enumerate(order) if r["doi"]}
+        assert by_doi["10.1/a"] != by_doi["10.1/b"]
+
+
+def test_handles_join_two_lanes_and_key_a_handle_only_work(tmp_path):
+    lane_a = [_rec("a1", year="", url="http://hdl.handle.net/2139/99", title="Handle work"),
+              _rec("a2", year="", url="https://repo.uwi.edu/handle/2139/7", title="Repo work")]
+    lane_b = [_rec("b1", year="2019", url="https://hdl.handle.net/2139/99/", title="Other")]
+    report, pool = _run(tmp_path, [], [("t1653-sud", "2026-10-02", lane_a),
+                                       ("t1650-toc", "2026-10-03", lane_b)])
+    assert _row(pool, "url:hdl:2139/99")["sources"] == "t1650-toc;t1653-sud"
+    assert _row(pool, "url:repo.uwi.edu:hdl:2139/7")["n_sources"] == "1"
+    a = report["deliveries"]["t1653-sud/2026-10-02"]
+    assert a["with_handle"] == 2 and a["title_year_only"] == 0
+    assert (a["in_other_lane_only"], a["new_to_pool"]) == (1, 1)
+    assert all(v == "ok" for v in report["reconciliation"]["checks"].values())
+
+
+def _crow(doi="", url="", title="x", year="", openalex_id="", origin="l"):
+    return {"origin": origin, "delivery": f"{origin}/1", "doi": doi,
+            "openalex_id": openalex_id, "handle": rk.handle_key(url), "title": title,
+            "year": year, "version_hint": ""}

@@ -198,3 +198,23 @@ def test_counts_records_must_be_an_integer(tmp_path, declared):
                   manifest={"counts": {"records": declared, "excluded": {"front_matter": 1}}})
     assert any("counts.records" in e and "is not an integer" in e
                for e in ric.check_delivery(str(d)))
+
+
+
+@pytest.mark.parametrize("url", ["https://hdl.handle.net/2139/12345",
+                                 "https://repo.uwi.edu/handle/2139/7?show=full",
+                                 "https://doi.org/10.1234/x", "https://openalex.org/W12"])
+def test_persistent_url_is_a_dedup_key(tmp_path, url):
+    rec = _record("r1", doi="", year="", url=url)
+    d = _delivery(tmp_path, records=[rec, _record("r2")])
+    assert ric.check_delivery(str(d)) == []
+
+
+@pytest.mark.parametrize("url", ["hdl:2139/12345", "https://ceew.in/publications/x",
+                                 "https://j.org/issue/5", "https://repo.org",
+                                 "https://doi.org/", "https://openalex.org/authors/A1"])
+def test_non_persistent_url_is_not_a_dedup_key(tmp_path, url):
+    rec = _record("r1", doi="", year="", url=url)
+    d = _delivery(tmp_path, records=[rec, _record("r2")])
+    errors = ric.check_delivery(str(d))
+    assert len(errors) == 1 and repr(url) in errors[0] and "no_dedup_key" in errors[0]

@@ -49,7 +49,7 @@ STAGES = {"1", "2", "audit"}
 LABELLERS = {"llm", "human"}
 LABELS = {"icf", "aux", "out", "unsure"}
 DOC_TYPES = {"research", "institutional", "other", "unknown"}
-WORK_KEY_PREFIXES = ("openalex:", "doi:", "title:")
+WORK_KEY_PREFIXES = ("openalex:", "doi:", "url:", "title:")
 REQUIRED = ["work_key", "stage", "labeller", "model", "prompt_sha256", "run_id",
             "machine", "label", "doc_type", "labelled_at", "source"]
 UNKNOWN = "unknown"
