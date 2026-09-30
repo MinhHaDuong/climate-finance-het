@@ -4,11 +4,20 @@ Reads the deduplicated candidate list, asks an LLM to label batches of records
 against the ICF rule in ``config/rel_sud_screen.yaml`` and appends one result
 per work to a JSONL file. Resumable: works already labelled are skipped, and
 records whose label could not be parsed are left unlabelled so a rerun retries
-them. A header line in ``screen_run.json`` records model, prompt hash and date.
+them. A header line in ``screen_runs.jsonl`` records model, prompt hash, date and
+the record key.
+
+The record key is ``openalex_id`` (the 1530 input) unless ``--id-field`` names
+another input field: ``work_key`` screens REL pool works (ticket 1733), whose
+input comes from ``corpus_icf_stage1_input.py``. The key only names the output
+lines; the prompt shows the same fields either way. A run directory keeps one
+key: resuming it under another is refused, since no label would be recognised
+as done and every record would be screened twice.
 
 Usage:
     python scripts/corpus_rel_sud_screen.py --input screen_input.jsonl \
-        --output-dir data/rel_sud/screen1 [--limit 200] [--sample-seed 7]
+        --output-dir data/rel_sud/screen1 [--limit 200] [--sample-seed 7] \
+        [--backend local] [--id-field work_key]
 """
 
 import argparse
@@ -76,8 +85,8 @@ def extract_lines(text):
     return items
 
 
-def parse_answer(text, batch):
-    """{openalex_id: result} for the records the answer labels validly."""
+def parse_answer(text, batch, id_field="openalex_id"):
+    """{record key: result} for the records the answer labels validly."""
     data = extract_list(text) or extract_lines(text)
     out = {}
     for item in data:
@@ -88,7 +97,7 @@ def parse_answer(text, batch):
             continue
         label, doc = str(item.get("label", "")).strip().lower(), str(item.get("doc", "")).strip().lower()
         if label in LABELS and doc in DOCS:
-            out[batch[n - 1]["openalex_id"]] = {
+            out[batch[n - 1][id_field]] = {
                 "label": label, "doc": doc, "why": str(item.get("why", ""))[:160]}
     return out
 
@@ -119,17 +128,19 @@ def make_call(cfg):
     return local_call
 
 
-def screen_batch(batch, cfg, call=llm_call):
+def screen_batch(batch, cfg, call=llm_call, id_field="openalex_id"):
     reply = call(build_prompt(batch, cfg), model=cfg["model"], max_tokens=cfg["max_tokens"])
-    return parse_answer(reply, batch)
+    return parse_answer(reply, batch, id_field)
 
 
-def select_records(path, done, limit, seed):
+def select_records(path, done, limit, seed, id_field="openalex_id"):
     recs, seen = [], set(done)
     with open(path, encoding="utf-8") as fh:
-        for r in map(json.loads, fh):
-            if r["openalex_id"] not in seen:
-                seen.add(r["openalex_id"])
+        for lineno, r in enumerate(map(json.loads, fh), 1):
+            if not r.get(id_field):
+                raise SystemExit(f"{path}: line {lineno} has no {id_field!r}")
+            if r[id_field] not in seen:
+                seen.add(r[id_field])
                 recs.append(r)
     if limit and limit < len(recs):
         recs = random.Random(seed).sample(recs, limit)
@@ -138,6 +149,7 @@ def select_records(path, done, limit, seed):
 
 def run(cfg, args, call=None):
     call = call or make_call(cfg)
+    id_field = getattr(args, "id_field", "openalex_id")
     os.makedirs(args.output_dir, exist_ok=True)
     out_path = os.path.join(args.output_dir, "screen.jsonl")
     done = set()
@@ -145,10 +157,17 @@ def run(cfg, args, call=None):
         with open(out_path, encoding="utf-8") as fh:
             for line in fh:
                 try:
-                    done.add(json.loads(line)["openalex_id"])
-                except (ValueError, KeyError):
+                    lab = json.loads(line)
+                except ValueError:
+                    lab = None
+                if not isinstance(lab, dict):
                     log.warning("skipping an unreadable line in %s (killed mid-write?)", out_path)
-    recs = select_records(args.input, done, args.limit, args.sample_seed)
+                    continue
+                if id_field not in lab:
+                    raise SystemExit(f"{out_path} holds labels keyed otherwise than by "
+                                     f"{id_field!r}: resume it with its own --id-field")
+                done.add(lab[id_field])
+    recs = select_records(args.input, done, args.limit, args.sample_seed, id_field)
     size = cfg["batch_size"]
     batches = [recs[i:i + size] for i in range(0, len(recs), size)]
     prompt_sha = hashlib.sha256((cfg["prompt_template"] + "\n" + cfg["answer_format"]).encode()).hexdigest()
@@ -156,9 +175,9 @@ def run(cfg, args, call=None):
         fh.write(json.dumps({
             "model": cfg["model"], "backend": "local" if cfg.get("api_base") else "openrouter",
             "started": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "prompt_sha256": prompt_sha,
+            "prompt_sha256": prompt_sha, "id_field": id_field,
             "input": args.input, "n_todo": len(recs), "n_batches": len(batches)}) + "\n")
-    by_id = {r["openalex_id"]: r for r in recs}
+    by_id = {r[id_field]: r for r in recs}
     n_ok = n_lost = 0
     if os.path.exists(out_path) and os.path.getsize(out_path):
         with open(out_path, "rb") as fh:
@@ -169,9 +188,9 @@ def run(cfg, args, call=None):
                 fh.write("\n")
     with open(out_path, "a", encoding="utf-8") as out, \
             ThreadPoolExecutor(max_workers=cfg["workers"]) as pool:
-        for batch, res in zip(batches, pool.map(lambda b: screen_batch(b, cfg, call), batches)):
-            for oid, r in res.items():
-                out.write(json.dumps({"openalex_id": oid, "title": by_id[oid]["title"],
+        for batch, res in zip(batches, pool.map(lambda b: screen_batch(b, cfg, call, id_field), batches)):
+            for key, r in res.items():
+                out.write(json.dumps({id_field: key, "title": by_id[key]["title"],
                                       **r, "model": cfg["model"]}, ensure_ascii=False) + "\n")
             out.flush()
             n_ok += len(res)
@@ -190,6 +209,9 @@ def main(argv=None):
     ap.add_argument("--sample-seed", type=int, default=7)
     ap.add_argument("--backend", choices=["openrouter", "local"], default="openrouter",
                     help="local applies the `local:` block of the config (llama-server)")
+    ap.add_argument("--id-field", default="openalex_id",
+                    help="input field that keys each record and its label (work_key for "
+                         "REL pool works)")
     args = ap.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
