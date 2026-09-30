@@ -125,8 +125,8 @@ verified by hash against the DVC pointers, and never a synchronisation.
 
 ## 4. The repository as control plane
 
-The Observer is built and run through its repository. Coding agents write
-the code and launch the runs; tickets record decisions and their reasons;
+The Observer is built and run through its repository. Development agents
+write the code and launch the runs; tickets record decisions and their reasons;
 tests and reviews by LLMs from another vendor gate every change; the
 author steers, arbitrates and accepts each milestone (requirements § 3.2).
 

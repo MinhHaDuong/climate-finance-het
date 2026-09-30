@@ -359,13 +359,19 @@ Know what exists, what was fetched, by which route, and what became of it.
 **F7. Discovery proposes, a decision admits.** A candidate document found by
 any search is admitted only by a recorded decision, never automatically.
 *M3a.* Test: a candidate from a discovery run is absent from the register
-until an admission decision exists.
+until an admission decision, which may be a checked LLM judgement under Q5,
+exists.
 
 **F8. What was sought is recorded.** For each authority and listed
 project in the discovery frame, the Observer records a terminal verdict
 (collected, not published, blocked, not applicable), and keeps not
-published, blocked, unreadable, not sought and loss of visibility distinct.
-Absence of a document is recorded with the search that failed to find it.
+published, blocked, unreadable, not sought and loss of visibility distinct:
+not published and blocked are verdicts of the frame; unreadable is an
+extraction disposition of a held document; not sought cannot occur for an
+entry of the frame, which the stopping rule requires to be searched, and is
+stated for what lies outside the frame; loss of visibility, a publisher that
+stops publishing, is measured between campaigns from M4. Absence of a
+document is recorded with the search that failed to find it.
 *M3a.* Test: every entry of the frame has a verdict; a blocked retrieval
 does not appear as a missing event or a stalled project.
 
@@ -527,7 +533,7 @@ its amount once to the all-functions total.
 **F19. Matching to CRS and IATI, and the gaps between financial states.** Operations are matched to CRS and
 IATI records as candidate matches under F11; the gaps between announced,
 signed, reported and disbursed amounts are produced per country and funder;
-a public traceability rate is computed; the reporting lag of the structured
+a public matching coverage rate (Fusion § 5) is computed; the reporting lag of the structured
 channels is measured, not assumed. Structured search channels have no precedence
 over the document closest to the event. *M3b.* Test: each matched aggregate
 links to the events and documents it is made of; no CRS value overrides a
@@ -547,7 +553,8 @@ reuse.
 
 **F9. Each release states two dates.** The discovery cutoff (date of the last
 search) and the newest document date. *M3a.* Test: both dates appear in the
-release and in every product citing it.
+M3a collection report; from M3b, in the release and in every product citing
+it.
 
 **F28. Persistent identifier.** Each release is deposited in a public data
 repository under a persistent identifier that resolves to it, and whose
@@ -673,9 +680,10 @@ the list predates the first round and its recovery rate is reported.
 
 **DA9. Unreachable documents are data.** The list of documents and search
 channels that could not be reached, with the reason, is released with the
-register. *M3a.* Test: the release contains it, including documents excluded
-by robots rules, terms of
-use or restricted access.
+register. *M3a.* Test: the M3a collection report contains it, and from M3b
+the release does, with each entry's reason taken from the reasons of
+Collection § 8.
+<!-- wave-1 W1-29: pending author decision (whether and how documents excluded by robots rules or terms of use are listed) -->
 
 **DA10. Structured search channels.** CRS and IATI records for the four countries,
 held as comparator records beside the documentary statements, never merged
@@ -739,8 +747,9 @@ Test: revoke one match; the list of affected figures is produced.
 from it, a paper result and an Observatory figure reproduce exactly. A
 corrected current account never silently refreshes a released result. *M3b.*
 Test: an independent reader reconstructs one country total and one timeline
-from the release, its dictionary and its locators; any undocumented choice is
-a failure.
+from the release, its dictionary and its locators, over documents that have
+a public copy (redistributed bytes or a public archive capture); any
+undocumented choice is a failure.
 
 **Q9. Every method has a version.** Every extraction, reading, judgement,
 scope and calculation names its method and version; changing one produces a
@@ -750,9 +759,10 @@ calculations. Test: every result names the versions it was computed under.
 
 **Q10. Recall is stated.** Discovery follows a stopping rule stated before
 the first round; every round is logged, empty rounds included; the recall
-estimate against the known-item list is reported; the share of the main
-secondary trackers' quantitative claims traced to a primary document is
-reported. *M3a.* Test: the author accepts the protocol, the recall estimate
+estimate against the known-item list is reported; the tracker traceability
+rate, the share of the main secondary trackers' quantitative claims traced to
+a primary document read by the Observer, is reported with the distribution
+of all claim outcomes. *M3a.* Test: the author accepts the protocol, the recall estimate
 and the unreachable list before M3b starts.
 
 ### 6.2 Judgement and uncertainty
@@ -900,7 +910,8 @@ fetched (F27, N13). A change of a site's terms or robots rules is signalled, nev
 silent. Document bytes are redistributed only where the source's terms
 allow; otherwise a release carries the address, hash and locator. *M3a.*
 Test: no automated crawl fetches a path the site's robots rules exclude;
-every single fetch records the site's stated position; the release lists
+every single fetch records the site's stated position; the M3a collection
+report states the position recorded per site, and from M3b the release lists
 which bytes are redistributed and on what terms.
 
 **C7. Static publication.** The Observatory is published as static pages and
@@ -948,8 +959,10 @@ generation). Each enters only by a decision that adds it as a measure.
 documents; it does not require debit and credit counterparts that no
 document discloses.
 
-**N4. No automatic truth.** No program admits a document, merges two
-identities, prefers a value or publishes a release on its own.
+**N4. No automatic truth.** No program, and no rule without a recorded
+judgement, admits a document, merges two identities, prefers a value or
+publishes a release on its own. A program that applies a rule the author
+adopted by version applies the author's judgement (Fusion § 3).
 
 **N5. No claim of completeness.** Coverage is quantified; universal
 completeness is never claimed.

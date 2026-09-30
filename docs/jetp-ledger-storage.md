@@ -85,6 +85,16 @@ so, and the table above changes when the DDL does.
 | `line-field-specs` | keyed by document and table segment; each row maps a printed header, with its printed unit and scale wording, to a field name under a versioned mapping declared by the parser | extraction section 3, verbatim fields | M2 |
 | `lines` | `classification` is required (not null); no candidate status on a line | extraction section 3, classification | M2 |
 | `documents` | loses `edition_of`; the `relations` row is the one home of an edition relation | one home per fact | M2 |
+| `documents` | gains `class` (frozen, living or series), recorded as a dated judgement | collection section 10; requirement DA6 | M3a |
+| `retrievals` | `collection_method` takes the names of the five rungs of the access ladder, `script`, `browser-session`, `browser-automated`, `browser-manual` and `web-archive`, plus `local-record` for bytes recorded from a local file, which is not a rung; today's four values map onto rungs 1, 2 and 4 and `local-record` | collection section 8 | M3a |
+| `retrievals` | gains `archive_url`, the public archive capture of the document's address, which is the public archive record of requirement F27 | requirement F27 | M3a |
+| `frame-entries` | new table: one row per expected authority or listed project of the authority frame, keyed by its kind and by the `party_id` of the authority or the `line_id` of the plan line that lists the project, with its terminal verdict and the recorded search behind it; no new identifier family, and no project referent is needed before M3b | collection section 3 | M3a |
+| `rounds` | new table: the round log (country, language, search channel class, routes and terms, date, effort spent, candidates found, documents newly admitted) | collection section 5 | M3a |
+| `candidates` | new table: a candidate's pointer, the round that found it, and the document it became when admitted | collection section 2 | M3a |
+| `triage-judgements` | new table: the triage outcome of a candidate as a judgement of the one shape of section 4, with `status`, `supersedes` and `recorded_at`; a document's admission is its accepted admit row | collection section 9; as-of rule | M3a |
+| `known-items` | new table: the frozen known-item list, each item with what identifies it, the held document matched to it if any, and whether its recovery followed a revision of the frame | collection section 6 | M3a |
+| `tracker-claims` | new table: each examined claim of a declared tracker, with its outcome and the primary document it was traced to | collection section 7 | M3a |
+<!-- wave-1 W1-29: pending author decision (terms, robots and registration columns on retrievals and documents) -->
 | `document-addresses` | new table: a document's recorded addresses, each with the date from which it holds, so a relocation is a new address of the same document | relocation rule (below) | M4 |
 <!-- wave-1 W1-01: pending author decision (where readings, dispositions and run records live; method, run and status columns on lines) -->
 
@@ -362,7 +372,10 @@ it is a set of candidate matches between lines of two documents, not an
 edition relation between the documents.
 For documents, the one tagging of [fusion](jetp-fusion.md) section 3: at
 M2, tiers 1 and 2 run as deterministic proposers at registration, so a
-snapshot whose text already exists is recorded before extraction, and tier 3
+snapshot whose text already exists is recorded before extraction: identical
+bytes are recorded `accepted` under the rule the author adopted (fusion
+section 3, judgement by adopted rule), and tier 2 registers a `same_as`
+candidate for the author or the checking rule to decide; tier 3
 generates a bounded candidate list over the registered documents (at most
 about 30 pairs, sorted by likelihood) that the author decides; tiers 4 and 5
 start at M3a, with the checking rule of [extraction](jetp-extraction.md)

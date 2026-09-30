@@ -9,6 +9,7 @@ Blocked-by: 1711
 2026-09-30T15:10Z HDMX-coding-agent note two exit criteria added from the extraction spec review (author, 2026-09-30): reading method, version and reviewer on every line; ordinal continuation across snapshots in the line identifier scheme
 2026-09-30T18:00Z HDMX-coding-agent note exit criterion added from the vocabulary pass (ticket 1703): proposed schema changes the specification documents cannot make
 2026-09-30T14:33Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M2 storage and extraction targets of the storage contract
+2026-09-30T14:48Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M3a collection targets of the storage contract
 
 --- body ---
 ## Context
@@ -54,3 +55,7 @@ Author decisions (2026-09-30, interactive):
 - [ ] The writer splits an oversized `line-fields/<document_id>` into numbered `.d/NN.csv` shards, and a living document's fields table by year of `recorded_at` (W1-14, W1-53)
 - [ ] The validator checks prose locators as start and end anchors derived from the verbatim quote (extraction § 5) on lines admitted after the rule, and accepts `text` as the table segment of a prose line identifier (W1-02, W1-09)
 - [ ] A `document-addresses` table records a document's addresses with the date from which each holds, and the validator counts a retrieval of any recorded address as a retrieval of the document [M4] (W1-51)
+- [ ] `retrievals.collection_method` takes the five rung names of collection § 8 (`script`, `browser-session`, `browser-automated`, `browser-manual`, `web-archive`) plus `local-record`, as terms in force [M3a] (W1-23, W1-45)
+- [ ] `retrievals` carries `archive_url`, the public archive capture of the document's address [M3a] (W1-28)
+- [ ] `documents` carries `class` (frozen, living, series) as a dated judgement [M3a] (W1-23, W1-54)
+- [ ] The M3a collection tables exist with their columns and validator rules: `frame-entries` keyed by kind and `party_id` or `line_id`, `rounds`, `candidates`, `triage-judgements` under the in-force rule, `known-items`, `tracker-claims` [M3a] (W1-23)

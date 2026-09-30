@@ -122,8 +122,8 @@ release identifier and the result's identifier. *M3b* (Q6).
 The kinds of result the M3b release must contain are those the requirements
 name: counts per country, state and scope (F13); accounts (fusion § 7);
 operation timelines (F16); the gaps between announced, signed, reported and
-disbursed amounts and the traceability rate of the matching to CRS and IATI
-(F19); lists of excerpts for qualitative work (F21); and the
+disbursed amounts and the matching coverage rate to CRS and IATI (F19,
+fusion § 5); lists of excerpts for qualitative work (F21); and the
 coverage report (DP-3). Other results are added when a product needs them.
 
 ## 3. Two match thresholds
@@ -162,12 +162,19 @@ stated.
 - **Provenance** in machine-readable form: for every statement, the hash of
   the snapshot it was extracted from, its locator and its extraction method; for
   every result, its inputs, times and versions. (F32)
-- **The collection record**: the discovery cutoff, the newest document date,
-  the recall estimate and the list of documents and search channels that
-  could not be reached,
-  with the reason. (F9, DA9, Q10)
+- **The collection record**, carried from the M3a collection report that
+  the author accepted (collection § 12): the declared protocol and its
+  recorded revisions, the round log, the terminal verdict of every expected
+  authority and listed project, the statement "stopped by cap" with the
+  unmet conditions when a cap stopped discovery, the discovery cutoff, the
+  newest document date, the recall estimate, the tracker traceability rate
+  with the distribution of claim outcomes, and the list of documents and
+  search channels that could not be reached, with the reason. (F8, F9, DA9,
+  Q10)
 - **The redistribution list**: for every document, whether its bytes are in
-  the release or only cited, and on which terms (section 7). (C6)
+  the release or only cited, on which terms, and its public copy:
+  redistributed bytes, a public archive capture, or none with the reason
+  (section 7). (C6, F27)
 - **The validation and coverage reports**, and an editorial note in plain
   language saying what the release contains and what it does not.
 - **The cost record**: LLM spend and review time per document class.
@@ -277,8 +284,11 @@ The Observer publishes what it made and cites what others made.
   allow it or are unknown, the release carries the address, the public
   archive record if one exists, the hash and the locator, so that a reader
   who obtains the document can check that it holds the same bytes. The
-  redistribution list states, for every document, which case applies and
-  why. *M3b* (C6, F27).
+  public archive record is the capture of the document's address recorded
+  with its retrieval. The redistribution list states, for every document,
+  which case applies and why, and whether a public copy exists. A document
+  with no public copy cannot be checked by a third party; the reconstruction
+  test of Q8 is stated over documents that have one. *M3b* (C6, F27).
 - **Never in a release**: closed material of any kind, which never enters
   the Observer in the first place, and credentials. *M2* (N13, C9).
 
@@ -385,7 +395,8 @@ pages remain readable from the deposited files alone. *M4* (C10, C7).
 The first correct, citable release needs, and needs only:
 
 1. Results that carry their inputs, both times, ontology and method versions,
-   match thresholds, ranges and trails (sections 2 and 3).
+   match thresholds, ranges and trails (sections 2 and 3), with the
+   collection record of the M3a collection report the author accepted.
 2. One release built inputs first and descriptor after, validated and
    accepted before the current release advances (sections 4 and 5).
 3. A persistent identifier, a harvestable metadata record, an open licence

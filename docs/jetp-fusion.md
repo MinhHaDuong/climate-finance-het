@@ -176,6 +176,16 @@ what the previous ones left open and signing with its own method name.
 A proposer's settings are part of its method version, and are tested against
 matches already judged by hand before its judgements are used. [M3b]
 
+**Judgement by adopted rule.** A program records an accepted judgement only
+under a rule the author adopted, by version, in a recorded decision: identical
+bytes, the same external identifier, a case or diacritic variant of one
+name. Such a rule is the author's judgement applied by a program, and its
+rows name the rule as their method. Every other proposal, by a program or an
+LLM, is recorded as a candidate match until the checking rule of
+[extraction](jetp-extraction.md) section 6.3 or the author accepts it. This
+is how the first principle ("no rule below selects a value or merges two
+things on its own") and the proposers above hold together. [M2]
+
 **Reading and verification.** The author is not the checker. A reading is
 done by independent readers from different vendors, on the same inputs, blind
 to each other's answers, choosing from a closed list of options with a quoted
@@ -284,6 +294,10 @@ preference is ever automatic. [M2 for keeping every statement; M3b for preferenc
   only.
 - Structured search channels (OECD CRS, IATI) have no precedence of their own. They
   report one to three years late, and that lag is measured, not assumed.
+- The **matching coverage rate** is the share of a result's operations that
+  have an accepted match to a CRS or IATI record at the result's match
+  threshold, reported per country and funder; it is distinct from the
+  tracker traceability rate of discovery (collection section 7).
 - Where no judgement prefers one statement, a result carries the
   disagreement: both statements, and the condition that stops them from being
   compared (different scope, basis, currency, cutoff or measure).

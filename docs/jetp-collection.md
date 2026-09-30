@@ -104,9 +104,10 @@ except *held*, defined here.
   unfetched, and it then carries its access outcome (section 8). [M3a]
 - A **retrieval** is one attempt to fetch one document. [M2]
 - A **snapshot** is the bytes a successful retrieval returned. The bytes kept
-  are the server's response. A rendered page is kept beside it only when the
+  are the server's response. A rendered page is captured only when the
   response alone does not carry the content (tabs built by a script, for
-  example). [M2]
+  example), and the capture is a retrieval of its own, yielding a snapshot of
+  its own. [M2]
 - A document is **held** when it is admitted and at least one of its
   retrievals yielded a snapshot. [M2]
 
@@ -153,6 +154,18 @@ work. [M3a for the bounded round, later for deeper searches]
 "Not published" is a finding about the authority, not a gap in collection.
 "Blocked" is a gap, and it is published as one (section 8). [M3a]
 
+The recorded search of section 7 is the standard behind "not published". Its
+three parts read as follows. For an authority, the publisher's own search
+channel is the authority's portal or site, the partner disclosure channel is
+searched when the authority is a partner or is named in a partner's
+disclosure, and the general web search is run in each language of the
+country; the authority's own channel is the one being tested, so a search
+that did not reach it cannot close the entry. For a listed project, the
+publisher's own channel is that of its operator or promoter where one is
+named, the partner disclosure channel is that of the partners named for it
+(the bounded round above), and the general web search is run likewise.
+[M3a]
+
 ## 4. Search channel classes
 
 A search channel is a way of finding documents. The frame of a campaign is a fixed
@@ -166,7 +179,7 @@ country's languages that it serves. The classes are:
 | operator sites | the electricity operator and named project operators | primary |
 | structured reporting | CRS and IATI records, as pointers to documents | primary, late |
 | references in held documents | documents cited by documents already held | mixed |
-| secondary trackers and news | the declared list of trackers, think-tank reports, the press | leads (section 6) |
+| secondary trackers and news | the declared list of trackers, think-tank reports, the press | leads (section 7) |
 | general web search | search engines, per language | whatever the result is |
 | web archives | archived copies of pages that moved or disappeared | the archived document's |
 
@@ -274,10 +287,14 @@ document. Each claim ends with one outcome. [M3a]
 | untraced | the recorded search found no primary document |
 | secondary only | the claim cites another secondary document, followed once more before it ends here |
 
-**Traceability rate.** The share of claims examined that are traced
-(held, admitted or unreachable), reported with its interval and published at
-M3a. When a tracker makes more claims than the budget allows, the pass
-examines a random sample drawn before it starts, and says so. [M3a]
+**Tracker traceability rate.** The share of claims examined that are traced
+to a primary document the Observer read (held or admitted), reported with
+its interval in the M3a collection report, beside the distribution of all
+five outcomes; "traced, unreachable" is shown beside the rate and not
+counted in it, since nobody read that document. When a tracker makes more
+claims than the budget allows, the pass examines a random sample drawn
+before it starts, and says so. The tracker traceability rate is distinct
+from the matching coverage rate of fusion section 5. [M3a]
 
 **The recorded search.** "No primary document found", here and in fusion
 section 5, means a search that covered at least the publisher's own search channel,
@@ -285,8 +302,11 @@ the partner disclosure search channel when a partner is named, and one general w
 search in each relevant language, with the routes and terms recorded. A
 claim is untraced only after that search. [M3a]
 
-The pass is a search channel class like the others: its admissions count as yield
-in the stopping rule. [M3a]
+The pass is how the class "secondary trackers and news" of section 4 is
+searched: the claims of the declared trackers traced for one country in one
+language are that class's round, and the documents admitted from them are
+that round's yield, for frame coverage and for the quiet tail of the
+stopping rule alike. [M3a]
 
 ## 8. Access and unreachable documents
 
@@ -313,9 +333,11 @@ case. [M3a]
 the frozen register. Each entry names what is missing (an expected document,
 or a search channel of an expected authority), why it is expected, the rungs tried
 with their dates, and the reason it stopped: login required, paywall, bot wall
-not cleared, certificate or server failure, removed with no archive copy,
-declared but not published. It is a result: it tells the reader where the
-register is blind. [M3a]
+not cleared, certificate or server failure, removed with no archive copy, or
+named but never found (a document that another document says exists, which
+the recorded search did not find). An authority that publishes nothing is
+not on the list: its verdict is "not published" (section 3). It is a result:
+it tells the reader where the register is blind. [M3a]
 
 ## 9. Candidate triage
 
@@ -358,7 +380,7 @@ classes. [M3a for the class, M4 for what each class needs over time]
 
 | Class | Examples | At M3a | At M4 |
 |---|---|---|---|
-| frozen | a signed agreement, a board report, a plan once issued | fetched once | its address is checked periodically; a disappearance triggers an archive capture or retry (link rot) |
+| frozen | a signed agreement, a board report, a plan once issued | fetched once, and once more at the freeze (section 11) | its address is checked periodically; a disappearance triggers an archive capture or retry (link rot) |
 | living | a project data sheet updated as disbursements come, a portfolio portal, a ministry dashboard | fetched once at discovery; earlier snapshots held are kept | refetched at a declared frequency; each changed version is a new snapshot, so the document becomes a dated series of snapshots |
 | series | annual and quarterly reports, secretariat progress reports | each issue found is its own document, linked by `edition_of`; the series' publisher and stated periodicity are recorded | the date of the next issue is expected, and a late issue is reported |
 
@@ -391,7 +413,10 @@ admissions and judgements count, here the date of the freeze. [M3a]
 
 **The freeze.** When the author accepts the recall estimate and the
 unreachable list, the register is frozen: its documents, their triage
-outcomes and their access outcomes are fixed for M3b. After the freeze: [M3a]
+outcomes and their access outcomes are fixed for M3b. At the freeze, every
+frozen document fetched during the campaign is fetched once more: identical
+bytes cost nothing (extraction section 8), and different bytes are a new
+snapshot. After the freeze: [M3a]
 
 - a candidate found by any route, including a reference found during M3b
   extraction, is recorded as a document not held and waits for the next
@@ -402,8 +427,9 @@ outcomes and their access outcomes are fixed for M3b. After the freeze: [M3a]
   by supersession, as fusion section 2 allows for the ledger's own errors,
   and the correction is reported with the release.
 
-**M2 before the campaign.** M2 discovers nothing. It may retry, on the access
-ladder, the retrieval of documents already registered that have no snapshot,
+**M2 before the campaign.** M2 discovers nothing. It may retry, on the first
+two rungs of the access ladder (a plain automated request, then the author's
+browser session), the retrieval of documents already registered that have no snapshot,
 because that is fetching, not discovery; every such document ends with a
 snapshot or the disposition `no_snapshot` of
 [extraction](jetp-extraction.md) section 7, whose reason cites the latest
@@ -416,7 +442,10 @@ coverage rules are to be written when M4 opens. [M4]
 
 ## 12. What M3a must produce
 
-The minimum that yields a citable recall estimate:
+M3a produces a collection report, which the author accepts; it is the
+vehicle of everything this document says is published at M3a, and the first
+release (results and releases, section 13) carries its content. The minimum
+that yields a citable recall estimate:
 
 1. A declared protocol: authority frame, search channel classes per country and
    language, known-item list (frozen, hidden), tracker list, thresholds and
@@ -425,8 +454,9 @@ The minimum that yields a citable recall estimate:
 3. A checked judgement on every candidate: two LLM readers from different
    vendors, the author seeing their disagreements and a random sample.
 4. Terminal verdicts for every expected authority and listed project.
-5. The recall estimate with its interval, the traceability rate, the
-   unreachable list, the discovery cutoff and the newest document date.
+5. The recall estimate with its interval, the tracker traceability rate with
+   the distribution of claim outcomes, the unreachable list, the discovery
+   cutoff and the newest document date.
 
 Everything else in this document tagged M4 or later is not needed for it.
 
@@ -445,7 +475,8 @@ produces.
 | A known item was missed; examining it shows a partner portal missing from the frame. | The frame is revised with a recorded reason and the portal searched; the item looked up directly does not count as recovered. |
 | The effort cap is reached with 34 of 40 known items found. | Discovery stops; the results publish 85 % with its interval, "stopped by cap", and the unmet conditions; the author decides whether to accept. |
 | A ministry decree is found through a newspaper article. | The decree is a primary document of the ministry; the route is recorded but does not lower its pedigree. |
-| A tracker reports a disbursement and cites nothing; the recorded search finds no primary document. | The claim is untraced and lowers the traceability rate; the event may stand on the secondary document only as fusion section 5 allows, marked as such. |
+| A tracker reports a disbursement and cites nothing; the recorded search finds no primary document. | The claim is untraced and lowers the tracker traceability rate; the event may stand on the secondary document only as fusion section 5 allows, marked as such. |
+| The secondary-to-primary pass traces the claims of the declared trackers for Senegal in French and admits nothing new. | That is a quiet round of the class "secondary trackers and news" for Senegal in French, counted in frame coverage and in the quiet tail. |
 | A page opens only after a login the public cannot freely obtain. | No bypass; the document enters the unreachable list with "login required", after the web archive rung is tried. |
 | A page behind a bot wall opens in the author's browser. | It is fetched with the author's session; the retrieval records that rung; the bytes kept are the server's response. |
 | A site's crawler rules forbid automated access; the needed report's address is known and opens in the author's browser. | The report is fetched once and the site's position recorded; no program walks the site's other pages. |
