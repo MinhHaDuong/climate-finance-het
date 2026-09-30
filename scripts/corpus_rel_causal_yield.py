@@ -198,37 +198,91 @@ def read_registry(path, with_econlit=False):
         return [r for r in csv.DictReader(fh) if with_econlit or r["platform"] != "econlit"]
 
 
+def _agrees(hint, doi):
+    """An EDS DOI agrees with a DOI when it is empty, equal, or a strict prefix
+    (EDS truncates); any other pair names two different works."""
+    return not hint or doi.startswith(hint)
+
+
+def _title_groups(records, by_oa):
+    """Per title+year key: the DOIs records carry, the first OpenAlex work
+    without DOI, and the anchors (those DOIs plus every EDS DOI that is no
+    strict prefix of another DOI of the group)."""
+    dois_by_title, hints_by_title, oa_by_title = defaultdict(set), defaultdict(set), {}
+    for r in records:
+        k = title_key(r.get("title"), r.get("year"))
+        if not k:
+            continue
+        if r.get("doi"):
+            dois_by_title[k].add(r["doi"])
+            continue
+        if r.get("doi_eds"):
+            hints_by_title[k].add(r["doi_eds"])
+        if r.get("openalex_id"):
+            oa_by_title.setdefault(k, by_oa.get(r["openalex_id"], "oa:" + r["openalex_id"]))
+    anchors = {}
+    for k in set(dois_by_title) | set(hints_by_title):
+        every = dois_by_title[k] | hints_by_title[k]
+        anchors[k] = dois_by_title[k] | {h for h in hints_by_title[k]
+                                         if not any(d != h and d.startswith(h) for d in every)}
+    return dois_by_title, oa_by_title, anchors
+
+
+def _split_group_key(r, hint, group, own):
+    """Key of a record without DOI in a title+year group holding works whose
+    DOIs disagree: the one anchor its EDS DOI agrees with, else its own id.
+    A record that anchors a work with its own EDS DOI gets it as ``doi``."""
+    agreeing = sorted(a for a in group if _agrees(hint, a))
+    if len(agreeing) != 1:
+        return "oa:" + r["openalex_id"] if r.get("openalex_id") else "an:" + r.get("eds_an", "")
+    if agreeing[0] in own:
+        return "doi:" + agreeing[0]
+    if hint == agreeing[0]:
+        r["doi"], r["doi_promoted"] = hint, True
+    return "edsdoi:" + agreeing[0]
+
+
 def assign_work_keys(records):
     """Work key per record: its DOI; else the DOI another record gives its
-    OpenAlex id or its title+year; else its OpenAlex id; else the key of an
-    identified record with the same title+year; else a title+year key. The
-    title join also covers an OpenAlex record without DOI and an EDS record
-    carrying one, which an id-first rule would keep apart."""
+    OpenAlex id; else, within its title+year group, the one DOI it agrees
+    with; else its OpenAlex id; else the key of an identified record with the
+    same title+year; else a title+year key. The title join also covers an
+    OpenAlex record without DOI and an EDS record carrying one, which an
+    id-first rule would keep apart.
+
+    A title+year group whose records carry two DOIs that disagree (the OpenAlex
+    DOIs, and the EDS DOIs that are no prefix of another one in the group) holds
+    several works (ticket 1755): a record joins only the one DOI it agrees
+    with, and a record that agrees with several, or none, keeps its own key.
+    An EDS DOI that anchors such a split is not truncated, so it becomes the
+    record's ``doi``: without it the pool's title+year join would fuse the
+    works again."""
     by_oa = {r["openalex_id"]: "doi:" + r["doi"] for r in records
              if r.get("doi") and r.get("openalex_id")}
     known_dois = {r["doi"] for r in records if r.get("doi")}
-    doi_by_title, oa_by_title = {}, {}
+    dois_by_title, oa_by_title, anchors = _title_groups(records, by_oa)
     for r in records:
         k = title_key(r.get("title"), r.get("year"))
-        if k and r.get("doi"):
-            doi_by_title.setdefault(k, "doi:" + r["doi"])
-        elif k and r.get("openalex_id"):
-            oa_by_title.setdefault(k, by_oa.get(r["openalex_id"], "oa:" + r["openalex_id"]))
-    for r in records:
-        k = title_key(r.get("title"), r.get("year"))
+        hint = r.get("doi_eds") or ""
+        group = anchors.get(k, set())
         if r.get("doi"):
             r["work_key"] = "doi:" + r["doi"]
-        elif r.get("openalex_id"):
-            r["work_key"] = (by_oa.get(r["openalex_id"]) or doi_by_title.get(k)
-                             or "oa:" + r["openalex_id"])
-        elif r.get("doi_eds") in known_dois:
+        elif r.get("openalex_id") and r["openalex_id"] in by_oa:
+            r["work_key"] = by_oa[r["openalex_id"]]
+        elif hint in known_dois:
             # an EDS DOI that equals a DOI another record carries is not truncated
-            r["work_key"] = "doi:" + r["doi_eds"]
+            r["work_key"] = "doi:" + hint
+        elif len(group) > 1:
+            r["work_key"] = _split_group_key(r, hint, group, dois_by_title[k])
         else:
-            r["work_key"] = (doi_by_title.get(k) or oa_by_title.get(k)
-                             or ("ty:" + k if k else "")
-                             or ("edsdoi:" + r["doi_eds"] if r.get("doi_eds") else "")
-                             or "an:" + r.get("eds_an", ""))
+            one_doi = "doi:" + next(iter(dois_by_title[k])) if dois_by_title.get(k) else ""
+            if r.get("openalex_id"):
+                r["work_key"] = one_doi or "oa:" + r["openalex_id"]
+            else:
+                r["work_key"] = (one_doi or oa_by_title.get(k)
+                                 or ("ty:" + k if k else "")
+                                 or ("edsdoi:" + hint if hint else "")
+                                 or "an:" + r.get("eds_an", ""))
     return records
 
 
@@ -306,14 +360,15 @@ INTAKE_RECORD_FIELDS = [
     "doi", "openalex_id", "title_original", "first_author", "all_authors", "year",
     "publication_date", "journal", "issn", "doc_type", "language", "abstract",
     "abstract_provenance", "url", "affiliation_countries", "version_hint",
-    "lane_status", "lane_note", "families", "formulations", "all_query_ids",
+    "lane_status", "lane_note", "doi_eds_hint", "families", "formulations", "all_query_ids",
     "family_relevance", "in_refined", "in_unified", "in_sud",
 ]
 INTAKE_REGISTRY_FIELDS = [
     "query_id", "platform", "query", "run_at", "n_received", "completed", "filter",
     "n_expected", "stop_reason", "question", "question_type", "group", "formulation",
-    "language", "pages", "cost_usd", "runs",
+    "language", "pages", "cost_usd", "runs", "cursor_state", "cursor_note",
 ]
+INTAKE_FILES = ["records.csv", "registry.csv", "excluded.csv", "manifest.json"]
 # The EconLit rows were written, not run: their registry date is the lane's date.
 UNRUN_DATE = "2026-09-30"
 _LANG = {"English": "en", "French": "fr", "Spanish": "es", "German": "de",
@@ -359,13 +414,16 @@ def intake_rows(records, registry_all, labels):
                          for r in rs[1:]]
             continue
         rel = {q: labels.get((wk, q), "") for q in dict.fromkeys(r["question"] for r in rs)}
+        # every EDS DOI of every retrieval of the work, not only the kept one's
+        hints = list(dict.fromkeys(r["doi_eds"] for r in rs if r.get("doi_eds")))
         year = first.get("year")
         out.append({
             "record_id": f"1652:{wk}", "query_id": first["search_id"],
             "platform": _platform_code(first["platform"]),
             "retrieved_at": reg[first["search_id"]]["run_at"], "title": first.get("title") or "",
             "platform_record_id": first.get("openalex_id") or first.get("eds_an") or "",
-            "doi": first["doi"], "openalex_id": first.get("openalex_id") or "",
+            "doi": first["doi"] or next((r["doi"] for r in rs if r.get("doi_promoted")), ""),
+            "openalex_id": first.get("openalex_id") or "",
             "year": str(year) if year and len(str(year)) == 4 else "",
             "publication_date": first.get("date") or "", "journal": first.get("journal") or "",
             "doc_type": first.get("type") or "",
@@ -375,8 +433,12 @@ def intake_rows(records, registry_all, labels):
             "affiliation_countries": "; ".join(first.get("countries") or []),
             "lane_status": "already_in_pool" if any(r["in_unified"] for r in rs) else "candidate",
             "lane_note": "family relevance is a cheap-model mechanism judgment, not the ICF screen"
-                         + (f"; EDS DOI as returned, often truncated: {first['doi_eds']}"
-                            if first.get("doi_eds") else ""),
+                         + ("; doi is the EDS DOI: it disagrees with the DOI of a record with the "
+                            "same title and year, so the two are different works"
+                            if any(r.get("doi_promoted") for r in rs) else "")
+                         + (f"; EDS DOI as returned, often truncated: {'; '.join(hints)}"
+                            if hints else ""),
+            "doi_eds_hint": "; ".join(hints),
             "families": "|".join(rel), "formulations": "|".join(sorted({r["formulation"] for r in rs})),
             "all_query_ids": "|".join(r["search_id"] for r in rs),
             "family_relevance": "|".join(f"{q}={lab or 'unlabelled'}" for q, lab in rel.items()),
@@ -384,22 +446,27 @@ def intake_rows(records, registry_all, labels):
         for r in rs[1:]:
             excluded.append({"record_id": f"1652:{wk}", "query_id": r["search_id"],
                              "reason": "duplicate_in_lane", "title": r.get("title") or "",
-                             "note": f"{_raw_id(r)}: kept as retrieved by {first['search_id']}"})
+                             "note": f"{_raw_id(r)}: kept as retrieved by {first['search_id']}"
+                                     + (f"; EDS DOI as returned: {r['doi_eds']}"
+                                        if r.get("doi_eds") else "")})
     regs = []
     for s in registry_all:
         regs.append({
             **{k: s.get(k, "") for k in INTAKE_REGISTRY_FIELDS},
             "query_id": s["search_id"], "platform": _platform_code(s["platform"]),
             "query": s["query_string"], "run_at": s["run_at"] or UNRUN_DATE,
-            "n_received": str(s["n_received"] or 0), "completed": _flag(s["completed"])})
+            "n_received": str(s["n_received"] or 0), "completed": _flag(s["completed"]),
+            "cursor_state": s.get("cursor_state") or run_state(s, None)})
     return out, regs, excluded, delivered
 
 
 def write_intake(out_dir, records, registry_all, labels, manifest, force=False):
-    """Write the four delivery files; a directory that already holds a
-    delivery is refused unless ``force`` (a delivery is immutable once merged)."""
-    if os.path.exists(os.path.join(out_dir, "records.csv")) and not force:
-        raise SystemExit(f"{out_dir} already holds a delivery; pass --force-intake to replace it")
+    """Write the four delivery files; a directory that already holds any of
+    them is refused unless ``force`` (a delivery is immutable once merged)."""
+    taken = [n for n in INTAKE_FILES if os.path.exists(os.path.join(out_dir, n))]
+    if taken and not force:
+        raise SystemExit(f"{out_dir} already holds a delivery ({', '.join(taken)}); "
+                         "pass --force-intake to replace it")
     rows, regs, excluded, _ = intake_rows(records, registry_all, labels)
     os.makedirs(out_dir, exist_ok=True)
     for name, fields, data in (("records.csv", INTAKE_RECORD_FIELDS, rows),
@@ -431,24 +498,62 @@ def _raw_id(rec):
     return rec.get("openalex_id") or rec.get("eds_an") or f"{rec.get('doi')}|{rec.get('title')}"
 
 
+def run_state(r, expected):
+    """State of one run of a search, judged on its distinct ids (ticket 1755).
+
+    ``complete``: the cursor ended with every announced id. ``cursor_exhausted``:
+    the cursor ended after serving at least the announced number of rows, but
+    OpenAlex repeated some across pages, so fewer distinct ids arrived; the
+    search cannot return more, and the row counts as complete (arbitration at
+    the merge of PR #1609). ``short_cursor``: the cursor ended with fewer rows
+    than announced. ``record_cap``, ``error``, ``budget``, ``not_run``: the
+    run stopped before the end of its cursor."""
+    rows = int(r["n_received"] or 0)
+    distinct = int(r.get("_distinct", rows))
+    reason = r.get("stop_reason") or ""
+    if str(r.get("completed")) == "True" or reason.startswith("short cursor"):
+        if expected is None or distinct >= expected:
+            return "complete"
+        return "cursor_exhausted" if rows >= expected else "short_cursor"
+    for state in ("record cap", "error", "budget", "not run"):
+        if reason.startswith(state):
+            return state.replace(" ", "_")
+    return "stopped"
+
+
 def merge_registry_rows(rows):
     """One registry row for a search run in several run directories.
 
     Counts describe the union of the retrievals; the row is complete only when
-    some run reached the end of the cursor AND received what it announced, so a
-    run that stopped short can never pass for a finished one."""
-    base = max(rows, key=lambda r: int(r["n_received"] or 0))
+    some run reached the end of the cursor with every announced id, or
+    exhausted it (``run_state``), so a run that stopped short can never pass
+    for a finished one. ``cursor_state`` names the state of the deciding run,
+    ``cursor_note`` details an exhausted cursor."""
+    base = max(rows, key=lambda r: int(r.get("_distinct", r["n_received"] or 0)))
     expected = max((int(r["n_expected"]) for r in rows if str(r["n_expected"]).isdigit()),
                    default=None)
-    done = [r for r in rows if r["completed"] == "True"
-            and (expected is None or int(r["n_received"] or 0) >= expected)]
+    states = [(r, run_state(r, expected)) for r in rows]
+    complete = [r for r, s in states if s == "complete"]
+    exhausted = [r for r, s in states if s == "cursor_exhausted"]
     reasons = []
-    for r in rows:
-        why = r["stop_reason"] or ("short cursor" if r["completed"] == "True" else "")
-        reasons.append(f"{r['_run']}: {why or 'complete'} ({r['n_received']} of {r['n_expected']})")
+    for r, s in states:
+        why = r["stop_reason"].split(":")[0] if s == "short_cursor" else r["stop_reason"]
+        why = why or s.replace("_", " ")
+        reasons.append(f"{r['_run']}: {why} ({r.get('_distinct', r['n_received'])} of {r['n_expected']})")
+    note = ""
+    if complete:
+        state = "complete"
+    elif exhausted:
+        state, r = "cursor_exhausted", exhausted[0]
+        note = (f"{r['_run']}: cursor exhausted ({r['n_received']} rows, "
+                f"{r.get('_distinct', r['n_received'])} distinct ids of {expected} announced)")
+    else:
+        state = dict((id(r), s) for r, s in states)[id(base)]
+    done = state in ("complete", "cursor_exhausted")
     return {**base, "n_expected": "" if expected is None else expected,
             "completed": "True" if done else "False",
             "stop_reason": "" if done else "; ".join(reasons),
+            "cursor_state": state, "cursor_note": note,
             "runs": "|".join(r["_run"] for r in rows)}
 
 
@@ -466,10 +571,12 @@ def load_runs(dirs):
             else:
                 by_id[r["search_id"]].append({**r, "_run": os.path.basename(os.path.normpath(d))})
     meta = {sid: rows[0] for sid, rows in by_id.items()}
-    records, seen = [], set()
+    records, seen, distinct = [], set(), defaultdict(set)
     for d in dirs:
+        run_name = os.path.basename(os.path.normpath(d))
         for rec in read_jsonl_gz(os.path.join(d, "results.jsonl.gz")):
             key = (rec["search_id"], _raw_id(rec))
+            distinct[(run_name, rec["search_id"])].add(key[1])
             if key in seen:
                 continue
             seen.add(key)
@@ -488,9 +595,12 @@ def load_runs(dirs):
     received = Counter(r["search_id"] for r in records)
     registry = []
     for sid, rows in by_id.items():
+        for r in rows:  # the cursor's page repeats count once
+            r["_distinct"] = len(distinct[(r["_run"], sid)])
         row = merge_registry_rows(rows)
         row["n_received"] = received.get(sid, 0)
         row.pop("_run", None)
+        row.pop("_distinct", None)
         registry.append(row)
     return registry, registry + econlit_rows, records
 
