@@ -239,13 +239,13 @@ judge labels lean to "unsure".
 ## Delivery to the pool (1655)
 
 In the intake-contract format of `docs/rel-intake-contract.md` (ticket 1730,
-open PR #1604 at the time of delivery): `data/rel_intake/t1652-causal-econlit/2026-09-30/`
+PR #1604): `data/rel_intake/t1652-causal-econlit/2026-09-30/`
 (`records.csv`, `registry.csv`, `excluded.csv`, `manifest.json`), tracked by DVC
 (`data/rel_intake/t1652-causal-econlit.dvc`, pushed to the padme remote from
 padme). 33,531 records (one per work, OpenAlex retrieval preferred), 18,095
 further retrievals listed as `duplicate_in_lane`, 15 untitled OpenAlex works as
-`not_retrievable`; the contract's checker (`scripts/qa_rel_intake.py` from that
-PR) passes. Extra columns carry families, formulations, every search id and the
+`not_retrievable`; the contract's checker `scripts/qa_rel_intake.py` passes
+(the PR's version on padme, and the stricter version merged on `main`). Extra columns carry families, formulations, every search id and the
 family-relevance labels as information, never as a filter. Coverage is
 `incomplete` (capped rows, the two HTTP 500 rows, the unrun EconLit strings);
 `needs_human` lists EconLit access. The per-retrieval table with archive path
