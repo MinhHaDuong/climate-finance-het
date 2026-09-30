@@ -2,11 +2,13 @@
 Title: Spec: operation on padme and doudou
 Created: 2026-09-30
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1635
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
 2026-09-30T13:24Z HDMX-coding-agent note docs/jetp-operation.md drafted: machines, data flow, repository as control plane, checking rule, secrets, budgets (proposed defaults, derived from the held text layer and AEDIST prices), logging, backups (DVC remote shares padme's disk), failure handling, M4 changes, checks table; draft PR for author review
 
+2026-09-30T20:40Z HDMX-coding-agent closed — autoclosed — PR #1635
 --- body ---
 ## Context
 
