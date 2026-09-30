@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-30T06:26Z
+Last updated: 2026-09-30T07:29Z
 
 ## Current goal
 
@@ -17,23 +17,24 @@ Next: sweep; Gavard/Schoch; DAG and independent EconLit/OpenAlex searches;
 
 ## JETP checkpoint
 
-No deployment; no causal model (0729 DEFER). MVP unpublished. The ontology-v2 migration closed (0870, #1587),
+No causal model (0729 DEFER). The MVP is live on GitHub Pages (`gh-pages`, republished 2026-09-30 from `df1d9436`) but shared only by private mail, so it counts as unpublished. The ontology-v2 migration closed (0870, #1587),
 with #1574 (register dispositions) merged, and the bounded M1b catalogue is published (0833, #1586).
 **Next:** M3a (following newer sources, remaining candidates; ladder in 0725).
 `make all` still awaits the figure handoff (1491).
 
 ## Status
-<!-- generated 2026-09-30T06:26Z · as of 8e83d940 -->
+<!-- generated 2026-09-30T07:29Z · as of be19b52e -->
 
 **Tickets:** 66 ready · 73 blocked · 12 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  8e83d940 Merge pull request #1587 from MinhHaDuong/t0870-closeout
-  dd98e868 Merge pull request #1586 from MinhHaDuong/t0833-m1b-canonical-catalog
-  26cb05d3 Merge pull request #1585 from MinhHaDuong/close-1490-after-review
+  be19b52e Merge pull request #1591 from MinhHaDuong/docs-oeconomia-branch-to-tag
+  7b7d120d Merge pull request #1590 from MinhHaDuong/docs-gh-pages-branch
+  df1d9436 Merge pull request #1589 from MinhHaDuong/t1501-widen-language-step
 
 ## Corpus and submissions
 
+- The Œconomia submission is archived as tags `v1.0-submission` and `v1.1-oeconomia-revised`; its branch is deleted (rejected 2026-09-16).
 - The data paper is published; v2 remains immutable at tag `rdj26561-revision1` (`9af9dc08`).
 - V3 is unfrozen: Flag 5 publishes a non-removing per-language semantic distance; the Padme artifact is current and the 33,344-row refined corpus is unchanged.
