@@ -1,0 +1,46 @@
+{
+ "id": "gen-1790775426-aNI5A3V0QxKYItxp7eVs",
+ "object": "chat.completion",
+ "created": 1790775426,
+ "model": "deepseek/deepseek-v3.2",
+ "provider": "SiliconFlow",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\n  \"stance\": \"same\",\n  \"likelihood\": \"virtually certain\",\n  \"confidence\": \"high\",\n  \"basis\": \"The statement's label 'dự án Thủy điện tích năng Bắc Ái' is the direct Vietnamese translation of the existing identity's canonical name 'Bac Ai pumped-storage hydropower plant'. Both refer to a pumped-storage hydropower project at Bac Ai. The spelling difference is only due to language (Vietnamese vs. English) and does not indicate a different project. The statement's status ('đang trong giai đoạn đàm phán thỏa thuận vốn' / 'in the stage of negotiating capital agreement') is consistent with the existing identity's record of a term sheet and financier updates.\"\n}",
+    "refusal": null,
+    "reasoning": null
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 532,
+  "completion_tokens": 162,
+  "total_tokens": 694,
+  "cost": 0.000205828,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000205828,
+   "upstream_inference_prompt_cost": 0.000137788,
+   "upstream_inference_completions_cost": 6.804e-05
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

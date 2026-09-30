@@ -1,0 +1,48 @@
+{"stage": "scope", "document_id": "planted-control", "wall_s": 9.32, "cost": 0.0063045}
+{"stage": "read", "document_id": "planted-control", "wall_s": 29.03, "cost": 0.021828, "n": 19}
+{"stage": "locate", "document_id": "planted-control", "wall_s": 0.0, "kept": 13, "rejected": 6}
+{"stage": "scope", "document_id": "planted-control", "wall_s": 9.97, "cost": 0.00696825}
+{"stage": "read", "document_id": "planted-control", "wall_s": 17.39, "cost": 0.01311825, "n": 20}
+{"stage": "locate", "document_id": "planted-control", "wall_s": 0.0, "kept": 15, "rejected": 5}
+{"stage": "locate", "document_id": "planted-control", "wall_s": 0.0, "kept": 15, "rejected": 5}
+{"stage": "locate", "document_id": "planted-control", "wall_s": 0.0, "kept": 17, "rejected": 3}
+{"stage": "locate", "document_id": "redtest-fabricated", "wall_s": 0.0, "kept": 17, "rejected": 4}
+{"stage": "scope", "document_id": "vnm-decision-1009-2023", "wall_s": 6.06, "cost": 0.0087765}
+{"stage": "scope", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 10.17, "cost": 0.006954}
+{"stage": "scope", "document_id": "vnm-moit-newsletter-13-2026-03", "wall_s": 11.82, "cost": 0.00819375}
+{"stage": "read", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 26.38, "cost": 0.0195915, "n": 14}
+{"stage": "locate", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 0.0, "kept": 5, "rejected": 9}
+{"stage": "check", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 4.48, "cost": 0.00707025, "n": 5, "missed": 9}
+{"stage": "review_set", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 0.0, "proposed": 14, "rejected_by_locator": 9, "agreed": 5, "disagreements": 0, "missed": 9, "sample": 3, "unchecked": 0, "unclassified_waiting_review": 0, "author_minutes": 15.0}
+{"stage": "read", "document_id": "vnm-decision-1009-2023", "wall_s": 58.62, "cost": 0.04641375, "n": 59}
+{"stage": "locate", "document_id": "vnm-decision-1009-2023", "wall_s": 0.01, "kept": 57, "rejected": 2}
+{"stage": "check", "document_id": "vnm-decision-1009-2023", "wall_s": 13.97, "cost": 0.03090075, "n": 57, "missed": 5}
+{"stage": "review_set", "document_id": "vnm-decision-1009-2023", "wall_s": 0.0, "proposed": 59, "rejected_by_locator": 2, "agreed": 51, "disagreements": 6, "missed": 5, "sample": 10, "unchecked": 0, "unclassified_waiting_review": 0, "author_minutes": 21.5}
+{"stage": "scope", "document_id": "planted-control", "wall_s": 10.25, "cost": 0.00654825}
+{"stage": "read", "document_id": "planted-control", "wall_s": 194.44, "cost": 0.09470625, "n": 22}
+{"stage": "locate", "document_id": "planted-control", "wall_s": 0.0, "kept": 21, "rejected": 1}
+{"stage": "scope", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 8.75, "cost": 0.006174}
+{"stage": "scope", "document_id": "vnm-moit-newsletter-13-2026-03", "wall_s": 8.84, "cost": 0.00606375}
+{"stage": "read", "document_id": "vnm-moit-newsletter-13-2026-03", "wall_s": 14.71, "cost": 0.0111285, "n": 13}
+{"stage": "locate", "document_id": "vnm-moit-newsletter-13-2026-03", "wall_s": 0.0, "kept": 12, "rejected": 1}
+{"stage": "scope", "document_id": "vnm-decision-1009-2023", "wall_s": 24.48, "cost": 0.010494}
+{"stage": "check", "document_id": "vnm-moit-newsletter-13-2026-03", "wall_s": 6.92, "cost": 0.0097095, "n": 12, "missed": 6}
+{"stage": "review_set", "document_id": "vnm-moit-newsletter-13-2026-03", "wall_s": 0.0, "proposed": 13, "rejected_by_locator": 1, "agreed": 7, "disagreements": 5, "missed": 6, "sample": 3, "unchecked": 0, "unclassified_waiting_review": 0, "author_minutes": 18.0}
+{"stage": "read", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 31.9, "cost": 0.01995225, "n": 15}
+{"stage": "locate", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 0.0, "kept": 10, "rejected": 5}
+{"stage": "check", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 5.48, "cost": 0.00806265, "n": 10, "missed": 9}
+{"stage": "review_set", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 0.0, "proposed": 15, "rejected_by_locator": 5, "agreed": 9, "disagreements": 1, "missed": 9, "sample": 3, "unchecked": 0, "unclassified_waiting_review": 0, "author_minutes": 16.5}
+{"stage": "read", "document_id": "vnm-decision-1009-2023", "wall_s": 73.02, "cost": 0.05606775, "n": 46}
+{"stage": "locate", "document_id": "vnm-decision-1009-2023", "wall_s": 0.0, "kept": 13, "rejected": 33}
+{"stage": "check", "document_id": "vnm-decision-1009-2023", "wall_s": 8.89, "cost": 0.0139887, "n": 13, "missed": 28}
+{"stage": "review_set", "document_id": "vnm-decision-1009-2023", "wall_s": 0.0, "proposed": 46, "rejected_by_locator": 33, "agreed": 8, "disagreements": 5, "missed": 28, "sample": 3, "unchecked": 0, "unclassified_waiting_review": 0, "author_minutes": 51.0}
+{"stage": "restatement", "document_id": "vnm-moit-newsletter-08-2025-10+vnm-moit-newsletter-13-2026-03", "wall_s": 5.52, "cost": 0.0030132, "pairs": 6}
+{"stage": "match", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 12.53, "cost": 0.000649828}
+{"stage": "locate", "document_id": "vnm-decision-1009-2023", "wall_s": 0.0, "kept": 13, "rejected": 33}
+{"stage": "locate", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 0.0, "kept": 10, "rejected": 5}
+{"stage": "locate", "document_id": "vnm-moit-newsletter-13-2026-03", "wall_s": 0.0, "kept": 12, "rejected": 1}
+{"stage": "read", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 23.95, "cost": 0.019017, "n": 18}
+{"stage": "locate", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 0.0, "kept": 17, "rejected": 1}
+{"stage": "check", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 7.37, "cost": 0.01247025, "n": 17, "missed": 8}
+{"stage": "review_set", "document_id": "vnm-moit-newsletter-08-2025-10", "wall_s": 0.0, "proposed": 18, "rejected_by_locator": 1, "agreed": 16, "disagreements": 1, "missed": 8, "sample": 3, "unchecked": 0, "unclassified_waiting_review": 0, "author_minutes": 15.0}
+{"stage": "restatement", "document_id": "vnm-moit-newsletter-08-2025-10+vnm-moit-newsletter-13-2026-03", "wall_s": 6.56, "cost": 0.00407672, "pairs": 7}

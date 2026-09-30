@@ -1,0 +1,78 @@
+{
+ "scope_in": [
+  {
+   "part": "Bản tin phỏng vấn Đại sứ Phái đoàn Liên minh châu Âu (EU) về tài chính JETP và Dự án Thủy điện tích năng Bác Ái",
+   "pages": [
+    1,
+    2
+   ]
+  },
+  {
+   "part": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP, Phương thức tham gia JETP",
+   "pages": [
+    2
+   ]
+  },
+  {
+   "part": "Thông báo ký kết hiệp định vay Dự án Điện gió ngoài khơi Hòn Mây 2",
+   "pages": [
+    2
+   ]
+  }
+ ],
+ "scope_out": [
+  {
+   "part": "Tiêu đề bản tin và số phát hành (BẢN TIN JETP VIỆT NAM Số 12 – Tháng 02/2026)",
+   "reason": "Repeated masthead and issue metadata"
+  },
+  {
+   "part": "Thông tin liên hệ Cơ quan thường trực Ban Thư ký thực hiện JETP Bộ Công Thương (chân trang các trang 1 và 2)",
+   "reason": "Repeated contact boilerplate and website URL"
+  }
+ ],
+ "field_list": [
+  {
+   "name": "dự_án",
+   "printed": false
+  },
+  {
+   "name": "bên_liên_quan",
+   "printed": false
+  },
+  {
+   "name": "giá_trị_tài_chính",
+   "printed": false
+  },
+  {
+   "name": "ngày_ký_hoặc_sự_kiện",
+   "printed": false
+  },
+  {
+   "name": "giai_đoạn_trạng_thái",
+   "printed": false
+  },
+  {
+   "name": "nội_dung_chi_tiết",
+   "printed": false
+  }
+ ],
+ "charts_without_text": [],
+ "notes": "Tài liệu là văn bản tin tức, phóng vấn và hướng dẫn dạng văn xuôi (prose), không chứa bảng biểu hay tiêu đề cột được in sẵn; do đó các trường thông tin được đề xuất bởi người đọc (reader-supplied) để phục vụ việc ghi sổ giao dịch/dự án JETP.",
+ "_method": {
+  "model": "google/gemini-3.8-flash",
+  "prompt_version": "spike-2026-09-30.3",
+  "call": {
+   "t": "2026-09-30T13:30:33Z",
+   "stage": "scope:planted-control",
+   "model": "google/gemini-3.8-flash",
+   "served_model": "google/gemini-3.8-flash",
+   "provider": "Google",
+   "prompt_tokens": 2306,
+   "completion_tokens": 1285,
+   "cost_usd": 0.00654825,
+   "wall_s": 10.2,
+   "temperature": 0.0,
+   "max_tokens": 4000
+  }
+ }
+}

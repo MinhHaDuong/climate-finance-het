@@ -1,0 +1,291 @@
+{
+ "method": {
+  "tier2": "normalised-token-jaccard>=0.2",
+  "tier4": "mistralai/mistral-medium-3.1",
+  "call": {
+   "t": "2026-09-30T13:39:25Z",
+   "stage": "restatement-pairing",
+   "model": "mistralai/mistral-medium-3.1",
+   "served_model": "mistralai/mistral-medium-3.1",
+   "provider": "Mistral",
+   "prompt_tokens": 5781,
+   "completion_tokens": 898,
+   "cost_usd": 0.00407672,
+   "wall_s": 6.5,
+   "temperature": 0.0,
+   "max_tokens": 6000
+  }
+ },
+ "n_a": 18,
+ "n_b": 11,
+ "tier2_candidates": [
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-1",
+   "b": "vnm-moit-newsletter-13-2026-03-text-7",
+   "jaccard": 0.21
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-4",
+   "b": "vnm-moit-newsletter-13-2026-03-text-7",
+   "jaccard": 0.38
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-4",
+   "b": "vnm-moit-newsletter-13-2026-03-text-8",
+   "jaccard": 0.32
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-5",
+   "b": "vnm-moit-newsletter-13-2026-03-text-2",
+   "jaccard": 0.21
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-5",
+   "b": "vnm-moit-newsletter-13-2026-03-text-4",
+   "jaccard": 0.22
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-6",
+   "b": "vnm-moit-newsletter-13-2026-03-text-7",
+   "jaccard": 0.21
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-6",
+   "b": "vnm-moit-newsletter-13-2026-03-text-8",
+   "jaccard": 0.34
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-8",
+   "b": "vnm-moit-newsletter-13-2026-03-text-2",
+   "jaccard": 0.2
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-9",
+   "b": "vnm-moit-newsletter-13-2026-03-text-6",
+   "jaccard": 0.43
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-12",
+   "b": "vnm-moit-newsletter-13-2026-03-text-2",
+   "jaccard": 0.23
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-13",
+   "b": "vnm-moit-newsletter-13-2026-03-text-9",
+   "jaccard": 0.24
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-14",
+   "b": "vnm-moit-newsletter-13-2026-03-text-5",
+   "jaccard": 0.25
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-15",
+   "b": "vnm-moit-newsletter-13-2026-03-text-6",
+   "jaccard": 0.33
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-a1",
+   "b": "vnm-moit-newsletter-13-2026-03-text-9",
+   "jaccard": 0.2
+  }
+ ],
+ "pairs": [
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-9",
+   "b": "vnm-moit-newsletter-13-2026-03-text-6",
+   "stance": "same",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "Both refer to the 'Thủy điện tích năng Bác Ái' project.",
+   "a_label": "dự án Thủy điện tích năng Bác Ái (công suất dự kiến hơn 1.200 MW)",
+   "b_label": "Thủy điện tích năng Bác Ái",
+   "kind": "change",
+   "field_differences": {
+    "parties_involved": [
+     null,
+     "KfW"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-15",
+   "b": "vnm-moit-newsletter-13-2026-03-text-6",
+   "stance": "same",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "Both refer to the 'Thủy điện tích năng Bác Ái' project, with issue 8 specifying its financial amount (557 triệu USD).",
+   "a_label": "dự án Thủy điện tích năng Bắc Ái (557 triệu USD, đang trong giai đoạn đàm phán thỏa thuận vốn)",
+   "b_label": "Thủy điện tích năng Bác Ái",
+   "kind": "change",
+   "field_differences": {
+    "stage_or_decision": [
+     "đang trong giai đoạn đàm phán thỏa thuận vốn",
+     null
+    ],
+    "parties_involved": [
+     null,
+     "KfW"
+    ],
+    "project_name": [
+     "dự án Thủy điện tích năng Bắc Ái",
+     "Thủy điện tích năng Bác Ái"
+    ],
+    "financial_amount": [
+     "557 triệu USD",
+     null
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-14",
+   "b": "vnm-moit-newsletter-13-2026-03-text-5",
+   "stance": "same",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "Issue 8: '03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD'; Issue 13: '3 dự án nhận được tài trợ với tổng vốn trên 700 triệu USD'.",
+   "a_label": "03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD",
+   "b_label": "3 dự án nhận được tài trợ với tổng vốn trên 700 triệu USD",
+   "kind": "change",
+   "field_differences": {
+    "stage_or_decision": [
+     "tiếp cận tài chính JETP",
+     "nhận được tài trợ"
+    ],
+    "financial_amount": [
+     "728 triệu USD",
+     "trên 700 triệu USD"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-a1",
+   "b": "vnm-moit-newsletter-13-2026-03-text-9",
+   "stance": "same",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "Issue 8: '44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD'; Issue 13: 'danh mục 44 dự án phù hợp JETP với nhu cầu vốn trên 11 tỷ USD'.",
+   "a_label": "gồm 44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD",
+   "b_label": "danh mục 44 dự án phù hợp JETP",
+   "kind": "change",
+   "field_differences": {
+    "stage_or_decision": [
+     null,
+     "đã xác định danh mục 44 dự án phù hợp JETP với nhu cầu vốn trên 11 tỷ USD"
+    ],
+    "financial_amount": [
+     "hơn 10 tỷ USD",
+     "trên 11 tỷ USD"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-13",
+   "b": "vnm-moit-newsletter-13-2026-03-text-9",
+   "stance": "same",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "Issue 8: '7 dự án được các bên thống nhất xác định phù hợp với JETP từ năm 2024'; Issue 13: 'danh mục 44 dự án phù hợp JETP' (subset relationship).",
+   "a_label": "7 dự án được các bên thống nhất xác định phù hợp với JETP từ năm 2024",
+   "b_label": "danh mục 44 dự án phù hợp JETP",
+   "kind": "change",
+   "field_differences": {
+    "date": [
+     "năm 2024",
+     null
+    ],
+    "stage_or_decision": [
+     "được các bên thống nhất xác định phù hợp với JETP",
+     "đã xác định danh mục 44 dự án phù hợp JETP với nhu cầu vốn trên 11 tỷ USD"
+    ],
+    "financial_amount": [
+     null,
+     "trên 11 tỷ USD"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-8",
+   "b": "vnm-moit-newsletter-13-2026-03-text-12",
+   "stance": "same",
+   "likelihood": "likely",
+   "confidence": "medium",
+   "basis": "Issue 8: 'Gói hỗ trợ 430 triệu Euro' (EU); Issue 13: 'cam kết tài chính công khoảng 7,75 tỷ USD' (IPG). Both refer to JETP-related financial commitments, though amounts differ.",
+   "a_label": "Liên minh châu Âu (EU) đã công bố gói hỗ trợ trị giá 430 triệu Euro dành cho Việt Nam nhằm thúc đẩy Quan hệ đối tác chuyển đổi năng lượng công bằng (JETP)",
+   "b_label": "cam kết tài chính công khoảng 7,75 tỷ USD",
+   "kind": "change",
+   "field_differences": {
+    "stage_or_decision": [
+     "đã công bố gói hỗ trợ trị giá 430 triệu Euro dành cho Việt Nam",
+     "duy trì cam kết tài chính công"
+    ],
+    "parties_involved": [
+     "Liên minh châu Âu (EU)",
+     "IPG"
+    ],
+    "date": [
+     "Ngày 9/10",
+     null
+    ],
+    "financial_amount": [
+     "430 triệu Euro",
+     "khoảng 7,75 tỷ USD"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-10",
+   "b": "vnm-moit-newsletter-13-2026-03-text-12",
+   "stance": "same",
+   "likelihood": "likely",
+   "confidence": "medium",
+   "basis": "Issue 8: 'Gói hỗ trợ 430 triệu Euro được triển khai trong khuôn khổ hợp tác của Team Europe'; Issue 13: 'cam kết tài chính công khoảng 7,75 tỷ USD' (IPG). Both describe JETP financial frameworks.",
+   "a_label": "Gói hỗ trợ 430 triệu Euro được triển khai trong khuôn khổ hợp tác của Team Europe",
+   "b_label": "cam kết tài chính công khoảng 7,75 tỷ USD",
+   "kind": "change",
+   "field_differences": {
+    "stage_or_decision": [
+     "được triển khai trong khuôn khổ hợp tác của Team Europe",
+     "duy trì cam kết tài chính công"
+    ],
+    "parties_involved": [
+     "Team Europe gồm EU, các quốc gia thành viên và các định chế tài chính phát triển như AFD, EIB, KfW, CDP và PROPARCO",
+     "IPG"
+    ],
+    "financial_amount": [
+     "430 triệu Euro",
+     "khoảng 7,75 tỷ USD"
+    ]
+   },
+   "label_differs": true
+  }
+ ],
+ "unpaired_earlier": [
+  "vnm-moit-newsletter-08-2025-10-text-1",
+  "vnm-moit-newsletter-08-2025-10-text-2",
+  "vnm-moit-newsletter-08-2025-10-text-3",
+  "vnm-moit-newsletter-08-2025-10-text-4",
+  "vnm-moit-newsletter-08-2025-10-text-5",
+  "vnm-moit-newsletter-08-2025-10-text-6",
+  "vnm-moit-newsletter-08-2025-10-text-7",
+  "vnm-moit-newsletter-08-2025-10-text-11",
+  "vnm-moit-newsletter-08-2025-10-text-12",
+  "vnm-moit-newsletter-08-2025-10-text-16",
+  "vnm-moit-newsletter-08-2025-10-text-17"
+ ],
+ "new_in_later": [
+  "vnm-moit-newsletter-13-2026-03-text-1",
+  "vnm-moit-newsletter-13-2026-03-text-2",
+  "vnm-moit-newsletter-13-2026-03-text-3",
+  "vnm-moit-newsletter-13-2026-03-text-4",
+  "vnm-moit-newsletter-13-2026-03-text-7",
+  "vnm-moit-newsletter-13-2026-03-text-8",
+  "vnm-moit-newsletter-13-2026-03-text-11"
+ ]
+}

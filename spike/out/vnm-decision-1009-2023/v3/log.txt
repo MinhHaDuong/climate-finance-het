@@ -1,0 +1,38 @@
+scope {"scope_in": [{"part": "Preamble and Decision enactments (Số: 1009/QĐ-TTg, Điều 1)", "pages": [1]}, {"part": "Section I: Quan điểm (Principles / Perspectives)", "pages": [1, 2]}, {"part": "Section II: Mục tiêu (General and Specific Objectives to 2030 and post-2030)", "pages": [2, 3]}, {"part": "Section III: Các nhiệm vụ trọng tâm (Key Tasks 1 through 10)", "pages": [3, 4, 5, 6, 7, 8, 9]}, {"part": "Section IV: Nguồn lực thực hiện (Implementation Resources)", "pages": [9]}, {"part": "Section V: Tổ chức thực hiện (Implementation Arrangements, Working Groups, Ministry and Agency Assignments)", "pages": [10, 11, 12, 13, 14]}, {"part": "Closing Articles (Điều 2, Điều 3) and Signatory block", "pages": [14, 15]}], "scope_out": [{"part": "Page numbers and header markers", "reason": "Repeated page furniture and text layer delimiters."}, {"part": "Distribution list (Nơi nhận)", "reason": "Routine administrative distribution boilerplate."}], "field_list": [{"name": "section", "printed": false}, {"name": "subsection", "printed": false}, {"name": "content", "printed": false}, {"name": "responsible_entity", "printed": false}, {"name": "target_or_timeline", "printed": false}], "charts_without_text": [], "notes": "The document is an official government legal decision in unstructured prose containing policy mandates, objectives, quantitative sectoral targets, and administrative responsibilities without printed tabular column labels.", "_method": {"model": "google/gemini-3.8-flash", "prompt_ve
+proposals 46
+locator check: kept 13 rejected 33
+  REJ 0 ['label not found verbatim on the page'] Quyết định Số: 1009/QĐ-TTg
+  REJ 7 ["value of 'section' not found near the anchor: 'II. MỤC TIÊU'", "value of 'subsection' not found near the anchor: '2. Mục tiêu cụ thể'"] Phấn đấu đến 2030 hình thành 02 trung tâm công nghiệp, dịch vụ năng lượng tái tạ
+  REJ 8 ["value of 'section' not found near the anchor: 'II. MỤC TIÊU'", "value of 'subsection' not found near the anchor: '2. Mục tiêu cụ thể'"] phấn đấu tỉ lệ năng lượng tái tạo đạt 47% và mức phát thải đỉnh của ngành điện k
+  REJ 9 ["value of 'section' not found near the anchor: 'II. MỤC TIÊU'", "value of 'subsection' not found near the anchor: '2. Mục tiêu cụ thể'"] b) Giai đoạn sau năm 2030
+  REJ 10 ["value of 'section' not found near the anchor: 'II. MỤC TIÊU'", "value of 'subsection' not found near the anchor: '2. Mục tiêu cụ thể'"] Không xây mới và loại bỏ dần các nhà máy nhiệt điện than, thực hiện mạnh mẽ các 
+  REJ 13 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 2. Thúc đẩy chuyển đổi điện than sang năng lượng sạch
+  REJ 14 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 3. Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo
+  REJ 15 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 4. Sử dụng năng lượng tiết kiệm và hiệu quả
+  REJ 16 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 5. Nâng cấp hệ thống truyền tải và phân phối điện, đẩy nhanh lộ trình xây dựng h
+  REJ 17 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông 
+  REJ 18 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 7. Đổi mới sáng tạo, phát triển và chuyển giao công nghệ
+  REJ 19 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 8. Bảo đảm công bằng trong chuyển đổi năng lượng
+  REJ 20 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 9. Truyền thông, nâng cao nhận thức
+  REJ 21 ["value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"] 10. Thúc đẩy hợp tác, huy động nguồn lực cho chuyển đổi năng lượng công bằng
+  REJ 26 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] b) Nhóm Thể chế, Chính sách và Đầu tư
+  REJ 27 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] c) Nhóm Công nghệ và Năng lượng
+  REJ 28 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] d) Nhóm Tài chính
+  REJ 29 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] 2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan
+  REJ 30 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] a) Bộ Tài nguyên và Môi trường
+  REJ 31 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] b) Bộ Kế hoạch và Đầu tư
+  REJ 32 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] c) Bộ Công Thương
+  REJ 33 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] d) Bộ Tài chính
+  REJ 34 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] đ) Bộ Lao động - Thương binh và Xã hội
+  REJ 35 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] e) Bộ Khoa học và Công nghệ
+  REJ 36 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] g) Bộ Giao thông vận tải
+  REJ 37 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] h) Bộ Xây dựng
+  REJ 38 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] i) Bộ Nông nghiệp và Phát triển nông thôn
+  REJ 39 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] k) Ngân hàng Nhà nước Việt Nam
+  REJ 40 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] l) Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ
+  REJ 41 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] m) Ủy ban quản lý vốn nhà nước tại doanh nghiệp
+  REJ 42 ["value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"] n) Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương
+  REJ 43 ['label not found verbatim on the page'] Điều 2. Hiệu lực thi hành
+  REJ 44 ['label not found verbatim on the page'] Điều 3. Trách nhiệm thi hành
+checks 13 missed 28
+{"proposed": 46, "rejected_by_locator": 33, "agreed": 8, "disagreements": 5, "missed": 28, "sample": 3, "unchecked": 0, "unclassified_waiting_review": 0} author minutes 51.0

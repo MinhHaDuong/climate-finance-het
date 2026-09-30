@@ -1,0 +1,565 @@
+{
+ "disagreements": [
+  {
+   "page": 2,
+   "anchor": "- Xây dựng Kế hoạch huy động nguồn lực thực hiện Tuyên bố JETP (Kế hoạch huy",
+   "label": "Xây dựng Kế hoạch huy động nguồn lực thực hiện Tuyên bố JETP (Kế hoạch huy động nguồn lực) và triển khai các dự án thí điểm thực hiện chuyển đổi năng lượng công bằng.",
+   "classification": "unnamed_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "a) Giai đoạn từ nay đến năm 2030",
+   "fields": {
+    "action_or_target": "Xây dựng Kế hoạch huy động nguồn lực thực hiện Tuyên bố JETP (Kế hoạch huy động nguồn lực) và triển khai các dự án thí điểm thực hiện chuyển đổi năng lượng công bằng. Triển khai thực hiện Kế hoạch huy động nguồn lực với hỗ trợ tài chính và chuyển giao công nghệ của quốc tế nhằm thúc đẩy chuyển đổi nhiệt điện than và sử dụng năng lượng hóa thạch sang năng lượng sạch; phát triển các loại hình năng lượng tái tạo, năng lượng mới (hydro xanh, amoniac xanh…)."
+   },
+   "speaker": null,
+   "note": null,
+   "_anchor_trimmed_from": "- Xây dựng Kế hoạch huy động nguồn lực thực hiện Tuyên bố JETP (Kế hoạch huy động",
+   "_proposal_index": 11,
+   "ordinal": 12,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "- Xây dựng Kế hoạch huy động nguồn lực thực hiện Tuyên bố JETP (Kế hoạch huy",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 12,
+    "stance": "partly right",
+    "likelihood": "likely",
+    "confidence": "high",
+    "basis": "\"- Xây dựng Kế hoạch huy động nguồn lực thực hiện Tuyên bố JETP (Kế hoạch huy động nguồn lực) và triển khai các dự án thí điểm thực hiện chuyển đổi năng lượng công bằng.\"",
+    "problem": "Thiếu phần tiếp theo trong cùng gạch đầu dòng: \"Triển khai thực hiện Kế hoạch huy động nguồn lực với hỗ trợ tài chính và chuyển giao công nghệ của quốc tế...\""
+   }
+  },
+  {
+   "page": 7,
+   "anchor": "a) Đảm bảo bình đẳng trong tiếp cận nguồn lực và thực hiện trách nhiệm trong",
+   "label": "a) Đảm bảo bình đẳng trong tiếp cận nguồn lực và thực hiện trách nhiệm trong chuyển đổi năng lượng",
+   "classification": "unnamed_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "fields": {
+    "section_number": "a",
+    "section_heading": "Đảm bảo bình đẳng trong tiếp cận nguồn lực và thực hiện trách nhiệm trong chuyển đổi năng lượng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 30,
+   "ordinal": 31,
+   "locator": {
+    "page_index": 7,
+    "folio": null,
+    "text_anchor": "a) Đảm bảo bình đẳng trong tiếp cận nguồn lực và thực hiện trách nhiệm trong",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 31,
+    "stance": "partly right",
+    "likelihood": "likely",
+    "confidence": "high",
+    "basis": "\"a) Đảm bảo bình đẳng trong tiếp cận nguồn lực và thực hiện trách nhiệm trong chuyển đổi năng lượng\"",
+    "problem": "Label khớp, nhưng classification là \"heading\" trong bản gốc; mục này được in như tiểu mục kèm các gạch đầu dòng phía dưới, không phải một \"unnamed_item\" độc lập theo nghĩa chặt."
+   }
+  },
+  {
+   "page": 7,
+   "anchor": "b) Hỗ trợ các nhóm lao động và hộ gia đình dễ bị tổn thương chịu ảnh hưởng của",
+   "label": "b) Hỗ trợ các nhóm lao động và hộ gia đình dễ bị tổn thương chịu ảnh hưởng của quá trình chuyển đổi năng lượng.",
+   "classification": "unnamed_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "fields": {
+    "section_number": "b",
+    "section_heading": "Hỗ trợ các nhóm lao động và hộ gia đình dễ bị tổn thương chịu ảnh hưởng của quá trình chuyển đổi năng lượng."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 31,
+   "ordinal": 32,
+   "locator": {
+    "page_index": 7,
+    "folio": null,
+    "text_anchor": "b) Hỗ trợ các nhóm lao động và hộ gia đình dễ bị tổn thương chịu ảnh hưởng của",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 32,
+    "stance": "partly right",
+    "likelihood": "likely",
+    "confidence": "high",
+    "basis": "\"b) Hỗ trợ các nhóm lao động và hộ gia đình dễ bị tổn thương chịu ảnh hưởng của quá trình chuyển đổi năng lượng.\"",
+    "problem": "Label đúng nhưng dấu câu cuối bị thêm; classification là tiểu mục, nhưng trường nội dung không nêu hết các gạch đầu dòng đi kèm."
+   }
+  },
+  {
+   "page": 9,
+   "anchor": "Kinh phí thực hiện Đề án triển khai Tuyên bố JETP từ nguồn ngân sách nhà nước",
+   "label": "Kinh phí thực hiện Đề án triển khai Tuyên bố JETP",
+   "classification": "envelope",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "IV. NGUỒN LỰC THỰC HIỆN",
+   "fields": {
+    "action_or_target": "Kinh phí thực hiện Đề án triển khai Tuyên bố JETP từ nguồn ngân sách nhà nước và huy động tối đa từ các nguồn tài trợ, viện trợ, các nguồn tài chính hợp pháp khác theo quy định của pháp luật. Huy động nguồn lực từ Nhóm các đối tác quốc tế, Liên minh tài chính Glasgow vì mục tiêu phát thải ròng bằng “0” và các tổ chức, định chế tài chính khác; khuyến khích đầu tư tư nhân, thúc đẩy phát triển thị trường các-bon trong nước và kết nối với thị trường các-bon thế giới nhằm tăng thêm nguồn lực cho phát triển kinh tế các-bon thấp."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 36,
+   "ordinal": 37,
+   "locator": {
+    "page_index": 9,
+    "folio": null,
+    "text_anchor": "Kinh phí thực hiện Đề án triển khai Tuyên bố JETP từ nguồn ngân sách nhà nước",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 37,
+    "stance": "partly right",
+    "likelihood": "likely",
+    "confidence": "high",
+    "basis": "\"Kinh phí thực hiện Đề án triển khai Tuyên bố JETP từ nguồn ngân sách nhà nước và huy động tối đa từ các nguồn tài trợ, viện trợ, các nguồn tài chính hợp pháp khác theo quy định của pháp luật.\"",
+    "problem": "Label chỉ là phần mở đầu, chưa bao quát câu đầy đủ; classification \"envelope\" phù hợp, nhưng field action_or_target là toàn bộ đoạn nên không phải verbaim label."
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "- Tạo sự đồng thuận và tích cực tham gia của người dân, doanh nghiệp, cộng đồng",
+   "label": "Tạo sự đồng thuận và tích cực tham gia của người dân, doanh nghiệp, cộng đồng trong sử dụng tiết kiệm, hiệu quả năng lượng và chuyển đổi năng lượng",
+   "classification": "quota",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "a) Giai đoạn từ nay đến năm 2030",
+   "fields": {
+    "action_or_target": "phấn đấu tỉ lệ năng lượng tái tạo đạt 47% và mức phát thải đỉnh của ngành điện không quá 170 triệu tấn CO2 tương đương, tổng quy mô công suất nhiệt điện than không quá 30.127 MW với sự hỗ trợ đầy đủ và thực chất của quốc tế."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 15,
+   "ordinal": 16,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "- Tạo sự đồng thuận và tích cực tham gia của người dân, doanh nghiệp, cộng đồng",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 16,
+    "stance": "wrong",
+    "likelihood": "very unlikely",
+    "confidence": "high",
+    "basis": "\"- Tạo sự đồng thuận và tích cực tham gia của người dân, doanh nghiệp, cộng đồng trong sử dụng tiết kiệm, hiệu quả năng lượng và chuyển đổi năng lượng để phấn đấu tỉ lệ năng lượng tái tạo đạt 47% và mức phát thải đỉnh của ngành điện không quá 170 triệu tấn CO2 tương đương, tổng quy mô công suất nhiệt điện than không quá 30.127 MW\"",
+    "problem": "Đây là nội dung mục tiêu cụ thể dạng gạch đầu dòng, không phải \"quota\"; phần trích dẫn nêu cả mục tiêu định tính và định lượng."
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "- Không xây mới và loại bỏ dần các nhà máy nhiệt điện than,",
+   "label": "Không xây mới và loại bỏ dần các nhà máy nhiệt điện than, thực hiện mạnh mẽ các biện pháp giảm phát thải khí nhà kính",
+   "classification": "quota",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "b) Giai đoạn sau năm 2030",
+   "fields": {
+    "action_or_target": "Không xây mới và loại bỏ dần các nhà máy nhiệt điện than, thực hiện mạnh mẽ các biện pháp giảm phát thải khí nhà kính hướng tới năm 2050 đạt mức phát thải từ năng lượng không vượt quá 101 triệu tấn CO2 tương đương, tỉ lệ năng lượng tái tạo đạt khoảng 80 - 85% tổng năng lượng sơ cấp.",
+    "timeframe": "năm 2050"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 19,
+   "ordinal": 20,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "- Không xây mới và loại bỏ dần các nhà máy nhiệt điện than,",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 20,
+    "stance": "wrong",
+    "likelihood": "very unlikely",
+    "confidence": "high",
+    "basis": "\"- Không xây mới và loại bỏ dần các nhà máy nhiệt điện than, thực hiện mạnh mẽ các biện pháp giảm phát thải khí nhà kính hướng tới năm 2050 đạt mức phát thải từ năng lượng không vượt quá 101 triệu tấn CO2 tương đương, tỉ lệ năng lượng tái tạo đạt khoảng 80 - 85% tổng năng lượng sơ cấp.\"",
+    "problem": "Cột classification là \"quota\" thì phần biểu đạt phải là một chỉ tiêu/định lượng; nhưng label đã lược bỏ nửa sau của câu gốc, nên không khớp hoàn toàn với bản in."
+   }
+  }
+ ],
+ "missed": [
+  {
+   "page": 1,
+   "anchor": "THỦ TƯỚNG CHÍNH PHỦ",
+   "label": "THỦ TƯỚNG CHÍNH PHỦ",
+   "why": "Trong phạm vi quyết định và là chủ thể ban hành văn bản, nhưng không có đề xuất riêng cho nhãn này."
+  },
+  {
+   "page": 1,
+   "anchor": "QUYẾT ĐỊNH Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng",
+   "label": "QUYẾT ĐỊNH Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng",
+   "why": "Đây là tiêu đề quyết định chính, thuộc phần nội dung trong scope."
+  },
+  {
+   "page": 1,
+   "anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng",
+   "label": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng",
+   "why": "Đây là điều khoản chính trong scope, nên cần một assertion riêng về chính điều khoản."
+  },
+  {
+   "page": 15,
+   "anchor": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày ký ban hành.",
+   "label": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày ký ban hành.",
+   "why": "Là một điều khoản thuộc scope và là một assertion độc lập về hiệu lực."
+  },
+  {
+   "page": 15,
+   "anchor": "Điều 3. Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc Chính phủ",
+   "label": "Điều 3. Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc Chính phủ và ... chịu trách nhiệm thi hành Quyết định này.",
+   "why": "Là điều khoản cuối cùng trong scope, nêu trách nhiệm thi hành."
+  }
+ ],
+ "sample_of_agreed": [
+  {
+   "page": 6,
+   "anchor": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông",
+   "label": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải",
+   "classification": "unnamed_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+   "fields": {
+    "section_number": "6",
+    "section_heading": "Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải",
+    "topic": "Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 27,
+   "ordinal": 28,
+   "locator": {
+    "page_index": 6,
+    "folio": null,
+    "text_anchor": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 28,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 11,
+   "anchor": "a) Bộ Tài nguyên và Môi trường\n- Thành lập Nhóm Tổng hợp",
+   "label": "a) Bộ Tài nguyên và Môi trường",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan",
+   "fields": {
+    "section_number": "a",
+    "responsible_entity": "Bộ Tài nguyên và Môi trường"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 44,
+   "ordinal": 45,
+   "locator": {
+    "page_index": 11,
+    "folio": null,
+    "text_anchor": "a) Bộ Tài nguyên và Môi trường - Thành lập Nhóm Tổng hợp",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 45,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"a) Bộ Tài nguyên và Môi trường\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "1. Huy động tối đa và sử dụng hiệu quả nguồn lực để thực hiện chuyển đổi năng",
+   "label": "1. Huy động tối đa và sử dụng hiệu quả nguồn lực để thực hiện chuyển đổi năng lượng công bằng",
+   "classification": "unnamed_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "I. QUAN ĐIỂM",
+   "fields": {
+    "section_number": "1",
+    "action_or_target": "Huy động tối đa và sử dụng hiệu quả nguồn lực để thực hiện chuyển đổi năng lượng công bằng trên nguyên tắc hài hòa lợi ích của các chủ thể tham gia đầu tư, sử dụng năng lượng và đáp ứng yêu cầu phát triển của các vùng, địa phương; đảm bảo trong khung nợ công và nợ nước ngoài của quốc gia, thúc đẩy thực hiện định hướng chiến lược phát triển năng lượng quốc gia, Quy hoạch tổng thể về năng lượng quốc gia và Đóng góp do quốc gia tự quyết định (NDC) của Việt Nam."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 3,
+   "ordinal": 4,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "1. Huy động tối đa và sử dụng hiệu quả nguồn lực để thực hiện chuyển đổi năng",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 4,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"1. Huy động tối đa và sử dụng hiệu quả nguồn lực để thực hiện chuyển đổi năng lượng công bằng\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 13,
+   "anchor": "đ) Bộ Lao động - Thương binh và Xã hội\n- Chủ trì, phối hợp với các bộ, ngành,",
+   "label": "đ) Bộ Lao động - Thương binh và Xã hội",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan",
+   "fields": {
+    "section_number": "đ",
+    "responsible_entity": "Bộ Lao động - Thương binh và Xã hội"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 48,
+   "ordinal": 49,
+   "locator": {
+    "page_index": 13,
+    "folio": null,
+    "text_anchor": "đ) Bộ Lao động - Thương binh và Xã hội - Chủ trì, phối hợp với các bộ, ngành,",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 49,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"đ) Bộ Lao động - Thương binh và Xã hội\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 10,
+   "anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng Chính",
+   "label": "1. Ban Thư ký thực hiện Tuyên bố JETP",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "V. TỔ CHỨC THỰC HIỆN",
+   "fields": {
+    "section_number": "1",
+    "responsible_entity": "Ban Thư ký thực hiện Tuyên bố JETP",
+    "action_or_target": "tham mưu cho Thủ tướng Chính phủ trong chỉ đạo, điều hành và giải quyết các công việc triển khai thực hiện Tuyên bố JETP, đồng thời phối hợp với Nhóm các đối tác quốc tế trong triển khai thực hiện Tuyên bố JETP."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 38,
+   "ordinal": 39,
+   "locator": {
+    "page_index": 10,
+    "folio": null,
+    "text_anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng Chính",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 39,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng Chính phủ\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "2. Mục tiêu cụ thể",
+   "label": "2. Mục tiêu cụ thể",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "II. MỤC TIÊU",
+   "fields": {
+    "section_number": "2",
+    "section_heading": "Mục tiêu cụ thể"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 8,
+   "ordinal": 9,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "2. Mục tiêu cụ thể",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 9,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"2. Mục tiêu cụ thể\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 10,
+   "anchor": "c) Nhóm Công nghệ và Năng lượng do Bộ trưởng Bộ Công Thương thành lập,",
+   "label": "c) Nhóm Công nghệ và Năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "V. TỔ CHỨC THỰC HIỆN",
+   "fields": {
+    "section_number": "c",
+    "responsible_entity": "Nhóm Công nghệ và Năng lượng",
+    "action_or_target": "Bộ trưởng Bộ Công Thương thành lập, một lãnh đạo cấp Thứ trưởng Bộ Công Thương làm Trưởng nhóm, chịu trách nhiệm rà soát, đề xuất hoàn thiện các chính sách, quy định thúc đẩy thực hiện chuyển đổi năng lượng công bằng; xác định nhu cầu, thúc đẩy và điều phối các hoạt động kỹ thuật, chuyển giao công nghệ trong triển khai thực hiện Tuyên bố JETP theo hướng dẫn của Việt Nam và Nhóm các đối tác quốc tế thực hiện chuyển đổi năng lượng công bằng."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 41,
+   "ordinal": 42,
+   "locator": {
+    "page_index": 10,
+    "folio": null,
+    "text_anchor": "c) Nhóm Công nghệ và Năng lượng do Bộ trưởng Bộ Công Thương thành lập,",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 42,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"c) Nhóm Công nghệ và Năng lượng do Bộ trưởng Bộ Công Thương thành lập\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 12,
+   "anchor": "c) Bộ Công Thương\n- Thành lập Nhóm Công nghệ và Năng lượng",
+   "label": "c) Bộ Công Thương",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan",
+   "fields": {
+    "section_number": "c",
+    "responsible_entity": "Bộ Công Thương"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 46,
+   "ordinal": 47,
+   "locator": {
+    "page_index": 12,
+    "folio": null,
+    "text_anchor": "c) Bộ Công Thương - Thành lập Nhóm Công nghệ và Năng lượng",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 47,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"c) Bộ Công Thương\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 7,
+   "anchor": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "label": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+   "fields": {
+    "section_number": "8",
+    "section_heading": "Bảo đảm công bằng trong chuyển đổi năng lượng",
+    "topic": "Bảo đảm công bằng trong chuyển đổi năng lượng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 29,
+   "ordinal": 30,
+   "locator": {
+    "page_index": 7,
+    "folio": null,
+    "text_anchor": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 30,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"8. Bảo đảm công bằng trong chuyển đổi năng lượng\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 10,
+   "anchor": "b) Nhóm Thể chế, Chính sách và Đầu tư do Bộ trưởng Bộ Kế hoạch và Đầu tư",
+   "label": "b) Nhóm Thể chế, Chính sách và Đầu tư",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "V. TỔ CHỨC THỰC HIỆN",
+   "fields": {
+    "section_number": "b",
+    "responsible_entity": "Nhóm Thể chế, Chính sách và Đầu tư",
+    "action_or_target": "Bộ trưởng Bộ Kế hoạch và Đầu tư thành lập, một lãnh đạo cấp Thứ trưởng Bộ Kế hoạch và Đầu tư làm Trưởng nhóm, chịu trách nhiệm về hoàn thiện thể chế, tháo gỡ khó khăn, vướng mắc, cải cách thủ tục hành chính để tạo điều kiện cho nhà đầu tư nước ngoài và doanh nghiệp tham gia thực hiện chuyển đổi năng lượng công bằng; lồng ghép nội dung chuyển đổi năng lượng công bằng vào các chương trình, chiến lược, quy hoạch, kế hoạch dài hạn và trung hạn của đất nước. Huy động và sử dụng hiệu quả nguồn vốn hỗ trợ từ các đối tác cho mục đích chuyển đổi năng lượng công bằng của Việt Nam."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 40,
+   "ordinal": 41,
+   "locator": {
+    "page_index": 10,
+    "folio": null,
+    "text_anchor": "b) Nhóm Thể chế, Chính sách và Đầu tư do Bộ trưởng Bộ Kế hoạch và Đầu tư",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 41,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"b) Nhóm Thể chế, Chính sách và Đầu tư do Bộ trưởng Bộ Kế hoạch và Đầu tư thành lập\"",
+    "problem": null
+   }
+  }
+ ],
+ "unchecked": [],
+ "counts": {
+  "proposed": 59,
+  "rejected_by_locator": 2,
+  "agreed": 51,
+  "disagreements": 6,
+  "missed": 5,
+  "sample": 10,
+  "unchecked": 0,
+  "unclassified_waiting_review": 0
+ },
+ "author_minutes_estimate": 21.5
+}

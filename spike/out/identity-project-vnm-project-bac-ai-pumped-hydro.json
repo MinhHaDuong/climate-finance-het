@@ -1,0 +1,49 @@
+{
+ "identity": [
+  {
+   "project_id": "project-vnm-project-bac-ai-pumped-hydro",
+   "country": "VNM",
+   "canonical_name": "Bac Ai pumped-storage hydropower plant",
+   "aliases": "",
+   "classification": "project",
+   "classified_at": "",
+   "sector": "",
+   "notes": "Legacy vnm-project-bac-ai-pumped-hydro; MOIT publishes a 1200 MW project profile; the record preserves the May 2025 six-DFI term sheet and later direct financier updates"
+  }
+ ],
+ "referent_rows": [
+  {
+   "referent_row_id": "0875.project.project-vnm-project-bac-ai-pumped-hydro",
+   "line_id": "vnm-evn-cdp-bac-ai-2025-discovery-1",
+   "referent_kind": "project",
+   "referent_id": "project-vnm-project-bac-ai-pumped-hydro",
+   "status": "accepted",
+   "method": "confirmed_document_link",
+   "method_version": "1",
+   "confidence": "1",
+   "justification_line_ids": "vnm-evn-cdp-bac-ai-2025-discovery-1",
+   "decided_at": "2026-09-24",
+   "decided_by": "scripts/jetp/build_reconciliation.py",
+   "supersedes": "",
+   "notes": ""
+  }
+ ],
+ "lines": [
+  {
+   "line_id": "vnm-evn-cdp-bac-ai-2025-discovery-1",
+   "country": "VNM",
+   "sha256": "81f8b5b58bd1cf49e513164d6405f2c0365a7d4e7595c6a4bcd4a2c140ed5a6f",
+   "locator": "term sheet and letter of intent",
+   "ordinal": "1",
+   "label": "EVN and CDP sign letter of intent on Bac Ai pumped-storage hydropower",
+   "classification": "named_item",
+   "own_status": "",
+   "own_status_axis": "",
+   "own_sector": "",
+   "groups": "",
+   "recorded_at": "2026-09-24",
+   "notes": "method=legacy_link; version=1; source_id=vnm-evn-cdp-bac-ai-2025; migration_recorded_at=2026-09-24; legacy_links=[{\"project_id\":\"vnm-project-bac-ai-pumped-hydro\",\"relationship\":\"named_in\",\"review_status\":\"confirmed\"}]",
+   "document_id": "vnm-evn-cdp-bac-ai-2025"
+  }
+ ]
+}

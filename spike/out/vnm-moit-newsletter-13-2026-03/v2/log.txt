@@ -1,0 +1,16 @@
+scope {"scope_in": [{"part": "Article: Bộ Công Thương và các đối tác tổ chức họp điều phối triển khai JETP", "pages": [1]}, {"part": "Article: Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh doanh EU-Việt Nam", "pages": [2]}, {"part": "Article: Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JETP", "pages": [3]}], "scope_out": [{"part": "Header banner and newsletter title (BẢN TIN JETP VIỆT NAM Số 13 – Tháng 03/2026)", "reason": "Repeated newsletter masthead and issue numbering metadata."}, {"part": "Footer contact information box and website links (Cơ quan thường trực Ban Thư ký thực hiện JETP Bộ Công Thương, 54 Hai Bà Trưng, Hà Nội, https://jetp.moit.gov.vn/)", "reason": "Repeated boilerplate publisher contact info and page furniture."}], "field_list": [{"name": "article_title", "printed": false}, {"name": "event_date", "printed": false}, {"name": "location", "printed": false}, {"name": "participating_entities", "printed": false}, {"name": "substantive_decisions_and_commitments", "printed": false}, {"name": "financial_amounts_and_project_status", "printed": false}], "charts_without_text": [], "notes": "The document consists of narrative prose articles without structured tabular headers or printed form labels; all fields are reader-supplied to capture key statements regarding JETP coordination, financing amounts, and project pipeline progress.", "_method": {"model": "google/gemini-3.8-flash", "prompt_version": "spike-2026
+Traceback (most recent call last):
+  File "/home/haduong/CNRS/projets/actifs/climate-finance-het/.claude/worktrees/agent-a5bbefd33b17bdf4e/spike/assisted.py", line 256, in <module>
+    globals()['stage_' + s](doc, sha)
+  File "/home/haduong/CNRS/projets/actifs/climate-finance-het/.claude/worktrees/agent-a5bbefd33b17bdf4e/spike/assisted.py", line 110, in stage_read
+    j = llm.parse_json(out)
+        ^^^^^^^^^^^^^^^^^^^
+  File "/home/haduong/CNRS/projets/actifs/climate-finance-het/.claude/worktrees/agent-a5bbefd33b17bdf4e/spike/llm.py", line 77, in parse_json
+    return json.loads(s[i:k + 1])
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 15 column 4 (char 479)

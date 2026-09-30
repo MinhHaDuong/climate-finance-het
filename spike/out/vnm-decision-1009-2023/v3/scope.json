@@ -1,0 +1,110 @@
+{
+ "scope_in": [
+  {
+   "part": "Preamble and Decision enactments (Số: 1009/QĐ-TTg, Điều 1)",
+   "pages": [
+    1
+   ]
+  },
+  {
+   "part": "Section I: Quan điểm (Principles / Perspectives)",
+   "pages": [
+    1,
+    2
+   ]
+  },
+  {
+   "part": "Section II: Mục tiêu (General and Specific Objectives to 2030 and post-2030)",
+   "pages": [
+    2,
+    3
+   ]
+  },
+  {
+   "part": "Section III: Các nhiệm vụ trọng tâm (Key Tasks 1 through 10)",
+   "pages": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  {
+   "part": "Section IV: Nguồn lực thực hiện (Implementation Resources)",
+   "pages": [
+    9
+   ]
+  },
+  {
+   "part": "Section V: Tổ chức thực hiện (Implementation Arrangements, Working Groups, Ministry and Agency Assignments)",
+   "pages": [
+    10,
+    11,
+    12,
+    13,
+    14
+   ]
+  },
+  {
+   "part": "Closing Articles (Điều 2, Điều 3) and Signatory block",
+   "pages": [
+    14,
+    15
+   ]
+  }
+ ],
+ "scope_out": [
+  {
+   "part": "Page numbers and header markers",
+   "reason": "Repeated page furniture and text layer delimiters."
+  },
+  {
+   "part": "Distribution list (Nơi nhận)",
+   "reason": "Routine administrative distribution boilerplate."
+  }
+ ],
+ "field_list": [
+  {
+   "name": "section",
+   "printed": false
+  },
+  {
+   "name": "subsection",
+   "printed": false
+  },
+  {
+   "name": "content",
+   "printed": false
+  },
+  {
+   "name": "responsible_entity",
+   "printed": false
+  },
+  {
+   "name": "target_or_timeline",
+   "printed": false
+  }
+ ],
+ "charts_without_text": [],
+ "notes": "The document is an official government legal decision in unstructured prose containing policy mandates, objectives, quantitative sectoral targets, and administrative responsibilities without printed tabular column labels.",
+ "_method": {
+  "model": "google/gemini-3.8-flash",
+  "prompt_version": "spike-2026-09-30.3",
+  "call": {
+   "t": "2026-09-30T13:35:15Z",
+   "stage": "scope:vnm-decision-1009-2023",
+   "model": "google/gemini-3.8-flash",
+   "served_model": "google/gemini-3.8-flash",
+   "provider": "Google",
+   "prompt_tokens": 8617,
+   "completion_tokens": 1075,
+   "cost_usd": 0.010494,
+   "wall_s": 24.5,
+   "temperature": 0.0,
+   "max_tokens": 4000
+  }
+ }
+}

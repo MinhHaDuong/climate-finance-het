@@ -1,0 +1,54 @@
+{
+ "id": "gen-1790775299-GRMQO5Dn5zN9oZ1LfHjm",
+ "object": "chat.completion",
+ "created": 1790775300,
+ "model": "google/gemini-3.8-flash",
+ "provider": "Google",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "STOP",
+   "message": {
+    "role": "assistant",
+    "content": "{\"statements\": [{\"page\": 1, \"anchor\": \"Bộ Công Thương và các đối tác tổ chức họp điều phối triển khai JETP Chiều 3/3,\", \"label\": \"Bộ Công Thương và các đối tác tổ chức họp điều phối triển khai JETP\", \"classification\": \"heading\", \"own_status\": null, \"own_status_axis\": null, \"own_sector\": null, \"group_anchor\": null, \"fields\": {\"article_title\": \"Bộ Công Thương và các đối tác tổ chức họp điều phối triển khai JETP\", \"date\": \"Chiều 3/3\", \"parties_involved\": \"Bộ Công Thương và các đối tác\"}, \"speaker\": null, \"note\": null}, {\"page\": 1, \"anchor\": \"Chiều 3/3, tại trụ sở Bộ Công Thương, Cục Đổi mới sáng tạo, Chuyển đổi xanh và Kh\", \"label\": \"cuộc họp điều phối kỹ thuật định kỳ trong khuôn khổ Quan hệ đối tác chuyển đổi năng lượng công bằng (JETP)\", \"classification\": \"named_item\", \"own_status\": null, \"own_status_axis\": null, \"own_sector\": null, \"group_anchor\": \"Bộ Công Thương và các đối tác tổ chức họp điều phối triển khai JETP Chiều 3/3,\", \"fields\": {\"date\": \"Chiều 3/3\", \"parties_involved\": \"Cục Đổi mới sáng tạo, Chuyển đổi xanh và Khuyến công (Cục ĐCK) phối hợp với Cục Điện lực, UNDP tại Việt Nam\", \"stage_or_decision\": \"tổ chức cuộc họp điều phối kỹ thuật định kỳ trong khuôn khổ Quan hệ đối tác chuyển đổi năng lượng công bằng (JETP)\"}, \"speaker\": null, \"note\": null}, {\"page\": 1, \"anchor\": \"Kết thúc cuộc họp, các bên thống nhất thông qua Kế hoạch hỗ trợ hoạt động của Ba\", \"label\": \"Kế hoạch hỗ trợ hoạt động của Ban Thư ký JETP và khuôn khổ đánh giá hai năm một lần\", \"classification\": \"named_item\", \"own_status\": \"thông qua\", \"own_status_axis\": \"project_stage\", \"own_sector\": null, \"group_anchor\": \"Bộ Công Thương và các đối tác tổ chức họp điều phối triển khai JETP Chiều 3/3,\", \"fields\": {\"parties_involved\": \"các bên\", \"stage_or_decision\": \"thống nhất thông qua Kế hoạch hỗ trợ hoạt động của Ban Thư ký JETP và khuôn khổ đánh giá hai năm một lần, giao cơ quan hỗ trợ Ban Thư ký hoàn thiện, triển khai thực hiện\"}, \"speaker\": null, \"note\": null}, {\"page\": 2, \"anchor\": \"Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh do\", \"label\": \"Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh doanh EU-Việt Nam\", \"classification\": \"heading\", \"own_status\": null, \"own_status_axis\": null, \"own_sector\": null, \"group_anchor\": null, \"fields\": {\"article_title\": \"Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh doanh EU-Việt Nam\"}, \"speaker\": null, \"note\": null}, {\"page\": 2, \"anchor\": \"Chiều ngày 24/3, tại Hà Nội, trong khuôn khổ Diễn đàn Đầu tư và Kinh doanh EU-Vi\", \"label\": \"phiên thảo luận chuyên đề “JETP & Chuyển dịch năng lượng: Nền tảng quan trọng cho đối thoại chính sách và triển khai các dự án hợp tác”\", \"classification\": \"named_item\", \"own_status\": \"đã diễn ra\", \"own_status_axis\": \"project_stage\", \"own_sector\": null, \"group_anchor\": \"Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh do\", \"fields\": {\"date\": \"Chiều ngày 24/3\", \"parties_involved\": \"ông Cyril Loisel Cố vấn chính sách về Khí hậu, Môi trường và Việc làm, Phái đoàn EU tại Việt Nam và bà Anna Gibson - Tham tán Khí hậu, ĐSQ Anh tại Hà Nội điều phối, với sự tham gia của đại diện Bộ Công Thương, Ngân hàng Tái thiết Đức (KfW), EuroCham,\\nGFANZ, UNDP cùng đông đảo tổ chức và doanh nghiệp\"}, \"speaker\": null, \"note\": null}, {\"page\": 2, \"anchor\": \"trong số 44 dự án được rà soát, mới chỉ có 3 dự án nhận được tài trợ\", \"label\": \"3 dự án nhận được tài trợ với tổng vốn trên 700 triệu USD\", \"classification\": \"count\", \"own_status\": \"nhận được tài trợ\", \"own_status_axis\": \"money\", \"own_sector\": null, \"group_anchor\": \"Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh do\", \"fields\": {\"financial_amount\": \"trên 700 triệu USD\", \"stage_or_decision\": \"nhận được tài trợ\"}, \"speaker\": null, \"note\": null}, {\"page\": 2, \"anchor\": \"Ông Stephan - Thành viên Ban Giám đốc KfW chia sẻ kinh nghiệm triển khai các dự \", \"label\": \"Thủy điện tích năng Bác Ái\", \"classification\": \"named_item\", \"own_status\": \"triển khai\", \"own_status_axis\": \"project_stage\", \"own_sector\": \"Thủy điện tích năng\", \"group_anchor\": \"Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh do\", \"fields\": {\"parties_involved\": \"KfW\", \"project_name\": \"Thủy điện tích năng Bác Ái\"}, \"speaker\": \"Ông Stephan - Thành viên Ban Giám đốc KfW\", \"note\": null}, {\"page\": 3, \"anchor\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JE\", \"label\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JETP\", \"classification\": \"heading\", \"own_status\": null, \"own_status_axis\": null, \"own_sector\": null, \"group_anchor\": null, \"fields\": {\"article_title\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JETP\", \"parties_involved\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế\"}, \"speaker\": null, \"note\": null}, {\"page\": 3, \"anchor\": \"Ngày 27/3 tại Hà Nội, Thứ trưởng Bộ Công Thương Nguyễn Hoàng Long đã có buổi làm\", \"label\": \"buổi làm việc với đoàn công tác của IPG và GFANZ\", \"classification\": \"named_item\", \"own_status\": null, \"own_status_axis\": null, \"own_sector\": null, \"group_anchor\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JE\", \"fields\": {\"date\": \"Ngày 27/3\", \"parties_involved\": \"Thứ trưởng Bộ Công Thương Nguyễn Hoàng Long đã có buổi làm việc với đoàn công tác của IPG và GFANZ\"}, \"speaker\": null, \"note\": null}, {\"page\": 3, \"anchor\": \"Đến nay, các bên đã xác định danh mục 44 dự án phù hợp JETP\", \"label\": \"danh mục 44 dự án phù hợp JETP\", \"classification\": \"count\", \"own_status\": \"đã xác định\", \"own_status_axis\": \"project_stage\", \"own_sector\": null, \"group_anchor\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JE\", \"fields\": {\"financial_amount\": \"trên 11 tỷ USD\", \"stage_or_decision\": \"đã xác định danh mục 44 dự án phù hợp JETP với nhu cầu vốn trên 11 tỷ USD\"}, \"speaker\": null, \"note\": null}, {\"page\": 3, \"anchor\": \"Việt Nam và IPG đang tiếp tục rà soát các dự án năng lượng khác,\", \"label\": \"danh mục IPG23\", \"classification\": \"named_item\", \"own_status\": \"đang tiếp tục rà soát\", \"own_status_axis\": \"project_stage\", \"own_sector\": null, \"group_anchor\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JE\", \"fields\": {\"parties_involved\": \"Việt Nam và IPG\", \"project_name\": \"danh mục IPG23\"}, \"speaker\": null, \"note\": null}, {\"page\": 3, \"anchor\": \"Trong đó, IPG duy trì cam kết tài chính công khoảng 7,75 tỷ USD,\", \"label\": \"cam kết tài chính công khoảng 7,75 tỷ USD\", \"classification\": \"envelope\", \"own_status\": \"duy trì cam kết\", \"own_status_axis\": \"money\", \"own_sector\": null, \"group_anchor\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JE\", \"fields\": {\"financial_amount\": \"khoảng 7,75 tỷ USD\", \"parties_involved\": \"IPG\", \"stage_or_decision\": \"duy trì cam kết tài chính công\"}, \"speaker\": \"Đại diện IPG và GFANZ\", \"note\": null}, {\"page\": 3, \"anchor\": \"Trong thời gian tới, các bên thống nhất trong vòng 3 tháng sẽ phối hợp xem xét, \", \"label\": \"danh mục các dự án trọng điểm để tập trung huy động và giải ngân nguồn vốn 7,75 tỷ USD\", \"classification\": \"unnamed_item\", \"own_status\": \"thống nhất trong vòng 3 tháng sẽ phối hợp xem xét, xác định\", \"own_status_axis\": \"project_stage\", \"own_sector\": null, \"group_anchor\": \"Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JE\", \"fields\": {\"financial_amount\": \"7,75 tỷ USD\", \"parties_involved\": \"các bên\", \"stage_or_decision\": \"thống nhất trong vòng 3 tháng sẽ phối hợp xem xét, xác định danh mục các dự án trọng điểm để tập trung huy động và giải ngân nguồn vốn 7,75 tỷ USD\"}, \"speaker\": null, \"note\": null}]}",
+    "refusal": null,
+    "reasoning": null,
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "signature": "AY89a1+vwK/aiItA04BnpPlDvi/+wFfG+jbjYA0Bn/f4nxqP/PEclyyG4hBVUOW9A822SqypTSsYTigN3OfKp0vcQYNhqKtZvTsZ5BMB58vHL0IQH0v+",
+      "format": "google-gemini-v1",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 3148,
+  "completion_tokens": 2338,
+  "total_tokens": 5486,
+  "cost": 0.0111285,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0111285,
+   "upstream_inference_prompt_cost": 0.002361,
+   "upstream_inference_completions_cost": 0.0087675
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

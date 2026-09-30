@@ -1,0 +1,54 @@
+{
+ "id": "gen-1790775291-LAZ8VjFfsFnvoNcO96hJ",
+ "object": "chat.completion",
+ "created": 1790775291,
+ "model": "google/gemini-3.8-flash",
+ "provider": "Google",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "STOP",
+   "message": {
+    "role": "assistant",
+    "content": "{\n  \"scope_in\": [\n    {\n      \"part\": \"Preamble and Decision enactments (Số: 1009/QĐ-TTg, Điều 1)\",\n      \"pages\": [1]\n    },\n    {\n      \"part\": \"Section I: Quan điểm (Principles / Perspectives)\",\n      \"pages\": [1, 2]\n    },\n    {\n      \"part\": \"Section II: Mục tiêu (General and Specific Objectives to 2030 and post-2030)\",\n      \"pages\": [2, 3]\n    },\n    {\n      \"part\": \"Section III: Các nhiệm vụ trọng tâm (Key Tasks 1 through 10)\",\n      \"pages\": [3, 4, 5, 6, 7, 8, 9]\n    },\n    {\n      \"part\": \"Section IV: Nguồn lực thực hiện (Implementation Resources)\",\n      \"pages\": [9]\n    },\n    {\n      \"part\": \"Section V: Tổ chức thực hiện (Implementation Arrangements, Working Groups, Ministry and Agency Assignments)\",\n      \"pages\": [10, 11, 12, 13, 14]\n    },\n    {\n      \"part\": \"Closing Articles (Điều 2, Điều 3) and Signatory block\",\n      \"pages\": [14, 15]\n    }\n  ],\n  \"scope_out\": [\n    {\n      \"part\": \"Page numbers and header markers\",\n      \"reason\": \"Repeated page furniture and text layer delimiters.\"\n    },\n    {\n      \"part\": \"Distribution list (Nơi nhận)\",\n      \"reason\": \"Routine administrative distribution boilerplate.\"\n    }\n  ],\n  \"field_list\": [\n    {\n      \"name\": \"section\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"subsection\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"content\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"responsible_entity\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"target_or_timeline\",\n      \"printed\": false\n    }\n  ],\n  \"charts_without_text\": [],\n  \"notes\": \"The document is an official government legal decision in unstructured prose containing policy mandates, objectives, quantitative sectoral targets, and administrative responsibilities without printed tabular column labels.\"\n}",
+    "refusal": null,
+    "reasoning": "**Defining Scope and Fields**\n\nI'm currently focusing on extracting the essential scope and field list from the provided document details. My goal is to structure this information precisely in JSON format, adhering to all system and prompt specifications for this Vietnamese decision.\n\n**Extracting Decision Details**\n\nI'm now focused on a precise breakdown of the document's scope, differentiating between content included and excluded. My next step involves detailing the specific fields I can extract from this prose-based legal decree.\n\n",
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "text": "**Defining Scope and Fields**\n\nI'm currently focusing on extracting the essential scope and field list from the provided document details. My goal is to structure this information precisely in JSON format, adhering to all system and prompt specifications for this Vietnamese decision.\n\n**Extracting Decision Details**\n\nI'm now focused on a precise breakdown of the document's scope, differentiating between content included and excluded. My next step involves detailing the specific fields I can extract from this prose-based legal decree.\n\n",
+      "format": "google-gemini-v1",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 8617,
+  "completion_tokens": 1075,
+  "total_tokens": 9692,
+  "cost": 0.010494,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.010494,
+   "upstream_inference_prompt_cost": 0.00646275,
+   "upstream_inference_completions_cost": 0.00403125
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 512,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

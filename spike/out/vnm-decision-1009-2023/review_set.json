@@ -1,0 +1,444 @@
+{
+ "disagreements": [
+  {
+   "page": 1,
+   "anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "label": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng (Tuyên bố JETP)",
+   "classification": "named_item",
+   "own_status": "Phê duyệt",
+   "own_status_axis": "project_stage",
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "section": "Điều 1",
+    "content": "Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng (Tuyên bố JETP)"
+   },
+   "speaker": "THỦ TƯỚNG CHÍNH PHỦ",
+   "note": null,
+   "_proposal_index": 1,
+   "ordinal": 1,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 1,
+    "stance": "partly right",
+    "likelihood": "very likely",
+    "confidence": "high",
+    "basis": "\"Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng (Tuyên bố JETP)\"",
+    "problem": "Anchor/label are truncated and not copied verbatim from the document; the full printed wording includes \"với các nội dung chủ yếu sau:\" after this title. Classification as named_item is acceptable."
+   }
+  },
+  {
+   "page": 9,
+   "anchor": "IV. NGUỒN LỰC THỰC HIỆN\nKinh phí thực hiện Đề án triển khai Tuyên bố JETP",
+   "label": "IV. NGUỒN LỰC THỰC HIỆN",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "fields": {
+    "section": "IV. NGUỒN LỰC THỰC HIỆN",
+    "content": "Kinh phí thực hiện Đề án triển khai Tuyên bố JETP từ nguồn ngân sách nhà nước và huy động tối đa từ các nguồn tài trợ, viện trợ, các nguồn tài chính hợp pháp khác theo quy định của pháp luật. Huy động nguồn lực từ Nhóm các đối tác quốc tế, Liên minh tài chính Glasgow vì mục tiêu phát thải ròng bằng “0” và các tổ chức, định chế tài chính khác"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 22,
+   "ordinal": 9,
+   "locator": {
+    "page_index": 9,
+    "folio": null,
+    "text_anchor": "IV. NGUỒN LỰC THỰC HIỆN Kinh phí thực hiện Đề án triển khai Tuyên bố JETP",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 9,
+    "stance": "partly right",
+    "likelihood": "very likely",
+    "confidence": "high",
+    "basis": "\"IV. NGUỒN LỰC THỰC HIỆN Kinh phí thực hiện Đề án triển khai Tuyên bố JETP từ nguồn ngân sách nhà nước\"",
+    "problem": "The label is fine, but the content field is truncated and does not match the full printed paragraph verbatim; it omits the final sentence starting \"khuyến khích đầu tư tư nhân...\"."
+   }
+  },
+  {
+   "page": 10,
+   "anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+   "label": "1. Ban Thư ký thực hiện Tuyên bố JETP",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "V. TỔ CHỨC THỰC HIỆN\n1. Ban Thư ký thực hiện Tuyên bố JETP",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "1. Ban Thư ký thực hiện Tuyên bố JETP",
+    "content": "Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng Chính phủ trong chỉ đạo, điều hành và giải quyết các công việc triển khai thực hiện Tuyên bố JETP, đồng thời phối hợp với Nhóm các đối tác quốc tế trong triển khai thực hiện Tuyên bố JETP.",
+    "responsible_entity": "Ban Thư ký thực hiện Tuyên bố JETP"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 24,
+   "ordinal": 11,
+   "locator": {
+    "page_index": 10,
+    "folio": null,
+    "text_anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 11,
+    "stance": "partly right",
+    "likelihood": "very likely",
+    "confidence": "high",
+    "basis": "\"Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng Chính phủ trong chỉ đạo, điều hành và giải quyết các công việc triển khai thực hiện Tuyên bố JETP\"",
+    "problem": "The content field is truncated; the printed sentence continues \"đồng thời phối hợp với Nhóm các đối tác quốc tế trong triển khai thực hiện Tuyên bố JETP.\""
+   }
+  },
+  {
+   "page": 10,
+   "anchor": "a) Nhóm Tổng hợp do Bộ trưởng Bộ Tài nguyên và Môi trường thành lập",
+   "label": "a) Nhóm Tổng hợp",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "a) Nhóm Tổng hợp",
+    "content": "Nhóm Tổng hợp do Bộ trưởng Bộ Tài nguyên và Môi trường thành lập, một lãnh đạo cấp Thứ trưởng Bộ Tài nguyên và Môi trường làm Trưởng nhóm",
+    "responsible_entity": "Bộ Tài nguyên và Môi trường"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 25,
+   "ordinal": 12,
+   "locator": {
+    "page_index": 10,
+    "folio": null,
+    "text_anchor": "a) Nhóm Tổng hợp do Bộ trưởng Bộ Tài nguyên và Môi trường thành lập",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 12,
+    "stance": "partly right",
+    "likelihood": "very likely",
+    "confidence": "high",
+    "basis": "\"Nhóm Tổng hợp do Bộ trưởng Bộ Tài nguyên và Môi trường thành lập, một lãnh đạo cấp Thứ trưởng Bộ Tài nguyên và Môi trường làm Trưởng nhóm\"",
+    "problem": "The content field is truncated; it omits the rest of the printed responsibility sentence, including \"chịu trách nhiệm tổng hợp các hoạt động, báo cáo kết quả...\""
+   }
+  },
+  {
+   "page": 15,
+   "anchor": "KT. THỦ TƯỚNG\nPHÓ THỦ TƯỚNG\nTrần Hồng Hà",
+   "label": "KT. THỦ TƯỚNG PHÓ THỦ TƯỚNG Trần Hồng Hà",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "responsible_entity": "Trần Hồng Hà"
+   },
+   "speaker": "Trần Hồng Hà",
+   "note": null,
+   "_proposal_index": 45,
+   "ordinal": 13,
+   "locator": {
+    "page_index": 15,
+    "folio": null,
+    "text_anchor": "KT. THỦ TƯỚNG PHÓ THỦ TƯỚNG Trần Hồng Hà",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 13,
+    "stance": "partly right",
+    "likelihood": "very likely",
+    "confidence": "high",
+    "basis": "\"KT. THỦ TƯỚNG PHÓ THỦ TƯỚNG Trần Hồng Hà\"",
+    "problem": "The signer name is correct, but the label/anchor is not verbatim to the document formatting; the printed block is split across lines and includes only the signature block, while assigning a responsible_entity to the person is not what the publisher states."
+   }
+  }
+ ],
+ "missed": [
+  {
+   "page": 1,
+   "anchor": "Căn cứ Tuyên bố chính trị về thiết lập quan hệ đối tác",
+   "label": "Căn cứ Tuyên bố chính trị về thiết lập quan hệ đối tác với Việt Nam",
+   "why": "In scope: Preamble and Decision enactments on page 1."
+  },
+  {
+   "page": 2,
+   "anchor": "Nguồn đầu tư tư nhân là quan trọng trong quá trình chuyển đổi năng lượng công bằng",
+   "label": "3. Nguồn đầu tư tư nhân là quan trọng...",
+   "why": "In scope: Section I: Quan điểm."
+  },
+  {
+   "page": 3,
+   "anchor": "- Phát triển công nghiệp năng lượng tái tạo, nhất là công nghiệp chế tạo thiết bị năng lượng tái tạo",
+   "label": "- Phát triển công nghiệp năng lượng tái tạo...",
+   "why": "In scope: Section II: Mục tiêu, specific objectives to 2030."
+  },
+  {
+   "page": 4,
+   "anchor": "2. Thúc đẩy chuyển đổi điện than sang năng lượng sạch",
+   "label": "2. Thúc đẩy chuyển đổi điện than sang năng lượng sạch",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 5,
+   "anchor": "3. Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo",
+   "label": "3. Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 6,
+   "anchor": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải",
+   "label": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 7,
+   "anchor": "7. Đổi mới sáng tạo, phát triển và chuyển giao công nghệ",
+   "label": "7. Đổi mới sáng tạo, phát triển và chuyển giao công nghệ",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 8,
+   "anchor": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "label": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 9,
+   "anchor": "9. Truyền thông, nâng cao nhận thức",
+   "label": "9. Truyền thông, nâng cao nhận thức",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 9,
+   "anchor": "10. Thúc đẩy hợp tác, huy động nguồn lực cho chuyển đổi năng lượng công bằng",
+   "label": "10. Thúc đẩy hợp tác, huy động nguồn lực cho chuyển đổi năng lượng công bằng",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 10,
+   "anchor": "a) Nhóm Thể chế, Chính sách và Đầu tư do Bộ trưởng Bộ Kế hoạch và Đầu tư thành lập",
+   "label": "a) Nhóm Thể chế, Chính sách và Đầu tư",
+   "why": "In scope: Section V: Tổ chức thực hiện, working groups."
+  },
+  {
+   "page": 10,
+   "anchor": "c) Nhóm Công nghệ và Năng lượng do Bộ trưởng Bộ Công Thương thành lập",
+   "label": "c) Nhóm Công nghệ và Năng lượng",
+   "why": "In scope: Section V: Tổ chức thực hiện, working groups."
+  },
+  {
+   "page": 10,
+   "anchor": "d) Nhóm Tài chính do Bộ trưởng Bộ Tài chính thành lập",
+   "label": "d) Nhóm Tài chính",
+   "why": "In scope: Section V: Tổ chức thực hiện, working groups."
+  },
+  {
+   "page": 11,
+   "anchor": "a) Bộ Tài nguyên và Môi trường",
+   "label": "a) Bộ Tài nguyên và Môi trường",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 12,
+   "anchor": "b) Bộ Kế hoạch và Đầu tư",
+   "label": "b) Bộ Kế hoạch và Đầu tư",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 12,
+   "anchor": "c) Bộ Công Thương",
+   "label": "c) Bộ Công Thương",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 12,
+   "anchor": "d) Bộ Tài chính",
+   "label": "d) Bộ Tài chính",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 13,
+   "anchor": "đ) Bộ Lao động - Thương binh và Xã hội",
+   "label": "đ) Bộ Lao động - Thương binh và Xã hội",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 13,
+   "anchor": "e) Bộ Khoa học và Công nghệ",
+   "label": "e) Bộ Khoa học và Công nghệ",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 13,
+   "anchor": "g) Bộ Giao thông vận tải",
+   "label": "g) Bộ Giao thông vận tải",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 13,
+   "anchor": "h) Bộ Xây dựng",
+   "label": "h) Bộ Xây dựng",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "i) Bộ Nông nghiệp và Phát triển nông thôn",
+   "label": "i) Bộ Nông nghiệp và Phát triển nông thôn",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "k) Ngân hàng Nhà nước Việt Nam",
+   "label": "k) Ngân hàng Nhà nước Việt Nam",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "l) Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ",
+   "label": "l) Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "m) Ủy ban quản lý vốn nhà nước tại doanh nghiệp",
+   "label": "m) Ủy ban quản lý vốn nhà nước tại doanh nghiệp",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "n) Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương",
+   "label": "n) Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày ký ban hành.",
+   "label": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày ký ban hành.",
+   "why": "In scope: Closing Articles (Điều 2, Điều 3) and Signatory block."
+  },
+  {
+   "page": 15,
+   "anchor": "Điều 3. Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc Chính phủ",
+   "label": "Điều 3. Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc Chính phủ",
+   "why": "In scope: Closing Articles (Điều 2, Điều 3) and Signatory block."
+  }
+ ],
+ "sample_of_agreed": [
+  {
+   "page": 2,
+   "anchor": "a) Giai đoạn từ nay đến năm 2030\n- Xây dựng, hoàn thiện khuôn khổ pháp lý",
+   "label": "a) Giai đoạn từ nay đến năm 2030",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Mục tiêu cụ thể\na) Giai đoạn từ nay đến năm 2030",
+   "fields": {
+    "section": "II. MỤC TIÊU",
+    "subsection": "2. Mục tiêu cụ thể",
+    "target_or_timeline": "từ nay đến năm 2030"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 6,
+   "ordinal": 6,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "a) Giai đoạn từ nay đến năm 2030 - Xây dựng, hoàn thiện khuôn khổ pháp lý",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 6,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"a) Giai đoạn từ nay đến năm 2030\""
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "I. QUAN ĐIỂM\n1. Huy động tối đa và sử dụng hiệu quả nguồn lực",
+   "label": "I. QUAN ĐIỂM",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "fields": {
+    "section": "I. QUAN ĐIỂM"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 2,
+   "ordinal": 2,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "I. QUAN ĐIỂM 1. Huy động tối đa và sử dụng hiệu quả nguồn lực",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 2,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"I. QUAN ĐIỂM\""
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng\n- Rà soát các",
+   "label": "1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 12,
+   "ordinal": 8,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng - Rà soát các",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 8,
+    "stance": "right",
+    "likelihood": "very likely",
+    "confidence": "high",
+    "basis": "\"1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng\""
+   }
+  }
+ ],
+ "unchecked": [],
+ "counts": {
+  "proposed": 46,
+  "rejected_by_locator": 33,
+  "agreed": 8,
+  "disagreements": 5,
+  "missed": 28,
+  "sample": 3,
+  "unchecked": 0,
+  "unclassified_waiting_review": 0
+ },
+ "author_minutes_estimate": 51.0
+}

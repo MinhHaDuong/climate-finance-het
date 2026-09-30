@@ -1,0 +1,94 @@
+{
+ "scope_in": [
+  {
+   "part": "Interview with EU Ambassador Julien Guerrier on JETP financing and the Bác Ái Pumped Storage Hydropower Project loan",
+   "pages": [
+    1,
+    2
+   ]
+  },
+  {
+   "part": "JETP project selection principles, priority areas, and participation procedures",
+   "pages": [
+    2
+   ]
+  },
+  {
+   "part": "Loan agreement statement for the Hòn Mây 2 Offshore Wind Project",
+   "pages": [
+    2
+   ]
+  }
+ ],
+ "scope_out": [
+  {
+   "part": "Newsletter header banner and issue metadata ('BẢN TIN JETP VIỆT NAM Số 12 – Tháng 02/2026')",
+   "reason": "Repeated periodical masthead and page furniture"
+  },
+  {
+   "part": "Contact information and office address in the running footer ('Thông tin liên hệ: Cơ quan thường trực Ban Thư ký...')",
+   "reason": "Repeated boilerplate contact info"
+  },
+  {
+   "part": "Hyperlink reference to the interview video ('Xem chi tiết cuộc phỏng vấn tại...')",
+   "reason": "External media navigation link"
+  }
+ ],
+ "field_list": [
+  {
+   "name": "project_name",
+   "printed": false
+  },
+  {
+   "name": "parties",
+   "printed": false
+  },
+  {
+   "name": "transaction_type",
+   "printed": false
+  },
+  {
+   "name": "amount",
+   "printed": false
+  },
+  {
+   "name": "currency",
+   "printed": false
+  },
+  {
+   "name": "date",
+   "printed": false
+  },
+  {
+   "name": "capacity_or_specifications",
+   "printed": false
+  },
+  {
+   "name": "status_or_stage",
+   "printed": false
+  },
+  {
+   "name": "strategic_perimeter",
+   "printed": false
+  }
+ ],
+ "charts_without_text": [],
+ "notes": "The document is entirely narrative prose and news reporting with no formal tabular field names; all proposed fields are reader-supplied.",
+ "_method": {
+  "model": "google/gemini-3.8-flash",
+  "prompt_version": "spike-2026-09-30.2",
+  "call": {
+   "t": "2026-09-30T13:27:15Z",
+   "stage": "scope:planted-control",
+   "model": "google/gemini-3.8-flash",
+   "served_model": "google/gemini-3.8-flash",
+   "provider": "Google",
+   "prompt_tokens": 2306,
+   "completion_tokens": 1397,
+   "cost_usd": 0.00696825,
+   "wall_s": 10.0,
+   "temperature": 0.0,
+   "max_tokens": 4000
+  }
+ }
+}

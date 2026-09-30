@@ -1,0 +1,6 @@
+{"method": "person (spike operator standing in for the author; extraction spec s6.4 second paragraph)",
+ "decided_at": "2026-09-30",
+ "basis": "checker listed it as missed: '44 dự án phù hợp JETP với tổng vốn hơn 10 tỷ USD' (p3); the reader's own proposal was rejected by the locator check because its anchor 'danh mục các dự án phù hợp JETP tới nay' ... ran across the footer box that the text layer inserts mid-sentence",
+ "statements": [
+  {"page": 3, "anchor": "gồm 44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD", "label": "gồm 44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD", "classification": "count", "fields": {"funding_amount": "hơn 10 tỷ USD"}, "note": "label as printed is 'danh mục các dự án phù hợp JETP tới nay gồm 44 dự án', but the text layer interrupts it with the footer box, so the verbatim label check can only pass on the second half"}
+ ]}

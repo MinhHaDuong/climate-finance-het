@@ -1,0 +1,5 @@
+proposals 18
+locator check: kept 17 rejected 1
+  REJ 12 ['label not found verbatim on the page', "value of 'stage_or_decision' not found near the anchor: 'đã rà soát và thống nhất danh mục các dự án phù hợp JETP tới nay gồm 44 dự án'"] danh mục các dự án phù hợp 
+checks 17 missed 8
+{"proposed": 18, "rejected_by_locator": 1, "agreed": 16, "disagreements": 1, "missed": 8, "sample": 3, "unchecked": 0, "unclassified_waiting_review": 0} author minutes 15.0

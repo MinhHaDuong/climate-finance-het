@@ -1,0 +1,115 @@
+{
+ "figure": {
+  "value": 44,
+  "unit": "dự án (projects), a count the publisher stated (fusion s7: unit named)",
+  "reads": "MOIT newsletter issue 13 states that the parties have identified a list of 44 JETP-aligned projects with a capital need of over USD 11 billion",
+  "note": "a publisher-stated count, not a count of identities; no project identity is minted from it (fusion s7, s9 row 8)"
+ },
+ "observation_as_it_would_be_read_at_M3b": {
+  "subject_kind": "line",
+  "subject_id": "vnm-moit-newsletter-13-2026-03-text-9",
+  "axis": "counting",
+  "measure": "count",
+  "value": "44",
+  "value_low": "44",
+  "value_high": "44",
+  "unit": "dự án",
+  "timings": [
+   {
+    "date_role": "event",
+    "date": "2026-03-27",
+    "date_precision": "day",
+    "problem": "the article prints 'Ngày 27/3' without a year; the year is on the masthead 'Số 13 – Tháng 03/2026', which the reader declared out of scope as page furniture, so no statement of this snapshot carries it (extraction s11 requires the timing to name the statement it was read from)"
+   }
+  ],
+  "method": "not run: observation reading is M3b (extraction s11)"
+ },
+ "statement": {
+  "line_id_as_minted": "vnm-moit-newsletter-13-2026-03-text-9",
+  "country": "VNM",
+  "sha256": "fa7d149b3d8165b85b7090584a3df3d35fbd6b097bb8a08844df330a3410fc39",
+  "locator": {
+   "page_index": 3,
+   "folio": null,
+   "text_anchor": "Đến nay, các bên đã xác định danh mục 44 dự án phù hợp JETP",
+   "adapter": "poppler-pdftotext 24.02.0"
+  },
+  "ordinal": 9,
+  "label": "danh mục 44 dự án phù hợp JETP",
+  "classification": "count",
+  "fields": {
+   "financial_amount": "trên 11 tỷ USD",
+   "stage_or_decision": "đã xác định danh mục 44 dự án phù hợp JETP với nhu cầu vốn trên 11 tỷ USD"
+  },
+  "group_anchor": "Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JE",
+  "method": "assisted-reading",
+  "method_version": "spike-2026-09-30.3",
+  "reader": "google/gemini-3.8-flash",
+  "checker": "openai/gpt-5.4-mini",
+  "checker_stance": {
+   "ordinal": 9,
+   "stance": "partly right",
+   "likelihood": "likely",
+   "confidence": "medium",
+   "basis": "\"Đến nay, các bên đã xác định danh mục 44 dự án phù hợp JETP với nhu cầu vốn trên 11 tỷ USD\"",
+   "problem": "The label \"danh mục 44 dự án phù hợp JETP\" is copied, but the statement bundles a project count and a money figure under count; the classification/field mix is not fully fitting."
+  },
+  "author_decision": "pending: shown to the author as a disagreement (partly right, likely, medium)"
+ },
+ "text_layer": {
+  "adapter": "poppler-pdftotext 24.02.0",
+  "regenerated_now": true,
+  "anchor_resolves_once": true,
+  "label_found": true,
+  "value_44_found_in_label": true
+ },
+ "snapshot": {
+  "sha256": "fa7d149b3d8165b85b7090584a3df3d35fbd6b097bb8a08844df330a3410fc39",
+  "storage_path": "objects/fa/fa7d149b3d8165b85b7090584a3df3d35fbd6b097bb8a08844df330a3410fc39.pdf",
+  "size_bytes": "1193197",
+  "content_type": "application/pdf",
+  "bytes_rehashed_match": true,
+  "size_on_disk": 1193197
+ },
+ "retrievals": [
+  {
+   "retrieval_id": "vnm-moit-newsletter-13-2026-03:1",
+   "document_id": "vnm-moit-newsletter-13-2026-03",
+   "retrieved_at": "2026-09-12T09:56:00Z",
+   "status": "collected",
+   "http_status": "",
+   "content_type": "application/pdf",
+   "etag": "",
+   "last_modified": "",
+   "final_url": "https://jetp.moit.gov.vn/Images/User/ngocanh/2026/4/ban_tin_so_13__vie_(1).pdf",
+   "error": "",
+   "sha256": "fa7d149b3d8165b85b7090584a3df3d35fbd6b097bb8a08844df330a3410fc39",
+   "collection_method": "script"
+  }
+ ],
+ "document": {
+  "document_id": "vnm-moit-newsletter-13-2026-03",
+  "country": "VNM",
+  "document_type": "progress_update",
+  "language": "vi",
+  "title": "Viet Nam JETP Newsletter issue 13 - March 2026",
+  "url": "https://jetp.moit.gov.vn/Images/User/ngocanh/2026/4/ban_tin_so_13__vie_(1).pdf",
+  "published_date": "2026-04-13",
+  "edition_of": "",
+  "active": "true",
+  "notes": "Latest newsletter in the two-page official document index observed on 2026-09-12"
+ },
+ "document_publishers": [
+  {
+   "document_id": "vnm-moit-newsletter-13-2026-03",
+   "party_id": "ministry-of-industry-and-trade",
+   "role": "author",
+   "name_row_id": "ministry-of-industry-and-trade.name.1"
+  }
+ ],
+ "knowledge_time": {
+  "recorded_date_rule": "extraction s3: when the ledger admitted the statement; the date the ledger first held the bytes is the earliest retrieval yielding the snapshot",
+  "first_held": "2026-09-12T09:56:00Z"
+ },
+ "all_links_verified": true
+}

@@ -1,0 +1,54 @@
+{
+ "id": "gen-1790774902-kzU9k7JGmP4jLipUUZ1B",
+ "object": "chat.completion",
+ "created": 1790774902,
+ "model": "google/gemini-3.8-flash",
+ "provider": "Google",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "STOP",
+   "message": {
+    "role": "assistant",
+    "content": "{\n  \"scope_in\": [\n    {\n      \"part\": \"Decision preamble, Article 1 (Approval of the Scheme to implement the Political Declaration on JETP: Viewpoints, Objectives, Key Tasks, Implementation Resources, Implementation Organization), Article 2 (Effective date), and Article 3 (Implementation responsibilities)\",\n      \"pages\": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]\n    }\n  ],\n  \"scope_out\": [\n    {\n      \"part\": \"National motto, document metadata header, reference basis laws, distribution list ('Nơi nhận'), and signatory block boilerplate\",\n      \"reason\": \"Administrative boilerplate, formal legal references, and distribution notices outside core substantive JETP commitments, governance structures, and policy mandates.\"\n    },\n    {\n      \"part\": \"Page headers and numbers\",\n      \"reason\": \"Repeated page furniture.\"\n    }\n  ],\n  \"field_list\": [\n    {\n      \"name\": \"section_number\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"section_heading\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"topic\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"responsible_entity\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"action_or_target\",\n      \"printed\": false\n    },\n    {\n      \"name\": \"timeframe\",\n      \"printed\": false\n    }\n  ],\n  \"charts_without_text\": [],\n  \"notes\": \"The document is an official government legal decision in continuous regulatory prose with numbered and titled sections (I to V and Articles 1 to 3) without standardized tabular columns or printed metadata field headers. The reader-supplied fields represent the minimal set necessary to capture policy targets, institutional assignments, and implementation stages.\"\n}",
+    "refusal": null,
+    "reasoning": "**Defining Scope**\n\nI'm currently focused on identifying and defining the explicit scope of the document, particularly which sections and elements are included versus those that are intentionally excluded. This involves a careful analysis of the content to establish clear boundaries for the declared scope.\n\n",
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "text": "**Defining Scope**\n\nI'm currently focused on identifying and defining the explicit scope of the document, particularly which sections and elements are included versus those that are intentionally excluded. This involves a careful analysis of the content to establish clear boundaries for the declared scope.\n\n",
+      "format": "google-gemini-v1",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 8617,
+  "completion_tokens": 617,
+  "total_tokens": 9234,
+  "cost": 0.0087765,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0087765,
+   "upstream_inference_prompt_cost": 0.00646275,
+   "upstream_inference_completions_cost": 0.00231375
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 162,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

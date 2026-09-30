@@ -1,0 +1,479 @@
+{
+ "kept": [
+  {
+   "page": 1,
+   "anchor": "Một ví dụ cụ thể là Dự án Thủy điện tích năng Bác Ái,",
+   "label": "Dự án Thủy điện tích năng Bác Ái",
+   "classification": "named_item",
+   "own_status": "ký",
+   "own_status_axis": "money",
+   "own_sector": "thủy điện tích năng",
+   "group_anchor": null,
+   "fields": {
+    "project_name": "Dự án Thủy điện tích năng Bác Ái",
+    "transaction_type": "khoản vay đợt đầu",
+    "amount": "76 triệu",
+    "currency": "euro",
+    "status_or_stage": "vừa ký"
+   },
+   "speaker": "Ông Julien Guerrier",
+   "note": null,
+   "_proposal_index": 0,
+   "ordinal": 1,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Một ví dụ cụ thể là Dự án Thủy điện tích năng Bác Ái,",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "tổng mức tài trợ dự kiến lên tới 480 triệu euro.",
+   "label": "tổng mức tài trợ dự kiến lên tới 480 triệu euro",
+   "classification": "envelope",
+   "own_status": "dự kiến",
+   "own_status_axis": "money",
+   "own_sector": null,
+   "group_anchor": "Một ví dụ cụ thể là Dự án Thủy điện tích năng Bác Ái,",
+   "fields": {
+    "project_name": "Dự án Thủy điện tích năng Bác Ái",
+    "transaction_type": "tài trợ",
+    "amount": "480 triệu",
+    "currency": "euro",
+    "status_or_stage": "dự kiến"
+   },
+   "speaker": "Ông Julien Guerrier",
+   "note": null,
+   "_proposal_index": 1,
+   "ordinal": 2,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "tổng mức tài trợ dự kiến lên tới 480 triệu euro.",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "label": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {},
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 2,
+   "ordinal": 3,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Nguyên tắc 1 - Năng lượng tái tạo và hiệu quả:",
+   "label": "Nguyên tắc 1 - Năng lượng tái tạo và hiệu quả: Thúc đẩy năng lượng tái tạo, tiết kiệm năng lượng và hiệu quả để cắt giảm khí thải và đảm bảo an ninh năng lượng.",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "Thúc đẩy năng lượng tái tạo, tiết kiệm năng lượng và hiệu quả để cắt giảm khí thải và đảm bảo an ninh năng lượng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 3,
+   "ordinal": 4,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Nguyên tắc 1 - Năng lượng tái tạo và hiệu quả:",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Nguyên tắc 2 - Lợi ích kinh tế xã hội:",
+   "label": "Nguyên tắc 2 - Lợi ích kinh tế xã hội: Cung cấp lợi ích rõ ràng cho cộng đồng, doanh nghiệp và người lao động bị ảnh hưởng bởi quá trình chuyển đổi.",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "Cung cấp lợi ích rõ ràng cho cộng đồng, doanh nghiệp và người lao động bị ảnh hưởng bởi quá trình chuyển đổi"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 4,
+   "ordinal": 5,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Nguyên tắc 2 - Lợi ích kinh tế xã hội:",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Nguyên tắc 3 – Tính xúc tác tự nhiên:",
+   "label": "Nguyên tắc 3 – Tính xúc tác tự nhiên: Khuyến khích các khoản đầu tư JETP bổ sung và trong tương lai với tác động mạnh mẽ.",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "Khuyến khích các khoản đầu tư JETP bổ sung và trong tương lai với tác động mạnh mẽ"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 5,
+   "ordinal": 6,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Nguyên tắc 3 – Tính xúc tác tự nhiên:",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Nguyên tắc 4 – Tác động chuyển đổi công bằng:",
+   "label": "Nguyên tắc 4 – Tác động chuyển đổi công bằng: Đảm bảo tác động tích cực đáng kể đến sự công bằng và hòa nhập trong quá trình chuyển đổi năng lượng.",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "Đảm bảo tác động tích cực đáng kể đến sự công bằng và hòa nhập trong quá trình chuyển đổi năng lượng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 6,
+   "ordinal": 7,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Nguyên tắc 4 – Tác động chuyển đổi công bằng:",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Thúc đẩy chuyển đổi điện than sang năng lượng sạch;",
+   "label": "Thúc đẩy chuyển đổi điện than sang năng lượng sạch",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "chuyển đổi điện than",
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "dự án đầu tư tài sản"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 7,
+   "ordinal": 8,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Thúc đẩy chuyển đổi điện than sang năng lượng sạch;",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo",
+   "label": "Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo (Các tiểu hạng mục bao gồm: Phát triển ngành công nghiệp năng lượng tái tạo; Sản xuất năng lượng tái tạo (gió, mặt trời…); Sản xuất và sử dụng hydro xanh và các chất dẫn xuất)",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "năng lượng tái tạo",
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "dự án đầu tư tài sản"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 8,
+   "ordinal": 9,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Truyền tải điện và lưu trữ năng lượng;",
+   "label": "Truyền tải điện và lưu trữ năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "truyền tải điện và lưu trữ năng lượng",
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "dự án đầu tư tài sản"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 9,
+   "ordinal": 10,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Truyền tải điện và lưu trữ năng lượng;",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Sử dụng năng lượng tiết kiệm và hiệu quả;",
+   "label": "Sử dụng năng lượng tiết kiệm và hiệu quả",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "tiết kiệm và hiệu quả năng lượng",
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "dự án đầu tư tài sản"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 10,
+   "ordinal": 11,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Sử dụng năng lượng tiết kiệm và hiệu quả;",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận",
+   "label": "Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "giao thông vận tải",
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "dự án đầu tư tài sản"
+   },
+   "speaker": null,
+   "note": null,
+   "_anchor_trimmed_from": "Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải.",
+   "_proposal_index": 11,
+   "ordinal": 12,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Dự án hỗ trợ hoàn thiện thể , chính sách thúc đẩy chuyển đổi năng lượng;",
+   "label": "Dự án hỗ trợ hoàn thiện thể , chính sách thúc đẩy chuyển đổi năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "hỗ trợ kỹ thuật",
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "dự án hỗ trợ kỹ thuật"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 12,
+   "ordinal": 13,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Dự án hỗ trợ hoàn thiện thể , chính sách thúc đẩy chuyển đổi năng lượng;",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Dự án đổi mới sáng tạo, phát triển và chuyển giao công nghệ;",
+   "label": "Dự án đổi mới sáng tạo, phát triển và chuyển giao công nghệ",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "hỗ trợ kỹ thuật",
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "dự án hỗ trợ kỹ thuật"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 13,
+   "ordinal": 14,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Dự án đổi mới sáng tạo, phát triển và chuyển giao công nghệ;",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Dự án thúc đẩy công bằng trong chuyển đổi năng lượng.",
+   "label": "Dự án thúc đẩy công bằng trong chuyển đổi năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "hỗ trợ kỹ thuật",
+   "group_anchor": "Các nguyên tắc và lĩnh vực ưu tiên dành cho dự án tham gia JETP",
+   "fields": {
+    "strategic_perimeter": "dự án hỗ trợ kỹ thuật"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 14,
+   "ordinal": 15,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Dự án thúc đẩy công bằng trong chuyển đổi năng lượng.",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Phương thức tham gia JETP",
+   "label": "Phương thức tham gia JETP",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {},
+   "speaker": "Cục Điện lực (Bộ Công Thương)",
+   "note": null,
+   "_proposal_index": 15,
+   "ordinal": 16,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Phương thức tham gia JETP",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Ngày 5/2/2026, Công ty Điện gió Hòn Mây đã ký hiệp định vay trị giá 212 triệu",
+   "label": "Dự án Điện gió ngoài khơi Hòn Mây 2",
+   "classification": "named_item",
+   "own_status": "đã ký",
+   "own_status_axis": "money",
+   "own_sector": "Điện gió ngoài khơi",
+   "group_anchor": null,
+   "fields": {
+    "project_name": "Dự án Điện gió ngoài khơi Hòn Mây 2",
+    "parties": "Công ty Điện gió Hòn Mây",
+    "transaction_type": "hiệp định vay",
+    "amount": "212 triệu",
+    "currency": "USD",
+    "date": "5/2/2026",
+    "capacity_or_specifications": "350 MW",
+    "status_or_stage": "đã ký hiệp định vay",
+    "strategic_perimeter": "khuôn khổ JETP"
+   },
+   "speaker": null,
+   "note": null,
+   "_anchor_trimmed_from": "Ngày 5/2/2026, Công ty Điện gió Hòn Mây đã ký hiệp định vay trị giá 212 triệu USD",
+   "_proposal_index": 19,
+   "ordinal": 17,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Ngày 5/2/2026, Công ty Điện gió Hòn Mây đã ký hiệp định vay trị giá 212 triệu",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  }
+ ],
+ "rejected": [
+  {
+   "page": 2,
+   "anchor": "1. Truy cập và đăng ký trên trang web chính thức của JETP Việt Nam",
+   "label": "1. Truy cập và đăng ký trên trang web chính thức của JETP Việt Nam tại j e t p. m o it .g ov.v n",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Phương thức tham gia JETP",
+   "fields": {
+    "status_or_stage": "Bước 1"
+   },
+   "speaker": "Cục Điện lực (Bộ Công Thương)",
+   "note": null,
+   "_proposal_index": 16,
+   "_reasons": [
+    "anchor occurs 0 times in the snapshot (must be 1)"
+   ]
+  },
+  {
+   "page": 2,
+   "anchor": "2. Gửi đề xuất dự án thông qua biểu mẫu trực tuyến,",
+   "label": "2. Gửi đề xuất dự án thông qua biểu mẫu trực tuyến, cung cấp đầy đủ thông tin về dự án chuyển đổi năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Phương thức tham gia JETP",
+   "fields": {
+    "status_or_stage": "Bước 2"
+   },
+   "speaker": "Cục Điện lực (Bộ Công Thương)",
+   "note": null,
+   "_proposal_index": 17,
+   "_reasons": [
+    "anchor occurs 0 times in the snapshot (must be 1)"
+   ]
+  },
+  {
+   "page": 2,
+   "anchor": "3. Liên hệ với Cơ quan hỗ trợ Ban Thư ký",
+   "label": "3. Liên hệ với Cơ quan hỗ trợ Ban Thư ký nếu có thắc mắc hoặc cần hướng dẫn trước khi nộp đơn",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Phương thức tham gia JETP",
+   "fields": {
+    "status_or_stage": "Bước 3"
+   },
+   "speaker": "Cục Điện lực (Bộ Công Thương)",
+   "note": null,
+   "_proposal_index": 18,
+   "_reasons": [
+    "anchor occurs 0 times in the snapshot (must be 1)"
+   ]
+  },
+  {
+   "page": 2,
+   "anchor": "Dự án Thủy điện Trị An mở rộng đã ký hiệp định vay",
+   "label": "Dự án Thủy điện Trị An mở rộng",
+   "classification": "named_item",
+   "fields": {},
+   "_proposal_index": 20,
+   "_reasons": [
+    "anchor occurs 0 times in the snapshot (must be 1)"
+   ]
+  }
+ ]
+}

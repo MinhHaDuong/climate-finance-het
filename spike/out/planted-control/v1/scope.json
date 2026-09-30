@@ -1,0 +1,78 @@
+{
+ "scope_in": [
+  {
+   "part": "Toàn văn các bài viết và tin tức về dự án, tài chính, nguyên tắc, lĩnh vực ưu tiên và thông báo giao dịch trong Bản tin JETP Việt Nam Số 12 – Tháng 02/2026",
+   "pages": [
+    1,
+    2
+   ]
+  }
+ ],
+ "scope_out": [
+  {
+   "part": "Tiêu đề đầu trang và số phát hành bản tin (Bản tin JETP Việt Nam Số 12 – Tháng 02/2026)",
+   "reason": "Running header and newsletter issue furniture"
+  },
+  {
+   "part": "Thông tin liên hệ chân trang (Cơ quan thường trực Ban Thư ký thực hiện JETP Bộ Công Thương, địa chỉ, URL)",
+   "reason": "Repeated boilerplate contact information and page furniture"
+  },
+  {
+   "part": "Đường dẫn xem chi tiết cuộc phỏng vấn (https://jetp.moit.govvn/Video?VideoId=129)",
+   "reason": "External navigational hyperlink"
+  }
+ ],
+ "field_list": [
+  {
+   "name": "project_name",
+   "printed": false
+  },
+  {
+   "name": "party_entity",
+   "printed": false
+  },
+  {
+   "name": "transaction_type",
+   "printed": false
+  },
+  {
+   "name": "amount",
+   "printed": false
+  },
+  {
+   "name": "currency",
+   "printed": false
+  },
+  {
+   "name": "date",
+   "printed": false
+  },
+  {
+   "name": "capacity",
+   "printed": false
+  },
+  {
+   "name": "framework_or_stage",
+   "printed": false
+  }
+ ],
+ "charts_without_text": [],
+ "notes": "The document is written entirely in narrative prose and contains no printed table headers or field labels. Therefore, all proposed field names are reader-supplied.",
+ "_method": {
+  "model": "google/gemini-3.8-flash",
+  "prompt_version": "spike-2026-09-30.1",
+  "call": {
+   "t": "2026-09-30T13:26:19Z",
+   "stage": "scope:planted-control",
+   "model": "google/gemini-3.8-flash",
+   "served_model": "google/gemini-3.8-flash",
+   "provider": "Google",
+   "prompt_tokens": 2306,
+   "completion_tokens": 1220,
+   "cost_usd": 0.0063045,
+   "wall_s": 9.3,
+   "temperature": 0.0,
+   "max_tokens": 4000
+  }
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "id": "gen-1790775425-LurcZDo5bri9T4rpYDzf",
+ "object": "chat.completion",
+ "created": 1790775425,
+ "model": "mistralai/mistral-medium-3.1",
+ "provider": "Mistral",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\"stance\": \"same\", \"likelihood\": \"very likely\", \"confidence\": \"high\", \"basis\": \"The statement's project name 'dự án Thủy điện tích năng Bắc Ái' translates to 'Bac Ai pumped-storage hydropower plant', matching the canonical name of the existing identity. The sector (pumped-storage hydropower) and country (VNM) also align. The spelling difference ('Bắc Ái' vs 'Bac Ai') is a Vietnamese diacritic variation and does not affect identity.\"}",
+    "refusal": null,
+    "reasoning": null
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 540,
+  "completion_tokens": 114,
+  "total_tokens": 654,
+  "cost": 0.000444,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.000444,
+   "upstream_inference_prompt_cost": 0.000216,
+   "upstream_inference_completions_cost": 0.000228
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

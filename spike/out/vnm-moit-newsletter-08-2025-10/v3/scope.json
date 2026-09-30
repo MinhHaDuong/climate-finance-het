@@ -1,0 +1,92 @@
+{
+ "scope_in": [
+  {
+   "part": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "pages": [
+    1
+   ]
+  },
+  {
+   "part": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh",
+   "pages": [
+    1,
+    2
+   ]
+  },
+  {
+   "part": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+   "pages": [
+    2
+   ]
+  },
+  {
+   "part": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "pages": [
+    3
+   ]
+  }
+ ],
+ "scope_out": [
+  {
+   "part": "Bản tin header banner (QUAN HỆ ĐỐI TÁC CHUYỂN ĐỔI NĂNG LƯỢNG CÔNG BẰNG (JETP) / BẢN TIN JETP VIỆT NAM Số 8 – Tháng 10/2025)",
+   "reason": "Repeated newsletter banner / publication metadata"
+  },
+  {
+   "part": "Thông tin liên hệ: Cơ quan thường trực Ban Thư ký thực hiện JETP Bộ Công Thương, địa chỉ và website URL footer",
+   "reason": "Repeated boilerplate contact information on pages 1, 2, and 3"
+  }
+ ],
+ "field_list": [
+  {
+   "name": "article_title",
+   "printed": false
+  },
+  {
+   "name": "event_date",
+   "printed": false
+  },
+  {
+   "name": "parties_involved",
+   "printed": false
+  },
+  {
+   "name": "project_name",
+   "printed": false
+  },
+  {
+   "name": "funding_amount",
+   "printed": false
+  },
+  {
+   "name": "status_or_stage",
+   "printed": false
+  },
+  {
+   "name": "summary_content",
+   "printed": false
+  },
+  {
+   "name": "source_url",
+   "printed": false
+  }
+ ],
+ "charts_without_text": [],
+ "notes": "The document consists entirely of running prose news articles with no printed tables or standardized key-value labels. All field names are reader-supplied.",
+ "_method": {
+  "model": "google/gemini-3.8-flash",
+  "prompt_version": "spike-2026-09-30.3",
+  "call": {
+   "t": "2026-09-30T13:34:59Z",
+   "stage": "scope:vnm-moit-newsletter-08-2025-10",
+   "model": "google/gemini-3.8-flash",
+   "served_model": "google/gemini-3.8-flash",
+   "provider": "Google",
+   "prompt_tokens": 2612,
+   "completion_tokens": 1124,
+   "cost_usd": 0.006174,
+   "wall_s": 8.8,
+   "temperature": 0.0,
+   "max_tokens": 4000
+  }
+ }
+}

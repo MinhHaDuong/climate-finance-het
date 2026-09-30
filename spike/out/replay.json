@@ -1,0 +1,23 @@
+{
+ "vnm-decision-1009-2023": {
+  "statements": 13,
+  "replay_failures": [],
+  "positive_control_fires": true,
+  "locator_step_idempotent": true,
+  "outside_replay_reach": "13 statements by assisted-reading (not regenerable)"
+ },
+ "vnm-moit-newsletter-08-2025-10": {
+  "statements": 10,
+  "replay_failures": [],
+  "positive_control_fires": true,
+  "locator_step_idempotent": true,
+  "outside_replay_reach": "10 statements by assisted-reading (not regenerable)"
+ },
+ "vnm-moit-newsletter-13-2026-03": {
+  "statements": 12,
+  "replay_failures": [],
+  "positive_control_fires": true,
+  "locator_step_idempotent": true,
+  "outside_replay_reach": "12 statements by assisted-reading (not regenerable)"
+ }
+}

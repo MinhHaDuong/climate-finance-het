@@ -1,0 +1,83 @@
+[
+ {
+  "sha256": "c5cd6cb1225fd7b5483ce83b5fe92863c252229ddcf0cd9d2653bc907e5f345b",
+  "parser": "vnm-moit-newsletter-parser",
+  "version": "0.1-spike",
+  "issue": 8,
+  "month": "2025-10",
+  "statements": [
+   {
+    "ordinal": 1,
+    "page": 1,
+    "anchor": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+    "label": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+    "classification": "heading",
+    "method": "vnm-moit-newsletter-parser",
+    "version": "0.1-spike"
+   },
+   {
+    "ordinal": 2,
+    "page": 1,
+    "anchor": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh",
+    "label": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh",
+    "classification": "heading",
+    "method": "vnm-moit-newsletter-parser",
+    "version": "0.1-spike"
+   },
+   {
+    "ordinal": 3,
+    "page": 2,
+    "anchor": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+    "label": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+    "classification": "heading",
+    "method": "vnm-moit-newsletter-parser",
+    "version": "0.1-spike"
+   },
+   {
+    "ordinal": 4,
+    "page": 3,
+    "anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+    "label": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+    "classification": "heading",
+    "method": "vnm-moit-newsletter-parser",
+    "version": "0.1-spike"
+   }
+  ]
+ },
+ {
+  "sha256": "fa7d149b3d8165b85b7090584a3df3d35fbd6b097bb8a08844df330a3410fc39",
+  "parser": "vnm-moit-newsletter-parser",
+  "version": "0.1-spike",
+  "issue": 13,
+  "month": "2026-03",
+  "statements": [
+   {
+    "ordinal": 1,
+    "page": 1,
+    "anchor": "Bộ Công Thương và các đối tác tổ chức họp điều phối triển khai JETP",
+    "label": "Bộ Công Thương và các đối tác tổ chức họp điều phối triển khai JETP",
+    "classification": "heading",
+    "method": "vnm-moit-newsletter-parser",
+    "version": "0.1-spike"
+   },
+   {
+    "ordinal": 2,
+    "page": 2,
+    "anchor": "Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh",
+    "label": "Phiên thảo luận về JETP và chuyển dịch năng lượng tại Diễn đàn Đầu tư và Kinh doanh EU-Việt Nam",
+    "classification": "heading",
+    "method": "vnm-moit-newsletter-parser",
+    "version": "0.1-spike"
+   },
+   {
+    "ordinal": 3,
+    "page": 3,
+    "anchor": "Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai",
+    "label": "Thứ trưởng Nguyễn Hoàng Long làm việc với đối tác quốc tế thúc đẩy triển khai JETP",
+    "classification": "heading",
+    "method": "vnm-moit-newsletter-parser",
+    "version": "0.1-spike"
+   }
+  ]
+ }
+]

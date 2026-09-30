@@ -1,0 +1,96 @@
+{
+ "scope_in": [
+  {
+   "part": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam (Article on Vietnam-UK JETP and energy cooperation)",
+   "pages": [
+    1
+   ]
+  },
+  {
+   "part": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh (Article on Vietnam-EU green transition cooperation)",
+   "pages": [
+    1,
+    2
+   ]
+  },
+  {
+   "part": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP (Article on EU €430 million JETP support package announcement and Bác Ái pumped storage project)",
+   "pages": [
+    2
+   ]
+  },
+  {
+   "part": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW (Article on JETP Secretariat meeting, project pipeline, and project financing updates)",
+   "pages": [
+    3
+   ]
+  }
+ ],
+ "scope_out": [
+  {
+   "part": "Header banner and newsletter masthead ('QUAN HỆ ĐỐI TÁC CHUYỂN ĐỔI NĂNG LƯỢNG CÔNG BẰNG (JETP)', 'BẢN TIN JETP VIỆT NAM Số 8 – Tháng 10/2025')",
+   "reason": "Repeated newsletter title and issue header furniture."
+  },
+  {
+   "part": "Footer contact block ('Thông tin liên hệ: Cơ quan thường trực Ban Thư ký thực hiện JETP Bộ Công Thương', address, URL)",
+   "reason": "Repeated boilerplate contact information across all pages."
+  },
+  {
+   "part": "Source hyperlinks ('Xem thông tin chi tiết tại: ...')",
+   "reason": "Web navigation links pointing to full online articles."
+  }
+ ],
+ "field_list": [
+  {
+   "name": "article_title",
+   "printed": false
+  },
+  {
+   "name": "event_date",
+   "printed": false
+  },
+  {
+   "name": "parties_involved",
+   "printed": false
+  },
+  {
+   "name": "project_or_program",
+   "printed": false
+  },
+  {
+   "name": "amount",
+   "printed": false
+  },
+  {
+   "name": "currency",
+   "printed": false
+  },
+  {
+   "name": "stage_or_status",
+   "printed": false
+  },
+  {
+   "name": "summary_and_perimeter",
+   "printed": false
+  }
+ ],
+ "charts_without_text": [],
+ "notes": "The document is composed entirely of continuous prose news articles and publishes no table headers or structured data labels. Consequently, all declared fields are reader-supplied.",
+ "_method": {
+  "model": "google/gemini-3.8-flash",
+  "prompt_version": "spike-2026-09-30.2",
+  "call": {
+   "t": "2026-09-30T13:28:32Z",
+   "stage": "scope:vnm-moit-newsletter-08-2025-10",
+   "model": "google/gemini-3.8-flash",
+   "served_model": "google/gemini-3.8-flash",
+   "provider": "Google",
+   "prompt_tokens": 2612,
+   "completion_tokens": 1332,
+   "cost_usd": 0.006954,
+   "wall_s": 10.2,
+   "temperature": 0.0,
+   "max_tokens": 4000
+  }
+ }
+}

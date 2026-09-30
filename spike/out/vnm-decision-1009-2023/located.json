@@ -1,0 +1,1023 @@
+{
+ "kept": [
+  {
+   "page": 1,
+   "anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "label": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng (Tuyên bố JETP)",
+   "classification": "named_item",
+   "own_status": "Phê duyệt",
+   "own_status_axis": "project_stage",
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "section": "Điều 1",
+    "content": "Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng (Tuyên bố JETP)"
+   },
+   "speaker": "THỦ TƯỚNG CHÍNH PHỦ",
+   "note": null,
+   "_proposal_index": 1,
+   "ordinal": 1,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "I. QUAN ĐIỂM\n1. Huy động tối đa và sử dụng hiệu quả nguồn lực",
+   "label": "I. QUAN ĐIỂM",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "fields": {
+    "section": "I. QUAN ĐIỂM"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 2,
+   "ordinal": 2,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "I. QUAN ĐIỂM 1. Huy động tối đa và sử dụng hiệu quả nguồn lực",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "II. MỤC TIÊU\n1. Mục tiêu tổng quát",
+   "label": "II. MỤC TIÊU",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "fields": {
+    "section": "II. MỤC TIÊU"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 3,
+   "ordinal": 3,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "II. MỤC TIÊU 1. Mục tiêu tổng quát",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "1. Mục tiêu tổng quát\nTriển khai thực hiện thành công Tuyên bố JETP",
+   "label": "1. Mục tiêu tổng quát",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "II. MỤC TIÊU\n1. Mục tiêu tổng quát",
+   "fields": {
+    "section": "II. MỤC TIÊU",
+    "subsection": "1. Mục tiêu tổng quát",
+    "content": "Triển khai thực hiện thành công Tuyên bố JETP gắn với thúc đẩy phát triển năng lượng tái tạo, sử dụng năng lượng tiết kiệm và hiệu quả, góp phần thực hiện mục tiêu phát thải ròng bằng “0” vào năm 2050",
+    "target_or_timeline": "năm 2050"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 4,
+   "ordinal": 4,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "1. Mục tiêu tổng quát Triển khai thực hiện thành công Tuyên bố JETP",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "2. Mục tiêu cụ thể\na) Giai đoạn từ nay đến năm 2030",
+   "label": "2. Mục tiêu cụ thể",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "II. MỤC TIÊU\n1. Mục tiêu tổng quát",
+   "fields": {
+    "section": "II. MỤC TIÊU",
+    "subsection": "2. Mục tiêu cụ thể"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 5,
+   "ordinal": 5,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "2. Mục tiêu cụ thể a) Giai đoạn từ nay đến năm 2030",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "a) Giai đoạn từ nay đến năm 2030\n- Xây dựng, hoàn thiện khuôn khổ pháp lý",
+   "label": "a) Giai đoạn từ nay đến năm 2030",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Mục tiêu cụ thể\na) Giai đoạn từ nay đến năm 2030",
+   "fields": {
+    "section": "II. MỤC TIÊU",
+    "subsection": "2. Mục tiêu cụ thể",
+    "target_or_timeline": "từ nay đến năm 2030"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 6,
+   "ordinal": 6,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "a) Giai đoạn từ nay đến năm 2030 - Xây dựng, hoàn thiện khuôn khổ pháp lý",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "label": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 11,
+   "ordinal": 7,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM 1. Hoàn thiện thể chế, chính sách",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng\n- Rà soát các",
+   "label": "1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 12,
+   "ordinal": 8,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng - Rà soát các",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 9,
+   "anchor": "IV. NGUỒN LỰC THỰC HIỆN\nKinh phí thực hiện Đề án triển khai Tuyên bố JETP",
+   "label": "IV. NGUỒN LỰC THỰC HIỆN",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "fields": {
+    "section": "IV. NGUỒN LỰC THỰC HIỆN",
+    "content": "Kinh phí thực hiện Đề án triển khai Tuyên bố JETP từ nguồn ngân sách nhà nước và huy động tối đa từ các nguồn tài trợ, viện trợ, các nguồn tài chính hợp pháp khác theo quy định của pháp luật. Huy động nguồn lực từ Nhóm các đối tác quốc tế, Liên minh tài chính Glasgow vì mục tiêu phát thải ròng bằng “0” và các tổ chức, định chế tài chính khác"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 22,
+   "ordinal": 9,
+   "locator": {
+    "page_index": 9,
+    "folio": null,
+    "text_anchor": "IV. NGUỒN LỰC THỰC HIỆN Kinh phí thực hiện Đề án triển khai Tuyên bố JETP",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 10,
+   "anchor": "V. TỔ CHỨC THỰC HIỆN\n1. Ban Thư ký thực hiện Tuyên bố JETP",
+   "label": "V. TỔ CHỨC THỰC HIỆN",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 23,
+   "ordinal": 10,
+   "locator": {
+    "page_index": 10,
+    "folio": null,
+    "text_anchor": "V. TỔ CHỨC THỰC HIỆN 1. Ban Thư ký thực hiện Tuyên bố JETP",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 10,
+   "anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+   "label": "1. Ban Thư ký thực hiện Tuyên bố JETP",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "V. TỔ CHỨC THỰC HIỆN\n1. Ban Thư ký thực hiện Tuyên bố JETP",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "1. Ban Thư ký thực hiện Tuyên bố JETP",
+    "content": "Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng Chính phủ trong chỉ đạo, điều hành và giải quyết các công việc triển khai thực hiện Tuyên bố JETP, đồng thời phối hợp với Nhóm các đối tác quốc tế trong triển khai thực hiện Tuyên bố JETP.",
+    "responsible_entity": "Ban Thư ký thực hiện Tuyên bố JETP"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 24,
+   "ordinal": 11,
+   "locator": {
+    "page_index": 10,
+    "folio": null,
+    "text_anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 10,
+   "anchor": "a) Nhóm Tổng hợp do Bộ trưởng Bộ Tài nguyên và Môi trường thành lập",
+   "label": "a) Nhóm Tổng hợp",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "a) Nhóm Tổng hợp",
+    "content": "Nhóm Tổng hợp do Bộ trưởng Bộ Tài nguyên và Môi trường thành lập, một lãnh đạo cấp Thứ trưởng Bộ Tài nguyên và Môi trường làm Trưởng nhóm",
+    "responsible_entity": "Bộ Tài nguyên và Môi trường"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 25,
+   "ordinal": 12,
+   "locator": {
+    "page_index": 10,
+    "folio": null,
+    "text_anchor": "a) Nhóm Tổng hợp do Bộ trưởng Bộ Tài nguyên và Môi trường thành lập",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 15,
+   "anchor": "KT. THỦ TƯỚNG\nPHÓ THỦ TƯỚNG\nTrần Hồng Hà",
+   "label": "KT. THỦ TƯỚNG PHÓ THỦ TƯỚNG Trần Hồng Hà",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "responsible_entity": "Trần Hồng Hà"
+   },
+   "speaker": "Trần Hồng Hà",
+   "note": null,
+   "_proposal_index": 45,
+   "ordinal": 13,
+   "locator": {
+    "page_index": 15,
+    "folio": null,
+    "text_anchor": "KT. THỦ TƯỚNG PHÓ THỦ TƯỚNG Trần Hồng Hà",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  }
+ ],
+ "rejected": [
+  {
+   "page": 1,
+   "anchor": "Số: 1009/QĐ-TTg\nHà Nội, ngày 31 tháng 8 năm 2023",
+   "label": "Quyết định Số: 1009/QĐ-TTg",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "content": "QUYẾT ĐỊNH Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng",
+    "target_or_timeline": "ngày 31 tháng 8 năm 2023"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 0,
+   "_reasons": [
+    "label not found verbatim on the page"
+   ]
+  },
+  {
+   "page": 3,
+   "anchor": "Phấn đấu đến 2030 hình thành 02 trung tâm công nghiệp, dịch vụ năng lượng tái",
+   "label": "Phấn đấu đến 2030 hình thành 02 trung tâm công nghiệp, dịch vụ năng lượng tái tạo liên vùng",
+   "classification": "quota",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "năng lượng tái tạo",
+   "group_anchor": "a) Giai đoạn từ nay đến năm 2030\n- Xây dựng, hoàn thiện khuôn khổ pháp lý",
+   "fields": {
+    "section": "II. MỤC TIÊU",
+    "subsection": "2. Mục tiêu cụ thể",
+    "content": "Phấn đấu đến 2030 hình thành 02 trung tâm công nghiệp, dịch vụ năng lượng tái tạo liên vùng tại các khu vực có nhiều tiềm năng như Bắc Bộ, Nam Trung Bộ, Nam Bộ.",
+    "target_or_timeline": "2030"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 7,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'II. MỤC TIÊU'",
+    "value of 'subsection' not found near the anchor: '2. Mục tiêu cụ thể'"
+   ]
+  },
+  {
+   "page": 3,
+   "anchor": "phấn đấu tỉ lệ năng lượng tái tạo đạt 47% và mức phát thải đỉnh của ngành điện",
+   "label": "phấn đấu tỉ lệ năng lượng tái tạo đạt 47% và mức phát thải đỉnh của ngành điện không quá 170 triệu tấn CO2 tương đương, tổng quy mô công suất nhiệt điện than không quá 30.127 MW",
+   "classification": "quota",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "năng lượng tái tạo",
+   "group_anchor": "a) Giai đoạn từ nay đến năm 2030\n- Xây dựng, hoàn thiện khuôn khổ pháp lý",
+   "fields": {
+    "section": "II. MỤC TIÊU",
+    "subsection": "2. Mục tiêu cụ thể",
+    "content": "phấn đấu tỉ lệ năng lượng tái tạo đạt 47% và mức phát thải đỉnh của ngành điện không quá 170 triệu tấn CO2 tương đương, tổng quy mô công suất nhiệt điện than không quá 30.127 MW với sự hỗ trợ đầy đủ và thực chất của quốc tế."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 8,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'II. MỤC TIÊU'",
+    "value of 'subsection' not found near the anchor: '2. Mục tiêu cụ thể'"
+   ]
+  },
+  {
+   "page": 3,
+   "anchor": "b) Giai đoạn sau năm 2030\n- Tiếp tục hoàn thiện hệ thống chính sách",
+   "label": "b) Giai đoạn sau năm 2030",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Mục tiêu cụ thể\na) Giai đoạn từ nay đến năm 2030",
+   "fields": {
+    "section": "II. MỤC TIÊU",
+    "subsection": "2. Mục tiêu cụ thể",
+    "target_or_timeline": "sau năm 2030"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 9,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'II. MỤC TIÊU'",
+    "value of 'subsection' not found near the anchor: '2. Mục tiêu cụ thể'"
+   ]
+  },
+  {
+   "page": 3,
+   "anchor": "Không xây mới và loại bỏ dần các nhà máy nhiệt điện than, thực hiện mạnh mẽ các",
+   "label": "Không xây mới và loại bỏ dần các nhà máy nhiệt điện than, thực hiện mạnh mẽ các biện pháp giảm phát thải khí nhà kính hướng tới năm 2050",
+   "classification": "quota",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "nhiệt điện than",
+   "group_anchor": "b) Giai đoạn sau năm 2030\n- Tiếp tục hoàn thiện hệ thống chính sách",
+   "fields": {
+    "section": "II. MỤC TIÊU",
+    "subsection": "2. Mục tiêu cụ thể",
+    "content": "Không xây mới và loại bỏ dần các nhà máy nhiệt điện than, thực hiện mạnh mẽ các biện pháp giảm phát thải khí nhà kính hướng tới năm 2050 đạt mức phát thải từ năng lượng không vượt quá 101 triệu tấn CO2 tương đương, tỉ lệ năng lượng tái tạo đạt khoảng 80 - 85% tổng năng lượng sơ cấp.",
+    "target_or_timeline": "năm 2050"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 10,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'II. MỤC TIÊU'",
+    "value of 'subsection' not found near the anchor: '2. Mục tiêu cụ thể'"
+   ]
+  },
+  {
+   "page": 4,
+   "anchor": "2. Thúc đẩy chuyển đổi điện than sang năng lượng sạch\n- Đàm phán việc dừng",
+   "label": "2. Thúc đẩy chuyển đổi điện than sang năng lượng sạch",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "điện than",
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "2. Thúc đẩy chuyển đổi điện than sang năng lượng sạch"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 13,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 4,
+   "anchor": "3. Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo\n- Triển",
+   "label": "3. Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "năng lượng tái tạo",
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "3. Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 14,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 5,
+   "anchor": "4. Sử dụng năng lượng tiết kiệm và hiệu quả\n- Tăng cường thực hiện các giải pháp",
+   "label": "4. Sử dụng năng lượng tiết kiệm và hiệu quả",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "4. Sử dụng năng lượng tiết kiệm và hiệu quả"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 15,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 5,
+   "anchor": "5. Nâng cấp hệ thống truyền tải và phân phối điện, đẩy nhanh lộ trình xây dựng",
+   "label": "5. Nâng cấp hệ thống truyền tải và phân phối điện, đẩy nhanh lộ trình xây dựng hệ thống điện thông minh và phát triển hệ thống lưu trữ năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "hệ thống điện",
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "5. Nâng cấp hệ thống truyền tải và phân phối điện, đẩy nhanh lộ trình xây dựng hệ thống điện thông minh và phát triển hệ thống lưu trữ năng lượng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 16,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 6,
+   "anchor": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông",
+   "label": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "giao thông vận tải",
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 17,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 6,
+   "anchor": "7. Đổi mới sáng tạo, phát triển và chuyển giao công nghệ\n- Thành lập Trung tâm",
+   "label": "7. Đổi mới sáng tạo, phát triển và chuyển giao công nghệ",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "7. Đổi mới sáng tạo, phát triển và chuyển giao công nghệ"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 18,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 7,
+   "anchor": "8. Bảo đảm công bằng trong chuyển đổi năng lượng\na) Đảm bảo bình đẳng trong",
+   "label": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "8. Bảo đảm công bằng trong chuyển đổi năng lượng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 19,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 9,
+   "anchor": "9. Truyền thông, nâng cao nhận thức\n- Tuyên truyền, vận động",
+   "label": "9. Truyền thông, nâng cao nhận thức",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "9. Truyền thông, nâng cao nhận thức"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 20,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 9,
+   "anchor": "10. Thúc đẩy hợp tác, huy động nguồn lực cho chuyển đổi năng lượng công bằng",
+   "label": "10. Thúc đẩy hợp tác, huy động nguồn lực cho chuyển đổi năng lượng công bằng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "III. CÁC NHIỆM VỤ TRỌNG TÂM\n1. Hoàn thiện thể chế, chính sách",
+   "fields": {
+    "section": "III. CÁC NHIỆM VỤ TRỌNG TÂM",
+    "subsection": "10. Thúc đẩy hợp tác, huy động nguồn lực cho chuyển đổi năng lượng công bằng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 21,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'III. CÁC NHIỆM VỤ TRỌNG TÂM'"
+   ]
+  },
+  {
+   "page": 10,
+   "anchor": "b) Nhóm Thể chế, Chính sách và Đầu tư do Bộ trưởng Bộ Kế hoạch và Đầu tư",
+   "label": "b) Nhóm Thể chế, Chính sách và Đầu tư",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "b) Nhóm Thể chế, Chính sách và Đầu tư",
+    "content": "Nhóm Thể chế, Chính sách và Đầu tư do Bộ trưởng Bộ Kế hoạch và Đầu tư thành lập, một lãnh đạo cấp Thứ trưởng Bộ Kế hoạch và Đầu tư làm Trưởng nhóm",
+    "responsible_entity": "Bộ Kế hoạch và Đầu tư"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 26,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 10,
+   "anchor": "c) Nhóm Công nghệ và Năng lượng do Bộ trưởng Bộ Công Thương thành lập",
+   "label": "c) Nhóm Công nghệ và Năng lượng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "c) Nhóm Công nghệ và Năng lượng",
+    "content": "Nhóm Công nghệ và Năng lượng do Bộ trưởng Bộ Công Thương thành lập, một lãnh đạo cấp Thứ trưởng Bộ Công Thương làm Trưởng nhóm",
+    "responsible_entity": "Bộ Công Thương"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 27,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 10,
+   "anchor": "d) Nhóm Tài chính do Bộ trưởng Bộ Tài chính thành lập, một lãnh đạo cấp Thứ",
+   "label": "d) Nhóm Tài chính",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "1. Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "d) Nhóm Tài chính",
+    "content": "Nhóm Tài chính do Bộ trưởng Bộ Tài chính thành lập, một lãnh đạo cấp Thứ trưởng Bộ Tài chính làm Trưởng nhóm",
+    "responsible_entity": "Bộ Tài chính"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 28,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 11,
+   "anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "label": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "V. TỔ CHỨC THỰC HIỆN\n1. Ban Thư ký thực hiện Tuyên bố JETP",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 29,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 11,
+   "anchor": "a) Bộ Tài nguyên và Môi trường\n- Thành lập Nhóm Tổng hợp",
+   "label": "a) Bộ Tài nguyên và Môi trường",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "a) Bộ Tài nguyên và Môi trường",
+    "content": "Chủ trì, phối hợp với các bộ, ngành, Nhóm các đối tác quốc tế xây dựng Kế hoạch huy động nguồn lực trình cấp có thẩm quyền phê duyệt",
+    "responsible_entity": "Bộ Tài nguyên và Môi trường"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 30,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 11,
+   "anchor": "b) Bộ Kế hoạch và Đầu tư\n- Thành lập Nhóm Thể chế, Chính sách và Đầu tư",
+   "label": "b) Bộ Kế hoạch và Đầu tư",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "b) Bộ Kế hoạch và Đầu tư",
+    "content": "Chủ trì, phối hợp với Bộ Tài chính, các bộ có liên quan xác định nhu cầu viện trợ, đầu tư tư nhân cho chuyển đổi năng lượng cộng bằng",
+    "responsible_entity": "Bộ Kế hoạch và Đầu tư"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 31,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 12,
+   "anchor": "c) Bộ Công Thương\n- Thành lập Nhóm Công nghệ và Năng lượng",
+   "label": "c) Bộ Công Thương",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "c) Bộ Công Thương",
+    "content": "Chủ trì đề xuất các dự án ưu tiên thực hiện chuyển đổi năng lượng công bằng để huy động hỗ trợ từ Nhóm các đối tác quốc tế, Liên minh Tài chính Glasgow vì mục tiêu phát thải ròng bằng “0” và các định chế tài chính khác",
+    "responsible_entity": "Bộ Công Thương"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 32,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 12,
+   "anchor": "d) Bộ Tài chính\n- Thành lập Nhóm Tài chính do một lãnh đạo cấp Thứ trưởng",
+   "label": "d) Bộ Tài chính",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "d) Bộ Tài chính",
+    "content": "Chủ trì, phối hợp với các cơ quan liên quan thực hiện đàm phán, tiếp nhận nguồn vốn vay ODA, vốn vay ưu đãi, vốn ODA không hoàn lại để hỗ trợ nhu cầu chuyển đổi năng lượng",
+    "responsible_entity": "Bộ Tài chính"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 33,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 13,
+   "anchor": "đ) Bộ Lao động - Thương binh và Xã hội\n- Chủ trì, phối hợp với các bộ",
+   "label": "đ) Bộ Lao động - Thương binh và Xã hội",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "đ) Bộ Lao động - Thương binh và Xã hội",
+    "content": "Chủ trì, phối hợp với các bộ, ngành, cơ quan liên quan xây dựng các cơ chế, chính sách, giải pháp thúc đẩy chuyển dịch công bằng đối với các nhóm đối tượng yếu thế, dễ bị tổn thương",
+    "responsible_entity": "Bộ Lao động - Thương binh và Xã hội"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 34,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 13,
+   "anchor": "e) Bộ Khoa học và Công nghệ\n- Chủ trì, phối hợp với Bộ Công Thương",
+   "label": "e) Bộ Khoa học và Công nghệ",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "e) Bộ Khoa học và Công nghệ",
+    "content": "Chủ trì, phối hợp với Bộ Công Thương trong việc nghiên cứu phát triển và ứng dụng các nguồn năng lượng mới (hydro xanh, amoniac xanh); nghiên cứu thí điểm triển khai thu hồi, hấp thụ, lưu trữ và sử dụng các-bon (CCUS).",
+    "responsible_entity": "Bộ Khoa học và Công nghệ"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 35,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 13,
+   "anchor": "g) Bộ Giao thông vận tải\nChủ trì, phối hợp với các bộ, ngành, cơ quan",
+   "label": "g) Bộ Giao thông vận tải",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "Giao thông vận tải",
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "g) Bộ Giao thông vận tải",
+    "content": "Chủ trì, phối hợp với các bộ, ngành, cơ quan liên quan xây dựng, hoàn thiện thể chế, chính sách nâng cao hiệu quả sử dụng năng lượng, chuyển đổi sử dụng điện, năng lượng xanh đối với phương tiện, thiết bị, hạ tầng giao thông xanh trong giao thông vận tải",
+    "responsible_entity": "Bộ Giao thông vận tải"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 36,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 13,
+   "anchor": "h) Bộ Xây dựng\nChủ trì, phối hợp với các bộ, ngành, cơ quan liên quan",
+   "label": "h) Bộ Xây dựng",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "Xây dựng",
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "h) Bộ Xây dựng",
+    "content": "Chủ trì, phối hợp với các bộ, ngành, cơ quan liên quan xây dựng, hoàn thiện thể chế, chính sách, quy hoạch phát triển đô thị, công trình xây dựng xanh, hạ tầng công cộng phục vụ xe điện và các phương tiện giao thông thân thiện với môi trường",
+    "responsible_entity": "Bộ Xây dựng"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 37,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 14,
+   "anchor": "i) Bộ Nông nghiệp và Phát triển nông thôn\n- Chủ trì, phối hợp",
+   "label": "i) Bộ Nông nghiệp và Phát triển nông thôn",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "Nông nghiệp",
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "i) Bộ Nông nghiệp và Phát triển nông thôn",
+    "content": "Chủ trì, phối hợp với các bộ, ngành có liên quan chỉ đạo, hướng dẫn các địa phương tổ chức thực hiện sử dụng đất nông nghiệp, nuôi trồng thủy sản để phát triển đa mục tiêu kết hợp sản xuất năng lượng tái tạo",
+    "responsible_entity": "Bộ Nông nghiệp và Phát triển nông thôn"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 38,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 14,
+   "anchor": "k) Ngân hàng Nhà nước Việt Nam\nChủ trì, phối hợp với các cơ quan",
+   "label": "k) Ngân hàng Nhà nước Việt Nam",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "Ngân hàng",
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "k) Ngân hàng Nhà nước Việt Nam",
+    "content": "Chủ trì, phối hợp với các cơ quan liên quan thực hiện ký kết, tiếp nhận nguồn vốn ODA không hoàn lại không gắn với khoản vay của các tổ chức tài chính, tiền tệ và ngân hàng quốc tế để hỗ trợ nhu cầu chuyển đổi năng lượng",
+    "responsible_entity": "Ngân hàng Nhà nước Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 39,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 14,
+   "anchor": "l) Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ\nThực hiện đầy đủ",
+   "label": "l) Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "l) Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ",
+    "content": "Thực hiện đầy đủ chức năng, nhiệm vụ, quyền hạn để triển khai đúng tiến độ các chương trình, dự án trong Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng",
+    "responsible_entity": "Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 40,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 14,
+   "anchor": "m) Ủy ban quản lý vốn nhà nước tại doanh nghiệp\nChỉ đạo các Tập đoàn",
+   "label": "m) Ủy ban quản lý vốn nhà nước tại doanh nghiệp",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "m) Ủy ban quản lý vốn nhà nước tại doanh nghiệp",
+    "content": "Chỉ đạo các Tập đoàn: Điện lực Việt Nam, Dầu khí Việt Nam, Công nghiệp Than - Khoáng sản Việt Nam phối hợp chặt chẽ với các cơ quan có liên quan, Nhóm các đối tác quốc tế cung cấp thông tin, xây dựng kế hoạch, lộ trình chuyển đổi năng lượng của các doanh nghiệp thành viên.",
+    "responsible_entity": "Ủy ban quản lý vốn nhà nước tại doanh nghiệp"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 41,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 14,
+   "anchor": "n) Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương\n- Tổ chức",
+   "label": "n) Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "2. Phân công trách nhiệm đối với các bộ, cơ quan liên quan\na) Bộ Tài nguyên",
+   "fields": {
+    "section": "V. TỔ CHỨC THỰC HIỆN",
+    "subsection": "n) Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương",
+    "content": "Tổ chức thực hiện việc lựa chọn chủ đầu tư các dự án điện, bố trí quỹ đất cho phát triển các công trình điện theo quy định của pháp luật",
+    "responsible_entity": "Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 42,
+   "_reasons": [
+    "value of 'section' not found near the anchor: 'V. TỔ CHỨC THỰC HIỆN'"
+   ]
+  },
+  {
+   "page": 14,
+   "anchor": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày ký ban hành.",
+   "label": "Điều 2. Hiệu lực thi hành",
+   "classification": "named_item",
+   "own_status": "hiệu lực",
+   "own_status_axis": "project_stage",
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "section": "Điều 2",
+    "content": "Quyết định này có hiệu lực thi hành kể từ ngày ký ban hành."
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 43,
+   "_reasons": [
+    "label not found verbatim on the page"
+   ]
+  },
+  {
+   "page": 15,
+   "anchor": "Điều 3. Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc",
+   "label": "Điều 3. Trách nhiệm thi hành",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "section": "Điều 3",
+    "content": "Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc Chính phủ, Chủ tịch Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương và tổ chức, cá nhân có liên quan chịu trách nhiệm thi hành Quyết định này.",
+    "responsible_entity": "Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc Chính phủ, Chủ tịch Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương và tổ chức, cá nhân có liên quan"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 44,
+   "_reasons": [
+    "label not found verbatim on the page"
+   ]
+  }
+ ]
+}

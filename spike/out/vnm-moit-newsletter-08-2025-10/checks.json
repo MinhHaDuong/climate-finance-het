@@ -1,0 +1,208 @@
+{
+ "checks": [
+  {
+   "ordinal": 1,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam\"",
+   "problem": null
+  },
+  {
+   "ordinal": 2,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"Chiều ngày 07/10/2025, Thứ trưởng Nguyễn Hoàng Long đã tiếp ông Iain Frew - Đại sứ Vương quốc Anh tại Việt Nam\"",
+   "problem": null
+  },
+  {
+   "ordinal": 3,
+   "stance": "partly right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"Đại sứ cũng đề xuất Bộ Công Thương ký kết Biên bản ghi nhớ về hợp tác năng lượng. Kết thúc buổi làm việc, Thứ trưởng Nguyễn Hoàng Long nhất trí với đề xuất này\"",
+   "problem": "Field value \"stage_or_decision\" is not copied verbatim; the document says \"đề xuất\" and \"nhất trí với đề xuất này\", not \"đề\\nxuất Bộ Công Thương ký kết Biên bản ghi nhớ\" as a single asserted stage."
+  },
+  {
+   "ordinal": 4,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"Kết thúc buổi làm việc, Thứ trưởng Nguyễn Hoàng Long nhất trí với đề xuất này\"",
+   "problem": null
+  },
+  {
+   "ordinal": 5,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh\"",
+   "problem": null
+  },
+  {
+   "ordinal": 6,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"Ngày 7/10/2025, Thứ trưởng Nguyễn Hoàng Long đã có buổi làm việc với ông Rafael De Bustamante, Phó trưởng Phái đoàn Liên minh châu Âu (EU) tại Việt Nam\"",
+   "problem": null
+  },
+  {
+   "ordinal": 7,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP\"",
+   "problem": null
+  },
+  {
+   "ordinal": 8,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"Liên minh châu Âu (EU) đã công bố gói hỗ trợ trị giá 430 triệu Euro dành cho Việt Nam nhằm thúc đẩy Quan hệ đối tác chuyển đổi năng lượng công bằng (JETP)\"",
+   "problem": null
+  },
+  {
+   "ordinal": 9,
+   "stance": "right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"dự án Thủy điện tích năng Bác Ái (công suất dự kiến hơn 1.200 MW)\"",
+   "problem": null
+  },
+  {
+   "ordinal": 10,
+   "stance": "right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"Gói hỗ trợ 430 triệu Euro được triển khai trong khuôn khổ hợp tác của Team Europe gồm EU, các quốc gia thành viên và các định chế tài chính phát triển như AFD, EIB, KfW, CDP và PROPARCO.\"",
+   "problem": null
+  },
+  {
+   "ordinal": 11,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW\"",
+   "problem": null
+  },
+  {
+   "ordinal": 12,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"Ngày 14/10/2025, tại Hà Nội, Ban Thư ký thực hiện Tuyên bố Chính trị thiết lập Quan hệ đối tác chuyển đổi năng lượng công bằng (JETP) đã họp với Nhóm các đối tác quốc tế (IPG), Liên minh tài chính Glasgow vì mục tiêu phát thải ròng bằng “0” (GFANZ) và UNDP\"",
+   "problem": null
+  },
+  {
+   "ordinal": 13,
+   "stance": "right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"gồm 44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD. Trong số 7 dự án được các bên thống nhất xác định phù hợp với JETP từ năm 2024\"",
+   "problem": null
+  },
+  {
+   "ordinal": 14,
+   "stance": "right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"đến nay đã có 03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD\"",
+   "problem": null
+  },
+  {
+   "ordinal": 15,
+   "stance": "right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"dự án Thủy điện tích năng Bắc Ái (557 triệu USD, đang trong giai đoạn đàm phán thỏa thuận vốn)\"",
+   "problem": null
+  },
+  {
+   "ordinal": 16,
+   "stance": "right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"dự án đường dây tải điện Thành phố Hồ Chí Minh – Bình Dương (78 triệu USD, đã ký kết thỏa thuận tài chính với Tập đoàn điện lực Việt Nam)\"",
+   "problem": null
+  },
+  {
+   "ordinal": 17,
+   "stance": "right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"Dự án mở rộng nhà máy Thủy điện Trị An (93 triệu USD, đã ký kết thỏa thuận tài chính với Tập đoàn điện lực Việt Nam)\"",
+   "problem": null
+  }
+ ],
+ "missed": [
+  {
+   "page": 1,
+   "anchor": "Đại sứ Iain Frew đánh giá cao nỗ lực của Việt Nam",
+   "label": "Đại sứ Iain Frew đánh giá cao nỗ lực của Việt Nam trong thúc đẩy hợp tác chuyển dịch năng lượng theo JETP",
+   "why": "Trong phạm vi bài viết về tiếp Đại sứ Anh; là một phát biểu/nội dung hợp tác được nêu rõ."
+  },
+  {
+   "page": 1,
+   "anchor": "Ông cam kết Vương quốc Anh sẵn sàng đồng hành",
+   "label": "Vương quốc Anh sẵn sàng đồng hành, chia sẻ kinh nghiệm, hỗ trợ kỹ thuật và huy động vốn",
+   "why": "Thuộc bài viết về tiếp Đại sứ Anh và là một cam kết cụ thể trong khuôn khổ JETP."
+  },
+  {
+   "page": 2,
+   "anchor": "EU hiện đang thúc đẩy nhiều dự án hợp tác cụ thể tại Việt Nam",
+   "label": "EU hiện đang thúc đẩy nhiều dự án hợp tác cụ thể tại Việt Nam",
+   "why": "Thuộc bài viết về hợp tác Việt Nam – EU; là một nhận định/nội dung hợp tác trong scope."
+  },
+  {
+   "page": 2,
+   "anchor": "ông Rafael De Bustamante cũng cam kết phối hợp chặt chẽ",
+   "label": "ông Rafael De Bustamante cam kết phối hợp chặt chẽ với Bộ Công Thương",
+   "why": "Là một cam kết của phía EU trong bài viết về hợp tác Việt Nam – EU, thuộc scope."
+  },
+  {
+   "page": 2,
+   "anchor": "AFD, EIB, KfW, CDP và PROPARCO",
+   "label": "Team Europe gồm EU, các quốc gia thành viên và các định chế tài chính phát triển như AFD, EIB, KfW, CDP và PROPARCO",
+   "why": "Là thành phần của gói hỗ trợ 430 triệu Euro, thuộc bài viết scope."
+  },
+  {
+   "page": 3,
+   "anchor": "gồm 44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD",
+   "label": "44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD",
+   "why": "Là số liệu JETP được nêu trong bài viết scope."
+  },
+  {
+   "page": 3,
+   "anchor": "Nghị định 242/2025/NĐ-CP mới về quản lý và sử dụng nguồn vốn ODA",
+   "label": "Nghị định 242/2025/NĐ-CP mới về quản lý và sử dụng nguồn vốn ODA, vốn vay ưu đãi",
+   "why": "Nội dung cập nhật chính sách liên quan trực tiếp đến triển khai JETP trong bài viết scope."
+  },
+  {
+   "page": 3,
+   "anchor": "các dự án lớn thuộc lĩnh vực ưu tiên như phát triển năng lượng mới",
+   "label": "Đẩy nhanh tiến độ huy động nguồn lực JETP cho các dự án lớn thuộc lĩnh vực ưu tiên",
+   "why": "Là kết luận/định hướng triển khai JETP của bài viết scope."
+  }
+ ],
+ "_method": {
+  "checker": "openai/gpt-5.4-mini",
+  "prompt_version": "spike-2026-09-30.3",
+  "temperature": 0.0,
+  "call": {
+   "t": "2026-09-30T13:39:14Z",
+   "stage": "check:vnm-moit-newsletter-08-2025-10",
+   "model": "openai/gpt-5.4-mini",
+   "served_model": "openai/gpt-5.4-mini",
+   "provider": "OpenAI",
+   "prompt_tokens": 6037,
+   "completion_tokens": 1765,
+   "cost_usd": 0.01247025,
+   "wall_s": 7.4,
+   "temperature": 0.0,
+   "max_tokens": 32000
+  }
+ }
+}

@@ -1,0 +1,248 @@
+{
+ "method": {
+  "tier2": "normalised-token-jaccard>=0.2",
+  "tier4": "mistralai/mistral-medium-3.1",
+  "call": {
+   "t": "2026-09-30T13:36:56Z",
+   "stage": "restatement-pairing",
+   "model": "mistralai/mistral-medium-3.1",
+   "served_model": "mistralai/mistral-medium-3.1",
+   "provider": "Mistral",
+   "prompt_tokens": 4018,
+   "completion_tokens": 703,
+   "cost_usd": 0.0030132,
+   "wall_s": 5.5,
+   "temperature": 0.0,
+   "max_tokens": 6000
+  }
+ },
+ "n_a": 11,
+ "n_b": 11,
+ "tier2_candidates": [
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-1",
+   "b": "vnm-moit-newsletter-13-2026-03-text-7",
+   "jaccard": 0.21
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-2",
+   "b": "vnm-moit-newsletter-13-2026-03-text-2",
+   "jaccard": 0.21
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-2",
+   "b": "vnm-moit-newsletter-13-2026-03-text-4",
+   "jaccard": 0.22
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-4",
+   "b": "vnm-moit-newsletter-13-2026-03-text-6",
+   "jaccard": 0.43
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-7",
+   "b": "vnm-moit-newsletter-13-2026-03-text-5",
+   "jaccard": 0.25
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-8",
+   "b": "vnm-moit-newsletter-13-2026-03-text-6",
+   "jaccard": 0.33
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-a1",
+   "b": "vnm-moit-newsletter-13-2026-03-text-9",
+   "jaccard": 0.2
+  }
+ ],
+ "pairs": [
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-4",
+   "b": "vnm-moit-newsletter-13-2026-03-text-6",
+   "stance": "same",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "Both refer to the 'Thủy điện tích năng Bác Ái' project.",
+   "a_label": "dự án Thủy điện tích năng Bác Ái",
+   "b_label": "Thủy điện tích năng Bác Ái",
+   "kind": "change",
+   "field_differences": {
+    "summary_content": [
+     "công suất dự kiến hơn 1.200 MW",
+     null
+    ],
+    "parties_involved": [
+     null,
+     "KfW"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-8",
+   "b": "vnm-moit-newsletter-13-2026-03-text-6",
+   "stance": "same",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "Both refer to the 'Thủy điện tích năng Bác Ái' project, with issue 8 specifying funding and stage, and issue 13 mentioning KfW's involvement.",
+   "a_label": "dự án Thủy điện tích năng Bắc Ái",
+   "b_label": "Thủy điện tích năng Bác Ái",
+   "kind": "change",
+   "field_differences": {
+    "status_or_stage": [
+     "đang trong giai đoạn đàm phán thỏa thuận vốn",
+     null
+    ],
+    "funding_amount": [
+     "557 triệu USD",
+     null
+    ],
+    "parties_involved": [
+     null,
+     "KfW"
+    ],
+    "project_name": [
+     "dự án Thủy điện tích năng Bắc Ái",
+     "Thủy điện tích năng Bác Ái"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-7",
+   "b": "vnm-moit-newsletter-13-2026-03-text-5",
+   "stance": "same",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "Both refer to the count of JETP-funded projects (3 projects) and their total funding (728 triệu USD vs. trên 700 triệu USD).",
+   "a_label": "03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD",
+   "b_label": "3 dự án nhận được tài trợ với tổng vốn trên 700 triệu USD",
+   "kind": "change",
+   "field_differences": {
+    "summary_content": [
+     "03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD",
+     null
+    ],
+    "stage_or_decision": [
+     null,
+     "nhận được tài trợ"
+    ],
+    "funding_amount": [
+     "728 triệu USD",
+     null
+    ],
+    "financial_amount": [
+     null,
+     "trên 700 triệu USD"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-a1",
+   "b": "vnm-moit-newsletter-13-2026-03-text-9",
+   "stance": "same",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "Both refer to the portfolio of 44 JETP projects, with issue 8 stating 'hơn 10 tỷ USD' and issue 13 stating 'trên 11 tỷ USD'.",
+   "a_label": "gồm 44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD",
+   "b_label": "danh mục 44 dự án phù hợp JETP",
+   "kind": "change",
+   "field_differences": {
+    "stage_or_decision": [
+     null,
+     "đã xác định danh mục 44 dự án phù hợp JETP với nhu cầu vốn trên 11 tỷ USD"
+    ],
+    "funding_amount": [
+     "hơn 10 tỷ USD",
+     null
+    ],
+    "financial_amount": [
+     null,
+     "trên 11 tỷ USD"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-5",
+   "b": "vnm-moit-newsletter-13-2026-03-text-12",
+   "stance": "same",
+   "likelihood": "likely",
+   "confidence": "medium",
+   "basis": "Both refer to the JETP funding envelope, with issue 8 mentioning '430 triệu Euro' (Team Europe) and issue 13 mentioning '7,75 tỷ USD' (IPG).",
+   "a_label": "Gói hỗ trợ 430 triệu Euro được triển khai trong khuôn khổ hợp tác của Team Europe",
+   "b_label": "cam kết tài chính công khoảng 7,75 tỷ USD",
+   "kind": "change",
+   "field_differences": {
+    "funding_amount": [
+     "430 triệu Euro",
+     null
+    ],
+    "parties_involved": [
+     "Team Europe gồm EU, các quốc gia thành viên và các định chế tài chính phát triển như AFD, EIB, KfW, CDP và PROPARCO",
+     "IPG"
+    ],
+    "stage_or_decision": [
+     null,
+     "duy trì cam kết tài chính công"
+    ],
+    "financial_amount": [
+     null,
+     "khoảng 7,75 tỷ USD"
+    ]
+   },
+   "label_differs": true
+  },
+  {
+   "a": "vnm-moit-newsletter-08-2025-10-text-3",
+   "b": "vnm-moit-newsletter-13-2026-03-text-12",
+   "stance": "same",
+   "likelihood": "likely",
+   "confidence": "medium",
+   "basis": "Both refer to JETP funding, with issue 8 specifying '430 triệu Euro' (EU) and issue 13 specifying '7,75 tỷ USD' (IPG).",
+   "a_label": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+   "b_label": "cam kết tài chính công khoảng 7,75 tỷ USD",
+   "kind": "change",
+   "field_differences": {
+    "funding_amount": [
+     "430 triệu Euro",
+     null
+    ],
+    "parties_involved": [
+     null,
+     "IPG"
+    ],
+    "article_title": [
+     "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+     null
+    ],
+    "stage_or_decision": [
+     null,
+     "duy trì cam kết tài chính công"
+    ],
+    "financial_amount": [
+     null,
+     "khoảng 7,75 tỷ USD"
+    ]
+   },
+   "label_differs": true
+  }
+ ],
+ "unpaired_earlier": [
+  "vnm-moit-newsletter-08-2025-10-text-1",
+  "vnm-moit-newsletter-08-2025-10-text-2",
+  "vnm-moit-newsletter-08-2025-10-text-6",
+  "vnm-moit-newsletter-08-2025-10-text-9",
+  "vnm-moit-newsletter-08-2025-10-text-10"
+ ],
+ "new_in_later": [
+  "vnm-moit-newsletter-13-2026-03-text-1",
+  "vnm-moit-newsletter-13-2026-03-text-2",
+  "vnm-moit-newsletter-13-2026-03-text-3",
+  "vnm-moit-newsletter-13-2026-03-text-4",
+  "vnm-moit-newsletter-13-2026-03-text-7",
+  "vnm-moit-newsletter-13-2026-03-text-8",
+  "vnm-moit-newsletter-13-2026-03-text-11"
+ ]
+}

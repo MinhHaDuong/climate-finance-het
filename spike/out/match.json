@@ -1,0 +1,74 @@
+{
+ "candidate_match": {
+  "statement": "vnm-moit-newsletter-08-2025-10-text-8",
+  "identity": "project-vnm-project-bac-ai-pumped-hydro"
+ },
+ "readings": [
+  {
+   "stance": "same",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "The statement's project name 'dự án Thủy điện tích năng Bắc Ái' translates to 'Bac Ai pumped-storage hydropower plant', matching the canonical name of the existing identity. The sector (pumped-storage hydropower) and country (VNM) also align. The spelling difference ('Bắc Ái' vs 'Bac Ai') is a Vietnamese diacritic variation and does not affect identity.",
+   "reader": "mistralai/mistral-medium-3.1",
+   "call": {
+    "t": "2026-09-30T13:37:06Z",
+    "stage": "match:mistralai/mistral-medium-3.1",
+    "model": "mistralai/mistral-medium-3.1",
+    "served_model": "mistralai/mistral-medium-3.1",
+    "provider": "Mistral",
+    "prompt_tokens": 540,
+    "completion_tokens": 114,
+    "cost_usd": 0.000444,
+    "wall_s": 1.5,
+    "temperature": 0.0,
+    "max_tokens": 1500
+   }
+  },
+  {
+   "stance": "same",
+   "likelihood": "virtually certain",
+   "confidence": "high",
+   "basis": "The statement's label 'dự án Thủy điện tích năng Bắc Ái' is the direct Vietnamese translation of the existing identity's canonical name 'Bac Ai pumped-storage hydropower plant'. Both refer to a pumped-storage hydropower project at Bac Ai. The spelling difference is only due to language (Vietnamese vs. English) and does not indicate a different project. The statement's status ('đang trong giai đoạn đàm phán thỏa thuận vốn' / 'in the stage of negotiating capital agreement') is consistent with the existing identity's record of a term sheet and financier updates.",
+   "reader": "deepseek/deepseek-v3.2",
+   "call": {
+    "t": "2026-09-30T13:37:17Z",
+    "stage": "match:deepseek/deepseek-v3.2",
+    "model": "deepseek/deepseek-v3.2",
+    "served_model": "deepseek/deepseek-v3.2",
+    "provider": "SiliconFlow",
+    "prompt_tokens": 532,
+    "completion_tokens": 162,
+    "cost_usd": 0.000205828,
+    "wall_s": 11.0,
+    "temperature": 0.0,
+    "max_tokens": 1500
+   }
+  }
+ ],
+ "judgement": {
+  "stance": "same",
+  "likelihood": "very likely",
+  "confidence": "high",
+  "rule": "combine-2readers-v1",
+  "decided_at": "2026-09-30",
+  "proposer": "tier4-llm (tier2 normalised label also run: see below)"
+ },
+ "tier2": {
+  "statement_tokens": [
+   "ai",
+   "bac",
+   "dien",
+   "nang",
+   "thuy",
+   "tich"
+  ],
+  "identity_tokens": [
+   "ai",
+   "bac",
+   "hydropower",
+   "plant",
+   "pumped",
+   "storage"
+  ]
+ }
+}

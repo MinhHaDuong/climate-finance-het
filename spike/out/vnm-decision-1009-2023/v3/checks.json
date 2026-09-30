@@ -1,0 +1,288 @@
+{
+ "checks": [
+  {
+   "ordinal": 1,
+   "stance": "partly right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"Điều 1. Phê duyệt Đề án triển khai Tuyên bố chính trị thiết lập quan hệ đối tác chuyển đổi năng lượng công bằng (Tuyên bố JETP)\"",
+   "problem": "Anchor/label are truncated and not copied verbatim from the document; the full printed wording includes \"với các nội dung chủ yếu sau:\" after this title. Classification as named_item is acceptable."
+  },
+  {
+   "ordinal": 2,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"I. QUAN ĐIỂM\""
+  },
+  {
+   "ordinal": 3,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"II. MỤC TIÊU\""
+  },
+  {
+   "ordinal": 4,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"1. Mục tiêu tổng quát Triển khai thực hiện thành công Tuyên bố JETP gắn với thúc đẩy phát triển năng lượng tái tạo, sử dụng năng lượng tiết kiệm và hiệu quả\""
+  },
+  {
+   "ordinal": 5,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"2. Mục tiêu cụ thể a) Giai đoạn từ nay đến năm 2030\""
+  },
+  {
+   "ordinal": 6,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"a) Giai đoạn từ nay đến năm 2030\""
+  },
+  {
+   "ordinal": 7,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"III. CÁC NHIỆM VỤ TRỌNG TÂM\""
+  },
+  {
+   "ordinal": 8,
+   "stance": "right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"1. Hoàn thiện thể chế, chính sách thúc đẩy chuyển đổi năng lượng\""
+  },
+  {
+   "ordinal": 9,
+   "stance": "partly right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"IV. NGUỒN LỰC THỰC HIỆN Kinh phí thực hiện Đề án triển khai Tuyên bố JETP từ nguồn ngân sách nhà nước\"",
+   "problem": "The label is fine, but the content field is truncated and does not match the full printed paragraph verbatim; it omits the final sentence starting \"khuyến khích đầu tư tư nhân...\"."
+  },
+  {
+   "ordinal": 10,
+   "stance": "right",
+   "likelihood": "virtually certain",
+   "confidence": "very high",
+   "basis": "\"V. TỔ CHỨC THỰC HIỆN\""
+  },
+  {
+   "ordinal": 11,
+   "stance": "partly right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"Ban Thư ký thực hiện Tuyên bố JETP có nhiệm vụ tham mưu cho Thủ tướng Chính phủ trong chỉ đạo, điều hành và giải quyết các công việc triển khai thực hiện Tuyên bố JETP\"",
+   "problem": "The content field is truncated; the printed sentence continues \"đồng thời phối hợp với Nhóm các đối tác quốc tế trong triển khai thực hiện Tuyên bố JETP.\""
+  },
+  {
+   "ordinal": 12,
+   "stance": "partly right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"Nhóm Tổng hợp do Bộ trưởng Bộ Tài nguyên và Môi trường thành lập, một lãnh đạo cấp Thứ trưởng Bộ Tài nguyên và Môi trường làm Trưởng nhóm\"",
+   "problem": "The content field is truncated; it omits the rest of the printed responsibility sentence, including \"chịu trách nhiệm tổng hợp các hoạt động, báo cáo kết quả...\""
+  },
+  {
+   "ordinal": 13,
+   "stance": "partly right",
+   "likelihood": "very likely",
+   "confidence": "high",
+   "basis": "\"KT. THỦ TƯỚNG PHÓ THỦ TƯỚNG Trần Hồng Hà\"",
+   "problem": "The signer name is correct, but the label/anchor is not verbatim to the document formatting; the printed block is split across lines and includes only the signature block, while assigning a responsible_entity to the person is not what the publisher states."
+  }
+ ],
+ "missed": [
+  {
+   "page": 1,
+   "anchor": "Căn cứ Tuyên bố chính trị về thiết lập quan hệ đối tác",
+   "label": "Căn cứ Tuyên bố chính trị về thiết lập quan hệ đối tác với Việt Nam",
+   "why": "In scope: Preamble and Decision enactments on page 1."
+  },
+  {
+   "page": 2,
+   "anchor": "Nguồn đầu tư tư nhân là quan trọng trong quá trình chuyển đổi năng lượng công bằng",
+   "label": "3. Nguồn đầu tư tư nhân là quan trọng...",
+   "why": "In scope: Section I: Quan điểm."
+  },
+  {
+   "page": 3,
+   "anchor": "- Phát triển công nghiệp năng lượng tái tạo, nhất là công nghiệp chế tạo thiết bị năng lượng tái tạo",
+   "label": "- Phát triển công nghiệp năng lượng tái tạo...",
+   "why": "In scope: Section II: Mục tiêu, specific objectives to 2030."
+  },
+  {
+   "page": 4,
+   "anchor": "2. Thúc đẩy chuyển đổi điện than sang năng lượng sạch",
+   "label": "2. Thúc đẩy chuyển đổi điện than sang năng lượng sạch",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 5,
+   "anchor": "3. Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo",
+   "label": "3. Phát triển hệ sinh thái công nghiệp và dịch vụ về năng lượng tái tạo",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 6,
+   "anchor": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải",
+   "label": "6. Chuyển đổi năng lượng xanh, giảm phát thải khí nhà kính của ngành giao thông vận tải",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 7,
+   "anchor": "7. Đổi mới sáng tạo, phát triển và chuyển giao công nghệ",
+   "label": "7. Đổi mới sáng tạo, phát triển và chuyển giao công nghệ",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 8,
+   "anchor": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "label": "8. Bảo đảm công bằng trong chuyển đổi năng lượng",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 9,
+   "anchor": "9. Truyền thông, nâng cao nhận thức",
+   "label": "9. Truyền thông, nâng cao nhận thức",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 9,
+   "anchor": "10. Thúc đẩy hợp tác, huy động nguồn lực cho chuyển đổi năng lượng công bằng",
+   "label": "10. Thúc đẩy hợp tác, huy động nguồn lực cho chuyển đổi năng lượng công bằng",
+   "why": "In scope: Section III: Các nhiệm vụ trọng tâm."
+  },
+  {
+   "page": 10,
+   "anchor": "a) Nhóm Thể chế, Chính sách và Đầu tư do Bộ trưởng Bộ Kế hoạch và Đầu tư thành lập",
+   "label": "a) Nhóm Thể chế, Chính sách và Đầu tư",
+   "why": "In scope: Section V: Tổ chức thực hiện, working groups."
+  },
+  {
+   "page": 10,
+   "anchor": "c) Nhóm Công nghệ và Năng lượng do Bộ trưởng Bộ Công Thương thành lập",
+   "label": "c) Nhóm Công nghệ và Năng lượng",
+   "why": "In scope: Section V: Tổ chức thực hiện, working groups."
+  },
+  {
+   "page": 10,
+   "anchor": "d) Nhóm Tài chính do Bộ trưởng Bộ Tài chính thành lập",
+   "label": "d) Nhóm Tài chính",
+   "why": "In scope: Section V: Tổ chức thực hiện, working groups."
+  },
+  {
+   "page": 11,
+   "anchor": "a) Bộ Tài nguyên và Môi trường",
+   "label": "a) Bộ Tài nguyên và Môi trường",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 12,
+   "anchor": "b) Bộ Kế hoạch và Đầu tư",
+   "label": "b) Bộ Kế hoạch và Đầu tư",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 12,
+   "anchor": "c) Bộ Công Thương",
+   "label": "c) Bộ Công Thương",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 12,
+   "anchor": "d) Bộ Tài chính",
+   "label": "d) Bộ Tài chính",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 13,
+   "anchor": "đ) Bộ Lao động - Thương binh và Xã hội",
+   "label": "đ) Bộ Lao động - Thương binh và Xã hội",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 13,
+   "anchor": "e) Bộ Khoa học và Công nghệ",
+   "label": "e) Bộ Khoa học và Công nghệ",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 13,
+   "anchor": "g) Bộ Giao thông vận tải",
+   "label": "g) Bộ Giao thông vận tải",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 13,
+   "anchor": "h) Bộ Xây dựng",
+   "label": "h) Bộ Xây dựng",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "i) Bộ Nông nghiệp và Phát triển nông thôn",
+   "label": "i) Bộ Nông nghiệp và Phát triển nông thôn",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "k) Ngân hàng Nhà nước Việt Nam",
+   "label": "k) Ngân hàng Nhà nước Việt Nam",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "l) Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ",
+   "label": "l) Các bộ, cơ quan ngang bộ, cơ quan thuộc Chính phủ",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "m) Ủy ban quản lý vốn nhà nước tại doanh nghiệp",
+   "label": "m) Ủy ban quản lý vốn nhà nước tại doanh nghiệp",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "n) Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương",
+   "label": "n) Ủy ban nhân dân các tỉnh, thành phố trực thuộc trung ương",
+   "why": "In scope: Section V: agency assignments."
+  },
+  {
+   "page": 14,
+   "anchor": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày ký ban hành.",
+   "label": "Điều 2. Quyết định này có hiệu lực thi hành kể từ ngày ký ban hành.",
+   "why": "In scope: Closing Articles (Điều 2, Điều 3) and Signatory block."
+  },
+  {
+   "page": 15,
+   "anchor": "Điều 3. Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc Chính phủ",
+   "label": "Điều 3. Các Bộ trưởng, Thủ trưởng cơ quan ngang bộ, Thủ trưởng cơ quan thuộc Chính phủ",
+   "why": "In scope: Closing Articles (Điều 2, Điều 3) and Signatory block."
+  }
+ ],
+ "_method": {
+  "checker": "openai/gpt-5.4-mini",
+  "prompt_version": "spike-2026-09-30.3",
+  "temperature": 0.0,
+  "call": {
+   "t": "2026-09-30T13:36:37Z",
+   "stage": "check:vnm-decision-1009-2023",
+   "model": "openai/gpt-5.4-mini",
+   "served_model": "openai/gpt-5.4-mini",
+   "provider": "OpenAI",
+   "prompt_tokens": 11652,
+   "completion_tokens": 2357,
+   "cost_usd": 0.0139887,
+   "wall_s": 8.9,
+   "temperature": 0.0,
+   "max_tokens": 32000
+  }
+ }
+}

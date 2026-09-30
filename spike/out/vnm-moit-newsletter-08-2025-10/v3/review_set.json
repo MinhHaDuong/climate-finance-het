@@ -1,0 +1,204 @@
+{
+ "disagreements": [
+  {
+   "page": 3,
+   "anchor": "Trong số 7 dự án được các bên thống nhất xác định phù hợp với JETP từ năm 2024,",
+   "label": "03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD",
+   "classification": "count",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "funding_amount": "728 triệu USD",
+    "summary_content": "03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 11,
+   "ordinal": 7,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "Trong số 7 dự án được các bên thống nhất xác định phù hợp với JETP từ năm 2024,",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 7,
+    "stance": "partly right",
+    "likelihood": "very likely",
+    "confidence": "high",
+    "basis": "\"03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD\"",
+    "problem": "Label/summary compresses the source; the document says there are \"7 dự án\" identified from 2024 and \"03 dự án\" have accessed JETP finance, not exactly a standalone count item as labeled."
+   }
+  }
+ ],
+ "missed": [
+  {
+   "page": 1,
+   "anchor": "Chiều ngày 07/10/2025, Thứ trưởng Nguyễn Hoàng Long đã tiếp ông Iain Frew",
+   "label": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "why": "Trong phạm vi bài viết, là một sự kiện có ngày cụ thể về bên tham gia và thời điểm."
+  },
+  {
+   "page": 1,
+   "anchor": "Đại sứ cũng đề xuất Bộ Công Thương ký kết Biên bản ghi nhớ về hợp tác năng lượng",
+   "label": "Bộ Công Thương ký kết Biên bản ghi nhớ về hợp tác năng lượng",
+   "why": "Đây là một đề xuất/hành động được nêu rõ trong bài về phía Đại sứ Anh, thuộc cùng bài và cùng chủ đề."
+  },
+  {
+   "page": 1,
+   "anchor": "Ngày 7/10/2025, Thứ trưởng Nguyễn Hoàng Long đã có buổi làm việc với ông Rafael De Bustamante",
+   "label": "Thứ trưởng Nguyễn Hoàng Long làm việc với ông Rafael De Bustamante",
+   "why": "Một sự kiện riêng trong bài về hợp tác Việt Nam–EU, thuộc phạm vi."
+  },
+  {
+   "page": 1,
+   "anchor": "Là một thành viên chủ chốt của Nhóm các đối tác quốc tế (IPG)",
+   "label": "EU là thành viên chủ chốt của Nhóm các đối tác quốc tế (IPG)",
+   "why": "Thông tin về vai trò/tư cách của EU trong khuôn khổ JETP được nêu trong bài."
+  },
+  {
+   "page": 2,
+   "anchor": "Ngày 9/10 tại Brussels (Bỉ), ... EU đã công bố gói hỗ trợ trị giá 430 triệu Euro",
+   "label": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+   "why": "Đây là sự kiện chính trong bài, có ngày và địa điểm cụ thể."
+  },
+  {
+   "page": 2,
+   "anchor": "dự án Thủy điện tích năng Bác Ái (công suất dự kiến hơn 1.200 MW)",
+   "label": "Dự án Thủy điện tích năng Bác Ái",
+   "why": "Tên dự án được nêu là một dự án JETP liên quan đến gói hỗ trợ."
+  },
+  {
+   "page": 3,
+   "anchor": "gồm 44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD",
+   "label": "44 dự án phù hợp JETP với tổng vốn hơn 10 tỷ USD",
+   "why": "Đây là một xác nhận số lượng/tổng vốn về danh mục dự án trong phạm vi bài."
+  },
+  {
+   "page": 3,
+   "anchor": "Nghị định 242/2025/NĐ-CP mới về quản lý và sử dụng nguồn vốn ODA",
+   "label": "Nghị định 242/2025/NĐ-CP về quản lý và sử dụng nguồn vốn ODA",
+   "why": "Một nội dung cập nhật chính sách được nêu trong bài họp JETP, thuộc phạm vi."
+  },
+  {
+   "page": 3,
+   "anchor": "phát triển năng lượng mới, năng lượng tái tạo, nâng cấp hệ thống lưới điện",
+   "label": "Các lĩnh vực ưu tiên cho huy động nguồn lực JETP",
+   "why": "Đây là danh sách ưu tiên hợp tác được nêu rõ trong bài."
+  }
+ ],
+ "sample_of_agreed": [
+  {
+   "page": 3,
+   "anchor": "dự án Thủy điện tích năng Bắc Ái (557 triệu USD, đang trong giai đoạn đàm phán",
+   "label": "dự án Thủy điện tích năng Bắc Ái",
+   "classification": "named_item",
+   "own_status": "đang trong giai đoạn đàm phán thỏa thuận vốn",
+   "own_status_axis": "money",
+   "own_sector": "Thủy điện tích năng",
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "project_name": "dự án Thủy điện tích năng Bắc Ái",
+    "funding_amount": "557 triệu USD",
+    "status_or_stage": "đang trong giai đoạn đàm phán thỏa thuận vốn"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 12,
+   "ordinal": 8,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "dự án Thủy điện tích năng Bắc Ái (557 triệu USD, đang trong giai đoạn đàm phán",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 8,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"dự án Thủy điện tích năng Bắc Ái (557 triệu USD, đang trong giai đoạn đàm phán thỏa thuận vốn)\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "label": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "article_title": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 0,
+   "ordinal": 1,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 1,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam\"",
+    "problem": null
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "Dự án mở rộng nhà máy Thủy điện Trị An (93 triệu USD,",
+   "label": "Dự án mở rộng nhà máy Thủy điện Trị An",
+   "classification": "named_item",
+   "own_status": "đã ký kết thỏa thuận tài chính",
+   "own_status_axis": "money",
+   "own_sector": "Thủy điện",
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "project_name": "Dự án mở rộng nhà máy Thủy điện Trị An",
+    "funding_amount": "93 triệu USD",
+    "status_or_stage": "đã ký kết thỏa thuận tài chính với Tập đoàn điện lực Việt Nam",
+    "parties_involved": "Tập đoàn điện lực Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 14,
+   "ordinal": 10,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "Dự án mở rộng nhà máy Thủy điện Trị An (93 triệu USD,",
+    "adapter": "poppler-pdftotext 24.02.0"
+   },
+   "_check": {
+    "ordinal": 10,
+    "stance": "right",
+    "likelihood": "virtually certain",
+    "confidence": "very high",
+    "basis": "\"Dự án mở rộng nhà máy Thủy điện Trị An (93 triệu USD, đã ký kết thỏa thuận tài chính với Tập đoàn điện lực Việt Nam)\"",
+    "problem": null
+   }
+  }
+ ],
+ "unchecked": [],
+ "counts": {
+  "proposed": 15,
+  "rejected_by_locator": 5,
+  "agreed": 9,
+  "disagreements": 1,
+  "missed": 9,
+  "sample": 3,
+  "unchecked": 0,
+  "unclassified_waiting_review": 0
+ },
+ "author_minutes_estimate": 16.5
+}

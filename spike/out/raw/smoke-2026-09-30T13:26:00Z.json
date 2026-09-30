@@ -1,0 +1,54 @@
+{
+ "id": "gen-1790774758-K6nQwr2Fe9mAM2wgqdpr",
+ "object": "chat.completion",
+ "created": 1790774758,
+ "model": "google/gemini-3.8-flash",
+ "provider": "Google",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "STOP",
+   "message": {
+    "role": "assistant",
+    "content": "{\"a\": [1, 2]}",
+    "refusal": null,
+    "reasoning": null,
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "signature": "AY89a1+6sk3Cc4LPHOczB0QkzxPRs6LEuHsVlbHHAUIYh+HN9moc/62M/ZvBUz4UFvBWKUZ5cINZL7QEmGyBsadC/cNPKqJs2pUU7yh1nB/yvEAtplRUvAMXrLdld8YYIsOWrzwmKv9Y8eE4F91po2gLu2cDYPLnNHxOXyqneYwSW/7PUTRUVrpM5I81kz9V3Nlz4/x/3Z+legzzWgXTSxvP4pnQq/F7pt9vTSjqPEVUebufQbfUhnVZqVvO/piFkdsAxNB6RcSL4lKhlk8gvEVNV1AVJS9/mWc7P0FIDE4eMRlOximZa+WrUnPnzXDo3iE+YJyU9TsyoEdtfAnskuC+l3F3COcqTsHHtuH9byLvoNaavD/54mP9q0H1n4Xx888TY1RM49fDmEjAbphGPEYgWuo/ZjAg6/0zcVKkmTPZ3xAzrxKByMRWdujsOTEx+spGY2iZSckMD5g0O8lDzDx6fuqlH6/MZXpOR3pSBlMgeBGDcRZUJLdXzNQ1Qxqp4rxoW7B51sTu2VsJRnWCPMY4FyNqSjiPfbIdTcTPTlS44DAR5xZ9H2yv2g3V3BkYCA4tZY36+1HL7Rf6cBipDkpPD/A4aA71Tc9NFuZvfgUFZeVCDaScmUMRrgZlpJYtr6Y06tj4GvIMDnDKlOACjbIzy+Fl3Xfb69dNLqLmPWFfmUqBqTcC0y8cIh5JnIUN3pQgfIOj4MPOtlh2pw9OVxLLLa4ST5enhoDWRpQnQY1eJ0BWL3nNR9l+pS/+Gbz6T+kIB76JBvc5bJCAf+TeMAhB3YZ7EgA57OwWJuzPmvBKHmpSkoLh8YNyHF0JrVCGnBQPq9+kyzB9AhrwiW2Pio7bZTqs6pcMxq4HmKa30HD9Am26xCnXhyucOS8kGiK5+Q==",
+      "format": "google-gemini-v1",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 11,
+  "completion_tokens": 144,
+  "total_tokens": 155,
+  "cost": 0.00054825,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00054825,
+   "upstream_inference_prompt_cost": 8.25e-06,
+   "upstream_inference_completions_cost": 0.00054
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 135,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

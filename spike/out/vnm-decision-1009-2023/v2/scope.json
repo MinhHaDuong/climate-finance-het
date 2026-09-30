@@ -1,0 +1,79 @@
+{
+ "scope_in": [
+  {
+   "part": "Decision preamble, Article 1 (Approval of the Scheme to implement the Political Declaration on JETP: Viewpoints, Objectives, Key Tasks, Implementation Resources, Implementation Organization), Article 2 (Effective date), and Article 3 (Implementation responsibilities)",
+   "pages": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ]
+  }
+ ],
+ "scope_out": [
+  {
+   "part": "National motto, document metadata header, reference basis laws, distribution list ('Nơi nhận'), and signatory block boilerplate",
+   "reason": "Administrative boilerplate, formal legal references, and distribution notices outside core substantive JETP commitments, governance structures, and policy mandates."
+  },
+  {
+   "part": "Page headers and numbers",
+   "reason": "Repeated page furniture."
+  }
+ ],
+ "field_list": [
+  {
+   "name": "section_number",
+   "printed": false
+  },
+  {
+   "name": "section_heading",
+   "printed": false
+  },
+  {
+   "name": "topic",
+   "printed": false
+  },
+  {
+   "name": "responsible_entity",
+   "printed": false
+  },
+  {
+   "name": "action_or_target",
+   "printed": false
+  },
+  {
+   "name": "timeframe",
+   "printed": false
+  }
+ ],
+ "charts_without_text": [],
+ "notes": "The document is an official government legal decision in continuous regulatory prose with numbered and titled sections (I to V and Articles 1 to 3) without standardized tabular columns or printed metadata field headers. The reader-supplied fields represent the minimal set necessary to capture policy targets, institutional assignments, and implementation stages.",
+ "_method": {
+  "model": "google/gemini-3.8-flash",
+  "prompt_version": "spike-2026-09-30.2",
+  "call": {
+   "t": "2026-09-30T13:28:28Z",
+   "stage": "scope:vnm-decision-1009-2023",
+   "model": "google/gemini-3.8-flash",
+   "served_model": "google/gemini-3.8-flash",
+   "provider": "Google",
+   "prompt_tokens": 8617,
+   "completion_tokens": 617,
+   "cost_usd": 0.0087765,
+   "wall_s": 6.1,
+   "temperature": 0.0,
+   "max_tokens": 4000
+  }
+ }
+}

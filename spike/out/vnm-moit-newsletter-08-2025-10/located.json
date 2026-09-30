@@ -1,0 +1,442 @@
+{
+ "kept": [
+  {
+   "page": 1,
+   "anchor": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "label": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "article_title": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 0,
+   "ordinal": 1,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "Chiều ngày 07/10/2025, Thứ trưởng Nguyễn Hoàng Long đã tiếp ông Iain Frew",
+   "label": "Chiều ngày 07/10/2025, Thứ trưởng Nguyễn Hoàng Long đã tiếp ông Iain Frew - Đại sứ Vương quốc Anh tại Việt Nam",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "năng lượng và chuyển đổi xanh",
+   "group_anchor": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "fields": {
+    "date": "07/10/2025",
+    "parties_involved": "Thứ trưởng Nguyễn Hoàng Long đã tiếp ông Iain Frew - Đại sứ Vương quốc Anh tại Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 1,
+   "ordinal": 2,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Chiều ngày 07/10/2025, Thứ trưởng Nguyễn Hoàng Long đã tiếp ông Iain Frew",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "Đại sứ cũng đề\nxuất Bộ Công Thương ký kết Biên bản ghi nhớ về hợp tác năng lượng",
+   "label": "Đại sứ cũng đề xuất Bộ Công Thương ký kết Biên bản ghi nhớ về hợp tác năng lượng",
+   "classification": "submission",
+   "own_status": "đề xuất",
+   "own_status_axis": "project_stage",
+   "own_sector": "hợp tác năng lượng",
+   "group_anchor": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "fields": {
+    "parties_involved": "Bộ Công Thương",
+    "stage_or_decision": "đề\nxuất Bộ Công Thương ký kết Biên bản ghi nhớ"
+   },
+   "speaker": "Đại sứ Iain Frew",
+   "note": null,
+   "_proposal_index": 2,
+   "ordinal": 3,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Đại sứ cũng đề xuất Bộ Công Thương ký kết Biên bản ghi nhớ về hợp tác năng lượng",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "Kết thúc buổi làm việc, Thứ trưởng Nguyễn Hoàng Long nhất trí với đề xuất này",
+   "label": "Kết thúc buổi làm việc, Thứ trưởng Nguyễn Hoàng Long nhất trí với đề xuất này",
+   "classification": "evaluation",
+   "own_status": "nhất trí",
+   "own_status_axis": "project_stage",
+   "own_sector": "hợp tác năng lượng",
+   "group_anchor": "Thứ trưởng Nguyễn Hoàng Long tiếp Đại sứ Anh tại Việt Nam",
+   "fields": {
+    "parties_involved": "Thứ trưởng Nguyễn Hoàng Long",
+    "stage_or_decision": "nhất trí với đề xuất này"
+   },
+   "speaker": "Thứ trưởng Nguyễn Hoàng Long",
+   "note": null,
+   "_proposal_index": 3,
+   "ordinal": 4,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Kết thúc buổi làm việc, Thứ trưởng Nguyễn Hoàng Long nhất trí với đề xuất này",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh",
+   "label": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "article_title": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 4,
+   "ordinal": 5,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 1,
+   "anchor": "Ngày 7/10/2025, Thứ trưởng Nguyễn Hoàng Long đã có buổi làm việc với ông Rafael",
+   "label": "Ngày 7/10/2025, Thứ trưởng Nguyễn Hoàng Long đã có buổi làm việc với ông Rafael De Bustamante, Phó trưởng Phái đoàn Liên minh châu Âu (EU) tại Việt Nam",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "năng lượng, chuyển đổi xanh",
+   "group_anchor": "Việt Nam – EU tăng cường hợp tác trong lĩnh vực năng lượng và chuyển đổi xanh",
+   "fields": {
+    "date": "7/10/2025",
+    "parties_involved": "Thứ trưởng Nguyễn Hoàng Long đã có buổi làm việc với ông Rafael De Bustamante, Phó trưởng Phái đoàn Liên minh châu Âu (EU) tại Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 5,
+   "ordinal": 6,
+   "locator": {
+    "page_index": 1,
+    "folio": null,
+    "text_anchor": "Ngày 7/10/2025, Thứ trưởng Nguyễn Hoàng Long đã có buổi làm việc với ông Rafael",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+   "label": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "article_title": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+    "financial_amount": "430 triệu Euro"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 6,
+   "ordinal": 7,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Ngày 9/10 tại Brussels (Bỉ), trong khuôn khổ Diễn đàn Cửa ngõ Toàn cầu lần thứ",
+   "label": "Liên minh châu Âu (EU) đã công bố gói hỗ trợ trị giá 430 triệu Euro dành cho Việt Nam nhằm thúc đẩy Quan hệ đối tác chuyển đổi năng lượng công bằng (JETP)",
+   "classification": "envelope",
+   "own_status": "đã công bố",
+   "own_status_axis": "money",
+   "own_sector": null,
+   "group_anchor": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+   "fields": {
+    "date": "Ngày 9/10",
+    "parties_involved": "Liên minh châu Âu (EU)",
+    "financial_amount": "430 triệu Euro",
+    "stage_or_decision": "đã công bố gói hỗ trợ trị giá 430 triệu Euro dành cho Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_anchor_trimmed_from": "Ngày 9/10 tại Brussels (Bỉ), trong khuôn khổ Diễn đàn Cửa ngõ Toàn cầu lần thứ hai",
+   "_proposal_index": 7,
+   "ordinal": 8,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Ngày 9/10 tại Brussels (Bỉ), trong khuôn khổ Diễn đàn Cửa ngõ Toàn cầu lần thứ",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Ông Jozef Síkela cho biết, dự án Thủy điện tích năng Bác Ái",
+   "label": "dự án Thủy điện tích năng Bác Ái (công suất dự kiến hơn 1.200 MW)",
+   "classification": "named_item",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": "Thủy điện tích năng",
+   "group_anchor": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+   "fields": {
+    "project_name": "Thủy điện tích năng Bác Ái"
+   },
+   "speaker": "Ông Jozef Síkela",
+   "note": null,
+   "_proposal_index": 8,
+   "ordinal": 9,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Ông Jozef Síkela cho biết, dự án Thủy điện tích năng Bác Ái",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 2,
+   "anchor": "Gói hỗ trợ 430 triệu Euro được triển khai trong khuôn khổ hợp tác của Team",
+   "label": "Gói hỗ trợ 430 triệu Euro được triển khai trong khuôn khổ hợp tác của Team Europe",
+   "classification": "envelope",
+   "own_status": "được triển khai",
+   "own_status_axis": "money",
+   "own_sector": null,
+   "group_anchor": "EU công bố gói hỗ trợ 430 triệu Euro hỗ trợ Việt Nam thực hiện Tuyên bố JETP",
+   "fields": {
+    "parties_involved": "Team Europe gồm EU, các quốc gia thành viên và các định chế tài chính phát triển như AFD, EIB, KfW,\nCDP và PROPARCO",
+    "financial_amount": "430 triệu Euro",
+    "stage_or_decision": "được triển khai trong khuôn khổ hợp tác của Team Europe"
+   },
+   "speaker": null,
+   "note": null,
+   "_anchor_trimmed_from": "Gói hỗ trợ 430 triệu Euro được triển khai trong khuôn khổ hợp tác của Team Europe",
+   "_proposal_index": 9,
+   "ordinal": 10,
+   "locator": {
+    "page_index": 2,
+    "folio": null,
+    "text_anchor": "Gói hỗ trợ 430 triệu Euro được triển khai trong khuôn khổ hợp tác của Team",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "label": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "classification": "heading",
+   "own_status": null,
+   "own_status_axis": null,
+   "own_sector": null,
+   "group_anchor": null,
+   "fields": {
+    "article_title": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 10,
+   "ordinal": 11,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "Ngày 14/10/2025, tại Hà Nội, Ban Thư ký thực hiện Tuyên bố Chính trị",
+   "label": "Ban Thư ký thực hiện Tuyên bố Chính trị thiết lập Quan hệ đối tác chuyển đổi năng lượng công bằng (JETP) đã họp với Nhóm các đối tác quốc tế (IPG), Liên minh tài chính Glasgow vì mục tiêu phát thải ròng bằng “0” (GFANZ) và UNDP",
+   "classification": "named_item",
+   "own_status": "đã họp",
+   "own_status_axis": "project_stage",
+   "own_sector": null,
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "date": "14/10/2025",
+    "parties_involved": "Ban Thư ký thực hiện Tuyên bố Chính trị thiết lập Quan hệ đối tác chuyển đổi năng lượng công bằng (JETP) đã họp với Nhóm các đối tác quốc tế (IPG), Liên minh tài chính Glasgow vì mục tiêu phát thải ròng bằng “0” (GFANZ) và UNDP",
+    "stage_or_decision": "đã họp"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 11,
+   "ordinal": 12,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "Ngày 14/10/2025, tại Hà Nội, Ban Thư ký thực hiện Tuyên bố Chính trị",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "Trong số 7 dự án được các bên thống nhất xác định phù hợp với JETP từ năm 2024",
+   "label": "7 dự án được các bên thống nhất xác định phù hợp với JETP từ năm 2024",
+   "classification": "count",
+   "own_status": "thống nhất xác định",
+   "own_status_axis": "project_stage",
+   "own_sector": null,
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "date": "năm 2024",
+    "stage_or_decision": "được các bên thống nhất xác định phù hợp với JETP"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 13,
+   "ordinal": 13,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "Trong số 7 dự án được các bên thống nhất xác định phù hợp với JETP từ năm 2024",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "đến nay đã có 03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD",
+   "label": "03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD",
+   "classification": "count",
+   "own_status": "tiếp cận tài chính",
+   "own_status_axis": "money",
+   "own_sector": null,
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "financial_amount": "728 triệu USD",
+    "stage_or_decision": "tiếp cận tài chính JETP"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 14,
+   "ordinal": 14,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "đến nay đã có 03 dự án tiếp cận tài chính JETP với số vốn là 728 triệu USD",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "gồm dự án Thủy điện tích năng Bắc Ái (557 triệu USD",
+   "label": "dự án Thủy điện tích năng Bắc Ái (557 triệu USD, đang trong giai đoạn đàm phán thỏa thuận vốn)",
+   "classification": "named_item",
+   "own_status": "đang trong giai đoạn đàm phán thỏa thuận vốn",
+   "own_status_axis": "project_stage",
+   "own_sector": "Thủy điện tích năng",
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "project_name": "dự án Thủy điện tích năng Bắc Ái",
+    "financial_amount": "557 triệu USD",
+    "stage_or_decision": "đang trong giai đoạn đàm phán thỏa thuận vốn"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 15,
+   "ordinal": 15,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "gồm dự án Thủy điện tích năng Bắc Ái (557 triệu USD",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "dự án đường dây tải điện Thành phố Hồ Chí Minh – Bình Dương",
+   "label": "dự án đường dây tải điện Thành phố Hồ Chí Minh – Bình Dương (78 triệu USD, đã ký kết thỏa thuận tài chính với Tập đoàn điện lực Việt Nam)",
+   "classification": "named_item",
+   "own_status": "đã ký kết thỏa thuận tài chính",
+   "own_status_axis": "project_stage",
+   "own_sector": "đường dây tải điện",
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "parties_involved": "Tập đoàn điện lực Việt Nam",
+    "project_name": "dự án đường dây tải điện Thành phố Hồ Chí Minh – Bình Dương",
+    "financial_amount": "78 triệu USD",
+    "stage_or_decision": "đã ký kết thỏa thuận tài chính với Tập đoàn điện lực Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 16,
+   "ordinal": 16,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "dự án đường dây tải điện Thành phố Hồ Chí Minh – Bình Dương",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  },
+  {
+   "page": 3,
+   "anchor": "và Dự án mở rộng nhà máy Thủy điện Trị An",
+   "label": "Dự án mở rộng nhà máy Thủy điện Trị An (93 triệu USD, đã ký kết thỏa thuận tài chính với Tập đoàn điện lực Việt Nam)",
+   "classification": "named_item",
+   "own_status": "đã ký kết thỏa thuận tài chính",
+   "own_status_axis": "project_stage",
+   "own_sector": "Thủy điện",
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "parties_involved": "Tập đoàn điện lực Việt Nam",
+    "project_name": "Dự án mở rộng nhà máy Thủy điện Trị An",
+    "financial_amount": "93 triệu USD",
+    "stage_or_decision": "đã ký kết thỏa thuận tài chính với Tập đoàn điện lực Việt Nam"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 17,
+   "ordinal": 17,
+   "locator": {
+    "page_index": 3,
+    "folio": null,
+    "text_anchor": "và Dự án mở rộng nhà máy Thủy điện Trị An",
+    "adapter": "poppler-pdftotext 24.02.0"
+   }
+  }
+ ],
+ "rejected": [
+  {
+   "page": 3,
+   "anchor": "Theo thông tin cập nhật, các bên đã rà soát và thống nhất danh mục các dự án",
+   "label": "danh mục các dự án phù hợp JETP tới nay gồm 44 dự án, với tổng số vốn cần huy động hơn 10 tỷ USD",
+   "classification": "count",
+   "own_status": "đã rà soát và thống nhất",
+   "own_status_axis": "project_stage",
+   "own_sector": null,
+   "group_anchor": "Thúc đẩy triển khai JETP theo tinh thần Nghị quyết số 70-NQ/TW",
+   "fields": {
+    "financial_amount": "hơn 10 tỷ USD",
+    "stage_or_decision": "đã rà soát và thống nhất danh mục các dự án phù hợp JETP tới nay gồm 44 dự án"
+   },
+   "speaker": null,
+   "note": null,
+   "_proposal_index": 12,
+   "_reasons": [
+    "label not found verbatim on the page",
+    "value of 'stage_or_decision' not found near the anchor: 'đã rà soát và thống nhất danh mục các dự án phù hợp JETP tới nay gồm 44 dự án'"
+   ]
+  }
+ ]
+}
