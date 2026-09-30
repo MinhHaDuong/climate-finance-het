@@ -442,10 +442,8 @@ statements or a recorded disposition and its reason (duplicate of a
 canonical document, non-canonical translation, no snapshot, no extractable
 content). *M2.* Test: the count of documents with neither is zero.
 
-**F5. The pending work is computable.** The pending list, as the extraction
-document defines it (a snapshot with no statements and no disposition of its
-own, whose document has no document-level disposition), is derivable at any
-time and is the input of every run, so that later recurring passes reuse the M2 pipeline. *M2.* Test: after
+**F5. The pending work is computable.** The pending list of Extraction § 2
+is derivable at any time and is the input of every run, so that later recurring passes reuse the M2 pipeline. *M2.* Test: after
 a new snapshot is registered, the pending set contains exactly it.
 
 ### 4.2 Statements and traceability

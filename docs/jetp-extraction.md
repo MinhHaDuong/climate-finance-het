@@ -120,8 +120,9 @@ Three things are settled before any statement is extracted.
   restatements (section 8). [M2; the pairing, M3b]
 
 The input of every run is the pending list. A snapshot is pending when it
-has no statements and no snapshot-level disposition, and its document has no
-document-level disposition (section 7): so a snapshot of a `duplicate` or
+has no statement, no snapshot-level disposition and no whole-snapshot
+restatement (section 8) in force, and its document has no document-level
+disposition in force (section 7): so a snapshot of a `duplicate` or
 `out_of_scope` document is never pending. A registered document with no
 snapshot and no disposition is pending as a document, and its only outcome
 is `no_snapshot`. A backlog run and a later periodic run start from the same
@@ -566,8 +567,8 @@ The kinds, closed and grown only by decision:
 | `deferred` | snapshot | held and in scope, not extracted yet; names the milestone it waits for and why (a run budget reached, a format no method reads yet) |
 
 A snapshot that is byte-identical to one already extracted is not a new snapshot
-and needs neither statements nor a disposition; nor does a new snapshot
-whose normalised text is identical (section 8). [M2]
+and needs neither statements nor a disposition; a new snapshot whose
+normalised text is identical is recorded as a restatement (section 8). [M2]
 
 A `deferred` disposition closes a document for the purpose of a run's
 completeness, but a run reports the deferred documents apart, by country and
@@ -597,8 +598,9 @@ a register) changes between fetches. The rules below apply
   earlier snapshots are not touched. [M2]
 - **Restatement.** A statement of the new snapshot whose item and verbatim
   content match a statement of an earlier snapshot of the same document is a
-  restatement. It is kept, under its own snapshot, and linked to the
-  statement where that content first appeared (its origin), never to the
+  restatement. It is kept, under its own snapshot, and linked by a
+  restatement record, never a `same_as`, to the statement where that
+  content first appeared (its origin), never to the
   previous restatement, so every restatement is one step from its origin.
   The ledger can then answer every date on which a content was printed. A
   restatement is persistence, not corroboration. Restatement is judged
