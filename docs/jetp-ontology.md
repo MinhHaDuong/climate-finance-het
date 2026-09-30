@@ -1,17 +1,13 @@
 # JETP ledger ontology
 
 It fixes what the ledger talks about: its classes, relations, value lists and
-status axes, and the ontology tables that define and revise them. It holds
-no rule for combining statements, no storage and no presentation:
-
-- [`jetp-fusion.md`](jetp-fusion.md), how statements are combined, weighed and revised;
-- [`jetp-ledger-storage.md`](jetp-ledger-storage.md), the storage contract: tables, validation rules, engine, matching, translations;
-- [`attic/jetp-ledger-migration.md`](attic/jetp-ledger-migration.md), the migration from the previous tables;
-- [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md), what readers see.
-
-The author's design decisions, with their reasons, are kept in the
-[attic](attic/jetp-ontology-decisions-2026-09.md); their effect is the text
-below.
+status axes, and the ontology tables that define and revise them. How
+statements are combined is [`jetp-fusion.md`](jetp-fusion.md); the tables,
+validation rules and engine are the
+[storage contract](jetp-ledger-storage.md); what readers see is
+[`jetp-observatory-presentation.md`](jetp-observatory-presentation.md). The
+author's design decisions, with their reasons, are in the
+[attic](attic/jetp-ontology-decisions-2026-09.md).
 
 History: version 2 of the ontology, decided by the author on 2026-09-22
 and 2026-09-23 and migrated by the 0870 train.
@@ -21,39 +17,30 @@ and 2026-09-23 and migrated by the 0870 train.
 The ledger is the Data of the ODEM frame (Ontology, Data, Evidence, Models),
 guided by the Ontology this document defines; Evidence is computed on top,
 and there is no Model. Data is a pipeline of four steps: D1 register, D2
-lines, D3 observations, D4 referents. The frame, the step-to-table map and the
-terms the design documents and schema use or avoid are
-[`jetp-language.md`](jetp-language.md). What readers of the Observatory see is
-[`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
+lines, D3 observations, D4 referents ([`jetp-language.md`](jetp-language.md)).
 
-**Reading in W3C PROV.** The justification chain maps onto the provenance
-model of W3C PROV without a PROV engine or an RDF store; the mapping is what
-the RO-Crate option of [results](jetp-results.md) section 5 would export.
-[M4]
-
-| Ledger object or link | PROV |
-|---|---|
-| snapshot, line, observation, decision row, result, release | *Entity* |
-| retrieval, run, reading, judgement, release build | *Activity* |
-| publisher, method version, LLM reader, person | *Agent* |
-| a line and the snapshot it cites; a result and its inputs | *wasDerivedFrom* |
-| a snapshot and the retrieval that yielded it | *wasGeneratedBy* |
-| a run and the snapshots and lines it read | *used* |
-| a run or judgement and its method version, LLM and person | *wasAssociatedWith* |
-| a document and its publishers | *wasAttributedTo* |
-| a superseding row and the row it supersedes | *wasRevisionOf* |
+**Reading in W3C PROV.** The justification chain maps onto W3C PROV without
+a PROV engine or an RDF store: snapshots, lines, observations, decision
+rows, results and releases are *Entities*; retrievals, runs, readings,
+judgements and release builds are *Activities*; publishers, method
+versions, LLM readers and persons are *Agents*; a line and its snapshot, a
+result and its inputs are *wasDerivedFrom*; a snapshot and its retrieval
+*wasGeneratedBy*; a run and what it read *used*; a run or judgement and its
+method version, LLM and person *wasAssociatedWith*; a document and its
+publishers *wasAttributedTo*; a superseding row and the row it supersedes
+*wasRevisionOf*. The mapping is what the RO-Crate option of
+[results](jetp-results.md) section 5 would export. [M4]
 
 ## 1. Why a new schema
 
 The four partnerships publish lists, not project registries, and the
 previous schema read every list as projects, so that no count stated its
-unit. The case, from four reviews, is in the
-[attic](attic/jetp-ontology-decisions-2026-09.md).
+unit. The case is in the [attic](attic/jetp-ontology-decisions-2026-09.md).
 
 ## 2. Vocabulary
 
-Terms are ordered from the document register outward: who says it, in what, then what it
-is about.
+Terms are ordered from the document register outward: who says it, in what,
+then what it is about.
 
 ### Publisher
 
@@ -77,11 +64,10 @@ A logical publication: a title, a document type, a canonical URL, and one
 or more publishers. The document types are `political_declaration`,
 `investment_plan`, `implementation_plan`, `annual_report`, `progress_update`,
 `project_list`, `project_page`, `approval_document`, `financing_agreement`,
-`operator_report`, `official_news`, `secondary_news` and `data_portal`. The Resource Mobilisation Plan 2023, the Q1 2026 investment
-register, an EVN project page. Publication is a relation, not a column, so a
-declaration co-signed by a government and the International Partners Group, or
-a report issued jointly by a secretariat and a ministry, names every publisher.
-A document may have editions; an edition is a document related to its
+`operator_report`, `official_news`, `secondary_news` and `data_portal`.
+Publication is a relation, not a column, so a declaration co-signed by a
+government and the International Partners Group names every publisher. A
+document may have editions; an edition is a document related to its
 predecessor, either a revised edition or the next issue of a series. The
 successive versions of a living page are snapshots of one document, not
 editions. [M2]
@@ -90,15 +76,14 @@ editions. [M2]
 
 One attempt to fetch one document at one time: the date, the HTTP outcome,
 the headers that matter and, when bytes came back, the fingerprint of the
-snapshot they form. This is the current manifest row. A retrieval may fail
-and hold no snapshot; two retrievals may return the same bytes and share one
-snapshot, as the manifest already shows with a `not_modified` re-fetch three
-minutes after a collection. A retrieval's status is `collected`,
-`not_modified`, `blocked`, `missing`, `invalid_content`, `invalid_response`,
-`retryable_http_error`, `http_error`, `fetch_error`, `not_published` or
-`not_applicable`. The last two are not outcomes of a fetch: the terminal
-verdict that closes a search is collection's ([collection](jetp-collection.md)
-section 3), and how the two lists relate is a proposed schema change. [M2]
+snapshot they form. A retrieval may fail and hold no snapshot; two
+retrievals may return the same bytes and share one snapshot. A retrieval's
+status is `collected`, `not_modified`, `blocked`, `missing`,
+`invalid_content`, `invalid_response`, `retryable_http_error`, `http_error`,
+`fetch_error`, `not_published` or `not_applicable`. The last two are not
+outcomes of a fetch: the terminal verdict that closes a search is
+collection's ([collection](jetp-collection.md) section 3), and how the two
+lists relate is a proposed schema change. [M2]
 
 ### Snapshot
 
@@ -110,10 +95,10 @@ so that what was read can be re-read. [M2]
 ### Line
 
 One publisher's dated assertion at one locator in one snapshot. A row of the
-South African grants register, a line of a plan appendix, a position in an annex, a submission
-in a list of submissions, a heading that groups such lines, a count the
-publisher gives without naming what is counted. The line is the first-class
-unit of the ledger: every identity below is minted from lines, every observation
+South African grants register, a line of a plan appendix, a submission in a
+list of submissions, a heading that groups such lines, a count the publisher
+gives without naming what is counted. The line is the first-class unit of
+the ledger: every identity below is minted from lines, every observation
 cites one, and nothing is ever counted except lines and the identities that
 reviewed matches have produced from them. [M2]
 
@@ -122,17 +107,17 @@ ordinal in its table, the label the publisher printed, its classification
 (section 4), the publisher's own status word and which axis that word belongs
 to, and, when its document attributes the part that carries it to one of its
 publishers or to another party it names, that party; otherwise the line is its
-document's publishers', jointly. Everything else the publisher printed for that line is kept verbatim,
-field by field as printed. [M2]
+document's publishers', jointly. Everything else the publisher printed for
+that line is kept verbatim, field by field as printed. [M2]
 
 Every observation names the method and version that read it from its line,
 or the person who wrote it by hand. [M3b]
 
-Proposition and programme are classifications of lines, not kinds. A proposition is a line whose publisher puts something forward for a
-decision not yet taken: a Senegal Annex 2 submission, a Viet Nam Annex I.2
-partner proposal. A programme heading is a line that groups other lines under
-a governance or budget envelope. Neither is an identity. Two propositions may
-describe one future project and a proposition may die without one. [M2]
+Proposition and programme are classifications of lines, not kinds. A
+proposition is a line whose publisher puts something forward for a decision
+not yet taken: a Senegal Annex 2 submission, a Viet Nam Annex I.2 partner
+proposal. A programme heading is a line that groups other lines under a
+governance or budget envelope. Neither is an identity. [M2]
 
 ### Project
 
@@ -148,40 +133,41 @@ may have none of its own. [M3b]
 A physical thing at a site: a plant, a unit within a plant, a transmission line,
 a substation, a mini-grid. Carries capacity, technology and location; its
 operator is a party attached by a dated `party_in` row, so a change of
-operator is a new row, not an edited attribute. It moves through an asset lifecycle aligned to Global Energy Monitor's
-status list, so that early retirement, mothballing and fuel conversion are
-expressible as asset states. Coal retirement is a unit fact: an asset may be a
-unit whose `part_of` is a plant. Minted only by a reviewed match. An asset can
-exist with no project: the plan line for Pelabuhan Ratu names a plant and a
-retirement year and matches no undertaking. [M3b]
+operator is a new row, not an edited attribute. It moves through an asset
+lifecycle aligned to Global Energy Monitor's status list, so that early
+retirement, mothballing and fuel conversion are expressible as asset states.
+Coal retirement is a unit fact: an asset may be a unit whose `part_of` is a
+plant. Minted only by a reviewed match. An asset can exist with no project:
+the plan line for Pelabuhan Ratu names a plant and a retirement year and
+matches no undertaking. [M3b]
 
 ### Agreement
 
 Funder-side money: a party commits an amount under an instrument to a
-counterparty. A grant line of the South African grants register, a loan, a results-based lending
-operation, a term sheet before signature. States are states of the document
-that embodies it: announced, MoU, approved, signed, cancelled, withdrawn.
-Money movements are flows on the agreement, typed by the IATI transaction list:
-pledge (IATI's incoming and outgoing pledge, since version 2.03 of the
-standard), commitment, disbursement, expenditure. An operation, in the
-lenders' sense ([language](jetp-language.md)), is an agreement; a tranche or
-a successive loan under one programme is an agreement of its own related by
-`tranche_of`, never an amount split within one agreement. A plan cost estimate is not an
-agreement state; it is an observation on a line ([storage contract](jetp-ledger-storage.md) section 1). An agreement
-may be a tranche of another (`tranche_of`) and finances zero or more projects
+counterparty. A grant line of the South African grants register, a loan, a
+results-based lending operation, a term sheet before signature. States are
+states of the document that embodies it: announced, MoU, approved, signed,
+cancelled, withdrawn. Money movements are flows on the agreement, typed by
+the IATI transaction list: pledge (IATI's incoming and outgoing pledge,
+since version 2.03 of the standard), commitment, disbursement, expenditure.
+An operation, in the lenders' sense ([language](jetp-language.md)), is an
+agreement; a tranche or a successive loan under one programme is an
+agreement of its own related by `tranche_of`, never an amount split within
+one agreement. A plan cost estimate is not an agreement state; it is an
+observation on a line. An agreement finances zero or more projects
 (`finances`); the hierarchy never splits money. [M3b]
 
-An agreement carries a `modality`, the OECD DAC type-of-aid code: budget support (`A01`, `A02`), core contributions (`B01`,
-`B02`, `B03`, `B04`), project-type interventions (`C01`), experts and
-technical assistance (`D01`, `D02`), scholarships (`E01`), debt relief
-(`F01`), and `unknown` when no line states it. Modality is a classification assigned from a line through a referent
-decision, never inferred from the instrument word. Loan terms, interest rate,
-maturity, grace period and the resulting grant element, are observations on
-the agreement, because a publisher reports them at a date and another may
-contradict them. A conditionality is an observation on the agreement of
-measure `condition`, whose value is the condition as printed and whose
-`concerns` relation names the party it binds, so that an AFD loan tied to a
-tariff reform at Senelec is one agreement, one condition, one party. [M3b]
+An agreement carries a `modality`, the OECD DAC type-of-aid code: budget
+support (`A01`, `A02`), core contributions (`B01`, `B02`, `B03`, `B04`),
+project-type interventions (`C01`), experts and technical assistance
+(`D01`, `D02`), scholarships (`E01`), debt relief (`F01`), and `unknown`
+when no line states it. Modality is assigned from a line through a referent
+decision, never inferred from the instrument word. Loan terms, interest
+rate, maturity, grace period and the resulting grant element, are
+observations on the agreement, because a publisher reports them at a date
+and another may contradict them. A conditionality is an observation on the
+agreement of measure `condition`, whose value is the condition as printed
+and whose `concerns` relation names the party it binds. [M3b]
 
 ### Party
 
@@ -193,9 +179,8 @@ roles attach to an agreement, a project or an asset through `party_in`; a
 mandate outside any of them (a lead agency, a guarantor, a signatory) goes
 through `role_in` (section 3). [M2 for publishers; M3b for the other roles]
 
-Parties are under authority control, as in a library's name authority file
-or the ROR and GLEIF registries. A party row holds no name;
-its names are party name rows, one per form as printed, each with a form type,
+Parties are under authority control. A party row holds no name; its names
+are party name rows, one per form as printed, each with a form type,
 `acronym`, `translation`, `spelling_or_case_variant` or `former_name` (or
 none for the plain form), a language, the document or line it was read
 from, and whether it is the preferred form. Being preferred is a flag, not a
@@ -209,21 +194,20 @@ carries the flag. [M2 for the names of publishers; M3b for other parties]
 A coverage definition stated by a publisher: the partnership pledge envelope
 and its revisions, a publisher-defined portfolio of 24 records of which 21 are
 unnamed, a procurement quota of 250 MW, a plan's list at a cutoff.
-Membership is a justified relation, not a list. A count slot is a perimeter observation,
-"this publisher counted 24 at this date", not 21 rows in a table. A scope
-that the analysis defines to count against, such as a reference pool of
-comparator operations, is a method choice, not a perimeter of the ontology
-([fusion](jetp-fusion.md), section 6). [M3b]
+Membership is a justified relation, not a list. A count slot is a perimeter
+observation, "this publisher counted 24 at this date", not 21 rows in a
+table. A scope that the analysis defines to count against is a method
+choice, not a perimeter of the ontology ([fusion](jetp-fusion.md), section
+6). [M3b]
 
 ### External identifier
 
 A code another identifier scheme uses for one of the ledger's identities or
-lines: a
-World Bank P-number, a CRS `crs_id` or `donor_project_id`, an IATI activity
-identifier, a GEM unit id; for a party, an IATI organisation identifier, a ROR
-identifier, an LEI or a Wikidata item. One table holds them all, typed by
-scheme, so a comparator record and a ledger identity meet on a key rather than
-on a name. What an identifier decides is a fusion rule
+lines: a World Bank P-number, a CRS `crs_id` or `donor_project_id`, an IATI
+activity identifier, a GEM unit id; for a party, an IATI organisation
+identifier, a ROR identifier, an LEI or a Wikidata item. One table holds
+them all, typed by scheme, so a comparator record and a ledger identity meet
+on a key rather than on a name. What an identifier decides is a fusion rule
 ([fusion](jetp-fusion.md), section 3). [M3b]
 
 ### Comparator record
@@ -233,7 +217,8 @@ project from the projects API, a CRS activity, an IATI activity. It is a
 line of a snapshot whose document is the dataset edition and whose publisher
 is the institution, with its own fields verbatim, its identifiers in the
 external-identifier table and its statuses crosswalked like any publisher's.
-Nothing in the ledger treats a comparator record as a project of a partnership. [M3b]
+Nothing in the ledger treats a comparator record as a project of a
+partnership. [M3b]
 
 ### Observation
 
@@ -245,22 +230,20 @@ no identity has been minted. An observation has one or more timings, each
 with a role from one closed list of nine (`event`, `approval`,
 `reporting_cutoff`, `register_date`, `report_date`, `planned`, `target`,
 `period_start`, `period_end`; the last two bound a flow over an interval,
-section 4), a precision (`day`, `month`, `quarter`, `year`,
-`unknown`) and bounds, so that an approval known only to the year
-and the cutoff of the report that states it are both kept. Values are the
-publisher's, in the publisher's unit and currency; conversion is a
-derivation through the sourced `rates` table. An observation names its
-`measure` from the closed list of section 4, its `basis` (`gross`, `net`,
-`unknown`) where money is involved, and its `flow_type` from the IATI list when
-the measure is a flow. It carries `recorded_at`, the date the ledger wrote
-it, and the same `status` and `supersedes` as a decision row. Supersession
-corrects the ledger's own errors (a misread value, a false match, a faulty
-extraction rule), never a publisher: a later statement that prints a
-different value is a new observation beside the old one, and one that prints
-the same value again is a dated restatement ([fusion](jetp-fusion.md),
-section 2).
-Subjects also include `country`, for macro-fiscal indicators (GDP, external debt;
-a utility's debt ratio is on a `party`), each with its indicator code from the publisher's own list. [M3b]
+section 4), a precision (`day`, `month`, `quarter`, `year`, `unknown`) and
+bounds. Values are the publisher's, in the publisher's unit and currency;
+conversion is a derivation through the sourced `rates` table. An
+observation names its `measure` from the closed list of section 4, its
+`basis` (`gross`, `net`, `unknown`) where money is involved, and its
+`flow_type` from the IATI list when the measure is a flow. It carries
+`recorded_at`, the date the ledger wrote it, and the same `status` and
+`supersedes` as a decision row. Supersession corrects the ledger's own
+errors, never a publisher: a later statement that prints a different value
+is a new observation beside the old one, and one that prints the same value
+again is a dated restatement ([fusion](jetp-fusion.md), section 2).
+Subjects also include `country`, for macro-fiscal indicators (GDP, external
+debt; a utility's debt ratio is on a `party`), each with its indicator code
+from the publisher's own list. [M3b]
 
 ### Crosswalk
 
@@ -312,15 +295,15 @@ method versions ([extraction](jetp-extraction.md) section 3). [M2]
 digits; the 231 to 236 group covers energy policy, generation by source,
 distribution and efficiency), because CRS records carry it, IATI uses it by
 default and the World Bank taxonomy crosswalks to it. It is handled like a
-status axis: the publisher's own word, a South African window, an
-Indonesian technology group, a plan appendix's label, a World Bank sector
-code, stays verbatim on the line, and a reviewed, dated `sector-crosswalk`
-row maps each publisher scheme onto a purpose code. Sector appears on a line
-as `own_sector`, on an agreement and a project as `sector` assigned through
-a referent decision, and on an observation by inheritance from its subject.
-Technology is a separate attribute of assets, aligned to the Global Energy
-Monitor list: a sector says what the money is for, a technology says what
-the plant is. [M2 for the publisher's own sector word on the line; M3b for the crosswalk and the assigned sector]
+status axis: the publisher's own word stays verbatim on the line, and a
+reviewed, dated `sector-crosswalk` row maps each publisher scheme onto a
+purpose code. Sector appears on a line as `own_sector`, on an agreement and
+a project as `sector` assigned through a referent decision, and on an
+observation by inheritance from its subject. Technology is a separate
+attribute of assets, aligned to the Global Energy Monitor list: a sector
+says what the money is for, a technology says what the plant is. [M2 for
+the publisher's own sector word on the line; M3b for the crosswalk and the
+assigned sector]
 
 A **transition function** (requirement F18) is a classification of an
 agreement or a project, assigned like `sector` through a referent decision,
@@ -344,17 +327,16 @@ under the marker definition of that year. The "climate finance" that a
 marker yields is the score times a coefficient, 100 percent for principal
 and 40, 50 or 100 percent for significant depending on the donor and the
 year. The coefficient is a sourced parameter of a derived account, not a
-word of the ontology ([fusion](jetp-fusion.md), section 7); it is kept for
-now in the `marker-coefficients` table (section 5), which is used from M4,
-or from M3b if the comparison of requirement F19 uses climate-marked
-amounts. A value may be a range: `value_low` and
-`value_high` bound it, as the timing bounds bound a date, and a scalar has
-both equal. [M3b]
+word of the ontology ([fusion](jetp-fusion.md), section 7); it is kept in
+the `marker-coefficients` table (section 5), used from M4, or from M3b if
+the comparison of requirement F19 uses climate-marked amounts. A value may
+be a range: `value_low` and `value_high` bound it, as the timing bounds
+bound a date, and a scalar has both equal. [M3b]
 
-Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow carries
-its interval through two of the timing roles of section 2, `period_start` and `period_end`, so a
-quarterly register total states the quarter it covers and the account
-of the [fusion rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
+Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow
+carries its interval through two of the timing roles of section 2,
+`period_start` and `period_end`, so the account of the [fusion
+rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
 `event` timing. [M3b]
 
 Four shared status axes, each sourced from an external list and extended only
@@ -371,15 +353,15 @@ where the four publishers' practice requires it:
 [M3b for the axes and their crosswalks]
 
 The publisher's own words, all of them, are kept: the South African
-register's `A. Planned`
-to `D. Completed`, Indonesia's modality and approval, Viet Nam's published or
-not published, Senegal's submitted, evaluated and quick win. Each maps through
-the crosswalk to at most one axis. A publisher's own scheme that reuses a
-word of this design, such as Indonesia's "Modality A" and "Modality B",
-stays a verbatim field of the line; `modality` on an agreement is only ever
-the DAC type-of-aid code. Where a publisher reports one axis only, the
-other two are absent for that line: the ledger states which axes a publisher
-reports rather than filling the others. [M2 for keeping the words; M3b for the crosswalk]
+register's `A. Planned` to `D. Completed`, Indonesia's modality and
+approval, Viet Nam's published or not published, Senegal's submitted,
+evaluated and quick win. Each maps through the crosswalk to at most one
+axis. A publisher's own scheme that reuses a word of this design, such as
+Indonesia's "Modality A" and "Modality B", stays a verbatim field of the
+line; `modality` on an agreement is only ever the DAC type-of-aid code.
+Where a publisher reports one axis only, the other two are absent for that
+line: the ledger states which axes a publisher reports rather than filling
+the others. [M2 for keeping the words; M3b for the crosswalk]
 
 ## 5. Ontology tables
 
@@ -393,8 +375,8 @@ paths are defined in the [storage contract](jetp-ledger-storage.md)
 **Definition.** Every word the schema admits as a value is a `terms` row: the
 classes and relations of sections 2 and 3, the line classifications, measures,
 bases, flow types, modalities, date roles, roles, axes and axis values of
-section 4. `kind` says which (`class`, `relation`, `value`); `list` names the closed
-list a value belongs to. The definition is plain English, one or two
+section 4. `kind` says which (`class`, `relation`, `value`); `list` names the
+closed list a value belongs to. The definition is plain English, one or two
 sentences, written for a reader of the Observatory. A relation term also
 states its `domain` and `range`. The DDL's checks read the terms in force; no
 script or configuration file carries its own copy of a list. Sections 2 to 4
@@ -411,25 +393,22 @@ itself. Similar labels do not justify `exactMatch`. A crosswalk row maps a
 publisher's word onto a term; a perimeter row defines a population that
 counts are made against. Both name who decided and when. A crosswalk row
 also states its mapping strength with the same SKOS relations, required when
-the row is accepted, since "D. Completed" onto `closed` and a word onto its
-identical label are not the same mapping; the two crosswalk tables gain
-`mapping_relation` as a target of the storage contract (section 1), and a
-result that counts by shared status or sector states the weakest mapping
-among the rows it used, in the order exactMatch, closeMatch, broadMatch or
-narrowMatch, relatedMatch, with the count of rows per relation. [M2 for terms; M3b for crosswalk rows]
+the row is accepted; the two crosswalk tables gain `mapping_relation` as a
+target of the storage contract (section 1), and a result that counts by
+shared status or sector states the weakest mapping among the rows it used,
+in the order exactMatch, closeMatch, broadMatch or narrowMatch,
+relatedMatch, with the count of rows per relation. [M2 for terms; M3b for
+crosswalk rows]
 
 **Revision.** The in-force rule of the decision tables applies (storage
-contract, section 1): a row is in force when it is the accepted terminal row
-of its chain, or an accepted row whose only successors are proposals not yet
-accepted or rejected, so a proposed revision leaves the adopted row in
-force. Rewording a
-definition or correcting a mapping supersedes the row under the same chain
-key. A change of meaning mints a new `term_id` or `perimeter_id`, and the old
-one stays valid for every row that used it; a count made against the old
-perimeter is never silently moved to the new one. The ontology as of cutoff K
-is the set of rows in force at K, so an as-of query reconstructs the words as
-well as the data. `decisions.md` keeps the reasons in prose and cites the row
-it explains. [M2]
+contract, section 1), so a proposed revision leaves the adopted row in
+force. Rewording a definition or correcting a mapping supersedes the row
+under the same chain key. A change of meaning mints a new `term_id` or
+`perimeter_id`, and the old one stays valid for every row that used it; a
+count made against the old perimeter is never silently moved to the new
+one. The ontology as of cutoff K is the set of rows in force at K, so an
+as-of query reconstructs the words as well as the data. `decisions.md`
+keeps the reasons in prose and cites the row it explains. [M2]
 
 **Reference from E.** Every derived result names the ontology version it was
 computed under, and a result is never recomputed under a later ontology
@@ -437,22 +416,20 @@ without a new run record. [M3b]
 
 ### English and formal specification
 
-This document is the English specification: it gives the reasons and the
-rules. The formal specification is the DDL of the [storage contract](jetp-ledger-storage.md) (section 3) together with the
-`terms` table. Nothing else is: no OWL file, no SHACL shapes and no second
-prose glossary. Alignment is checked, not trusted. A test fails
-when a value listed in sections 2 to 4 is not a term in force, or a term in
-force appears nowhere in this document, and when a table or column declared
-in the storage contract differs from the DDL. The Observatory's Glossary and a SKOS export
-(storage contract, section 3) are generated from the `terms` table; the SKOS
-export covers the value lists only (`kind` = `value`), one concept scheme
-per `list`, since SKOS does not model classes and relations, so the words a reader sees
-are the words the validator enforces. [M2 for the DDL and the alignment test; M3b for the Glossary and M4 for the SKOS export]
-
-LinkML was considered as the single source instead, generating the DDL, JSON
-Schema, OWL and documentation from one YAML file. It is not adopted now,
-because it adds a toolchain whose extra outputs have no consumer. The question
-reopens when an external consumer asks for OWL or JSON Schema. [later]
+This document is the English specification. The formal specification is the
+DDL of the [storage contract](jetp-ledger-storage.md) (section 3) together
+with the `terms` table; there is no OWL file, no SHACL shapes and no second
+prose glossary. A test fails when a value listed in sections 2 to 4 is not
+a term in force, or a term in force appears nowhere in this document, and
+when a table or column declared in the storage contract differs from the
+DDL. The Observatory's Glossary and a SKOS export (storage contract,
+section 3) are generated from the `terms` table; the SKOS export covers the
+value lists only (`kind` = `value`), one concept scheme per `list`. LinkML
+as a single source generating the DDL, JSON Schema, OWL and documentation
+is not adopted, since its extra outputs have no consumer; the question
+reopens when an external consumer asks for OWL or JSON Schema. [M2 for the
+DDL and the alignment test; M3b for the Glossary; M4 for the SKOS export;
+later for LinkML]
 
 History: the alignment test was written under ticket 0880; the ontology
 tables' keys and columns moved to the storage contract in review wave 1
