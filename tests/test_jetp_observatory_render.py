@@ -812,7 +812,7 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
 # the paper trail's steps sit in a second bar, the last three as parallel
 # siblings, and About's pages in the same bar as plain siblings.
 NAVIGATION = ["The paper trail", "The tallies", "About"]
-ABOUT = ["Glossary", "Methods", "Who we are"]
+ABOUT = ["Glossary", "Methods", "Who we are", "Legal"]
 STEPS = ["Documents", "Document rows", "Statements"]
 REFERENT_PAGES = ["Projects", "Funding", "Organisations"]
 TRAIL_ROUTES = ("documents", "document-rows", "document-rows/VNM", "statements", "statements/ZAF",
@@ -827,7 +827,7 @@ FORBIDDEN = re.compile(
     r"|\bfacts?\b|\bclaims?\b|\bdeals?\b|\bplayers?\b|\bsources\b|\bentities\b|\brecords\b",
     re.IGNORECASE,
 )
-ROUTES = ("overview", "the-paper-trail", "about", "who-we-are", "glossary", "documents", "document-rows", "statements", "projects",
+ROUTES = ("overview", "the-paper-trail", "about", "who-we-are", "legal", "glossary", "documents", "document-rows", "statements", "projects",
           "funding", "organisations", "counts", "money", "methods", "release-history",
           "non-jetp-energy-operations", *(f"funding/{code}" for code in COUNTRIES),
           "document-rows/VNM", "statements/ZAF", "project/" + BAC_AI)
@@ -898,7 +898,8 @@ SUB_PAGES = {
                                         "#funding", "#organisations"])),
     "the-tallies": [("Counts", "#counts"), ("Money", "#money"),
                     ("Non-JETP energy operations", "#non-jetp-energy-operations")],
-    "about": [("Glossary", "#glossary"), ("Methods", "#methods"), ("Who we are", "#who-we-are")],
+    "about": [("Glossary", "#glossary"), ("Methods", "#methods"), ("Who we are", "#who-we-are"),
+              ("Legal", "#legal")],
 }
 
 
@@ -1168,14 +1169,14 @@ def test_decision_confidence_falls_back_and_leaves_unscored_rows_last():
 
 @pytest.mark.parametrize(("route", "current"), [
     ("about", None), ("glossary", "Glossary"), ("methods", "Methods"),
-    ("who-we-are", "Who we are"), ("release-history", "Methods")])
+    ("who-we-are", "Who we are"), ("legal", "Legal"), ("release-history", "Methods")])
 def test_about_pages_show_the_about_sub_bar_as_plain_siblings(route, current) -> None:
     bar = step_bar(route)
     links = re.findall(r'<a href="#([^"]+)" data-sub="[^"]+"[^>]*?( aria-current="page")?>([^<]+)</a>', bar)
     assert [unescape(label) for *_, label in links] == ABOUT, bar
     assert [unescape(label) for _, mark, label in links if mark] == ([current] if current else [])
     # Plain siblings: one list item, so no arrow separates them.
-    assert bar.count("<li>") == 3 and 'data-sub-bar="about"' in bar and "›" not in bar
+    assert bar.count("<li>") == 4 and 'data-sub-bar="about"' in bar and "›" not in bar
     assert "data-step" not in bar
     # The release history is in no bar.
     assert "release-history" not in bar
@@ -1206,6 +1207,20 @@ def test_who_we_are_is_the_authors_text_and_nothing_else() -> None:
     assert re.findall(r'href="(https?://[^"]+)"', main) == [
         "https://minh.haduong.com", "https://orcid.org/0000-0001-9988-2100"]
     assert "placeholder" not in main and "@" not in text_of(main)
+
+
+# The Legal page (author, 2026-09-30; docs/jetp-legal-note.md): the five
+# blocks the note asks for, and nothing the author has not supplied — each
+# gap is a visible [TO CONFIRM], never an invented name or address.
+def test_the_legal_page_holds_the_notice_licence_terms_takedown_and_privacy() -> None:
+    main = render("legal")["main"]
+    assert re.findall(r'data-legal="([^"]+)"', main) == [
+        "notice", "licence", "publishers", "takedown", "privacy"]
+    text = text_of(main)
+    assert "CC BY 4.0" in text and "L122-5" in text and "no cookie" in text
+    assert "three days" in text and "CNIL" in text
+    assert "[TO CONFIRM" in text and "@" not in text
+    assert 'href="#release-history"' in main and 'href="#methods"' in main
 
 
 @pytest.mark.parametrize("route", ["documents", "statements", "document-rows", "organisations",

@@ -588,7 +588,7 @@ def check_sections(page, url):
     page.locator('header nav a[data-section="about"]').click()
     page.wait_for_selector('#step-bar [data-sub-bar="about"]')
     assert page.locator('#step-bar a[data-sub]').all_text_contents() == [
-        'Glossary', 'Methods', 'Who we are']
+        'Glossary', 'Methods', 'Who we are', 'Legal']
     page.locator('#step-bar a[data-sub="who-we-are"]').click()
     page.wait_for_selector('[data-who-we-are]')
     assert page.locator('#step-bar a[aria-current="page"]').inner_text() == 'Who we are'

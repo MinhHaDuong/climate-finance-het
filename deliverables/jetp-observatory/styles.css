@@ -1154,6 +1154,12 @@ header nav.section-tabs .sections > .section > a.active {
 .scope-chip a:hover {
   background: var(--white);
 }
+/* Legal page: what the author has not supplied is shown, never hidden. */
+mark.to-confirm {
+  background: #fff3c4;
+  color: inherit;
+  padding: 0 3px;
+}
 details.about {
   margin: -6px 0 18px;
   font-size: 14px;

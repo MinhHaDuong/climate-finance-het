@@ -69,4 +69,8 @@ Design history, superseded plans and dated review records are in
 [`attic/`](attic/README.md): provenance, never authority. Reviews of the
 specification itself are tickets 1710 and 1711, archived with their findings
 ledgers under [`jetp-spec-review/`](jetp-spec-review/wave-1/README.md); version 1 is tagged
-`jetp-spec-v1` once the author accepts it.
+`jetp-spec-v1` once the author accepts it. The [legal note](jetp-legal-note.md)
+is a supporting document (author, 2026-09-30, on finding W1-29): the legal
+basis under French law for collecting, redistributing, reading with language
+models, publishing the site and licensing the releases, with the open points
+for the CNRS legal service; it is not legal advice.
