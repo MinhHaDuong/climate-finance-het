@@ -111,3 +111,28 @@ def no_mailto_get(url, params=None, delay=1.0):
     return retry_get(url, params=params, delay=delay, max_retries=POLITE_MAX_RETRIES,
                      timeout=30, mailto=None,
                      user_agent=f"ClimateFinancePipeline/1.0 (mailto:{MAILTO})")
+
+
+# Characters XML 1.0 forbids; OJS lets them through from pasted abstracts
+# (U+FFFE inside an AJOL abstract broke a whole OAI page, 2026-09-30).
+XML_INVALID_RE = re.compile("[^\x09\x0a\x0d\x20-\ud7ff\ue000-\ufffd\U00010000-\U0010ffff]")
+
+
+class _Cleaned:
+    def __init__(self, resp):
+        self.status_code, self.headers, self.url = resp.status_code, resp.headers, getattr(resp, "url", "")
+        text = resp.content.decode("utf-8", errors="replace")
+        self.text = XML_INVALID_RE.sub("", text)
+        self.content = self.text.encode("utf-8")
+
+
+def xml_clean(get):
+    """``get`` whose 200 responses have XML-forbidden characters removed.
+
+    ``common.oai_list_records`` parses the raw bytes, and one forbidden
+    character makes the whole page (and the rest of the journal) unreadable.
+    """
+    def wrapped(url, params=None, delay=0):
+        resp = get(url, params=params, delay=delay)
+        return _Cleaned(resp) if resp.status_code == 200 else resp
+    return wrapped

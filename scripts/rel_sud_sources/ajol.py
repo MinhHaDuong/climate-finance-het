@@ -22,13 +22,19 @@ skipped (registered incomplete) instead of pressing on.
 
 Requests go through ``listing.no_mailto_get``: the ``mailto`` query parameter
 that ``polite_get`` appends makes OJS answer ``badArgument``.
+Characters XML forbids (U+FFFE in an abstract) are removed before parsing
+(``listing.xml_clean``); otherwise one of them loses the rest of a journal.
 """
 
 import re
 import time
 
+from utils import get_logger
+
 from rel_sud_sources.common import dc_to_record, oai_list_records
-from rel_sud_sources.listing import matcher, no_mailto_get
+from rel_sud_sources.listing import matcher, no_mailto_get, xml_clean
+
+log = get_logger("rel_sud_sources")
 
 SITE = "https://www.ajol.info/index.php"
 LANGUAGES = ["en", "fr", "pt", "ar"]
@@ -108,6 +114,7 @@ def patient(get, sleep=time.sleep):
         for pause in CHALLENGE_PAUSES:
             if not challenged(resp):
                 break
+            log.warning("WAF challenge on %s %s; waiting %d s", url, params, pause)
             sleep(pause)
             resp = get(url, params=params, delay=delay)
         return resp
@@ -122,7 +129,7 @@ def fetch(spec, delay, get=no_mailto_get, sleep=time.sleep):
         yield ("end", "skipped: WAF challenge persisted on previous journals")
         return
     stream = oai_list_records(spec["endpoint"], delay=max(delay, MIN_DELAY),
-                              get=patient(get, sleep))
+                              get=xml_clean(patient(get, sleep)))
     for kind, val in stream:
         if kind == "end":
             hit = val == "http 202"

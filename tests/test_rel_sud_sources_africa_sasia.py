@@ -345,6 +345,15 @@ def test_oai_requests_carry_no_mailto_argument(monkeypatch):
     assert ajol.fetch.__defaults__[0] is listing.no_mailto_get
 
 
+def test_ajol_survives_a_character_xml_forbids(monkeypatch):
+    monkeypatch.setattr(ajol, "_state", {"challenged_in_a_row": 0})
+    dirty = OAI.replace("Climate finance in Ghana", "Climate finance in Ghana\ufffe")
+    spec = {"endpoint": "https://oai", "match": listing.matcher(CFG, ajol.LANGUAGES)}
+    evs = events(ajol, FakeGet({"https://oai": Resp(dirty)}), spec)
+    assert evs[-1] == ("end", "")
+    assert works(evs)[0]["title"] == "Climate finance in Ghana"
+
+
 def test_every_adapter_honours_the_contract():
     for mod in (ajol, adb_ewp, ceew, cpd, ersa, south_centre):
         src = mod.SOURCE
