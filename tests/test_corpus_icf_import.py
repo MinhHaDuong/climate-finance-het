@@ -74,7 +74,7 @@ def test_t1530_rows_segments_models_and_unknowns(tmp_path):
 def test_t1530_import_is_idempotent(tmp_path):
     a, prompt = _archive(tmp_path)
     table = str(tmp_path / "t" / "icf_screen.csv")
-    args = ["--table", table, "t1530", "--archive", str(a), "--stage2-prompt", str(prompt)]
+    args = ["--output", table, "t1530", "--archive", str(a), "--stage2-prompt", str(prompt)]
     assert ci.main(args) == 0
     first = open(table, "rb").read()
     assert len(ics.read_table(table)) == 6 + 2 + 2
@@ -106,7 +106,7 @@ def _run_dir(tmp_path, finished=True, models=("qwen",)):
 def test_stage1_run_import(tmp_path):
     d = _run_dir(tmp_path)
     table = str(tmp_path / "icf_screen.csv")
-    assert ci.main(["--table", table, "stage1-run", "--run-dir", str(d), "--machine", "padme"]) == 0
+    assert ci.main(["--output", table, "stage1-run", "--run-dir", str(d), "--machine", "padme"]) == 0
     (row,) = ics.read_table(table)
     assert (row["work_key"], row["run_id"], row["model"], row["doi"], row["labelled_at"]) == (
         "openalex:W7", "2026-09-30-catalogue-stage1", "qwen", "10.2/x", "2026-09-30T10:00:00+00:00")

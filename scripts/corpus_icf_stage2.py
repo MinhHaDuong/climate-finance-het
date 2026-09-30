@@ -38,8 +38,6 @@ Usage:
     python scripts/corpus_icf_stage2.py agreement --audit-run-id R --output FILE
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import glob
@@ -52,7 +50,7 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
 import _icf_screen as ics
-import corpus_rel_view as crv
+import _rel_view as rv
 import yaml
 from pipeline_loaders import load_rel_review_config
 from utils import get_logger, normalize_title
@@ -71,8 +69,8 @@ class Stage2Error(Exception):
 
 
 def _view(pool_path, table_path):
-    pool = crv.read_pool(pool_path)
-    rows, _ = crv.build_view(pool, ics.read_table(table_path), load_rel_review_config())
+    pool = rv.read_pool(pool_path)
+    rows, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config())
     return pool, rows
 
 
@@ -199,7 +197,7 @@ def cohen_kappa(pairs: list[tuple[str, str]]) -> dict:
 
 
 def agreement(pool: list[dict], labels: list[dict], audit_run_id: str) -> dict:
-    matched, _, _ = crv.match_labels(pool, labels)
+    matched, _, _ = rv.match_labels(pool, labels)
     pairs, by_stratum = [], defaultdict(list)
     for labs in matched.values():
         s2 = [lab for lab in labs if lab["stage"] == "2"]
@@ -250,8 +248,8 @@ def main(argv=None):
                 keys = audit_sample(view, cfg["audit"]["per_label"], cfg["audit"]["seed"])
             by_key = {p["work_key"]: p for p in pool}
             manifest = {"kind": args.cmd, "pool": os.path.basename(pool_path),
-                        "pool_sha256": crv._sha256(pool_path),
-                        "table_sha256": crv._sha256(table),
+                        "pool_sha256": rv.sha256_file(pool_path),
+                        "table_sha256": rv.sha256_file(table),
                         "prompt": cfg["stage2"]["prompt"],
                         "prompt_sha256": ics.stage2_prompt_sha256(cfg["stage2"]["prompt"])}
             if args.cmd == "audit-sample":
@@ -270,7 +268,7 @@ def main(argv=None):
             log.info("chunks %s", report)
             log.info("%d answers, %d appended, %d already in %s", len(rows), added, skipped, table)
         else:
-            res = agreement(crv.read_pool(pool_path), ics.read_table(table), args.audit_run_id)
+            res = agreement(rv.read_pool(pool_path), ics.read_table(table), args.audit_run_id)
             with open(args.output, "w", encoding="utf-8") as fh:
                 json.dump(res, fh, indent=2)
                 fh.write("\n")

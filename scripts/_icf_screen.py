@@ -23,8 +23,6 @@ Guards, each one tested:
 Readers go through ``read_table``, which runs the same verification.
 """
 
-from __future__ import annotations
-
 import csv
 import hashlib
 import io
@@ -149,7 +147,7 @@ def validate_row(row: dict) -> list[str]:
     if extra:
         errors.append(f"unknown columns {sorted(extra)}")
     for col in REQUIRED:
-        if not str(row.get(col) or "").strip():
+        if not (row.get(col) or "").strip():
             errors.append(f"{col} is empty")
     checks = (("stage", STAGES), ("labeller", LABELLERS), ("label", LABELS),
               ("doc_type", DOC_TYPES))

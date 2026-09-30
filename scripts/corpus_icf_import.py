@@ -43,12 +43,10 @@ inside any ``source_id``, so 7 EconBiz ids (``EDSZBW…``) and 3 SciSpace URLs c
 as false W-ids; a label keyed on one would sit forever on the wrong work.
 
 Usage:
-    python scripts/corpus_icf_import.py t1530 [--archive DIR] [--table PATH]
-    python scripts/corpus_icf_import.py stage1-run --run-dir DIR --machine padme \\
-        [--input DIR/screen_input.jsonl] [--run-id NAME] [--table PATH]
+    python scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv t1530 [--archive DIR]
+    python scripts/corpus_icf_import.py --output TABLE stage1-run --run-dir DIR --machine padme \\
+        [--input DIR/screen_input.jsonl] [--run-id NAME] [--skip-ids FILE]
 """
-
-from __future__ import annotations
 
 import argparse
 import glob
@@ -217,7 +215,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--config", default=DEFAULT_CONFIG)
-    parser.add_argument("--table", default=None, help="default: config table")
+    # --output is the append-only icf_screen table the labels are appended to.
+    parser.add_argument("--output", required=True)
     sub = parser.add_subparsers(dest="cmd", required=True)
     p1 = sub.add_parser("t1530")
     p1.add_argument("--archive", default=None, help="default: config t1530_archive")
@@ -233,7 +232,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
-    table = args.table or cfg["table"]
+    table = args.output
     try:
         if args.cmd == "t1530":
             archive = os.path.expanduser(args.archive or cfg["t1530_archive"])

@@ -350,7 +350,7 @@ rel-intake-1530:
 # The import is idempotent; the view is regenerable from pool + table.
 .PHONY: rel-screen-import-1530 rel-view
 rel-screen-import-1530:
-	$(PYTHON) scripts/corpus_icf_import.py t1530
+	$(PYTHON) scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv t1530
 
 rel-view:
 	$(PYTHON) scripts/corpus_rel_view.py --output-dir data/rel_pool

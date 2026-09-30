@@ -4,6 +4,7 @@ import csv
 import json
 
 import _icf_screen as ics
+import _rel_view as rv
 import corpus_rel_view as crv
 import pytest
 
@@ -62,7 +63,7 @@ def _status(rows):
 
 
 def test_statuses_matching_and_latest_label():
-    rows, summary = crv.build_view(POOL, LABELS, WINDOW)
+    rows, summary = rv.build_view(POOL, LABELS, WINDOW)
     assert _status(rows) == {
         "openalex:W1": "icf", "openalex:W2": "stage1_out", "openalex:W3": "stage1_aux",
         "openalex:W4": "pending_stage2", "openalex:W5": "unsure_unresolved", "doi:10.1/x": "icf",
@@ -74,7 +75,7 @@ def test_statuses_matching_and_latest_label():
 
 
 def test_counts_window_doc_type_and_version_hint():
-    rows, summary = crv.build_view(POOL, LABELS, WINDOW)
+    rows, summary = rv.build_view(POOL, LABELS, WINDOW)
     counts = crv.make_counts(rows, summary, WINDOW, {})
     rel = counts["rel"]
     assert rel["icf_total"] == 4
@@ -90,7 +91,7 @@ def test_counts_window_doc_type_and_version_hint():
 def _files(tmp_path):
     pool = tmp_path / "pool.csv"
     with open(pool, "w", encoding="utf-8", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=crv.POOL_FIELDS)
+        w = csv.DictWriter(fh, fieldnames=rv.POOL_FIELDS)
         w.writeheader()
         w.writerows(POOL)
     table = str(tmp_path / "icf_screen.csv")
