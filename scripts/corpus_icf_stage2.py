@@ -4,8 +4,9 @@ Dispatcher over the REL view (``corpus_rel_view.build_view``, computed in
 memory from the pool and the ``icf_screen`` table, so it is never stale):
 
 ``build``
-    Works whose status is ``pending_stage2`` (stage-1 ``icf``/``unsure``, no
-    stage-2 label), sorted by ``work_key``, in numbered chunks of the 1530
+    Works whose status is ``pending_stage2`` (stage-1 label in
+    ``stage2_labels`` of ``config/rel_screen.yaml``: ``icf``/``unsure``/``aux``
+    since 2026-09-30; no stage-2 label), sorted by ``work_key``, in numbered chunks of the 1530
     stage-2 format: ``chunkNN.txt`` (``n. [lang | year | journal |
     affiliations: CC, CC]``, ``Title:`` ≤ 220, ``Abstract:`` ≤ 650 characters),
     ``chunkNN.ids.json`` (the chunk's work keys, in order) and ``works.csv``
@@ -68,9 +69,9 @@ class Stage2Error(Exception):
     """A refused build or parse."""
 
 
-def _view(pool_path, table_path):
+def _view(pool_path, table_path, rule):
     pool = rv.read_pool(pool_path)
-    rows, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config())
+    rows, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config(), rule)
     return pool, rows
 
 
@@ -245,7 +246,8 @@ def main(argv=None):
         if args.cmd != "parse":
             ics.require_table(table)
         if args.cmd in ("build", "audit-sample"):
-            pool, view = _view(pool_path, table)
+            rule = rv.screen_rule(cfg)
+            pool, view = _view(pool_path, table, rule)
             if args.cmd == "build":
                 keys = select_pending(view)
             else:
@@ -255,7 +257,8 @@ def main(argv=None):
                         "pool_sha256": rv.sha256_file(pool_path),
                         "table_sha256": rv.sha256_file(table),
                         "prompt": cfg["stage2"]["prompt"],
-                        "prompt_sha256": ics.stage2_prompt_sha256(cfg["stage2"]["prompt"])}
+                        "prompt_sha256": ics.stage2_prompt_sha256(cfg["stage2"]["prompt"]),
+                        "rule": rule}
             if args.cmd == "audit-sample":
                 manifest["audit"] = cfg["audit"]
             names = write_chunks(args.output_dir, [by_key[k] for k in keys], cfg["stage2"],

@@ -28,13 +28,14 @@ Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 
 |---|---:|---|
 | **Étape 1** : œuvres triées (Haiku 4.5 pour 12 491, Qwen3.8-27B pour 13 202) | 25 693 | mesuré, `screen.jsonl` |
 | exclues à l'étape 1 : hors sujet | 12 598 | mesuré (Haiku 5 965 ; Qwen 6 633) |
-| exclues à l'étape 1 : proches mais non ICF | 8 303 | mesuré (Haiku 3 819 ; Qwen 4 484) |
+| classées à l'étape 1 : proches mais non ICF | 8 303 | mesuré (Haiku 3 819 ; Qwen 4 484) ; ne sortent plus (décision du 30 septembre) |
+| **en attente d'étape 2** : « proches » de l'étape 1 | 9 906 | mesuré, `rel_view.csv` du 30 septembre (statut `pending_stage2`, étiquette d'étape 1 « aux », runs `t1530-*`) ; inclut les 1 686 du passage Qwen en cours, hors des 25 693 |
 | envoyées à l'étape 2 : « ICF » | 3 069 | mesuré (Haiku 2 028 ; Qwen 1 041) |
 | envoyées à l'étape 2 : « incertaines » | 1 723 | mesuré (Haiku 679 ; Qwen 1 044) |
-| **Étape 2** (Opus) : œuvres relues | 4 792 | mesuré (4 752 en 32 lots + 40 du pilote) |
+| **Étape 2** (Opus), avant relecture des 8 303 : œuvres relues | 4 792 | mesuré (4 752 en 32 lots + 40 du pilote) |
 | exclues à l'étape 2 : proches mais non ICF | 1 746 | mesuré (1 736 + 10) |
 | exclues à l'étape 2 : hors sujet | 396 | mesuré (391 + 5) |
-| **restées « incertaines »** | **177** | mesuré (174 + 3) ; règle de sortie à fixer |
+| **restées « incertaines »** | **177** | mesuré (174 + 3) ; restent dans REL, signalées (décision du 30 septembre) |
 | **retenues « ICF »** | **2 473** | mesuré (2 451 + 22) |
 | dont œuvres de recherche | 1 933 | mesuré (1 913 + 20) |
 | dont documents institutionnels (hors décompte des œuvres) | 409 | mesuré (408 + 1) |
@@ -44,15 +45,15 @@ Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 
 
 | Case | Effectif | Statut |
 |---|---:|---|
-| **Œuvres de recherche ICF, provisoire** | **1 933** | avant fusion des versions, avant lecture des « incertaines », avant le tri du reste du pool |
+| **Œuvres de recherche ICF, provisoire** | **1 933** | série « ICF » seule, sans les 177 « incertaines » gardées et signalées ; avant comptage par familles, avant relecture des « proches », avant le tri du reste du pool |
 | Textes lus pour la synthèse narrative | — | à remplir |
 
 ## Validation des outils automatiques (à joindre au rapport)
 
-- **Étape 1**, 200 œuvres contre Opus : Haiku 153 / 200 exact, aucune des 22 œuvres ICF d'Opus étiquetée « hors sujet » ; Qwen (JSON) 169 / 200, aucune manquée ; Qwen (format compact) 164 / 199, aucune manquée. Un seul juge, 22 positifs, très peu d'hindi, de bengali et d'arabe.
+- **Étape 1**, 200 œuvres contre Opus : Haiku 153 / 200 exact, aucune des 22 œuvres ICF d'Opus étiquetée « hors sujet » ; Qwen (JSON) 169 / 200, aucune étiquetée « hors sujet » mais 1 « proche » ; Qwen (format compact) 164 / 199, aucune « hors sujet » mais 3 « proche », comme six sentinelles (`rel_jev_pilot/2026-09-30/out/report_control.txt`). Depuis le 30 septembre, les « proche » de l'étape 1 passent à l'étape 2. Un seul juge, 22 positifs, très peu d'hindi, de bengali et d'arabe.
 - **Étape 2** : pas encore d'audit par échantillon par Fable.
 - **Sentinelles** (55 fixées ; 21 œuvres de classe « retrouvable ») : rappel de réserve 13 / 14 sur la passe `f` seule, 14 / 14 avec la requête de comblement `g` (H15 n'y est retrouvée que par `g`, ajoutée à cause des sentinelles de réglage) ; réglage 5 / 7 (échecs connus : S23 espagnol, S55 français). Dix sentinelles absentes d'OpenAlex testent les autres sources.
 
 ## Ce qu'il faut pour geler le pool
 
-Voir la réponse du 29 septembre : voies du protocole exécutées ou déclarées impossibles ; étape d'injection dans le catalogue avec provenance et rapport de fusion par source ; règle de sortie des « incertaines » ; unité de compte des versions ; tri de tout le pool ; manifeste de gel (empreintes, SHA du code, versions de modèles).
+Voir la réponse du 29 septembre : voies du protocole exécutées ou déclarées impossibles ; étape d'injection dans le catalogue avec provenance et rapport de fusion par source ; tri de tout le pool ; manifeste de gel (empreintes, SHA du code, versions de modèles). La sortie des « incertaines » et l'unité de compte (la famille d'œuvres, version publiée en représentante) sont décidées depuis le 30 septembre.

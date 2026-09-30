@@ -4,6 +4,7 @@ import csv
 import json
 
 import _icf_screen as ics
+import _rel_view as rv
 import corpus_icf_stage2 as cs
 import pytest
 
@@ -117,3 +118,26 @@ def test_parse_refuses_to_fork_a_dvc_tracked_table(tmp_path):
     assert not (tmp_path / "rs").exists()
     assert cs.main(base + ["--new-table"]) == 0
     assert len(ics.read_table(table)) == 1
+
+
+def test_build_sends_stage1_aux_to_stage2_under_the_config_rule(tmp_path):
+    # Author decision 2026-09-30: stage 2 rereads icf, unsure and aux; only out leaves.
+    pool = tmp_path / "pool.csv"
+    with open(pool, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=rv.POOL_FIELDS, restval="")
+        w.writeheader()
+        for i in range(1, 5):
+            w.writerow({**_work(i), "all_openalex_ids": f"W{i}"})
+    table = str(tmp_path / "icf_screen.csv")
+    ics.append_rows(table, [
+        {"work_key": f"openalex:W{i}", "openalex_id": f"W{i}", "doi": "",
+         "title_norm_year": f"title {i}|2020", "stage": "1", "labeller": "llm", "model": "qwen",
+         "prompt_sha256": "p", "run_id": "r", "machine": "padme", "label": label,
+         "doc_type": "research", "studied_country": "", "why": "", "labelled_at": "2026-09-29",
+         "source": "s"}
+        for i, label in ((1, "icf"), (2, "aux"), (3, "out"), (4, "unsure"))])
+    out = tmp_path / "s2"
+    assert cs.main(["--pool", str(pool), "--table", table, "build", "--output-dir", str(out)]) == 0
+    keys = [r["work_key"] for r in csv.DictReader(open(out / "works.csv", encoding="utf-8"))]
+    assert keys == ["openalex:W1", "openalex:W2", "openalex:W4"]
+    assert json.loads((out / "build.json").read_text())["rule"]["stage1_exit_labels"] == ["out"]

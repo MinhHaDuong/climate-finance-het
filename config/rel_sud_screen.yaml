@@ -1,5 +1,6 @@
 # REL relevance screen for candidates of the south-and-languages pass (ticket 1530).
-# First-pass label only: `icf` and `unsure` go to a stronger model and to reading;
+# First-pass label only: `icf`, `unsure` and (since 2026-09-30, ticket 1655) `aux`
+# go to a stronger model and to reading, only `out` leaves (config/rel_screen.yaml);
 # nothing is admitted to the review by this file alone.
 model: openrouter/anthropic/claude-haiku-4.5
 batch_size: 20

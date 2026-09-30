@@ -6,6 +6,11 @@ pilot records Opus had already judged). One subagent per chunk, model `opus`,
 read-only, no web. The rule itself is the `prompt_template` field of
 `config/rel_sud_screen.yaml`; only the wrapper below is stage-2 specific.
 
+Since 2026-09-30 (ticket 1655) stage 2 also rereads the works that stage 1
+labelled `aux`: its input is every work whose stage-1 label is in
+`stage2_labels` of `config/rel_screen.yaml` (`icf`, `unsure`, `aux`). The
+wrapper below, and so its hash, is unchanged.
+
 ```
 Read-only labelling task. Do not run git commands; do not edit any file other
 than the one output file named below.

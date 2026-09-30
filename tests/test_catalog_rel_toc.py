@@ -217,6 +217,12 @@ def test_merge_toc_folds_doi_alias_by_title_author_year():
     assert recs[0]["alias_dois"] == "10.3763/alias"
 
 
+def test_merge_toc_joins_several_aliases_with_semicolons():
+    # version_hint cells are ";"-separated (docs/rel-intake-contract.md).
+    recs = toc.merge_toc([_crrec()], [_oa(doi="10.3763/alias"), _oa(doi="10.3763/other")])
+    assert recs[0]["alias_dois"] == "10.3763/alias;10.3763/other"
+
+
 def test_merge_toc_keeps_openalex_only_item_without_doi():
     (rec,) = toc.merge_toc([], [_oa(title="An old JSTOR article", volume="80", issue="2")])
     assert rec["toc_source"] == "openalex-only"
