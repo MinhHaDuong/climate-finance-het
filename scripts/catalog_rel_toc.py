@@ -45,6 +45,7 @@ from _rel_toc_core import (
     UNTIL_DATE,
     PoolIndex,
     build_register,
+    crossref_filter,
     crossref_record,
     in_window,
     issue_key,
@@ -144,8 +145,8 @@ def crossref_sweep(journal, run_dir, mailto):
     issn = journal["pissn"] or journal["eissn"]
     session = requests.Session()
     session.headers["User-Agent"] = f"ClimateFinanceHET-RELtoc/0.1 (mailto:{mailto})"
-    url = f"{CR_API}/journals/{issn}/works"
-    params = {"filter": f"from-pub-date:{FROM_DATE},until-pub-date:{UNTIL_DATE}",
+    url = f"{CR_API}/works"
+    params = {"filter": crossref_filter(journal),
               "rows": 1000, "cursor": "*", "select": CR_SELECT, "mailto": mailto}
     out = os.path.join(run_dir, f"crossref_{journal['journal_key']}.jsonl.gz")
     t0, calls, n, total, reason = time.time(), 0, 0, None, ""
@@ -396,8 +397,7 @@ def match_journal(journal, run_dir, pool, retrieved_at):
             checks = {tuple(json.loads(k)): v for k, v in json.load(fh).items()}
     register = build_register(recs, checks)
     endpoints = {
-        "crossref": f"{CR_API}/journals/{issn}/works?filter=from-pub-date:{FROM_DATE},"
-                    f"until-pub-date:{UNTIL_DATE}",
+        "crossref": f"{CR_API}/works?filter={crossref_filter(journal)}",
         "openalex-only": f"{OA_API}/works?filter=primary_location.source.id (ISSN {issn}),"
                          f"from_publication_date:{FROM_DATE},to_publication_date:{UNTIL_DATE}",
     }

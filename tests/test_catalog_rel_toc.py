@@ -176,6 +176,13 @@ def test_merge_toc_redates_misdated_openalex_item_by_annual_volume():
     assert not toc.in_window(old)
 
 
+def test_crossref_filter_queries_both_issns():
+    # ESPR deposits 2023+ under its eISSN only: 13,125 works a pISSN sweep misses.
+    flt = toc.crossref_filter({"pissn": "0944-1344", "eissn": "1614-7499"})
+    assert flt.startswith("issn:0944-1344,issn:1614-7499,from-pub-date:1990-01-01")
+    assert toc.crossref_filter({"pissn": "", "eissn": "2071-1050"}).startswith("issn:2071-1050,")
+
+
 def test_register_never_counts_a_needs_human_issue_as_scanned():
     recs = [
         {"journal_key": "j", "year": 2001, "volume": "1", "issue": "1", "online_first": False,

@@ -15,6 +15,18 @@ from utils import normalize_doi, reconstruct_abstract
 FROM_DATE = "1990-01-01"
 UNTIL_DATE = "2026-09-28"  # config/rel_review.yaml search date
 
+
+def crossref_filter(journal):
+    """Crossref /works filter: every ISSN of the title (ORed), REL window.
+
+    /journals/{issn}/works follows one ISSN: ESPR deposits 2023+ under its eISSN
+    only, and a pISSN sweep misses 13,125 works (measured 2026-09-30).
+    """
+    issns = [i for i in (journal.get("pissn"), journal.get("eissn")) if i]
+    issns = list(dict.fromkeys(issns))
+    return ",".join([f"issn:{i}" for i in issns]
+                    + [f"from-pub-date:{FROM_DATE}", f"until-pub-date:{UNTIL_DATE}"])
+
 # ---------------------------------------------------------------------------
 # Pure functions
 # ---------------------------------------------------------------------------
