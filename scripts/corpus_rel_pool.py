@@ -11,12 +11,17 @@ Deduplication is one union-find over all rows, catalogue and lanes alike:
 1. same normalized DOI;
 2. same OpenAlex id (the union is transitive: a record whose DOI matches one
    work and whose OpenAlex id matches another joins the two);
-3. same normalized title and same year, decided on the components steps 1-2
+2b. same normalized ``url`` (``norm_url``: scheme and host lowercased,
+   trailing slash dropped, ``hdl.handle.net/X`` and ``<host>/handle/X`` both
+   ``hdl:X``). A resolver URL is not a URL key: ``doi.org/…`` fills an empty
+   DOI and ``openalex.org/W…`` an empty OpenAlex id instead;
+3. same normalized title and same year, decided on the components steps 1-2b
    left: the rows sharing a title + year join when their identifier-bearing
-   rows form at most one component, or components that cannot disagree (one
-   with DOIs only, one with OpenAlex ids only). When two components both carry
-   DOIs (or both OpenAlex ids), the title is **ambiguous**: nothing joins them,
-   and rows with neither identifier join only one another. A working paper and
+   rows form at most one component, or components that cannot disagree (no
+   identifier kind, DOI, OpenAlex id or URL, on both sides). When two
+   components both carry DOIs (or both OpenAlex ids, or both URLs), the title
+   is **ambiguous**: nothing joins them, and rows with no identifier join only
+   one another. A working paper and
    its article with their own DOIs therefore stay two works, an id-less
    "Editorial" cannot fuse distinct DOIs, and a title never joins across
    years. Each row's ``version_hint`` is carried so the counting-unit decision
@@ -34,7 +39,8 @@ not a well-formed ``10.xxxx/...`` DOI is kept and counted (``doi_malformed``).
 Outputs (``--output-dir``, default ``data/rel_pool``):
 
 - ``pool.csv``: one row per work. ``work_key`` is ``openalex:W…`` when a member
-  carries an OpenAlex id, else ``doi:<doi>``, else ``title:<title>|<year>``.
+  carries an OpenAlex id, else ``doi:<doi>``, else ``url:<normalized url>``,
+  else ``title:<title>|<year>``.
   Metadata come from the first non-empty member: catalogue rows first, then
   lanes in ``lane_order``. Provenance: ``in_catalogue``, ``sources``
   (``catalogue`` then lane ids), ``n_sources``, ``member_record_ids``.
@@ -105,6 +111,37 @@ def norm_openalex(v):
     return s.upper() if OPENALEX_ID.match(s.upper()) else ""
 
 
+_URL = re.compile(r"^(https?)://([^/?#\s]+)(\S*)$", re.IGNORECASE)
+_HANDLE_PATH = re.compile(r"^/handle/(.+)$")
+DOI_RESOLVERS = {"doi.org", "dx.doi.org", "www.doi.org"}
+OPENALEX_HOSTS = {"openalex.org", "api.openalex.org"}
+
+
+def norm_url(v):
+    """Normalized URL key, ``hdl:<handle>`` for a Handle, ``""`` if not http(s)."""
+    m = _URL.match(str(v or "").strip())
+    if not m:
+        return ""
+    scheme, host, path = m.group(1).lower(), m.group(2).lower(), m.group(3).rstrip("/")
+    if host == "hdl.handle.net" and path.strip("/"):
+        return "hdl:" + path.lstrip("/")
+    hm = _HANDLE_PATH.match(path)
+    if hm:
+        return "hdl:" + hm.group(1)
+    return f"{scheme}://{host}{path}"
+
+
+def ids_from_url(raw, doi, openalex_id):
+    """``(doi, openalex_id, url_key)`` once a resolver URL has filled its identifier."""
+    m = _URL.match(str(raw or "").strip())
+    host = m.group(2).lower() if m else ""
+    if host in DOI_RESOLVERS:
+        return doi or normalize_doi(raw), openalex_id, ""
+    if host in OPENALEX_HOSTS:
+        return doi, openalex_id or norm_openalex(raw), ""
+    return doi, openalex_id, norm_url(raw)
+
+
 def keys_of(row):
     """(doi, openalex_id, title|year) keys of a normalized row; blanks omitted."""
     title = normalize_title(row["title"])
@@ -116,7 +153,8 @@ def _compatible(a, b):
     """Two rows that no identifier sets apart."""
     return not ((a["doi"] and b["doi"] and a["doi"] != b["doi"])
                 or (a["openalex_id"] and b["openalex_id"]
-                    and a["openalex_id"] != b["openalex_id"]))
+                    and a["openalex_id"] != b["openalex_id"])
+                or (a.get("url") and b.get("url") and a["url"] != b["url"]))
 
 
 class _UnionFind:
@@ -139,19 +177,22 @@ def _title_unions(rows, uf, group):
     """Unions one title + year group allows, judged on the identifier components.
 
     Returns the index pairs to join and whether the group was ambiguous.
-    Distinct components never share a DOI or an OpenAlex id (they would have
-    joined), so two components disagree exactly when both carry DOIs or both
-    carry OpenAlex ids.
+    Distinct components never share a DOI, an OpenAlex id or a URL key (they
+    would have joined), so two components disagree exactly when both carry
+    an identifier of the same kind.
     """
-    free = [i for i in group if not rows[i]["doi"] and not rows[i]["openalex_id"]]
-    comps = defaultdict(lambda: [False, False])
+    def ident(i):
+        return (bool(rows[i]["doi"]), bool(rows[i]["openalex_id"]), bool(rows[i].get("url")))
+
+    free = [i for i in group if not any(ident(i))]
+    comps = defaultdict(lambda: [False, False, False])
     for i in group:
-        if rows[i]["doi"] or rows[i]["openalex_id"]:
+        if any(ident(i)):
             flags = comps[uf.find(i)]
-            flags[0] |= bool(rows[i]["doi"])
-            flags[1] |= bool(rows[i]["openalex_id"])
+            for k, has in enumerate(ident(i)):
+                flags[k] |= has
     kinds = list(comps.values())
-    ambiguous = any((a[0] and b[0]) or (a[1] and b[1])
+    ambiguous = any(any(x and y for x, y in zip(a, b))
                     for n, a in enumerate(kinds) for b in kinds[n + 1:])
     members = free if ambiguous else group
     return [(members[0], j) for j in members[1:]], ambiguous
@@ -160,22 +201,25 @@ def _title_unions(rows, uf, group):
 def cluster(rows, stats=None):
     """Union-find over ``rows``: component root index per row.
 
-    Steps 1-2 (DOI, OpenAlex id) join unconditionally. Step 3 decides every
+    Steps 1-2b (DOI, OpenAlex id, URL key) join unconditionally. Step 3 decides every
     title + year group on the components steps 1-2 left, then applies all
     its unions at once, so the result does not depend on row order.
     ``stats`` (a dict), when given, receives ``ambiguous_title_groups``.
     """
     uf = _UnionFind(len(rows))
-    by_doi, by_oa, by_title = defaultdict(list), defaultdict(list), defaultdict(list)
+    by_doi, by_oa, by_url, by_title = (defaultdict(list), defaultdict(list),
+                                       defaultdict(list), defaultdict(list))
     for i, r in enumerate(rows):
         doi, oa, ty = keys_of(r)
         if doi:
             by_doi[doi].append(i)
         if oa:
             by_oa[oa].append(i)
+        if r.get("url"):
+            by_url[r["url"]].append(i)
         if ty:
             by_title[ty].append(i)
-    for group in list(by_doi.values()) + list(by_oa.values()):
+    for group in list(by_doi.values()) + list(by_oa.values()) + list(by_url.values()):
         for j in group[1:]:
             uf.union(group[0], j)
     pending, ambiguous = [], 0
@@ -254,8 +298,8 @@ def load_catalogue(path, expected_md5, expected_rows):
         rows.append({
             "origin": CATALOGUE, "delivery": CATALOGUE,
             "record_id": f"{r.get('source', '')}:{r.get('source_id') or i}",
-            "doi": normalize_doi(r.get("doi")),
-            "openalex_id": norm_openalex(r.get("source_id")),
+            **dict(zip(("doi", "openalex_id", "url"), ids_from_url(
+                r.get("url"), normalize_doi(r.get("doi")), norm_openalex(r.get("source_id"))))),
             "title": r.get("title") or "",
             "first_author": r.get("first_author") or "",
             "all_authors": r.get("all_authors") or "",
@@ -355,8 +399,8 @@ def load_delivery(did, path):
         rows.append({
             "origin": did.split("/")[0], "delivery": did,
             "record_id": f"{did}:{r['record_id']}",
-            "doi": normalize_doi(r.get("doi")),
-            "openalex_id": norm_openalex(r.get("openalex_id")),
+            **dict(zip(("doi", "openalex_id", "url"), ids_from_url(
+                r.get("url"), normalize_doi(r.get("doi")), norm_openalex(r.get("openalex_id"))))),
             **{c: r.get(c) or "" for c in ("title", "first_author", "all_authors",
                                             "journal", "abstract", "language", "doc_type",
                                             "affiliation_countries", "version_hint")},
@@ -371,7 +415,7 @@ def load_delivery(did, path):
             rows.append({
                 "origin": did.split("/")[0], "delivery": did,
                 "record_id": f"{did}:excluded:{r['record_id']}",
-                "doi": "", "openalex_id": "", "year": "", "title": r["title"],
+                "doi": "", "openalex_id": "", "url": "", "year": "", "title": r["title"],
                 **{c: "" for c in ("first_author", "all_authors", "journal", "abstract",
                                    "language", "doc_type", "affiliation_countries",
                                    "version_hint", "affiliations", "cited_by_count",
@@ -385,11 +429,13 @@ def load_delivery(did, path):
 # ── Pool ─────────────────────────────────────────────────
 
 
-def _work_key(merged):
+def _work_key(merged, url=""):
     if merged["openalex_id"]:
         return f"openalex:{merged['openalex_id']}"
     if merged["doi"]:
         return f"doi:{merged['doi']}"
+    if url:
+        return f"url:{url}"
     return f"title:{normalize_title(merged['title'])}|{merged['year']}"
 
 
@@ -420,7 +466,7 @@ def build_pool(rows, roots, lane_rank):
             "n_sources": len(origins),
             "member_record_ids": ";".join(m["record_id"] for m in mem),
         })
-        merged["work_key"] = _work_key(merged)
+        merged["work_key"] = _work_key(merged, next((m["url"] for m in mem if m.get("url")), ""))
         pool.append(merged)
     keys = Counter(p["work_key"] for p in pool)
     dup = [k for k, n in keys.items() if n > 1]
@@ -439,6 +485,8 @@ def _direct_catalogue_method(row, cat_index):
         return "by_doi"
     if oa and oa in cat_index["openalex_id"]:
         return "by_openalex_id"
+    if row.get("url") and row["url"] in cat_index["url"]:
+        return "by_url"
     if ty and any(_compatible(row, c) for c in cat_index["title"].get(ty, [])):
         return "by_title_year"
     return None
@@ -446,7 +494,7 @@ def _direct_catalogue_method(row, cat_index):
 
 def _catalogue_index(rows):
     """Catalogue keys, for naming the method of a direct catalogue match."""
-    index = {"doi": set(), "openalex_id": set(), "title": defaultdict(list)}
+    index = {"doi": set(), "openalex_id": set(), "url": set(), "title": defaultdict(list)}
     for r in rows:
         if r["origin"] != CATALOGUE:
             continue
@@ -455,6 +503,8 @@ def _catalogue_index(rows):
             index["doi"].add(doi)
         if oa:
             index["openalex_id"].add(oa)
+        if r.get("url"):
+            index["url"].add(r["url"])
         if ty:
             index["title"][ty].append(r)
     return index
@@ -475,7 +525,8 @@ def delivery_counts(did, idx, rows, roots, comp, cat_index):
     works = defaultdict(list)
     for i in idx:
         works[roots[i]].append(i)
-    in_cat = Counter({"by_doi": 0, "by_openalex_id": 0, "by_title_year": 0, "via_other_lane": 0})
+    in_cat = Counter({"by_doi": 0, "by_openalex_id": 0, "by_url": 0, "by_title_year": 0,
+                      "via_other_lane": 0})
     other_lane_only = new = 0
     for root, members in works.items():
         full = comp[root]
@@ -492,7 +543,9 @@ def delivery_counts(did, idx, rows, roots, comp, cat_index):
         "with_doi": sum(bool(r["doi"]) for r in drows),
         "doi_malformed": sum(bool(r["doi"]) and not DOI.match(r["doi"]) for r in drows),
         "with_openalex_id": sum(bool(r["openalex_id"]) for r in drows),
-        "title_year_only": sum(not r["doi"] and not r["openalex_id"] for r in drows),
+        "with_url": sum(bool(r.get("url")) for r in drows),
+        "title_year_only": sum(not r["doi"] and not r["openalex_id"] and not r.get("url")
+                               for r in drows),
         "title_only_from_excluded": len(title_only),
         "title_only_joined": sum(len(comp[roots[i]]) > 1 and any(
             not rows[j].get("title_only") for j in comp[roots[i]]) for i in title_only),
@@ -582,7 +635,7 @@ def make_report(rows, roots, deliveries, excluded, catalogue_meta, superseded, s
 
 def report_markdown(report):
     head = ["delivery", "records", "excluded", "title_only_from_excluded", "with_doi", "doi_malformed", "with_openalex_id",
-            "title_year_only", "dup_within_delivery", "in_catalogue (doi/oa/title/via lane)",
+            "title_year_only", "dup_within_delivery", "in_catalogue (doi/oa/url/title/via lane)",
             "in_other_lane_only", "new_to_pool"]
     lines = ["# REL pool merge report", "",
              f"Catalogue: `{report['catalogue']['path']}`, md5 `{report['catalogue']['md5']}`, "
@@ -594,7 +647,8 @@ def report_markdown(report):
         lines.append("| " + " | ".join(map(str, [
             did, p["records"], exc, p["title_only_from_excluded"], p["with_doi"], p["doi_malformed"], p["with_openalex_id"], p["title_year_only"],
             p["dup_within_delivery"],
-            f"{c['total']} ({c['by_doi']}/{c['by_openalex_id']}/{c['by_title_year']}/{c['via_other_lane']})",
+            f"{c['total']} ({c['by_doi']}/{c['by_openalex_id']}/{c['by_url']}/{c['by_title_year']}/"
+            f"{c['via_other_lane']})",
             p["in_other_lane_only"], p["new_to_pool"]])) + " |")
     pool = report["pool"]
     lines += ["", f"Pool: {pool['works']} works ({pool['in_catalogue']} with a catalogue row, "

@@ -143,7 +143,7 @@ def test_per_source_report_reconciles(tmp_path):
     a = report["deliveries"]["t1650-toc/2026-10-01"]
     assert a["records"] == 6 and a["dup_within_delivery"] == 1 and a["works"] == 5
     assert a["with_doi"] == 4 and a["with_openalex_id"] == 1 and a["title_year_only"] == 1
-    assert a["in_catalogue"] == {"total": 3, "by_doi": 1, "by_openalex_id": 1,
+    assert a["in_catalogue"] == {"total": 3, "by_doi": 1, "by_openalex_id": 1, "by_url": 0,
                                  "by_title_year": 1, "via_other_lane": 0}
     assert a["in_other_lane_only"] == 1 and a["new_to_pool"] == 1
     b = report["deliveries"]["t1653-sud/2026-10-02"]
@@ -252,9 +252,7 @@ def test_norm_year_and_openalex():
     assert rp.norm_openalex("abc") == ""
 
 
-def test_no_dedup_key_rows_enter_the_pool_as_title_only_works(tmp_path, monkeypatch):
-    # The reason joined the contract in PR #1614; accept it here whatever the base.
-    monkeypatch.setattr(ric, "EXCLUSION_REASONS", ric.EXCLUSION_REASONS | {rp.NO_DEDUP_KEY})
+def test_no_dedup_key_rows_enter_the_pool_as_title_only_works(tmp_path):
     cat = [{"source": "openalex", "source_id": "W1", "doi": "", "title": "Carbon funds", "year": "2001"},
            {"source": "grey", "source_id": "g1", "doi": "", "title": "Twice seen", "year": "2002"},
            {"source": "grey", "source_id": "g2", "doi": "10.1111/b", "title": "Twice seen", "year": "2003"}]
@@ -275,4 +273,29 @@ def test_no_dedup_key_rows_enter_the_pool_as_title_only_works(tmp_path, monkeypa
         "t1653-sud/2026-10-02:excluded:x2"
     assert _row(pool, "title:nowhere else|")["member_record_ids"].count("excluded:") == 2
     assert report["reconciliation"]["ambiguous_title_only"] == 1
+    assert all(v == "ok" for v in report["reconciliation"]["checks"].values())
+
+
+def test_norm_url_handles_and_resolvers():
+    assert rp.norm_url("HTTPS://Repo.UWI.edu/handle/2139/99/") == "hdl:2139/99"
+    assert rp.norm_url("http://hdl.handle.net/2139/99") == "hdl:2139/99"
+    assert rp.norm_url("https://CEEW.in/Publications/x/") == "https://ceew.in/Publications/x"
+    assert rp.norm_url("ftp://x/y") == rp.norm_url("") == ""
+    assert rp.ids_from_url("https://doi.org/10.1111/AB", "", "") == ("10.1111/ab", "", "")
+    assert rp.ids_from_url("https://openalex.org/W12", "", "") == ("", "W12", "")
+
+
+def test_url_joins_two_lanes_and_keys_a_url_only_work(tmp_path):
+    cat = [{"source": "openalex", "source_id": "W1", "doi": "", "title": "A", "year": "2001"}]
+    lane_a = [_rec("a1", year="", url="https://repo.uwi.edu/handle/2139/99", title="Handle work"),
+              _rec("a2", year="", url="https://ceew.in/pub/x/", title="CEEW report")]
+    lane_b = [_rec("b1", year="2019", url="http://hdl.handle.net/2139/99", title="Other spelling")]
+    report, pool = _run(tmp_path, cat, [("t1653-sud", "2026-10-02", lane_a),
+                                        ("t1650-toc", "2026-10-03", lane_b)])
+    assert _row(pool, "url:hdl:2139/99")["sources"] == "t1650-toc;t1653-sud"
+    assert _row(pool, "url:https://ceew.in/pub/x")["n_sources"] == "1"
+    a = report["deliveries"]["t1653-sud/2026-10-02"]
+    assert a["with_url"] == 2 and a["title_year_only"] == 0
+    assert (a["in_other_lane_only"], a["new_to_pool"]) == (1, 1)
+    assert len(pool) == 3
     assert all(v == "ok" for v in report["reconciliation"]["checks"].values())

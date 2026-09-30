@@ -198,3 +198,16 @@ def test_counts_records_must_be_an_integer(tmp_path, declared):
                   manifest={"counts": {"records": declared, "excluded": {"front_matter": 1}}})
     assert any("counts.records" in e and "is not an integer" in e
                for e in ric.check_delivery(str(d)))
+
+
+def test_http_url_is_a_dedup_key(tmp_path):
+    rec = _record("r1", doi="", year="", url="https://hdl.handle.net/2139/12345")
+    d = _delivery(tmp_path, records=[rec, _record("r2")])
+    assert ric.check_delivery(str(d)) == []
+
+
+def test_non_http_url_is_not_a_dedup_key(tmp_path):
+    rec = _record("r1", doi="", year="", url="hdl:2139/12345")
+    d = _delivery(tmp_path, records=[rec, _record("r2")])
+    errors = ric.check_delivery(str(d))
+    assert len(errors) == 1 and "http(s) url (got url 'hdl:2139/12345')" in errors[0]

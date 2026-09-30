@@ -31,13 +31,14 @@ closed list, in `excluded.csv`:
 | `duplicate_in_lane` | the same item retrieved twice by this lane (keep one row in `records.csv`, list the others) |
 | `front_matter` | not an item at all: issue cover, editorial board, table of contents page, index, erratum notice |
 | `not_retrievable` | the lane saw a reference to the item but could not obtain title-level metadata |
-| `no_dedup_key` | title known, but no DOI, OpenAlex id or year exists in the source |
+| `no_dedup_key` | title known, but no DOI, OpenAlex id, year or http(s) URL exists in the source |
 
 Unlike the other reasons, `no_dedup_key` rows are **not** dropped from the pool.
 They are listed here only because `records.csv` requires a deduplication key
 they cannot carry. The pool merge (ticket 1731) takes them in as title-only
 works, so the ICF rule still sees them and screens them on title. Their `title`
-must be non-empty, and their `note` carries the source URL or handle.
+must be non-empty. A record with a persistent URL is not `no_dedup_key`: it
+goes in `records.csv` with that URL in `url` (see below).
 
 Book reviews, editorials with content, and institutional reports are **not**
 front matter: deliver them, the screen's document-type label handles them.
@@ -94,16 +95,19 @@ empty.
 | `language` | | ISO 639-1 code of the full text if known |
 | `abstract` | | as retrieved; empty is allowed and expected for some sources |
 | `abstract_provenance` | | where the abstract came from when not `platform` |
-| `url` | | landing page |
+| `url` | | the most persistent http(s) identifier available: a Handle URL (`https://hdl.handle.net/…`), a DOI resolver URL, a repository permalink; else the landing page |
 | `affiliation_countries` | | `; `-separated ISO 3166-1 alpha-2 codes of author affiliations |
 | `version_hint` | | the lane's pointer to another version of the same work (DOI or `record_id`), e.g. working paper → article |
 | `lane_status` | | the lane's own disposition, information only (`candidate`, `already_in_pool`, `unresolved`, …) |
 | `lane_note` | | free text |
 
-At least one of `doi`, `openalex_id` or `year` must be non-empty on every row:
-a record with none of them cannot be deduplicated (the merge falls back on
-normalized title + year). A titled record whose source holds none of them goes
-to `excluded.csv` with reason `no_dedup_key` (see above).
+At least one of `doi`, `openalex_id`, `year` or an http(s) `url` must be
+non-empty on every row: a record with none of them cannot be deduplicated. The
+merge joins records on DOI, OpenAlex id, then normalized URL (scheme and host
+lowercased, trailing slash dropped, `hdl.handle.net/X` and `<host>/handle/X`
+both read as the Handle `X`; a DOI resolver or OpenAlex URL counts as that DOI
+or id), then normalized title + year. A titled record whose source holds none
+of them goes to `excluded.csv` with reason `no_dedup_key` (see above).
 
 ## `registry.csv`
 
@@ -160,10 +164,10 @@ delivery, per source (a work two lanes found counts in both):
 |---|---|
 | `records` | rows in `records.csv` |
 | `excluded` | per-reason counts from `excluded.csv` |
-| `with_doi`, `doi_malformed`, `with_openalex_id`, `title_year_only` | identifier coverage (DOIs are compared as strings, never resolved) |
+| `with_doi`, `doi_malformed`, `with_openalex_id`, `with_url`, `title_year_only` | identifier coverage (DOIs are compared as strings, never resolved) |
 | `title_only_from_excluded`, `title_only_joined` | `no_dedup_key` rows taken in as title-only works, and how many joined the one existing work with the same normalized title (several such works: ambiguous, kept separate, counted in the pool reconciliation as `ambiguous_title_only`) |
 | `dup_within_delivery` | rows (records and title-only rows) that land in the same pool work as another row of the same delivery |
-| `in_catalogue` | matched to the catalogue (by DOI, OpenAlex id, then title + year, or `via_other_lane` when only another lane's record bridges them; each count reported) |
+| `in_catalogue` | matched to the catalogue (by DOI, OpenAlex id, URL, then title + year, or `via_other_lane` when only another lane's record bridges them; each count reported) |
 | `in_other_lane_only` | not in the catalogue, matched to another delivery |
 | `new_to_pool` | matched to nothing else: the lane's unique yield |
 | `already_screened` | of the delivery's works, how many already carry an ICF label in `icf_screen` |

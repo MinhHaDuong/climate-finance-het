@@ -42,6 +42,7 @@ COVERAGE_VALUES = {"complete", "incomplete"}
 
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}([T ][0-9:.]+(Z|[+-]\d{2}:?\d{2})?)?$")
 DOI = re.compile(r"^10\.\d{4,9}/\S+$")
+HTTP_URL = re.compile(r"^https?://[^/\s]+\S*$", re.IGNORECASE)
 OPENALEX_ID = re.compile(r"^W\d+$")
 YEAR = re.compile(r"^\d{4}$")
 LANE = re.compile(r"^t\d{4}-[a-z0-9][a-z0-9-]*$")
@@ -105,8 +106,11 @@ def check_records(header, rows, query_ids):
             errors.append(f"{where}: openalex_id {r['openalex_id']!r} is not W + digits")
         if r["year"] and not YEAR.match(r["year"]):
             errors.append(f"{where}: year {r['year']!r} is not four digits")
-        if not (r["doi"] or r["openalex_id"] or r["year"]):
-            errors.append(f"{where}: needs at least one of doi, openalex_id, year")
+        url = (r.get("url") or "").strip()
+        if not (r["doi"] or r["openalex_id"] or r["year"] or HTTP_URL.match(url)):
+            errors.append(f"{where}: needs at least one of doi, openalex_id, year, or an "
+                          f"http(s) url (got url {url!r})" if url else
+                          f"{where}: needs at least one of doi, openalex_id, year, url")
     return errors
 
 
