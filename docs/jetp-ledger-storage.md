@@ -19,9 +19,12 @@ A table too large for the repository's file ceiling, 512 000 bytes per
 file in `.githooks/pre-commit`, is chunked by country and year into
 `<table>.d/<CODE>-<year>.csv`, with numbered `-02`, `-03` shards when one
 country-year still exceeds the ceiling. The build joins those shards in
-numeric order, preserving row order within that country-year. `observations` and
+numeric order, preserving row order within that country-year. The shard
+key is read from fields that never change: the year of the row's own
+`recorded_at` (of `decided_at` where the table does not carry `recorded_at`
+yet), and the row's own `country` column. `observations` and
 `timings` get their shard country from the cited `line_id`, since those tables
-have no country column. The `.d` suffix keeps a
+have no country column; no shard key is an inferred or judged value. The `.d` suffix keeps a
 chunk directory apart from a directory that shares a table's name:
 `data/jetp/documents/` is the document store (the snapshot bytes) under DVC, not the chunks of the
 `documents` table, and the writer deletes only its `<CODE>-<year>[-NN].csv` files of
@@ -89,7 +92,9 @@ alignment test (ontology section 5) checks the values. [M2]
 The rules of the specification require the changes below, which the DDL
 does not yet carry. Each is a target of this contract, with the milestone
 that needs it; a rule of this section that relies on a target column says
-so, and the table above changes when the DDL does.
+so, and the table above changes when the DDL does. A requirement whose rule
+needs a target change is not met at a milestone while that change is still
+a target: the Milestone column is when the DDL must carry it.
 
 | Table | Target change | Rule it serves | Milestone |
 |---|---|---|---|
@@ -118,10 +123,15 @@ so, and the table above changes when the DDL does.
 | `sector-crosswalk` | gains `mapping_relation`, as for `status-crosswalk` | ontology section 5, traceability | M3b |
 | `retrievals` | gains `terms_position` (open licence, public-sector reuse, rights reserved, unknown), `robots_position` (the site's robots rules for the path fetched: allowed, excluded, none published) and `registration_used` (the name of the free public registration used, never a credential); the validator requires them non-empty from M3a | requirements F27 and C6; results section 7 | M2 for the columns; M3a for the check |
 | `documents` | gains `access_route_kind` (address, archive record, registration) and `registration` (the free public registration a registration route needs, named, never a credential); the validator requires a route kind on every document from M3a | requirement F27 | M2 for the columns; M3a for the check |
+| `documents` | gains `hosted_reading` (`allowed`, `local_only`): `local_only` when the recorded terms forbid third-party processing by an explicit reservation; a `local_only` document is never sent to a hosted model | operation section 5; extraction section 6.3 | M2 |
 | `document-addresses` | new table: a document's recorded addresses, each with the date from which it holds, so a relocation is a new address of the same document | relocation rule (below) | M4 |
 | `lines` | gains `run_id`, `method` and `method_version`: the run that admitted the line and the method version that extracted it | extraction section 3, method and version; requirement Q4 | M2 |
 | `observations` | gains `run_id` beside `method` and `method_version` | extraction section 11; requirement Q4 | M3b |
 | `line-referents`, `relations`, `adjudications` | gain `run_id` beside `method` and `method_version` (which `adjudications` gains as above) | fusion section 3, traceable | M2 for `line-referents` and `relations`; M3b for `adjudications` |
+| `lines` | the locator syntax gains an assertion index for a prose span that carries several statements; the (`sha256`, `locator`) check reads it | extraction sections 4 and 5 | M2 |
+| `lines` | gains `attributed_party_id` (nullable): the party the document attributes the line's part to; empty means the document's publishers jointly | requirement F1; extraction section 3 | M2 |
+| `line-groups` | new relation table (line_id, heading_line_id) replacing `lines.groups`, so a line can sit under several headings and method notes | the no-list rule; extraction section 3, group | M2 |
+| `projects` | loses `aliases`, a list in one column; a project's other names are the labels of the lines attached to it | the no-list rule | M3b |
 | `readings` | new append-only journal (below) | extraction section 6.3; collection section 9; fusion section 3; requirements Q4 and Q17 | M2 |
 | `runs` | new append-only journal (below) | operation sections 8 and 10; requirement Q14 | M2 |
 
@@ -151,7 +161,8 @@ under the in-force rule below. [M2]
   (operation section 10). It is the structured twin of the run report
   (operation section 8): run identifier, job, commit of the code, machine,
   start and end times, final state, method and method version, prompt hash,
-  LLM and routed provider, sampling settings, adapter version, spend per
+  LLM and routed provider with the endpoint and the data-collection and
+  retention settings of its hosted calls, sampling settings, adapter version, spend per
   vendor, GPU time and the paths of the run report and of the raw responses
   it stored. Every `run_id` of another table names a row here.
 
@@ -183,6 +194,25 @@ artifact keyed by the snapshot's `sha256`, the adapter, its exact version and
 the layer's own hash, kept under `data/derived/jetp/` and backed up with the
 document bytes. A later adapter version writes a second layer beside the
 first; neither replaces the other. [M2]
+
+**Times per table.** Which times each table holds, what places a row in
+the as-of state at a knowledge cutoff K (the rule below), and whether a
+correction overlay may correct it. World time, the time a statement speaks
+of, is held only in `timings`, in a relation's validity and in a rate's
+date; everything else is ledger time. [M2 for the D1 and D2 tables; M3b
+for the others]
+
+| Table | Times it holds | Enters the state at K by | Overlay |
+|---|---|---|---|
+| `documents` | `published_date`, as the publisher dates it; admission, dated by the earliest retrieval that yielded a snapshot, or by the admit triage judgement from M3a | admission | yes: a document wrongly admitted |
+| `retrievals` | `retrieved_at` | `retrieved_at` | no: a retrieval is an event, not a judgement |
+| `snapshots` | none of its own | the earliest retrieval that yielded it | no |
+| `lines` | `recorded_at`; a printed date stays a verbatim field until read | `recorded_at` | yes |
+| `observations`, `timings` | world time in `timings` (event, period, report date, reporting cutoff and the other roles); `recorded_at` | `recorded_at` | yes |
+| `line-referents`, `relations` | `decided_at`, the judgement's own time; `recorded_at` (target); a relation's `valid_from` and `valid_to`, world time | `recorded_at`, and `decided_at` until the target lands | yes |
+| `adjudications`, `party-names`, `external-ids`, `rates`, `deflators` | `recorded_at` (and `decided_at` where the table has it); a rate's `date`, world time | `recorded_at` | yes |
+| the ontology tables | `recorded_at` | `recorded_at` | no: a changed term is a new ontology version, hence a new result |
+| `readings`, `runs` | `recorded_at`; a run's start and end | not part of the state: they record how its rows were made | no |
 
 Rules that the validator enforces:
 
@@ -227,7 +257,9 @@ Rules that the validator enforces:
   cutoff K and adds a named correction overlay: supersession rows that
   correct ledger errors, recorded after K, whose superseded rows were
   recorded on or before K. Its state is the as-of state at K with those rows
-  applied, and nothing else recorded after K. [M3b]
+  applied, and nothing else recorded after K: a line extracted after K,
+  even from a snapshot retrieved before K, is a new line, not a supersession,
+  and first counts in the next regular release. [M3b]
 - A document is admitted, for the as-of rule, when the ledger first held it.
   At M2, holding is dated by the earliest retrieval that yielded one of its
   snapshots ([extraction](jetp-extraction.md) section 3). From M3a, admission
@@ -267,7 +299,12 @@ Rules that the validator enforces:
   observation reads the note through its line. The relation is stored on the
   member: its `groups` column names the heading, a foreign key into `lines`,
   since a column holds one value and a heading governs many lines; the heading
-  is a line of the same snapshot and never the member itself. [M2]
+  is a line of the same snapshot and never the member itself. A line may sit
+  under several headings (a section title and a footnote): in the target
+  schema `groups` becomes rows of the relation table `line-groups`, one per
+  member and heading; until then the column names the nearest heading, and
+  a heading may name the heading that governs it, so a line reads the
+  chain. [M2]
 - A `line_id` is a minted key, independent of a row's changing attributes.
   Document extractors mint `<document_id>-<table>-<ordinal>` in extraction
   order, where `ordinal` is the mint counter of that document and segment,
@@ -448,7 +485,7 @@ decisions are stored.
   form type `spelling_or_case_variant`); party identifiers are
   `external-ids` rows of kind `party`. Two parties are folded physically
   only under the rules that fusion section 3 says never make two parties
-  (the same external identifier, a case or diacritic variant): the retained
+  (the same identifier of a declared scheme, a case or diacritic variant): the retained
   party gains the other's forms as `party-names` rows, its preferred form is
   stated by superseding the other's, and the retired identifier is recorded.
   Every other `same_as` between parties stays a judgement, and each result

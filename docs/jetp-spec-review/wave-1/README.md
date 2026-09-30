@@ -15,8 +15,11 @@ run on the ten documents as they stood at commit `7f3368b5` on `main`.
   it needs an author decision.
 - **Prototype.** The report of a throwaway prototype (branch
   `spike-spec-prototype`, `spike/REPORT.md`) was an input to every lens.
-- **External pass.** The planned cross-vendor pass (OpenAI, Mistral) was not
-  run: the project's OpenRouter account lacked credit.
+- **External pass.** The cross-vendor pass (OpenAI GPT-5.5 and Mistral
+  Large, each as a critical and a sympathetic reviewer) could not run with
+  the lens review, for lack of OpenRouter credit; it ran later the same day
+  on the fixed documents, and its 31 findings are batch 2 of the ledger
+  ([`external/`](external/README.md)).
 
 ## Files
 
@@ -25,6 +28,7 @@ run on the ten documents as they stood at commit `7f3368b5` on `main`.
 | [`ledger.md`](ledger.md) | The findings ledger, human-readable, with the outcome of each row |
 | [`ledger.json`](ledger.json) | The same rows as data, as the ledger agent produced them |
 | [`agent-results.json`](agent-results.json) | Raw outputs of the lens reviewers and their skeptics |
+| [`external/`](external/README.md) | The four external reviews and their synthesis (batch 2) |
 
 The **Outcome** line of each row in `ledger.md` records whether the fix was
 applied and in which commit, or why it waits for the author.

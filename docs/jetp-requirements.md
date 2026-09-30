@@ -43,6 +43,20 @@ Anyone who asks what was promised, signed and paid, to whom and when, must
 rebuild the record alone, and the record rebuilt by one party is doubted
 by the others.
 
+**Neighbours.** Aggregate trackers of climate finance (the Climate Policy
+Initiative's Global Landscape of Climate Finance, the OECD's reports on
+climate finance provided and mobilised) count flows across all countries
+from reported data; the OECD Creditor Reporting System and IATI carry
+activity records reported by the funders themselves, late and rarely
+labelled JETP; think-tank trackers follow the partnerships from
+announcements and press. The Observer differs by its unit, the dated
+statement attributed to its publisher with its snapshot and locator, and by
+keeping every publisher's version side by side; it reads CRS and IATI as
+comparators, not as its record (DA10). For preservation and provenance it
+follows established models without adopting their machinery: what PREMIS
+asks an archived object to record (fixity, events, rights), and the W3C
+PROV reading of its justification chain (Ontology § 0).
+
 **Outcomes: who does what differently because the Observer exists.** In
 the author's order of priority.
 
@@ -132,7 +146,15 @@ Observer, whether it is met. User questions are numbered by user (OBS, OP,
 DP, SP, LP, BK, AED). Requirements are functional (F), data (DA), quality (Q)
 and constraints (C); non-requirements (N) state what is out of scope.
 Identifiers are stable: regrouping never renumbers them, and a withdrawn
-identifier is not reused. The data requirements are prefixed DA, so that
+identifier is not reused.
+
+A test that samples draws its sample at random with a recorded seed, ten
+items by default or all of them when fewer, and is run by an agent or the
+cross-family reviewer, never the author (C1); one failure fails the test. A
+test that is a review (Q13, Q16) is made finite: the list of evaluative
+words of the presentation is searched over the pages, and each flagged
+sentence is read. A requirement whose test fits neither form is a
+principle and is stated as one, not as a test. The data requirements are prefixed DA, so that
 D1 to D4 name only the steps of Data.
 
 History: the data requirements were prefixed D until 2026-09-30.
@@ -146,7 +168,9 @@ and operational convenience are deferred to operation (M4) unless a
 requirement of an earlier milestone needs them. A requirement names the
 first milestone that must meet it; once met, it stays met at every later
 milestone. Where a requirement binds in part earlier and in full later, it
-names both milestones.
+names both milestones. A requirement is not met at a milestone while a
+table or column its rules need is still a target of the storage contract
+(Storage § 1, target schema).
 
 | Milestone | What it delivers |
 |---|---|
@@ -432,7 +456,8 @@ overwrite one. Here, as in the extraction document, a statement is a line
 
 **F1. Every statement names where it was extracted.** Each statement carries
 its document, the snapshot extracted, its locator in that snapshot, its
-publisher, the method and version that extracted it, and the date extracted. *M2.* Test: pick
+publisher (its document's publishers, or the one party the document
+attributes the statement's part to, Extraction § 3), the method and version that extracted it, and the date extracted. *M2.* Test: pick
 any statement; its snapshot's bytes and its locator are reachable, and the
 printed text at the locator supports it.
 
@@ -491,7 +516,8 @@ as likely as not" changes no figure at a "likely" threshold and is listed.
 
 **F12. Organisations under authority control.** One identity per
 organisation with all its name forms; an external identifier decides where
-one exists. *M3b.* Test: "Senelec" and "SENELEC" are one party; "PLN" and
+one exists in a scheme declared as naming exactly one organisation (Fusion
+§ 3). *M3b.* Test: "Senelec" and "SENELEC" are one party; "PLN" and
 "Perusahaan Listrik Negara" are one party only through a recorded judgement.
 
 **F20. Finance joined to assets.** An operation joins a physical asset only by
@@ -624,7 +650,7 @@ countries has both, or a stated gap.
 
 **F26. Definitions a general reader follows.** Each term shown to readers has
 a plain-language definition beside its formal one. *M4.* Test: every
-glossary entry has a plain-language definition of at most a few sentences,
+glossary entry has a plain-language definition of at most three sentences,
 free of the builders' vocabulary.
 
 ## 5. Data requirements
@@ -704,8 +730,10 @@ list. *M3a.* Test: each class of the frame has at least one entry per
 country, or a recorded reason it has none.
 
 **DA8. A known-item list.** A list of documents known to exist, compiled
-before the discovery rounds, against which recall is estimated. *M3a.* Test:
-the list predates the first round and its recovery rate is reported.
+before the discovery rounds, apart from the searches, against which recall
+is estimated. *M3a.* Test: the list's hash is recorded before the first
+round, and its recovery rate is reported as known-item recovery, overall and
+per country, publisher category, document type and language.
 
 **DA9. Unreachable documents are data.** The list of documents and search
 channels that could not be reached, with the reason, is released with the
@@ -762,7 +790,8 @@ LLM names its LLM and version; re-running
 does not replace a recorded reading.
 
 **Q6. Released figures trace both ways.** Every published number, status and
-substantive narrative claim resolves to the statements and the named
+substantive narrative claim (a sentence that states a number, a date, a
+state, a count or an attribution) resolves to the statements and the named
 calculation it rests on, down to the snapshot bytes that supported it; from
 any statement, the published figures that use it are reachable. The latest
 snapshot of a document never stands in for the one that supported an older
@@ -770,12 +799,18 @@ statement. *M3b.* Test: sample figures from the Observatory and from each
 paper; each resolves to snapshots and locators, and each sampled statement
 lists the figures that use it.
 
+<!-- batch-2 X-26: pending author decision -->
+
 **Q7. Corrections propagate.** A correction reaches every published claim it
 touches, and those claims are identifiable before the next release. *M3b.*
 Test: revoke one match; the list of affected figures is produced.
 
 **Q8. Releases are frozen and reproducible.** A release has an identifier;
-from it, a paper result and an Observatory figure reproduce exactly. A
+from it, a paper result and an Observatory figure reproduce exactly.
+Reproducible means reproducible from the release, its recorded readings and
+the archived documents; to a third party, a result is inspectable as far as
+its documents have a public copy, which the release states per result
+(Results § 4). A
 corrected current account never silently refreshes a released result. *M3b.*
 Test: an independent reader reconstructs one country total and one timeline
 from the release, its dictionary and its locators, over documents that have
@@ -811,15 +846,19 @@ confidence, with every reader's answer; and served sorted by likelihood and
 confidence. No item is queued for the author: he examines the results when
 he chooses, and a decision he makes is recorded like any other judgement.
 Only a question that changes what a term or the contract means goes to
-him, with the panel's stance. The readers, the escalation and the
+him, with the panel's stance. No person reviews high-impact items one by
+one: the held-out reference answers are the only human check, and the
+agree-but-wrong rate and calibration error measured on them are published
+with each release instead (Extraction § 6.3). The readers, the escalation and the
 milestone at which each part applies are specified in Extraction,
 Collection and Fusion § 3. *M2* for statements extracted and for document
 identity judgements, *M3a* for discovery and admission judgements, *M3b*
 for the other identity judgements and for preference judgements. Test:
 every LLM judgement in a release carries readings from more than one model
 family, a stance and a calibrated likelihood and confidence; every reader
-used has a recorded calibration on held-out reference answers; no design
-rule queues an item for the author.
+used has a recorded calibration on held-out reference answers, with its
+agree-but-wrong rate and calibration error per stratum; no design rule
+queues an item for the author.
 
 **Q11. Uncertainty is never hidden.** A value may be a range and a date an
 interval; judgements use the calibrated likelihood and confidence scales;
@@ -859,12 +898,20 @@ an actual absence of finance. *M3b.* Test: the integration review finds no
 causal or speed claim in the Observatory and none unsupported in the papers.
 
 **Q16. A neutral documentary record.** Everything the Observer outputs is
-either a statement attributed to its publisher or a figure labelled as the
-Observer's calculation under a declared method. The Observer does not grade
-partners, judge whether a promise was kept, or recommend policy. *M2.* Test:
-no rule in any specification document makes the Observer assert a finding in
-its own voice other than a declared calculation; the Observatory contains no
-evaluative wording about a partner.
+either a statement attributed to its publisher or a finding of one of three
+kinds, each in its own voice and labelled as such: documentary (what was
+published, by whom and when, and what was sought and not found),
+procedural (how the Observer searched, read and judged, with the rates it
+measured), or a calculation under a declared method. It asserts no
+compliance, blame, merit or cause: it does not grade partners, judge
+whether a promise was kept, or recommend policy. A gap is worded as a
+documentary finding ("no public document found states a disbursement on
+this agreement as of the knowledge cutoff"), never as a finding about the
+world ("the money was not disbursed", "the project is delayed"). *M2.*
+Test: no rule in any specification document makes the Observer assert a
+finding outside these three kinds; outside quoted statements, the
+Observatory's pages contain no word of the presentation's list of
+evaluative words.
 
 ### 6.4 Maintainability and operation
 
@@ -987,7 +1034,8 @@ maintained through 2030, an extension decision in 2028, and an archived
 final release at the end, after which every release cited by a product stays
 retrievable. *M4.* Test: Operation and Results and releases state the end
 date, the date of the extension decision, and how the final release is
-archived; a release identifier cited in a paper resolves after the end.
+archived; a release identifier cited in a paper resolves after the end;
+the handover note of Operation § 9 exists before the first release.
 
 ## 8. Non-requirements
 
@@ -1011,10 +1059,14 @@ generation). Each enters only by a decision that adds it as a measure.
 documents; it does not require debit and credit counterparts that no
 document discloses.
 
-**N4. No automatic truth.** No program, and no rule without a recorded
-judgement, admits a document, merges two identities, prefers a value or
-publishes a release on its own. A program that applies a rule the author
-adopted by version applies the author's judgement (Fusion § 3).
+**N4. No automatic truth.** Nothing is admitted, merged, preferred or
+published without a recorded judgement that names who or what made it, by
+which method and version, and on what basis. A deterministic program
+applies only a rule the author adopted by version, and so applies the
+author's judgement; the panel of LLM readers and arbiter judges under a
+versioned, calibrated protocol (Q5); a release is published only by the
+author's act (N6). Who decides each kind of decision is the table of
+Fusion § 3 ("Who decides what").
 
 **N5. No claim of completeness.** Coverage is quantified; universal
 completeness is never claimed.
@@ -1050,7 +1102,9 @@ Observer, whoever offers it: no content behind a paid subscription, no
 invitation-only or institution-only access, no leaked or confidential
 document, no non-public dataset, no private communication. A site behind a
 free public registration is not closed (F27). Such material, where known to
-exist, may be listed as unreachable (DA9); it is never read.
+exist, may be listed as unreachable (DA9); it is never read. Material
+admitted in error and later found closed is removed as Collection § 9
+states.
 
 ## 9. Requirements and the documents expected to meet them
 

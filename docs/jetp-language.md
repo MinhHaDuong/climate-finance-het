@@ -76,6 +76,11 @@ weighing and revising ([fusion](jetp-fusion.md)); results are computed as E
   step matters, **line** (D2) or **observation** (D3). The extraction and
   fusion documents say *statement* for the line; the Observatory's
   Statements page shows observations.
+- A **locator** is the place of a line's assertion in its snapshot, precise
+  enough to be unique there and never the whole document: a page, table and
+  row, or anchors derived from a verbatim quote, or a record key. What it
+  means is [extraction](jetp-extraction.md) section 5; its syntax, the
+  [storage contract](jetp-ledger-storage.md) section 1.
 - *Referents* are the things of D4; an **identity decision** is the
   judgement that lines share one referent.
 - A **judgement** (fusion's word for the act of weighing), once recorded, is

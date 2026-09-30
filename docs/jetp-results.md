@@ -189,8 +189,16 @@ stated.
   the release or only cited, on which terms, and its public copy:
   redistributed bytes, a public archive capture, or none with the reason
   (section 7). (C6, F27)
+- **The share of support by public copy**: for each result and for the
+  release as a whole, the share of the supporting statements whose document
+  has its bytes redistributed, a public archive capture, a live address
+  only, a registration route only, or no public copy, so that a reader
+  knows how far a figure can be checked from outside. (Q8, C6, F27)
 - **The validation and coverage reports**, and an editorial note in plain
-  language saying what the release contains and what it does not.
+  language saying what the release contains and what it does not. The
+  validation reports include the calibration record of every method version
+  the release uses, with its agree-but-wrong rate and calibration error per
+  stratum ([extraction](jetp-extraction.md) § 6.3). (Q5)
 - **The cost record**: LLM spend and compute time per document class,
   document type and extraction method. (Q15, AED-3)
 - **The Observatory pages** of the release, built from the release alone and
@@ -249,9 +257,12 @@ published, that every result carries section 2 in full, that every trail
 resolves, that every file listed exists with its hash, and that the
 redistribution list excludes every document whose terms forbid it. A failed
 check stops the build and publishes nothing. The validation also screens the
-release's text for email addresses and telephone numbers and lists every hit
-for the author, who removes a natural person's contact details before
-acceptance; the screen reports, it does not block. *M3b* (Q6, Q8, C6, N2).
+release's text for email addresses and telephone numbers, and the speaker
+and verbatim fields of prose statements for the names of natural persons
+other than signatories printed as such, and lists every hit for the author,
+who removes a natural person's contact details, or a name recorded where the
+office should be (extraction § 4), before acceptance; the screen reports, it
+does not block. *M3b* (Q6, Q8, C6, N2).
 
 **A reviewed act.** No program publishes a release on its own. A named
 reviewer accepts the validated package; acceptance is recorded in the
@@ -399,7 +410,10 @@ ledger ([operation](jetp-operation.md) § 4). A report ends in one of three
 outcomes: a ledger error accepted and corrected; rejected, with the reason;
 or reported, awaiting a public source, when only a publisher's revision not
 yet public would settle it (N13, F27). A table of reports may be derived
-from the tickets at M4. *M3b* for tracing, *M4* for publishing the counts
+from the tickets at M4. A request to remove personal data or content (a
+takedown) is a report like any other: when granted, the ledger rows are
+superseded with the reason and released content is withdrawn as above,
+followed by a correction release. *M3b* for tracing, *M4* for publishing the counts
 and a derived table (F25).
 
 **Restoration after a failed publication.** When a publication fails midway,
@@ -492,6 +506,7 @@ process produces.
 | A figure's judgements all meet both thresholds. | One figure, with the note that matching does not move it. |
 | An error is found in release `2026-11` after publication. | A new release `2026-11-r1` names what it supersedes and keeps the cutoff of `2026-11`; the bytes of `2026-11` are unchanged, and its deposit's metadata record points to the correction. |
 | A ledger error in a row of `2026-11` is corrected after its cutoff, when new statements have also been admitted. | `2026-11-r1` carries the correction as a named overlay row and none of the new statements. |
+| A line is extracted after the cutoff of `2026-11` from a snapshot retrieved before it. | It is a new line, not a correction: `2026-11-r1` does not carry it, and it first counts in the next regular release. |
 | A release must be withdrawn. | Its files and pages are removed; its descriptor, hashes and reason stay, its persistent identifier resolves to them, and its status reads "withdrawn". |
 | A revoked match touches three country totals and one paper figure. | The correction's editorial note lists all four before it is published. |
 | The build of a new release fails halfway through writing the site. | The previous accepted release is served whole; no page mixes the two; the ledger keeps its newer rows. |

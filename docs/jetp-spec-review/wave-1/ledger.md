@@ -1,6 +1,6 @@
 # Specification review wave 1: findings ledger
 
-Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, cross-file, state of the art, data held, data to come, implementation, dead angles), reviewers on Sonnet, each lens verified by a skeptic on Fable, deduplicated by a Fable ledger agent; the throwaway prototype report (branch `spike-spec-prototype`, `spike/REPORT.md`) was an input. The external cross-vendor pass did not run: the project OpenRouter account had USD 0.36 left.
+Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, cross-file, state of the art, data held, data to come, implementation, dead angles), reviewers on Sonnet, each lens verified by a skeptic on Fable, deduplicated by a Fable ledger agent; the throwaway prototype report (branch `spike-spec-prototype`, `spike/REPORT.md`) was an input. The external cross-vendor pass could not run then, the project OpenRouter account having USD 0.36 left; it ran later the same day, and its findings are batch 2 (section "Batch 2: external review").
 
 ## Summary
 
@@ -691,3 +691,487 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 **Fix.** Add one sentence to extraction §6.3 and operation §5: a replacement reader or checker is admitted after passing the §12 controls and reaching a stated minimum agreement with the author-checked statements of Q17 on a fixed sample stratified by language; the coverage report states which method version read each document class. Drop the coding-agent vendor clause, outside the specification.
 
 **Outcome.** fixed in fd7c1f4c.
+
+## Batch 2: external review
+
+The cross-vendor pass on draft v0.1: OpenAI GPT-5.5 and Mistral Large 2512,
+each as a critical and a sympathetic reviewer, reviewing the ten documents
+as they stood on `main` after the fixes of batch 1 and before the author's
+decisions on autonomy and on the prose statement shape. The reviews and the
+synthesis that lists these findings are in [`external/`](external/README.md).
+Each row was checked against the documents on `main` at the time of
+application, not against the reviewed draft.
+
+Of the 31 rows, 24 are applied, 2 were already fixed on `main` (a check or a
+sentence added), 1 is moot under the author's rules, and 4 wait for an author
+decision (two of them applied in their author-independent part). Every
+external request for an author sample or an author review load is moot
+under the rule that no machine judgement is routed to the author; the
+compensating control is X-01.
+
+| ID | Severity | Milestone | Author? | Outcome |
+|---|---|---|---|---|
+| X-01 | major | M2 | no | applied |
+| X-02 | major | M2 | no | applied |
+| X-03 | major | M2 | no | applied |
+| X-04 | major | M2 | no | applied |
+| X-05 | major | M2 | no | applied |
+| X-06 | major | M3b | yes | applied in part; pending author |
+| X-07 | major | M2 | no | applied |
+| X-08 | minor | M3a | no | moot |
+| X-09 | minor | M2 | no | applied |
+| X-10 | minor | M3a | no | applied |
+| X-11 | minor | M2 | no | applied |
+| X-12 | minor | M3b | no | applied (tagged M4) |
+| X-13 | minor | M2 | no | applied |
+| X-14 | minor | M3b | no | already fixed; check added |
+| X-15 | minor | M3b | no | applied |
+| X-16 | minor | M3a | no | applied |
+| X-17 | minor | M3b | yes | pending author |
+| X-18 | minor | M3b | no | applied |
+| X-19 | minor | M3b | no | applied |
+| X-20 | minor | M3a | no | applied |
+| X-21 | minor | M3b | no | already fixed |
+| X-22 | minor | M2 | no | applied |
+| X-23 | minor | M2 | no | applied |
+| X-24 | minor | M3b | yes | applied in part; pending author |
+| X-25 | minor | M4 | no | applied |
+| X-26 | minor | M3b | yes | pending author |
+| X-27 | minor | M2 | no | applied |
+| X-28 | minor | M3b | no | applied |
+| X-29 | minor | M3b | no | applied |
+| X-30 | minor | M3b | no | applied |
+| X-31 | minor | M2 | no | applied |
+
+The four commits of this batch are cited by subject: (A) "docs(jetp):
+reference answers as the one human check, one decision-authority table";
+(B) "docs(jetp): assertion index, attributed party, times per table and
+heading rows"; (C) "docs(jetp): local-only reading, closed-room adapters,
+closed material, runbook and handover"; (D) "docs(jetp): known-item
+recovery, finite tests, neutral wording, account causes and PROV reading".
+
+### X-01 (major, M2)
+
+**Finding.** With no machine judgement routed to the author, nothing
+specified the held-out reference answers that are now the only human check:
+their size, strata, freezing, refresh after a model change, separation from
+prompt tuning, and the error that two agreeing readers share
+(agree-but-wrong). Reviewers asked for human review of high-impact items,
+which the author's rule excludes. (GG, GS, MG, MS)
+
+**Fix.** Extraction 6.3: the reference answers are the hand-made lines,
+split by recorded seed into a tuning and a held-out part, stratified by
+country, language and classification, frozen per method version and
+rescored on any change of reader, arbiter or prompt; each calibration
+reports per-term precision with its interval, calibration error and the
+agree-but-wrong rate; a stratum under 30 items is reported as uninformative.
+Q5 states that no person reviews high-impact items and what is published
+instead; releases carry the calibration record; a §12 check keeps tuning and
+held-out apart.
+
+**Outcome.** applied in (A).
+
+### X-02 (major, M2)
+
+**Finding.** "No automatic truth" (N4) read as forbidding what the panel of
+LLM readers now does (admitting statements and documents); nowhere said who
+decides each kind of decision, when it is in force and how it is reversed.
+(GG)
+
+**Fix.** One decision-authority table in fusion 3 (adopted rule, panel,
+author; in force when; what downstream accepts; reversed by), cited by N4,
+which is reworded to require a recorded judgement rather than a person.
+
+**Outcome.** applied in (A).
+
+### X-03 (major, M2)
+
+**Finding.** A prose sentence carrying several assertions collides with the
+uniqueness of (`sha256`, `locator`) under the shortest-span label rule. (GS)
+
+**Fix.** One statement per assertion on the same anchors, told apart by an
+assertion index in the locator; the admission check and a §15 row test it;
+the locator syntax change is a storage target and an exit criterion of
+ticket 1702.
+
+**Outcome.** applied in (B).
+
+### X-04 (major, M2)
+
+**Finding.** F1 says a statement "carries" its publisher, but `lines` has no
+publisher: joint publications, annexes by one partner and commissioned
+reports cannot be attributed at line level. (GG, GS)
+
+**Fix.** F1 defines the publisher as the document's publishers or the one
+party the document attributes the statement's part to; extraction 3 and the
+ontology gain the attributed party; target column `lines.attributed_party_id`
+(nullable, empty meaning jointly). Not required when a document has several
+publishers, as proposed, since extraction cannot always tell. The quoted
+speaker was already a verbatim field.
+
+**Outcome.** applied in (B); exit criterion of ticket 1702.
+
+### X-05 (major, M2)
+
+**Finding.** The author decided that the panel proposes new line classes
+and only the author adopts them, but not how adoption takes effect.
+
+**Fix.** A proposed class is a candidate and classifies nothing; adoption is
+a new method version that rereads the statements recorded as unclassifiable;
+the list is closed between versions (extraction 3, ontology 4).
+
+**Outcome.** applied in (A).
+
+### X-06 (major, M3b)
+
+**Finding.** The finance model omits guarantees, mobilised private finance,
+co-financing, repayment, refinancing and cancellation; agreement, operation
+and tranche are conflated; "pledge is not an IATI transaction type";
+cross-currency totals will often be impossible. (GG)
+
+**Fix.** Author-independent part: pledge is an IATI transaction type since
+standard 2.03 (incoming and outgoing pledge), so that claim is wrong; an
+operation is an agreement and a tranche or successive loan an agreement of
+its own under `tranche_of` (ontology 2); a total across currencies is often
+impossible and a result then reports per currency (fusion 7). Cancellation
+is already a money state, and refunds, repayments and cancellations already
+stay their own measures (fusion 7).
+
+**Author decision.** Which finance instruments enter the closed measure list
+at M3b? (a) extend `flow_type` with IATI loan repayment and credit guarantee,
+and record mobilised private finance and co-financing as `amount`
+observations whose `party_in` roles say whose money it is (F17), refinancing
+out of scope; (b) declare guarantees, mobilisation, co-financing, repayment
+and refinancing out of scope at M3b, kept verbatim on lines; (c) a full
+finance-instruments section mapped to IATI and CRS. Recommended: (a); F17
+already requires mobilisation and co-financing kept apart, and the two IATI
+codes cost two `terms` rows.
+
+**Outcome.** applied in part in (D); the rest pending author decision
+(comment at ontology 4, measures).
+
+### X-07 (major, M2)
+
+**Finding.** Document text goes to hosted LLM providers with no per-source
+control and no record of the provider's retention and training settings.
+(GG, GS)
+
+**Fix.** A document whose terms forbid third-party processing by an explicit
+reservation is read locally only, and what its readers leave open ends
+undetermined (extraction 6.3, operation 5, collection 1; target column
+`documents.hosted_reading`); every hosted call requests no collection and no
+retention, uses only an endpoint that honours that and fails closed; `runs`
+records the settings. The legal position stays with the legal note and the
+review before go-live.
+
+**Outcome.** applied in (C); exit criterion of ticket 1702.
+
+### X-08 (minor, M3a)
+
+**Finding.** Archive captures and registered-session fetches should be
+permitted only where the recorded terms allow, the route logged, and the
+robots-override policy approved once by a human. (GS, GG)
+
+**Fix.** None applied.
+
+**Outcome.** moot under the author's rules: the route of every retrieval is
+already logged (its rung in `collection_method`), the robots-override policy
+is the author's own C6, and whether a site's terms permit a
+registered-session or archive fetch is a legal question for the legal review
+that gates go-live (legal note §1); no legal service is consulted while the
+Observer is undeployed.
+
+### X-09 (minor, M2)
+
+**Finding.** The release screen of W1-56 covers contact details only; names
+of persons in speaker and verbatim fields, and a takedown route, are not
+covered. (GG, GS)
+
+**Fix.** Results 5: the screen also lists natural-person names other than
+signatories in prose speaker and verbatim fields; results 9: a takedown is a
+report, granted by supersession and, for released content, withdrawal and a
+correction release. The office-not-name rule was already in extraction 4.
+
+**Outcome.** applied in (C).
+
+### X-10 (minor, M3a)
+
+**Finding.** No rule for a held document later found non-public or leaked.
+(MS)
+
+**Fix.** Collection 9: an admission in error, superseded with its
+statements; bytes removed from the store, the off-site copies and
+unpublished releases; register row, hash and reason kept; published releases
+withdrawn and corrected; the git-history and backup limits stated. N13
+points to it. No new disposition kind was needed.
+
+**Outcome.** applied in (C).
+
+### X-11 (minor, M2)
+
+**Finding.** Parsers and renderers run with network and credentials in
+reach, and the adversarial fixtures stop at one planted instruction. (GS)
+
+**Fix.** Extraction 5: adapters run without network or credentials and
+execute nothing (macros, scripts, embedded objects, form actions, external
+links). Extraction 12: a sandbox fixture, and hidden-markup fixtures at M2;
+white-on-white, overlays, annotations and text-layer conflicts at M4, as
+W1-55 decided for the finer detection.
+
+**Outcome.** applied in (C).
+
+### X-12 (minor, M3b)
+
+**Finding.** No mapping from ledger objects to W3C PROV. (GG, GS, MG, MS)
+
+**Fix.** A mapping table (Entity, Activity, Agent and the core relations) in
+ontology 0, with no PROV engine and no RDF. Tagged M4, since the author
+decided that RO-Crate with PROV is the M4 option (W1-65).
+
+**Outcome.** applied in (D).
+
+### X-13 (minor, M2)
+
+**Finding.** No single statement of which times each table holds and which
+are eligible for the cutoff K and for a correction overlay. (GG, GS)
+
+**Fix.** Storage 1: a "Times per table" table (times held, what places a row
+in the state at K, whether an overlay may correct it).
+
+**Outcome.** applied in (B).
+
+### X-14 (minor, M3b)
+
+**Finding.** Can a correction overlay include a line extracted after K from a
+snapshot retrieved before K? (GS)
+
+**Fix.** Storage 1 now says outright that such a line is a new line, not a
+supersession, and counts from the next regular release; results 14 gains the
+check.
+
+**Outcome.** already fixed on `main` (the overlay admits only supersession
+rows on rows recorded on or before K; fusion 8 bars discoveries); sentence
+and check added in (B).
+
+### X-15 (minor, M3b)
+
+**Finding.** Depth-one equality lacked its reason; "an external identifier
+decides" is too strong (IATI identifiers reused for umbrella programmes, LEI
+branches) and clashed with the adopted-rule list; no cluster metric named.
+(GG, GS)
+
+**Fix.** Fusion 3: the reason (pairwise likelihoods do not compose along a
+chain); B-cubed named; an identifier decides only in a scheme declared as
+naming exactly one organisation, other codes being strong proposers; F12,
+the adopted-rule list and storage 4 follow.
+
+**Outcome.** applied in (A).
+
+### X-16 (minor, M3a)
+
+**Finding.** The known-item list could be drawn up after the fact, recovery
+is not stratified, and the public figure is called recall although known
+items are more visible than average. (GG, GS, MG)
+
+**Fix.** Collection 6: compiled apart from the searches, its hash recorded
+before round one; recovery also per country, publisher category, document
+type and language, as counts; published as known-item recovery. DA8's test
+follows.
+
+**Outcome.** applied in (D).
+
+### X-17 (minor, M3b)
+
+**Finding.** Known-item recovery is one estimator; capture-recapture over
+independent search channels would give a second. (GG, MG)
+
+**Fix.** None applied; collection 6 keeps it as later work.
+
+**Author decision.** Does the second recall estimator (capture-recapture on
+the overlap of independent search channel classes) move from later into an
+earlier milestone? (a) keep it later, but have the M3a `candidates` table
+record every round that found a candidate, not only the first, so the
+estimate can be computed afterwards without new collection; (b) compute it
+at M3a beside known-item recovery; (c) at M3b. Recommended: (a); with about
+40 known items a second estimator adds little now, and recording every
+finding round keeps the option open at almost no cost.
+
+**Outcome.** pending author decision (comment at collection 6).
+
+### X-18 (minor, M3b)
+
+**Finding.** "Reproducible" is overclaimed when bytes cannot be
+redistributed; nothing says how much of a result a third party can check.
+(GG, GS)
+
+**Fix.** Results 4: per result and per release, the share of supporting
+statements by public-copy kind; Q8: reproducible from the release and the
+archive, inspectable by others as far as a public copy exists.
+
+**Outcome.** applied in (D).
+
+### X-19 (minor, M3b)
+
+**Finding.** Soft tests (F26, Q13, Q16, Q18, Q21, C8) cannot be decided:
+samples without size or failure rule, reviews without a checklist,
+"substantive narrative claim" undefined. (GG, GS, MS)
+
+**Fix.** Requirements 2.1: sampled tests draw ten items by default with a
+recorded seed, run by an agent or the reviewer, never the author, one
+failure failing; review tests search a word list and read the hits; a test
+that fits neither is a principle. Q6 defines the claim; F26 says three
+sentences.
+
+**Outcome.** applied in (D).
+
+### X-20 (minor, M3a)
+
+**Finding.** Q16 "no finding in its own voice" contradicts the documentary
+findings the Observer does make (not published, stopped by cap, traceability
+rate). (GS, GG)
+
+**Fix.** Q16: three kinds of own finding (documentary, procedural, declared
+calculation) and none of compliance, blame, merit or cause, with the wording
+for gaps; the presentation holds the evaluative word list the build
+searches.
+
+**Outcome.** applied in (D).
+
+### X-21 (minor, M3b)
+
+**Finding.** The public page "Statements" shows observations (D3) while the
+builders call lines (D2) statements. (GS)
+
+**Fix.** None needed.
+
+**Outcome.** already fixed on `main`: the language document ("Words that
+span steps") and the presentation state that the Statements page shows
+observations; the page name is the author's and stays.
+
+### X-22 (minor, M2)
+
+**Finding.** `projects.aliases` is a list column against the no-list rule;
+`groups` holds one heading though a line can sit under several; `GLB` looks
+like a pseudo-country; sharding may use an inferred country. (GG)
+
+**Fix.** Verified: the first two hold and become targets (drop
+`projects.aliases`; a `line-groups` relation table, with the heading chain
+as the interim rule); `GLB` was already declared a storage bucket, not a
+country; the shard key is the row's own `recorded_at` year and country (or
+the cited line's), as the writer checks, now written.
+
+**Outcome.** applied in (B); exit criteria of ticket 1702.
+
+### X-23 (minor, M2)
+
+**Finding.** Normative text holds machine details (`~/.local/bin/uv`, the SSH
+command, the named llama service). (GG)
+
+**Fix.** A runbook section at the end of operation holds them as facts, not
+rules; sections 2 and 3, the agents' prohibitions and the checks name the
+roles.
+
+**Outcome.** applied in (C).
+
+### X-24 (minor, M3b)
+
+**Finding.** One-person continuity: no handover of credentials, ownership
+and restore steps, and nobody who can act on a takedown or withdrawal when
+the author cannot. (GG, GS, MG, MS)
+
+**Fix.** Operation 9: a handover note before the first release identifier
+(credential locations by provider, ownership of the repository, deposits
+and domain, restore steps), reread at each release; C10's test checks it.
+
+**Author decision.** Is a deputy named for takedown and withdrawal only?
+(a) name the deputy at the legal review before go-live, together with the
+legal publisher and the person who answers a reply request within three
+days (legal note §5); (b) name a colleague now, before the M3b release;
+(c) no deputy: withdrawal waits for the author, and the handover note
+suffices. Recommended: (a); the legal review decides who the publisher is,
+and the deputy follows from it.
+
+**Outcome.** applied in part in (C); the deputy pending author decision
+(comment at operation 9).
+
+### X-25 (minor, M4)
+
+**Finding.** Nothing tracks drift of sources, schemas, models, terms and
+ontology to 2030, and weekly snapshots multiply restatements. (GS, MG, MS)
+
+**Fix.** Operation 11: a drift register reviewed at each release, and an
+adaptive refetch cadence set from the observed rate of change within N6's
+weekly maximum.
+
+**Outcome.** applied in (C).
+
+### X-26 (minor, M3b)
+
+**Finding.** A published figure may lose its caveats; full traceability of
+every narrative claim at M3b may be overbuilt; whether the display-to-result
+map is served was open. (GG; G0 argued the opposite on traceability)
+
+**Fix.** None applied. Whether the map is served is already settled: it is a
+build-time check, never served (W1-69).
+
+**Author decision.** Traceability scope and caveats at M3b: (a) keep Q6 as
+written (every number, status and substantive narrative claim traced at
+M3b) and show, beside each affected figure, the exclusions and blocked parts
+that bear on it; (b) limit M3b traceability to tables, figures and headline
+metrics, narrative claims at M4, with the same caveat beside each figure;
+(c) keep Q6, with exclusions only in the release's editorial note, as now.
+Recommended: (a); X-19 now bounds what a substantive narrative claim is, and
+results already carry their blocked parts and thresholds, so the caveat
+renders data the release holds.
+
+**Outcome.** pending author decision (comment at requirements Q6).
+
+### X-27 (minor, M2)
+
+**Finding.** Nothing stops a requirement being counted as met while a column
+it needs is still a target, which let W1-01 arise. (GG, GS)
+
+**Fix.** Requirements 2.2 and storage 1: a requirement is not met at a
+milestone while a table or column its rules need is still a target; the
+target table's Milestone column already says when, so no new column.
+
+**Outcome.** applied in (B).
+
+### X-28 (minor, M3b)
+
+**Finding.** An account's missing residual is not labelled by cause. (MG)
+
+**Fix.** Fusion 7: an account that reaches no exact closing or residual names
+its cause from one list, and results count accounts per cause.
+
+**Outcome.** applied in (D).
+
+### X-29 (minor, M3b)
+
+**Finding.** The requirements do not place the Observer among climate-finance
+trackers, CRS, IATI, and preservation and provenance models. (MG)
+
+**Fix.** Requirements 1: a "Neighbours" paragraph.
+
+**Outcome.** applied in (D).
+
+### X-30 (minor, M3b)
+
+**Finding.** A partner's withdrawal or a lapsed partnership had no stated
+representation. (MS)
+
+**Fix.** Fusion 9: a check row (the withdrawal is a dated event; the
+partner's `party_in` rows end at its date by later judgements; nothing
+earlier deleted).
+
+**Outcome.** applied in (D).
+
+### X-31 (minor, M2)
+
+**Finding.** The language document should define locator, knowledge cutoff,
+referent and match threshold. (MS)
+
+**Fix.** Locator added under "Words that span steps"; the other three were
+already defined there.
+
+**Outcome.** applied in (B).

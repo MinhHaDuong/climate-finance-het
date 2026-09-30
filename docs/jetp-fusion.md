@@ -76,7 +76,8 @@ probabilities) coincide at this grain and are not needed. [M2]
 **Calibration.** The verbal terms mean something only once measured. For
 each method version, the observed precision of each likelihood term is
 measured on the judgements already made by hand (the register rows and plan
-lines matched by hand, and the audited decisions) and published with the
+lines matched by hand, and any decision the author chose to make), held out
+from the tuning of the method as extraction section 6.3 states, and published with the
 method version; a result translates its threshold into an expected error
 from those observed rates. [M2]
 
@@ -199,7 +200,10 @@ between referents is bounded to depth one: the source of an accepted
 `same_as` is never the target of another, so a chain of three (A same as B,
 B same as C) is raised as a conflict for review, and resolved by judging A
 against C, never closed by transitivity. A rejected `same_as` between two
-members of one would-be cluster is such a conflict too. [M3b]
+members of one would-be cluster is such a conflict too. The reason is that
+a `same_as` judgement is pairwise evidence, not an equivalence: likelihoods
+do not compose along a chain, so "A same as B" and "B same as C", each
+likely, say nothing calibrated about A and C. [M3b]
 
 - An equality claim (`same_as`) is a justified claim that two things are one; it does
   not choose which name or route prevails. [M2]
@@ -234,18 +238,35 @@ A proposer's settings are part of its method version, and are tested against
 matches already judged by hand before its judgements are used. Each method
 version publishes, on the hand-judged set, its blocking recall (the share of
 true pairs that the proposers put up at all), its pairwise precision and
-recall, and one cluster metric. [M3b]
+recall, and one cluster metric, B-cubed precision and recall. [M3b]
 
 **Judgement by adopted rule.** A program records an accepted judgement only
 under a rule the author adopted, by version, in a recorded decision: identical
-bytes, the same external identifier, a case or diacritic variant of one
-name. Such a rule is the author's judgement applied by a program, and its
+bytes, the same identifier of a declared scheme (Organisations, below), a
+case or diacritic variant of one name. Such a rule is the author's judgement applied by a program, and its
 rows name the rule as their method. Every other proposal, by a program or an
 LLM, is recorded as a candidate match until the judgement protocol of
 [extraction](jetp-extraction.md) section 6.3 accepts it, or the author,
 when he chooses to, decides it. This
 is how the first principle ("no rule below selects a value or merges two
 things on its own") and the proposers above hold together. [M2]
+
+**Who decides what.** Every decision of the Observer falls under one row
+of this table, which is the one statement of decision authority;
+requirement N4 cites it.
+
+| Decision | Decided by | In force when | What downstream accepts | Reversed by |
+|---|---|---|---|---|
+| Identical bytes; the same identifier of a declared scheme (Organisations, below); a case or diacritic variant of one name | a program applying a rule the author adopted by version | recorded as accepted under that rule | every result, whatever its threshold | a later judgement of the panel or of the author, or a new version of the rule |
+| A statement admitted or rejected; a disposition; a document identity beyond the adopted rules; a triage outcome; a document's class | the panel: two readers, the arbiter on escalation (extraction section 6.3) | its final stance, admitted or accepted | an admitted statement, by every result; a document judgement, before extraction | a later judgement of the panel or of the author, naming the one it revises |
+| A match, an occurrence, a coverage, a compatibility, a revision, a preference | the panel | accepted, with its likelihood and confidence | a result, only at or above its declared match threshold | as above |
+| A new line classification, a new term or a changed meaning, a new disposition kind | the author, on the panel's proposal and its stance | adopted, as a new method or ontology version | runs under that version and after | a later decision of the author |
+| The collection protocol, the recall estimate and the freeze; the publication of a release | the author | recorded in the collection report or in the release's descriptor | M3b; the products that cite the release | a recorded revision of the protocol; a correction release |
+| Any item the author chooses to decide | the author, as a reading of the role *author* | recorded beside the machine readings, superseding the judgement it revises | as for the judgement it supersedes | a later judgement |
+
+[M2 for the adopted rules, statements, dispositions, document judgements
+and the author's rows; M3a for triage and classes; M3b for the other
+judgements]
 
 **Reading and verification.** The author is not the checker, and no
 machine judgement is routed to him. A reading is one answer to one
@@ -276,9 +297,14 @@ name authority file or the ROR and GLEIF registries: one identity per
 organisation, every form of its name attached to it, one form preferred.
 Three rules of their own apply.
 
-- An external identifier decides: an IATI organisation identifier, a ROR
-  identifier, an LEI or a Wikidata item. Two names that carry the same
-  identifier are one organisation.
+- An external identifier decides when its scheme is declared, in the
+  method version, as naming exactly one organisation at the grain of a
+  party: an IATI organisation identifier, a ROR identifier, the LEI of a
+  legal entity, a Wikidata item for an organisation. Two names that carry
+  the same identifier of a declared scheme are one organisation. A code
+  that can name a branch, a programme or a group of entities (an IATI
+  identifier reused for an umbrella programme, an LEI of a branch) is a
+  strong proposer, judged like any candidate match, never a decision.
 - Forms that differ only by case, diacritics or spacing (Senelec and
   SENELEC) are one party with several name forms, never two parties joined by
   an equality claim.
@@ -420,6 +446,9 @@ implies neither finance nor physical progress. [M3b]
 conversion uses a rate that a document printed, cited like any statement; no
 rate is assumed and no conversion is implicit. A conversion made by a third
 party is kept as its statement and excluded from sums in original currency.
+Since few documents print a rate, a total across currencies is often
+impossible; a result then reports one figure per currency rather than
+converting.
 Gross flows are not reduced by refunds, repayments or cancellations, which
 remain their own measures. Rounded inputs carry their bounds, and a rounding
 difference is not a discrepancy. [M3b]
@@ -450,6 +479,13 @@ position. [M3b for all]
 - A residual (reported closing minus reconstructed closing) exists only when
   the two share cutoff, currency, coverage and basis; otherwise both are kept
   with the condition that failed.
+- An account that reaches no exact closing, or no residual, names its
+  cause from one list: totals that overlap in part with no supported
+  decomposition; an opening position unknown or with an open bound; a
+  movement whose interval straddles a boundary; coverage not judged
+  complete; a cutoff, currency, coverage or basis that differs between the
+  reported and the reconstructed closing. A result counts its accounts per
+  cause, so that what blocks the reconstruction is itself a finding.
 - A figure printed as cumulative or "to date" is a closing-position
   candidate, never a movement: it is read as a flow over an interval whose
   end is its as-of date and whose start is unknown (extraction section 11),
@@ -517,3 +553,4 @@ well.
 | A report of March 2026 says a plant was commissioned, without a date. | The commissioning is an interval with an open start ending in March 2026, not a day. |
 | An accepted match has a later revision that is only proposed. | The accepted match stays in force and counts; the proposal is listed as pending until it is itself accepted or rejected. |
 | A match accepted before cutoff K is superseded by a judgement admitted after K. | A result at K counts the accepted match; a result at a later cutoff applies the revision. |
+| A partner announces its withdrawal from a partnership. | The announcement is a statement read as a dated event; the partner's `party_in` rows end at the date it gives, by later judgements that close them and cite the statement. Nothing earlier is deleted: a result at an earlier cutoff still shows the partner's role and the amounts it had stated. |

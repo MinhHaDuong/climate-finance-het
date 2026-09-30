@@ -28,6 +28,23 @@ terms the design documents and schema use or avoid are
 [`jetp-language.md`](jetp-language.md). What readers of the Observatory see is
 [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
 
+**Reading in W3C PROV.** The justification chain maps onto the provenance
+model of W3C PROV without a PROV engine or an RDF store; the mapping is what
+the RO-Crate option of [results](jetp-results.md) section 5 would export.
+[M4]
+
+| Ledger object or link | PROV |
+|---|---|
+| snapshot, line, observation, decision row, result, release | *Entity* |
+| retrieval, run, reading, judgement, release build | *Activity* |
+| publisher, method version, LLM reader, person | *Agent* |
+| a line and the snapshot it cites; a result and its inputs | *wasDerivedFrom* |
+| a snapshot and the retrieval that yielded it | *wasGeneratedBy* |
+| a run and the snapshots and lines it read | *used* |
+| a run or judgement and its method version, LLM and person | *wasAssociatedWith* |
+| a document and its publishers | *wasAttributedTo* |
+| a superseding row and the row it supersedes | *wasRevisionOf* |
+
 ## 1. Why a new schema
 
 The four partnerships publish lists, not project registries, and the
@@ -105,7 +122,9 @@ reviewed matches have produced from them. [M2]
 A line carries what every line has in common: country, snapshot, locator,
 ordinal in its table, the label the publisher printed, its classification
 (section 4), the publisher's own status word and which axis that word belongs
-to. Everything else the publisher printed for that line is kept verbatim,
+to, and, when its document attributes the part that carries it to one of its
+publishers or to another party it names, that party; otherwise the line is its
+document's publishers', jointly. Everything else the publisher printed for that line is kept verbatim,
 field by field as printed. [M2]
 
 Every observation names the method and version that read it from its line,
@@ -145,7 +164,11 @@ counterparty. A grant line of the South African grants register, a loan, a resul
 operation, a term sheet before signature. States are states of the document
 that embodies it: announced, MoU, approved, signed, cancelled, withdrawn.
 Money movements are flows on the agreement, typed by the IATI transaction list:
-pledge, commitment, disbursement, expenditure. A plan cost estimate is not an
+pledge (IATI's incoming and outgoing pledge, since version 2.03 of the
+standard), commitment, disbursement, expenditure. An operation, in the
+lenders' sense ([language](jetp-language.md)), is an agreement; a tranche or
+a successive loan under one programme is an agreement of its own related by
+`tranche_of`, never an amount split within one agreement. A plan cost estimate is not an
 agreement state; it is an observation on a line ([storage contract](jetp-ledger-storage.md) section 1). An agreement
 may be a tranche of another (`tranche_of`) and finances zero or more projects
 (`finances`); the hierarchy never splits money. [M3b]
@@ -291,7 +314,9 @@ A classification is never inferred from the label. The list grows only by
 decision of the author, since a new value changes the contract: when readers
 answer "cannot classify", the panel groups those statements and proposes a
 new value with a stance and a confidence ([extraction](jetp-extraction.md)
-section 3), and the author adopts it or not. [M2]
+section 3), and the author adopts it or not. An adopted value takes effect
+with a new method version, which reads the unclassified statements again;
+between versions the list is closed. [M2]
 
 **Sector** is a shared axis, coded with the OECD DAC CRS purpose list (five
 digits; the 231 to 236 group covers energy policy, generation by source,
@@ -306,6 +331,8 @@ a referent decision, and on an observation by inheritance from its subject.
 Technology is a separate attribute of assets, aligned to the Global Energy
 Monitor list: a sector says what the money is for, a technology says what
 the plant is. [M2 for the publisher's own sector word on the line; M3b for the crosswalk and the assigned sector]
+
+<!-- batch-2 X-06: pending author decision -->
 
 The `measure` of an observation is from a closed list, extended by decision:
 

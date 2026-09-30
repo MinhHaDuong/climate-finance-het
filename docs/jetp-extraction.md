@@ -164,10 +164,14 @@ required of it at this step.
   of the list fits what the publisher asserts. Such a statement is not
   admitted; it is recorded with its readings, and the panel (the two readers
   and the arbiter) groups the unclassified statements of a run and proposes
-  new classes for them, each with a stance and a confidence. A new class is
-  adopted only by the author, since it changes the contract; the statements
-  it covers are then read again. A classification is never added to an
-  admitted statement afterwards. [M2]
+  new classes for them, each with a stance and a confidence. A proposed
+  class is a candidate and classifies nothing. A new class is adopted only
+  by the author, since it changes the contract, and its adoption is a new
+  method version, which lists the statements recorded as unclassifiable
+  under earlier versions and reads them again. Between two method versions
+  the list is closed: no run admits a statement under a class not yet
+  adopted. A classification is never added to an admitted statement
+  afterwards. [M2]
 - **The publisher's own status word**, copied as printed, when the publisher
   prints one. The axis it belongs to is set only by a parser's reviewed,
   versioned status list for its series (adopted as crosswalk rows at M3b);
@@ -177,9 +181,16 @@ required of it at this step.
   here; it lives only in the crosswalk. [M2]
 - **The publisher's own sector word**, copied as printed, when there is one.
   [M2]
-- **Group**: the heading statement that governs it, when one does (a
+- **Group**: the heading statements that govern it, when some do (a
   programme heading, a method note, a section title that conditions every
-  item under it). The heading is a statement of the same snapshot. [M2]
+  item under it); a statement may sit under several. Each heading is a
+  statement of the same snapshot. [M2]
+- **Attributed party**, when the document attributes the part that carries
+  the statement to one party: an annex signed by one partner, a chapter by
+  one co-publisher, the consultant who wrote a commissioned report. The
+  party is one of the document's publishers or a party the document names.
+  Otherwise the statement is its document's publishers', jointly. A quoted
+  speaker is a verbatim field (section 4), not an attribution. [M2]
 - **Verbatim fields**: everything else the publisher printed for the item,
   field by field. The list of fields is fixed by the method version for
   each document class or series, never by a reader, and applies per table
@@ -232,7 +243,12 @@ cases that recur in the documents held. [M2 for all]
   quoted speaker is recorded as the office or institution the publisher
   prints; a person's name is recorded only when the publisher prints it as
   the signatory of an in-scope document. The label of a prose statement is
-  the shortest verbatim span of the text that carries the assertion. Its
+  the shortest verbatim span of the text that carries the assertion. When
+  one span carries several assertions (a sentence saying that a plan was
+  approved in March and that a loan was disbursed in June), each assertion
+  is its own statement on the same anchors, told apart by an assertion
+  index in its locator, numbered in the order the assertions appear and
+  never reassigned (section 5). Its
   verbatim fields are the fixed list of its document class or series
   (section 3), for prose at least the speaker, the date and the amount as
   printed, each a verbatim substring of the text layer. Amounts and dates
@@ -275,6 +291,12 @@ resolves against the stored bytes through that named adapter version. The
 adapter is pinned by exact version with the pipeline's other dependencies.
 [M2]
 
+**Adapters in a closed room.** Parsing is the one step that handles hostile
+bytes before anything has read them. Adapters and renderers run without
+network access and without the credentials of the pipeline, and never
+execute macros, scripts, embedded objects or form actions, nor follow
+external links or references. [M2]
+
 **Retained layers.** A locator resolves only against the text layer of one
 adapter version, and an adapter version may become unavailable, so the text
 layer of every snapshot with admitted statements is retained beside its
@@ -289,7 +311,8 @@ For a table cell, it is the page (or sheet), the table and the row. For
 prose, it is the page index plus start and end anchors that code derives
 from the reader's verbatim quote, after whitespace is normalised and the
 page furniture the method declares is removed; the anchors must be unique in
-the text layer, or carry an occurrence index. The folio the publisher
+the text layer, or carry an occurrence index, and a span that carries several
+statements adds an assertion index (section 4). The folio the publisher
 printed is recorded only when the adapter reads it. The locator check
 (section 6.3) resolves the anchors in the text layer and compares the text
 between them with the quote under the same normalisation; there is no
@@ -409,6 +432,11 @@ record, and no item waits for the author.
 - **Untrusted input.** Documents are written by interested parties. LLM
   readers and the arbiter are called without tools, network or file access,
   and receive the text layer as quoted data, never as instructions. [M2]
+- **Local reading only.** A document whose recorded terms forbid
+  third-party processing by an explicit reservation is read by local
+  readers only and never sent to a hosted model; an item its readers leave
+  open ends undetermined instead of going to the arbiter
+  ([operation](jetp-operation.md) section 5). [M2]
 - **Two readers.** Each reader is given the document's text layer, the
   declared scope and the field list that the method version fixes for the
   document's class or series (a reader never proposes one), and, blind to
@@ -449,11 +477,30 @@ record, and no item waits for the author.
   makes is recorded as a judgement like any other, beside the machine
   readings, never over them. [M2]
 - **Calibration.** Before any unattended run, each reader and the arbiter
-  are scored on held-out reference answers, lines of the extracted documents
-  made by hand, and each model's raw self-scores are mapped to the
-  likelihood terms from those scores; a model that fails its positive
-  controls is weighted out. How the readers are selected and where they run
-  is in [operation](jetp-operation.md) section 5. [M2]
+  are scored on held-out reference answers, and each model's raw
+  self-scores are mapped to the likelihood terms from those scores; a model
+  that fails its positive controls is weighted out. How the readers are
+  selected and where they run is in [operation](jetp-operation.md) section
+  5. [M2]
+- **Reference answers, the only human check.** No person reviews admitted
+  items one by one, high-impact items included; the reference answers are
+  the human check of the method. They are the lines of the extracted
+  documents made by hand (requirement Q17), split once, by a recorded
+  seed, into a tuning part, which prompt writing and model selection may
+  read, and a held-out part, which they never read. The held-out part is
+  stratified by country, language and classification, frozen with the
+  method version it calibrates, and changed only by a new method version;
+  any change of reader, arbiter or prompt is scored on it again. Each
+  calibration records, per model and per stratum, the observed precision of
+  each likelihood term with its Wilson interval, the calibration error (the
+  terms whose observed precision falls outside their stated range), and the
+  agree-but-wrong rate: the share of held-out items on which both readers
+  agreed at or above the acceptance level and were wrong, the error that
+  escalation cannot catch, since readers of two families still share
+  training data. A stratum with fewer than 30 held-out items is reported as
+  uninformative, not as calibrated. The calibration record of every method
+  version a release uses is part of its validation reports
+  ([results](jetp-results.md) section 4). [M2]
 - **Parts.** A document too long for one reading is read
   in parts, and a part is a declared scope part (section 4: an appendix, a
   section, a page range), so parts never overlap. An item that runs across
@@ -750,8 +797,9 @@ not used on held documents until its checks pass. [M2 for all]
   total, or bytes it was not written for.
 - **The admission step** rejects a renumbered identifier, a statement whose
   verbatim fields disagree with its document's declared field list, two
-  statements with one locator in one snapshot, and a statement citing a
-  snapshot the ledger does not hold.
+  statements with one locator in one snapshot (two assertions of one span
+  differ by their assertion index), and a statement citing a snapshot the
+  ledger does not hold.
 - **Assisted reading** passes the planted-item control (the item is found,
   the absent item is not invented) and rejects a fabricated locator
   automatically. The control document also carries a planted instruction
@@ -759,14 +807,21 @@ not used on held documents until its checks pass. [M2 for all]
 - **Calibration.** Each reader and the arbiter are scored on held-out
   reference answers before use; the set carries a planted misreading that
   each must reject, and a model that fails a positive control is weighted
-  out.
+  out. A prompt revised after reading a held-out item makes that item part
+  of the tuning set, and the calibration is rerun without it.
 - **Parts.** A fixture cut so that an item straddles the boundary of two
   parts yields one statement.
 - **Retained layers.** Replay against a snapshot whose retained text layer
   is deleted and whose adapter version is unavailable fails loudly; it
   never reports the statements as unresolvable in silence.
 - **The adapters** turn a corrupt or empty object into a disposition, not a
-  crash.
+  crash. A fixture carrying a macro, an embedded script and an external link
+  is parsed with no network request and nothing executed.
+- **Hidden text.** An HTML fixture with text under the `hidden` attribute
+  and an inline `display:none` yields statements marked as hidden. White
+  text on a white ground, overlaid objects, annotations and a text layer
+  that disagrees with the rendered page are fixtures of the finer detection
+  of section 5, at M4.
 - **Ingestion runs** fail on a snapshot whose records read differ in number
   from the count the service or file states (section 6.2).
 - **The pending list** lists a snapshot with neither statements nor a
@@ -864,6 +919,7 @@ does well.
 | A footnote conditions every row of a list. | A heading statement that the rows name as their group. |
 | One cell names three funders. | One statement, the cell kept whole; the three parties are minted later by matching. |
 | An item runs over a page break. | One statement whose locator spans both pages. |
+| One sentence says that the plan was approved in March and that ADB disbursed USD 100 million in June. | Two statements on the same anchors, with assertion indexes 1 and 2; neither is refused as a duplicate locator. |
 | An object is served as a generic byte stream and is a PDF. | It is extracted as a PDF; the declared type stays on the retrieval. |
 | A PDF is truncated. | Disposition `unreadable`, with the reason; the run continues. |
 | A registered document has no bytes. | Disposition `no_snapshot`, whose reason cites the latest retrieval status. |

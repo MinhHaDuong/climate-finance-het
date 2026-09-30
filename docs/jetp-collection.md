@@ -52,7 +52,9 @@ access route records the free registration used, never its credentials
 (requirements C6). Collection never circumvents a technical measure that a
 member of the public could not pass. A site's stated position on automated access (its terms of use,
 its crawler rules) is recorded with the attempts made there, and any change in
-it is reported, never passed over. The legal basis for holding the copies
+it is reported, never passed over. Terms that forbid third-party processing
+by an explicit reservation keep the document's reading local
+([operation](jetp-operation.md) section 5). The legal basis for holding the copies
 (the research text-and-data-mining exception, CPI art. L122-5-3 II and R122-23,
 conditional on the Observer being recorded as a CNRS research activity) and the
 lawful-access record are stated in the [legal note](jetp-legal-note.md) §1. [M3a]
@@ -255,7 +257,10 @@ drawn from the declared secondary trackers, which the secondary-to-primary
 pass searches (section 7): recall measured on them would be circular. Each
 item is identified well enough to decide whether a held document is it. The
 list holds at least 40 items across the four countries, so that its interval
-(below) is informative; the size is tunable upward. [M3a]
+(below) is informative; the size is tunable upward. It is compiled apart
+from the searches, by an agent or a session that takes no part in them, and
+its file's hash is recorded in the round log before the first round, so
+that nobody can show later that it was drawn up after the fact. [M3a]
 
 **Blind use.** Those who search do not see the list. It is compared with the
 register only at declared checkpoints and at the end. [M3a]
@@ -266,8 +271,13 @@ interval, for example "36 of 40, 90 % (77 to 96 %)". An item found only
 after the frame was widened because of its own miss counts as missed.
 Recall is reported under the frame as declared before the first round and
 under the frame as widened, each with its interval, and the share of the
-list already held at round zero is stated. If the list is enlarged, a
-held-out part is reserved that no diagnosis reads. [M3a]
+list already held at round zero is stated. Recovery is also given per
+country, publisher's authority category, document type and language, as
+counts without intervals, since strata of a list of 40 are too small for
+them. The published figure is named *known-item recovery*, an estimate of
+recall with the bias stated below, never recall without qualification. If
+the list is enlarged, a held-out part is reserved that no diagnosis reads.
+[M3a]
 
 **A missed item is a diagnosis.** At a checkpoint, a missed item is examined
 for the search channel that would have found it. If that search channel is missing from the
@@ -282,6 +292,8 @@ since someone cited them, so known-item recall tends to overstate recall. The
 results say so. A second estimate from the overlap between two independent
 search channel classes (capture and recapture) is later work. [M3a for the caveat,
 later for the second estimate]
+
+<!-- batch-2 X-17: pending author decision -->
 
 ## 7. The secondary-to-primary pass
 
@@ -395,6 +407,19 @@ claim's outcome in the secondary-to-primary pass, a duplicate. [M3a]
 
 A triage outcome is defeasible like any judgement: a rejected candidate can be
 admitted later by a judgement that says why. [M3a]
+
+**Material later found closed.** A held document later found not to have
+been public when it was retrieved (leaked, confidential, reached through
+access the public could not obtain) was admitted in error. Its admission
+is superseded by a rejection with the reason, its statements and every row
+that cites them are superseded, and its bytes are removed from the document
+store, from its off-site copies and from every release not yet published;
+its register row, retrievals, hash and the reason stay, so the removal is
+itself on record. A published release that carried its content is withdrawn
+and corrected ([results](jetp-results.md) section 9). Two limits are
+stated, not hidden: verbatim fields already committed stay in the
+repository's history, and machine backups age out on their own schedule.
+[M3a; M2 for the documents held]
 
 ## 10. Document classes
 

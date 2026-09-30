@@ -25,6 +25,14 @@ The page vocabulary is a newsroom's: data desks organise document-based work the
 plain. It keeps to the neutral side of that vocabulary, attribution rather
 than suspicion, because the readers are researchers as well as journalists. [M3b]
 
+**Evaluative words.** Outside a quoted statement, page copy never uses:
+*on track*, *off track*, *delayed*, *behind schedule*, *failed*, *broken
+promise*, *promise kept*, *underperforming*, *success*. A gap is written as
+what was and was not found ("no public document found states a
+disbursement as of the knowledge cutoff"), and a publisher's own word of
+that kind is shown as the publisher's, in quotation. The build searches the
+pages for the list and reports each hit (requirement Q16). [M3b]
+
 | ODEM object | What the reader sees | Label on the page |
 |---|---|---|
 | O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Glossary** |
