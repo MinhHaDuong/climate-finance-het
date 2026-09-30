@@ -14,7 +14,7 @@ import re
 from pipeline_io import polite_get
 
 from rel_sud_sources.common import empty_record, find_year
-from rel_sud_sources.listing import listing_query, matcher
+from rel_sud_sources.listing import listing_query, matcher, soft
 
 IDEAS = "https://ideas.repec.org"
 SERIES = f"{IDEAS}/s/ris/adbewp"
@@ -93,6 +93,7 @@ def listing(get, delay):
 
 
 def fetch(spec, delay, get=polite_get):
+    get = soft(get)
     items, error = listing(get, delay)
     seen = set()
     items = [i for i in items if not (i[0] in seen or seen.add(i[0]))]

@@ -16,6 +16,8 @@ No ``SOURCE`` here: the runner's discovery skips this module.
 import html
 import re
 
+import requests
+
 from rel_sud_sources.common import lexicon_terms, term_matcher
 
 TAG_RE = re.compile(r"<[^>]+>")
@@ -78,3 +80,19 @@ def emit(records, n_listing, error):
         if rec.get("matched_terms"):
             yield ("work", rec)
     yield ("end", error)
+
+
+def soft(get):
+    """``get`` that returns a 4xx response instead of raising it.
+
+    ``polite_get`` raises ``HTTPError`` on any 4xx; a listing needs to see the
+    404 that marks the page past the last one, as distinct from a failure.
+    """
+    def wrapped(url, params=None, delay=0):
+        try:
+            return get(url, params=params, delay=delay)
+        except requests.HTTPError as exc:
+            if exc.response is None:
+                raise
+            return exc.response
+    return wrapped

@@ -149,6 +149,23 @@ def test_south_centre_reads_every_feed_page_at_crawl_delay():
     assert all(d >= south_centre.CRAWL_DELAY for _, _, d in get.calls)
 
 
+def test_a_raised_404_past_the_last_page_ends_a_listing_complete():
+    """polite_get raises HTTPError on 4xx; the listing must still see the 404."""
+    import requests
+
+    feed = south_centre.FEED
+    inner = FakeGet({(feed, (("paged", 1),)): Resp(rss([("Research Paper 1", "Climate finance", "")]))})
+
+    def raising(url, params=None, delay=0):
+        resp = inner(url, params, delay)
+        if resp.status_code >= 400:
+            raise requests.HTTPError(response=resp)
+        return resp
+
+    evs = list(south_centre.fetch(south_centre.plan(CFG)[0], 0, get=raising))
+    assert evs[0] == ("meta", 1) and evs[-1] == ("end", "")
+
+
 def test_south_centre_first_page_error_is_incomplete():
     get = FakeGet({(south_centre.FEED, (("paged", 1),)): Resp("", 503)})
     assert events(south_centre, get)[-1] == ("end", "http 503 on page 1")
