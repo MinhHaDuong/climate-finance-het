@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
+2026-09-30T15:40Z HDMX-coding-agent note docs/jetp-results.md drafted (results, two matching cutoffs, release build, identification, redistribution, citation, correction, restoration, Observatory view, M4 change attribution, horizon, checks); repointing of scattered sources waits for review
 
 --- body ---
 ## Context
@@ -31,6 +32,6 @@ built before it.
 
 ## Exit criteria
 
-- [ ] `docs/jetp-results.md` states what a result carries (inputs, the two cutoffs, ontology and method versions, matching cutoff), how a release is frozen, identified, cited, corrected and restored
-- [ ] Every rule carries its milestone
+- [x] `docs/jetp-results.md` states what a result carries (inputs, the two cutoffs, ontology and method versions, matching cutoff), how a release is frozen, identified, cited, corrected and restored
+- [x] Every rule carries its milestone
 - [ ] The scattered sources point to it without restating it
