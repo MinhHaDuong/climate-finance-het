@@ -127,3 +127,18 @@ def test_malformed_counts_excluded_is_a_violation_not_a_crash(tmp_path, excluded
 def test_unhashable_coverage_is_a_violation_not_a_crash(tmp_path, coverage):
     d = _delivery(tmp_path, manifest={"coverage": coverage})
     assert any("is not complete/incomplete" in e for e in ric.check_delivery(str(d)))
+
+
+@pytest.mark.parametrize("name", ric.FILES)
+def test_non_utf8_file_is_named_and_other_files_still_checked(tmp_path, name):
+    d = _delivery(tmp_path, excluded=[{"record_id": "r3", "query_id": "q1",
+                                       "reason": "off_topic", "title": "x", "note": ""}],
+                  manifest={"counts": {"records": 2, "excluded": {"off_topic": 1}}})
+    if name == "excluded.csv":
+        _write_csv(d / "registry.csv", ["query_id"], [{"query_id": "q1"}])
+    raw = (d / name).read_bytes()
+    (d / name).write_bytes(raw + "Économie\n".encode("latin-1"))
+    errors = ric.check_delivery(str(d))
+    assert any(e.startswith(f"{name}: not UTF-8") for e in errors)
+    other = "registry.csv: missing column" if name == "excluded.csv" else "off_topic"
+    assert any(other in e for e in errors)

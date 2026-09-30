@@ -48,11 +48,16 @@ DELIVERY = re.compile(r"^\d{4}-\d{2}-\d{2}[a-z]?$")
 FILES = ["records.csv", "registry.csv", "excluded.csv", "manifest.json"]
 
 
-def _read_csv(path):
-    with open(path, encoding="utf-8", newline="") as fh:
-        reader = csv.DictReader(fh)
-        header = reader.fieldnames or []
-        rows = list(reader)
+def _read_csv(path, errors):
+    """Return (header, rows); on a decode error, record it and return (None, [])."""
+    try:
+        with open(path, encoding="utf-8", newline="") as fh:
+            reader = csv.DictReader(fh)
+            header = reader.fieldnames or []
+            rows = list(reader)
+    except UnicodeDecodeError as exc:
+        errors.append(f"{os.path.basename(path)}: not UTF-8 ({exc})")
+        return None, []
     return header, rows
 
 
@@ -75,7 +80,7 @@ def check_records(header, rows, query_ids):
         for col in RECORD_REQUIRED:
             if not (r.get(col) or "").strip():
                 errors.append(f"{where}: {col} is empty")
-        if r["query_id"] and r["query_id"] not in query_ids:
+        if query_ids is not None and r["query_id"] and r["query_id"] not in query_ids:
             errors.append(f"{where}: query_id {r['query_id']!r} not in registry.csv")
         if r["retrieved_at"] and not ISO_DATE.match(r["retrieved_at"]):
             errors.append(f"{where}: retrieved_at {r['retrieved_at']!r} is not ISO 8601")
@@ -125,7 +130,7 @@ def check_excluded(header, rows, query_ids, record_ids):
             errors.append(
                 f"{where}: reason {r['reason']!r} is not one of "
                 f"{', '.join(sorted(EXCLUSION_REASONS))} (relevance is never a reason)")
-        if r["query_id"] and r["query_id"] not in query_ids:
+        if query_ids is not None and r["query_id"] and r["query_id"] not in query_ids:
             errors.append(f"{where}: query_id {r['query_id']!r} not in registry.csv")
         if (r["reason"] != "duplicate_in_lane" and r["record_id"]
                 and r["record_id"] in record_ids):
@@ -159,7 +164,7 @@ def _check_counts(manifest, n_records, excluded_counts):
     """Declared counts must equal the rows actually delivered and excluded."""
     errors = []
     counts = manifest["counts"] if isinstance(manifest["counts"], dict) else {}
-    if counts.get("records") != n_records:
+    if n_records is not None and counts.get("records") != n_records:
         errors.append(
             f"manifest.json: counts.records is {counts.get('records')!r}, "
             f"records.csv has {n_records} rows")
@@ -167,7 +172,7 @@ def _check_counts(manifest, n_records, excluded_counts):
     if not isinstance(excluded, dict):
         return errors + [f"manifest.json: counts.excluded must be an object, got {excluded!r}"]
     declared = {k: v for k, v in excluded.items() if v}
-    if declared != dict(excluded_counts):
+    if excluded_counts is not None and declared != dict(excluded_counts):
         errors.append(
             f"manifest.json: counts.excluded {declared} differs from "
             f"excluded.csv {dict(excluded_counts)}")
@@ -218,23 +223,32 @@ def check_delivery(delivery_dir):
     if missing:
         return [f"missing file(s): {', '.join(missing)}"]
     errors = []
-    reg_header, reg_rows = _read_csv(os.path.join(delivery_dir, "registry.csv"))
-    reg_errors, query_ids = check_registry(reg_header, reg_rows)
-    errors += reg_errors
-    rec_header, rec_rows = _read_csv(os.path.join(delivery_dir, "records.csv"))
-    errors += check_records(rec_header, rec_rows, query_ids)
-    exc_header, exc_rows = _read_csv(os.path.join(delivery_dir, "excluded.csv"))
-    record_ids = {r.get("record_id") for r in rec_rows}
-    errors += check_excluded(exc_header, exc_rows, query_ids, record_ids)
+    reg_header, reg_rows = _read_csv(os.path.join(delivery_dir, "registry.csv"), errors)
+    query_ids = None
+    if reg_header is not None:
+        reg_errors, query_ids = check_registry(reg_header, reg_rows)
+        errors += reg_errors
+    rec_header, rec_rows = _read_csv(os.path.join(delivery_dir, "records.csv"), errors)
+    if rec_header is not None:
+        errors += check_records(rec_header, rec_rows, query_ids)
+    exc_header, exc_rows = _read_csv(os.path.join(delivery_dir, "excluded.csv"), errors)
+    if exc_header is not None:
+        record_ids = {r.get("record_id") for r in rec_rows}
+        errors += check_excluded(exc_header, exc_rows, query_ids, record_ids)
     try:
         with open(os.path.join(delivery_dir, "manifest.json"), encoding="utf-8") as fh:
             manifest = json.load(fh)
+    except UnicodeDecodeError as exc:
+        return errors + [f"manifest.json: not UTF-8 ({exc})"]
     except json.JSONDecodeError as exc:
         return errors + [f"manifest.json: not valid JSON ({exc})"]
     if not isinstance(manifest, dict):
         return errors + ["manifest.json: top level must be an object"]
-    excluded_counts = Counter(r.get("reason") for r in exc_rows)
-    errors += check_manifest(manifest, delivery_dir, len(rec_rows), excluded_counts)
+    # A file that could not be read has no row count to compare against.
+    n_records = len(rec_rows) if rec_header is not None else None
+    excluded_counts = (Counter(r.get("reason") for r in exc_rows)
+                       if exc_header is not None else None)
+    errors += check_manifest(manifest, delivery_dir, n_records, excluded_counts)
     return errors
 
 
