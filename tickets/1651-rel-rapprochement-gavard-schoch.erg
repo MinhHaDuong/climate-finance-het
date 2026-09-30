@@ -5,7 +5,7 @@ Author: haduong
 
 --- log ---
 2026-09-29T15:00Z haduong created
-
+2026-09-30T13:42Z HDMX-coding-agent note rapprochement fait: 29 references, 14 doublon, 3 inclus, 11 hors theme, 1 non resolu (Wang & Tang, needs-human); 12 absences livrees data/rel/gavard_schoch/delivery_1655.csv
 --- body ---
 ## Contexte
 
@@ -21,6 +21,39 @@ des émissions, en staging Zotero (0704).
 3. Livrer les absences pertinentes à l'injection (1655), avec provenance.
 
 ## Exit criteria
-- [ ] Liste de décisions par référence (inclus / doublon / hors période / hors thème / non résolu)
-- [ ] Absences pertinentes livrées à 1655 avec provenance ; l'absence d'un DOI correspondant n'est pas traitée comme absence du pool
-- [ ] Références non résolues listées, jamais comptées comme traitées
+- [x] Liste de décisions par référence (inclus / doublon / hors période / hors thème / non résolu)
+  — `data/rel/gavard_schoch/decisions.csv`, 29 lignes, une décision chacune, preuve citée (registre `references.csv`)
+- [x] Absences pertinentes livrées à 1655 avec provenance ; l'absence d'un DOI correspondant n'est pas traitée comme absence du pool
+  — `data/rel/gavard_schoch/delivery_1655.csv` (12 lignes) ; la règle titre/auteur/année tourne pour toute référence sans DOI trouvé, et retrouve, DOI effacé, les 12 références pertinentes trouvées par DOI dans `unified_works.csv` (contrôle positif)
+- [x] Références non résolues listées, jamais comptées comme traitées
+  — 1 : Wang & Tang (2026), `treated=no`, `needs_human=yes`
+
+## Résultat (2026-09-30)
+
+Ensemble de référence : les 29 notices bibliographiques des collections Zotero
+« Climate finance audit (2026) » et « Comment on Gavard & Schoch (2026) »
+(28 œuvres et le jeu de données Zenodo ; la page d'état `missing-papers.html`,
+enregistrée comme notice web, n'est pas une référence). Les 28 PDF de `docs/`
+et `2609-PublishedVersion.pdf` correspondent tous à l'une d'elles ; aucune
+référence n'existe en PDF seul. La bibliographie du commentaire
+(`manuscript/comment.md`) y est contenue, sauf la note de données de l'auteur,
+à paraître.
+
+Pool rapproché (md5 dans `pool_manifest.json`) : `unified_works.csv`,
+`refined_works.csv`, `extended_works.csv` de padme, identiques aux sorties
+épinglées de `dvc.lock`, et les candidats 1530 (`screen_input_union.jsonl`,
+`screen_input_final.jsonl`).
+
+Décisions : 14 doublon, 3 inclus (Li–Rishi–Bae 2021, Mahalik et al. 2021,
+Wu–Pan–She 2021), 11 hors thème, 0 hors période, 1 non résolu. Toutes les
+présences sont trouvées par DOI ; le titre ne trouve rien de plus. Gavard &
+Schoch 2021 (ZEW DP, au catalogue) et 2026 (EDE, seulement chez les candidats
+1530) sont liés par `version_link` ; She, Wu & Pan (2020, 资源科学), au
+catalogue, est signalé comme version chinoise possible de Wu–Pan–She 2021.
+L'unité de compte reste à 1655.
+
+Livraison : aucun contrat 1730 n'était sur `main` au 2026-09-30. Faute de
+contrat, `delivery_1655.csv` livre toutes les absences, hors thème compris et
+marquées (aucune mise à l'écart de pertinence avant livraison, comme le prévoit
+1730), avec voie, clé Zotero, fichier source, date de collecte, révision du
+pool et preuve.
