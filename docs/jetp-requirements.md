@@ -694,8 +694,8 @@ its documents carry a disposition that names the format.
 **DA5. Languages.** English, Indonesian, Vietnamese and French. The language
 of every document is recorded; every statement keeps its label in the
 language printed; one member of a translation pair is canonical for extraction.
-*M2.* Test: no document has an unknown language (20 of the 115 have none
-today); no statement cites a translation.
+*M2.* Test: no document has an unknown language (59 of the 392 have none
+today, 20 of them among the 115); no statement cites a translation.
 
 **DA6. Three document classes.** Frozen (collected once, then checked),
 living (re-collected, each version kept as a dated snapshot) and series
