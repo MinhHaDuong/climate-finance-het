@@ -12,20 +12,8 @@ later milestone. It names no storage and no screen layout. How the ledger is
 stored is the storage contract's business; how results are shown on the
 Observatory is the presentation's.
 
-The specification set:
-
-| Document | Subject |
-|---|---|
-| Purpose and requirements (this document) | Why the Observer exists, what it must deliver, and to whom |
-| Language (`jetp-language.md`) | The ODEM frame and the builders' vocabulary |
-| Ontology (`jetp-ontology.md`) | What the ledger talks about |
-| Collection (`jetp-collection.md`) | How documents are found and fetched |
-| Extraction (`jetp-extraction.md`) | How statements are extracted from documents |
-| Fusion (`jetp-fusion.md`) | How statements are combined, weighed and revised |
-| Storage (`jetp-ledger-storage.md`) | How the ledger is kept |
-| Results and releases (`jetp-results.md`) | What is computed, frozen and cited |
-| Presentation (`jetp-observatory-presentation.md`) | What readers of the Observatory see |
-| Operation (`jetp-operation.md`) | Which machine runs what, with which budgets |
+The specification set and its reading order are in the
+[index](jetp-spec.md).
 
 ## 1. Purpose: a theory of change
 
@@ -156,8 +144,6 @@ words of the presentation is searched over the pages, and each flagged
 sentence is read. A requirement whose test fits neither form is a
 principle and is stated as one, not as a test. The data requirements are prefixed DA, so that
 D1 to D4 name only the steps of Data.
-
-History: the data requirements were prefixed D until 2026-09-30.
 
 ### 2.2 Milestones and incremental delivery
 

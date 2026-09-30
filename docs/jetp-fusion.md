@@ -17,8 +17,6 @@ read into a subject, a measure and a value.
 In the ODEM frame ([language](jetp-language.md)), identity decisions are the
 last step of Data (D4) and accounts are Evidence. Both are methods: each rule below
 has a version, and every result names the versions it was computed under.
-Several rules describe the target, not what is built today; building them is
-tracked outside this document.
 
 ## 1. Principles
 

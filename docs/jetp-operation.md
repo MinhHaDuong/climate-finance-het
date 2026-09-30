@@ -150,12 +150,8 @@ its readings, its locator and its snapshot, not every row; the row check is
 the readers' protocol of section 5. A pull request that changes code, rules
 or configuration keeps the full gate above.
 
-Ledger tables stay CSV in git. Bulky raw material, the full raw model
-responses and the text layers, is stored under DVC by its hash and named
-from the tables and the run report, never committed. If the volume of run
-output or its review outgrows git, Dolt (a SQL database versioned like git,
-with row-level differences) is the option recorded for M4. [M2; M4 for the
-Dolt option]
+Ledger tables and bulky raw material are kept as storage contract § 3
+states. [M2]
 
 **What agents may do.** [M2]
 

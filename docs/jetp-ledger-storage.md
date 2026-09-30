@@ -385,15 +385,10 @@ Rules that the validator enforces:
 - Every count exported names its unit: lines of a document, referents of a
   kind, or a perimeter observation. [M3b]
 
-History: one file per table, nothing materialised, is kept from ticket
-0858; `GLB` as a storage bucket from ticket 0885; the heading relation on
-the member from ticket 0873. The decision-scoped key families were minted
-for tickets 0970 and 1160. The minted-key rule was decided by the author on
-2026-09-22 and amended on 2026-09-29 to describe the API and
-reviewed-decision families already present. The money and missingness
-conventions are carried from the backend design of 2026-09-14. The
-non-redirection of preview identifiers is the author's decision of
-2026-09-24 (PR #1492 removed the browser forwards).
+History: tickets 0858 (one file per table), 0885 (`GLB`), 0873 (heading
+on the member), 0970 and 1160 (decision-scoped keys); the minted-key rule
+and the non-redirection of preview identifiers are the author's decisions
+of 2026-09-22, 2026-09-29 and 2026-09-24.
 
 ## 2. What the Observatory serves
 
@@ -458,9 +453,7 @@ one script. If that consumer ever runs SPARQL over several ledgers, the
 engine question reopens on their data, not on this one. [later for the RDF export]
 
 History: the author asked on 2026-09-22 whether the settled ontology was
-the moment to change engine; the backend design of 2026-09-14 (deleted
-2026-09-30) had reserved an optional `<release_id>.sqlite` (`<edition_id>`
-there), promoted here to the build's only query engine.
+the moment to change engine.
 
 ## 4. Matching records
 
@@ -563,6 +556,4 @@ may show a translated label beside the original and a machine summary on a
 document's page, each marked as derived, and a reader who clicks through
 reaches the snapshot in its own language. No observation cites a translation
 or a summary; the justification is the line in the publisher's language, at its
-locator, in its snapshot. The first implementation is the language column and
-the translation relation; the two derived tables are nice-to-have and wait for
-a reader who needs them. [M2 for the language column and the translation relation; later for the two derived tables]
+locator, in its snapshot. [M2 for the language column and the translation relation; later for the two derived tables]

@@ -15,9 +15,7 @@ Its rules are conceptual. They hold whether statements are kept as RDF
 triples, as sentences of flat text or as rows; how they are stored is the
 [storage contract](jetp-ledger-storage.md), and how they are shown is the
 [Observatory](jetp-observatory-presentation.md). Words follow the
-[language](jetp-language.md) document: a statement's documentary support is
-its justification, a language model is an LLM, and the ledger's own output is
-a release.
+[language](jetp-language.md) document.
 
 Milestone tags in square brackets follow the [index](jetp-spec.md).
 
@@ -718,11 +716,7 @@ observations (step D3). [M3b for all rules of this section]
 print a measure and belong to a declared counting scope (the strict scope
 of a partnership, or a declared reference pool) are read into observations;
 the others are listed, not counted. Matching is bounded the same way
-([fusion](jetp-fusion.md) section 3): only statements that feed a declared
-result are matched, against the top candidates per statement. Reading and
-matching run on the two local readers ([operation](jetp-operation.md)
-section 5: one model per GPU, the calibrated winners); a hosted model is
-called only as the arbiter, on escalation.
+([fusion](jetp-fusion.md) section 3).
 
 **How many.** A statement yields zero, one or several observations, one per
 measure it prints. A plan item that prints a capacity and a cost estimate

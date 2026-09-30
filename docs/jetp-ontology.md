@@ -13,10 +13,8 @@ The author's design decisions, with their reasons, are kept in the
 [attic](attic/jetp-ontology-decisions-2026-09.md); their effect is the text
 below.
 
-History: version 2 of the ontology, drafted 2026-09-22 and decided by the
-author on 2026-09-22 and 2026-09-23, reviewed by four independent panels
-([review](jetp-study/ontology-review-2026-09-22/)) and migrated by the 0870
-train (closed 2026-09-30).
+History: version 2 of the ontology, decided by the author on 2026-09-22
+and 2026-09-23 and migrated by the 0870 train.
 
 ## 0. Frame
 
@@ -271,10 +269,6 @@ axis. The publisher's word stays on the line and on the observation; the
 crosswalk row is the only place a shared status is asserted, and it names who
 decided it and when. [M2 for keeping the publisher's word; M3b for the crosswalk]
 
-History: the rename of the authority category `secondary_source` and the
-relation between retrieval statuses and terminal verdicts are proposed
-schema changes tracked in ticket 1702.
-
 ## 3. Relations
 
 | Relation | From | To | Meaning |
@@ -311,12 +305,8 @@ own terms, from a closed list:
 `register_allocation`, `count`, `envelope`, `absence`, `target`, `event`, `decision`.
 
 A classification is never inferred from the label. The list grows only by
-decision of the author, since a new value changes the contract: when readers
-answer "cannot classify", the panel groups those statements and proposes a
-new value with a stance and a confidence ([extraction](jetp-extraction.md)
-section 3), and the author adopts it or not. An adopted value takes effect
-with a new method version, which reads the unclassified statements again;
-between versions the list is closed. [M2]
+decision of the author, on the panel's proposal, and is closed between
+method versions ([extraction](jetp-extraction.md) section 3). [M2]
 
 **Sector** is a shared axis, coded with the OECD DAC CRS purpose list (five
 digits; the 231 to 236 group covers energy policy, generation by source,

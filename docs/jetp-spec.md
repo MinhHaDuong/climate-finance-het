@@ -67,9 +67,7 @@ correct, traceable results; a rule tagged M4 or later is specified now and
 not built before its milestone. A rule already in force, implemented by the
 migration, carries the earliest milestone that relies on it.
 
-History: the milestone ladder is ticket 0725. Documents 0, 3, 4, 7 and 9
-were written with tags; documents 1, 2, 5, 6 and 8 received theirs after the
-vocabulary alignment pass (ticket 1709).
+History: the milestone ladder is ticket 0725.
 
 ## Around the specification
 
