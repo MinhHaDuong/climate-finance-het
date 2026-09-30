@@ -1,0 +1,29 @@
+%erg 0.1
+Title: JETP document bytes have no copy off padme's system disk
+Created: 2026-09-30
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-09-30T13:10Z HDMX-coding-agent created — found by the operation spec draft (ticket 1708), verified
+
+--- body ---
+## Context
+
+Observed 2026-09-30 on padme: the DVC remote of this repository
+(`/data/projets/dvc/oeconomia-climate-finance`, `.dvc/config.local`) and the
+working DVC cache under `/home/haduong` are two btrfs subvolumes (`@data`,
+`@home_haduong`) of the same partition, `/dev/nvme1n1p2`. The DVC
+configuration names no other remote. The archived snapshots of JETP
+documents (`data/jetp/documents.dvc`) therefore exist on one physical drive;
+some of those pages have since disappeared from the web, so a drive failure
+would lose evidence the M3 release is built from.
+
+Not established: whether padme has a machine-level backup outside DVC. Only
+the DVC configuration was inspected; the author knows.
+
+## Exit criteria
+
+- [ ] The author states whether a machine-level backup of padme's `/data` exists, and where
+- [ ] If none: the document bytes have a copy on another physical device or site (the operation spec draft proposes doudou pulling a copy after each push; an institutional or cloud store is an alternative), and a restore of one snapshot from it is tested
+- [ ] `docs/jetp-operation.md` (backups section) states the arrangement
