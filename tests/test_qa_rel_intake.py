@@ -142,3 +142,19 @@ def test_non_utf8_file_is_named_and_other_files_still_checked(tmp_path, name):
     assert any(e.startswith(f"{name}: not UTF-8") for e in errors)
     other = "registry.csv: missing column" if name == "excluded.csv" else "off_topic"
     assert any(other in e for e in errors)
+
+
+def test_utf8_bom_is_tolerated(tmp_path):
+    d = _delivery(tmp_path)
+    for name in ("records.csv", "registry.csv", "excluded.csv"):
+        raw = (d / name).read_bytes()
+        (d / name).write_bytes(b"\xef\xbb\xbf" + raw)
+    assert ric.check_delivery(str(d)) == []
+
+
+def test_records_header_failure_skips_the_row_count_check(tmp_path):
+    d = _delivery(tmp_path)
+    _write_csv(d / "records.csv", ["title"], [{"title": "t"}])
+    errors = ric.check_delivery(str(d))
+    assert any("records.csv: missing column(s)" in e for e in errors)
+    assert not any("counts.records" in e for e in errors)

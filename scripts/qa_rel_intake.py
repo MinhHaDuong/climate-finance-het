@@ -51,7 +51,8 @@ FILES = ["records.csv", "registry.csv", "excluded.csv", "manifest.json"]
 def _read_csv(path, errors):
     """Return (header, rows); on a decode error, record it and return (None, [])."""
     try:
-        with open(path, encoding="utf-8", newline="") as fh:
+        # utf-8-sig: tolerate the byte-order mark an Excel "CSV UTF-8" export adds.
+        with open(path, encoding="utf-8-sig", newline="") as fh:
             reader = csv.DictReader(fh)
             header = reader.fieldnames or []
             rows = list(reader)
@@ -244,10 +245,12 @@ def check_delivery(delivery_dir):
         return errors + [f"manifest.json: not valid JSON ({exc})"]
     if not isinstance(manifest, dict):
         return errors + ["manifest.json: top level must be an object"]
-    # A file that could not be read has no row count to compare against.
-    n_records = len(rec_rows) if rec_header is not None else None
-    excluded_counts = (Counter(r.get("reason") for r in exc_rows)
-                       if exc_header is not None else None)
+    # A file that could not be read, or whose header failed, has no row
+    # count to compare against: reporting "0 rows" would only mislead.
+    rec_ok = rec_header is not None and not _missing_columns(rec_header, RECORD_COLUMNS, "")
+    exc_ok = exc_header is not None and not _missing_columns(exc_header, EXCLUDED_COLUMNS, "")
+    n_records = len(rec_rows) if rec_ok else None
+    excluded_counts = Counter(r.get("reason") for r in exc_rows) if exc_ok else None
     errors += check_manifest(manifest, delivery_dir, n_records, excluded_counts)
     return errors
 

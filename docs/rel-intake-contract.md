@@ -60,7 +60,8 @@ data/rel_intake/<lane>/<delivery>/
 
 ## `records.csv`
 
-UTF-8, comma-separated, RFC 4180 quoting, one header row. **Every column below
+UTF-8 (a leading byte-order mark, as Excel writes, is tolerated), comma-separated,
+RFC 4180 quoting, one header row. **Every column below
 must be present in the header**, in any order; extra columns are allowed and
 carried. Required columns must be non-empty on every row; the others may be
 empty.
