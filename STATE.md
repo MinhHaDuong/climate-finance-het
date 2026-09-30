@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-30T07:29Z
+Last updated: 2026-09-30T20:43Z
 
 ## Current goal
 
@@ -19,19 +19,20 @@ Next: sweep; Gavard/Schoch; DAG and independent EconLit/OpenAlex searches;
 
 No causal model (0729 DEFER). The MVP is live on GitHub Pages (`gh-pages`, republished 2026-09-30 from `df1d9436`) but shared only by private mail, so it counts as unpublished. The ontology-v2 migration closed (0870, #1587),
 with #1574 (register dispositions) merged, and the bounded M1b catalogue is published (0833, #1586).
-**Next:** M3a (following newer sources, remaining candidates; ladder in 0725).
+The JETP Observer system specification v1 is accepted (tag `jetp-spec-v1`, index `docs/jetp-spec.md`, reviews in `docs/jetp-spec-review/`); M2 code is no longer gated.
+**Next:** M2 extraction (tracker 1500, from 1506), with storage and code catching up to the spec (1702) and reader selection and calibration on OpenRouter; spec follow-ups in 1703; Zotero off-site copy of document bytes (1712).
 `make all` still awaits the figure handoff (1491).
 
 ## Status
-<!-- generated 2026-09-30T07:29Z · as of be19b52e -->
+<!-- generated 2026-09-30T20:43Z · as of f8a0119b -->
 
-**Tickets:** 66 ready · 73 blocked · 12 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 70 ready · 76 blocked · 15 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
 **In flight:** no open PRs
 **Recent (first-parent):**
-  be19b52e Merge pull request #1591 from MinhHaDuong/docs-oeconomia-branch-to-tag
-  7b7d120d Merge pull request #1590 from MinhHaDuong/docs-gh-pages-branch
-  df1d9436 Merge pull request #1589 from MinhHaDuong/t1501-widen-language-step
+  f8a0119b Merge pull request #1635 from MinhHaDuong/t1711-accept-spec-v1
+  0217a024 Merge pull request #1634 from MinhHaDuong/t1711-accept-defaults-2
+  08efed96 Merge pull request #1627 from MinhHaDuong/t1733-stage1-pool-input
 
 ## Corpus and submissions
 
