@@ -713,11 +713,10 @@ state, a count or an attribution) resolves to the statements and the named
 calculation it rests on, down to the snapshot bytes that supported it; from
 any statement, the published figures that use it are reachable. The latest
 snapshot of a document never stands in for the one that supported an older
-statement. *M3b.* Test: sample figures from the Observatory and from each
-paper; each resolves to snapshots and locators, and each sampled statement
-lists the figures that use it.
-
-<!-- batch-2 X-26: pending author decision -->
+statement. Each figure shows beside it the exclusions that affect it.
+*M3b.* Test: sample figures from the Observatory and from each paper; each
+resolves to snapshots and locators and shows its exclusions, and each
+sampled statement lists the figures that use it.
 
 **Q7. Corrections propagate.** A correction reaches every published claim it
 touches, and those claims are identifiable before the next release. *M3b.*

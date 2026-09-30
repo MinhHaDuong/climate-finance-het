@@ -421,9 +421,9 @@ the repository states where each credential lives (by provider, never the
 value), who owns the repository, the release deposits and the Observatory's
 domain, and the restore steps of this section, so that the cited releases
 stay retrievable and a withdrawal (results § 9) can be carried out when the
-author cannot act. It is reread at each release. [M3b]
-
-<!-- batch-2 X-24: pending author decision -->
+author cannot act. It is reread at each release. A deputy for takedown and
+withdrawal requests is named at the go-live legal review, with the legal
+publisher. [M3b]
 
 ## 10. Failure handling
 

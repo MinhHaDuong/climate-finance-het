@@ -703,8 +703,9 @@ Each row was checked against the documents on `main` at the time of
 application, not against the reviewed draft.
 
 Of the 31 rows, 24 are applied, 2 were already fixed on `main` (a check or a
-sentence added), 1 is moot under the author's rules, and 4 wait for an author
-decision (two of them applied in their author-independent part). Every
+sentence added), 1 is moot under the author's rules, and 4 took the
+author's recommended default on 2026-09-30 (two of them applied earlier in
+their author-independent part). Every
 external request for an author sample or an author review load is moot
 under the rule that no machine judgement is routed to the author; the
 compensating control is X-01.
@@ -716,7 +717,7 @@ compensating control is X-01.
 | X-03 | major | M2 | no | applied |
 | X-04 | major | M2 | no | applied |
 | X-05 | major | M2 | no | applied |
-| X-06 | major | M3b | yes | applied in part; pending author |
+| X-06 | major | M3b | yes | default accepted by the author 2026-09-30 |
 | X-07 | major | M2 | no | applied |
 | X-08 | minor | M3a | no | moot |
 | X-09 | minor | M2 | no | applied |
@@ -727,16 +728,16 @@ compensating control is X-01.
 | X-14 | minor | M3b | no | already fixed; check added |
 | X-15 | minor | M3b | no | applied |
 | X-16 | minor | M3a | no | applied |
-| X-17 | minor | M3b | yes | pending author |
+| X-17 | minor | M3b | yes | default accepted by the author 2026-09-30 |
 | X-18 | minor | M3b | no | applied |
 | X-19 | minor | M3b | no | applied |
 | X-20 | minor | M3a | no | applied |
 | X-21 | minor | M3b | no | already fixed |
 | X-22 | minor | M2 | no | applied |
 | X-23 | minor | M2 | no | applied |
-| X-24 | minor | M3b | yes | applied in part; pending author |
+| X-24 | minor | M3b | yes | default accepted by the author 2026-09-30 |
 | X-25 | minor | M4 | no | applied |
-| X-26 | minor | M3b | yes | pending author |
+| X-26 | minor | M3b | yes | default accepted by the author 2026-09-30 |
 | X-27 | minor | M2 | no | applied |
 | X-28 | minor | M3b | no | applied |
 | X-29 | minor | M3b | no | applied |
@@ -847,8 +848,9 @@ finance-instruments section mapped to IATI and CRS. Recommended: (a); F17
 already requires mobilisation and co-financing kept apart, and the two IATI
 codes cost two `terms` rows.
 
-**Outcome.** applied in part in (D); the rest pending author decision
-(comment at ontology 4, measures).
+**Outcome.** applied in part in (D); the rest: default accepted by the author 2026-09-30; applied in "docs(jetp): apply the author's defaults for the last five decisions and the licence": option (a), two
+`flow_type` terms (`loan_repayment`, `credit_guarantee`), mobilised and
+co-financing amounts with their funding roles (ontology 4), fusion 7.
 
 ### X-07 (major, M2)
 
@@ -996,7 +998,7 @@ at M3a beside known-item recovery; (c) at M3b. Recommended: (a); with about
 40 known items a second estimator adds little now, and recording every
 finding round keeps the option open at almost no cost.
 
-**Outcome.** pending author decision (comment at collection 6).
+**Outcome.** default accepted by the author 2026-09-30; applied in "docs(jetp): apply the author's defaults for the last five decisions and the licence": option (a), collection 6 and the `candidates` table.
 
 ### X-18 (minor, M3b)
 
@@ -1091,8 +1093,8 @@ days (legal note §5); (b) name a colleague now, before the M3b release;
 suffices. Recommended: (a); the legal review decides who the publisher is,
 and the deputy follows from it.
 
-**Outcome.** applied in part in (C); the deputy pending author decision
-(comment at operation 9).
+**Outcome.** applied in part in (C); the deputy: default accepted by the author 2026-09-30; applied in "docs(jetp): apply the author's defaults for the last five decisions and the licence": option (a),
+operation 9.
 
 ### X-25 (minor, M4)
 
@@ -1124,7 +1126,7 @@ Recommended: (a); X-19 now bounds what a substantive narrative claim is, and
 results already carry their blocked parts and thresholds, so the caveat
 renders data the release holds.
 
-**Outcome.** pending author decision (comment at requirements Q6).
+**Outcome.** default accepted by the author 2026-09-30; applied in "docs(jetp): apply the author's defaults for the last five decisions and the licence": option (a), requirements Q6.
 
 ### X-27 (minor, M2)
 

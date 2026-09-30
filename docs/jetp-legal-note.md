@@ -41,7 +41,7 @@ conditions; they are not litigation probabilities.
 | 3 | Personal data in documents | medium until the controller and the safeguards are documented, low afterward | art. 6(1)(e) with art. 6(3); minimisation before hosted calls; art. 14 exemption documented; privacy notice complete |
 | 4 | Sending content to LLM providers | medium pending the provider agreement and the transfer mapping | R122-23 II agreement; art. 28 contract where the provider is a processor; approved endpoints enforced, fail closed |
 | 5 | Website obligations | medium | LCEN art. 1-1 notice; three-day right of reply; host logging described; accessibility scheme |
-| 6 | Licensing the releases | medium pending the ownership and licence decisions, low afterward | who holds the rights; CC BY 4.0 or Licence Ouverte 2.0; third-party material marked |
+| 6 | Licensing the releases | medium pending the ownership decision, low afterward | who holds the rights; CC BY 4.0 (decided); third-party material marked |
 
 ## 1. Collecting and holding copies
 
@@ -401,9 +401,10 @@ Zenodo requires a licence per deposit.
 **How the Observer complies.** Results §6 states an attribution-only
 licence; results §7 separates what is redistributed from what is cited.
 
-**What must change.** Decide who holds the rights and which licence
-applies (CC BY 4.0 if the researcher licenses his own work; Licence
-Ouverte 2.0 if the CNRS licenses an administrative document). Then label
+**What must change.** The author decided CC BY 4.0 for the Observer's own
+contributions (2026-09-30). The go-live review decides who holds the
+rights and checks whether any output falls under CRPA L323-2, which would
+require Licence Ouverte 2.0 for it. Then label
 at three levels: (i) a `LICENSE` file in each release and on Zenodo,
 naming the licence and its scope, "the tables, results, dictionary,
 provenance, reports and pages produced by the JETP Observer"; (ii) the
@@ -446,7 +447,8 @@ basis stated above and no legal service is consulted.
    given that the ledger tables, per-document fields included, sit in a
    public repository before any release (section 2)?
 7. Which outputs fall under the CRPA licensing regime and which remain the
-   researcher's works; CC BY 4.0 or Licence Ouverte 2.0 (section 6)?
+   researcher's works, and does any need Licence Ouverte 2.0 beside the
+   decided CC BY 4.0 (section 6)?
 8. Are OpenRouter and each permitted endpoint approved, with the R122-23
    II agreement, an art. 28 contract where needed, a transfer mechanism
    and enforceable retention limits (section 4)?

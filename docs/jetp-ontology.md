@@ -149,7 +149,8 @@ results-based lending operation, a term sheet before signature. States are
 states of the document that embodies it: announced, MoU, approved, signed,
 cancelled, withdrawn. Money movements are flows on the agreement, typed by
 the IATI transaction list: pledge (IATI's incoming and outgoing pledge,
-since version 2.03 of the standard), commitment, disbursement, expenditure.
+since version 2.03 of the standard), commitment, disbursement, expenditure,
+loan repayment, credit guarantee.
 An operation, in the lenders' sense ([language](jetp-language.md)), is an
 agreement; a tranche or a successive loan under one programme is an
 agreement of its own related by `tranche_of`, never an amount split within
@@ -310,13 +311,15 @@ agreement or a project, assigned like `sector` through a referent decision,
 from the three functions F18 names; its values become terms with the other
 M3b axes. [M3b]
 
-<!-- batch-2 X-06: pending author decision -->
+Mobilised and co-financing amounts are `amount` observations whose
+`party_in` funding roles say whose money it is (F17); refinancing is out of
+scope. [M3b]
 
 The `measure` of an observation is from a closed list, extended by decision:
 
 | Axis | Measures |
 |---|---|
-| money | `amount` (a state's amount, with `own_status`), `flow` (with `flow_type`: `pledge`, `commitment`, `disbursement`, `expenditure`, from IATI), `estimate` (a plan cost, no funder), `envelope` (a partnership or portfolio total), `interest_rate`, `maturity_years`, `grace_years`, `grant_element`, `condition` |
+| money | `amount` (a state's amount, with `own_status`), `flow` (with `flow_type`: `pledge`, `commitment`, `disbursement`, `expenditure`, `loan_repayment`, `credit_guarantee`, from IATI), `estimate` (a plan cost, no funder), `envelope` (a partnership or portfolio total), `interest_rate`, `maturity_years`, `grace_years`, `grant_element`, `condition` |
 | physical | `capacity` (with unit), `length`, `state`, `target` (a physical or social objective with a `target` timing, such as a renewable share by 2030) |
 | counting | `count` (with the publisher's unit named: rows, locomotives, officials trained, households), `absence` |
 | macro | `indicator` (with the publisher's indicator code) |
@@ -346,7 +349,7 @@ where the four publishers' practice requires it:
 |---|---|---|---|
 | `project_stage` | project | OC4IDS `projectStatus`: `identification`, `preparation`, `implementation`, `completion`, `maintenance`, `decommissioning`, `decommissioned`, `cancelled` | none |
 | `asset_state` | asset | Global Energy Monitor: `announced`, `pre_permit`, `permitted`, `construction`, `shelved`, `cancelled`, `operating`, `mothballed`, `retired` | `retirement_proposed`, `retirement_agreed` |
-| `money` | agreement | states: `announced`, `mou`, `approved`, `signed`, `cancelled`, `withdrawn`; flows: IATI `pledge`, `commitment`, `disbursement`, `expenditure` | none |
+| `money` | agreement | states: `announced`, `mou`, `approved`, `signed`, `cancelled`, `withdrawn`; flows: IATI `pledge`, `commitment`, `disbursement`, `expenditure`, `loan_repayment`, `credit_guarantee` | none |
 | `delivery` | agreement | IATI activity status: `pipeline`, `implementation`, `finalisation`, `closed`, `cancelled`, `suspended` | none; the South African register's letters A to D crosswalk here |
 | comparator statuses | comparator lines | World Bank project status (pipeline, active, closed, dropped), CRS and IATI activity status | crosswalked onto the axes above, never merged | 
 

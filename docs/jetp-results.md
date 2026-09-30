@@ -288,8 +288,8 @@ the superseded release, the code), the papers that cite it, added as they
 appear, and, as a version note since DataCite has no status field: current,
 superseded by a named correction, or withdrawn with the reason. *M3b* (F29).
 
-**Licence.** The release is published under an open licence that requires no
-more than attribution, stated in its metadata and in its files; the code
+**Licence.** The release is published under CC BY 4.0, which requires no more
+than attribution, stated in its metadata and in its files; the code
 that produced it is under an open-source licence, stated likewise. *M3b*
 (F30, C5).
 
@@ -304,7 +304,7 @@ The Observer publishes what it made and cites what others made. The legal
 basis for each case (short quotation assessed per use, database right
 assessed per table and producer, public-sector re-use, per-publisher terms)
 and the export review at each release are stated in the [legal
-note](jetp-legal-note.md) §2 and §6. The open licence of the release (CC BY)
+note](jetp-legal-note.md) §2 and §6. The open licence of the release (CC BY 4.0)
 covers the Observer's own contributions; publisher text reproduced in the
 release (verbatim labels, excerpts, the per-document fields) is quoted data,
 reproduced under attribution to its publisher, and is not relicensed. Each
