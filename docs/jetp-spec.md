@@ -42,8 +42,9 @@ packages, pages and machines. A conceptual rule that needs an implementation
 is stated once, in the conceptual document, and realised in the
 implementation document that cites it. Where the implementation does not
 yet realise a rule, the storage contract lists the change as a target
-(section 1, target schema).
-<!-- wave-1 W1-41: pending author decision (the ontology tables of ontology section 5: a stated exception to this rule, or moved to the storage contract) -->
+(section 1, target schema). The ontology tables follow the same rule: the
+ontology says what they mean, and the storage contract (section 1) defines
+their keys, columns and paths.
 
 The frame is ODEM, defined in the [language](jetp-language.md) document:
 **Ontology** (what the ledger talks about), **Data** (what publishers said, as

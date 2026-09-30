@@ -9,9 +9,11 @@ combined and judged is [fusion](jetp-fusion.md). What the ledger's words mean is
 
 ## 1. Tables and rules
 
-One file is one table, joins happen at read time, nothing is materialised
-(ticket 0858, kept). Data tables under `data/jetp/`, ontology tables under
-`data/jetp/ontology/` ([ontology](jetp-ontology.md) section 5), CSV, columns in this order.
+One file is one table, joins happen at read time, nothing is materialised.
+Data tables under `data/jetp/`, the five ontology tables under
+`data/jetp/ontology/`, CSV, columns in this order. What the ontology tables
+mean, and how they are revised, is the [ontology](jetp-ontology.md)
+(section 5); their keys, columns and paths are here.
 A table too large for the repository's file ceiling, 512 000 bytes per
 file in `.githooks/pre-commit`, is chunked by country and year into
 `<table>.d/<CODE>-<year>.csv`, with numbered `-02`, `-03` shards when one
@@ -65,8 +67,22 @@ the lines' `recorded_at` instead (`<document_id>.d/<year>.csv`, with numbered
 | `coverage` | (referent_kind, referent_id) | review_status, checked_at, route, document_ids, notes |
 | `dry-searches` | as today | |
 | `decisions.md` | as today | | 
+| `terms` | `term_row_id` | *term_id*, kind, *list*, label, definition, scope_note, domain, range, external_scheme, external_uri, mapping_relation, recorded_at, decided_by, status, supersedes, notes |
+| `status-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_status)*, axis, shared_status, recorded_at, decided_by, status, supersedes, notes |
+| `sector-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_sector)*, purpose_code, recorded_at, decided_by, status, supersedes, notes |
+| `perimeters` | `perimeter_row_id` | *perimeter_id*, country, name, scope, definition, recorded_at, decided_by, status, supersedes, notes |
+| `marker-coefficients` | `coefficient_row_id` | *(donor_party_id, marker, score, year)*, coefficient, line_id, recorded_at, decided_by, status, supersedes |
 
 [M2 for the D1 and D2 tables and the ontology tables; M3a for the record of searches; M3b for the D3 and D4 tables]
+
+The last five rows are the ontology tables, one file each under
+`data/jetp/ontology/` (`terms.csv`, `status-crosswalk.csv`,
+`sector-crosswalk.csv`, `perimeters.csv`, `marker-coefficients.csv`). Each is
+keyed by a row identifier; the columns in *italics* are the chain key that
+successive revisions of one entry share. A term's `term_id` is unique within
+its `list`, so `cancelled` can be a value of several axes. A test fails when
+a table or column of this section differs from the DDL, and the ontology's
+alignment test (ontology section 5) checks the values. [M2]
 
 **Target schema.** The table above is the schema the DDL declares today.
 The rules of the specification require the changes below, which the DDL
@@ -99,9 +115,44 @@ so, and the table above changes when the DDL does.
 | `adjudications` | `decision_type` gains `revision` (members: the earlier and the later line; verdict: development, late report, correction or rounded restatement) and `preference` (members: candidates, the accepted one and the excluded ones; verdict: the reason of fusion section 5), as `terms` rows | fusion sections 2 and 5 | M3b |
 | `status-crosswalk` | gains `mapping_relation` (the SKOS mapping strength), required when a row is accepted | ontology section 5, traceability | M3b |
 | `sector-crosswalk` | gains `mapping_relation`, as for `status-crosswalk` | ontology section 5, traceability | M3b |
-<!-- wave-1 W1-29: pending author decision (terms, robots and registration columns on retrievals and documents) -->
+| `retrievals` | gains `terms_position` (open licence, public-sector reuse, rights reserved, unknown), `robots_position` (the site's robots rules for the path fetched: allowed, excluded, none published) and `registration_used` (the name of the free public registration used, never a credential); the validator requires them non-empty from M3a | requirements F27 and C6; results section 7 | M2 for the columns; M3a for the check |
+| `documents` | gains `access_route_kind` (address, archive record, registration) and `registration` (the free public registration a registration route needs, named, never a credential); the validator requires a route kind on every document from M3a | requirement F27 | M2 for the columns; M3a for the check |
 | `document-addresses` | new table: a document's recorded addresses, each with the date from which it holds, so a relocation is a new address of the same document | relocation rule (below) | M4 |
-<!-- wave-1 W1-01: pending author decision (where readings, dispositions and run records live; method, run and status columns on lines) -->
+| `lines` | gains `run_id`, `method` and `method_version`: the run that admitted the line and the method version that extracted it | extraction section 3, method and version; requirement Q4 | M2 |
+| `observations` | gains `run_id` beside `method` and `method_version` | extraction section 11; requirement Q4 | M3b |
+| `line-referents`, `relations`, `adjudications` | gain `run_id` beside `method` and `method_version` (which `adjudications` gains as above) | fusion section 3, traceable | M2 for `line-referents` and `relations`; M3b for `adjudications` |
+| `readings` | new append-only journal (below) | extraction section 6.3; collection section 9; fusion section 3; requirements Q4 and Q17 | M2 |
+| `runs` | new append-only journal (below) | operation sections 8 and 10; requirement Q14 | M2 |
+
+**Readings and runs, target journals.** Two tables complete the record of
+how a line or a judgement was made. Both are append-only journals: a row is
+never edited or deleted, and a correction is a new row that supersedes it,
+under the in-force rule below. [M2]
+
+- `readings`: one row per proposal of a reader, per second reading, per
+  arbitration, and per decision of the author when he makes one, with its
+  role (`reader`, `second_reader`, `arbiter` or `author`). A row names its
+  run, the snapshot, the line it produced when one was admitted (empty for
+  a rejected or undetermined proposal, which keeps its row), the candidate
+  match or candidate it judges when it is a judgement, the LLM identifier
+  or person, the prompt version and calibration version, the proposed
+  locator, label, classification and verbatim fields, the stance,
+  likelihood, confidence and quoted basis, the outcome (admitted, rejected,
+  undetermined), the step at fault for a rejected proposal (locator check,
+  agreement, arbitration), the hash of the full raw model response, and
+  `recorded_at`. The full raw response is stored under its hash in the
+  document store, beside the document bytes and under DVC; the row points to
+  it and never copies it. The validator checks that every line of an
+  assisted reading has a `reader` and a `second_reader` row, and an
+  `arbiter` row when the readers left it open.
+- `runs`: one row per run, written when the run ends, including a run that
+  ended `partial`, `failed` or `not started`, with that final state
+  (operation section 10). It is the structured twin of the run report
+  (operation section 8): run identifier, job, commit of the code, machine,
+  start and end times, final state, method and method version, prompt hash,
+  LLM and routed provider, sampling settings, adapter version, spend per
+  vendor, GPU time and the paths of the run report and of the raw responses
+  it stored. Every `run_id` of another table names a row here.
 
 A judgement of the [fusion rules](jetp-fusion.md), once recorded, is a
 decision row: a `line-referents` row, a `relations` row, or an
@@ -367,10 +418,12 @@ decisions are stored.
   [collection](jetp-collection.md) section 9 in the M3a triage table, and
   each reading of a proposed line or candidate match, whose role is
   `reader`, `second_reader`, `arbiter` or `author` (fusion section 3), the
-  last only when the author chooses to decide. [M2 for readings; M3a for
-  triage]
-  <!-- wave-1 W1-01: pending author decision (the table that holds checker readings) -->
-  <!-- wave-1 W1-30: pending author decision (stance and likelihood as one judged quantity) -->
+  last only when the author chooses to decide. Each reading is a row of the
+  target journal `readings` (section 1). The likelihood is always that of
+  the positive proposition (the two are the same, the proposal is right),
+  so a judgement of difference is a low likelihood of sameness, and
+  `undetermined` is an abstention that carries no likelihood ([fusion](jetp-fusion.md)
+  section 3). [M2 for readings; M3a for triage]
 - Tier thresholds live in configuration, versioned with the method; the match
   threshold a result applies is declared by the result (fusion section 3). [M3b] The
   panel's stance-and-confidence rule is `matching.panel` in

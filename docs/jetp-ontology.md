@@ -317,7 +317,7 @@ marker yields is the score times a coefficient, 100 percent for principal
 and 40, 50 or 100 percent for significant depending on the donor and the
 year. The coefficient is a sourced parameter of a derived account, not a
 word of the ontology ([fusion](jetp-fusion.md), section 7); it is kept for
-now in the `marker-coefficients` table of section 5. A value may be a range: `value_low` and
+now in the `marker-coefficients` table (section 5). A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
 both equal. [M3b]
 
@@ -353,20 +353,12 @@ reports rather than filling the others. [M2 for keeping the words; M3b for the c
 
 ## 5. Ontology tables
 
-The ontology is data about the ledger's words, stored like the ledger itself
-([storage contract](jetp-ledger-storage.md)), reviewed by diff, revised by
-supersession and never edited in place. Each table is keyed by a row
-identifier; the columns in *italics* are the chain key that successive
-revisions of one entry share. A term's `term_id` is unique within its
-`list`, so `cancelled` can be a value of several axes.
-
-| Table | Key | Columns |
-|---|---|---|
-| `terms` | `term_row_id` | *term_id*, kind, *list*, label, definition, scope_note, domain, range, external_scheme, external_uri, mapping_relation, recorded_at, decided_by, status, supersedes, notes |
-| `status-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_status)*, axis, shared_status, recorded_at, decided_by, status, supersedes, notes |
-| `sector-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_sector)*, purpose_code, recorded_at, decided_by, status, supersedes, notes |
-| `perimeters` | `perimeter_row_id` | *perimeter_id*, country, name, scope, definition, recorded_at, decided_by, status, supersedes, notes |
-| `marker-coefficients` | `coefficient_row_id` | *(donor_party_id, marker, score, year)*, coefficient, line_id, recorded_at, decided_by, status, supersedes |
+The ontology is data about the ledger's words, stored like the ledger itself,
+reviewed by diff, revised by supersession and never edited in place. Five
+tables hold it: `terms`, `status-crosswalk`, `sector-crosswalk`,
+`perimeters` and `marker-coefficients`. Their keys, columns, chain keys and
+paths are defined in the [storage contract](jetp-ledger-storage.md)
+(section 1); this section says what they mean and how they are revised.
 
 **Definition.** Every word the schema admits as a value is a `terms` row: the
 classes and relations of sections 2 and 3, the line classifications, measures,

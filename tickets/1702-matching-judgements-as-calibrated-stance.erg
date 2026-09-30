@@ -11,6 +11,7 @@ Blocked-by: 1711
 2026-09-30T14:33Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M2 storage and extraction targets of the storage contract
 2026-09-30T14:48Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M3a collection targets of the storage contract
 2026-09-30T15:02Z HDMX-coding-agent note exit criteria added from spec review wave 1 (ticket 1710): M3b targets of the storage contract and ontology
+2026-09-30T19:00Z HDMX-coding-agent note exit criteria added from the author's decisions on spec review wave 1 (ticket 1710): readings and runs journals, run_id on lines, observations and decision tables (W1-01); terms, robots, registration and access-route columns (W1-29)
 
 --- body ---
 ## Context
@@ -66,3 +67,8 @@ Author decisions (2026-09-30, interactive):
 - [ ] `status-crosswalk` and `sector-crosswalk` carry `mapping_relation`, required on accepted rows [M3b] (W1-64)
 - [ ] The validator refuses a `same_as` chain between referents deeper than one [M3b] (W1-31)
 - [ ] The as-of builder applies a named correction overlay (storage contract § 1) for a correction release [M3b] (W1-36)
+- [ ] `lines` carries `run_id`, `method` and `method_version`; `observations`, `line-referents`, `relations` and `adjudications` carry `run_id` beside their method columns; every `run_id` names a `runs` row (W1-01)
+- [ ] A `readings` table, append-only under the in-force rule, holds one row per reader proposal, second reading, arbitration and author decision (roles `reader`, `second_reader`, `arbiter`, `author`), rejected and undetermined proposals included, with the fields of the storage contract § 1 (readings and runs); the validator checks that every assisted-reading line has a `reader` and a `second_reader` row, and an `arbiter` row when the readers left it open (W1-01)
+- [ ] A `runs` table, append-only, holds one row per run written at its end, `partial`, `failed` and `not started` runs included, with its final state and the fields of the storage contract § 1 (W1-01)
+- [ ] Full raw model responses are stored under their hash in the DVC document store, beside the document bytes, and each `readings` row points to its response by hash (W1-01)
+- [ ] `retrievals` carries `terms_position`, `robots_position` and `registration_used`, and `documents` carries `access_route_kind` and `registration` [M2]; the validator requires them non-empty [M3a] (W1-29)
