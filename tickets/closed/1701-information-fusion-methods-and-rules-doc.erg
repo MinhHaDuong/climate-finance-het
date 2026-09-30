@@ -1,0 +1,45 @@
+%erg 0.1
+Title: Information fusion methods and rules; docs attic; dissolve the JETP backend design
+Created: 2026-09-30
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1594
+
+--- log ---
+2026-09-30T08:27Z HDMX-coding-agent created
+2026-09-30T09:20Z HDMX-coding-agent decision author (2026-09-30): delete jetp-storage.md and jetp-backend-design.md outright after moving live content; destinies executed (fusion, storage contract, presentation, plan, 1506, 1184)
+2026-09-30T09:35Z HDMX-coding-agent note ontology sweep finished (author request): decisions and old-schema case to docs/attic/jetp-ontology-decisions-2026-09.md; counts, paper ties, storage and display detail moved or deleted. Open: perimeters.csv data split, storage § 4 matching into fusion
+2026-09-30T11:36Z HDMX-coding-agent note review of PR 1594 (5 panels) and author answers (2026-09-30) applied: judgements as calibrated stances on the IPCC scales, cutoff per result, "candidate match" for the thing judged, precedence never automatic, check table rewritten, no ticket references in fusion; storage and code follow-up is [[1702]]; storage § 4 matching moved to fusion § 3
+2026-09-30T11:47Z HDMX-coding-agent closed — autoclosed — PR #1594
+--- body ---
+## Context
+
+A sweep of `docs/jetp-ontology.md` (2026-09-30) found resolution rules inside
+the ontology: party identity by identifier, supersession of a publisher's
+corrected value, marker coefficients as "a rule, so ontology", analyst
+perimeters. The rules for combining statements from several sources are
+scattered over the ontology, `jetp-ledger-storage.md` § 4,
+`jetp-backend-design.md` § 3–6 and 10, and tickets 1180 and 0721, and two of
+them pull against each other (1180: the primary source closest to the event
+prevails; backend design: never select by publisher rank alone).
+
+Author decisions (2026-09-30, interactive):
+
+1. `docs/attic/` keeps old planning notes we do not delete outright, even
+   though git tracks them.
+2. "Fusion methods and rules are conceptual, they make sense independently of
+   the storage and presentation: RDF triples, SPARQL, flat text sentences,
+   rows. The file does NOT talk about storage and presentation."
+3. The fusion file opens with principles: defeasible, traceable, uncertainty
+   accepting, pedigree, storage and presentation independence.
+4. Supersession is restricted to ledger errors; perimeters are split into
+   publisher-defined (data) and analyst-defined (method).
+5. Review `jetp-storage.md` and `jetp-backend-design.md` for an update,
+   dissolve, attic or delete destiny.
+
+## Exit criteria
+
+- [x] `docs/attic/` exists with a README saying what goes there and that nothing in it governs
+- [x] `docs/jetp-fusion.md` opens with the principles and names no storage table, column, file or display, and cites no ticket
+- [x] The ontology restricts `supersedes` to ledger errors and defines a perimeter as publisher-stated (the data split of `perimeters.csv` and the code follow in 1702); the rules it held point to the fusion file
+- [x] Each section of `jetp-storage.md` and `jetp-backend-design.md` has a recorded destiny and is executed; the files are deleted, not atticked (author, 2026-09-30); the worktree snapshot procedure lives in `data/jetp/README.md`
+- [x] Every link to a deleted file from a current document is repointed; closed tickets and dated review records keep their text as history

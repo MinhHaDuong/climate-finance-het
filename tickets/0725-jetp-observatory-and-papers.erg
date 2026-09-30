@@ -51,7 +51,15 @@ operation.
   date, under a stopping rule stated in advance, then freeze the registry.
   Two dates are published: the discovery cutoff (date of the last search) and
   the newest document date. Rounds are logged, empty ones included, and a
-  known-item list gives a recall estimate. Draft rule: a fixed frame of
+  known-item list gives a recall estimate. Starting frame of authorities per
+  country (from the tracking contract, deleted 2026-09-30, ticket 1701): the
+  national JETP portal or responsible ministry; the IPG co-leads and every
+  public partner named in the package; the multilateral and private windows
+  named in official financing tables; the national electricity operator and
+  named project operators; every project in an official plan, pipeline or
+  progress list. Each expected authority and listed project ends with a
+  terminal verdict (collected, not published, blocked, not applicable).
+  Draft rule: a fixed frame of
   channel classes per country and language; a secondary-to-primary pass that
   follows each quantitative claim of the main secondary trackers to its
   primary source (yielding a traceability rate); stop when two consecutive

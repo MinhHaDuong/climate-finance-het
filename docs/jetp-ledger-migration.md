@@ -86,8 +86,8 @@ Order of work, each step a ticket with its own byte-level check:
 4. Identity split: referents and the five identity tables. The 404 identifiers
    from the unpublished preview have dispositions without new `routes` rows
    (author decision, 2026-09-24). The party table, which step 1 starts
-   with the publishers under authority control (decision 12 of the
-   [ontology](jetp-ontology.md)), gains the funders and channels here, each
+   with the publishers under authority control (decision 12 of the ontology design, now in the
+   [attic](attic/jetp-ontology-decisions-2026-09.md)), gains the funders and channels here, each
    with its `party-names` rows and, where one exists, its external identifier
    (IATI organisation identifier, ROR, LEI, Wikidata), and the `party_in`
    relation with a role. The 61 funder strings and the register's 14 funder prefixes
@@ -130,7 +130,7 @@ Order of work, each step a ticket with its own byte-level check:
    dates; the undated Diass factsheet), 7 pending physical claims rejected,
    the previously accepted Nagajaya claim revoked by a superseding row, and 1
    left with ticket 0920; every read judgment verified by a three-reader panel
-   (storage contract § 4, `matching.panel` version 1) with the stance and
+   (storage contract § 4 at the time, now [fusion](jetp-fusion.md) § 3; `matching.panel` version 1) with the stance and
    confidence recorded per row; 33 authorities attached to parties (8
    minted from lines that print their names), 4 left uncovered for want of a
    line, 17 project identifiers handed to M1b.

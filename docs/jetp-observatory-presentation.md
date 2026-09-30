@@ -137,3 +137,52 @@ a general reader).
 
 The serving contract, every table served or named as not served, is
 [`jetp-ledger-storage.md`](jetp-ledger-storage.md) section 2.
+
+## Traceability to what is published
+
+Carried from the backend design of 2026-09-14 (section 8; deleted 2026-09-30), in the
+[language](jetp-language.md) of 2026-09-23. The chain runs both ways: from the
+archived bytes of a snapshot, through the line, the observation, the identity
+decisions and the frozen release, to a figure or sentence on the site or in a
+paper; and back from any published number to the observations and
+calculation it rests on. Every published number, status and substantive
+narrative claim resolves to observation identifiers or to a named
+calculation.
+
+- **The provenance index is a build-time check, never a served file.** It is
+  keyed by a stable claim identifier, with observation identifiers,
+  derivation, method version, input and output hashes and editorial
+  justification, and it proves at build time that the chain resolves and
+  that a correction reaches every claim it touches. The display-occurrence
+  record (`display_id`, payload, JSON pointer, route, rendering role) is built
+  and checked the same way and not published. The site's climb from a number
+  to its justification stays a read-time join over the served tables (ticket
+  0858 removed the 874 kB materialised join; rebuilding it under another name
+  is what this rule forbids).
+- `(release_id, display_id)` identifies an occurrence, so the same claim on
+  two pages, or a component repeated on one page, stays distinct. A manuscript
+  occurrence uses a figure, table or block label and a cell or paragraph
+  locator instead of a route; a PDF page number is not a durable key.
+- Authored narrative claims carry stable block identifiers and link to their
+  supporting and contradicting observations; rewording a claim reopens the
+  review of its links.
+- A provenance entry resolves through the observation's line to the exact
+  snapshot: the latest retrieval of a document cannot stand in for the bytes
+  that supported an older observation.
+- Where bytes cannot be redistributed, the release says so and still carries
+  URL, hash and locator.
+
+### Country cards and pages
+
+A country keeps two document roles: the **principal official reference**
+(normally the latest comprehensive Secretariat report; Viet Nam may need a
+local substitute, Senegal uses its plan) and the **latest subsequent official
+news**. Each pins its document and snapshot, with publication date, selection
+date and scope recorded apart from the headline. The homepage card links only
+to the principal reference, but its text is a reviewed synthesis of all the
+justification, so a newer news figure keeps its own citation in the export;
+where no later official item exists, the gap is stated. Example: Indonesia's
+USD 3.92bn approval headline may rest on the 8 September 2026 JDU newsletter
+while the principal reference is the 2025 report with an older USD 3.1bn:
+two dated observations, neither a payment total. Country-level claims are
+exported even when no project is attached.

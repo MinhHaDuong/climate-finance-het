@@ -1,77 +1,22 @@
 # JETP ledger ontology
 
-Status: design for author review, 2026-09-22. Version 2 of the ontology first
-drafted the same day and reviewed by four independent panels
-([`jetp-study/ontology-review-2026-09-22/`](jetp-study/ontology-review-2026-09-22/)).
+Status: in force. Version 2 of the ontology, drafted 2026-09-22, reviewed by
+four independent panels
+([`jetp-study/ontology-review-2026-09-22/`](jetp-study/ontology-review-2026-09-22/))
+and migrated by the 0870 train (closed 2026-09-30).
 It fixes what the ledger talks about: its classes, relations, value lists and
-status axes, and the ontology tables that define and revise them. Three
-documents carry the design, split on 2026-09-23 at the author's request:
+status axes, and the ontology tables that define and revise them. It holds
+no rule for combining statements, no storage and no presentation:
 
-- this one, the ontology;
-- [`jetp-ledger-storage.md`](jetp-ledger-storage.md), the storage contract: tables, validation rules, engine, matching, translations, and the consequences for [`jetp-backend-design.md`](jetp-backend-design.md);
-- [`jetp-ledger-migration.md`](jetp-ledger-migration.md), the migration from the current tables, which the 0870 train consumes.
+- [`jetp-fusion.md`](jetp-fusion.md), how statements are combined, weighed and revised;
+- [`jetp-ledger-storage.md`](jetp-ledger-storage.md), the storage contract: tables, validation rules, engine, matching, translations;
+- [`jetp-ledger-migration.md`](jetp-ledger-migration.md), the migration from the previous tables;
+- [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md), what readers see.
 
-The decisions below govern all three.
-
-The author's decisions of 2026-09-22 and 2026-09-23 shape it:
-
-1. Split the identity registry now rather than tag it. The current
-   `projects.csv` mixes four kinds of row; a column would only name the mix.
-2. The published line is the first-class unit, and its storages are unified.
-3. Statuses follow each publisher's practice. The publisher's word is stored
-   verbatim and crosswalked; it is never overwritten or inferred.
-4. Design the target, then migrate. No incremental patching of the current
-   tables.
-5. Line identifiers are minted, not keyed on fingerprint and locator
-   ([storage contract](jetp-ledger-storage.md) section 1).
-6. The party table is built in the identity split, minimal, with funder and
-   channel roles populated first ([migration](jetp-ledger-migration.md), step 4).
-7. Matching is a tiered, defeasible, traceable process ([storage contract](jetp-ledger-storage.md) section 4).
-   The record format is designed now; the matcher starts at its simplest tier.
-8. Translations are managed as document relations and derived text
-   ([storage contract](jetp-ledger-storage.md) section 5). Automatic summaries and translations are derived aids, never
-   justification, and are nice-to-have.
-9. After the fit-for-purpose review (review 5): amount semantics are closed
-   vocabularies (measure, basis, flow type, modality, period roles); every
-   record row carries `recorded_at`; external identifiers and the comparator
-   pools (World Bank, CRS, IATI) enter as lines of API snapshots; the
-   adjudications and accounts of the backend design keep their tables;
-   rates and deflators are sourced records. The storage contract's section 3 volume projection is
-   corrected.
-10. After the proofing review (review 6, 36 random pages of 12 documents):
-    sector is a shared axis coded with the OECD DAC purpose list and reached
-    by crosswalk from each publisher's own scheme; Rio and policy markers
-    are a measure with a sourced coefficient table; targets and counts in
-    publisher units are measures; roles exist on any subject; lines relate
-    to lines; locator syntax is defined per format; a delivery axis for
-    agreements is aligned to the IATI activity status list; ranges have
-    bounds; a publisher's own modality scheme stays a verbatim field. What
-    stays out of scope is named in section 6. The delivery axis and the
-    section 6 list were proposed as defaults and approved by the author on
-    2026-09-22.
-11. On 2026-09-23, after the ODEM acceptance review
-    ([`jetp-odem-acceptance-review-2026-09-23.md`](jetp-odem-acceptance-review-2026-09-23.md)):
-    the ledger is Data guided by Ontology, Evidence comes on top, and there
-    is no Model (section 0). The ontology is a set of tables with
-    definitions, external mappings and revisions (section 5). The builders'
-    language, including five retired terms, is
-    [`jetp-language.md`](jetp-language.md); the observatory's organisation
-    and page vocabulary are
-    [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
-12. On 2026-09-23, organisations are under authority control, as in a
-    library's name authority file or the ROR and GLEIF registries. The ledger
-    keeps one organisation table: a publisher is a party in a publishing
-    role, and the publishers table folds into `parties`. Every form of an
-    organisation's name is a row of `party-names` with its form type, its
-    language and the document or line it was read from, and one form is
-    preferred. Senelec and SENELEC, EVN, Vietnam Electricity and Tập đoàn
-    Điện lực Việt Nam, PLN and Perusahaan Listrik Negara, AFD and Agence
-    française de développement each resolve to one organisation. An
-    external identifier (IATI organisation identifier, ROR, LEI, Wikidata)
-    is tier 1 of matching for organisations; case, diacritic and spacing
-    variants are merged when the party is minted; acronyms, translations
-    and former names are tier-2 candidates, reviewed
-    ([storage contract](jetp-ledger-storage.md) section 4).
+The author's design decisions of 2026-09-22 and 2026-09-23, with their
+reasons, are kept in
+[`attic/jetp-ontology-decisions-2026-09.md`](attic/jetp-ontology-decisions-2026-09.md);
+their effect is the text below.
 
 ## 0. Frame
 
@@ -83,23 +28,12 @@ terms the design documents and schema use or avoid are
 [`jetp-language.md`](jetp-language.md). What readers of the observatory see is
 [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
 
-## 1. Why the current schema fails
+## 1. Why a new schema
 
-The four reviews make the case; the short form is this. The four
-partnerships never publish a project registry. They publish lists: a grants
-register keyed by funder and sequence (South Africa, 257 rows), plan appendices
-of capacity lines by system (Indonesia, 1 579 rows over two editions), plan
-annexes of positions and task groups (Viet Nam, 279 rows), promoter submissions
-and quick wins (Senegal, 49 rows). The ledger read all of these as projects.
-The result is one foreign key, `events.project_id`, that resolves to a funder
-tranche in 257 cases, a donor facility or programme in about 40, and a physical
-undertaking in about 60, so that no count and no sum in the ledger states its
-unit. The register's own status letters were dropped into a notes string. The
-21 Viet Nam count slots, a cardinality assertion, sit in the registry as rows.
-The partnership pledges, which are the headline of every country page, have no
-table and live in configuration. Asset attributes exist in three tables but
-no asset does. The same kind of thing, a published line, lives in four
-storages with three schemas.
+The four partnerships publish lists, not project registries, and the
+previous schema read every list as projects, so that no count stated its
+unit. The case, from four reviews, is in the
+[attic](attic/jetp-ontology-decisions-2026-09.md).
 
 ## 2. Vocabulary
 
@@ -117,18 +51,8 @@ report and the one that funds a loan are one organisation. The party carries
 an authority category, `national_government`, `jetp_secretariat`, `ipg`,
 `bilateral_funder`, `multilateral_funder`, `private_finance`, `operator` or
 `secondary_source`, and a country (`ZAF`, `IDN`, `VNM`, `SEN`) or
-`international`. The registry's 103 distinct publisher texts resolve to 94
-parties: two case variants merge, three texts that name two bodies are joint
-publications, and thirteen texts of the forms "X via Y" and "X / Y" resolve by
-rule to their publisher X. The channel Y of a "via" text is a retrieval
-route, written in the document's notes and never a party; the Y of a slash
-text is the consulting firm that wrote the document, linked as `author` with
-X as `commissioner`, or a natural person, written in the notes. Six slash
-texts whose second part is not a reviewed writer stay single parties.
-
-A publisher is what the project has so far called a source. The word source is
-retired from column names and page copy, because it has meant a URL since the
-first harvest.
+`international`. A consulting firm that wrote a document for a publisher is
+linked as `author`, with the publisher as `commissioner`.
 
 ### Document
 
@@ -175,19 +99,13 @@ reviewed matches have produced from them.
 A line carries what every line has in common: country, snapshot, locator,
 ordinal in its table, the label the publisher printed, its classification
 (section 4), the publisher's own status word and which axis that word belongs
-to. Everything else the publisher printed for that line is kept verbatim in a
-per-document fields table, one column per source column, as the M1a export
-already does with its pass-through columns.
+to. Everything else the publisher printed for that line is kept verbatim,
+field by field as printed.
 
-Reading a line into observations is itself a method. For a register or a
-plan appendix the observations are generated by a rule per document type,
-one version of which is named on every observation it writes, so that a
-changed rule is a new method version and its observations supersede the old
-ones under the matching record ([storage contract](jetp-ledger-storage.md) section 4). A hand-written observation names its author
-instead.
+Every observation names the method and version that read it from its line,
+or the person who wrote it by hand.
 
-Proposition and programme, two kinds in the first draft, are classifications
-of lines. A proposition is a line whose publisher puts something forward for a
+Proposition and programme are classifications of lines, not kinds. A proposition is a line whose publisher puts something forward for a
 decision not yet taken: a Senegal Annex 2 submission, a Viet Nam Annex I.2
 partner proposal. A programme heading is a line that groups other lines under
 a governance or budget envelope. Neither is an identity. Two propositions may
@@ -225,8 +143,7 @@ agreement state; it is an observation on a line ([storage contract](jetp-ledger-
 may be a tranche of another (`tranche_of`) and finances zero or more projects
 (`finances`); the hierarchy never splits money.
 
-An agreement carries a `modality`, the OECD DAC type-of-aid code that Paper A's
-result turns on: budget support (`A01`, `A02`), core contributions (`B01`,
+An agreement carries a `modality`, the OECD DAC type-of-aid code: budget support (`A01`, `A02`), core contributions (`B01`,
 `B02`, `B03`, `B04`), project-type interventions (`C01`), experts and
 technical assistance (`D01`, `D02`), scholarships (`E01`), debt relief
 (`F01`), and `unknown` when no line states it. Modality is a classification assigned from a line through a referent
@@ -242,25 +159,27 @@ tariff reform at Senelec is one agreement, one condition, one party.
 
 One organisation, whatever its roles: `funder`, `channel`, `promoter`,
 `implementing_entity`, `beneficiary`, `contractor`, `operator`, or publisher of
-a document. Replaces 61 free-text funder strings that conflate funder with
-channel ("Canada via World Bank and ADB") and the publisher texts of the
-document registry.
+a document. A funder and the channel its money passes through are two
+parties in two roles: "Canada via World Bank and ADB" names three.
 
-Parties are under authority control (decision 12). A party row holds no name;
+Parties are under authority control, as in a library's name authority file
+or the ROR and GLEIF registries. A party row holds no name;
 its names are party name rows, one per form as printed, each with a form type,
 `preferred`, `acronym`, `translation`, `spelling_or_case_variant` or
 `former_name`, a language, and the document or line it was read from. Exactly
 one form is preferred at a time; a form is revised by supersession like any
-decision row. A page shows the form the document in front of the reader
-prints, and the preferred form where no document is in view.
+decision row.
 
 ### Perimeter
 
-A coverage definition the ledger can count against: the partnership pledge
-envelope and its revisions, a source-defined portfolio of 24 records of which
-21 are unnamed, a procurement quota of 250 MW, a plan's list at a cutoff.
+A coverage definition stated by a publisher: the partnership pledge envelope
+and its revisions, a publisher-defined portfolio of 24 records of which 21 are
+unnamed, a procurement quota of 250 MW, a plan's list at a cutoff.
 Membership is a justified relation, not a list. A count slot is a perimeter observation,
-"this publisher counted 24 at this date", not 21 rows in a registry.
+"this publisher counted 24 at this date", not 21 rows in a registry. A scope
+that the analysis defines to count against, such as a reference pool of
+comparator operations, is a method choice, not a perimeter of the ontology
+([fusion](jetp-fusion.md), section 6).
 
 ### External identifier
 
@@ -269,8 +188,8 @@ World Bank P-number, a CRS `crs_id` or `donor_project_id`, an IATI activity
 identifier, a GEM unit id; for a party, an IATI organisation identifier, a ROR
 identifier, an LEI or a Wikidata item. One table holds them all, typed by
 scheme, so a comparator record and a ledger identity meet on a key rather than
-on a name. For a party the identifier decides: two names that carry the same
-one are one organisation.
+on a name. What an identifier decides is a fusion rule
+([fusion](jetp-fusion.md), section 3).
 
 ### Comparator record
 
@@ -279,8 +198,7 @@ project from the projects API, a CRS activity, an IATI activity. It is a
 line of a snapshot whose document is the dataset edition and whose publisher
 is the institution, with its own fields verbatim, its identifiers in the
 external-identifier table and its statuses crosswalked like any publisher's.
-The 97 closed World Bank energy operations of the reference pool are such
-lines; nothing in the ledger treats them as projects of the partnership.
+Nothing in the ledger treats a comparator record as a project of a partnership.
 
 ### Observation
 
@@ -298,12 +216,14 @@ derivation through the sourced `rates` table. An observation names its
 `measure` from the closed list of section 4, its `basis` (`gross`, `net`,
 `unknown`) where money is involved, and its `flow_type` from the IATI list when
 the measure is a flow. It carries `recorded_at`, the date the ledger wrote
-it, and the same `status` and `supersedes` as a decision row, so a corrected
-publication is a new observation that supersedes the old one and an as-of
-state at cutoff K is the set of rows recorded on or before K and in force.
-Subjects also include `country`, for the macro-fiscal indicators the
-absorbability block reads (GDP, external debt, a utility's debt ratio on a
-`party`), each with its indicator code from the publisher's own list.
+it, and the same `status` and `supersedes` as a decision row. Supersession
+corrects the ledger's own errors (a misread value, a false match, a faulty
+extraction rule), never a publisher: a later statement that prints a
+different value is a new observation beside the old one, and one that prints
+the same value again is a dated restatement ([fusion](jetp-fusion.md),
+section 2).
+Subjects also include `country`, for macro-fiscal indicators (GDP, external debt;
+a utility's debt ratio is on a `party`), each with its indicator code from the publisher's own list.
 
 ### Crosswalk
 
@@ -379,17 +299,16 @@ A marker is the donor's own scoring of an activity, at a reporting year,
 under the marker definition of that year. The "climate finance" that a
 marker yields is the score times a coefficient, 100 percent for principal
 and 40, 50 or 100 percent for significant depending on the donor and the
-year; the coefficient is a rule, not an observation, so it belongs to the
-ontology (section 5). It is recorded in the sourced `marker-coefficients`
-table and applied only in a derived account, so that the same loan can be shown moving from 40 to 100 percent climate finance
-without any change in the loan. A value may be a range: `value_low` and
+year. The coefficient is a sourced parameter of a derived account, not a
+word of the ontology ([fusion](jetp-fusion.md), section 7); it is kept for
+now in the `marker-coefficients` table of section 5. A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
 both equal.
 
 Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow carries
 its interval through two timing roles, `period_start` and `period_end`, so a
 quarterly register total states the quarter it covers and the account
-of section 5 of the backend design can test coverage. A point flow has one
+of the [fusion rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
 `event` timing.
 
 Four shared status axes, each sourced from an external list and extended only
@@ -410,15 +329,13 @@ the crosswalk to at most one axis. A publisher's own scheme that reuses a
 word of this design, such as Indonesia's "Modality A" and "Modality B",
 stays a verbatim field of the line; `modality` on an agreement is only ever
 the DAC type-of-aid code. Where a publisher reports one axis only, the
-other two are absent for that line. The reviews established that today each
-country populates one axis: South Africa the money axis with the delivery axis
-discarded, Indonesia approval, Senegal estimates, Viet Nam none. The ledger
-states this rather than filling it.
+other two are absent for that line: the ledger states which axes a publisher
+reports rather than filling the others.
 
 ## 5. Ontology tables
 
-The ontology is data about the ledger's words, stored like the ledger itself:
-one CSV per table under `data/jetp/ontology/`, reviewed by diff, revised by
+The ontology is data about the ledger's words, stored like the ledger itself
+([storage contract](jetp-ledger-storage.md)), reviewed by diff, revised by
 supersession and never edited in place. Each table is keyed by a row
 identifier; the columns in *italics* are the chain key that successive
 revisions of one entry share. A term's `term_id` is unique within its
@@ -463,10 +380,9 @@ is the set of rows in force at K, so an as-of query reconstructs the words as
 well as the data. `decisions.md` keeps the reasons in prose and cites the row
 it explains.
 
-**Reference from E.** Every derived result records an `ontology_ref`, the
-hash of `data/jetp/ontology/` and of the DDL it was computed under, beside its
-run identifier and its two cutoffs. A result is never recomputed under a
-later ontology without a new run record.
+**Reference from E.** Every derived result names the ontology version it was
+computed under, and a result is never recomputed under a later ontology
+without a new run record.
 
 ### English and formal specification
 
@@ -487,10 +403,8 @@ reopens when an external consumer asks for OWL or JSON Schema.
 
 ## 6. Out of scope, by decision
 
-The proofing review read 36 random pages of 12 documents and found 23
-percent of their information items not representable. The following classes
-are out of scope by decision on 2026-09-22, because no paper reads them, and
-the ledger says so rather than holding them badly:
+The following classes are out of scope by decision (2026-09-22), and the
+ledger says so rather than holding them badly:
 
 - institutional events (a body founded, launched, staffed, merged) and
   party-to-party relations other than `role_in` and `party_in`;
@@ -503,16 +417,5 @@ the ledger says so rather than holding them badly:
 - recurrence ("every year") and dates deferred to another plan's schedule;
 - a publisher's own liabilities and budget;
 - physical outcomes beyond capacity, length and state: emissions, jobs,
-  people, generation, tonnage, hectares. When a paper needs one, it enters
+  people, generation, tonnage, hectares. When one is needed, it enters
   as a measure by decision with its unit and the IPCC or ILO list it maps to.
-
-A scan with no text layer (the Vietnamese decision of 2026 is one) is
-extracted by transcription, and each of its lines names the transcription
-as its method and version, so that the label has the provenance the
-translation tables give derived text.
-
-## 7. Open questions for the author
-
-None at 2026-09-22 end of day. The three questions this section held, line
-identifiers, the party table and the Indonesian edition relation, were decided
-the same day (decisions 5 and 6, and [storage contract](jetp-ledger-storage.md) section 4).

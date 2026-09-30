@@ -55,7 +55,7 @@ Today step D1 is a home-made document manager: `data/jetp/documents.csv`
    while a closed-membership public group shares metadata with everyone and
    attachments with members only (author, 2026-09-29; details in 1511), so
    the files stay
-   non-redistributed, as in `docs/jetp-storage.md` ("not served wholesale").
+   non-redistributed, as the original storage decision had it ("not served wholesale"; `docs/jetp-storage.md`, deleted 2026-09-30, ticket 1701).
    Public access to the documents themselves already goes through the Web
    Archive snapshots (`web-archive-captures.csv`).
 

@@ -186,7 +186,7 @@ jetp-harvest: $(JETP_DOCUMENT_REGISTRY) $(JETP_RETRIEVALS) $(JETP_SNAPSHOTS) scr
 # Ticket 0926: sources that refuse the collector but open in the author's
 # browser. The first rung replays the author's Firefox session; the second
 # picks up files the author saved by hand. Both then ask for a Web Archive
-# copy, as jetp-harvest does (ticket 0925). See docs/jetp-tracking.md.
+# copy, as jetp-harvest does (ticket 0925). See data/jetp/README.md § Collection.
 
 jetp-harvest-blocked: $(JETP_DOCUMENT_REGISTRY) $(JETP_RETRIEVALS) $(JETP_SNAPSHOTS) scripts/jetp/corpus_harvest_ledger.py scripts/jetp/_firefox.py
 	$(PYTHON) scripts/jetp/corpus_harvest_ledger.py --storage-root $(JETP_DOCUMENTS) --browser-session --only-status blocked $(JETP_DOCUMENT_ID_ARG)

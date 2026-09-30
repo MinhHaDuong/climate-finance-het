@@ -12,7 +12,7 @@ Blocked-by: 1508
 --- body ---
 ## Context
 
-Storage contract § 4: document deduplication runs before any line is extracted,
+Storage contract § 4 (now `docs/jetp-fusion.md` § 3): document deduplication runs before any line is extracted,
 because a duplicate extracted twice doubles every count. Planning-time result
 (1500): no tier-1 group and no `edition_of` row touches the 115; one title
 equals an extracted document's. Tier 2 was not run because a fresh worktree

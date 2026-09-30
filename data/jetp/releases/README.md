@@ -1,7 +1,7 @@
 # Frozen editions
 
 No public edition is created by this scaffold. Tickets 0726 and 0728 implement
-release generation and validation using [the storage contract](../../../docs/jetp-storage.md).
+release generation and validation using [the storage contract](../../../docs/jetp-ledger-storage.md).
 
 Each future `<edition_id>/release.json` records:
 
@@ -29,3 +29,24 @@ immutable; issue a new correction edition instead of changing the old files.
 for offline recovery before migration. It is not a public edition. Its capture
 revision, embedded input revision, source-recovery limitations and candidate
 workflow are documented in [the recovery note](../../../docs/jetp-mvp-baseline-0761.md).
+
+## Restoration
+
+When a publication fails, restore the last accepted complete package; never
+replace a few live files mid-build, and never re-enable a retired writer or
+reverse a migration to recover the site. Newer justification and its
+ownership are kept. A restored release shows its real cutoff, and a later
+correction is a new release. (Carried from the backend implementation plan of
+2026-09-14, deleted by ticket 1701.)
+
+## Release identifiers and pinning
+
+Carried from the storage note of 2026-09-13 (deleted by ticket 1701). A
+regular monthly release is `YYYY-MM`; a correction is `YYYY-MM-rN`, starting
+at r1, and records what it supersedes; the bytes at a published release URL
+are never replaced. The current-release pointer advances only after the
+complete release passes validation, so a failed update leaves the last good
+release available. A paper pins a release and its input SHA, never a moving
+current link; its sample selection and code carry their own version
+references beside the release.
+

@@ -30,7 +30,7 @@ Resolve paths through those constants — never hardcode `data/catalogs/` in a s
 **A worktree needs `make data` for the bulk corpus.** DVC-managed data is
 normally absent in a fresh worktree. The exception is JETP documents: the hook
 attempts a private reflink from the primary checkout when `documents.dvc`
-matches; otherwise use `make jetp-data` (see `docs/jetp-storage.md`).
+matches; otherwise use `make jetp-data` (see `data/jetp/README.md` § Snapshots in worktrees).
 `.githooks/post-checkout` symlinks the
 worktree's `.dvc/cache` at the primary checkout's cache, which is what lets
 `make data` (a `dvc checkout`, no network) populate `data/` from local blobs.
