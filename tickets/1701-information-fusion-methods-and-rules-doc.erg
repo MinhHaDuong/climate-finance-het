@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-30T08:27Z HDMX-coding-agent created
 2026-09-30T09:20Z HDMX-coding-agent decision author (2026-09-30): delete jetp-storage.md and jetp-backend-design.md outright after moving live content; destinies executed (fusion, storage contract, presentation, plan, 1506, 1184)
+2026-09-30T09:35Z HDMX-coding-agent note ontology sweep finished (author request): decisions and old-schema case to docs/attic/jetp-ontology-decisions-2026-09.md; counts, paper ties, storage and display detail moved or deleted. Open: perimeters.csv data split, storage § 4 matching into fusion
 --- body ---
 ## Context
 
