@@ -60,6 +60,18 @@ branche, il ne le duplique pas.
    hors des sites connus est la passe de [[1140]] ; ses candidatures entrent
    dans la même file.
 
+## Cas repris de la conception backend supprimée (ticket 1701)
+
+Tests d'acceptation de la gestion des sources (section 10 du document du
+2026-09-14) : une vérification bloquée enregistre la tentative sans avancer la
+dernière couverture réussie ; une vérification complète sans changement avance
+le calendrier sans créer d'observation ; chaque cible d'une passe gelée a un
+résultat ou un report explicite ; une découverte répétée garde une seule
+identité de document ; une révision d'éditeur, de cadence ou de classement
+laisse inchangées une passe ancienne et une requête à date de connaissance
+antérieure ; un rapport copié ne crée ni confirmation indépendante ni
+paiement en double.
+
 ## Exit criteria
 
 - [ ] Une fiche ADB est recollectée par deux passes datées ; une nouvelle version produit un nouvel instantané, une version inchangée n'en produit pas

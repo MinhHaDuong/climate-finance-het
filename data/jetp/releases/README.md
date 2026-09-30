@@ -1,7 +1,7 @@
 # Frozen editions
 
 No public edition is created by this scaffold. Tickets 0726 and 0728 implement
-release generation and validation using [the storage contract](../../../docs/jetp-storage.md).
+release generation and validation using [the storage contract](../../../docs/jetp-ledger-storage.md).
 
 Each future `<edition_id>/release.json` records:
 

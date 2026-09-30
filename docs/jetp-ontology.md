@@ -8,7 +8,7 @@ status axes, and the ontology tables that define and revise them. Three
 documents carry the design, split on 2026-09-23 at the author's request:
 
 - this one, the ontology;
-- [`jetp-ledger-storage.md`](jetp-ledger-storage.md), the storage contract: tables, validation rules, engine, matching, translations, and the consequences for [`jetp-backend-design.md`](jetp-backend-design.md);
+- [`jetp-ledger-storage.md`](jetp-ledger-storage.md), the storage contract: tables, validation rules, engine, matching, translations;
 - [`jetp-ledger-migration.md`](jetp-ledger-migration.md), the migration from the current tables, which the 0870 train consumes.
 
 The decisions below govern all three.
@@ -394,7 +394,7 @@ both equal.
 Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow carries
 its interval through two timing roles, `period_start` and `period_end`, so a
 quarterly register total states the quarter it covers and the account
-of section 5 of the backend design can test coverage. A point flow has one
+of the [fusion rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
 `event` timing.
 
 Four shared status axes, each sourced from an external list and extended only

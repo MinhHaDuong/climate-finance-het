@@ -17,6 +17,13 @@ has a version, and every result names the versions it was computed under.
 
 ## 1. Principles
 
+**Documentary accounting.** The ledger reconstructs from public documents;
+it is not a lender's double-entry books. It cannot require debit and credit
+counterparts that no document discloses. It can require identities,
+comparable perimeters, explicit movements and stated differences. An item in
+a plan is a statement of intention: it proves neither financing, nor
+admission to a later cohort, nor physical progress.
+
 **Statements, not facts.** The ledger holds what a publisher printed, at a
 locator, in a snapshot, on a date. "The loan was signed on 3 May" enters as
 "this publisher stated, in this document read on this date, that the loan was

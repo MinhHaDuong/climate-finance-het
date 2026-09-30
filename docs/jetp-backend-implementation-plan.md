@@ -11,7 +11,7 @@ data) as **schema**; *reconciliation* as **matching** for identities or
 Evidence is computed on top, and there is no Model.
 
 Proposed 14 September 2026, against `ff9cbe834a166c4ecbd2fbae20afc8988c43ebc9`
-(the merged [backend design, revision 5](jetp-backend-design.md)). This is an
+(the merged backend design, revision 5, `docs/jetp-backend-design.md`, deleted 2026-09-30 by ticket 1701). This is an
 implementation proposal. No migration, source refresh or website deployment has
 been performed by writing this plan.
 

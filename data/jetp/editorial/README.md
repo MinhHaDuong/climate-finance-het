@@ -1,7 +1,7 @@
 # Editorial dossiers
 
 Markdown is the human reading/editing layer. See
-[storage contract](../../../docs/jetp-storage.md) for fact ownership and publication.
+[storage contract](../../../docs/jetp-ledger-storage.md) for fact ownership and publication.
 
 | Folder | Filename | Content |
 |---|---|---|

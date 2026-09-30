@@ -15,7 +15,7 @@ comes from dated official documents and project records. This contract keeps
 the two roles separate and makes every aggregate reversible.
 
 Publication storage and the Markdown editorial layer are specified in
-[the programme storage contract](jetp-storage.md). The dated country
+[the ledger storage contract](jetp-ledger-storage.md). The dated country
 checkpoints below describe the earlier source-bound review; current table
 paths and referent counts are given in the v2 ledger contract.
 

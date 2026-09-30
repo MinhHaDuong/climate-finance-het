@@ -38,6 +38,11 @@ layout-specific parsers, which are research code and stay as plug-ins.
   the ledger answers, for any stated content, every snapshot date that stated
   it. This is what makes the pipeline the extraction step of the periodic
   harvest (M4), not only a one-off backlog run.
+- Parser changes (carried from the deleted backend design, § 6): a parser
+  change that moves a locator keeps the existing `line_id` through a reviewed
+  crosswalk when the meaning is unchanged, and otherwise corrects the line as
+  a ledger error. Neither a mutable locator nor a content hash alone defines a
+  line's identity.
 - Pending list: one command lists the snapshots that have neither lines nor a
   disposition. It is the input of every later run, backlog or periodic.
 - Build from the first real case (the VNM progress-update series) and

@@ -153,6 +153,12 @@ Rules that the validator enforces:
   `status-crosswalk`.
 - No column holds a semicolon-separated list; a list is rows in a relation
   table.
+- Target conventions, not yet checked by the DDL (carried from the backend
+  design of 2026-09-14): money is a decimal string in whole currency units
+  plus a currency, never a binary float, so 3.92 in a table headed USD billion
+  is `3920000000` USD with the printed value, scale and label kept in the
+  line's verbatim fields; an unknown value is an empty field with a typed
+  missingness reason, and `null` on export; zero is a measured value.
 - `routes` maps identifiers from a published edition to their new kind and
   identifier, so no public route breaks. The prepublication preview IDs were
   never public and are dispositions in the migration report, not redirects
@@ -208,7 +214,7 @@ foreign-key and check constraints run as the validator, and the observatory's
 served JSON views and the accounts (E) are SQL queries over that file.
 The file is deterministic for a given input, disposable, and may ship as a
 downloadable release artifact, never as a
-committed file. This is what the backend design already reserves as an optional
+committed file. This is what the backend design (2026-09-14) reserved as an optional
 `<release_id>.sqlite` (`<edition_id>` there), promoted from optional to the build's only query
 engine. In the browser the observatory keeps serving one JSON file per table
 and joining at read time; at this volume an in-browser SQL engine would add a
@@ -378,20 +384,3 @@ or a summary; the justification is the line in the publisher's language, at its
 locator, in its snapshot. The first implementation is the language column and
 the translation relation; the two derived tables are nice-to-have and wait for
 a reader who needs them.
-
-## 6. Consequences for the backend design
-
-`jetp-backend-design.md` is revised, not replaced. Its sections 1, 5 to 8 and
-10 stand. Sections 2 to 4 adopt the tables of section 1: `entity` becomes the three
-identity kinds; `subject_type` gains `line`; `source` becomes publisher,
-document and snapshot; `reported-positions` and the event journal merge into
-`observations`. Its section 5 accounts keep their adjudications as the
-`adjudications` and `adjudication-members` tables and their accounts as
-derived outputs (section 1). Section 9 adopts the [migration](jetp-ledger-migration.md) table. Per the schema
-review, the first executable metric is restated as a commitment measure until
-a disbursement observation exists, the provenance index of section 8 is
-declared a build-time validation artifact and never a served file, and the
-source-editions triple, the alias chain rules, the dependency table between justifications (`evidence-dependencies` there) and the
-concept-mapping profile leave the implementation scope until a metric needs
-them. Tickets 0762, 0768 and 0769 closed on the previous contract; their
-readers are retired at step 7.

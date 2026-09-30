@@ -53,7 +53,7 @@ Markdown dossiers and small CSV registries stay in Git. Binary source evidence
 stays in the existing DVC archive. The website consumes static HTML/CSS/JavaScript
 and frozen JSON; SQLite is an optional derived query export, not a required backend.
 Raw-document access/redistribution rights remain distinct from public references.
-See docs/jetp-storage.md and data/jetp/README.md for the storage contract.
+See docs/jetp-ledger-storage.md and data/jetp/README.md for the storage contract.
 
 ## Track two: three publications
 
@@ -151,3 +151,37 @@ Journal submission is separate. The current checkpoint closes only the visible
 MVP slice after its merge gate; it neither closes the parent programme nor asserts
 that a causal design is feasible. Ticket exit criteria and source evidence govern
 completion, not a positive acceleration result or a count of merged PRs.
+
+## Research evidence gates
+
+Carried from the backend design of 2026-09-14 (sections 4, 10 and 11) when it
+was deleted (ticket 1701). Storage completeness establishes neither
+comparability nor causal identification.
+
+| Product or question | Required before release or estimation |
+|---|---|
+| Observatory and data paper: what was planned, financed, implemented and disclosed? | Full-inventory coverage assessment, reviewed identities and perimeters, exact provenance and bounded account tests; named web profiles alone do not define coverage |
+| Comparative political economy: how and why did trajectories or official accounts change? | Defensible case selection, codebooks and excerpt-level justification, competing interpretations and negative cases, traceable claims |
+| Disclosure and implementation gaps | Observation-process evidence kept apart from physical and financial statements; an unavailable document does not establish a stalled project |
+| Descriptive durations | Comparable endpoints, entry maturity, date bounds, supported follow-up, censoring and competing-outcome rules |
+| Causal acceleration | Frozen historical populations, exposure, anticipation and baseline evidence, defensible comparison units, an explicitly justified identification design |
+
+If no supported causal design survives, record DEFER and return the scope
+decision to the author; do not substitute a descriptive comparison quietly.
+
+**Study contract, when a study is commissioned** (no tables before then): a
+frozen protocol revision (question, unit, time zero, horizon, eligibility,
+endpoints, knowledge cutoff); an immutable sampling frame whose membership
+decisions cite their lines; an observation-process record keeping not
+published, blocked, unreadable, not sought and loss of visibility distinct; a
+versioned codebook, with independent codings allowed to coexist; an immutable
+run manifest pinning protocol, release, frame, code, environment, seeds and
+output hashes. A failed run supplies no releasable result, and a corrected
+current account never silently refreshes a released study.
+
+**Research acceptance fixture**: reconstruct a pre-intervention frame with one
+active and one cancelled operation, keep both through follow-up, and reject a
+completed-only list as that frame; derive an interval-censored milestone and a
+missing endpoint without invented dates; keep a later support decision out of
+baseline eligibility where the protocol requires; a revised official inventory
+leaves the frozen frame unchanged.

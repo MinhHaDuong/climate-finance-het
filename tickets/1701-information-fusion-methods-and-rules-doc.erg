@@ -5,7 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-30T08:27Z HDMX-coding-agent created
-
+2026-09-30T09:20Z HDMX-coding-agent decision author (2026-09-30): delete jetp-storage.md and jetp-backend-design.md outright after moving live content; destinies executed (fusion, storage contract, presentation, plan, 1506, 1184)
 --- body ---
 ## Context
 
@@ -34,8 +34,8 @@ Author decisions (2026-09-30, interactive):
 
 ## Exit criteria
 
-- [ ] `docs/attic/` exists with a README saying what goes there and that nothing in it governs
-- [ ] `docs/jetp-fusion.md` opens with the principles and names no table, file, column, page or format
-- [ ] The ontology restricts `supersedes` to ledger errors and keeps only publisher-defined perimeters; the rules it held point to the fusion file
-- [ ] Each section of `jetp-storage.md` and `jetp-backend-design.md` has a recorded destiny, approved by the author, and is executed; no live content (the worktree snapshot procedure) lands in the attic
-- [ ] Every inbound link to a moved file still resolves
+- [x] `docs/attic/` exists with a README saying what goes there and that nothing in it governs
+- [x] `docs/jetp-fusion.md` opens with the principles and names no table, file, column, page or format
+- [x] The ontology restricts `supersedes` to ledger errors and keeps only publisher-defined perimeters; the rules it held point to the fusion file
+- [x] Each section of `jetp-storage.md` and `jetp-backend-design.md` has a recorded destiny and is executed; the files are deleted, not atticked (author, 2026-09-30); the worktree snapshot procedure lives in `data/jetp/README.md`
+- [x] Every link to a deleted file from a current document is repointed; closed tickets and dated review records keep their text as history
