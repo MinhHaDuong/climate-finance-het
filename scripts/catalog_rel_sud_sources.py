@@ -26,7 +26,9 @@ import importlib
 import json
 import os
 import pkgutil
+import re
 import sys
+import unicodedata
 from datetime import datetime, timezone
 
 import rel_sud_sources
@@ -63,6 +65,39 @@ def discover():
 def keep(route, rec):
     """Search routes keep all; harvest routes keep lexicon matches only."""
     return route not in HARVEST_ROUTES or bool(rec.get("matched_terms"))
+
+
+def _norm(text):
+    text = unicodedata.normalize("NFKC", text or "").casefold()
+    return re.sub(r"[\W_]+", " ", text).strip()
+
+
+def sentinel_hits(sentinel, rows):
+    """Candidate rows matching a sentinel by DOI, or by every fragment of its
+    title (sentinel titles elide words with '...' and add notes in brackets)."""
+    doi = (sentinel.get("doi") or "").lower()
+    frags = [f for f in (_norm(x) for x in re.split(r"\.\.\.|…|\(|\)", sentinel["title"])) if f]
+    out = []
+    for r in rows:
+        if doi and (r.get("doi") or "").lower() == doi:
+            out.append(r)
+        elif frags and all(f in _norm(r.get("title")) for f in frags):
+            out.append(r)
+    return out
+
+
+def sentinel_report(sentinels, rows, klass="b"):
+    """One line per sentinel of the class: id, found, sources and query ids."""
+    report = []
+    for s in sentinels:
+        if s.get("class") != klass:
+            continue
+        hits = sentinel_hits(s, rows)
+        report.append({"sentinel": s["sentinel"], "found": bool(hits),
+                       "sources": "; ".join(sorted({h["source"] for h in hits})),
+                       "query_ids": "; ".join(sorted({h["query_id"] for h in hits})),
+                       "title": s["title"]})
+    return report
 
 
 def run_source(mod, cfg, out_dir, reg, cand, cap, delay):

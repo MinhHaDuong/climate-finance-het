@@ -126,6 +126,26 @@ def test_cap_stops_and_flags(tmp_path):
     assert regrows[0]["stop_reason"] == "record cap" and regrows[0]["completed"] == "False"
 
 
+def test_sentinel_matching_by_fragments_and_doi():
+    sentinels = [
+        {"sentinel": "S43", "class": "b", "doi": "",
+         "title": "Kerjasama Indonesia-Norwegia dalam konservasi hutan ... REDD+ (Kalimantan Tengah)"},
+        {"sentinel": "S99", "class": "b", "doi": "10.1/x", "title": "Nothing like it"},
+        {"sentinel": "S01", "class": "c", "doi": "", "title": "ignored class"},
+    ]
+    rows = [
+        {"source": "garuda", "query_id": "G1", "doi": "",
+         "title": "Kerjasama Indonesia–Norwegia dalam Konservasi Hutan melalui skema REDD+ "
+                  "di Kalimantan Tengah"},
+        {"source": "x", "query_id": "X1", "doi": "10.1/X", "title": "Other"},
+        {"source": "y", "query_id": "Y1", "doi": "", "title": "Kerjasama Indonesia"},
+    ]
+    rep = {r["sentinel"]: r for r in runner.sentinel_report(sentinels, rows)}
+    assert set(rep) == {"S43", "S99"}
+    assert rep["S43"]["found"] and rep["S43"]["sources"] == "garuda"
+    assert rep["S99"]["query_ids"] == "X1"
+
+
 def test_existing_registry_is_refused(tmp_path):
     (tmp_path / "registry.csv").write_text("x")
     assert runner.main(["--output-dir", str(tmp_path)]) == 2
