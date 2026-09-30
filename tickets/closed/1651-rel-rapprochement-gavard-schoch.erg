@@ -2,12 +2,14 @@
 Title: REL — rapprochement des références de l'audit Gavard & Schoch avec le pool
 Created: 2026-09-29
 Author: haduong
+Closed: autoclosed — PR #1606
 
 --- log ---
 2026-09-29T15:00Z haduong created
 2026-09-30T13:42Z HDMX-coding-agent note rapprochement fait: 29 references, 14 doublon, 3 inclus, 11 hors theme, 1 non resolu (Wang & Tang, needs-human); 12 absences livrees data/rel/gavard_schoch/delivery_1655.csv
 2026-09-30T13:58Z HDMX-coding-agent livraison refaite au contrat d'intake 1730 (PR #1604): data/rel_intake/t1651-gavard-schoch/2026-09-30, 29 notices, 1 exclusion front_matter, qa_rel_intake OK
 2026-09-30T14:15Z HDMX-coding-agent correction: la note de 13:42Z cite delivery_1655.csv, retire; la livraison est data/rel_intake/t1651-gavard-schoch/2026-09-30. Apres /gaze, 'deja au pool' = au catalogue: 12 doublon, 5 inclus (GS02, GS13 seulement chez les candidats 1530)
+2026-09-30T14:20Z HDMX-coding-agent closed — autoclosed — PR #1606
 --- body ---
 ## Contexte
 
