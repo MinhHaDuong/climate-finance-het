@@ -524,14 +524,16 @@ def run_state(r, expected):
     return "stopped"
 
 
-def merge_registry_rows(rows):
+def merge_registry_rows(rows, n_union=None):
     """One registry row for a search run in several run directories.
 
     Counts describe the union of the retrievals; the row is complete only when
     some run reached the end of the cursor with every announced id, or
     exhausted it (``run_state``), so a run that stopped short can never pass
     for a finished one. ``cursor_state`` names the state of the deciding run,
-    ``cursor_note`` details an exhausted cursor."""
+    ``cursor_note`` details an exhausted cursor. ``n_union``, the distinct
+    ids of all runs together, completes a row whose runs jointly received
+    every announced id."""
     base = max(rows, key=lambda r: int(r.get("_distinct", r["n_received"] or 0)))
     expected = max((int(r["n_expected"]) for r in rows if str(r["n_expected"]).isdigit()),
                    default=None)
@@ -544,7 +546,7 @@ def merge_registry_rows(rows):
         why = why or s.replace("_", " ")
         reasons.append(f"{r['_run']}: {why} ({r.get('_distinct', r['n_received'])} of {r['n_expected']})")
     note = ""
-    if complete:
+    if complete or (n_union is not None and expected is not None and n_union >= expected):
         state = "complete"
     elif exhausted:
         state, r = "cursor_exhausted", exhausted[0]
@@ -600,7 +602,7 @@ def load_runs(dirs):
     for sid, rows in by_id.items():
         for r in rows:  # the cursor's page repeats count once
             r["_distinct"] = len(distinct[(r["_run"], sid)])
-        row = merge_registry_rows(rows)
+        row = merge_registry_rows(rows, received.get(sid, 0))
         row["n_received"] = received.get(sid, 0)
         row.pop("_run", None)
         row.pop("_distinct", None)

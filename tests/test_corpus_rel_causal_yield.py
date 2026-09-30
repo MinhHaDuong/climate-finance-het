@@ -362,6 +362,25 @@ def test_completeness_counts_distinct_ids_and_names_the_exhausted_cursor(tmp_pat
     assert row["completed"] == "True" and row["cursor_state"] == "complete" and row["cursor_note"] == ""
 
 
+def test_runs_that_jointly_received_every_announced_id_are_complete(tmp_path):
+    """Replay of RC-construction_emissions-IM-en: run d exhausted its cursor at
+    1,453 distinct ids of 1,454, and run a had retrieved the missing one."""
+    sid = "RC-construction_emissions-IM-en"
+    _run_with_repeats(tmp_path / "a", sid, 1, 1, 4, completed="False", stop="record cap")
+    _run_dir(tmp_path / "d", "openalex", [(sid, "construction_emissions", "IM", 4)],
+             [{"search_id": sid, "openalex_id": f"W{i}", "doi": "",
+               "title": f"Construction emissions record number {i}", "year": 2020}
+              for i in (1, 2, 3, 3, 2)])
+    _set_registry(tmp_path / "d" / "registry.csv", **{sid: {"n_received": "5"}})
+    row = cy.load_runs([str(tmp_path / "a")])[0][0]
+    assert row["completed"] == "False"
+    row = cy.load_runs([str(tmp_path / "d")])[0][0]
+    assert row["cursor_state"] == "cursor_exhausted"
+    row = cy.load_runs([str(tmp_path / "a"), str(tmp_path / "d")])[0][0]
+    assert row["n_received"] == 4 and row["completed"] == "True"
+    assert row["cursor_state"] == "complete"
+
+
 def test_every_eds_doi_survives_in_the_delivery(lane):
     """An EDS retrieval joined to an OpenAlex record without DOI is a
     duplicate_in_lane; its DOI is carried by the kept record and the exclusion
