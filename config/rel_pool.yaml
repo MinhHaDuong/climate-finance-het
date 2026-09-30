@@ -18,9 +18,13 @@ intake_dir: data/rel_intake
 # Metadata priority after the catalogue: a pooled work takes each field from
 # its first non-empty member, catalogue rows first, then lanes in this order.
 # A lane missing from this list is appended in name order, with a warning;
-# each lane PR (1650 to 1654) adds its directory name here.
+# each lane PR adds its directory name here. Hand-checked Zotero records
+# (1651) come first, then the frozen OpenAlex search (1530), then the causal
+# EconLit/EDS lane (1652), whose EDS-derived DOIs are not all verified.
 lane_order:
+  - t1651-gavard-schoch
   - t1530-sud-openalex
+  - t1652-causal-econlit
 
 # Lane 1530 conversion (scripts/catalog_rel_1530_delivery.py). The limits are
 # those ticket 1530 documented at closure; every query of runs f and g

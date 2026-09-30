@@ -183,6 +183,37 @@ def test_catalogue_with_another_md5_is_refused(tmp_path):
         rp.run(cfg, str(cat), str(tmp_path / "none"), str(tmp_path / "out"))
 
 
+def test_idless_generic_title_never_fuses_distinct_dois(tmp_path):
+    cat = [{"source": "openalex", "source_id": "W1", "doi": "10.1111/ed1", "title": "Editorial",
+            "year": "2020"},
+           {"source": "istex", "source_id": "x", "doi": "10.1111/ed2", "title": "Editorial",
+            "year": "2020"}]
+    recs = [_rec("e1", title="EDITORIAL.", year="2020"), _rec("e2", title="Editorial", year="2020")]
+    report, pool = _run(tmp_path, cat, [("t1650-toc", "2026-10-01", recs)])
+    assert len(pool) == 3, "two DOI works plus one id-less work, never one fused work"
+    assert report["reconciliation"]["ambiguous_title_groups"] == 1
+    d = report["deliveries"]["t1650-toc/2026-10-01"]
+    assert (d["dup_within_delivery"], d["new_to_pool"]) == (1, 1)
+
+
+def test_title_joins_a_doi_only_and_an_openalex_only_component(tmp_path):
+    cat = [{"source": "istex", "source_id": "x", "doi": "10.1111/a", "title": "Green aid",
+            "year": "2015"}]
+    recs = [_rec("r1", openalex_id="W5", title="Green Aid", year="2015")]
+    report, pool = _run(tmp_path, cat, [("t1530-sud", "2026-09-29", recs)])
+    assert len(pool) == 1 and pool[0]["work_key"] == "openalex:W5"
+    assert report["deliveries"]["t1530-sud/2026-09-29"]["in_catalogue"]["by_title_year"] == 1
+
+
+def test_malformed_catalogue_doi_is_kept_and_counted(tmp_path):
+    cat = [{"source": "openalex", "source_id": "W1", "title": "A", "year": "2001",
+            "doi": "10.1108/s1569 chapter 2"},
+           {"source": "grey", "source_id": "g", "title": "B", "year": "2002", "doi": "RePEc:abc"}]
+    report, pool = _run(tmp_path, cat, [])
+    assert len(pool) == 2
+    assert report["reconciliation"]["catalogue_doi_malformed"] == 2
+
+
 def test_norm_year_and_openalex():
     assert rp.norm_year("2026.0") == "2026"
     assert rp.norm_year("") == rp.norm_year("n.d.") == ""
