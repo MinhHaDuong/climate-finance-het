@@ -13,8 +13,8 @@ import re
 
 from pipeline_io import polite_get
 
-from rel_sud_sources.common import empty_record, find_year
-from rel_sud_sources.listing import listing_query, matcher, soft
+from rel_sud_sources._common import empty_record, find_year
+from rel_sud_sources._listing import listing_query, matcher, soft
 
 IDEAS = "https://ideas.repec.org"
 SERIES = f"{IDEAS}/s/ris/adbewp"

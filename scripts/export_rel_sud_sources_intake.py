@@ -45,13 +45,26 @@ from collections import Counter, OrderedDict
 from datetime import datetime, timezone
 
 import yaml
-from catalog_rel_sud_sources import HARVEST_ROUTES, discover, sentinel_report
 from pipeline_io import polite_get
-from qa_rel_intake import EXCLUDED_COLUMNS, RECORD_COLUMNS
-from rel_sud_sources import garuda
-from rel_sud_sources.common import find_doi
+from rel_sud_sources import (
+    _garuda as garuda,
+)
+from rel_sud_sources._common import HARVEST_ROUTES, discover, find_doi, sentinel_report
+from utils import get_logger
+
+log = get_logger("rel_sud_sources")
 
 LANE = "t1653-sud-hors-openalex"
+# The intake contract's columns (docs/rel-intake-contract.md), in its order;
+# the tests hold them to scripts/qa_rel_intake.py.
+RECORD_COLUMNS = [
+    "record_id", "query_id", "platform", "retrieved_at", "title",
+    "platform_record_id", "doi", "openalex_id", "title_original",
+    "first_author", "all_authors", "year", "publication_date", "journal",
+    "issn", "doc_type", "language", "abstract", "abstract_provenance", "url",
+    "affiliation_countries", "version_hint", "lane_status", "lane_note",
+]
+EXCLUDED_COLUMNS = ["record_id", "query_id", "reason", "title", "note"]
 TICKET = "1653"
 DOI_RE = re.compile(r"^10\.\d{4,9}/\S+$")
 YEAR_RE = re.compile(r"^(19|20)\d{2}$")
@@ -296,16 +309,17 @@ def cmd_export(args):
     with open(os.path.join(args.output_dir, "manifest.json"), "w", encoding="utf-8") as fh:
         json.dump(man, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
-    print(json.dumps(man["counts"], ensure_ascii=False))
+    log.info("counts %s", json.dumps(man["counts"], ensure_ascii=False))
     for s in report:
-        print(s["sentinel"], "found" if s["found"] else "missed", s["sources"], s["query_ids"])
+        log.info("%s %s %s %s", s["sentinel"], "found" if s["found"] else "missed",
+                 s["sources"], s["query_ids"])
     return 0
 
 
 def cmd_enrich_years(args, get=polite_get):
     """Detail-page years for the records with neither year nor DOI."""
     if args.source != "garuda":
-        print("only garuda has a detail page with a publication date", file=sys.stderr)
+        log.error("only garuda has a detail page with a publication date")
         return 2
     rows = read_csv(os.path.join(args.run_dir, "candidates.csv"))
     todo = list(dict.fromkeys(r["record_id"] for r in rows if r["source"] == args.source
@@ -325,7 +339,7 @@ def cmd_enrich_years(args, get=polite_get):
         out.append({"record_id": rid, "year": year or "", "source_url": url,
                     "fetched_at": fetched, "status": state})
     write_csv(os.path.join(args.run_dir, "year_enrichment.csv"), ENRICHMENT_FIELDS, out)
-    print(f"{sum(1 for o in out if o['year'])} of {len(out)} years found")
+    log.info("%d of %d years found", sum(1 for o in out if o["year"]), len(out))
     return 0
 
 

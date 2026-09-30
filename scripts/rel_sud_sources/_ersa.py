@@ -9,8 +9,8 @@ robots.txt (checked 2026-09-30) disallows only ``/wp-admin/``.
 
 from pipeline_io import polite_get
 
-from rel_sud_sources.common import empty_record, find_year
-from rel_sud_sources.listing import emit, html_text, listing_query, matcher, wp_listing
+from rel_sud_sources._common import empty_record, find_year
+from rel_sud_sources._listing import emit, html_text, listing_query, matcher, wp_listing
 
 BASE = "https://econrsa.org/wp-json/wp/v2"
 WORKING_PAPER = 7139  # publication-types term id, slug 'working-paper'

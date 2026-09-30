@@ -4,7 +4,9 @@ UWISpace at uwispace.sta.uwi.edu (handle prefix 2139) is the university-wide
 repository; the search covers all its communities.
 """
 
-from rel_sud_sources import latam_dspace
+from rel_sud_sources import (
+    _latam_dspace as latam_dspace,
+)
 
 BASE = "https://uwispace.sta.uwi.edu"
 

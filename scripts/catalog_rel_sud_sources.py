@@ -23,17 +23,17 @@ Usage:
 import argparse
 import csv
 import gzip
-import importlib
 import json
 import os
-import pkgutil
-import re
 import sys
-import unicodedata
 from datetime import datetime, timezone
 
-import rel_sud_sources
-from rel_sud_sources.common import RECORD_FIELDS, load_lexicon
+from rel_sud_sources._common import (
+    RECORD_FIELDS,
+    discover,
+    keep,
+    load_lexicon,
+)
 from utils import get_logger
 
 log = get_logger("rel_sud_sources")
@@ -47,61 +47,6 @@ PROVENANCE_FIELDS = [
     "export_file",
 ]
 CANDIDATE_FIELDS = PROVENANCE_FIELDS + RECORD_FIELDS
-
-# Routes with no server-side search: the whole set or listing is read and
-# archived, and the local 1530 lexicon match selects the candidates.
-HARVEST_ROUTES = {"oai-pmh", "listing"}
-
-
-def discover():
-    """``{source name: adapter module}`` for every module defining SOURCE."""
-    out = {}
-    for info in pkgutil.iter_modules(rel_sud_sources.__path__):
-        if info.name == "common":
-            continue
-        mod = importlib.import_module(f"rel_sud_sources.{info.name}")
-        if hasattr(mod, "SOURCE"):
-            out[mod.SOURCE["name"]] = mod
-    return out
-
-
-def keep(route, rec):
-    """Search routes keep all; harvest routes keep lexicon matches only."""
-    return route not in HARVEST_ROUTES or bool(rec.get("matched_terms"))
-
-
-def _norm(text):
-    text = unicodedata.normalize("NFKC", text or "").casefold()
-    return re.sub(r"[\W_]+", " ", text).strip()
-
-
-def sentinel_hits(sentinel, rows):
-    """Candidate rows matching a sentinel by DOI, or by every fragment of its
-    title (sentinel titles elide words with '...' and add notes in brackets)."""
-    doi = (sentinel.get("doi") or "").lower()
-    frags = [f for f in (_norm(x) for x in re.split(r"\.\.\.|…|\(|\)", sentinel["title"])) if f]
-    out = []
-    for r in rows:
-        if doi and (r.get("doi") or "").lower() == doi:
-            out.append(r)
-        elif frags and all(f in _norm(r.get("title")) for f in frags):
-            out.append(r)
-    return out
-
-
-def sentinel_report(sentinels, rows, klass="b"):
-    """One line per sentinel of the class: id, found, sources and query ids."""
-    report = []
-    for s in sentinels:
-        if s.get("class") != klass:
-            continue
-        hits = sentinel_hits(s, rows)
-        report.append({"sentinel": s["sentinel"], "found": bool(hits),
-                       "sources": "; ".join(sorted({h["source"] for h in hits})),
-                       "query_ids": "; ".join(sorted({h["query_id"] for h in hits})),
-                       "title": s["title"]})
-    return report
-
 
 def run_source(mod, cfg, out_dir, reg, cand, cap, delay):
     src = mod.SOURCE
@@ -153,7 +98,7 @@ def main(argv=None):
     adapters = discover()
     if args.list:
         for name, mod in sorted(adapters.items()):
-            print(name, mod.SOURCE["route"], mod.SOURCE["endpoint"])
+            log.info("%s %s %s", name, mod.SOURCE["route"], mod.SOURCE["endpoint"])
         return 0
     chosen = args.source or sorted(adapters)
     unknown = [s for s in chosen if s not in adapters]

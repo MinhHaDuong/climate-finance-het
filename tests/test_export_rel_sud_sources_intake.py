@@ -123,6 +123,11 @@ def test_enrichment_year_fills_a_record_with_neither_doi_nor_year(runs):
     assert stats["no_doi_no_year"] == 0
 
 
+def test_contract_columns_are_the_checkers():
+    assert ex.RECORD_COLUMNS == qa_rel_intake.RECORD_COLUMNS
+    assert ex.EXCLUDED_COLUMNS == qa_rel_intake.EXCLUDED_COLUMNS
+
+
 def test_export_writes_a_delivery_the_checker_accepts(runs, tmp_path):
     root, spec = runs
     write(os.path.join(spec[0][0], "year_enrichment.csv"), ex.ENRICHMENT_FIELDS,

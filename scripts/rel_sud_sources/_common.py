@@ -1,6 +1,9 @@
 """Shared record schema, lexicon matcher and OAI-PMH reader (ticket 1653)."""
 
+import importlib
+import pkgutil
 import re
+import unicodedata
 import xml.etree.ElementTree as ET
 
 import yaml
@@ -8,6 +11,8 @@ from catalog_rel_sud_search import spelling_variants, split_terms
 from openalex_corpus import retry_get
 from pipeline_io import MAILTO, POLITE_MAX_RETRIES
 from pipeline_text import normalize_doi_safe
+
+import rel_sud_sources
 
 # One normalized record, whatever the source.
 RECORD_FIELDS = [
@@ -201,3 +206,60 @@ def oai_list_records(endpoint, metadata_prefix="oai_dc", set_spec=None,
             yield ("end", "")
             return
         params = {"verb": "ListRecords", "resumptionToken": token}
+
+
+# ---------------------------------------------------------------------------
+# Routes, adapter discovery and sentinels (shared by the runner and the exporter)
+# ---------------------------------------------------------------------------
+
+# Routes with no server-side search: the whole set or listing is read and
+# archived, and the local 1530 lexicon match selects the candidates.
+HARVEST_ROUTES = {"oai-pmh", "listing"}
+
+
+def discover():
+    """``{source name: adapter module}`` for every module defining SOURCE."""
+    out = {}
+    for info in pkgutil.iter_modules(rel_sud_sources.__path__):
+        mod = importlib.import_module(f"rel_sud_sources.{info.name}")
+        if hasattr(mod, "SOURCE"):
+            out[mod.SOURCE["name"]] = mod
+    return out
+
+
+def keep(route, rec):
+    """Search routes keep all; harvest routes keep lexicon matches only."""
+    return route not in HARVEST_ROUTES or bool(rec.get("matched_terms"))
+
+
+def _norm(text):
+    text = unicodedata.normalize("NFKC", text or "").casefold()
+    return re.sub(r"[\W_]+", " ", text).strip()
+
+
+def sentinel_hits(sentinel, rows):
+    """Candidate rows matching a sentinel by DOI, or by every fragment of its
+    title (sentinel titles elide words with '...' and add notes in brackets)."""
+    doi = (sentinel.get("doi") or "").lower()
+    frags = [f for f in (_norm(x) for x in re.split(r"\.\.\.|…|\(|\)", sentinel["title"])) if f]
+    out = []
+    for r in rows:
+        if doi and (r.get("doi") or "").lower() == doi:
+            out.append(r)
+        elif frags and all(f in _norm(r.get("title")) for f in frags):
+            out.append(r)
+    return out
+
+
+def sentinel_report(sentinels, rows, klass="b"):
+    """One line per sentinel of the class: id, found, sources and query ids."""
+    report = []
+    for s in sentinels:
+        if s.get("class") != klass:
+            continue
+        hits = sentinel_hits(s, rows)
+        report.append({"sentinel": s["sentinel"], "found": bool(hits),
+                       "sources": "; ".join(sorted({h["source"] for h in hits})),
+                       "query_ids": "; ".join(sorted({h["query_id"] for h in hits})),
+                       "title": s["title"]})
+    return report

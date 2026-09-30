@@ -19,7 +19,7 @@ import re
 
 import requests
 
-from rel_sud_sources.common import lexicon_terms, term_matcher
+from rel_sud_sources._common import lexicon_terms, term_matcher
 
 TAG_RE = re.compile(r"<[^>]+>")
 SPACE_RE = re.compile(r"\s+")

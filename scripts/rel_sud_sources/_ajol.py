@@ -31,8 +31,8 @@ import time
 
 from utils import get_logger
 
-from rel_sud_sources.common import dc_to_record, oai_get, oai_list_records
-from rel_sud_sources.listing import matcher
+from rel_sud_sources._common import dc_to_record, oai_get, oai_list_records
+from rel_sud_sources._listing import matcher
 
 log = get_logger("rel_sud_sources")
 

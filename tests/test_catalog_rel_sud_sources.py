@@ -8,7 +8,9 @@ import types
 
 import catalog_rel_sud_sources as runner
 import pytest
-from rel_sud_sources import common
+from rel_sud_sources import (
+    _common as common,
+)
 
 pytestmark = pytest.mark.domain_corpus
 
@@ -169,7 +171,7 @@ def test_sentinel_matching_by_fragments_and_doi():
         {"source": "x", "query_id": "X1", "doi": "10.1/X", "title": "Other"},
         {"source": "y", "query_id": "Y1", "doi": "", "title": "Kerjasama Indonesia"},
     ]
-    rep = {r["sentinel"]: r for r in runner.sentinel_report(sentinels, rows)}
+    rep = {r["sentinel"]: r for r in common.sentinel_report(sentinels, rows)}
     assert set(rep) == {"S43", "S99"}
     assert rep["S43"]["found"] and rep["S43"]["sources"] == "garuda"
     assert rep["S99"]["query_ids"] == "X1"

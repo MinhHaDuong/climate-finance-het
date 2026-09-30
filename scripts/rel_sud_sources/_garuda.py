@@ -20,7 +20,7 @@ import re
 from catalog_rel_sud_search import split_terms
 from pipeline_io import polite_get
 
-from rel_sud_sources.common import (
+from rel_sud_sources._common import (
     empty_record,
     find_doi,
     find_year,

@@ -4,7 +4,24 @@ import json
 import types
 
 import pytest
-from rel_sud_sources import clacso, ipea, latam_dspace, redalyc, scielo, uwi
+from rel_sud_sources import (
+    _clacso as clacso,
+)
+from rel_sud_sources import (
+    _ipea as ipea,
+)
+from rel_sud_sources import (
+    _latam_dspace as latam_dspace,
+)
+from rel_sud_sources import (
+    _redalyc as redalyc,
+)
+from rel_sud_sources import (
+    _scielo as scielo,
+)
+from rel_sud_sources import (
+    _uwi as uwi,
+)
 
 pytestmark = pytest.mark.domain_corpus
 

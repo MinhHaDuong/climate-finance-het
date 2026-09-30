@@ -13,8 +13,8 @@ import re
 
 from pipeline_io import polite_get
 
-from rel_sud_sources.common import empty_record, find_year
-from rel_sud_sources.listing import html_text, listing_query, matcher, script_language
+from rel_sud_sources._common import empty_record, find_year
+from rel_sud_sources._listing import html_text, listing_query, matcher, script_language
 
 SITEMAP = "https://www.ceew.in/sitemap.xml"
 LANGUAGES = ["en", "hi"]

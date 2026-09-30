@@ -18,8 +18,8 @@ from email.utils import parsedate_to_datetime
 
 from pipeline_io import polite_get
 
-from rel_sud_sources.common import empty_record, find_year
-from rel_sud_sources.listing import emit, html_text, listing_query, matcher, soft
+from rel_sud_sources._common import empty_record, find_year
+from rel_sud_sources._listing import emit, html_text, listing_query, matcher, soft
 
 FEED = "https://www.southcentre.int/category/research-papers/feed/"
 LANGUAGES = ["en", "fr", "es", "pt"]

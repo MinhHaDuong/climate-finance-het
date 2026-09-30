@@ -5,7 +5,9 @@ Biblioteca Virtual (biblioteca.clacso.edu.ar). Its robots.txt asks
 ``Crawl-delay: 10``, so requests here are spaced by at least 10 s.
 """
 
-from rel_sud_sources import latam_dspace
+from rel_sud_sources import (
+    _latam_dspace as latam_dspace,
+)
 
 BASE = "https://biblioteca-repositorio.clacso.edu.ar"
 CRAWL_DELAY = 10.0

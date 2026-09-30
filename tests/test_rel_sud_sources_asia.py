@@ -7,7 +7,15 @@ OAI-PMH pages.
 import types
 
 import pytest
-from rel_sud_sources import common, cyberleninka, garuda
+from rel_sud_sources import (
+    _common as common,
+)
+from rel_sud_sources import (
+    _cyberleninka as cyberleninka,
+)
+from rel_sud_sources import (
+    _garuda as garuda,
+)
 
 pytestmark = pytest.mark.domain_corpus
 

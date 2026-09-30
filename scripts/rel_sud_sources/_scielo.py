@@ -25,7 +25,7 @@ date, so no date window is sent; the year stays a column for the screen.
 
 from pipeline_io import polite_get
 
-from rel_sud_sources.common import (
+from rel_sud_sources._common import (
     dc_to_record,
     lexicon_terms,
     oai_list_records,

@@ -10,14 +10,28 @@ import json
 import catalog_rel_sud_sources as runner
 import pytest
 from rel_sud_sources import (
-    adb_ewp,
-    ajol,
-    ceew,
-    common,
-    cpd,
-    ersa,
-    listing,
-    south_centre,
+    _adb_ewp as adb_ewp,
+)
+from rel_sud_sources import (
+    _ajol as ajol,
+)
+from rel_sud_sources import (
+    _ceew as ceew,
+)
+from rel_sud_sources import (
+    _common as common,
+)
+from rel_sud_sources import (
+    _cpd as cpd,
+)
+from rel_sud_sources import (
+    _ersa as ersa,
+)
+from rel_sud_sources import (
+    _listing as listing,
+)
+from rel_sud_sources import (
+    _south_centre as south_centre,
 )
 
 pytestmark = pytest.mark.domain_corpus
@@ -374,4 +388,4 @@ def test_every_adapter_honours_the_contract():
     assert "listing" not in runner.discover()
     # listing routes have no server-side search: the runner keeps matches only
     for mod in (adb_ewp, ceew, cpd, ersa, south_centre):
-        assert mod.SOURCE["route"] in runner.HARVEST_ROUTES
+        assert mod.SOURCE["route"] in common.HARVEST_ROUTES

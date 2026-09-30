@@ -32,7 +32,7 @@ import xml.etree.ElementTree as ET
 
 from pipeline_io import polite_get
 
-from rel_sud_sources.common import (
+from rel_sud_sources._common import (
     NS,
     dc_to_record,
     lexicon_terms,
