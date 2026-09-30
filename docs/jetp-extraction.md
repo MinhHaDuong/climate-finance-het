@@ -112,7 +112,7 @@ Three things are settled before any statement is extracted.
   extracted; failing that, the version in the country's official language, whose
   labels match other national sources best. [M2]
 - **Language.** The document's language is recorded, because the translation
-  rule needs it and because the LLM readers and checkers must handle that
+  rule needs it and because the LLM readers and the arbiter must handle that
   language. [M2]
 - **Edition.** A document that is a later edition of one already extracted is its
   own document, related by `edition_of`. Its statements are new statements
@@ -158,9 +158,9 @@ required of it at this step.
   `count`, `envelope`, `absence`. It is assigned by the extraction from what the
   publisher presents, never inferred from words in the label. A statement
   is admitted only with a classification. When the extraction cannot tell,
-  the proposal waits for review rather than taking a default: for an
-  assisted reading it stays in the author's queue of the run (section 6.3);
-  for a parser, the document is not admitted (section 6.1). A classification
+  the proposal takes no default: for an assisted reading it goes to the
+  arbiter, and if the arbiter cannot tell either it ends undetermined and is
+  not admitted (section 6.3); for a parser, the document is not admitted (section 6.1). A classification
   is never added to an admitted statement afterwards. [M2]
   <!-- wave-1 W1-12: pending author decision (whether the closed list grows now, and a reader's 'cannot classify' answer) -->
 - **The publisher's own status word**, copied as printed, when the publisher
@@ -190,8 +190,8 @@ required of it at this step.
   telephone number, a personal postal address) are out of the declared
   extraction scope of every document and are not extracted. [M2]
 - **Method and version** that extracted it, and, for an assisted reading or a
-  transcription, the checking reader and any person who decided on it
-  (section 6.3). [M2]
+  transcription, every reader's and the arbiter's answer and any person who
+  decided on it (section 6.3). [M2]
 - **Recorded date**: when the ledger admitted the statement. This is the
   knowledge time of [fusion](jetp-fusion.md) section 8. The world time a
   statement speaks of (a reporting cutoff, a publication date) is read later
@@ -374,72 +374,74 @@ the comparator records, M3b]
 ### 6.3 Assisted reading of one-off documents
 
 Where no series justifies a parser (a single investment plan, an approval
-document, a project page, a news item), an LLM reads and a second LLM from
-another vendor checks every row. The checked statements are the record.
+document, a project page, a news item), two LLM readers from different
+model families read every document independently, and a stronger LLM, the
+arbiter, settles what they leave open. The judged statements are the
+record, and no item waits for the author.
 
 - **Untrusted input.** Documents are written by interested parties. LLM
-  readers and checkers are called without tools, network or file access,
+  readers and the arbiter are called without tools, network or file access,
   and receive the text layer as quoted data, never as instructions. [M2]
-- The LLM reader is given the document's text layer, the declared scope and the
-  declared field list, and proposes statements with a label, a verbatim
-  quote of the assertion, a classification and the verbatim fields. [M2]
+- **Two readers.** Each reader is given the document's text layer, the
+  declared scope and the declared field list, and, blind to the other,
+  proposes statements with a label, a verbatim quote of the assertion, a
+  classification, the verbatim fields and a likelihood that the proposal is
+  right. The two readings are aligned on their derived locators. [M2]
 - The locator of every proposal is derived by code from its quote, as
   section 5 states, and checked against the text layer: it must resolve, and
   the text there must contain the proposed label and values. A proposal
   whose locator fails gets one repair call to the reader, with the failure
   stated; if it still fails, it is marked as failed. The failure and its
   reason are recorded. [M2]
-- A checker, an LLM from a vendor other than the reader's, examines every
-  proposal against the document, in the document's language, whatever that
-  language is, with the failed ones marked as such, so that a rejection by
-  the pipeline is not mistaken for a miss by the reader. For each it states
-  whether the proposal is right, with a likelihood and a confidence on the
-  calibrated scales of [fusion](jetp-fusion.md) section 1, and a quoted
-  basis. It also lists items of the declared scope that the LLM reader
-  missed; that list is de-duplicated against the proposals and the failed
-  proposals before anyone sees it. A proposal marked as failed is never
-  admitted: the author may correct it, and the correction is checked like a
-  person's reading (section 6.4). [M2]
-  <!-- wave-1 W1-04: pending author decision (definition of disagree, audit sample size and precision floor) -->
-- The author sees only the proposals on which reader and checker disagree,
-  the items the checker says were missed, and a random sample of the
-  proposals they agree on, all sorted by likelihood and confidence. The
-  author accepts, corrects or rejects each. A proposal both readers agree on
-  and the author does not overturn is admitted. A rejected proposal is
-  recorded with its reason, never dropped. [M2]
-- The method records, for reader and checker, the LLM identifier, the
-  prompt version and, where the service allows, the sampling settings; the
-  checker's stance and any decision by the author are recorded on every
-  admitted statement. [M2]
-- Each run states its budget for the author's attention: the number of
-  disagreements and the size of the random sample it will present. A
-  document that would exceed it is split into parts with their own scope, or
-  deferred with that reason (section 7); it is never admitted unchecked.
-  [M2]
-  <!-- wave-1 W1-05: pending author decision (attention total per milestone, per-document cap, deferral stance) -->
-- **Parts.** A document too long for one reading, or for one queue, is read
+- **Agreement.** The readers agree on an item when both propose it with
+  the same derived locator, classification and verbatim fields, each at a
+  calibrated likelihood at or above the extraction acceptance level (for
+  example "likely or more"). An item on which they agree stands. [M2]
+- **Arbiter.** Every other item (proposed by one reader only, proposed by
+  both with a difference, or below the acceptance level for either reader)
+  goes to the arbiter, a stronger hosted LLM, with both readings, their
+  likelihoods, any failure of the locator check and the pages concerned, in
+  the document's language, whatever that language is. The arbiter states
+  whether the item is right, with a quoted basis. A proposal marked as
+  failed is never admitted; a person may read the item directly (section
+  6.4). [M2]
+- **Every item ends with a stance.** Admitted, rejected, or undetermined,
+  with a likelihood and a confidence on the calibrated scales of
+  [fusion](jetp-fusion.md) section 1, mapped from the models' raw scores by
+  their calibration. An undetermined item is recorded and counted, never
+  admitted and never dropped; a rejected proposal is recorded with its
+  reason. Nothing is queued for the author. [M2]
+- **Recorded and served by confidence.** Every reader's and the arbiter's
+  answer is recorded on the item with the LLM identifier, the prompt
+  version, the calibration version and, where the service allows, the
+  sampling settings. The results are served sorted by likelihood and
+  confidence; the author examines them when he chooses, and a decision he
+  makes is recorded as a judgement like any other, beside the machine
+  readings, never over them. [M2]
+- **Calibration.** Before any unattended run, each reader and the arbiter
+  are scored on held-out reference answers, lines of the extracted documents
+  made by hand, and each model's raw self-scores are mapped to the
+  likelihood terms from those scores; a model that fails its positive
+  controls is weighted out. How the readers are selected and where they run
+  is in [operation](jetp-operation.md) section 5. [M2]
+- **Parts.** A document too long for one reading is read
   in parts, and a part is a declared scope part (section 4: an appendix, a
   section, a page range), so parts never overlap. An item that runs across
   the boundary of two parts is one statement whose locator spans the
   boundary, owned by the part where it starts, as for a page break; the
   statements of adjacent parts are de-duplicated on their derived locators.
-  Each part inherits the headings and method notes that govern it. The
-  checker lists missed items within its part only. The queue of every part
-  counts against the document's budget, and a printed total that covers
+  Each part inherits the headings and method notes that govern it. Each
+  reader reads within its part only, and a printed total that covers
   several parts is checked after the parts are merged. [M2]
 - Before the method is used on held documents it passes a test: a document
   with a planted item that must be found and a named absent item that must
   not be invented (section 12). [M2]
-- **Replacement readers.** A reader or checker replaced by another LLM (a
-  retired, repriced or unavailable one) is a new method version. It is
-  admitted only after passing the controls of section 12 and reaching a
-  stated minimum agreement with the statements the author checked
-  (requirement Q17) on a fixed sample stratified by language. The coverage
-  report states which method version read each document class. [M2]
-- The full panel of [fusion](jetp-fusion.md) section 3 replaces the single
-  checker: independent readers from different vendors reading blind, with
-  positive controls run first and a reader that misses one weighted out.
-  [M4]
+- **Replacement readers.** A reader or the arbiter replaced by another LLM
+  (a retired, repriced or unavailable one) is a new method version. It is
+  admitted only after passing the controls of section 12 and its
+  calibration on the held-out reference answers (requirement Q17),
+  stratified by language. The coverage report states which method version
+  read each document class. [M2]
 
 ### 6.4 Transcription
 
@@ -477,7 +479,7 @@ The kinds, closed and grown only by decision:
 | `unreadable` | snapshot | corrupt, truncated or in a format no adapter handles, with the format named |
 | `no_extractable_content` | snapshot | readable, but nothing in scope is stated in text: a shell around a service, a page of links, a chart with no text behind it; the reason says which |
 | `out_of_scope` | document | held for context, and nothing in it concerns the partnerships' projects, money, perimeters, parties or states |
-| `deferred` | snapshot | held and in scope, not extracted yet; names the milestone it waits for and why (a scan awaiting transcription, a review budget exceeded) |
+| `deferred` | snapshot | held and in scope, not extracted yet; names the milestone it waits for and why (a scan awaiting transcription, a run budget reached) |
 
 A snapshot that is byte-identical to one already extracted is not a new snapshot
 and needs neither statements nor a disposition; nor does a new snapshot
@@ -661,10 +663,10 @@ and version.
 - A reading rule per series: a versioned mapping from a series' verbatim
   fields to measures, units and timings, used where a parser read the
   statements. It is preferred wherever a series repeats.
-- An LLM reading of one-off statements, checked as in section 6.3: one
-  reader, a checker from another vendor on every observation, the author on
-  the disagreements and a random sample sorted by likelihood and confidence;
-  the full panel at M4.
+- An LLM reading of one-off statements, judged as in section 6.3: two
+  readers from different model families on every observation, the arbiter
+  on what they leave open, each observation ending with a stance, a
+  likelihood and a confidence.
 - A person, named as the method.
 
 **Checks.**
@@ -708,6 +710,10 @@ not used on held documents until its checks pass. [M2 for all]
   the absent item is not invented) and rejects a fabricated locator
   automatically. The control document also carries a planted instruction
   addressed to the reader, which must not alter any proposal.
+- **Calibration.** Each reader and the arbiter are scored on held-out
+  reference answers before use; the set carries a planted misreading that
+  each must reject, and a model that fails a positive control is weighted
+  out.
 - **Parts.** A fixture cut so that an item straddles the boundary of two
   parts yields one statement.
 - **Retained layers.** Replay against a snapshot whose retained text layer
@@ -732,12 +738,14 @@ It comprises:
    the pending list as the input of every run. The document judgements
    still pending are decided, and in force, before the first run.
 2. Statements carrying everything in section 3, including the method, the
-   version, the checking reader and any decision by the author.
+   version, every reader's and the arbiter's answer, and any decision the
+   author chose to make.
 3. The text layers of section 5 for every format present among the held
    snapshots, each other format given a disposition that names it.
 4. The four methods of section 6, with the automatic locator check and,
-   for assisted readings, a checker from another vendor on every row and the
-   author on the disagreements and a random sample.
+   for assisted readings, two readers from different model families on
+   every row and the arbiter on what they leave open, both readers and the
+   arbiter calibrated on held-out reference answers first.
 5. The dispositions of section 7, so that every registered document ends
    with statements or a disposition with its reason.
 6. The snapshot rules of section 8 with key-based pairing: a second dated
@@ -753,24 +761,23 @@ It comprises:
 
 After M2:
 
-- **M3a** adds no extraction rule and keeps the M2 check of assisted
+- **M3a** adds no extraction rule and keeps the M2 protocol of assisted
   readings. Discovery may bring formats or series not held at M2; they are
   extracted in M3b.
 - **M3b** extracts the documents new since M2 with the same pipeline,
   extracts the comparator records (CRS, IATI) as structured sources, and reads
   statements into observations (section 11).
 - **M4** runs the pipeline on schedule from the pending list, pairs
-  statements across snapshots without a publisher's key, replaces the single
-  checker by the full panel with positive controls, and swaps the document store behind
+  statements across snapshots without a publisher's key, and swaps the document store behind
   the same interface without changing an extraction method.
 - **Later**: transcription of values shown only in charts, and derived
   translations of labels (never statements in their own right).
 
 ## 14. Open questions
 
-- **How large the random sample shown to the author is.** Each run states it
-  with its budget (section 6.3); whether a floor should be fixed here, such
-  as a share of agreed rows per document, is not settled.
+- **The extraction acceptance level.** Default: "likely or more" on the
+  calibrated scale (section 6.3); revisited once calibration has measured
+  the observed precision of each likelihood term.
 
 ## 15. Checks an extraction must pass
 
@@ -793,8 +800,10 @@ does well.
 | A dashboard's stored markup holds no data, which arrives by script. | Disposition `no_extractable_content`, reason "shell around a service"; collection may seek the data. |
 | A decision is held only as a scan. | It is transcribed with the transcription named as method, or deferred with that reason; it is never skipped silently. <!-- wave-1 W1-16: pending author decision --> |
 | A figure appears only in a chart. | No statement; the extraction's scope note records the chart. |
-| The LLM proposes an item whose quote cannot be found in the text layer. | The derived locator fails; one repair call is made; if it still fails, the checker sees the proposal marked as failed, the failure is recorded, and the proposal is not admitted. |
-| The reader and the checker from another vendor agree on 40 rows of a Vietnamese plan and disagree on 3. | The author sees the 3 disagreements and a random sample of the 40, sorted by likelihood and confidence; the rest is admitted with the checker's stance recorded. |
+| The LLM proposes an item whose quote cannot be found in the text layer. | The derived locator fails; one repair call is made; if it still fails, the arbiter sees the proposal marked as failed, the failure is recorded, and the proposal is not admitted. |
+| The two readers agree on 40 rows of a Vietnamese plan at "likely" or more and differ on 3. | The 40 stand; the arbiter reads the 3 with both readings and the pages; all 43 end with a stance, a likelihood and a confidence, recorded with every reader's answer; nothing is queued for the author. |
+| The arbiter cannot decide one of the 3. | The item ends undetermined, recorded and counted, not admitted; it is served among the least certain results. |
+| A candidate reader fails its positive controls at calibration. | It is weighted out; no unattended run uses it. |
 | A spreadsheet has a hidden row. | It is extracted, and its statement records that it was hidden. |
 | A mirror was extracted before the publisher's own copy was found. | The mirror stays canonical; the publisher's copy has the disposition `duplicate`. |
 | The LLM reader is given a document with a planted item and a named absent item. | The planted item is found; nothing is proposed for the absent one. |

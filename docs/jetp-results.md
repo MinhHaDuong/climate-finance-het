@@ -185,7 +185,7 @@ stated.
   (section 7). (C6, F27)
 - **The validation and coverage reports**, and an editorial note in plain
   language saying what the release contains and what it does not.
-- **The cost record**: LLM spend and review time per document class,
+- **The cost record**: LLM spend and compute time per document class,
   document type and extraction method. (Q15, AED-3)
 - **The Observatory pages** of the release, built from the release alone and
   readable from its files alone. (C7)

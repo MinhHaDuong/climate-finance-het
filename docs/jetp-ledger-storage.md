@@ -239,7 +239,7 @@ Rules that the validator enforces:
   derived from its identifier family: an extractor-minted key names the
   extraction script and the commit that wrote it; an API snapshot key names
   the ingestion run; a decision-scoped key names a person's reading or an
-  assisted reading and carries no checker stance. The first replay under
+  assisted reading and carries no recorded reading of another role. The first replay under
   this specification counts the lines of each family and method
   ([requirements](jetp-requirements.md) Q1). [M2]
 - A referent is minted only by a `line-referents` row with a basis; no
@@ -364,8 +364,10 @@ decisions are stored.
   `possible_matches`. [M3b]
 - Every recorded judgement has that one shape (stance, likelihood,
   confidence, quoted basis, who, method, version, time): a triage outcome of
-  [collection](jetp-collection.md) section 9 in the M3a triage table, and a
-  checker's stance on a proposed line. [M2 for checker stances; M3a for
+  [collection](jetp-collection.md) section 9 in the M3a triage table, and
+  each reading of a proposed line or candidate match, whose role is
+  `reader`, `second_reader`, `arbiter` or `author` (fusion section 3), the
+  last only when the author chooses to decide. [M2 for readings; M3a for
   triage]
   <!-- wave-1 W1-01: pending author decision (the table that holds checker readings) -->
   <!-- wave-1 W1-30: pending author decision (stance and likelihood as one judged quantity) -->
@@ -401,9 +403,10 @@ M2, tiers 1 and 2 run as deterministic proposers at registration, so a
 snapshot whose text already exists is recorded before extraction: identical
 bytes are recorded `accepted` under the rule the author adopted (fusion
 section 3, judgement by adopted rule), and tier 2 registers a `same_as`
-candidate for the author or the checking rule to decide; tier 3
+candidate that the judgement protocol of [extraction](jetp-extraction.md)
+section 6.3 decides; tier 3
 generates a bounded candidate list over the registered documents (at most
-about 30 pairs, sorted by likelihood) that the author decides; tiers 4 and 5
+about 30 pairs, sorted by likelihood), judged under the same protocol; tiers 4 and 5
 start at M3a, with the checking rule of [extraction](jetp-extraction.md)
 section 6.3, when discovery brings mirrors. [M3b for lines; M2 for document
 tiers 1 to 3; M3a for document tiers 4 and 5]
