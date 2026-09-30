@@ -29,9 +29,11 @@ import gzip
 import hashlib
 import json
 import os
+import shutil
 import socket
 import subprocess
 import sys
+import tempfile
 from collections import Counter
 from datetime import datetime, timezone
 
@@ -233,6 +235,33 @@ def write_delivery(out_dir, records, excluded, registry, manifest):
         fh.write("\n")
 
 
+def publish_delivery(out_dir, records, excluded, registry, manifest):
+    """Write and check the delivery beside its target, then rename it into place.
+
+    The staging tree ``<lane_dir>/.staging-*/<lane>/<delivery>`` keeps the lane
+    and delivery names the checker compares with the manifest, and sits on the
+    target's filesystem so the final rename is atomic. A delivery that fails
+    the contract leaves nothing behind (not even a lane directory this run
+    created). Returns the contract violations.
+    """
+    out_dir = os.path.abspath(out_dir)
+    lane_dir = os.path.dirname(out_dir)
+    created_lane = not os.path.isdir(lane_dir)
+    os.makedirs(lane_dir, exist_ok=True)
+    staging = tempfile.mkdtemp(prefix=".staging-", dir=lane_dir)
+    try:
+        stage = os.path.join(staging, os.path.basename(lane_dir), os.path.basename(out_dir))
+        write_delivery(stage, records, excluded, registry, manifest)
+        errors = ric.check_delivery(stage)
+        if not errors:
+            os.rename(stage, out_dir)
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
+        if created_lane and not os.listdir(lane_dir):
+            os.rmdir(lane_dir)
+    return errors
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -248,8 +277,8 @@ def main(argv=None):
 
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)["t1530_delivery"]
-    if os.path.exists(os.path.join(args.output_dir, "manifest.json")):
-        log.error("%s already holds a delivery; deliveries are immutable", args.output_dir)
+    if os.path.exists(args.output_dir):
+        log.error("%s already exists; deliveries are immutable", args.output_dir)
         return 1
 
     reg_rows, results = read_runs(args.run_dir)
@@ -260,9 +289,7 @@ def main(argv=None):
     delivered_at = args.delivered_at or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     delivery = os.path.basename(os.path.normpath(args.output_dir))
     manifest = build_manifest(cfg, records, excluded, registry, inputs, delivery, delivered_at)
-    write_delivery(args.output_dir, records, excluded, registry, manifest)
-
-    errors = ric.check_delivery(args.output_dir)
+    errors = publish_delivery(args.output_dir, records, excluded, registry, manifest)
     for e in errors:
         log.error("%s", e)
     log.info("%d result rows -> %d records, excluded %s, %d registry rows",

@@ -74,3 +74,15 @@ def test_five_record_run_yields_a_contract_valid_delivery(tmp_path):
     assert reg["Q1"]["query"] == "search:Q1" and reg["Q2"]["completed"] == "false"
     # immutable once written
     assert cd.main(["--run-dir", str(f), "--output-dir", str(out)]) == 1
+
+
+def test_failing_conversion_leaves_nothing_behind(tmp_path):
+    # An unfinished query without stop_reason violates the registry contract.
+    f = _run_dir(tmp_path, "20260929f", [_reg("Q1", "False", "")], [_hit("W1", "Q1")])
+    out = tmp_path / "intake" / "t1530-sud-openalex" / "2026-09-29"
+    (tmp_path / "intake").mkdir()
+    rc = cd.main(["--run-dir", str(f), "--output-dir", str(out),
+                  "--config", os.path.join(ROOT, "config", "rel_pool.yaml")])
+    assert rc == 1
+    assert not out.exists() and not out.parent.exists()
+    assert os.listdir(tmp_path / "intake") == []
