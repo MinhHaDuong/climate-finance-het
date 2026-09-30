@@ -371,6 +371,27 @@ def test_curly_and_straight_apostrophes_make_one_title():
     assert recs[1]["work_key"] == "doi:10.1057/s41308-020-00113-x" and recs[1]["doi"] == ""
 
 
+def test_labels_follow_a_record_whose_title_key_changed_but_never_a_split_twin():
+    """The judge labelled (work key, family) pairs under the earlier title key;
+    a record whose key changed only with the normaliser keeps its label, a
+    record split from a DOI twin does not inherit the twin's."""
+    title = "Donors' Climate-Finance Pledges and Their Delivery"
+    old_ty = "ty:" + cy._legacy_title_key(title, 2019)
+    recs = cy.assign_work_keys([
+        {"doi": "", "openalex_id": "", "eds_an": "a", "title": title, "year": 2019,
+         "question": "grid"},
+        {"doi": "10.1/x", "openalex_id": "W1", "title": SURVEY, "year": 2007, "question": "grid"},
+        {"doi": "", "doi_eds": "10.1/y", "openalex_id": "", "eds_an": "b", "title": SURVEY,
+         "year": 2007, "question": "grid"}], resolves=lambda d: True)
+    assert recs[0]["work_key"] != old_ty and recs[2]["work_key"] == "edsdoi:10.1/y"
+    raw = {cy.pair_id(old_ty, "grid"): "relevant", cy.pair_id("doi:10.1/x", "grid"): "not",
+           cy.pair_id("ty:" + cy._legacy_title_key(SURVEY, 2007), "grid"): "relevant"}
+    labels = {(recs[1]["work_key"], "grid"): "not"}
+    assert cy.carry_labels(recs, labels, raw) == 1
+    assert labels[(recs[0]["work_key"], "grid")] == "relevant"
+    assert ("edsdoi:10.1/y", "grid") not in labels
+
+
 def test_doi_checks_look_each_doi_up_once_and_keep_the_answer(tmp_path):
     calls = []
     checks = cy.DoiChecks(str(tmp_path / "doi_checks.csv"),

@@ -37,6 +37,7 @@ import json
 import os
 import re
 import sys
+import unicodedata
 from collections import Counter, defaultdict
 
 import yaml
@@ -364,17 +365,51 @@ def write_csv(path, rows):
         w.writerows(rows)
 
 
-def load_labels(path, pairs):
-    """{(work_key, question): label} from the judge output."""
-    out = {}
+def load_labels(path, pairs, records=None):
+    """{(work_key, question): label} from the judge output; with ``records``,
+    also the labels ``carry_labels`` can carry to pairs the judge never saw."""
+    out, raw = {}, {}
     if not path or not os.path.exists(path):
         return out
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             r = json.loads(line)
+            raw[r["pair_id"]] = r["label"]
             if r["pair_id"] in pairs:
                 out[pairs[r["pair_id"]]] = r["label"]
+    if records is not None:
+        log.info("labels carried to new work keys: %d", carry_labels(records, out, raw))
     return out
+
+
+def _legacy_title_key(title, year):
+    """The title key before ticket 1755 (ASCII-folded, punctuation read as a
+    space), under which the judge labels of 2026-09-30 were given."""
+    t = unicodedata.normalize("NFKD", title or "").encode("ascii", "ignore").decode().lower()
+    t = re.sub(r"[^a-z0-9]+", " ", t).strip()
+    return f"{t}|{year}" if len(t) >= 20 and year else ""
+
+
+def carry_labels(records, labels, raw):
+    """Give a (work, question) pair the judge never saw the label the judge
+    gave the same record under a key the earlier rule could have given it
+    (legacy title key, OpenAlex id, DOI, accession number), when those labels
+    agree. Never for a work split from a DOI twin (``edsdoi:`` keys, promoted
+    DOIs): the old label judged the twin. Returns the pairs labelled."""
+    found = defaultdict(set)
+    for r in records:
+        key = (r["work_key"], r["question"])
+        if key in labels or r["work_key"].startswith("edsdoi:") or r.get("doi_promoted"):
+            continue
+        tk = _legacy_title_key(r.get("title"), r.get("year"))
+        olds = [k for k in ("ty:" + tk if tk else "",
+                            "oa:" + r["openalex_id"] if r.get("openalex_id") else "",
+                            "doi:" + r["doi"] if r.get("doi") else "",
+                            "an:" + r["eds_an"] if r.get("eds_an") else "") if k]
+        found[key] |= {raw[pid] for k in olds if (pid := pair_id(k, r["question"])) in raw}
+    carried = {key: next(iter(labs)) for key, labs in found.items() if len(labs) == 1}
+    labels.update(carried)
+    return len(carried)
 
 
 # --- delivery in the intake-contract format (docs/rel-intake-contract.md, 1730)
@@ -762,7 +797,7 @@ def run(args):
                                  "language": r.get("language"), "journal": r.get("journal"),
                                  "countries": r.get("countries") or []},
                                 ensure_ascii=False) + "\n")
-    labels = load_labels(args.labels, pairs)
+    labels = load_labels(args.labels, pairs, records)
 
     groupings = {
         "yield_by_search.csv": lambda s: (lane_of(s["platform"]), s["search_id"]),
