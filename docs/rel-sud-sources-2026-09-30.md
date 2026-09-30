@@ -8,7 +8,7 @@ forest; T4 loss and damage, justice, accounting) in ten languages. Every
 source reuses it; no source got its own vocabulary.
 
 Code: `scripts/catalog_rel_sud_sources.py` (runner) and the adapters of
-`scripts/rel_sud_sources/`. Delivery: `scripts/export_rel_sud_sources_intake.py`.
+`scripts/rel_sud_sources/`. Delivery: `scripts/catalog_rel_1653_delivery.py`.
 Source status, machine-readable: `config/rel_sud_sources_status.yaml`.
 Run directories and raw exports sit on doudou under
 `~/data/projets/climate-finance-het/rel_sud/2026-09-30/`, fingerprinted in
@@ -21,7 +21,8 @@ Three kinds of route ran. A **search** route (`api`) sends the lexicon to the
 server and delivers every record the server returned, deduplicated in lane by
 record id; a full-text hit with no lexicon phrase in its title or abstract is
 delivered too (GARUDA: 13,169 unique records of 18,987 rows; Redalyc: all 4,450
-unique full-text hits, of which 694 carry a title/abstract match). A
+unique full-text hits, of which 245 carry a title/abstract match; 694 of
+the 8,185 rows do). A
 **harvest** route (`oai-pmh`: SciELO, CyberLeninka, AJOL) and a **listing**
 route (`listing`: a whole working-paper series or catalogue) have no
 server-side search: the adapter reads the set or the listing whole, the raw
@@ -29,14 +30,14 @@ harvest is archived in the run's `raw/`, and the local match of the same 1530
 lexicon on title and abstract selects the candidates.
 
 Decision of the team lead, 2026-09-30: for these routes the local lexicon
-match **is** the query. The delivered registry's `query` names the set or
+match is the query. The delivered registry's `query` names the set or
 listing and adds "candidates selected by local 1530 lexicon match on
 title+abstract, languages X"; `n_received` is the number of records that
 query returned (the matches), `n_expected` the number harvested or listed.
 Rejected alternative: delivering the roughly 70,000 unmatched harvested
 SciELO, CyberLeninka and listing records to the ICF screen. They were not
 retrieved by any query of the protocol, only read in order to run one; the
-raw harvest stays archived should the pool want them later.
+raw harvest stays archived.
 
 `matched_terms` travels with every delivered record, and `lane_status`
 (`lexicon_match` / `no_lexicon_match`) repeats it, as information only.
@@ -53,7 +54,7 @@ deduplication); n_kept is the unique records in `records.csv`.
 | Redalyc | api | `www.redalyc.org/service/r2020/getArticles/` | lexicon string of a language x theme sent verbatim (`"financiamiento climático" OR ...`), es/pt/en | 12 (12) | 8,185 | 8,185 | 4,450 | `t1653-latam/` |
 | CLACSO | api | `biblioteca-repositorio.clacso.edu.ar/server/api/discover/search/objects` | `query=<lexicon string>&dsoType=ITEM`, es/pt | 8 (8) | 719 | 719 | 410 | `t1653-latam-dspace-b/` |
 | Ipea (TD) | api | `repositorio.ipea.gov.br/server/api/discover/search/objects`, collection hdl 11058/17462 | same, pt/en | 8 (8) | 135 | 135 | 87 | `t1653-latam/` |
-| UWI | api | `uwispace.sta.uwi.edu/server/api/discover/search/objects` | same, en | 4 (4) | 50 | 50 | 16 (+30 `no_dedup_key`) | `t1653-latam-dspace-b/` |
+| UWI | api | `uwispace.sta.uwi.edu/server/api/discover/search/objects` | same, en | 4 (4) | 50 | 50 | 46 (30 keyed by their Handle) | `t1653-latam-dspace-b/` |
 | SciELO | oai-pmh | `<collection>/oai/scielo-oai.php` (mex, ven, bol, cri, pry) | `ListRecords metadataPrefix=oai_dc set=<ISSN>` per social-science journal, lexicon es/pt/en | 216 (212) | 69,283 | 26 | 26 | `t1653-latam-scielo-b/` |
 | GARUDA | api | `garuda.kemdiktisaintek.go.id/documents` | `select=<title\|abstract>&q=<phrase>&from=1990&to=2026`, one query per phrase and field (server matches all words), id/en | 116 (107) | 97,342 | 18,987 | 13,169 | `t1653-asia/garuda/` |
 | CyberLeninka | oai-pmh | `cyberleninka.ru/oai` | `ListRecords set=repec`; `ListSets` for journal sets, lexicon ru/en on titles | 2 (0) | 9,830 | 0 | 0 | `t1653-asia/cyberleninka-b/`, `-c/` |
@@ -153,7 +154,8 @@ The human actions are gathered in ticket 1790 (`Label: needs-human`).
   not reached.
 
 The delivery's `manifest.json` declares `coverage: incomplete` and lists each
-of these units with its reason.
+blocked or partial source, GARUDA's capped queries and the unreviewed
+languages, eleven units in all, each with its reason.
 
 ## Translation status
 
@@ -171,7 +173,7 @@ delivered record (title fragments or DOI), written to the delivery's
 | Sentinel | Region, language | Title | Result | Diagnosis |
 | --- | --- | --- | --- | --- |
 | S08 | Global, en | Seeing Double: Decoding the additionality of climate finance (2023) | missed | CARE Denmark and CARE Climate Justice Center report, published on careclimatechange.org (checked 2026-09-30); a Northern NGO's grey literature, held by no source of this lane |
-| S24 | LAC, es | Análisis del financiamiento climático internacional en ALC, desde un enfoque de justicia climática y financiera | missed | not in CLACSO or Redalyc; likely NGO grey literature outside any repository searched |
+| S24 | LAC, es | Análisis del financiamiento climático internacional en ALC, desde un enfoque de justicia climática y financiera | missed | Latindadd report (latindadd.org/informes/analisis-del-financiamiento, checked 2026-09-30); NGO grey literature, not in CLACSO or Redalyc, held by no source of this lane |
 | S28 | Africa, en | Landscape of Climate Finance in Africa (2022) | missed | Climate Policy Initiative report on climatepolicyinitiative.org; no African source of this lane indexes CPI reports |
 | S35 | South Asia, en | Climate Change Finance, Analysis of a Recent OECD Report: Some Credible Facts Needed (2015) | missed | India Ministry of Finance, Department of Economic Affairs discussion paper on dea.gov.in; no government-publication source in scope |
 | S36 | South Asia, hi | जलवायु कार्रवाई के लिए निजी वित्त ... (2023) | missed | the Hindi version is on ORF Hindi; CEEW holds only the English original, delivered as "The Myth of Mobilising Private Finance for Climate Action and Pivoting to Scale" (2023) |
@@ -181,39 +183,59 @@ delivered record (title fragments or DOI), written to the delivery's
 | S58 | Pacific, en | Pacific Climate Change Financing Assessment (framework, Nauru case) (2012-2014) | missed | Pacific Islands Forum Secretariat report (reliefweb, pacificdata, unfccc); no automated Pacific source |
 | S59 | Pacific, en | Pacific Regional Climate Finance Access and Mobilisation Strategy 2025-2030 (2026) | missed | forumsec.org; same Pacific gap |
 
-S08's location was checked by the integrator on 2026-09-30; the other
-diagnoses are the lanes', and S43 and the CEEW English original of S36 were
-verified in the delivered records. One of ten found. The misses are mostly institutional grey literature
-(CARE, CPI, DEA, SEI, PIFS) that none of the scholarly or series sources
-indexes, plus one language (vi) with no source at all.
+The integrator checked the locations of S08 and S24 on 2026-09-30. The other
+diagnoses are the lanes'. S43 and the CEEW English original of S36 were
+verified in the delivered records.
+
+One of ten sentinels was found. Most misses are institutional grey
+literature (CARE, Latindadd, CPI, DEA, SEI, PIFS) that none of the scholarly
+or series sources indexes. One more is in a language (vi) with no source at
+all.
 
 ## Delivery
 
 `data/rel_intake/t1653-sud-hors-openalex/2026-09-30/`, written by
-`scripts/export_rel_sud_sources_intake.py` (the invocation is in the
+`scripts/catalog_rel_1653_delivery.py` (the invocation is in the
 manifest's `producer.runs`), DVC-tracked and pushed to padme.
 `uv run python scripts/qa_rel_intake.py` on it: `OK`, exit 0.
 
 | File | Content |
 | --- | --- |
-| `records.csv` | 18,238 records: GARUDA 13,169; Redalyc 4,450; CLACSO 410; Ipea 87; CEEW 52; SciELO 26; CPD 18; UWI 16; ADB 5; South Centre 4; ERSA 1. 12,615 carry a DOI, the other 5,623 a year. 1,564 carry a lexicon phrase in title or abstract. |
+| `records.csv` | 18,268 records: GARUDA 13,169; Redalyc 4,450; CLACSO 410; Ipea 87; CEEW 52; UWI 46; SciELO 26; CPD 18; ADB 5; South Centre 4; ERSA 1. 12,574 carry a DOI, 5,664 a year but no DOI, 30 only a Handle URL. 1,564 carry a lexicon phrase in title or abstract. |
 | `registry.csv` | 387 query rows with route, endpoint, run directory, `n_announced`, `n_harvested`, `n_delivered` |
-| `excluded.csv` | 9,914 `duplicate_in_lane`; 32 `no_dedup_key` (see below) |
+| `excluded.csv` | 9,914 `duplicate_in_lane`; 2 `no_dedup_key` (see below) |
 | `manifest.json` | `coverage: incomplete`, eleven incomplete units, nine `needs_human` items |
 | `sentinels.csv` | the class-b sentinel table above |
 
-Identifiers were completed without inventing any: 7 DOIs read from a
-record's URL (`info:doi/...`), 80 CLACSO years from `dc.date` (rerun), 102
-GARUDA years from each record's detail page ("Publish Date",
-`t1653-asia/garuda/year_enrichment.csv`). No year was taken from a title.
+Identifiers were completed without inventing any:
 
-**Records without any dedup key.** 32 records carry no DOI, OpenAlex id or
-publication year anywhere in their source: 30 UWI DSpace items (real items,
-the discovery query asks `dsoType=ITEM`, whose metadata holds only deposit
-dates; `dc.identifier.other` values such as 1953 look like CERIS record
-numbers, not years) and 2 CEEW pages without a date. The checker refuses
-such a row in `records.csv`, so they are listed in `excluded.csv` with the
-contract's `no_dedup_key` reason (added for them, commit 3cc392fa), their
-Handle URL and OAI identifier (UWI) or stable URL (CEEW) in `note` and in
-the extra `url` column. The pool merge takes them in as title-only works:
-they are not dropped from the ICF screen.
+- 7 DOIs were read from a record's URL (`info:doi/...`).
+- The CLACSO rerun with the `dc.date` fallback gives a year to 85 CLACSO
+  records that had neither year nor DOI in the lane's run
+  (`t1653-latam/` vs `t1653-latam-dspace-b/`). These records carry no
+  `lane_note` of their own: their year is the source's `dc.date`.
+- 102 GARUDA years come from each record's detail page ("Publish Date"),
+  archived with the run in `t1653-asia/garuda/year_enrichment.csv` and cited
+  in each record's `lane_note`.
+
+No year was taken from a title.
+
+**Keys.** 30 UWI DSpace items hold no publication year: their metadata has
+only deposit dates, and `dc.identifier.other` values such as 1953 look like
+CERIS record numbers, not years. Their Handle URL (`hdl.handle.net/2139/…`)
+is their key, as the contract allows.
+
+Two CEEW pages have neither a date nor a persistent URL. They are listed in
+`excluded.csv` as `no_dedup_key`, with their URL. The pool merge takes them
+in as title-only works.
+
+A source DOI carried by records whose titles name different works is not
+used as a key. It is blanked in `doi` and kept in `lane_note`. This affects
+41 records under 9 DOIs:
+
+- Redalyc issue-level DOIs, one of them on 17 unrelated articles;
+- GARUDA template DOIs ending in `p%p`, or truncated ones such as `10.21082/bul`;
+- one Spanish/English pair, whose titles are translations.
+
+The lane deduplicates by record id only. The same article under two GARUDA
+ids, or on two platforms, is left to the pool's DOI and title joins.
