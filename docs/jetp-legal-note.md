@@ -1,20 +1,21 @@
 # JETP Observer: legal note (France)
 
-Supporting document of the [specification](jetp-spec.md). Commissioned by
-the author on 2026-09-30 under review finding W1-29
-([ledger](jetp-spec-review/wave-1/ledger.md)) and requirement Q21. Drafted
+Supporting document of the [specification](jetp-spec.md). A human legal
+review is a go-live gate, not a build gate: no one is consulted while the
+Observatory is undeployed. **This note is not legal advice.** It states, for
+each activity of the Observer, the rule it relies on under French law and EU
+law as applied in France, how the Observer complies or what it must change,
+a residual risk rating, and what the specification must say. Every legal
+claim carries its article; a claim neither drafter nor reviewer checked
+against a primary source is marked *to verify*. Jurisdiction: France.
+Publisher: a researcher of the CNRS working at CIRED.
+
+History: commissioned by the author on 2026-09-30 under review finding W1-29
+([ledger](jetp-spec-review/wave-1/ledger.md)) and requirement Q21; drafted
 by a language model (Fable), reviewed by a second model (Astra, GPT-6,
-verdict "needs corrections", review archived at
+verdict "needs corrections",
 [`jetp-spec-review/legal/astra-review.md`](jetp-spec-review/legal/astra-review.md))
-and revised on the same day. A human legal review is a go-live gate, not a
-build gate: no one is consulted while the Observatory is undeployed. **This note
-is not legal advice.** It states, for each activity of the Observer, the
-rule it relies on under French law and EU law as applied in France, how the
-Observer complies or what it must change, a residual risk rating, and what
-the specification must say. Every legal claim carries its article; a claim
-neither drafter nor reviewer checked against a primary source is marked
-*to verify*. Jurisdiction: France. Publisher: a researcher of the CNRS
-working at CIRED.
+and revised the same day.
 
 Abbreviations: CPI, *Code de la propriété intellectuelle*; CRPA, *Code des
 relations entre le public et l'administration*; LCEN, *Loi n° 2004-575 pour
@@ -458,18 +459,11 @@ basis stated above and no legal service is consulted.
 12. The terms of OECD, each IATI publisher, World Bank documents and each
     secretariat, checked at release time (section 2).
 
-## Review by Astra: points not adopted
-
-- Rating for topic 2: Astra proposes "potentially high". Kept at medium
-  with a high branch for unlicensed re-serving of a substantial part of a
-  protected database, because the high case is conditional on a
-  protection finding not yet made, and the note says so in the table.
-- "Verification of implementation claims": the Legal page is in the same
-  PR as this note and is checked by a render test; the note now says what
-  the page holds and where, and leaves whether its placeholders are filled
-  to the author, which is what Astra asked.
-- Every other correction (1–31) and every missing point is adopted above;
-  Astra's ten questions are merged into the open points, deduplicated.
+History: Astra's corrections 1–31 and missing points are adopted above and
+its questions merged into the open points; two points were not adopted
+(the rating of topic 2 stays medium with a high branch, since the high case
+is conditional on a protection finding not yet made; whether the Legal
+page's placeholders are filled is left to the author).
 
 *This note is not legal advice. It was drafted and reviewed by language
 models; the references marked "to verify" are unchecked against primary
