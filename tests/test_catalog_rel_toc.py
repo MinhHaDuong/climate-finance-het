@@ -66,6 +66,10 @@ def test_classify_item_keeps_articles_that_start_like_notices(title):
     "Index", "Author Index", "Subject index", "Index to Volume 12", "Cover 2/Editorial Board",
     "Contents", "Contents of Volume 30", "ANNOUNCEMENTS", "Announcement - call for abstracts",
     "Subscription information", "Instructions for Authors", "Masthead",
+    # second review of PR 1615: notices delivered as articles
+    "Recent Referees", "Back Cover", "Cover", "Contents page", "Cover page", "Volume contents",
+    "Volume information", "Inside front cover - Editorial Board", "Title page", "Front cover",
+    "Editorial advisory board", "List of Reviewers", "Acknowledgement to reviewers",
 ])
 def test_classify_item_front_matter_shapes(title):
     assert toc.classify_item(title) == "front-back-matter"
@@ -74,9 +78,23 @@ def test_classify_item_front_matter_shapes(title):
 @pytest.mark.parametrize("title", [
     "Erratum", "ERRATUM", "Corrigendum to “Carbon taxes”", "Correction", "Correction to: Carbon taxes",
     "Retraction notice to “Carbon taxes”", "Expression of concern: Carbon taxes",
+    "Carbon taxes: Erratum", "Publisher Correction: Carbon taxes",
 ])
 def test_classify_item_erratum_shapes(title):
     assert toc.classify_item(title) == "erratum"
+
+
+@pytest.mark.parametrize("title", ["Editor’s note", "Editor's Introduction", "Editors’ note"])
+def test_classify_item_editor_note_survives_the_apostrophe(title):
+    assert toc.classify_item(title) == "editorial"
+
+
+def test_editor_note_never_matches_the_pool_by_title():
+    pool = toc.PoolIndex([{"doi": "", "title": "Editor’s note on climate finance", "first_author": "",
+                           "year": "2022", "openalex_id": ""}])
+    rec = {"doi": "10.1/x", "title": "Editor's note on climate finance",
+           "first_author_surname": "", "year": 2022}
+    assert pool.match(rec) == ""
 
 
 def test_untitled_item_is_front_matter_only_when_it_is_an_issue_record():

@@ -41,6 +41,7 @@ def normalize_title(title):
     t = html.unescape(_TAG.sub("", title))
     t = unicodedata.normalize("NFKD", t)
     t = "".join(c for c in t if not unicodedata.combining(c)).casefold()
+    t = re.sub(r"[\u2019\u2018'`]", "", t)  # "Editor's" -> "editors", not "editor s"
     t = re.sub(r"[^\w\s]|_", " ", t)
     return re.sub(r"\s+", " ", t).strip()
 
@@ -61,7 +62,11 @@ def surname_key(name):
 # When a title is ambiguous the item stays an article and is delivered.
 _CLASSES = [
     ("front-back-matter",
-     r"^(front|back) matter( .*)?$|^issue information( .*)?$|^editorial board( .*)?$"
+     r"^(front|back) matter( .*)?$|^issue information( .*)?$"
+     r"|^editorial (advisory )?board( .*)?$|^(inside )?(front |back )?cover( page| 2)?( .*board)?$"
+     r"|^title page$|^(recent )?referees$|^list of (reviewers|referees)( .*)?$"
+     r"|^acknowledge?ments? (to|of) (the )?(reviewers|referees)( .*)?$"
+     r"|^(volume )?contents( page)?$|^volume information$"
      r"|^masthead$|^(table of )?contents( of volume \S+| list)?$"
      r"|^cover [0-9]( .*)?$|^(author |subject )?index( to volume \S+)?$"
      r"|^subscription (information|page)$|^instructions (to|for) (authors|contributors)$"
@@ -69,6 +74,7 @@ _CLASSES = [
     ("book-review", r"^books? (reviews?|received)( .*)?$|^book notes?( .*)?$"),
     ("erratum",
      r"^(erratum|errata|corrigendum|corrigenda)( .*)?$|^corrections?$|^correction to .*$"
+     r"|^.* (erratum|corrigendum)$|^publisher correction( .*)?$"
      r"|^retraction( notice)?$|^retraction notice to .*$|^notice of retraction( .*)?$"
      r"|^expression of concern( .*)?$"),
     ("editorial", r"^editorial( .*)?$|^editors? (note|introduction)( .*)?$"

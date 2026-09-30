@@ -129,8 +129,13 @@ def record_row(rec, qid, retrieved_at, sweep_mode):
     notes = []
     if rec.get("in_pool"):
         notes.append(f"in pool by {rec['in_pool']}")
+    pub_date = _iso_date(rec.get("pub_date"))
+    if rec.get("year_source") in ("volume-offset", "crossref-issue"):
+        # OpenAlex's own date contradicts the redated year: keep it only in the note
+        notes.append(f"year redated by {rec['year_source']}; OpenAlex date {pub_date or 'none'}")
+        pub_date = ""
     if not in_window(rec):
-        notes.append("dated outside 1990-2026 (OpenAlex misdating redated by volume)")
+        notes.append("dated outside 1990-2026")
     if rec.get("alias_dois"):
         notes.append(f"alias DOI {rec['alias_dois']}")
     platform = "crossref" if rec.get("toc_source") == "crossref" else "openalex"
@@ -141,7 +146,7 @@ def record_row(rec, qid, retrieved_at, sweep_mode):
         "doi": rec["doi"], "openalex_id": rec.get("openalex_id", ""), "title_original": "",
         "first_author": rec.get("first_author", ""), "all_authors": rec.get("authors", ""),
         "year": str(rec["year"]) if rec.get("year") else "",
-        "publication_date": _iso_date(rec.get("pub_date")), "journal": rec.get("journal", ""),
+        "publication_date": pub_date, "journal": rec.get("journal", ""),
         "issn": rec.get("issn", ""),
         "doc_type": rec.get("crossref_type") or rec.get("openalex_type") or "",
         "language": "", "abstract": rec.get("abstract", ""),
@@ -264,6 +269,17 @@ def deliver(args, manifest, steps):
                         "candidates": n_cand, "unresolved": 0, "out_of_window": 0,
                         "complete": str(bool(s.get("complete"))).lower()})
 
+    # in_pool / candidates count delivered rows only, so registry, summary and
+    # lane_status agree (excluded and in-lane duplicate rows are not counted)
+    delivered = collections.Counter((r["query_id"], r["lane_status"]) for r in records)
+    for r in registry:
+        r["in_pool"] = delivered[(r["query_id"], "already_in_pool")]
+        r["candidates"] = delivered[(r["query_id"], "candidate")]
+    for srow in summary:
+        units = [u for u in registry if u.get("journal_key") == srow["journal_key"]
+                 or u["query_id"] == srow["journal_key"]]
+        srow["in_pool"] = sum(u["in_pool"] for u in units)
+        srow["candidates"] = sum(u["candidates"] for u in units)
     _write_csv(os.path.join(out, "records.csv"), records, RECORD_FIELDS)
     _write_csv(os.path.join(out, "registry.csv"), registry, REGISTRY_FIELDS)
     _write_csv(os.path.join(out, "excluded.csv"), excluded, EXCLUDED_FIELDS)

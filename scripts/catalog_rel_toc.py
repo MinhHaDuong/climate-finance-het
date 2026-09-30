@@ -129,6 +129,8 @@ def _paged(session, url, params, out, kind):
             if not items or not cursor or (kind == "crossref" and n >= total):
                 break
             params["cursor"] = cursor
+    if not reason and kind == "crossref" and n != total:
+        reason = f"received {n} of {total}"  # keep the .part: a resume retries it
     if not reason:
         os.replace(part, out)
     return calls, total, n, reason, resp
