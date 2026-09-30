@@ -177,9 +177,9 @@ def load_sud(paths):
     return ref
 
 
-def read_registry(path):
+def read_registry(path, with_econlit=False):
     with open(path, encoding="utf-8", newline="") as fh:
-        return [r for r in csv.DictReader(fh) if r["platform"] != "econlit"]
+        return [r for r in csv.DictReader(fh) if with_econlit or r["platform"] != "econlit"]
 
 
 def assign_work_keys(records):
@@ -269,6 +269,109 @@ def load_labels(path, pairs):
     return out
 
 
+# --- delivery in the intake-contract format (docs/rel-intake-contract.md, 1730)
+
+INTAKE_RECORD_FIELDS = [
+    "record_id", "query_id", "platform", "retrieved_at", "title", "platform_record_id",
+    "doi", "openalex_id", "title_original", "first_author", "all_authors", "year",
+    "publication_date", "journal", "issn", "doc_type", "language", "abstract",
+    "abstract_provenance", "url", "affiliation_countries", "version_hint",
+    "lane_status", "lane_note", "families", "formulations", "all_query_ids",
+    "family_relevance", "in_refined", "in_unified", "in_sud",
+]
+INTAKE_REGISTRY_FIELDS = [
+    "query_id", "platform", "query", "run_at", "n_received", "completed", "filter",
+    "n_expected", "stop_reason", "question", "question_type", "group", "formulation",
+    "language", "pages", "cost_usd",
+]
+_LANG = {"English": "en", "French": "fr", "Spanish": "es", "German": "de",
+         "Portuguese": "pt", "Italian": "it", "Russian": "ru", "Chinese": "zh"}
+
+
+def _platform_code(platform):
+    m = re.match(r"bibCNRS EDS \((\w+)\)", platform)
+    return f"bibcnrs_eds_{m.group(1).lower()}" if m else platform
+
+
+def _flag(v):
+    return "true" if str(v).lower() == "true" else "false"
+
+
+def intake_rows(records, registry_all, labels):
+    """(records rows, registry rows, excluded rows) of the intake contract.
+
+    One record per work: the first retrieval (OpenAlex before EDS, matrix
+    order); every other retrieval of the same work is `duplicate_in_lane`.
+    Families, formulations and relevance labels of all retrievals are carried
+    in extra columns, as information."""
+    reg = {r["search_id"]: r for r in registry_all}
+    order = {sid: i for i, sid in enumerate(reg)}
+    by_work = defaultdict(list)
+    for r in records:
+        by_work[r["work_key"]].append(r)
+    out, excluded = [], []
+    for wk, rs in by_work.items():
+        rs.sort(key=lambda r: (r["platform"] != "openalex", order[r["search_id"]]))
+        first = rs[0]
+        rel = {q: labels.get((wk, q), "") for q in dict.fromkeys(r["question"] for r in rs)}
+        year = first.get("year")
+        out.append({
+            "record_id": f"1652:{wk}", "query_id": first["search_id"],
+            "platform": _platform_code(first["platform"]),
+            "retrieved_at": reg[first["search_id"]]["run_at"], "title": first.get("title") or "",
+            "platform_record_id": first.get("openalex_id") or first.get("eds_an") or "",
+            "doi": first["doi"], "openalex_id": first.get("openalex_id") or "",
+            "year": str(year) if year and len(str(year)) == 4 else "",
+            "publication_date": first.get("date") or "", "journal": first.get("journal") or "",
+            "doc_type": first.get("type") or "",
+            "language": _LANG.get(first.get("language") or "", first.get("language") or "")
+            if len(first.get("language") or "") != 2 else first["language"],
+            "abstract": first.get("abstract") or "",
+            "affiliation_countries": "; ".join(first.get("countries") or []),
+            "lane_status": "already_in_pool" if first["in_unified"] else "candidate",
+            "lane_note": "family relevance is a cheap-model mechanism judgment, not the ICF screen",
+            "families": "|".join(rel), "formulations": "|".join(sorted({r["formulation"] for r in rs})),
+            "all_query_ids": "|".join(r["search_id"] for r in rs),
+            "family_relevance": "|".join(f"{q}={lab or 'unlabelled'}" for q, lab in rel.items()),
+            "in_refined": _flag(first["in_refined"]), "in_unified": _flag(first["in_unified"]),
+            "in_sud": _flag(first["in_sud"])})
+        for r in rs[1:]:
+            excluded.append({"record_id": f"1652:{wk}", "query_id": r["search_id"],
+                             "reason": "duplicate_in_lane", "title": r.get("title") or "",
+                             "note": f"kept as retrieved by {first['search_id']}"})
+    regs = []
+    for s in registry_all:
+        regs.append({
+            **{k: s.get(k, "") for k in INTAKE_REGISTRY_FIELDS},
+            "query_id": s["search_id"], "platform": _platform_code(s["platform"]),
+            "query": s["query_string"], "run_at": s["run_at"] or "2026-09-30",
+            "n_received": str(s["n_received"] or 0), "completed": _flag(s["completed"])})
+    return out, regs, excluded
+
+
+def write_intake(out_dir, records, registry_all, labels, manifest):
+    rows, regs, excluded = intake_rows(records, registry_all, labels)
+    os.makedirs(out_dir, exist_ok=True)
+    for name, fields, data in (("records.csv", INTAKE_RECORD_FIELDS, rows),
+                               ("registry.csv", INTAKE_REGISTRY_FIELDS, regs),
+                               ("excluded.csv", ["record_id", "query_id", "reason", "title", "note"],
+                                excluded)):
+        with open(os.path.join(out_dir, name), "w", encoding="utf-8", newline="") as fh:
+            w = csv.DictWriter(fh, fields, extrasaction="ignore")
+            w.writeheader()
+            w.writerows(data)
+    incomplete = [{"unit": s["search_id"], "reason": s["stop_reason"]}
+                  for s in registry_all if _flag(s["completed"]) == "false"]
+    manifest = {**manifest,
+                "counts": {"records": len(rows),
+                           "excluded": dict(Counter(e["reason"] for e in excluded))},
+                "coverage": "incomplete" if incomplete else "complete",
+                "incomplete": incomplete}
+    with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as fh:
+        json.dump(manifest, fh, indent=1, ensure_ascii=False)
+    return len(rows), len(excluded)
+
+
 def pair_id(work_key, question):
     return f"{question}::{work_key}"
 
@@ -277,8 +380,9 @@ def run(args):
     with open(args.families, encoding="utf-8") as fh:
         fam_cfg = yaml.safe_load(fh)
     mech = {q: m["mechanism"].strip() for q, m in {**fam_cfg["families"], **fam_cfg["themes"]}.items()}
-    registry, records = [], []
+    registry, registry_all, records = [], [], []
     for d in filter(None, [args.run_dir, args.eds_dir]):
+        registry_all += read_registry(os.path.join(d, "registry.csv"), with_econlit=True)
         reg = read_registry(os.path.join(d, "registry.csv"))
         registry += reg
         meta = {r["search_id"]: r for r in reg}
@@ -373,6 +477,11 @@ def run(args):
                 "in_refined": r["in_refined"], "in_unified": r["in_unified"], "in_sud": r["in_sud"]})
     log.info("wrote yields, sentinel recall, %d judge pairs and %d delivery rows",
              len(seen), len(records))
+    if getattr(args, "intake_dir", None):
+        with open(args.manifest_base, encoding="utf-8") as fh:
+            base = json.load(fh)
+        n, x = write_intake(args.intake_dir, records, registry_all, labels, base)
+        log.info("intake delivery: %d records, %d duplicate_in_lane", n, x)
     return 0
 
 
@@ -391,6 +500,9 @@ def main(argv=None):
     ap.add_argument("--archive-path", default="")
     ap.add_argument("--manifest-sha256", default="",
                     help="SHA-256 of the archive's MANIFEST.sha256 file")
+    ap.add_argument("--intake-dir", help="also write the delivery in the 1730 intake format")
+    ap.add_argument("--manifest-base", help="JSON with lane, ticket, delivery, delivered_at, "
+                    "producer, needs_human, supersedes, notes (counts and coverage are added)")
     # Multi-output script (yields, recall, judge input, delivery): --output-dir.
     ap.add_argument("--output-dir", required=True)
     return run(ap.parse_args(argv))

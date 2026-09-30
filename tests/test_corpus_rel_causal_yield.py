@@ -142,6 +142,28 @@ def test_labels_count_relevant_per_question_and_feed_the_outcomes(lane):
     assert {r["family_relevance"] for r in rows} == {"relevant", "not", ""}
 
 
+def test_intake_delivery_has_one_record_per_work_and_lists_the_duplicates(lane):
+    base = lane / "base.json"
+    base.write_text(json.dumps({"lane": "t1652-causal-econlit", "ticket": "1652",
+                                "delivery": "2026-09-30", "needs_human": [], "supersedes": None}))
+    args = _args(lane)
+    args.intake_dir, args.manifest_base = str(lane / "intake"), str(base)
+    assert cy.run(args) == 0
+    recs = _csv(lane / "intake" / "records.csv")
+    exc = _csv(lane / "intake" / "excluded.csv")
+    reg = _csv(lane / "intake" / "registry.csv")
+    assert len(recs) == 3 and len({r["record_id"] for r in recs}) == 3
+    assert len(recs) + len(exc) == 6 and {e["reason"] for e in exc} == {"duplicate_in_lane"}
+    w1 = [r for r in recs if r["record_id"] == "1652:doi:10.1/a"][0]
+    assert w1["platform"] == "openalex" and w1["all_query_ids"].count("|") == 2
+    assert [r["platform"] for r in recs if r["doi"] == "10.9/wp"] == ["bibcnrs_eds_repec"]
+    assert {r["completed"] for r in reg} == {"true", "false"}
+    assert all(r["stop_reason"] for r in reg if r["completed"] == "false")
+    manifest = json.loads((lane / "intake" / "manifest.json").read_text())
+    assert manifest["counts"] == {"records": 3, "excluded": {"duplicate_in_lane": 3}}
+    assert manifest["coverage"] == "incomplete"  # the EconLit rows were not run
+
+
 def test_judge_batches_one_mechanism_and_parses_labels(tmp_path):
     recs = [{"pair_id": f"{q}::{i}", "question": q, "mechanism": f"M {q}", "title": f"t{i}"}
             for q in ("b", "a") for i in range(3)]
