@@ -31,6 +31,13 @@ closed list, in `excluded.csv`:
 | `duplicate_in_lane` | the same item retrieved twice by this lane (keep one row in `records.csv`, list the others) |
 | `front_matter` | not an item at all: issue cover, editorial board, table of contents page, index, erratum notice |
 | `not_retrievable` | the lane saw a reference to the item but could not obtain title-level metadata |
+| `no_dedup_key` | title known, but no DOI, OpenAlex id or year exists in the source |
+
+Unlike the other reasons, `no_dedup_key` rows are **not** dropped from the pool.
+They are listed here only because `records.csv` requires a deduplication key
+they cannot carry. The pool merge (ticket 1731) takes them in as title-only
+works, so the ICF rule still sees them and screens them on title. Their `title`
+must be non-empty, and their `note` carries the source URL or handle.
 
 Book reviews, editorials with content, and institutional reports are **not**
 front matter: deliver them, the screen's document-type label handles them.
@@ -95,7 +102,8 @@ empty.
 
 At least one of `doi`, `openalex_id` or `year` must be non-empty on every row:
 a record with none of them cannot be deduplicated (the merge falls back on
-normalized title + year).
+normalized title + year). A titled record whose source holds none of them goes
+to `excluded.csv` with reason `no_dedup_key` (see above).
 
 ## `registry.csv`
 

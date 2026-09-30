@@ -33,7 +33,8 @@ RECORD_REQUIRED = ["record_id", "query_id", "platform", "retrieved_at", "title"]
 REGISTRY_REQUIRED = ["query_id", "platform", "query", "run_at", "n_received",
                      "completed"]
 EXCLUDED_COLUMNS = ["record_id", "query_id", "reason", "title", "note"]
-EXCLUSION_REASONS = {"duplicate_in_lane", "front_matter", "not_retrievable"}
+EXCLUSION_REASONS = {"duplicate_in_lane", "front_matter", "not_retrievable",
+                     "no_dedup_key"}
 
 MANIFEST_KEYS = ["lane", "ticket", "delivery", "delivered_at", "producer",
                  "counts", "coverage", "incomplete", "needs_human"]
@@ -149,6 +150,10 @@ def check_excluded(header, rows, query_ids, record_ids):
         if (r["reason"] != "duplicate_in_lane" and r["record_id"]
                 and r["record_id"] in record_ids):
             errors.append(f"{where}: record_id {r['record_id']!r} is also delivered")
+        if r["reason"] == "no_dedup_key" and not (r["title"] or "").strip():
+            errors.append(
+                f"{where}: no_dedup_key row needs a title (it enters the pool "
+                f"as a title-only work)")
     return errors
 
 
