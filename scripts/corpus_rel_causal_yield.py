@@ -12,7 +12,13 @@ the Sud search results (ticket 1530). Writes:
 - ``sentinel_recall.csv``: per sentinel, the searches that retrieved it;
 - ``judge_input.jsonl``: one (work, question) pair per line for the
   family-relevance judge (``corpus_rel_causal_judge.py``);
-- ``delivery.csv``: one row per retrieval with provenance, for the pool (1655).
+- ``delivery.csv``: one row per retrieval with provenance;
+- with ``--intake-dir`` and ``--manifest-base``: the delivery to the pool (1655)
+  in the intake-contract layout (records, registry, excluded, manifest).
+
+A search run in several run directories keeps the union of its retrievals, and
+a conservation check fails the run if any retrieved raw id is missing from the
+delivery.
 
 Every record is delivered: the relevance label is information, not a filter.
 
@@ -193,23 +199,30 @@ def read_registry(path, with_econlit=False):
 
 
 def assign_work_keys(records):
-    """Work key per record: DOI, else OpenAlex id, else a title+year key that
-    first borrows the key of an identified record with the same title+year."""
-    by_title = {}
-    for r in records:
-        k = title_key(r.get("title"), r.get("year"))
-        if k and (r.get("doi") or r.get("openalex_id")):
-            by_title.setdefault(k, "doi:" + r["doi"] if r.get("doi") else "oa:" + r["openalex_id"])
+    """Work key per record: its DOI; else the DOI another record gives its
+    OpenAlex id or its title+year; else its OpenAlex id; else the key of an
+    identified record with the same title+year; else a title+year key. The
+    title join also covers an OpenAlex record without DOI and an EDS record
+    carrying one, which an id-first rule would keep apart."""
     by_oa = {r["openalex_id"]: "doi:" + r["doi"] for r in records
              if r.get("doi") and r.get("openalex_id")}
+    doi_by_title, oa_by_title = {}, {}
     for r in records:
+        k = title_key(r.get("title"), r.get("year"))
+        if k and r.get("doi"):
+            doi_by_title.setdefault(k, "doi:" + r["doi"])
+        elif k and r.get("openalex_id"):
+            oa_by_title.setdefault(k, by_oa.get(r["openalex_id"], "oa:" + r["openalex_id"]))
+    for r in records:
+        k = title_key(r.get("title"), r.get("year"))
         if r.get("doi"):
             r["work_key"] = "doi:" + r["doi"]
         elif r.get("openalex_id"):
-            r["work_key"] = by_oa.get(r["openalex_id"], "oa:" + r["openalex_id"])
+            r["work_key"] = (by_oa.get(r["openalex_id"]) or doi_by_title.get(k)
+                             or "oa:" + r["openalex_id"])
         else:
-            k = title_key(r.get("title"), r.get("year"))
-            r["work_key"] = by_title.get(k) or ("ty:" + k if k else "an:" + r.get("eds_an", ""))
+            r["work_key"] = (doi_by_title.get(k) or oa_by_title.get(k)
+                             or ("ty:" + k if k else "an:" + r.get("eds_an", "")))
     return records
 
 
@@ -293,8 +306,10 @@ INTAKE_RECORD_FIELDS = [
 INTAKE_REGISTRY_FIELDS = [
     "query_id", "platform", "query", "run_at", "n_received", "completed", "filter",
     "n_expected", "stop_reason", "question", "question_type", "group", "formulation",
-    "language", "pages", "cost_usd",
+    "language", "pages", "cost_usd", "runs",
 ]
+# The EconLit rows were written, not run: their registry date is the lane's date.
+UNRUN_DATE = "2026-09-30"
 _LANG = {"English": "en", "French": "fr", "Spanish": "es", "German": "de",
          "Portuguese": "pt", "Italian": "it", "Russian": "ru", "Chinese": "zh"}
 
@@ -309,7 +324,8 @@ def _flag(v):
 
 
 def intake_rows(records, registry_all, labels):
-    """(records rows, registry rows, excluded rows) of the intake contract.
+    """(records rows, registry rows, excluded rows, delivered raw ids) of the
+    intake contract.
 
     One record per work: the first retrieval (OpenAlex before EDS, matrix
     order); every other retrieval of the same work is `duplicate_in_lane`.
@@ -320,8 +336,9 @@ def intake_rows(records, registry_all, labels):
     by_work = defaultdict(list)
     for r in records:
         by_work[r["work_key"]].append(r)
-    out, excluded = [], []
+    out, excluded, delivered = [], [], set()
     for wk, rs in by_work.items():
+        delivered |= {_raw_id(r) for r in rs}
         rs.sort(key=lambda r: (not (r.get("title") or "").strip(), r["platform"] != "openalex",
                                order[r["search_id"]]))
         first = rs[0]
@@ -350,29 +367,32 @@ def intake_rows(records, registry_all, labels):
             if len(first.get("language") or "") != 2 else first["language"],
             "abstract": first.get("abstract") or "",
             "affiliation_countries": "; ".join(first.get("countries") or []),
-            "lane_status": "already_in_pool" if first["in_unified"] else "candidate",
+            "lane_status": "already_in_pool" if any(r["in_unified"] for r in rs) else "candidate",
             "lane_note": "family relevance is a cheap-model mechanism judgment, not the ICF screen",
             "families": "|".join(rel), "formulations": "|".join(sorted({r["formulation"] for r in rs})),
             "all_query_ids": "|".join(r["search_id"] for r in rs),
             "family_relevance": "|".join(f"{q}={lab or 'unlabelled'}" for q, lab in rel.items()),
-            "in_refined": _flag(first["in_refined"]), "in_unified": _flag(first["in_unified"]),
-            "in_sud": _flag(first["in_sud"])})
+            **{k: _flag(any(r[k] for r in rs)) for k in ("in_refined", "in_unified", "in_sud")}})
         for r in rs[1:]:
             excluded.append({"record_id": f"1652:{wk}", "query_id": r["search_id"],
                              "reason": "duplicate_in_lane", "title": r.get("title") or "",
-                             "note": f"kept as retrieved by {first['search_id']}"})
+                             "note": f"{_raw_id(r)}: kept as retrieved by {first['search_id']}"})
     regs = []
     for s in registry_all:
         regs.append({
             **{k: s.get(k, "") for k in INTAKE_REGISTRY_FIELDS},
             "query_id": s["search_id"], "platform": _platform_code(s["platform"]),
-            "query": s["query_string"], "run_at": s["run_at"] or "2026-09-30",
+            "query": s["query_string"], "run_at": s["run_at"] or UNRUN_DATE,
             "n_received": str(s["n_received"] or 0), "completed": _flag(s["completed"])})
-    return out, regs, excluded
+    return out, regs, excluded, delivered
 
 
-def write_intake(out_dir, records, registry_all, labels, manifest):
-    rows, regs, excluded = intake_rows(records, registry_all, labels)
+def write_intake(out_dir, records, registry_all, labels, manifest, force=False):
+    """Write the four delivery files; a directory that already holds a
+    delivery is refused unless ``force`` (a delivery is immutable once merged)."""
+    if os.path.exists(os.path.join(out_dir, "records.csv")) and not force:
+        raise SystemExit(f"{out_dir} already holds a delivery; pass --force-intake to replace it")
+    rows, regs, excluded, _ = intake_rows(records, registry_all, labels)
     os.makedirs(out_dir, exist_ok=True)
     for name, fields, data in (("records.csv", INTAKE_RECORD_FIELDS, rows),
                                ("registry.csv", INTAKE_REGISTRY_FIELDS, regs),
@@ -398,35 +418,83 @@ def pair_id(work_key, question):
     return f"{question}::{work_key}"
 
 
+def _raw_id(rec):
+    """The platform's own identity of a retrieved record."""
+    return rec.get("openalex_id") or rec.get("eds_an") or f"{rec.get('doi')}|{rec.get('title')}"
+
+
+def merge_registry_rows(rows):
+    """One registry row for a search run in several run directories.
+
+    Counts describe the union of the retrievals; the row is complete only when
+    some run reached the end of the cursor AND received what it announced, so a
+    run that stopped short can never pass for a finished one."""
+    base = max(rows, key=lambda r: int(r["n_received"] or 0))
+    expected = max((int(r["n_expected"]) for r in rows if str(r["n_expected"]).isdigit()),
+                   default=None)
+    done = [r for r in rows if r["completed"] == "True"
+            and (expected is None or int(r["n_received"] or 0) >= expected)]
+    reasons = []
+    for r in rows:
+        why = r["stop_reason"] or ("short cursor" if r["completed"] == "True" else "")
+        reasons.append(f"{r['_run']}: {why or 'complete'} ({r['n_received']} of {r['n_expected']})")
+    return {**base, "n_expected": "" if expected is None else expected,
+            "completed": "True" if done else "False",
+            "stop_reason": "" if done else "; ".join(reasons),
+            "runs": "|".join(r["_run"] for r in rows)}
+
+
 def load_runs(dirs):
     """(registry, registry with the EconLit rows, records) of the run directories.
 
-    A later run directory supersedes an earlier one for the ids it reran,
-    unless it is worse: an unfinished rerun that received fewer records."""
-    def rank(r):
-        return (r["completed"] == "True", int(r["n_received"] or 0))
-
-    winner, econlit_rows = {}, []
+    A search run in several directories (reruns of errored or capped rows)
+    keeps the union of its retrievals, one record per raw platform id: a rerun
+    never loses what an earlier run retrieved."""
+    by_id, econlit_rows = defaultdict(list), []
     for d in dirs:
         for r in read_registry(os.path.join(d, "registry.csv"), with_econlit=True):
             if r["platform"] == "econlit":
                 econlit_rows.append(r)
-            elif r["search_id"] not in winner or rank(r) >= rank(winner[r["search_id"]][1]):
-                winner[r["search_id"]] = (d, r)
-    registry = [r for _, r in winner.values()]
-    records = []
+            else:
+                by_id[r["search_id"]].append({**r, "_run": os.path.basename(os.path.normpath(d))})
+    meta = {sid: rows[0] for sid, rows in by_id.items()}
+    records, seen = [], set()
     for d in dirs:
         for rec in read_jsonl_gz(os.path.join(d, "results.jsonl.gz")):
-            if winner[rec["search_id"]][0] != d:
+            key = (rec["search_id"], _raw_id(rec))
+            if key in seen:
                 continue
-            s = winner[rec["search_id"]][1]
+            seen.add(key)
+            s = meta[rec["search_id"]]
             rec.setdefault("openalex_id", "")
             rec.setdefault("eds_an", "")
             rec["doi"] = valid_doi(rec.get("doi") or "")
             rec.update(question=s["question"], formulation=s["formulation"],
                        platform=s["platform"], language_q=s["language"])
             records.append(rec)
+    received = Counter(r["search_id"] for r in records)
+    registry = []
+    for sid, rows in by_id.items():
+        row = merge_registry_rows(rows)
+        row["n_received"] = received.get(sid, 0)
+        row.pop("_run", None)
+        registry.append(row)
     return registry, registry + econlit_rows, records
+
+
+def raw_ids(dirs):
+    """Distinct raw platform ids retrieved in the run directories."""
+    return {_raw_id(rec) for d in dirs for rec in read_jsonl_gz(os.path.join(d, "results.jsonl.gz"))}
+
+
+def check_conservation(dirs, records, delivered_ids):
+    """Every raw id retrieved lands in the delivery (records or excluded)."""
+    loaded = {_raw_id(r) for r in records}
+    missing = (raw_ids(dirs) - loaded) | (loaded - delivered_ids)
+    if missing:
+        raise SystemExit(f"conservation: {len(missing)} retrieved ids missing from the delivery, "
+                         f"e.g. {sorted(missing)[:5]}")
+    return len(loaded)
 
 
 def sentinel_recall(sentinels, records, refined, unified):
@@ -477,7 +545,8 @@ def run(args):
         fam_cfg = yaml.safe_load(fh)
     mech = {q: m["mechanism"].strip() for q, m in {**fam_cfg["families"], **fam_cfg["themes"]}.items()}
     run_dirs = args.run_dir if isinstance(args.run_dir, list) else [args.run_dir]
-    registry, registry_all, records = load_runs([d for d in run_dirs + [args.eds_dir] if d])
+    dirs = [d for d in run_dirs + [args.eds_dir] if d]
+    registry, registry_all, records = load_runs(dirs)
     assign_work_keys(records)
     refined, unified, sud = load_catalog(args.refined), load_catalog(args.unified), load_sud(args.sud_results)
     for r in records:
@@ -526,11 +595,17 @@ def run(args):
                    args.archive_path, args.manifest_sha256)
     log.info("wrote yields, sentinel recall, %d judge pairs and %d delivery rows",
              len(seen), len(records))
+    # conservation: every raw id retrieved in any run lands in the delivery
+    n_ids = check_conservation(dirs, records, intake_rows(records, registry_all, labels)[3])
+    log.info("conservation: %d distinct raw ids, all delivered", n_ids)
     if getattr(args, "intake_dir", None):
+        if not args.manifest_base:
+            raise SystemExit("--intake-dir needs --manifest-base")
         with open(args.manifest_base, encoding="utf-8") as fh:
             base = json.load(fh)
-        n, x = write_intake(args.intake_dir, records, registry_all, labels, base)
-        log.info("intake delivery: %d records, %d duplicate_in_lane", n, x)
+        n, x = write_intake(args.intake_dir, records, registry_all, labels, base,
+                            force=getattr(args, "force_intake", False))
+        log.info("intake delivery: %d records, %d excluded rows", n, x)
     return 0
 
 
@@ -551,6 +626,8 @@ def main(argv=None):
     ap.add_argument("--manifest-sha256", default="",
                     help="SHA-256 of the archive's MANIFEST.sha256 file")
     ap.add_argument("--intake-dir", help="also write the delivery in the 1730 intake format")
+    ap.add_argument("--force-intake", action="store_true",
+                    help="replace an existing, not yet merged delivery")
     ap.add_argument("--manifest-base", help="JSON with lane, ticket, delivery, delivered_at, "
                     "producer, needs_human, supersedes, notes (counts and coverage are added)")
     # Multi-output script (yields, recall, judge input, delivery): --output-dir.

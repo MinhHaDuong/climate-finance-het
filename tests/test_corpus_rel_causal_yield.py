@@ -166,35 +166,79 @@ def test_intake_delivery_has_one_record_per_work_and_lists_the_duplicates(lane):
     assert manifest["coverage"] == "incomplete"  # the EconLit rows were not run
 
 
-def test_a_later_run_directory_supersedes_the_ids_it_reran(lane):
+def _set_registry(path, **changes):
+    reg = _csv(path)
+    for sid, fields in changes.items():
+        for r in reg:
+            if r["search_id"] == sid:
+                r.update(fields)
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, REG)
+        w.writeheader()
+        w.writerows(reg)
+
+
+def test_a_rerun_adds_to_a_search_and_never_drops_what_an_earlier_run_retrieved(lane):
     _run_dir(lane / "oa2", "openalex", [("RC-grid-IO-en", "grid", "IO", 1)],
              [{"search_id": "RC-grid-IO-en", "openalex_id": "W7", "doi": "10.7777/new",
                "title": "A rerun record", "year": 2024}])
     args = _args(lane)
     args.run_dir = [str(lane / "oa"), str(lane / "oa2")]
     assert cy.run(args) == 0
-    rows = _csv(lane / "out" / "delivery.csv")
-    io = [r for r in rows if r["search_id"] == "RC-grid-IO-en"]
-    assert [r["doi"] for r in io] == ["10.7777/new"]
-    by_search = {r["group"] for r in _csv(lane / "out" / "yield_by_search.csv")}
-    assert "RC-grid-IO-en" in by_search and len(rows) == 6
+    io = [r for r in _csv(lane / "out" / "delivery.csv") if r["search_id"] == "RC-grid-IO-en"]
+    assert sorted(r["doi"] for r in io) == ["10.1111/a", "10.7777/new"]
 
 
-def test_an_unfinished_rerun_with_fewer_records_does_not_supersede(lane):
+def test_short_complete_rerun_does_not_hide_a_larger_capped_run(lane):
+    """Replay of RC-construction_emissions-SY-en: run a capped at 800 of 1,944,
+    rerun c 'complete' at 193 of 1,944. Nothing retrieved is lost and the row
+    stays incomplete."""
+    _set_registry(lane / "oa" / "registry.csv",
+                  **{"RC-grid-IM-en": {"n_expected": "1944", "completed": "False",
+                                       "stop_reason": "record cap"}})
     _run_dir(lane / "oa2", "openalex", [("RC-grid-IM-en", "grid", "IM", 1)],
              [{"search_id": "RC-grid-IM-en", "openalex_id": "W7", "doi": "10.7777/new",
                "title": "A rerun record", "year": 2024}])
-    reg = _csv(lane / "oa2" / "registry.csv")
-    reg[0]["completed"], reg[0]["stop_reason"] = "False", "error: RuntimeError"
-    with open(lane / "oa2" / "registry.csv", "w", encoding="utf-8", newline="") as fh:
-        w = csv.DictWriter(fh, REG)
-        w.writeheader()
-        w.writerows(reg)
-    args = _args(lane)
-    args.run_dir = [str(lane / "oa"), str(lane / "oa2")]
-    assert cy.run(args) == 0
-    im = [r for r in _csv(lane / "out" / "delivery.csv") if r["search_id"] == "RC-grid-IM-en"]
-    assert sorted(r["openalex_id"] for r in im) == ["W1", "W2"]
+    _set_registry(lane / "oa2" / "registry.csv",
+                  **{"RC-grid-IM-en": {"n_expected": "1944", "completed": "True",
+                                       "stop_reason": ""}})
+    registry, _, records = cy.load_runs([str(lane / "oa"), str(lane / "oa2")])
+    row = [r for r in registry if r["search_id"] == "RC-grid-IM-en"][0]
+    assert row["completed"] == "False" and row["n_received"] == 3
+    assert "short cursor" in row["stop_reason"] and "record cap" in row["stop_reason"]
+    assert sorted(r["openalex_id"] for r in records if r["search_id"] == "RC-grid-IM-en") == \
+        ["W1", "W2", "W7"]
+
+
+def test_a_complete_row_needs_the_announced_count():
+    rows = [{"search_id": "S", "n_received": "658", "n_expected": "659", "completed": "True",
+             "stop_reason": "", "_run": "c"}]
+    row = cy.merge_registry_rows(rows)
+    assert row["completed"] == "False" and row["stop_reason"] == "c: short cursor (658 of 659)"
+    rows[0]["n_received"] = "659"
+    assert cy.merge_registry_rows(rows)["completed"] == "True"
+
+
+def test_conservation_check_fails_when_a_retrieved_id_is_not_delivered(lane):
+    dirs = [str(lane / "oa"), str(lane / "eds")]
+    _, _, records = cy.load_runs(dirs)
+    cy.assign_work_keys(records)
+    delivered = {cy._raw_id(r) for r in records}
+    assert cy.check_conservation(dirs, records, delivered) == len(delivered)
+    with pytest.raises(SystemExit, match="conservation: 1"):
+        cy.check_conservation(dirs, records, delivered - {"W2"})
+    with pytest.raises(SystemExit, match="conservation: 1"):
+        cy.check_conservation(dirs, [r for r in records if r["openalex_id"] != "W2"], delivered)
+
+
+def test_an_openalex_record_without_doi_joins_its_eds_twin_by_title():
+    recs = cy.assign_work_keys([
+        {"doi": "", "openalex_id": "W1", "title": T1, "year": 2015},
+        {"doi": "10.1111/abc", "openalex_id": "", "eds_an": "e1", "title": T1, "year": 2015},
+        {"doi": "", "openalex_id": "W3", "title": T2, "year": 2016},
+        {"doi": "", "openalex_id": "", "eds_an": "e2", "title": T2.upper(), "year": 2016}])
+    assert [r["work_key"] for r in recs] == ["doi:10.1111/abc", "doi:10.1111/abc",
+                                            "oa:W3", "oa:W3"]
 
 
 def test_truncated_dois_are_dropped_and_untitled_works_are_not_retrievable():
@@ -209,7 +253,8 @@ def test_truncated_dois_are_dropped_and_untitled_works_are_not_retrievable():
         {"search_id": "S1", "platform": "openalex", "openalex_id": "W2", "doi": "", "title": "T",
          "year": 2021, "question": "grid", "formulation": "IM", "in_refined": False,
          "in_unified": False, "in_sud": False}])
-    rows, _, excluded = cy.intake_rows(recs, reg, {})
+    rows, _, excluded, delivered = cy.intake_rows(recs, reg, {})
+    assert delivered == {"W1", "W2"}
     assert [r["openalex_id"] for r in rows] == ["W2"]
     assert [(e["record_id"], e["reason"]) for e in excluded] == [("1652:oa:W1", "not_retrievable")]
 
