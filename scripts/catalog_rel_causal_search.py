@@ -29,6 +29,7 @@ import sys
 from datetime import datetime, timezone
 
 import yaml
+from _rel_causal_query import expand_blocks, split_and_groups
 from catalog_rel_sud_search import (
     OA_API,
     OA_SELECT,
@@ -100,17 +101,6 @@ def partition_problems(families, annex_arcs):
 
 # --- query matrix ------------------------------------------------------------
 
-_BLOCK = re.compile(r"\{([A-Z_]+)\}")
-
-
-def expand_blocks(template, blocks):
-    def sub(m):
-        if m.group(1) not in blocks:
-            raise KeyError(f"unknown block {{{m.group(1)}}}")
-        return blocks[m.group(1)]
-    return _BLOCK.sub(sub, template)
-
-
 def load_sentinels(path):
     with open(path, encoding="utf-8", newline="") as fh:
         return list(csv.DictReader(fh))
@@ -171,33 +161,6 @@ def plan_queries(search_cfg, families_cfg, sentinels):
 
 
 # --- EconLit (EBSCOhost) adaptation ---------------------------------------
-
-def split_and_groups(query):
-    """Top-level AND groups of a query, outer parentheses removed."""
-    groups, depth, quoted, start, i = [], 0, False, 0, 0
-    while i < len(query):
-        c = query[i]
-        if c == '"':
-            quoted = not quoted
-        elif not quoted and c == "(":
-            depth += 1
-        elif not quoted and c == ")":
-            depth -= 1
-        elif not quoted and depth == 0 and query.startswith(" AND ", i):
-            groups.append(query[start:i])
-            start = i + 5
-            i += 5
-            continue
-        i += 1
-    groups.append(query[start:])
-    out = []
-    for g in groups:
-        g = g.strip()
-        if g.startswith("(") and g.endswith(")"):
-            g = g[1:-1].strip()
-        out.append(g)
-    return out
-
 
 def _in_fields(group, fields):
     return "(" + " OR ".join(f"{f} ({group})" for f in fields) + ")"

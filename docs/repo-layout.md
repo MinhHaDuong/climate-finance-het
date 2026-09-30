@@ -133,8 +133,11 @@ figures 62 · harvest 25 · analysis 34 · qa 11.
 `schemas`, `script_io_args`, `syllabi_config`, `syllabi_crossref`,
 `syllabi_harvest`, `syllabi_io`, `syllabi_process`, `utils`.
 
-**Dual-role reclassified Tier-2 (6, have a thin `main()` but are genuinely
+**Dual-role reclassified Tier-2 (8, have a thin `main()` but are genuinely
 reused computational libraries — extraction would fracture a tight cluster):**
+`catalog_rel_sud_search` and `corpus_rel_sud_screen` (OpenAlex search and LLM
+batch-screen helpers of the REL Sud lane, reused by the REL causal-map lane,
+ticket 1652; extraction was deferred because sibling lanes edit these files),
 `compute_divergence` (`METHODS` dispatch registry, rule 8), `compute_null_model`
 + `compute_divergence_bootstrap` (permutation drivers imported across the
 divergence family), `compute_changepoints` (convergence computation reused by

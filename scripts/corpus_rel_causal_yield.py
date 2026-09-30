@@ -115,7 +115,7 @@ def _phrase_re(phrases):
 
 def probe_patterns(search_cfg):
     """{question: compiled mediator pattern} from the first English string."""
-    from catalog_rel_causal_search import expand_blocks, split_and_groups
+    from _rel_causal_query import expand_blocks, split_and_groups
     out = {}
     for source in (search_cfg["queries"], search_cfg["themes"]):
         for q, by_lang in source.items():
