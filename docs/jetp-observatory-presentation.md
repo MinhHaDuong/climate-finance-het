@@ -1,7 +1,8 @@
 # JETP observatory: presentation
 
 What readers of the observatory see and how the site is organised. Decided by
-the author on 2026-09-23 and revised after the 2026-09-24 cold read (ticket 0902). Tickets [0881](../tickets/0881-le-mvp-distingue-o-d-e-et-m-et-pr-sente.erg)
+the author on 2026-09-23 and revised after the 2026-09-24 cold read (ticket 0902)
+and the 2026-09-29 three-step trail decision (ticket 0870). Tickets [0881](../tickets/0881-le-mvp-distingue-o-d-e-et-m-et-pr-sente.erg)
 (organisation and page vocabulary) and
 [0882](../tickets/0882-page-ontologie-du-mvp-d-finitions-des-ob.erg) (Glossary)
 implement it. What the ledger's terms mean is [`jetp-ontology.md`](jetp-ontology.md);
@@ -26,7 +27,7 @@ than suspicion, because the readers are researchers as well as journalists.
 | ODEM object | What the reader sees | Label on the page |
 |---|---|---|
 | O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Glossary** |
-| D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Document rows** → **Statements** → **Projects**, **Funding**, **Organisations** |
+| D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Document rows** → **Statements**; separately, **Projects**, **Funding**, **Organisations** |
 | E | Counts and totals computed by the ledger, each with its unit, its perimeter and a link to what it was computed from | **The tallies** |
 | M | Nothing | none |
 | (methods) | What was done, what was not, and which tables are not served | **Methods** |
@@ -37,7 +38,7 @@ sections: **The paper trail** · **The tallies** · **About**.
 
 | Section | Its pages, in sub-bar order | Tab lands on |
 |---|---|---|
-| The paper trail | Documents · Document rows · Statements · Projects · Funding · Organisations | `#the-paper-trail`, a short page on what each step holds and why they run in that order |
+| The paper trail | Documents · Document rows · Statements; a separate side group for Projects · Funding · Organisations | `#the-paper-trail`, a short page on the three steps and what their statements describe |
 | The tallies | Counts · Non-JETP energy operations (the accounts page of ticket 0877 joins as Money) | `#counts`: two pages need no landing page |
 | About | Glossary · Methods · Who we are | `#about`, one line per page |
 
@@ -54,12 +55,14 @@ marked current when it is open.
   ArrowDown opens it on its first link; Escape and a click outside close it.
   Hover opens one as an enhancement only. At phone width the three sections
   stack inside one collapsible nav behind a Menu button. The paper trail's
-  dropdown lists the six steps in trail order.
+  dropdown lists the three trail steps followed by the three referent pages.
 - **The sub-bar.** On every page of a section, its landing page included, a
   second bar holds the section's pages as plain sibling tabs, the current one
   selected (`aria-current="page"`). It is one component for all three
-  sections: no separators, no grouping. On the paper trail the order of the
-  six tabs is the trail's, carried by position left to right and explained
+  sections. On the paper trail, Documents, Document rows and Statements
+  form the three sequential tabs. Projects, Funding and Organisations form
+  a separate side group, since identity matching reads document rows rather
+  than forming three further stages after statements. The order is explained
   on `#the-paper-trail`, not by arrows or numerals. The selected tab is the
   page's position indicator, and the tabs beside it are the neighbouring
   steps. No page repeats it with an eyebrow, a trail block or in-page tabs,
@@ -109,8 +112,8 @@ release history is `#release-history`. A country's page nests under its step
   not repeat the first eight projects or sum milestones. Organisations groups
   exact names by country and combines funder and operator roles; reviewed
   party-name forms appear as aliases without guessing unreviewed matches.
-  The sub-bar shows where each
-  page sits on the trail and lets the reader step one level up or down: from
+  The sub-bar keeps those three referent pages apart from the three sequential
+  steps and lets the reader follow their justification: from
   a project to what is on the record about it, to the entries, to the page
   of the document, and back.
 - **The tallies.** A number the ledger computes is visibly set apart from

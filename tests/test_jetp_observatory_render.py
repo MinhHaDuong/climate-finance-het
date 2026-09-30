@@ -813,7 +813,8 @@ def test_every_senegal_row_names_a_pdf_page_and_no_other_non_rmp_country_does() 
 # siblings, and About's pages in the same bar as plain siblings.
 NAVIGATION = ["The paper trail", "The tallies", "About"]
 ABOUT = ["Glossary", "Methods", "Who we are"]
-STEPS = ["Documents", "Document rows", "Statements", "Projects", "Funding", "Organisations"]
+STEPS = ["Documents", "Document rows", "Statements"]
+REFERENT_PAGES = ["Projects", "Funding", "Organisations"]
 TRAIL_ROUTES = ("documents", "document-rows", "document-rows/VNM", "statements", "statements/ZAF",
                 "projects", "project/" + BAC_AI, "funding", "funding/VNM", "organisations")
 
@@ -893,7 +894,7 @@ def nav_html():
 LANDINGS = {"The paper trail": "the-paper-trail", "The tallies": "counts", "About": "about"}
 SECTION_KEYS = ("the-paper-trail", "the-tallies", "about")
 SUB_PAGES = {
-    "the-paper-trail": list(zip(STEPS, ["#documents", "#document-rows", "#statements", "#projects",
+    "the-paper-trail": list(zip(STEPS + REFERENT_PAGES, ["#documents", "#document-rows", "#statements", "#projects",
                                         "#funding", "#organisations"])),
     "the-tallies": [("Counts", "#counts"), ("Money", "#money"),
                     ("Non-JETP energy operations", "#non-jetp-energy-operations")],
@@ -1080,8 +1081,11 @@ def test_a_page_of_the_paper_trail_shows_its_step_and_links_to_its_neighbours() 
     hrefs = {unescape(label): href for href, _, _, label in links}
     assert hrefs["Documents"] == "#documents?country=VNM"
     assert hrefs["Statements"] == "#statements/VNM"
-    # Six plain sibling tabs: no separator, no grouping of the last three.
+    # Three sequential steps, with referents in a separate side group.
     assert "›" not in bar and "siblings" not in bar and bar.count("<li>") == 6
+    side = re.search(r'<ul[^>]+data-side-group="referents"[^>]*>(.*?)</ul>', bar).group(1)
+    assert re.findall(r'>(Projects|Funding|Organisations)</a>', side) == REFERENT_PAGES
+    assert 'data-step' not in side
     # The scope is a chip; removing it opens the same step, unscoped.
     chip = re.search(r'<span class="scope-chip">([^<]+)<a href="([^"]+)"', bar)
     assert chip and chip.group(1).strip() == "Viet Nam" and chip.group(2) == "#document-rows", bar
@@ -1147,6 +1151,19 @@ def test_no_second_bar_outside_the_paper_trail_and_about(route) -> None:
 def test_the_paper_trail_landing_shows_its_steps_with_none_current() -> None:
     bar = step_bar("the-paper-trail")
     assert 'data-step="D1"' in bar and 'aria-current' not in bar
+    main = render("the-paper-trail")["main"]
+    sequential = re.search(r'<ol class="trail-intro">(.*?)</ol>', main).group(1)
+    assert sequential.count('<li>') == 3
+    assert 'Projects' not in sequential
+    assert 'class="referent-intro"' in main
+
+
+def test_decision_confidence_falls_back_and_leaves_unscored_rows_last():
+    rows = '[{row_key:"blank",stance_confidence:"",confidence:null},{row_key:"fallback",stance_confidence:null,confidence:"0.8"},{row_key:"scored",stance_confidence:"0.2",confidence:"0.9"}]'
+    result = render('methods', {}, f'orderDecisions({rows}, false).map(r => [r.row_key, decisionConfidence(r)])')["eval"]
+    assert result == [["scored", 0.2], ["fallback", 0.8], ["blank", None]]
+    result = render('methods', {}, f'orderDecisions({rows}, true).map(r => r.row_key)')["eval"]
+    assert result == ["fallback", "scored", "blank"]
 
 
 @pytest.mark.parametrize(("route", "current"), [

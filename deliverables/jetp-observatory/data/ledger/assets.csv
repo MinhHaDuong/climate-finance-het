@@ -1,0 +1,3 @@
+asset_id,country,name,technology,location,operator_party_id,part_of,notes
+asset-idn-pipe-cirebon-1-retirement,IDN,Cirebon-1 coal-fired power plant early retirement,Coal retirement,"Cirebon, West Java",,,Legacy idn-pipe-cirebon-1-retirement
+asset-idn-pelabuhan-ratu,IDN,PLTU Pelabuhan Ratu,coal-fired power plant,,,,CIPP coal-retirement plan line; not a project stage

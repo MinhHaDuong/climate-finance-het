@@ -1,5 +1,18 @@
 # Static observatory handoffs: one invocation, one JSON output; no collection.
 JETP_OBSERVATORY := deliverables/jetp-observatory
+JETP_LEDGER_DOWNLOADS := $(JETP_OBSERVATORY)/data/ledger
+JETP_LEDGER_DOWNLOAD_INPUTS := $(wildcard data/jetp/*.csv data/jetp/*.d/*.csv data/jetp/ontology/*.csv) \
+    data/jetp/migration/1620-register-dispositions.csv config/jetp-ledger.sql \
+    scripts/jetp/build_ledger_downloads.py scripts/jetp/_ledger_headers.py
+
+.PHONY: jetp-ledger-downloads
+jetp-ledger-downloads: $(JETP_LEDGER_DOWNLOADS)/inventory.json
+
+# The manifest owns dynamic shard filenames. Repair checks every sidecar on
+# each invocation, preserving timestamps when bytes match and pruning only
+# obsolete paths recorded in the previous manifest.
+$(JETP_LEDGER_DOWNLOADS)/inventory.json: jetp-current-ledger-input $(JETP_LEDGER_DOWNLOAD_INPUTS)
+	$(PYTHON) scripts/jetp/build_ledger_downloads.py --output-dir $(JETP_LEDGER_DOWNLOADS)
 JETP_OBSERVATORY_VIEWS := overview comparison coverage documents ZAF IDN VNM SEN
 JETP_OBSERVATORY_EDITION_HISTORY := $(JETP_OBSERVATORY)/data/editions.json
 JETP_OBSERVATORY_JSON := $(addprefix $(JETP_OBSERVATORY)/data/,$(addsuffix .json,$(JETP_OBSERVATORY_VIEWS)))
@@ -138,7 +151,7 @@ $(JETP_ACCOUNTS_DERIVED): jetp-current-ledger-input
 $(JETP_ACCOUNTS_VIEW): jetp-current-ledger-input
 	$(PYTHON) scripts/jetp/build_accounts.py --output $@
 
-jetp-observatory: jetp-m1b-check $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_ACCOUNTS_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
+jetp-observatory: jetp-m1b-check jetp-ledger-downloads $(JETP_ONTOLOGY_VIEWS) $(JETP_LINK_VIEWS) $(JETP_LEDGER_DOCUMENTS_VIEW) $(JETP_PARTY_NAMES_VIEW) $(JETP_ACCOUNTS_VIEW) $(JETP_OBSERVATORY_JSON) $(JETP_OBSERVATORY_EDITION_HISTORY) $(JETP_OBSERVATORY_PROVENANCE)
 
 $(JETP_PARTY_NAMES_VIEW): data/jetp/parties.csv data/jetp/party-names.csv scripts/jetp/build_party_names_view.py
 	$(PYTHON) scripts/jetp/build_party_names_view.py --output $@

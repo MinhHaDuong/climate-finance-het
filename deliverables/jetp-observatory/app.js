@@ -43,11 +43,10 @@ const pill = (text) => `<span class="pill">${esc(text)}</span>`;
 /* Ticket 0881 (docs/jetp-observatory-presentation.md): the pages are organised
  * by the four objects of docs/jetp-language.md and never name them. The page
  * top is two bars (author, 2026-09-23). The header holds three sections as
- * tabs, each with a dropdown of its pages. Under it, on every page of a
- * section, the section's sub-bar: one component for all three, plain sibling
- * tabs with the current page selected — no separators, no grouping. The
- * paper trail's tabs keep their step codes in data attributes; their order
- * is the trail's, carried by position and explained on #the-paper-trail. A
+ * tabs, each with a dropdown of its pages. The section's sub-bar marks the
+ * current page. The paper trail has three sequential steps and a separate
+ * side group for the identities its statements describe (author, 2026-09-29).
+ * Step codes stay in data attributes; the order is explained on #the-paper-trail. A
  * trail page scoped to a country shows it at the bar's right as a removable
  * chip, and every trail tab keeps the country. */
 const SECTIONS = {
@@ -68,17 +67,19 @@ const STEPS = [
     href: (code) => (code ? `#document-rows/${code}` : "#document-rows") },
   { step: "D3", page: "on-the-record", label: "Statements",
     href: (code) => (code ? `#statements/${code}` : "#statements") },
-  { step: "D4", page: "projects", label: "Projects",
+];
+const REFERENT_PAGES = [
+  { page: "projects", label: "Projects",
     href: (code) => (code ? `#projects?country=${code}` : "#projects") },
-  { step: "D4", page: "funding", label: "Funding",
+  { page: "funding", label: "Funding",
     href: (code) => (code ? `#funding/${code}` : "#funding") },
-  { step: "D4", page: "whos-who", label: "Organisations",
+  { page: "whos-who", label: "Organisations",
     href: (code) => (code ? `#organisations?country=${code}` : "#organisations") },
 ];
 const plain = (page, label, extra = {}) => ({ page, label, href: () => "#" + page, ...extra });
 /* The pages of each section, in the order its sub-bar and its dropdown list. */
 const SUB_PAGES = {
-  "the-paper-trail": STEPS,
+  "the-paper-trail": [...STEPS, ...REFERENT_PAGES],
   "the-tallies": [plain("counts", "Counts", { object: "E" }), plain("money", "Money"),
     plain("comparisons", "Non-JETP energy operations", { href: () => "#non-jetp-energy-operations" })],
   about: [
@@ -104,16 +105,17 @@ const knownCountry = (code) => (code && overview.countries.some((c) => c.code ==
 function subBar(section, page, rawCode) {
   const current = CURRENT[page] || page;
   const code = section === "the-paper-trail" ? knownCountry(rawCode) : "";
-  const tabs = SUB_PAGES[section]
+  const tab = (s) => `<li><a href="${esc(s.href(code))}" data-sub="${s.page}"${s.step ? ` data-step="${s.step}"` : ""}${s.object ? ` data-object="${s.object}"` : ""}${s.page === current ? ' aria-current="page"' : ""}>${esc(s.label)}</a></li>`;
+  const tabs = (section === "the-paper-trail" ? STEPS : SUB_PAGES[section])
     .map(
-      (s) =>
-        `<li><a href="${esc(s.href(code))}" data-sub="${s.page}"${s.step ? ` data-step="${s.step}"` : ""}${s.object ? ` data-object="${s.object}"` : ""}${s.page === current ? ' aria-current="page"' : ""}>${esc(s.label)}</a></li>`,
+      tab,
     )
     .join("");
   const chip = code
     ? `<span class="scope-chip">${esc(country(code).name)} <a href="#${esc(CANONICAL[current] || current)}" aria-label="Remove the ${esc(country(code).name)} filter" data-scope-remove="${esc(code)}">×</a></span>`
     : "";
-  return `<ul class="sub-tabs" data-sub-bar="${section}">${tabs}</ul>${chip}`;
+  const side = section === "the-paper-trail" ? `<ul class="sub-tabs referent-tabs" data-side-group="referents" aria-label="What the statements describe">${REFERENT_PAGES.map(tab).join("")}</ul>` : "";
+  return `<ul class="sub-tabs" data-sub-bar="${section}">${tabs}</ul>${side}${chip}`;
 }
 /* One sentence under the title; the rest of the page's explanation, word for
  * word, folded under "About this page". */
@@ -325,7 +327,7 @@ function vietnamSideBySide(d) {
   const source = rmp.sublayers[0]?.source_id || "vnm-rmp-2023";
   const initial = d.reported_counts.find((row) => row.id === "0877.vnm-2025-initial-count");
   const screened = d.reported_counts.find((row) => row.id === "0877.vnm-2025-screened-count");
-  return `<section class="section" id="vnm-side-by-side" style="margin-top:35px"><div class="section-head"><h2>Two lists, kept apart</h2></div><div class="split"><div class="panel" data-side="rmp-2023"><h3>RMP 2023 plan</h3><p><strong>${fmt(rmp.row_count)}</strong> document rows in the Resource Mobilisation Plan, <code>${esc(source)}</code>. <span class="computed-tag">Our calculation</span></p><a class="text-link" href="#document-rows/VNM">Browse the plan rows →</a></div><div class="panel" data-side="portfolio-2025"><h3>2025 portfolio report</h3><p><strong>${esc(initial?.value || "—")}</strong> initial proposals and <strong>${esc(screened?.value || "—")}</strong> newly screened proposals. <span class="published-tag">As published</span></p><p>${d.project_count} reviewed project identity in this ledger. The reported counts do not name every proposal.</p><a class="text-link" href="#projects?country=VNM">Browse reviewed projects →</a></div></div><p class="note">These plan rows, reported proposal counts and reviewed project identities are separate units. They are not added or matched by their position in a list.</p></section>`;
+  return `<section class="section" id="vnm-side-by-side" style="margin-top:35px"><div class="section-head"><h2>Two lists, kept apart</h2></div><div class="split"><div class="panel" data-side="rmp-2023"><h3>RMP 2023 plan</h3><p><strong>${fmt(rmp.row_count)}</strong> document rows in the Resource Mobilisation Plan, <code>${esc(source)}</code>. <span class="computed-tag">Our calculation</span></p><a class="text-link" href="#document-rows/VNM">Browse the plan rows →</a></div><div class="panel" data-side="portfolio-2025"><h3>2025 portfolio report</h3><p><strong>${esc(initial?.value || "—")}</strong> initial proposals and <strong>${esc(screened?.value || "—")}</strong> newly screened proposals. <span class="published-tag">As published</span></p><p>${d.project_count} reviewed project identity in this ledger. The reported counts do not name every proposal.</p><a class="text-link" href="#projects?country=VNM">Browse reviewed projects →</a> · <a href="#statements/VNM?perimeter=vnm-jetp-portfolio-2025">Follow the published counts to their cited lines →</a></div></div><p class="note">These plan rows, reported proposal counts and reviewed project identities are separate units. They are not added or matched by their position in a list.</p></section>`;
 }
 function projectTable(rows) {
   if (!rows.length)
@@ -446,6 +448,7 @@ function filterTable(id, rows, opts) {
     if (next) next.addEventListener("click", step(1));
   };
   const mount = () => {
+    if (opts.search?.selected) document.getElementById(id + "-search").value = opts.search.selected;
     document
       .querySelectorAll(`#${id}-filters input,#${id}-filters select`)
       .forEach((el) =>
@@ -961,6 +964,7 @@ function documentsPage(params) {
     ],
     search: {
       label: "Search document titles, identifiers and addresses",
+      selected: params.get("source") || "",
       placeholder: "Try investment plan, jet-investment-register, .pdf…",
       text: (r) => (documentTitle(r) + " " + r.id + " " + (r.url || "")).toLowerCase(),
     },
@@ -1950,6 +1954,57 @@ function methodsPage() {
       "What we collected, how we read it, what we counted, and what this observatory does not do. Every figure can be followed back to its page.",
     ) +
     `<div class="method-list"><h2>What this release contains</h2><p>${projects.length} reviewed projects, ${agreementCount()} agreements, ${overview.source_count} documents cited by country pages and ${comparison.projects.length} closed historical operations. Reviewed project identities include programmes and components; they are not ${projects.length} distinct physical assets. Knowledge cutoff: ${date(overview.provenance.cutoff)}. Each country's reports keep their own dates.</p><h2>The paper trail, step by step</h2><p>The <a href="#documents">Documents</a> page lists the publications sought and the outcome of each retrieval. The <a href="#document-rows">Document rows</a> page preserves selected rows and their document wording. The <a href="#statements">Statements</a> page shows v2 observations and identity citations with their publisher and document location. A row may support several statements, while statements may come from prose. <a href="#projects">Projects</a>, <a href="#funding">Funding</a> and <a href="#organisations">Organisations</a> show the undertakings, financing and named organisations those documents discuss.</p><h2>Words and numbers</h2><p>The <a href="#glossary">Glossary</a> defines the words these pages use. A number a publisher printed is marked “As published” and shown with its publisher and date. A number we counted is marked “Our calculation”, with its unit and what it covers, and links to what was counted; <a href="#counts">The tallies</a> gathers them.</p><h2>What this observatory does not do</h2><p>It does not explain. It tests no causal explanation of why a partnership moves fast or slow, and estimates no effect of the partnerships. It does not add amounts across documents, nor a project's amounts to a partnership's headline. It does not convert or deflate amounts. It does not treat a plan, an approval or a register line as a payment. It does not match a 2023 plan position to a 2025 portfolio project. Missing payment data is not a zero payment.</p><h2>Three different kinds of progress</h2><p>Financial items distinguish needs, announcements, memoranda, approvals, signatures and disbursements. Delivery observations remain distinct from financing observations. Documentary coverage describes what we could locate, not what a project achieved. Register-derived dates are not presented as verified signature dates.</p><h2>How the national figures work</h2><p>Headline financing amounts reproduce attributed national reports; they are not computed by adding project events. The milestones differ across countries, so headline amounts must not be pooled. Portfolio bars count each reviewed project once, at the most advanced financing milestone coded for it; agreements and assets are counted separately. “Not coded in ledger” does not mean “no finance”. No project-level disbursement total is available in this release.</p><h2>Earlier energy operations: context, not an effect estimate</h2><p>${esc(comparison.method)} ${esc(comparison.date_note)} The API may contain older status snapshots; retrieval date is not the date of its latest substantive update. Energy-related includes mixed-sector operations, and additional-financing operations may refer to the same underlying investment. Comparisons of preparation speed require a credible causal design from the separate lifecycle research programme.</p><h2>Dates, conflicts and missing items</h2><p>Event dates, date intervals, dated status reports and collection dates remain distinct. Timing is adjudicated independently of the publisher's authority; unreviewed timing is labelled and cannot supply an event date. Document cards show cited v2 identity lines and collection outcomes. Historical downloads preserve each acquisition date and query-page hash; the substantive update date is unknown unless separately documented. Conflicting values are preserved in notes; we do not average them. Publisher proposal counts appear separately from reviewed project identities; unnamed proposals do not receive invented project pages. Original-currency amounts remain the reference. An extract's unknown field values count the cells its document prints but leaves blank or unreadable, not the empty columns of our own extraction.</p><section data-method="fingerprints"><h2>Fingerprints and archived copies</h2><p>Every document we collected is listed with the SHA-256 fingerprint of the bytes we read: a short code computed from the file, which changes if a single byte does. Compute it on any copy you obtain — from the publisher today, from a colleague, or from the Web Archive — and compare. The same fingerprint means exactly the file we read; a different one means a different file, even when it looks the same, because a publisher may replace a file at the same address. A PDF's “Web Archive copy” link opens the archived file itself, which can be checked this way. An archived web page cannot, and a mismatch there is expected: the Web Archive replays the page with its own banner and rewritten links, and a live page changes from one visit to the next, so its bytes never match what we read even when its text does.</p></section><h2>Download this snapshot</h2><div class="downloads">${overview.countries.map((c) => `<a class="button light" href="data/${c.code}.json" download>${esc(c.name)} ↓</a>`).join("")}<a class="button light" href="data/comparison.json" download>Historical cohort ↓</a><a class="button light" href="data/documents.json" download>Collection registry ↓</a><a class="button light" href="data/overview.json" download>Overview & input hashes ↓</a><a class="button light" href="data/provenance.json" download>Where each headline comes from ↓</a></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa document rows ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia document rows ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam document rows ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal document rows ↓</a><a class="button light" href="data/m1a/manifest.json" download>Document rows manifest ↓</a></div><p>JSON downloads include project data, document addresses and locators. Input SHA-256 hashes identify the files used to build this preview. This is a local preview, not yet a formally deposited monthly release; the <a href="#release-history">release history</a> lists what was prepared. Original documents retain their publishers' rights; their bulk redistribution is not implied.</p><h2>Reproducible, without a live database</h2><p>Markdown provides editorial context; CSV registries provide the structured data. The static website reads generated JSON. DVC preserves the research document archive, independently of the website. No visitor needs access to the archive or a database service.</p><p class="note">Input Git revision: <code>${esc(overview.provenance.input_git_sha || "Uncommitted preview inputs; use the file hashes")}</code><br>Release: ${esc(overview.provenance.edition)}</p></div>`;
+  main.innerHTML += `<section id="storage-inventory"><h2>Ledger tables and reviewed decisions</h2><p>Loading the table inventory…</p></section>`;
+  methodsLedger();
+}
+
+const ledgerObjects = (view) => view.rows.map((row) => Object.fromEntries(view.fields.map((key, i) => [key, row[i]])));
+function decisionConfidence(row) {
+  for (const value of [row.stance_confidence, row.confidence]) {
+    if (value == null || String(value).trim() === "") continue;
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) return numeric;
+  }
+  return null;
+}
+function orderDecisions(rows, high) {
+  return [...rows].sort((a, b) => {
+    const left = decisionConfidence(a), right = decisionConfidence(b);
+    if (left == null) return right == null ? 0 : 1;
+    if (right == null) return -1;
+    return (left - right) * (high ? -1 : 1);
+  });
+}
+async function methodsLedger() {
+  const inventory = await load("ledger/inventory");
+  const target = document.getElementById("storage-inventory");
+  if (!target || !location.hash.startsWith("#methods")) return;
+  target.innerHTML = `<h2>Ledger tables and reviewed decisions</h2><p>${esc(inventory.register_policy)}</p><p>A complete download preserves the canonical CSV bytes, headers and identity keys. Shards are parts of one table. Partial projections are labelled separately; their row counts must not be added to complete tables or country views.</p><div class="table-wrap"><table><thead><tr><th>Table · keys</th><th>Complete download</th><th>Partial projection / reason for omission</th></tr></thead><tbody>${inventory.tables.map((t) => `<tr data-storage-table="${esc(t.table)}"><td><code>${esc(t.table)}</code><small>${esc(t.keys.join(" · "))}</small></td><td>${t.fully_served ? t.files.map((f) => `<a href="${esc(f.path)}" download>${esc(f.path.split("/").pop())} ↓</a>`).join("<br>") : "Not fully served"}${t.rows == null ? "" : `<small>${fmt(t.rows)} canonical rows in this one table</small>`}</td><td>${esc(t.reason)}${t.projections.map((p) => `<p><a href="${esc(p.path)}" download>Partial projection (${fmt(p.rows)} rows) ↓</a> · ${esc(p.reason)}</p>`).join("")}</td></tr>`).join("")}</tbody></table></div><h2>Reviewed register decisions</h2><p>The 152 decision rows preserve stance, confidence, quoted justification and the independent readers. Rows with the lowest stance confidence appear first; reading confidence is used when stance confidence is absent, and unscored rows stay last.</p><p><a href="${esc(inventory.decision_record.path)}" download>Complete decision record (CSV) ↓</a></p><label>Sort by stance confidence<select id="register-confidence-sort"><option value="low">Lowest first</option><option value="high">Highest first</option></select></label><div id="register-decision-rows"></div>`;
+  const records = ledgerObjects(await load("ledger/register-decisions"));
+  if (!location.hash.startsWith("#methods") || document.getElementById("storage-inventory") !== target) return;
+  const update = () => {
+    const high = document.getElementById("register-confidence-sort").value === "high";
+    const ordered = orderDecisions(records, high);
+    document.getElementById("register-decision-rows").innerHTML = `<div class="table-wrap"><table><thead><tr><th>Register · row</th><th>Stance confidence</th><th>Disposition · owner</th><th>Stance, justification and readers</th></tr></thead><tbody>${ordered.map((r) => `<tr data-register-row="${esc(r.register + ":" + r.row_key)}" data-confidence="${esc(decisionConfidence(r) ?? "")}"><td>${esc(r.register)}<small><code>${esc(r.row_key)}</code></small></td><td>${esc(decisionConfidence(r) ?? "Unscored")}</td><td>${esc(r.disposition)} · ${esc(r.owner)}</td><td><details><summary>${esc(r.stance)}</summary><p>${esc(r.evidence)}</p><p>${esc(r.note)}</p><p>Panel: ${esc(r.panel_decided_by)} · ${esc(r.agreement)}</p><p>Fable: ${esc(r.fable_verdict)} · ${esc(r.fable_score)}<br>Codex: ${esc(r.codex_verdict)} · ${esc(r.codex_score)} · ${esc(r.codex_basis)}<br>Vibe: ${esc(r.vibe_verdict)} · ${esc(r.vibe_score)} · ${esc(r.vibe_basis)}</p><p>Recorded by ${esc(r.decided_by)} on ${esc(r.decided_at)}; reading confidence ${esc(r.confidence)}.</p></details></td></tr>`).join("")}</tbody></table></div>`;
+  };
+  document.getElementById("register-confidence-sort").addEventListener("change", update);
+  update();
+}
+
+async function perimeterPage() {
+  const route = location.hash;
+  main.innerHTML = header("Viet Nam: published portfolio counts", "Two statements about the same July 2025 portfolio. Seven initial proposals and seventeen new screened proposals remain separate; no inferred total or invented project identities.") + '<p>Loading the cited statements…</p>';
+  const [observationView, lineView, coverageView] = await Promise.all([
+    load("ledger/vnm-perimeter-observations"), load("ledger/vnm-perimeter-lines"), load("coverage"),
+  ]);
+  if (location.hash !== route) return;
+  const lines = ledgerObjects(lineView);
+  const coverage = coverageView.coverage.filter((r) => r.referent_kind === "perimeter" && r.referent_id === "vnm-jetp-portfolio-2025");
+  const observations = ledgerObjects(observationView).filter((o) => observationView.in_force.includes(o.observation_id));
+  main.innerHTML = header("Viet Nam: published portfolio counts", "The publisher's seven initial proposals and seventeen newly screened proposals describe separate populations. Their identities are not completely published; these counts are not sums of project pages.") + observations.map((o) => {
+    const line = lines.find((l) => l.line_id === o.line_id);
+    return `<section data-perimeter-observation="${esc(o.observation_id)}"><h2><span class="reported-tag">As published</span> ${esc(o.value)} ${esc(o.unit)}</h2><p>${esc(o.notes)}</p><dl class="facts"><dt>Observation</dt><dd><code>${esc(o.observation_id)}</code></dd><dt>Perimeter</dt><dd><code>${esc(o.subject_id)}</code></dd><dt>Method</dt><dd>${esc(o.method)} · version ${esc(o.method_version)}</dd></dl><details data-perimeter-line="${esc(line.line_id)}"><summary>Cited line: ${esc(line.line_id)}</summary><p>${esc(line.label)}</p><p>Locator: ${esc(line.locator)}<br>Snapshot: <code>${esc(line.sha256)}</code></p><p>${esc(line.notes)}</p><p>This line is a preserved local transcription; its locator and notes retain the original document identifiers and locations. The coverage review below records the three documents separately.</p></details></section>`;
+  }).join("") + `<h2>Coverage of this perimeter</h2>${coverage.map((r) => `<section data-perimeter-coverage="${esc(r.referent_id)}"><p>${esc(r.review_status)} · checked ${esc(r.checked_at)} · ${esc(r.route)}</p><p>${esc(r.notes)}</p><ul>${r.document_ids.split(";").filter(Boolean).map((id) => `<li data-perimeter-document="${esc(id)}"><a href="#documents?country=VNM&source=${encodeURIComponent(id)}">${esc(documentIndex[id]?.title || id)} →</a><small><code>${esc(id)}</code></small>${sourceLink(documentIndex[id], "Publisher's page")}</li>`).join("")}</ul></section>`).join("")}<p><a href="data/ledger/vnm-perimeter-observations.csv" download>Partial perimeter observations ↓</a> · <a href="data/ledger/vnm-perimeter-lines.csv" download>Partial cited lines ↓</a> · <a href="data/ledger/coverage.csv" download>Complete coverage table ↓</a></p>`;
 }
 function notFound() {
   main.innerHTML =
@@ -2095,6 +2150,7 @@ function paperTrailPage() {
       "Start with a project, amount or count and follow its links to the documents behind it. You can also start with a document and see what we recorded from it; these pages show different views of the same material, so their row counts should not be added together.",
     ) +
     `<ol class="trail-intro">${STEPS.map((s) => `<li><a href="${s.href("")}"><strong>${esc(s.label)}</strong></a> ${esc(STEP_NOTES[s.page])}</li>`).join("")}</ol>` +
+    `<aside class="referent-intro"><h2>What the statements describe</h2><p>Identities are matched from document rows and linked by the statements. Browse them separately:</p><ul>${REFERENT_PAGES.map((s) => `<li><a href="${s.href("")}">${esc(s.label)}</a> ${esc(STEP_NOTES[s.page])}</li>`).join("")}</ul></aside>` +
     `<p>For example, South Africa's <a href="#document-rows/ZAF?row=1">ACTIP001 register row</a> names the Skills Research Programme and prints USD 2.28 million. A <a href="#statements/ZAF">separate statement</a> shows that amount at the signed milestone, citing the same register row (ACTIP001). One document row need not yield exactly one statement.</p><p class="note">The words are defined in the <a href="#glossary">Glossary</a>.</p>`;
 }
 const STEP_NOTES = {
@@ -2121,7 +2177,7 @@ function render() {
   else if (page === "referents") referentsPage(id);
   else if (page === "project") projectPage(decodeURIComponent(id || ""));
   else if (page === "comparisons") comparisonPage(params);
-  else if (page === "on-the-record") id ? inventoryPage(id, params, "record") : evidencePage();
+  else if (page === "on-the-record") id === "VNM" && params.get("perimeter") === "vnm-jetp-portfolio-2025" ? perimeterPage() : id ? inventoryPage(id, params, "record") : evidencePage();
   else if (page === "release-history") editionHistoryPage();
   else if (page === "documents") documentsPage(params);
   else if (page === "entries") id ? inventoryPage(id, params, "") : entriesPage();

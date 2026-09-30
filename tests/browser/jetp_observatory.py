@@ -527,11 +527,15 @@ def check_paper_trail(page, url):
         assert page.locator('main .eyebrow, main nav.trail, main [role="tablist"]').count() == 0
 
     def step(label):
-        page.locator(f'#step-bar a[data-step]:text-is("{label}")').click()
+        page.locator(f'#step-bar a[data-sub]:text-is("{label}")').click()
 
     page.goto(url + '/#project/project-vnm-project-bac-ai-pumped-hydro')
     at_step('Projects', 'project/project-vnm-project-bac-ai-pumped-hydro')
     assert 'Viet Nam' in page.locator('#step-bar .scope-chip').inner_text()
+    assert page.locator('#step-bar [data-step]').all_text_contents() == [
+        'Documents', 'Document rows', 'Statements']
+    assert page.locator('#step-bar [data-side-group="referents"] a').all_text_contents() == [
+        'Projects', 'Funding', 'Organisations']
     step('Statements')
     at_step('Statements', 'statements/VNM')
     page.wait_for_selector('#observations-results tbody tr')
@@ -827,7 +831,50 @@ def check_historical_pool(page, url, count):
     assert page.locator('#history-table .empty').count() == 1
 
 
-def check_site(url, output, ticket_0902_only=False):
+def check_ticket_0870(page, url):
+    """Actual closeout contract; no legacy 3+21 or Bac Ai citation assumptions."""
+    page.goto(url + '/#methods')
+    page.wait_for_selector('[data-register-row]')
+    assert page.locator('[data-storage-table]').count() == 31
+    assert page.locator('[data-register-row]').count() == 152
+    scores = page.locator('[data-register-row]').evaluate_all(
+        'rows => rows.map(row => Number(row.dataset.confidence))')
+    assert scores == sorted(scores)
+    first = page.locator('[data-register-row]').first
+    first.locator('summary').click()
+    assert 'Panel:' in first.inner_text()
+    assert 'Fable:' in first.inner_text() and 'Codex:' in first.inner_text()
+    assert 'Vibe:' in first.inner_text()
+    page.locator('#register-confidence-sort').select_option('high')
+    scores = page.locator('[data-register-row]').evaluate_all(
+        'rows => rows.map(row => Number(row.dataset.confidence))')
+    assert scores == sorted(scores, reverse=True)
+    download_matches(page, url, 'data/ledger/migration/1620-register-dispositions.csv')
+    page.goto(url + '/#funding/VNM')
+    page.wait_for_selector('#vnm-side-by-side')
+    page.locator('a[href="#statements/VNM?perimeter=vnm-jetp-portfolio-2025"]').click()
+    page.wait_for_selector('[data-perimeter-observation]')
+    assert page.locator('[data-perimeter-observation]').count() == 2
+    assert {p.inner_text().split('proposals')[0].strip()[-2:].strip()
+            for p in page.locator('[data-perimeter-observation] h2').all()} == {'7', '17'}
+    for line in page.locator('[data-perimeter-line]').all():
+        line.locator('summary').click()
+        assert 'publisher_locator=' in line.inner_text()
+        assert 'Snapshot:' in line.inner_text()
+    assert page.locator('[data-perimeter-coverage]').count() == 1
+    assert page.locator('[data-perimeter-document]').count() == 3
+    links = page.locator('[data-perimeter-document] a[href^="#documents"]').evaluate_all(
+        'links => links.map(link => link.getAttribute("href"))')
+    for link in links:
+        source_id = link.split('source=')[1]
+        page.goto(url + '/' + link)
+        page.wait_for_selector('#documents-results')
+        assert page.locator('#documents-search').input_value() == source_id
+        assert page.locator('#documents-results tbody tr').count() == 1
+        assert page.locator(f'a[data-document-id^="{source_id}:"][data-link="publisher"]').count() >= 1
+
+
+def check_site(url, output, ticket_0902_only=False, ticket_0870_only=False):
     """Exercise data navigation, filtering, downloads and mobile layout."""
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True, args=['--no-sandbox'])
@@ -846,6 +893,10 @@ def check_site(url, output, ticket_0902_only=False):
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.goto(url)
         page.wait_for_selector('.country-grid')
+        if ticket_0870_only:
+            check_ticket_0870(page, url)
+            assert not errors and not external_requests, (errors, external_requests)
+            return
         check_ticket_0902(page, url)
         if ticket_0902_only:
             assert not errors, errors
@@ -879,6 +930,7 @@ def check_site(url, output, ticket_0902_only=False):
         check_documents_row_height(page, url)
         check_inventory(page, url, staged)
         check_v2_country_views(page, url)
+        check_ticket_0870(page, url)
         check_observations(page, url, staged)
         check_paper_trail(page, url)
         check_sections(page, url)
@@ -930,5 +982,6 @@ if __name__ == '__main__':
     parser.add_argument('--url', default='http://127.0.0.1:8765')
     parser.add_argument('--screenshot', type=Path, default=Path('/tmp/jetp-overview.png'))
     parser.add_argument('--ticket-0902-only', action='store_true')
+    parser.add_argument('--ticket-0870-only', action='store_true')
     args = parser.parse_args()
-    check_site(args.url.rstrip('/'), args.screenshot, args.ticket_0902_only)
+    check_site(args.url.rstrip('/'), args.screenshot, args.ticket_0902_only, args.ticket_0870_only)

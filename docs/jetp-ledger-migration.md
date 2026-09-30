@@ -105,7 +105,7 @@ Order of work, each step a ticket with its own byte-level check:
    rows. The four served views project the accepted v2 events and their exact
    cited lines into the browser contract. Eight unsupported physical claims
    remain in the pending register and are absent from those views; all 315
-   project-source-links remain on their legacy reader until its own migration.
+   project-source-links were retained until ticket 0878 retired their legacy reader.
    Tickets 0887
    and 0888 have already written the independent status and sector crosswalks:
    four South African register status words and Indonesia's approval word,
@@ -136,3 +136,49 @@ Order of work, each step a ticket with its own byte-level check:
    line, 17 project identifiers handed to M1b.
 6. Perimeter observations replace configured headlines.
 7. Remove the retired tables and the compatibility readers.
+
+## Current migration census (0870, 2026-09-30)
+
+These are actual current canonical rows at `dd98e868`, including comparator
+imports and decisions made after the migration waves. They are not targets,
+counts of distinct projects or sums of the historical inputs above. Shards
+are read as one table; superseded and rejected rows remain in this census.
+
+| Canonical table | Rows | Canonical table | Rows |
+|---|---:|---|---:|
+| `terms` | 233 | `status-crosswalk` | 15 |
+| `sector-crosswalk` | 30 | `perimeters` | 7 |
+| `marker-coefficients` | 12 | `parties` | 193 |
+| `party-names` | 195 | `documents` | 392 |
+| `document-publishers` | 403 | `retrievals` | 426 |
+| `snapshots` | 369 | `lines` | 13 092 |
+| `line-field-specs` | 97 | `projects` | 64 |
+| `assets` | 2 | `agreements` | 315 |
+| `line-referents` | 382 | `relations` | 4 021 |
+| `observations` | 48 367 | `timings` | 24 230 |
+| `external-ids` | 12 840 | `adjudications` | 0 |
+| `adjudication-members` | 0 | `rates` | 0 |
+| `deflators` | 20 | `routes` | 1 907 |
+| `coverage` | 145 | | |
+
+The 1620 record contains 152 rows: 52 `terminal`, 31 `resolved`, 25 `covered`,
+17 `moved_to_owner`, 11 `rejected`, 9 `minted_and_covered`, 4 `left_uncovered`,
+2 `pending_owner` and 1 `revoked`. These are decision records, preserving
+overlap and supersession, not 152 distinct legacy items.
+
+The observatory's Methods inventory names every storage-contract §1 table,
+its keys, complete raw CSV downloads or its reason for not being fully
+served. Complete lines and observations retain their canonical country-year
+shards. Bulk timings, external identifiers and per-document fields are
+explicitly omitted; partial projections are labelled. The 152 decisions are downloadable
+verbatim and browsable by stance confidence, lowest first, with their
+justification and readers. The Viet Nam count links follow the two accepted
+perimeter observations (`7` initial and `17` newly screened proposals), their
+exact local-record lines and original locator notes, the one perimeter
+coverage row, and its three documents. They do not create unnamed project
+pages or infer a 24-project tally.
+
+Migration reads each old register once into reviewed, append-only records.
+Routine site builds read the current canonical tables and decisions; they
+never rerun those register ingestions. The frozen M1b release remains the
+release originally reviewed, independently of subsequent live ledger changes.

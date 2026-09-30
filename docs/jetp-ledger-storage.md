@@ -120,15 +120,22 @@ Rules that the validator enforces:
   member: its `groups` column names the heading, a foreign key into `lines`,
   since a column holds one value and a heading governs many lines; the heading
   is a line of the same snapshot and never the member itself (ticket 0873).
-- A `line_id` is minted by the extractor as `<document_id>-<table>-<ordinal>`,
-  in extraction order, appended only and never renumbered: a re-extraction
-  that finds a dropped row appends it under the next ordinal. The pair
+- A `line_id` is a minted key, independent of a row's changing attributes.
+  Document extractors mint `<document_id>-<table>-<ordinal>` in extraction
+  order; a re-extraction that finds a dropped row appends it under the next
+  ordinal. API snapshot keys retain the publisher's record identifier (an
+  SDMX key, P-number or IATI activity identifier or its hash). Reviewed
+  additions of previously unextracted passages use decision-scoped keys
+  (`idn-progress25-...` for 0970, `line-1160-...` for 1160). All three
+  families are appended only and never renumbered. The pair
   (`sha256`, `locator`) is unique across `lines` as a check, not as the key,
   so no two lines claim the same place in the same bytes and a locator too
   coarse to be unique, such as a whole report, is refused at ingestion.
   Decided by the author on 2026-09-22: a minted key keeps the row's identity
   independent of its attributes, which is the normal form; the fingerprint and
   locator stay on the row as provenance.
+  Amended by the author on 2026-09-29 to describe the API and reviewed-decision
+  families already present; no existing identifier is renamed.
 - A referent is minted only by a `line-referents` row with a basis; no
   ingestion script writes to `projects`, `assets`, `agreements`, `parties` or
   `perimeters`. The one exception is a party in a publishing role, which the
