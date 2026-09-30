@@ -304,7 +304,8 @@ intended output.
 
 **How the Observer complies.** Operation §5–§7: readers are open-weight
 models run locally on padme (no transfer), the same models through
-OpenRouter as fallback, and a hosted arbiter through OpenRouter. OpenRouter
+OpenRouter as fallback, a hosted arbiter through OpenRouter, and two hosted
+vision readers for the one held scan. OpenRouter
 documents `data_collection: "deny"` and `zdr: true` request parameters and
 a sovereign (EU-hosted) routing option with its own availability
 conditions; its terms also carry input-categorisation and licensing
@@ -359,8 +360,9 @@ annual plan of the responsible body.
 disclosure of AI-generated text published to inform the public on matters
 of public interest, except under human review and editorial responsibility;
 the Observatory's pages are authored and reviewed, the LLM readings are
-data with a recorded human check (operation §5); the exception is to be
-stated explicitly.
+data calibrated on human reference answers (extraction §6.3) in a release
+a named reviewer accepts (results §5); the exception is to be stated
+explicitly.
 
 **How the Observer complies, and what must change.** PR #1617 adds a
 Legal page under About with the notice fields, the licence statement, the
@@ -439,8 +441,9 @@ basis stated above and no legal service is consulted.
    forbidding all automated access on a free-registration site (section 1)?
 6. Which source tables are protected databases, who produced them, and
    which complete or cumulative exports need a licence, in particular the
-   four plans' project tables and any EU-established publisher's table
-   (section 2)?
+   four plans' project tables and any EU-established publisher's table,
+   given that the ledger tables, per-document fields included, sit in a
+   public repository before any release (section 2)?
 7. Which outputs fall under the CRPA licensing regime and which remain the
    researcher's works; CC BY 4.0 or Licence Ouverte 2.0 (section 6)?
 8. Are OpenRouter and each permitted endpoint approved, with the R122-23

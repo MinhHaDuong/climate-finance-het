@@ -16,14 +16,10 @@ also the author's instrument for noticing anomalies (requirement Q20); how
 it shows them is the [presentation](jetp-observatory-presentation.md)'s
 business.
 
-Every rule carries, in square brackets, the milestone that needs it: M2 (an
-extraction pipeline that works on every document held), M3a (discovery to a
-cutoff, then the register frozen), M3b (the new documents extracted,
-matched and released), M4 (operation), or later. The rule is "something
-that works first, then M4 polishes": M2 and M3 need only what makes a run
-correct, reproducible and affordable. Scheduling, unattended refresh,
-link-rot checks, the pass launcher and the move of the document store to
-Zotero are M4 and are not built before it.
+Milestone tags in square brackets follow the [index](jetp-spec.md): M2 and
+M3 need only what makes a run correct, reproducible and affordable;
+scheduling, unattended refresh, link-rot checks, the pass launcher and the
+move of the document store to Zotero are M4.
 
 ## 1. Principles
 
@@ -126,9 +122,9 @@ author steers, arbitrates and accepts each milestone (requirements § 3.2).
 
 - Every change lands through a branch and a pull request; `main` is not
   written directly.
-- The merge gate is `make check-fast` and `make lint`; a change that writes
-  data, DVC outputs or deposits also passes the full `make check` on padme
-  before merging.
+- The merge gate is `make check-fast` and `make lint`; a change to code that
+  writes data, DVC outputs or deposits also passes the full `make check` on
+  padme before merging.
 - A change is reviewed by an LLM of another family than the one that wrote
   it (requirement Q19), and the review's findings are answered on the pull
   request before merge.
@@ -147,7 +143,8 @@ change's and checks the run rather than its rows: [M2]
 - the run report (section 8), which carries a table-aware summary: rows
   added, superseded and rejected per table and per document.
 
-The cross-family reviewer (requirement Q19) reads the run report and a
+The reviewer (requirement Q19), of a family other than the readers' and
+the arbiter's, reads the run report and a
 sample of traceability chains, each from a statement or judgement down to
 its readings, its locator and its snapshot, not every row; the row check is
 the readers' protocol of section 5. A pull request that changes code, rules
@@ -175,7 +172,8 @@ Dolt option]
 **What agents may not do.** [M2 unless stated]
 
 - Raise a budget, draw on prepaid credit, or top up a paid account.
-- Admit a document, accept a milestone, freeze the register, cut a release,
+- Admit a document by hand, outside the triage of collection § 9; accept a
+  milestone, freeze the register, cut a release,
   or publish the Observatory (`make jetp-observatory-publish` is run by the
   author, from `main`, after a release is accepted).
 - Pass a site's human check, use a login the public cannot freely obtain, or
@@ -286,11 +284,11 @@ the GPU budget. [M2, requirement Q17]
   machine that uses it. Runs happen on padme, so padme holds the keys for
   paid services; doudou holds only those its own sessions need (the
   repository-scoped GitHub token). [M2]
-- **Providers in use.** LLM readers: `anthropic`, `openai`,
-  `mistral`, `deepseek`, `alibaba`, `openrouter`. Search and bibliography:
-  `openalex`, `tavily`, `semanticscholar`. Archiving: `archive` (Internet
-  Archive account). Forge: `github`, with the repository-scoped token only.
-  Deposit: `zenodo` [M3b]. Document store: `zotero` [M4]. [M2 unless
+- **Providers in use.** LLMs: `openrouter`; a direct provider key only when
+  a role uses one. Search and bibliography: `openalex`, `tavily`,
+  `semanticscholar`. Archiving: `archive` (Internet Archive account). Forge:
+  `github`, with the repository-scoped token only. Off-site copy: `zotero`
+  (the document store from M4). Deposit: `zenodo` [M3b]. [M2 unless
   stated]
 - **The reading rule.** A tool names the provider and the variable it needs
   and reads that one value immediately before the authenticated call,
@@ -330,22 +328,13 @@ measurements, or a judgement. [M2]
   20 % of their bytes as text, they add about 1 million. The held documents
   are therefore about 4 million tokens. Vietnamese and Indonesian text uses
   more tokens per character, so this is a floor.
-- **Prices per million tokens, input / output** (derived by regressing the
-  recorded cost on recorded tokens over the AEDIST benchmark's measurement
-  log): frontier tier, Anthropic Opus 5 / 25 and OpenAI GPT-5.5 2.5 / 15;
-  mid tier, Anthropic Sonnet 3 / 15 and Qwen3.7-max 2.5 / 7.5; economy tier,
-  Mistral Large 0.5 / 1.5, DeepSeek V3.2 0.26 / 0.38, Gemini Flash-Lite
-  0.1 / 0.4. Prices move; the run records the actual cost.
-- **The M2 assisted pass** (derived). The LLM readers read only the 115
-  documents with a snapshot and nothing extracted (requirements DA2); the
-  254 documents already extracted are replayed without an LLM (extraction
-  § 10), so a rerun of the pipeline costs nothing in LLM spend. The
-  prototype run measured USD 0.03 to 0.08 per document with hosted readers;
-  with a margin for parts and repair calls, the M2 pass costs about USD 15
-  to 30. For scale only: a full assisted pass over every held object, reader
-  and second reader each reading the whole text (about 9 million input tokens with
-  prompts and 1 million output tokens), would cost about USD 42 at mid tier,
-  USD 55 with a frontier pair and USD 5 with an economy pair.
+- **The M2 assisted pass.** The readers read only the 115 documents with a
+  snapshot and nothing extracted (requirements DA2); the 254 already
+  extracted are replayed without an LLM (extraction § 10). The readers are
+  local, so the paid spend is the arbiter's calls on what they leave open,
+  the transcription of the held scan and the selection runs. None is
+  measured yet: the first calibration run measures the arbiter's rate and
+  cost, and the first run of the installed readers their GPU time.
 - **Local LLM throughput** (measured on padme, short-record screening with
   thinking disabled): about 1.7 records per second, decoding about 95 % of
   the time, against about 19 records per second for a hosted small LLM
@@ -361,10 +350,10 @@ measurements, or a judgement. [M2]
 
 | Budget | Proposed default | Basis |
 |---|---|---|
-| Paid LLM spend per document (hosted readers and arbiter together) | USD 3 | Derived: covers the largest held PDF (about 240,000 tokens) read once by a frontier pair; the median document costs well under USD 0.10 |
-| Paid LLM spend per run | USD 20 for an ordinary batch; USD 60 for the full M2 pass | Derived: the M2 pass over the 115 pending documents is about USD 15 to 30, so USD 60 covers it with room for a second attempt |
-| Paid LLM spend per calendar month, all vendors | USD 150 | Judgement: a full pass at frontier tier plus a partial rerun and the M3a discovery rounds |
-| Paid LLM spend per vendor per month | USD 80 | Judgement: no single maker can take more than about half the month, which keeps the second vendor funded |
+| Paid LLM spend per document (arbiter and hosted transcription) | USD 3 | Judgement: the arbiter reads a few pages per escalated item; revised on the first calibration run |
+| Paid LLM spend per run | USD 20 for an ordinary batch; USD 60 for the full M2 pass | Judgement, revised on the first calibration run |
+| Paid LLM spend per calendar month, all vendors | USD 150 | Judgement: the arbiter's calls, the selection runs and the M3a discovery rounds |
+| Paid LLM spend per vendor per month | USD 80 | Judgement: a cap on the arbiter's maker |
 | Paid web search (discovery) per campaign | USD 25, and a query count per round declared in the round's protocol | Judgement: no measurement in the repository |
 | OpenAlex | Within the free USD 1 per day; no draw on the prepaid balance | Measured allowance; the prepaid balance is not the Observer's |
 | Internet Archive captures | No money; captures paced and stopped on the service's rate-limit responses | The account is free |
@@ -376,8 +365,8 @@ the Observer work under the author's subscriptions, not under per-call
 billing. Their cost is not charged to a run; the number of sessions and
 their wall time are what the author can report. [M2]
 
-**Reaching a budget.** At the per-document budget the document is split
-into parts or deferred with that reason (extraction § 7). At the per-run
+**Reaching a budget.** At the per-document budget the document is left
+pending, with the reason in the run report. At the per-run
 budget the run stops and reports. At the monthly or per-vendor budget, no
 new paid run starts until the author raises it or the month turns. A run
 never switches vendor to stay under a vendor budget without the author's
@@ -391,8 +380,9 @@ code, machine, start and end times, declared budgets, spend per vendor and
 per LLM with token counts, GPU wall time, documents or rounds attempted,
 completed, failed and deferred with their reasons, the number of items
 that stood on the readers' agreement, went to the arbiter and ended
-undetermined, the calibration version in force, and a final state
-(section 10). The report of a build lists the
+undetermined, the calibration version in force, the declared scope, its
+notes and the part plan of each snapshot read, any reviewed locator or
+layer mapping (extraction §§ 5, 9), and a final state (section 10). The report of a build lists the
 trails that do not resolve. A run that found nothing says so. [M2 for extraction runs; M3a for discovery rounds, requirement Q14]
 
 **Compute time.** Each run records its local GPU wall time and its paid
@@ -413,7 +403,7 @@ supervision view]
 | Content | System of record | Copies |
 |---|---|---|
 | Code, rules, tickets, ledger tables (the register included), run reports | The git repository | GitHub; every checkout; padme's machine backup |
-| Document bytes, structured bulk data | DVC cache on padme | The DVC remote, on the same padme disk; the Zotero group (each snapshot, off-site); padme's machine backup (off-site) |
+| Document bytes (the document store and the comparator data directories) | DVC cache on padme | The DVC remote, on the same padme disk; the Zotero group (each snapshot, off-site); padme's machine backup (off-site) |
 | Retained text layers and raw model responses | DVC cache on padme, beside the document bytes | The DVC remote; padme's machine backup; a lost layer is regenerated only by the same adapter version |
 | Public copies of document addresses | The Internet Archive | — |
 | A frozen release | The release deposit [M3b] | Zenodo |
@@ -426,7 +416,9 @@ disk failure must not lose a document byte.
 
 **The off-site copy: Zotero.** Each snapshot is uploaded, one way, to the
 project's Zotero group, with its SHA-256 in the item's metadata, when it is
-pushed to DVC. No job reads from Zotero: DVC stays the working store until
+pushed to DVC; the objects pushed before the rule are uploaded once. The
+group is private, its attachments visible to members only. No job reads
+from Zotero: DVC stays the working store until
 the document store moves behind the same interface at M4 (section 11). [M2]
 
 **The machine backup.** padme runs a nightly restic backup of
@@ -435,10 +427,6 @@ daily, 4 weekly, 12 monthly and 5 yearly snapshots. It covers the DVC cache
 and remote, the retained layers and the repository checkouts. A backup that
 stops silently is the failure to guard against: the test of recovery reads
 the date of the latest backup snapshot. [M2]
-
-History: the machine backup was found failing on 2026-09-30 (last snapshot
-around 13 September 2026, after the padme repository moved and left the
-exclude-file symlink broken) and repaired by the author the same day.
 
 **Recovery.** [M2]
 
@@ -455,14 +443,15 @@ exclude-file symlink broken) and repaired by the author the same day.
 Zotero group and the machine backup, and checked against its hash. Once per
 milestone the author or an agent restores the document store into an empty
 worktree on padme from the machine backup and runs the replay; it must
-pass. [M2 once; M4 per release]
+pass. [M2, then before the M3a freeze and before each release]
 
 **Handover note.** Before the first release identifier is minted, a note in
 the repository states where each credential lives (by provider, never the
 value), who owns the repository, the release deposits and the Observatory's
 domain, and the restore steps of this section, so that the cited releases
-stay retrievable and a withdrawal can be carried out when the author cannot
-act. It is reread at each release. [M3b]
+stay retrievable and a withdrawal, which needs a removal request to the
+repository (results § 9), can be carried out when the author cannot act.
+It is reread at each release. [M3b]
 
 <!-- batch-2 X-24: pending author decision -->
 
@@ -473,7 +462,8 @@ disposed of), `partial` (stopped by a budget, a cap, an interruption or an
 error, with a list of what remains), `failed` (stopped before producing a
 usable product), or `not started` (a precondition failed: SSH, a missing
 key, `uv` not found, the store absent). The report states which. A run
-without a final state is treated as failed. [M2]
+whose `runs` row is still `running` when its session is gone is closed as
+failed (storage contract § 1). [M2]
 
 **Partial runs are never published.** A partial run's completed documents
 may be admitted through its pull request, each whole; the documents it did
@@ -598,7 +588,7 @@ Each has a default, applied unless the author decides otherwise.
 | A run is killed midway by a power cut. | The report, written as the run goes, has no final state and is treated as failed; the rerun takes the pending list, and nothing already admitted is renumbered. |
 | An extraction run completes over half the countries of a release's scope. | No release and no Observatory publication are built until every run in the scope is complete. |
 | An agent needs more parallel slots from the local LLM. | It asks the author; it does not restart the shared service. |
-| The Anthropic key is missing on padme. | The run stops before its first paid call and reports the missing provider; it does not fall back to another vendor. |
+| The OpenRouter key is missing on padme. | The run stops before its first paid call and reports the missing provider; it does not fall back to another vendor. |
 | A run report is about to include a request header with an API key. | The report names the provider and the LLM only; the key never appears. A key found in a tracked file is revoked first, then removed. |
 | An agent's branch adds 12 new document objects. | They are tracked and pushed to DVC from padme only after the branch's review passes, and uploaded one way to the Zotero group with their SHA-256. |
 | padme's disk fails. | Code and ledger are cloned from GitHub; document bytes are restored from the machine backup or the Zotero group and checked against their hashes; an object that fails is refetched as a new retrieval and the losses are listed in a recovery report. |

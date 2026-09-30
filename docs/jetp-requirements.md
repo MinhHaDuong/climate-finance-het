@@ -357,8 +357,8 @@ locatable across revisions (F1, F4, F10); and, from M4, the shared code
   process?
 - **AED-2** Against the human decisions, how often was each machine reading
   right, and at which step did the wrong ones fail?
-- **AED-3** What does an accepted change cost, in LLM spend and in human
-  minutes, per method?
+- **AED-3** What does an accepted change cost, in LLM spend, compute time
+  and the count of human decisions, per method?
 - **AED-4** When a document is revised or read again, can the justification
   behind an earlier result be found in the right version, and a change in the
   document be told from a change in processing?
@@ -1027,7 +1027,7 @@ not indefinitely. The initial partnership periods run three to five years
 2028); structured search channels report one to three years late. Default:
 maintained through 2030, an extension decision in 2028, and an archived
 final release at the end, after which every release cited by a product stays
-retrievable. *M4.* Test: Operation and Results and releases state the end
+retrievable. *M3b* for the handover note, *M4* for the horizon. Test: Operation and Results and releases state the end
 date, the date of the extension decision, and how the final release is
 archived; a release identifier cited in a paper resolves after the end;
 the handover note of Operation § 9 exists before the first release.
@@ -1191,7 +1191,7 @@ document that reads statements into observations.
 | C7 Static publication | M3b | Presentation; Storage § 3 |
 | C8 Build to the milestone | M2 | every document |
 | C9 Secrets | M2 | Operation |
-| C10 A declared horizon | M4 | Operation; Results and releases |
+| C10 A declared horizon | M3b, M4 | Operation; Results and releases |
 | **8 Non-requirements** | | |
 | N1–N13 | — | every document: no rule may serve only these |
 
@@ -1250,6 +1250,6 @@ requirements of the sections they test.
 | Operation § 5 LLM readers and the checking rule | Q5, Q17, C3 |
 | Operation § 6 Secrets | C9 |
 | Operation § 7 and § 8 Budgets, logging spend and compute time | C1, C4, Q14, Q15 |
-| Operation § 9 Backups and recovery | Q19 |
+| Operation § 9 Backups and recovery | Q19, C10 |
 | Operation § 10 Failure handling | Q14, C2 |
 | Language | Q13, Q18 |

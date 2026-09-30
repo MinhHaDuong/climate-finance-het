@@ -259,10 +259,11 @@ redistribution list excludes every document whose terms forbid it. A failed
 check stops the build and publishes nothing. The validation also screens the
 release's text for email addresses and telephone numbers, and the speaker
 and verbatim fields of prose statements for the names of natural persons
-other than signatories printed as such, and lists every hit for the author,
-who removes a natural person's contact details, or a name recorded where the
-office should be (extraction § 4), before acceptance; the screen reports, it
-does not block. *M3b* (Q6, Q8, C6, N2).
+other than signatories printed as such. Each hit is judged under the
+protocol of extraction § 6.3: a natural person's contact details, or a name
+recorded where the office should be (extraction § 4), are removed by
+supersession and recorded as readings; the build report counts the hits,
+and nothing is queued. *M3b* (Q6, Q8, C6, N2).
 
 **A reviewed act.** No program publishes a release on its own. A named
 reviewer accepts the validated package; acceptance is recorded in the
