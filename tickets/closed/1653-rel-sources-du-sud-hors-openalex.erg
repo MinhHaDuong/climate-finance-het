@@ -1,0 +1,28 @@
+%erg 0.1
+Title: REL — sources du Sud hors OpenAlex (SciELO, Redalyc, AJOL, autres)
+Created: 2026-09-29
+Author: haduong
+Closed: Livré au pool 1655 : data/rel_intake/t1653-sud-hors-openalex/2026-09-30 (qa_rel_intake OK), registre docs/rel-sud-sources-2026-09-30.md ; code en PR #1622, #1624, #1625, #1628 (scission de #1619) ; strates incomplètes et déblocages humains suivis dans 1790
+
+--- log ---
+2026-09-29T15:00Z haduong created
+
+2026-09-30T19:30Z HDMX-coding-agent closed — Livré au pool 1655 : data/rel_intake/t1653-sud-hors-openalex/2026-09-30 (qa_rel_intake OK), registre docs/rel-sud-sources-2026-09-30.md ; code en PR #1622, #1624, #1625, #1628 (scission de #1619) ; strates incomplètes et déblocages humains suivis dans 1790
+--- body ---
+## Contexte
+
+Enfant de 0700. Suite de 1530 (première passe OpenAlex de la strate « Sud et
+langues »). Cette passe ne couvre que OpenAlex ; les strates restent
+« incomplètes » tant que les sources suivantes ne sont pas exécutées ou déclarées
+impossibles : SciELO, Redalyc, AJOL (OAI-PMH), CNKI et Wanfang, eLIBRARY.ru,
+GARUDA, CLACSO, Shodhganga, dépôts UWI et USP, séries de working papers (Ipea,
+ERSA, South Centre, ADB, CEEW, CPD). Détail : `conception/rel-sud-et-langues-annexe-brouillon.md`.
+
+Dix sentinelles de `config/rel_sud_sentinels.csv` (classe b) sont absentes
+d'OpenAlex et testent ces voies.
+
+## Exit criteria
+- [x] Pour chaque source : exécutée avec chaîne, date et export archivés, ou déclarée impossible avec motif (accès, licence, absence d'API)
+- [x] Sentinelles de classe b retrouvées ou manquées, chaque manque diagnostiqué
+- [x] Traduction des chaînes relue par un lecteur compétent pour les langues non lues, ou statut « non résolu » consigné
+- [x] Notices livrées à l'injection (1655) avec provenance ; strates marquées « incomplètes » tant que nécessaire

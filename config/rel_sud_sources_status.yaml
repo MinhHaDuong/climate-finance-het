@@ -1,0 +1,159 @@
+# REL "Sud et langues", sources outside OpenAlex (ticket 1653): status of each
+# source on 2026-09-30. Read by scripts/catalog_rel_1653_delivery.py to
+# fill the delivery manifest (incomplete, needs_human); narrated in
+# docs/rel-sud-sources-2026-09-30.md.
+#
+# status: run (executed to completion), partial (executed, coverage short),
+#         impossible (not executable: access, licence, no API), substitute
+#         (another route used in its place), not needed.
+# run: the run directory under ~/data/projets/climate-finance-het/rel_sud/
+#      2026-09-30/ holding its registry and raw export, when it ran.
+
+sources:
+  scielo:
+    status: partial
+    route: oai-pmh
+    endpoint: "https://<collection>/oai/scielo-oai.php (mex, ven, bol, cri, pry); journal selection via ArticleMeta"
+    stratum: LAC
+    reason: >-
+      search.scielo.org is robots-disallowed (Disallow: /) and behind a Bunny
+      Shield proof-of-work 403; ArticleMeta has no text search. OAI harvest of
+      the social-science journal sets only: 216 sets, 212 complete (cri
+      0379-3982 bad xml, 3 pry RuntimeError). Brazil OAI 404/502,
+      Argentina and Colombia time out, Cuba refused, Chile and Peru
+      robots-disallowed.
+    needs_human: "SciELO OAI access or dump for Brazil, Chile, Peru, Argentina, Colombia, Cuba"
+  redalyc:
+    status: run
+    route: api
+    endpoint: "https://www.redalyc.org/service/r2020/getArticles/"
+    stratum: LAC
+    reason: >-
+      Undocumented JSON service behind the site's article finder (robots.txt
+      allows it); the documented OAI endpoint has no subject sets (775,205
+      records, about 5.5 h). Full-text search: every hit delivered.
+  clacso:
+    status: run
+    route: api
+    endpoint: "https://biblioteca-repositorio.clacso.edu.ar/server/api/discover/search/objects"
+    stratum: LAC
+    reason: "DSpace 7 discovery, crawl-delay 10 s; the old biblioteca.clacso.edu.ar answers HTTP 526."
+  ipea:
+    status: run
+    route: api
+    endpoint: "https://repositorio.ipea.gov.br/server/api/discover/search/objects (TD collection hdl 11058/17462)"
+    stratum: LAC
+    reason: "DSpace 7 discovery on the Textos para Discussão collection."
+  uwi:
+    status: run
+    route: api
+    endpoint: "https://uwispace.sta.uwi.edu/server/api/discover/search/objects"
+    stratum: LAC (Caribbean)
+    reason: "DSpace 7 discovery."
+  usp_repository:
+    status: impossible
+    stratum: Pacific
+    reason: >-
+      robots.txt disallows /cgi/ (oai2, search, export); every path answers a
+      Cloudflare challenge (403); CORE v3 search HTTP 500; not registered in
+      OpenAIRE. No automated Pacific source remains.
+    needs_human: "Ask the USP library for an allowlist or an OAI dump"
+  garuda:
+    status: run
+    route: api
+    endpoint: "https://garuda.kemdiktisaintek.go.id/documents"
+    stratum: SE Asia (Indonesia)
+    reason: >-
+      Server-rendered HTML search, no OAI or JSON API, robots.txt 404. The
+      server matches all words, not the phrase: one query per lexicon phrase
+      and field (title, abstract), 116 queries, 107 complete, 9 stopped at
+      the 1,000-record page cap.
+  sinta:
+    status: not needed
+    stratum: SE Asia (Indonesia)
+    reason: "robots.txt answers 403; GARUDA covers the Indonesian journals."
+  cyberleninka:
+    status: partial
+    route: oai-pmh
+    endpoint: "https://cyberleninka.ru/oai"
+    stratum: Russia
+    reason: >-
+      Substitute for eLIBRARY. /search and /api/ are robots-disallowed;
+      oai_dc carries titles only. The repec set was not economics (9,830
+      received, 0 matched, stopped on bad xml); a captcha after about 980
+      pages blocked the journal-set run at ListSets.
+    needs_human: "Ask skynet@cyberleninka.ru for permission, an allowlist or a dump"
+  elibrary:
+    status: impossible
+    stratum: Russia
+    reason: >-
+      agreement.asp forbids robots and automated search or download; no OAI
+      (404); API by organisation contract only.
+    needs_human: "eLIBRARY API contract (api@elibrary.ru) or manual export of the 4 ru queries"
+  cnki:
+    status: impossible
+    stratum: China
+    reason: >-
+      cnki.net redirects to oversea.cnki.net, robots Disallow: /; no OAI;
+      JavaScript search; no public API.
+    needs_human: "Institutional access through bibCNRS and manual export of the 4 zh queries"
+  wanfang:
+    status: impossible
+    stratum: China
+    reason: >-
+      Results come from an internal undocumented JavaScript API (not used);
+      no OAI; the open-platform API requires registration.
+    needs_human: "Register on apps.wanfangdata.com.cn/open or subscribe, or export the 4 zh queries manually"
+  ajol:
+    status: impossible
+    route: oai-pmh
+    endpoint: "https://www.ajol.info/index.php/<journal>/oai"
+    stratum: Africa
+    reason: >-
+      AWS WAF JavaScript challenge (202, x-amzn-waf-action: challenge) after
+      6-10 requests even at 4 s spacing, about 2 requests per minute; the
+      site-level OAI endpoint is empty; search and API are robots-disallowed.
+      No record received.
+    needs_human: "Ask support@ajol.info to allowlist the harvester or supply a dump"
+  shodhganga:
+    status: impossible
+    stratum: South Asia (India)
+    reason: "robots.txt Disallow: / (Crawl-delay 600); OAI and REST 404 (DSpace 5.3)."
+    needs_human: "INFLIBNET OAI access or export, or BASE API after IP registration"
+  ersa:
+    status: run
+    route: listing
+    endpoint: "https://econrsa.org/wp-json/wp/v2/publications?publication-types=7139"
+    stratum: Africa
+    reason: "WordPress REST listing of the working-paper series (not in RePEc)."
+  cpd:
+    status: run
+    route: listing
+    endpoint: "https://cpd.org.bd/wp-json/wp/v2/publication"
+    stratum: South Asia (Bangladesh)
+    reason: "WordPress REST listing of every publication; en and bn lexicon."
+  south_centre:
+    status: run
+    route: listing
+    endpoint: "https://www.southcentre.int/category/research-papers/feed/"
+    stratum: Global South
+    reason: "REST API answers 401 except /search; category RSS feed, crawl-delay 10 s."
+  adb_ewp:
+    status: run
+    route: listing
+    endpoint: "https://ideas.repec.org/s/ris/adbewp.html"
+    stratum: Asia-Pacific
+    reason: "adb.org answers a Cloudflare 403, robots.txt included; RePEc listing and paper pages on IDEAS."
+  ceew:
+    status: partial
+    route: listing
+    endpoint: "https://www.ceew.in/sitemap.xml"
+    stratum: South Asia (India)
+    reason: >-
+      No API or feed; search and paged listings are robots-disallowed; every
+      publication page of the sitemap read at crawl-delay 10 s, some pages
+      failed.
+
+# Languages whose query strings no competent reader has reviewed (exit
+# criterion 3): status "non résolu".
+unreviewed_languages: [zh, ru, hi, bn, id, ar]

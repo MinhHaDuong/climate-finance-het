@@ -8,7 +8,7 @@ and writes, in a fresh output directory:
   stop reason. A query cut short is ``completed`` False, never silently full.
 - ``raw/<source>.jsonl.gz``: every record received, normalized (the export).
 - ``candidates.csv``: the records handed to the intake exporter
-  (``export_rel_sud_sources_intake.py``, pool ticket 1655), each row
+  (``catalog_rel_1653_delivery.py``, pool ticket 1655), each row
   carrying its provenance (source, query id, query string, route, endpoint,
   date, export file). Search routes keep every record the server returned;
   harvest and listing routes keep the records whose title or abstract matched
