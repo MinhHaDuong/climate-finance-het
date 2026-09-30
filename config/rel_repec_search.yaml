@@ -1,0 +1,40 @@
+# REL lane over the local RePEc ReDIF mirror (ticket 1810).
+# Fixed 2026-10-01 BEFORE the full-mirror search was run.
+#
+# The lane replays, on the ReDIF table built by scripts/catalog_rel_repec_redif.py,
+# the query strings the other lanes sent to OpenAlex and EconLit, and adds a
+# declared JEL filter. Nothing here is new vocabulary: the text units are read
+# from their own configs, so a revision there is a revision here.
+#
+#   causal:  config/rel_causal_search.yaml (ticket 1652): every family and theme
+#            string (IM, IO, SY, CS, TH; en, fr, es), the SI rows replayed as a
+#            title search of the family's TUNING sentinels (the EconLit twin of
+#            1652: a local mirror has no citation index), and the per-family JEL
+#            rows (the family's JEL codes AND its mediator group), as 1652 sent
+#            them to EconLit.
+#   sud:     config/rel_sud_search.yaml (ticket 1530): the protocol's ICF terms,
+#            themes T1-T4 in every language, and the global gap-fill string.
+#   jel:     the declared JEL filter below, on Classification-JEL alone.
+#
+# Matching (the local equivalent of OpenAlex title_and_abstract.search):
+# title + abstract + keywords, case- and accent-folded, punctuation read as a
+# space; a quoted phrase matches on word boundaries, and its last word also
+# matches with a trailing "s" (a light plural; OpenAlex stems, this does not).
+# Scripts without word spaces (CJK) match as substrings. No year and no
+# language filter: the intake contract leaves the window to the REL view, and
+# ReDIF rarely states a language.
+sources:
+  causal: config/rel_causal_search.yaml
+  causal_families: config/rel_causal_families.yaml
+  causal_sentinels: config/rel_causal_sentinels.csv
+  sud: config/rel_sud_search.yaml
+
+# Declared JEL filter (ticket 1810, action 2). Each unit is an AND of OR-groups
+# of JEL code prefixes ("Q5" matches Q50-Q59). Codes named in the ticket: Q54
+# climate, Q56 environment and development, F35 foreign aid, O19 international
+# linkages to development / role of international organizations. Pairs, not a
+# union: Q54 alone is the whole climate economics of RePEc, not ICF.
+jel:
+  JEL-climate-aid:      [[Q54, Q56], [F35, O19]]   # climate or env-development x aid or international development
+  JEL-climate-intlfin:  [[Q54], [F2, F3]]          # climate x international factor movements or international finance
+  JEL-aid-energy-env:   [[F35], [Q4, Q5]]          # foreign aid x energy or environment
