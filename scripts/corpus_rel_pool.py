@@ -117,10 +117,12 @@ def norm_openalex(v):
     return s.upper() if OPENALEX_ID.match(s.upper()) else ""
 
 
-_URL = re.compile(r"^(https?)://([^/?#\s]+)(\S*)$", re.IGNORECASE)
+# Shared with the contract check, so the QA and the merge agree on which URL
+# yields a key.
+_URL = ric.URL_PARTS
 _HANDLE_PATH = re.compile(r"^/handle/(.+)$")
-DOI_RESOLVERS = {"doi.org", "dx.doi.org", "www.doi.org"}
-OPENALEX_HOSTS = {"openalex.org", "api.openalex.org"}
+DOI_RESOLVERS = ric.DOI_RESOLVERS
+OPENALEX_HOSTS = ric.OPENALEX_HOSTS
 
 
 # DSpace's default local prefix: unregistered, reused by many repositories, so

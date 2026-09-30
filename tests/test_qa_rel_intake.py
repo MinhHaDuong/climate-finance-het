@@ -211,3 +211,21 @@ def test_non_http_url_is_not_a_dedup_key(tmp_path):
     d = _delivery(tmp_path, records=[rec, _record("r2")])
     errors = ric.check_delivery(str(d))
     assert len(errors) == 1 and "http(s) url (got url 'hdl:2139/12345')" in errors[0]
+
+
+
+@pytest.mark.parametrize("url", ["https://doi.org/", "https://dx.doi.org",
+                                 "https://openalex.org/authors/A1"])
+def test_resolver_url_naming_no_id_is_not_a_dedup_key(tmp_path, url):
+    rec = _record("r1", doi="", year="", url=url)
+    d = _delivery(tmp_path, records=[rec, _record("r2")])
+    errors = ric.check_delivery(str(d))
+    assert len(errors) == 1 and repr(url) in errors[0] and "no DOI or OpenAlex id" in errors[0]
+
+
+
+@pytest.mark.parametrize("url", ["https://doi.org/10.1234/x", "https://openalex.org/W12"])
+def test_resolver_url_naming_an_id_is_a_dedup_key(tmp_path, url):
+    rec = _record("r1", doi="", year="", url=url)
+    d = _delivery(tmp_path, records=[rec, _record("r2")])
+    assert ric.check_delivery(str(d)) == []

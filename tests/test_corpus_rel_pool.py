@@ -357,3 +357,13 @@ def test_different_urls_do_not_veto_a_title_year_join():
             _crow(url="https://repo.org/handle/9/9", title="Carbon funds", year="2001")]
     assert len(set(rp.cluster(rows))) == 1
     assert rp._compatible(rows[0], rows[1])
+
+
+
+def test_resolver_url_without_id_is_refused_before_the_merge(tmp_path):
+    # Without the contract check these two id-less rows would collide on work_key.
+    recs = [_rec("r1", year="", title="Same", url="https://doi.org/")]
+    other = [_rec("s1", year="", title="Same", url="https://openalex.org/authors/A1")]
+    with pytest.raises(rp.RelPoolError, match="intake contract"):
+        _run(tmp_path, [], [("t1653-sud", "2026-10-02", recs),
+                            ("t1650-toc", "2026-10-03", other)])

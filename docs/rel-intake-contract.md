@@ -102,7 +102,9 @@ empty.
 | `lane_note` | | free text |
 
 At least one of `doi`, `openalex_id`, `year` or an http(s) `url` must be
-non-empty on every row: a record with none of them cannot be deduplicated. The
+non-empty on every row: a record with none of them cannot be deduplicated. A
+DOI resolver or OpenAlex URL that names no DOI or work id (`https://doi.org/`,
+`https://openalex.org/authors/A1`) is not such a `url`. The
 merge joins records on DOI, OpenAlex id, then normalized URL (scheme and host
 lowercased, trailing slash dropped, `hdl.handle.net/X` and `<host>/handle/X`
 both read as the Handle `X`, its query string and fragment dropped; under the
