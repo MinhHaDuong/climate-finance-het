@@ -154,10 +154,8 @@ def test_export_writes_a_delivery_the_checker_accepts(runs, tmp_path):
     status.write_text(
         "sources:\n"
         "  clacso: {status: run, reason: ok, stratum: LAC}\n"
-        "  scielo: {status: partial, reason: 'Brazil 404', stratum: LAC,\n"
-        "           needs_human: 'SciELO OAI access'}\n"
-        "  cnki: {status: impossible, reason: 'robots', stratum: China,\n"
-        "         needs_human: 'bibCNRS export'}\n"
+        "  scielo: {status: partial, reason: 'Brazil 404', stratum: LAC}\n"
+        "  cnki: {status: dead, reason: 'robots', stratum: China}\n"
         "unreviewed_languages: [zh, ru]\n", encoding="utf-8")
     sentinels = tmp_path / "sentinels.csv"
     write(str(sentinels), ["sentinel", "class", "title", "doi"],
@@ -176,7 +174,10 @@ def test_export_writes_a_delivery_the_checker_accepts(runs, tmp_path):
     units = [i["unit"] for i in man["incomplete"]]
     assert units[:2] == ["scielo: LAC", "cnki: China"]
     assert any("zh, ru" in u for u in units)
-    assert {n["item"] for n in man["needs_human"]} >= {"SciELO OAI access", "bibCNRS export"}
+    # Dead sources are coverage gaps, not human errands (ticket 1790); only the
+    # unreviewed languages still ask for a reader.
+    assert [n["item"] for n in man["needs_human"]] == [
+        "Competent readers for the zh, ru query strings"]
     with open(out / "sentinels.csv", encoding="utf-8") as fh:
         found = {r["sentinel"]: r["found"] for r in csv.DictReader(fh)}
     assert found == {"S01": "True", "S02": "False"}
