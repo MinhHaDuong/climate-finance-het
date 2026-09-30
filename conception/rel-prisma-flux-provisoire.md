@@ -34,7 +34,7 @@ Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 
 | **Étape 2** (Opus) : œuvres relues | 4 792 | mesuré (4 752 en 32 lots + 40 du pilote) |
 | exclues à l'étape 2 : proches mais non ICF | 1 746 | mesuré (1 736 + 10) |
 | exclues à l'étape 2 : hors sujet | 396 | mesuré (391 + 5) |
-| **restées « incertaines »** | **177** | mesuré (174 + 3) ; règle de sortie à fixer |
+| **restées « incertaines »** | **177** | mesuré (174 + 3) ; restent dans REL, signalées (décision du 30 septembre) |
 | **retenues « ICF »** | **2 473** | mesuré (2 451 + 22) |
 | dont œuvres de recherche | 1 933 | mesuré (1 913 + 20) |
 | dont documents institutionnels (hors décompte des œuvres) | 409 | mesuré (408 + 1) |
@@ -55,4 +55,4 @@ Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 
 
 ## Ce qu'il faut pour geler le pool
 
-Voir la réponse du 29 septembre : voies du protocole exécutées ou déclarées impossibles ; étape d'injection dans le catalogue avec provenance et rapport de fusion par source ; règle de sortie des « incertaines » ; unité de compte des versions ; tri de tout le pool ; manifeste de gel (empreintes, SHA du code, versions de modèles).
+Voir la réponse du 29 septembre : voies du protocole exécutées ou déclarées impossibles ; étape d'injection dans le catalogue avec provenance et rapport de fusion par source ; tri de tout le pool ; manifeste de gel (empreintes, SHA du code, versions de modèles). La sortie des « incertaines » et l'unité de compte (la famille d'œuvres, version publiée en représentante) sont décidées depuis le 30 septembre.
