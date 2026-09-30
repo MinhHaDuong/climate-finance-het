@@ -42,6 +42,9 @@ throwaway builder of the 2026-09-30 catalogue run took the first "W + digits"
 inside any ``source_id``, so 7 EconBiz ids (``EDSZBW…``) and 3 SciSpace URLs came in
 as false W-ids; a label keyed on one would sit forever on the wrong work.
 
+Creating the table where ``data/rel_screen.dvc`` tracks it is refused (an
+unfetched table, not a new one): ``dvc checkout`` first, or ``--new-table``.
+
 Usage:
     python scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv t1530 [--archive DIR]
     python scripts/corpus_icf_import.py --output TABLE stage1-run --run-dir DIR --machine padme \\
@@ -217,6 +220,8 @@ def main(argv=None):
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     # --output is the append-only icf_screen table the labels are appended to.
     parser.add_argument("--output", required=True)
+    parser.add_argument("--new-table", action="store_true",
+                        help="allow creating --output although a .dvc pointer tracks it")
     sub = parser.add_subparsers(dest="cmd", required=True)
     p1 = sub.add_parser("t1530")
     p1.add_argument("--archive", default=None, help="default: config t1530_archive")
@@ -249,7 +254,7 @@ def main(argv=None):
                                    args.machine, run_id, f"{run_id}/screen.jsonl", skip)
             log.info("skipped %d ids listed in --skip-ids", len(skip))
             note = f"import stage-1 run {run_id}"
-        added, skipped = ics.append_new(table, rows, note)
+        added, skipped = ics.append_new(table, rows, note, args.new_table)
     except (ImportRefused, ics.IcfScreenError) as exc:
         log.error("%s", exc)
         return 1

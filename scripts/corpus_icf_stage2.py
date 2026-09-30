@@ -232,6 +232,8 @@ def main(argv=None):
     pp.add_argument("--suffix", default="opus", help="answer files chunkNN.<suffix>.txt")
     pp.add_argument("--labeller", choices=sorted(ics.LABELLERS), default="llm")
     pp.add_argument("--labelled-at", default=None, help="default: today (UTC)")
+    pp.add_argument("--new-table", action="store_true",
+                    help="allow creating the table although a .dvc pointer tracks it")
     pa = sub.add_parser("agreement")
     pa.add_argument("--audit-run-id", required=True)
     pa.add_argument("--output", required=True)
@@ -240,6 +242,8 @@ def main(argv=None):
         cfg = yaml.safe_load(fh)
     pool_path, table = args.pool or cfg["pool"], args.table or cfg["table"]
     try:
+        if args.cmd != "parse":
+            ics.require_table(table)
         if args.cmd in ("build", "audit-sample"):
             pool, view = _view(pool_path, table)
             if args.cmd == "build":
@@ -264,7 +268,8 @@ def main(argv=None):
                 args.chunk_dir, args.suffix, args.stage, args.model, args.run_id, args.machine,
                 args.labeller, ics.stage2_prompt_sha256(cfg["stage2"]["prompt"]), labelled_at,
                 os.path.basename(os.path.normpath(args.chunk_dir)))
-            added, skipped = ics.append_new(table, rows, f"parse {args.stage} {args.run_id}")
+            added, skipped = ics.append_new(table, rows, f"parse {args.stage} {args.run_id}",
+                                           args.new_table)
             log.info("chunks %s", report)
             log.info("%d answers, %d appended, %d already in %s", len(rows), added, skipped, table)
         else:

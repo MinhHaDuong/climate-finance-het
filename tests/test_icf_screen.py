@@ -124,3 +124,22 @@ def test_format_stage2_record_matches_1530_layout():
     text = ics.format_stage2_record(3, rec, 220, 650)
     assert text == (f"3. [zh | 2008 | ? | affiliations: CN, FR]\n   Title: {'T' * 220}\n"
                     "   Abstract: (no abstract)\n")
+
+
+def test_missing_dvc_tracked_table_is_not_forked(tmp_path, table):
+    """A fresh checkout has data/rel_screen.dvc but no table: never start a new one."""
+    (tmp_path / "rel_screen.dvc").write_text("outs:\n- path: rel_screen\n")
+    with pytest.raises(ics.IcfScreenError, match="dvc checkout"):
+        ics.append_rows(table, [_row()])
+    with pytest.raises(ics.IcfScreenError, match="dvc checkout"):
+        ics.append_new(table, [_row()])
+    assert not os.path.exists(table) and not os.path.exists(ics.manifest_path(table))
+    assert ics.append_new(table, [_row()], new_table=True) == (1, 0)
+    assert ics.append_rows(table, [_row("openalex:W2")]) == 1, "an existing table grows"
+
+
+def test_require_table_names_the_fetch(tmp_path, table):
+    with pytest.raises(ics.IcfScreenError, match="missing"):
+        ics.require_table(table)
+    ics.append_rows(table, [_row()])
+    ics.require_table(table)

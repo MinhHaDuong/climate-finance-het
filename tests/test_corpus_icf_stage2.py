@@ -95,3 +95,25 @@ def test_agreement_pairs_audit_run_with_stage2():
     res = cs.agreement(pool, labels, "a1")
     assert res["n"] == 2 and res["by_stage2_label"] == {"icf": {"n": 1, "agree": 1},
                                                           "out": {"n": 1, "agree": 0}}
+
+
+@pytest.mark.parametrize("cmd", [["build", "--output-dir", "OUT"],
+                                 ["agreement", "--audit-run-id", "a", "--output", "OUT"]])
+def test_missing_table_is_a_clean_error(tmp_path, cmd):
+    missing = str(tmp_path / "none" / "icf_screen.csv")
+    args = [a.replace("OUT", str(tmp_path / "o")) for a in cmd]
+    assert cs.main(["--pool", str(tmp_path / "pool.csv"), "--table", missing] + args) == 1
+
+
+def test_parse_refuses_to_fork_a_dvc_tracked_table(tmp_path):
+    out = tmp_path / "s2"
+    cs.write_chunks(str(out), [_work(1)], S2CFG, {})
+    (out / "chunk01.opus.txt").write_text("1|icf|research|SN|x\n")
+    (tmp_path / "rs.dvc").write_text("outs:\n- path: rs\n")
+    table = str(tmp_path / "rs" / "icf_screen.csv")
+    base = ["--table", table, "parse", "--chunk-dir", str(out), "--model", "m",
+            "--run-id", "r", "--machine", "d"]
+    assert cs.main(base) == 1
+    assert not (tmp_path / "rs").exists()
+    assert cs.main(base + ["--new-table"]) == 0
+    assert len(ics.read_table(table)) == 1

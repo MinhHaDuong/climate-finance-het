@@ -115,3 +115,12 @@ def test_view_refuses_a_tampered_table(tmp_path):
     open(table, "wb").write(data[:-5])
     with pytest.raises(ics.IcfScreenError):
         crv.run(pool, table, str(tmp_path / "a"), WINDOW)
+
+
+def test_view_reports_a_missing_table_cleanly(tmp_path):
+    pool, _ = _files(tmp_path)
+    missing = str(tmp_path / "none" / "icf_screen.csv")
+    with pytest.raises(ics.IcfScreenError, match="missing"):
+        crv.run(pool, missing, str(tmp_path / "a"), WINDOW)
+    assert crv.main(["--pool", pool, "--table", missing,
+                     "--output-dir", str(tmp_path / "a")]) == 1

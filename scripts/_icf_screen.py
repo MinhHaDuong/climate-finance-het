@@ -54,6 +54,24 @@ def manifest_path(table_path: str) -> str:
     return os.path.splitext(table_path)[0] + ".manifest.jsonl"
 
 
+def dvc_pointer(table_path: str) -> str | None:
+    """The ``.dvc`` file that tracks the table's directory (or the table), if any."""
+    table_dir = os.path.dirname(os.path.abspath(table_path))
+    for cand in (table_dir + ".dvc", os.path.abspath(table_path) + ".dvc"):
+        if os.path.exists(cand):
+            return cand
+    return None
+
+
+def require_table(table_path: str) -> None:
+    """Refuse, with the fetch to run, when the table is absent (readers call this)."""
+    if not os.path.exists(table_path):
+        pointer = dvc_pointer(table_path)
+        hint = (f"fetch it with `dvc pull {os.path.relpath(pointer)}` (make rel-pool-data) "
+                "or `dvc checkout`" if pointer else "import labels first")
+        raise IcfScreenError(f"{table_path} is missing: {hint}")
+
+
 def _open(path: str, mode: str) -> IO[str]:
     """Open the table or its manifest; only non-destructive modes exist here."""
     if mode not in ("r", "a", "x"):
@@ -160,15 +178,36 @@ def validate_row(row: dict) -> list[str]:
     return errors
 
 
-def append_rows(table_path: str, rows: Iterable[dict], note: str = "") -> int:
+def _refuse_fork(table_path: str, new_table: bool) -> None:
+    """A missing table under a ``.dvc`` pointer is an unfetched one, not a new one.
+
+    Creating it there would start a second history that the next ``dvc
+    checkout`` or ``dvc add`` silently replaces or forks; ``new_table=True``
+    (``--new-table``) is the explicit opt-in for a genuinely first table.
+    """
+    if new_table or os.path.exists(table_path):
+        return
+    pointer = dvc_pointer(table_path)
+    if pointer:
+        raise IcfScreenError(
+            f"{table_path} is missing but {os.path.relpath(pointer)} tracks it: run "
+            f"`dvc checkout {os.path.relpath(pointer)}` (or `dvc pull`, make rel-pool-data) "
+            "first; pass --new-table only to start a new table on purpose")
+
+
+def append_rows(table_path: str, rows: Iterable[dict], note: str = "",
+                new_table: bool = False) -> int:
     """Append ``rows`` (dicts over ``COLUMNS`` minus ``label_id``); return how many.
 
     Every row is validated and checked against the keys already in the table
     before a single byte is written: one bad row refuses the whole batch.
+    Creating the table is refused when a ``.dvc`` pointer tracks it, unless
+    ``new_table`` (see ``_refuse_fork``).
     """
     rows = [dict(r) for r in rows]
     if not rows:
         return 0
+    _refuse_fork(table_path, new_table)
     existing = read_table(table_path)
     seen = {key_of(r) for r in existing}
     faults = []
@@ -210,15 +249,17 @@ def append_rows(table_path: str, rows: Iterable[dict], note: str = "") -> int:
     return len(rows)
 
 
-def append_new(table_path: str, rows: Iterable[dict], note: str = "") -> tuple[int, int]:
+def append_new(table_path: str, rows: Iterable[dict], note: str = "",
+               new_table: bool = False) -> tuple[int, int]:
     """Append the rows whose key is not in the table yet: ``(appended, skipped)``.
 
     The idempotent entry point for importers: a second run appends nothing.
     """
     rows = list(rows)
+    _refuse_fork(table_path, new_table)
     seen = {key_of(r) for r in read_table(table_path)}
     fresh = [r for r in rows if key_of({k: str(r.get(k) or "") for k in KEY}) not in seen]
-    return append_rows(table_path, fresh, note), len(rows) - len(fresh)
+    return append_rows(table_path, fresh, note, new_table), len(rows) - len(fresh)
 
 
 # ── Shared record formats (1530 stage 2) ─────────────────

@@ -116,6 +116,7 @@ def make_counts(rows: list[dict], summary: dict, window_cfg: dict, inputs: dict)
 
 
 def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict) -> dict:
+    ics.require_table(table_path)
     labels = ics.read_table(table_path)
     pool = rv.read_pool(pool_path)
     rows, summary = rv.build_view(pool, labels, window_cfg)

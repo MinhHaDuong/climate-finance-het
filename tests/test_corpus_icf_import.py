@@ -124,3 +124,14 @@ def test_stage1_run_refused_while_running_or_mixed(tmp_path):
     d = _run_dir(tmp_path / "b", models=("qwen", "haiku"))
     with pytest.raises(ci.ImportRefused, match="disagree"):
         ci.stage1_run_rows(str(d), str(d / "screen_input.jsonl"), "padme", "r", "s")
+
+
+def test_import_refuses_to_fork_a_dvc_tracked_table(tmp_path):
+    a, prompt = _archive(tmp_path)
+    (tmp_path / "t.dvc").write_text("outs:\n- path: t\n")
+    table = str(tmp_path / "t" / "icf_screen.csv")
+    args = ["--output", table, "t1530", "--archive", str(a), "--stage2-prompt", str(prompt)]
+    assert ci.main(args) == 1
+    assert not (tmp_path / "t" / "icf_screen.csv").exists()
+    assert ci.main(["--new-table"] + args) == 0
+    assert len(ics.read_table(table)) == 10
