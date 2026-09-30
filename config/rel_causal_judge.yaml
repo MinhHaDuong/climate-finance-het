@@ -7,6 +7,12 @@ model: openrouter/anthropic/claude-haiku-4.5
 # About 45,000 (work, question) pairs on 2026-09-30: the answer is one short
 # line per record and the abstract is cut at 500 characters to keep the run
 # near 10 USD (derived from Haiku list prices, not measured).
+# OpenRouter refused the run after 575 pairs on 2026-09-30 (HTTP 402, credits
+# exhausted); the rest ran on the same model through the Anthropic API.
+anthropic:
+  backend: anthropic
+  model: claude-haiku-4-5
+  workers: 4
 batch_size: 25
 workers: 6
 max_tokens: 1200

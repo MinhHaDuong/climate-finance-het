@@ -78,8 +78,45 @@ def batches_by_question(recs, size):
     return out
 
 
+def anthropic_call(usage):
+    """Messages API call with the project's Anthropic key; token usage is
+    summed into ``usage`` so the run records what it consumed."""
+    import requests
+    from pipeline_keystore import read_credential
+    key = read_credential("anthropic", "ANTHROPIC_API_KEY")
+
+    def call(prompt, model, max_tokens):
+        for attempt in range(4):
+            try:
+                r = requests.post(
+                    "https://api.anthropic.com/v1/messages", timeout=120,
+                    headers={"x-api-key": key, "anthropic-version": "2023-06-01",
+                             "content-type": "application/json"},
+                    json={"model": model, "max_tokens": max_tokens, "temperature": 0,
+                          "messages": [{"role": "user", "content": prompt}]})
+            except requests.RequestException as exc:
+                log.warning("Anthropic call failed: %s", type(exc).__name__)
+                continue
+            if r.status_code in (429, 500, 529):
+                import time
+                time.sleep(5 * (attempt + 1))
+                continue
+            if r.status_code != 200:
+                log.error("Anthropic HTTP %s", r.status_code)
+                return None
+            body = r.json()
+            for k in ("input_tokens", "output_tokens"):
+                usage[k] = usage.get(k, 0) + int((body.get("usage") or {}).get(k) or 0)
+            return "".join(c.get("text", "") for c in body.get("content") or [])
+        return None
+
+    return call
+
+
 def run(cfg, args, call=None):
-    call = call or make_call(cfg)
+    usage = {}
+    if call is None:
+        call = anthropic_call(usage) if cfg.get("backend") == "anthropic" else make_call(cfg)
     os.makedirs(args.output_dir, exist_ok=True)
     out_path = os.path.join(args.output_dir, "labels.jsonl")
     done = set()
@@ -98,7 +135,7 @@ def run(cfg, args, call=None):
     prompt_sha = hashlib.sha256((cfg["prompt_template"] + "\n" + cfg["answer_format"]).encode()).hexdigest()
     with open(os.path.join(args.output_dir, "judge_runs.jsonl"), "a", encoding="utf-8") as fh:
         fh.write(json.dumps({
-            "model": cfg["model"], "backend": "local" if cfg.get("api_base") else "openrouter",
+            "model": cfg["model"], "backend": cfg.get("backend") or ("local" if cfg.get("api_base") else "openrouter"),
             "started": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "prompt_sha256": prompt_sha, "input": args.input,
             "n_todo": len(recs), "n_batches": len(batches),
@@ -119,6 +156,9 @@ def run(cfg, args, call=None):
             n_ok += len(res)
             n_lost += len(batch) - len(res)
     log.info("labelled %d, unlabelled %d (rerun to retry)", n_ok, n_lost)
+    with open(os.path.join(args.output_dir, "judge_runs.jsonl"), "a", encoding="utf-8") as fh:
+        fh.write(json.dumps({"finished": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                             "labelled": n_ok, "unlabelled": n_lost, "tokens": usage}) + "\n")
     return 0
 
 
@@ -129,9 +169,13 @@ def main(argv=None):
     # Multi-output script (labels plus run headers): --output-dir.
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--backend", choices=["openrouter", "anthropic"], default="openrouter",
+                    help="anthropic applies the `anthropic:` block of the config")
     args = ap.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
+    if args.backend == "anthropic":
+        cfg.update(cfg["anthropic"])
     return run(cfg, args)
 
 
