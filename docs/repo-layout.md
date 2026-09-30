@@ -178,7 +178,7 @@ resolution — the pattern is the standing answer, not a one-off audit result:
 | `build_teaching_yaml` | `_dedup_course_names` → `_course_dedup.py` | `analyze_syllabi` |
 | `compute_clusters` | `LABEL_STOPWORDS`/`ACRONYM_EXPANSIONS`/`collapse_acronyms` → `_label_vocabulary.py` | `analyze_global_map` (ticket 0321) |
 
-The other six were **reclassified Tier-2** (see above). One correction to the old
+The other six were **reclassified Tier-2** (see above; the two REL Sud-lane scripts joined them later, ticket 1652). One correction to the old
 audit: `qa_near_duplicates` has no `__main__` and its docstring documents a
 `from qa_near_duplicates import …` API — it is already a pure library (Tier-2),
 never dual-role.
