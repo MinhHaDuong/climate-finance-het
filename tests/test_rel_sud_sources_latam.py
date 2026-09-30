@@ -119,6 +119,14 @@ def test_clacso_honours_its_crawl_delay():
     assert calls[0][2] == clacso.CRAWL_DELAY
 
 
+def test_dspace_year_falls_back_to_dc_date_never_to_deposit_dates():
+    md = {"dc.title": [{"value": "T"}], "dc.date": [{"value": "2012"}],
+          "dc.date.accessioned": [{"value": "2022-03-16T20:52:09Z"}]}
+    assert latam_dspace.item_to_record({"metadata": md}, "https://h")["year"] == 2012
+    del md["dc.date"]
+    assert latam_dspace.item_to_record({"metadata": md}, "https://h")["year"] is None
+
+
 def test_dspace_item_without_handle_or_date():
     rec = latam_dspace.item_to_record({"uuid": "abc", "metadata": {
         "dc.title": [{"value": "T"}]}}, "https://h")

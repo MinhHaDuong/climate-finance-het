@@ -20,6 +20,11 @@ from rel_sud_sources.common import (
 )
 
 PAGE_SIZE = 100
+# Where a publication date sits when dc.date.issued is empty. CLACSO carries
+# plain ``dc.date`` on many items (hdl CLACSO/34982: dc.date 2012, no
+# dc.date.issued; 2026-09-30). Never dc.date.accessioned/available: those are
+# deposit dates.
+PUBLICATION_DATE_KEYS = ("dc.date", "dcterms.issued", "dc.date.created")
 
 
 def lexicon_plan(source, lexicon, extra_params=None):
@@ -63,7 +68,8 @@ def item_to_record(obj, base_url, match=None):
         doi=find_doi(ids),
         title=title,
         authors="; ".join(_values(md, "dc.contributor.author") + _values(md, "dc.creator")),
-        year=find_year(_values(md, "dc.date.issued")),
+        year=find_year(_values(md, "dc.date.issued")
+                       or [v for k in PUBLICATION_DATE_KEYS for v in _values(md, k)]),
         language="; ".join(_values(md, "dc.language.iso") + _values(md, "dc.language")),
         venue="; ".join(_values(md, "dc.relation.ispartofseries")
                         + _values(md, "dc.relation.ispartof")
