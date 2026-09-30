@@ -6,6 +6,7 @@ Blocked-by: 1711
 
 --- log ---
 2026-09-30T11:35Z HDMX-coding-agent created
+2026-09-30T15:10Z HDMX-coding-agent note two exit criteria added from the extraction spec review (author, 2026-09-30): reading method, version and reviewer on every line; ordinal continuation across snapshots in the line identifier scheme
 
 --- body ---
 ## Context
@@ -39,3 +40,5 @@ Author decisions (2026-09-30, interactive):
 - [ ] Every derived result declares its matching cutoff in its run record, and the observatory's counts are produced at that cutoff; figures at the current default are unchanged or each change is explained
 - [ ] Counting scopes are stored apart from publisher-stated perimeters, and nothing in the build reads the World Bank pool as a perimeter
 - [ ] The storage contract § 1 and § 4 describe what the code does
+- [ ] A statement (line) records the method, method version and reviewer (checking reader, and the author where they decided) that read it, as `docs/jetp-extraction.md` § 3 requires
+- [ ] The statement identifier scheme says how ordinals continue across snapshots of one document, so a new snapshot's statements get new identifiers without collision (`docs/jetp-extraction.md` § 9)
