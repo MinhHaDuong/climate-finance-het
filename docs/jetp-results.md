@@ -3,7 +3,7 @@
 Status: draft for review, 2026-09-30.
 
 A **result** is what the JETP Observer computes from the ledger: a count, an
-account, a timeline, a reconciliation gap, a descriptive table, a list of
+account, a timeline, a gap between financial states, a descriptive table, a list of
 excerpts. In the ODEM frame of the [language](jetp-language.md) it is
 Evidence: it comes on top of Data and never edits it. A **release** is a
 frozen package of results, the data they were computed from and the
@@ -30,9 +30,8 @@ Monthly releases and the attribution of change between them are M4.
 **A result is reproducible or it is not a result.** Everything a result
 depends on is named in it: the inputs, the times, the versions of the words
 and of the methods, the thresholds applied to judgements. Given the same
-names, the same result comes out, exactly for the deterministic parts; a
-reading by a language model is reproduced from its recorded output, not by
-reading again.
+names, the same result comes out, exactly for the deterministic parts; an
+LLM reading is reproduced from its recorded output, not by reading again.
 
 **Frozen bytes.** A release is a set of bytes. Once published, no byte of it
 is replaced, whatever is found later. A correction is a new release beside
@@ -78,15 +77,15 @@ retrieved as they stood. A result is never recomputed under a later ontology
 without becoming a new result. *M3b* (Q9, OBS-4).
 
 **Its method versions.** Every method that selected, weighed, transformed or
-counted: the reading methods of the statements it uses, the proposers and
+counted: the extraction and reading methods of the statements it uses, the proposers and
 the rule that turned readings into judgements, the counting scope, the
 account rules, the conversion rule. Changing any of them makes a new result
 under a new version. *M3b* (Q9).
 
-**Its matching cutoff.** The likelihood and confidence a candidate match, an
+**Its match threshold.** The likelihood and confidence a candidate match, an
 occurrence, a coverage or a compatibility judgement needs in order to count
-(fusion § 3, Cutoff per result), for example "likely or more, medium
-confidence or more". The candidate matches below the cutoff that would have
+(fusion § 3, Threshold per result), for example "likely or more, medium
+confidence or more". The candidate matches below the threshold that would have
 changed the result are listed and counted apart; they never enter its
 figure. *M3b* (F11).
 
@@ -95,15 +94,15 @@ judgements carries, or resolves to, the calibrated likelihood and confidence
 of each judgement it counted, on the scales of fusion § 1. *M3b* (Q5, Q11).
 
 **Uncertainty as ranges.** A value is a range where its inputs are: rounded
-inputs carry their bounds, a date its interval, a figure at two matching
-cutoffs its low and high values (section 3). An unresolved disagreement is
+inputs carry their bounds, a date its interval, a figure at two match
+thresholds its low and high values (section 3). An unresolved disagreement is
 carried with both values and the condition that blocks comparison. Unknown
 is never zero, and a figure blocked by an open question is reported as
 blocked, with the reason, while the others stand. No preferred figure is
 manufactured to fill a gap. *M3b* (Q11, F6).
 
 **Its unit and population.** Every count names its unit (statements,
-identities of a kind, a publisher's stated count) and its perimeter or
+referents of a kind, a publisher's stated count) and its perimeter or
 counting scope; every sum names the financial state it selects and its
 currency (fusion § 6–7). *M3b* (F13, F14, F15).
 
@@ -123,27 +122,27 @@ release identifier and the result's identifier. *M3b* (Q6).
 The kinds of result the M3b release must contain are those the requirements
 name: counts per country, state and scope (F13); accounts (fusion § 7);
 operation timelines (F16); the gaps between announced, signed, reported and
-disbursed amounts and the traceability rate of the reconciliation with CRS
-and IATI (F19); lists of excerpts for qualitative work (F21); and the
+disbursed amounts and the traceability rate of the matching to CRS and IATI
+(F19); lists of excerpts for qualitative work (F21); and the
 coverage report (DP-3). Other results are added when a product needs them.
 
-## 3. Two matching cutoffs
+## 3. Two match thresholds
 
 Matching uncertainty is reported, not resolved away. A result whose figure
 depends on identity, occurrence or coverage judgements is computed at two
-matching cutoffs, both declared in advance:
+match thresholds, both declared in advance:
 
-- a **cautious** cutoff, counting only what the judgements support strongly
+- a **cautious** threshold, counting only what the judgements support strongly
   (default: likely or more, medium confidence or more);
-- an **inclusive** cutoff, counting also what they support weakly (default:
+- an **inclusive** threshold, counting also what they support weakly (default:
   about as likely as not or more, any confidence).
 
 The two figures are the low and the high end of the result's range. Where
 they coincide, one figure is shown with the note that matching does not move
-it. The candidate matches between the two cutoffs are listed with the
+it. The candidate matches between the two thresholds are listed with the
 result, so a reader sees what the range is made of. *M3b* (F11, Q11).
 
-A result may declare a single cutoff when it does not depend on matching; it
+A result may declare a single threshold when it does not depend on matching; it
 says so. The two defaults are method choices with a version, set by the
 author before the M3b release and not moved afterwards without a new
 version.
@@ -158,19 +157,20 @@ stated.
   definitions of the terms in force (the glossary). (F23, F32)
 - **The results** of section 2, each with its metadata.
 - **A data dictionary** defining every field of every file. (F31)
-- **The method register**: every method and version named by a result, with
+- **The method list**: every method and version named by a result, with
   a pointer to its specification. (Q9)
 - **Provenance** in machine-readable form: for every statement, the hash of
-  the snapshot it was read from, its locator and its reading method; for
+  the snapshot it was extracted from, its locator and its extraction method; for
   every result, its inputs, times and versions. (F32)
 - **The collection record**: the discovery cutoff, the newest document date,
-  the recall estimate and the list of sources that could not be reached,
-  with the reason. (F9, D9, Q10)
+  the recall estimate and the list of documents and search channels that
+  could not be reached,
+  with the reason. (F9, DA9, Q10)
 - **The redistribution list**: for every document, whether its bytes are in
   the release or only cited, and on which terms (section 7). (C6)
 - **The validation and coverage reports**, and an editorial note in plain
   language saying what the release contains and what it does not.
-- **The cost record**: model spend and review time per document class.
+- **The cost record**: LLM spend and review time per document class.
   (Q15)
 - **The Observatory pages** of the release, built from the release alone and
   readable from its files alone. (C7)
@@ -227,7 +227,7 @@ release in place. *M3b* (Q8).
 
 **Rebuildable.** Any release can be rebuilt from the repository at its input
 version and the archived documents, byte-identical for its deterministic
-parts; recorded readings by language models are reused, never re-read. *M3b*
+parts; recorded LLM readings are reused, never redone. *M3b*
 (Q4, Q19).
 
 ## 6. How a release is identified
@@ -270,7 +270,7 @@ The Observer publishes what it made and cites what others made.
   labels and short excerpts, each attributed to its publisher, document and
   locator. *M3b* (F21, F30).
 - **Redistributed only where the source's terms allow**: the bytes of a
-  document, and the records of a structured channel. Where the terms do not
+  document, and the records of a structured search channel. Where the terms do not
   allow it or are unknown, the release carries the address, the public
   archive record if one exists, the hash and the locator, so that a reader
   who obtains the document can check that it holds the same bytes. The
@@ -359,7 +359,7 @@ differs from the previous one. *M4* (F22, OBS-5, DP-5).
 - A change of method is isolated by recomputing the previous release's inputs
   under the new method, so that what the method changed is told apart from
   what the new inputs changed.
-- A failed retrieval is not a change in the world: an identity present in the
+- A failed retrieval is not a change in the world: a referent present in the
   previous release is kept in the next one, with its last known state and
   the failed retrieval recorded, unless a judgement retires it.
 - A release with no scientific change is a legitimate release and says so;
@@ -382,7 +382,7 @@ pages remain readable from the deposited files alone. *M4* (C10, C7).
 The first correct, citable release needs, and needs only:
 
 1. Results that carry their inputs, both times, ontology and method versions,
-   matching cutoffs, ranges and trails (sections 2 and 3).
+   match thresholds, ranges and trails (sections 2 and 3).
 2. One release built inputs first and descriptor after, validated and
    accepted before the current release advances (sections 4 and 5).
 3. A persistent identifier, a harvestable metadata record, an open licence
@@ -405,8 +405,8 @@ process produces.
 |---|---|
 | A statement is admitted the day after a release's knowledge cutoff. | No result of that release changes; the statement first counts in a later release. |
 | A result is found that names no method version for its counting scope. | The build fails validation and nothing is published. |
-| A candidate match judged "about as likely as not" joins two projects. | The project count differs between the inclusive and the cautious cutoff; the candidate is listed between the two. |
-| A figure's judgements all meet both cutoffs. | One figure, with the note that matching does not move it. |
+| A candidate match judged "about as likely as not" joins two projects. | The project count differs between the inclusive and the cautious threshold; the candidate is listed between the two. |
+| A figure's judgements all meet both thresholds. | One figure, with the note that matching does not move it. |
 | An error is found in release `2026-11` after publication. | A new release `2026-11-r1` names what it supersedes; the bytes and persistent identifier of `2026-11` are unchanged and point to the correction. |
 | A revoked match touches three country totals and one paper figure. | The correction's editorial note lists all four before it is published. |
 | The build of a new release fails halfway through writing the site. | The previous accepted release is served whole; no page mixes the two; the ledger keeps its newer rows. |
@@ -418,5 +418,5 @@ process produces.
 | An Observatory page shows a figure absent from the release it states. | Validation fails; the page is not published. |
 | The book pins a release; two later releases revise a figure it quotes. | The book's figure still reproduces from its pinned release. |
 | A figure rises between two releases because of a new disbursement and a revised match. | M4: the change is split into a development in the world and a changed interpretation, each with its share. |
-| A living page could not be fetched for the new release. | M4: the identities it supported stay, with their last known state and the failed retrieval recorded. |
+| A living page could not be fetched for the new release. | M4: the referents it supported stay, with their last known state and the failed retrieval recorded. |
 | The horizon is reached. | M4: a final release is archived; every cited release identifier still resolves. |

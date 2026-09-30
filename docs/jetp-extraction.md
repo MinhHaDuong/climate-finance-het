@@ -1,37 +1,40 @@
-# JETP extraction: how statements are read from documents
+# JETP extraction: how statements are extracted from documents
 
 Status: draft for author review.
 
 Extraction turns the bytes of a held document into statements. The
 [ontology](jetp-ontology.md) fixes what a statement (the ontology's line) is;
-the [fusion rules](jetp-fusion.md) fix how statements are combined once read.
-This document fixes how they are read: what a statement must carry when it
+the [fusion rules](jetp-fusion.md) fix how statements are combined once
+extracted. This document fixes how they are extracted: what a statement must carry when it
 leaves extraction, which methods may produce it, what happens to a document
 that yields none, how a run is shown to be correct, and how a statement is
-then read into observations.
+then read into observations. Extraction turns bytes into statements (step D2
+of the [language](jetp-language.md) document); reading turns statements into
+observations (D3). The Observatory's Statements page shows observations; this
+document's statements appear there as Document rows.
 
 Its rules are conceptual. They hold whether statements are kept as RDF
 triples, as sentences of flat text or as rows; how they are stored is the
 [storage contract](jetp-ledger-storage.md), and how they are shown is the
-[observatory](jetp-observatory-presentation.md). Words follow the
+[Observatory](jetp-observatory-presentation.md). Words follow the
 [language](jetp-language.md) document: a statement's documentary support is
 its justification, a language model is an LLM, and the ledger's own output is
 a release.
 
 Every rule carries, in square brackets, the milestone that needs it: M2 (an
 extraction pipeline that works on every document held), M3a (discovery to a
-cutoff, then the registry frozen), M3b (the new documents extracted,
-reconciled and released), M4 (operation), or later. A rule tagged after M2 is
+cutoff, then the register frozen), M3b (the new documents extracted,
+matched and released), M4 (operation), or later. A rule tagged after M2 is
 not built before its milestone.
 
 ## 1. Principles
 
-**Read, do not interpret.** Extraction records what the publisher printed, as
+**Extract, do not interpret.** Extraction records what the publisher printed, as
 printed: the label in its language, the status word in the publisher's
 vocabulary, the number with its printed unit and scale. Conversion,
 normalisation, crosswalking and matching come later, each as its own step
-with its own method. A reader who is unsure writes unknown; a guess is never
-recorded as a reading. [M2]
+with its own method. An extractor that is unsure writes unknown; a guess is
+never recorded as an extraction. [M2]
 
 **Traceable to bytes.** Every statement resolves to one snapshot and one
 place in it, so that anyone holding the bytes can find the text it rests on.
@@ -42,18 +45,18 @@ statement. [M2]
 recorded disposition for every document the ledger holds. Silence is never an
 outcome. [M2]
 
-**Complete within a declared scope.** A reading states in advance which parts
-of a document it covers. Inside that scope every item is read; outside it
-nothing is, and the scope stays on record so that a later reading can extend
-it. [M2]
+**Complete within a declared extraction scope.** An extraction states in
+advance which parts of a document it covers. Inside that scope every item is
+extracted; outside it nothing is, and the scope stays on record so that a
+later extraction can extend it. [M2]
 
-**Append only.** A reading adds statements. It never edits, deletes or
+**Append only.** An extraction adds statements. It never edits, deletes or
 renumbers an earlier one. The ledger's own errors are corrected by
 supersession ([fusion](jetp-fusion.md), section 2), and the superseded
 statement stays readable. [M2]
 
-**Declared method.** Every statement names the method and version that read
-it: a parser, an assisted reading, a transcription or a person. Changing a
+**Declared method.** Every statement names the method and version that
+extracted it: a parser, an assisted reading, a transcription or a person. Changing a
 method makes a new version, and its effect on earlier output is reviewed
 before it is adopted. [M2]
 
@@ -62,7 +65,7 @@ running it again and comparing. An LLM read cannot be reproduced byte for
 byte, so its checked output is the record and its checks are of another
 kind (section 6.3 and section 10). [M2]
 
-**Reading mints nothing.** Extraction produces statements and dispositions.
+**Extraction mints nothing.** Extraction produces statements and dispositions.
 It mints no project, asset, agreement, perimeter or party, and it decides no
 match. A parser may propose a pairing it can see, such as a publisher's own
 key repeated across editions, but the proposal is a candidate match of the
@@ -79,31 +82,31 @@ the cases it would serve. [M2]
 
 Extraction receives a held document with at least one snapshot, and returns
 statements citing that snapshot or a disposition. It does not fetch
-anything: acquisition, retries and the choice of what to collect belong to
-the collection specification. Reading statements into observations is a
+anything: fetching, retries and the choice of what to collect belong to the
+collection specification. Reading statements into observations is a
 later step with its own rules (section 11). [M2]
 
-Three things are settled before any statement is read.
+Three things are settled before any statement is extracted.
 
-- **Document deduplication.** A duplicate read twice doubles every statement
+- **Document deduplication.** A duplicate extracted twice doubles every statement
   and every count downstream, so the document judgements of
   [fusion](jetp-fusion.md) section 3 (`same_as`, `edition_of`,
-  `translation_of`) are made first. Statements are read from the canonical
+  `translation_of`) are made first. Statements are extracted from the canonical
   member of a `same_as` group and from one language of a translation pair.
   Extraction applies the outcome; it does not restate the proposers. If a
   document judgement is later revoked, the document it had folded becomes
-  pending again and is read like any other. [M2]
-- **Canonical member.** In a `same_as` group, the member already read stays
-  canonical, so that no statement moves; when none has been read, the
+  pending again and is extracted like any other. [M2]
+- **Canonical member.** In a `same_as` group, the member already extracted
+  stays canonical, so that no statement moves; when none has been extracted, the
   publisher's own address is canonical over a mirror. [M2]
-- **Language read in a translation pair.** The version the publisher
-  designates as authoritative is read; failing that, the member already
-  read; failing that, the version in the country's official language, whose
+- **Language extracted in a translation pair.** The version the publisher
+  designates as authoritative is extracted; failing that, the member already
+  extracted; failing that, the version in the country's official language, whose
   labels match other national sources best. [M2]
 - **Language.** The document's language is recorded, because the translation
-  rule needs it and because the readers and checkers must handle that
+  rule needs it and because the LLM readers and checkers must handle that
   language. [M2]
-- **Edition.** A document that is a later edition of one already read is its
+- **Edition.** A document that is a later edition of one already extracted is its
   own document, related by `edition_of`. Its statements are new statements
   of the new document; they are never merged into the earlier edition's.
   [M2]
@@ -119,7 +122,7 @@ required of it at this step.
 
 - **Country**: the recipient country the statement is about, or none for a
   statement about no recipient country (a donor's method note). [M2]
-- **Snapshot**: the fingerprint of the exact bytes read. Never a web address
+- **Snapshot**: the fingerprint of the exact bytes extracted. Never a web address
   and never a retrieval. [M2]
 - **Locator**: the place of the assertion in those bytes, precise enough to
   be unique within the snapshot and never the whole document. Its syntax per
@@ -134,9 +137,9 @@ required of it at this step.
 - **Classification**: one value from the closed list of the
   [ontology](jetp-ontology.md) (section 4): `named_item`, `unnamed_item`,
   `quota`, `heading`, `submission`, `evaluation`, `register_allocation`,
-  `count`, `envelope`, `absence`. It is assigned by the reading from what the
+  `count`, `envelope`, `absence`. It is assigned by the extraction from what the
   publisher presents, never inferred from words in the label. When the
-  reading cannot tell, the statement waits for review rather than taking a
+  extraction cannot tell, the statement waits for review rather than taking a
   default. [M2]
 - **The publisher's own status word**, copied as printed, and the axis it
   belongs to, when the publisher prints one. The shared status is never
@@ -148,11 +151,11 @@ required of it at this step.
   item under it). The heading is a statement of the same snapshot. [M2]
 - **Verbatim fields**: everything else the publisher printed for the item,
   field by field, under the publisher's own field names as printed. The list
-  of field names is declared once per document at reading, and every
+  of field names is declared once per document at extraction, and every
   statement of that document conforms to it. A value keeps its printed form:
   "3.92" under a heading "USD billion" stays 3.92 with the heading, and a
   cell naming several funders stays one cell. [M2]
-- **Method and version** that read it, and, for an assisted reading or a
+- **Method and version** that extracted it, and, for an assisted reading or a
   transcription, the checking reader and any person who decided on it
   (section 6.3). [M2]
 - **Recorded date**: when the ledger admitted the statement. This is the
@@ -181,23 +184,23 @@ cases that recur in the documents held. [M2 for all]
   both pages.
 - The same value printed in three places (a headline, a list, a caption) is
   three statements when all three places are in scope. Relating them is a
-  judgement of fusion, not a merge at reading.
-- Prose is read when it asserts something in scope: a signature, an approval,
+  judgement of fusion, not a merge at extraction.
+- Prose is extracted when it asserts something in scope: a signature, an approval,
   an amount, a date, a state. Each assertion is one statement anchored on its
   own words, attributed to its speaker when the publisher quotes someone.
 - Navigation, boilerplate, legal notices, contents pages and repeated
-  page furniture are out of scope unless the reading declares otherwise.
+  page furniture are out of scope unless the extraction declares otherwise.
 
-**Declared scope.** Before reading, the reading names the parts of the
-document it covers (an appendix, the list of submissions, the body of a news
+**Declared extraction scope.** Before extracting, the extraction names the
+parts of the document it covers (an appendix, the list of submissions, the body of a news
 item) and states why the rest is out of scope. Relevance is judged against
 the purpose of the ledger: statements about the partnerships' projects,
-money, perimeters, parties and states. A reading may stop short of a whole
-document; it may not stop short of a whole part it declared. [M2]
+money, perimeters, parties and states. An extraction may stop short of a
+whole document; it may not stop short of a whole part it declared. [M2]
 
 **Printed totals as controls.** Where the document prints how many items a
-part holds, or a total the items should sum to, the reading compares and
-fails when they disagree. The disagreement is resolved by reading again, or
+part holds, or a total the items should sum to, the extraction compares and
+fails when they disagree. The disagreement is resolved by extracting again, or
 recorded as the publisher's own inconsistency with both figures kept. [M2]
 
 ## 5. Text layers by format
@@ -234,7 +237,7 @@ received. [M2]
   person's transcription]
 - **Values shown only in a chart**, with no byte of text behind them, are out
   of scope until transcribed with provenance, as the ontology states (section
-  6). A reading that meets one records it in its scope note so the gap is
+  6). An extraction that meets one records it in its scope note so the gap is
   visible. [M2 for the note; transcription of charts later]
 - **Spreadsheets.** The cell values as stored by the publisher, sheet by
   sheet. Formulas are not re-evaluated; a cell's stored value is what the
@@ -245,7 +248,7 @@ received. [M2]
 - **JSON and other structured records.** Each record is read under its own
   key. A locator is the publisher's record identifier (a register code, an
   activity identifier, an SDMX key), and the record's fields are the
-  verbatim fields. [M2 for the documents held; the comparator channels of
+  verbatim fields. [M2 for the documents held; the comparator records of
   CRS and IATI, M3b]
 - **Scripts.** Data embedded as a literal inside a script (an array behind a
   dashboard) is read as a structured record from the literal. A script is
@@ -253,7 +256,7 @@ received. [M2]
 - **Corrupt or empty bytes** yield a disposition (section 7), never a crash
   of the run. [M2]
 
-## 6. Reading methods
+## 6. Extraction methods
 
 Four methods produce statements. Each signs what it reads with its name and
 version, and each has its own check of correctness. [M2 for all four]
@@ -271,7 +274,7 @@ reviewed as a difference against what was there before.
   way through an unfamiliar layout. [M2]
 - It uses the printed totals and part boundaries as controls (section 4) and
   fails the whole document when a control fails. No partial set of
-  statements is admitted from a failed reading. [M2]
+  statements is admitted from a failed extraction. [M2]
 - It assigns classifications from the publisher's own presentation or from a
   reviewed list of items, and leaves a statement unclassified for review
   rather than choosing a value it cannot justify. [M2]
@@ -288,7 +291,7 @@ reviews that statement of the run rather than each record. A bulk statement
 is examined individually when an observation first cites it. Before a
 portal is read, its snapshot is inspected and given a verdict: it holds
 data, it is a shell around a service, or it holds nothing to read. [M2 for
-the portals held; the comparator channels, M3b]
+the portals held; the comparator records, M3b]
 
 ### 6.3 Assisted reading of one-off documents
 
@@ -296,7 +299,7 @@ Where no series justifies a parser (a single investment plan, an approval
 document, a project page, a news item), an LLM reads and a second LLM from
 another vendor checks every row. The checked statements are the record.
 
-- The reader is given the document's text layer, the declared scope and the
+- The LLM reader is given the document's text layer, the declared scope and the
   declared field list, and proposes statements with a label, a locator that
   identifies the assertion, a classification and the verbatim fields. [M2]
 - Every proposed locator is checked automatically against the stored bytes:
@@ -308,14 +311,14 @@ another vendor checks every row. The checked statements are the record.
   whatever that language is. For each it states whether the proposal is
   right, with a likelihood and a confidence on the calibrated scales of
   [fusion](jetp-fusion.md) section 1, and a quoted basis. It also lists
-  items of the declared scope that the reader missed. [M2]
+  items of the declared scope that the LLM reader missed. [M2]
 - The author sees only the proposals on which reader and checker disagree,
   the items the checker says were missed, and a random sample of the
   proposals they agree on, all sorted by likelihood and confidence. The
   author accepts, corrects or rejects each. A proposal both readers agree on
   and the author does not overturn is admitted. A rejected proposal is
   recorded with its reason, never dropped. [M2]
-- The method records, for reader and checker, the model identifier, the
+- The method records, for reader and checker, the LLM identifier, the
   prompt version and, where the service allows, the sampling settings; the
   checker's stance and any decision by the author are recorded on every
   admitted statement. [M2]
@@ -347,8 +350,12 @@ check of locators applies. [M2]
 
 ## 7. Dispositions
 
+A disposition here is the outcome of a held document or snapshot that yields
+no statements; a candidate's outcome before admission is collection's triage
+outcome, a different list. [M2]
+
 Every held document ends with statements or a disposition, and every
-snapshot of a document that is read ends with statements or a disposition of
+snapshot of a document that is extracted ends with statements or a disposition of
 its own. A disposition is a record, like a judgement: it names its kind, its
 reason in words, who or what decided it, by which method and version, and
 when. It is revised by a later disposition that names it, never erased. [M2]
@@ -358,15 +365,15 @@ The kinds, closed and grown only by decision:
 | Kind | Applies to | Meaning |
 |---|---|---|
 | `duplicate` | document | a non-canonical member of a `same_as` group; its statements are those of the canonical member, and its snapshots stay citable |
-| `translation_not_canonical` | document | the member of a translation pair that is not read |
+| `translation_not_canonical` | document | the member of a translation pair that is not extracted |
 | `no_snapshot` | document | the ledger holds no bytes for it; collection owns the gap |
 | `wrong_content` | snapshot | the bytes are not the document (an error page, a login wall, a consent screen), which is handed back to collection |
 | `unreadable` | snapshot | corrupt, truncated or in a format no adapter handles, with the format named |
 | `no_extractable_content` | snapshot | readable, but nothing in scope is stated in text: a shell around a service, a page of links, a chart with no text behind it; the reason says which |
 | `out_of_scope` | document | held for context, and nothing in it concerns the partnerships' projects, money, perimeters, parties or states |
-| `deferred` | snapshot | held and in scope, not read yet; names the milestone it waits for and why (a scan awaiting transcription, a review budget exceeded) |
+| `deferred` | snapshot | held and in scope, not extracted yet; names the milestone it waits for and why (a scan awaiting transcription, a review budget exceeded) |
 
-A snapshot that is byte-identical to one already read is not a new snapshot
+A snapshot that is byte-identical to one already extracted is not a new snapshot
 and needs neither statements nor a disposition (section 8). [M2]
 
 A `deferred` disposition closes a document for the purpose of a run's
@@ -377,14 +384,14 @@ type, and a milestone's acceptance names them. [M2]
 
 A document may be fetched many times, and a living document (a project page,
 a register) changes between fetches. The rules below apply
-[fusion](jetp-fusion.md) section 2 at the moment of reading.
+[fusion](jetp-fusion.md) section 2 at the moment of extraction.
 
 - **Identical bytes.** A later retrieval that returns the same bytes shares
-  the earlier snapshot. Nothing is read again. The later retrieval date is
-  itself the dated evidence that the publisher still printed every statement
+  the earlier snapshot. Nothing is extracted again. The later retrieval date is
+  itself the dated justification that the publisher still printed every statement
   of that snapshot on that date. [M2]
 - **New bytes.** A later retrieval that returns different bytes forms a new
-  snapshot, which is read in full, as if for the first time, under the same
+  snapshot, which is extracted in full, as if for the first time, under the same
   declared scope. Its statements cite the new snapshot. The statements of
   earlier snapshots are not touched. [M2]
 - **Restatement.** A statement of the new snapshot whose item and verbatim
@@ -404,7 +411,7 @@ a register) changes between fetches. The rules below apply
   [fusion](jetp-fusion.md) section 3. Content is compared field by field
   on the verbatim fields after whitespace is joined; any other difference
   is a change. [M2 for key-based pairing; M4 for pairing without a key
-  across the periodic harvest]
+  across the periodic collection]
 - **Absence.** An item of an earlier snapshot with no counterpart in the new
   one is recorded as unpaired. No statement is invented for it, and its
   absence is not read as a cancellation; that too is a judgement of fusion.
@@ -414,15 +421,15 @@ a register) changes between fetches. The rules below apply
 
 - A statement's identifier is minted when it is admitted and is independent
   of its attributes. It is never reused and never renumbered, whatever
-  happens to the reading method. [M2]
-- A new snapshot's statements get new identifiers. A reading that later
-  finds an item it missed in an already read snapshot appends it under a new
+  happens to the extraction method. [M2]
+- A new snapshot's statements get new identifiers. An extraction that later
+  finds an item it missed in an already extracted snapshot appends it under a new
   identifier; the identifiers of the other statements do not move. [M2]
 - No two statements claim the same place in the same bytes. A locator too
   coarse to be unique is refused at admission. [M2]
 - A new method version that moves the locator of an item whose meaning is
   unchanged keeps the statement's identifier through a reviewed mapping from
-  old locator to new. When the new version shows the old reading was wrong
+  old locator to new. When the new version shows the old extraction was wrong
   (a misread value, a wrong item, a wrong locator), the old statement is
   superseded with the reason, and results computed before the correction can
   still be reproduced. [M2]
@@ -433,27 +440,27 @@ a register) changes between fetches. The rules below apply
 
 These are the correctness oracle of extraction. [M2 for all]
 
-- **Replay.** Every document already read by a parser is read again from its
-  stored bytes by the current pipeline, and the output is compared with the
+- **Replay.** Every document already extracted by a parser is extracted again
+  from its stored bytes by the current pipeline, and the output is compared with the
   statements of record, statement by statement and field by field. Every
   difference is classified: the pipeline is wrong (fix the pipeline), the
   statement of record is wrong (correct it by supersession), or the
   difference is legitimate and explained in words. An unexplained difference
   fails the replay.
-- **Idempotence.** Running the pipeline again over a snapshot already read
+- **Idempotence.** Running the pipeline again over a snapshot already extracted
   changes nothing: no statement added, altered or renumbered, and no
   disposition added.
 - **The limit.** An LLM read, a transcription and a person's reading are not
   reproducible byte for byte, so replay and idempotence bind the parsers,
   the ingestion runs and the step that admits statements, not a fresh
-  reading. For statements produced by those methods, replay verifies instead
+  extraction. For statements produced by those methods, replay verifies instead
   that each locator still resolves in its bytes and that the text there
   still contains the label and values of record. Replay lists these
   statements by method, so the reach of the oracle is stated.
 - **Positive control.** The replay itself is shown to fail when a snapshot or
   a statement of record is deliberately altered.
 
-A run reports, by country and document type, the documents read, the
+A run reports, by country and document type, the documents extracted, the
 statements admitted, each kind of disposition and the documents that replay
 exactly, differ with an explanation, or cannot be regenerated. [M2]
 
@@ -463,7 +470,8 @@ An observation is one dated statement about one subject, cited to exactly
 one statement ([ontology](jetp-ontology.md), Observation). Reading turns a
 statement's printed fields into that typed form. It is a step after
 extraction, with its own methods and checks, and it never changes the
-statement it reads. [M3b for all rules of this section]
+statement it reads. The Observatory's Statements page shows these
+observations (step D3). [M3b for all rules of this section]
 
 **How many.** A statement yields zero, one or several observations, one per
 measure it prints. A plan item that prints a capacity and a cost estimate
@@ -566,13 +574,13 @@ not used on held documents until its checks pass. [M2 for all]
   crash.
 - **The pending list** lists a snapshot with neither statements nor a
   disposition, and stops listing it once either exists.
-- **Document deduplication** finds a known mirror already in the register
+- **Document deduplication** finds a known mirror already in the document register
   before a null result on other documents is believed ([fusion](jetp-fusion.md)
   section 3).
 
 ## 13. The M2 slice
 
-M2 is the minimum that reads every held document correctly and traceably.
+M2 is the minimum that extracts every held document correctly and traceably.
 It comprises:
 
 1. The preconditions of section 2: deduplication applied, languages
@@ -599,14 +607,14 @@ After M2:
 
 - **M3a** adds no extraction rule and keeps the M2 check of assisted
   readings. Discovery may bring formats or series not held at M2; they are
-  read in M3b.
-- **M3b** reads the documents new since M2 with the same pipeline, reads
-  the comparator channels (CRS, IATI) as structured sources, and reads
+  extracted in M3b.
+- **M3b** extracts the documents new since M2 with the same pipeline,
+  extracts the comparator records (CRS, IATI) as structured sources, and reads
   statements into observations (section 11).
 - **M4** runs the pipeline on schedule from the pending list, pairs
   statements across snapshots without a publisher's key, replaces the single
   checker by the full panel with positive controls, and swaps the document store behind
-  the same interface without changing a reading method.
+  the same interface without changing an extraction method.
 - **Later**: transcription of values shown only in charts, and derived
   translations of labels (never statements in their own right).
 
@@ -616,43 +624,43 @@ After M2:
   with its budget (section 6.3); whether a floor should be fixed here, such
   as a share of agreed rows per document, is not settled.
 
-## 15. Checks a reading must pass
+## 15. Checks an extraction must pass
 
-Each check is a small constructed situation and the outcome a correct reading
-produces. A reading that gives another outcome is wrong, whatever else it
+Each check is a small constructed situation and the outcome a correct
+extraction produces. An extraction that gives another outcome is wrong, whatever else it
 does well.
 
 | Situation | Correct outcome |
 |---|---|
-| A page is fetched again and the bytes are identical. | Nothing is read. The later retrieval dates the persistence of every statement of the snapshot. |
-| A register is fetched again; one amount changed, the other items are unchanged. | The new snapshot is read in full. Unchanged items are restatements linked to the earlier statements; the changed amount is a new statement beside the old one; no earlier statement is touched. |
+| A page is fetched again and the bytes are identical. | Nothing is extracted. The later retrieval dates the persistence of every statement of the snapshot. |
+| A register is fetched again; one amount changed, the other items are unchanged. | The new snapshot is extracted in full. Unchanged items are restatements linked to the earlier statements; the changed amount is a new statement beside the old one; no earlier statement is touched. |
 | An item of the earlier snapshot is missing from the new one. | No statement is invented; the earlier item is recorded as unpaired, and nothing says it was cancelled. |
 | The pipeline is run twice on the same snapshot. | The second run changes nothing. |
 | A parser fix moves the locator of twelve items without changing what they say. | Their identifiers are kept through a reviewed mapping; nothing is renumbered. |
 | A parser fix shows that one value was misread. | The old statement is superseded with the reason; results computed before remain reproducible. |
-| A re-reading finds an item the first reading missed. | It is appended under a new identifier; the other identifiers do not move. |
-| A report is held under the publisher's address and a partner's mirror, with the same bytes. | It is read once, from the canonical member; the other has the disposition `duplicate`. |
-| A plan is held in English and in Vietnamese. | One language is read; the other has the disposition `translation_not_canonical`. |
+| A re-extraction finds an item the first extraction missed. | It is appended under a new identifier; the other identifiers do not move. |
+| A report is held under the publisher's address and a partner's mirror, with the same bytes. | It is extracted once, from the canonical member; the other has the disposition `duplicate`. |
+| A plan is held in English and in Vietnamese. | One language is extracted; the other has the disposition `translation_not_canonical`. |
 | A dashboard's stored markup holds no data, which arrives by script. | Disposition `no_extractable_content`, reason "shell around a service"; collection may seek the data. |
 | A decision is held only as a scan. | It is transcribed with the transcription named as method, or deferred with that reason; it is never skipped silently. |
-| A figure appears only in a chart. | No statement; the reading's scope note records the chart. |
+| A figure appears only in a chart. | No statement; the extraction's scope note records the chart. |
 | The LLM proposes an item whose locator does not contain its label. | The proposal is rejected before any further check, and the rejection is recorded. |
 | The reader and the checker from another vendor agree on 40 rows of a Vietnamese plan and disagree on 3. | The author sees the 3 disagreements and a random sample of the 40, sorted by likelihood and confidence; the rest is admitted with the checker's stance recorded. |
-| A spreadsheet has a hidden row. | It is read, and its statement records that it was hidden. |
-| A mirror was read before the publisher's own copy was found. | The mirror stays canonical; the publisher's copy has the disposition `duplicate`. |
-| The assisted reader is given a document with a planted item and a named absent item. | The planted item is found; nothing is proposed for the absent one. |
-| An appendix states it lists 37 items and the parser finds 36. | The reading fails; no statement of that document is admitted until the difference is resolved or recorded as the publisher's own. |
-| A figure of 3.92 is printed under the heading "USD billion". | The statement keeps 3.92 and the heading as printed; no conversion at reading. |
+| A spreadsheet has a hidden row. | It is extracted, and its statement records that it was hidden. |
+| A mirror was extracted before the publisher's own copy was found. | The mirror stays canonical; the publisher's copy has the disposition `duplicate`. |
+| The LLM reader is given a document with a planted item and a named absent item. | The planted item is found; nothing is proposed for the absent one. |
+| An appendix states it lists 37 items and the parser finds 36. | The extraction fails; no statement of that document is admitted until the difference is resolved or recorded as the publisher's own. |
+| A figure of 3.92 is printed under the heading "USD billion". | The statement keeps 3.92 and the heading as printed; no conversion at extraction. |
 | A register prints the status "B. In progress". | The word is copied as printed with its axis; no shared status is assigned. |
 | A publisher counts 24 projects and names 3. | Three item statements and one count statement; nothing for the other 21. |
 | A footnote conditions every row of a list. | A heading statement that the rows name as their group. |
 | One cell names three funders. | One statement, the cell kept whole; the three parties are minted later by matching. |
 | An item runs over a page break. | One statement whose locator spans both pages. |
-| An object is served as a generic byte stream and is a PDF. | It is read as a PDF; the declared type stays on the retrieval. |
+| An object is served as a generic byte stream and is a PDF. | It is extracted as a PDF; the declared type stays on the retrieval. |
 | A PDF is truncated. | Disposition `unreadable`, with the reason; the run continues. |
 | A held document has no bytes. | Disposition `no_snapshot`. |
 | Replay finds a difference nobody can explain. | The replay fails. |
-| Replay meets a statement read by an LLM. | It is not regenerated; its locator is checked against the bytes and the statement is listed as outside the reach of replay. |
+| Replay meets a statement extracted by an LLM. | It is not regenerated; its locator is checked against the bytes and the statement is listed as outside the reach of replay. |
 | A plan item prints a capacity of 50 MW and a cost of USD 120 million. | Two observations on the statement, a `capacity` and an `estimate`; no agreement and no identity. |
 | A register prints "approved in 2024" and its cover gives a reporting cutoff of 31 March 2026. | One observation with two timings: `approval` at year precision, and `reporting_cutoff` at day precision naming the cover statement. |
 | A cost field is blank. | Unknown, not zero; no observation value is invented. |

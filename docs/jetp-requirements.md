@@ -4,8 +4,9 @@ Status: draft for review, revised with the author's decisions of 2026-09-30.
 
 This document says what the JETP Observer is for, who uses what it
 produces, and what it must deliver to them. The Observer is the whole
-system: collection, reading, judgement, releases. The Observatory is its
-public website, one of its outputs. Every other document of the specification
+system: collection, extraction, reading, judgement, releases. The ledger is
+its Data (the tables of steps D1 to D4); the Observatory is its public
+website, one of its outputs. Every other document of the specification
 is reviewed against it: for each requirement, a reviewer says met or not
 met; for each design rule elsewhere, a reviewer says which requirement it
 serves, and a rule that serves none is a candidate for removal or for a
@@ -21,7 +22,7 @@ The specification set:
 | Language (`jetp-language.md`) | The ODEM frame and the builders' vocabulary |
 | Ontology (`jetp-ontology.md`) | What the ledger talks about |
 | Collection (`jetp-collection.md`) | How documents are found and fetched |
-| Extraction (`jetp-extraction.md`) | How statements are read from documents |
+| Extraction (`jetp-extraction.md`) | How statements are extracted from documents |
 | Fusion (`jetp-fusion.md`) | How statements are combined, weighed and revised |
 | Storage (`jetp-ledger-storage.md`) | How the ledger is kept |
 | Results and releases (`jetp-results.md`) | What is computed, frozen and cited |
@@ -38,7 +39,7 @@ of it the Observer can serve.
 **The problem it answers.** A Just Energy Transition Partnership is a
 promise of money announced at a summit and then reported, if at all, in
 plans, progress reports, project pages, registers and news, in four
-languages, each publisher in its own way. The structured channels (OECD
+languages, each publisher in its own way. The structured search channels (OECD
 CRS, IATI) arrive one to three years late and rarely carry a JETP label.
 Anyone who asks what was promised, signed and paid, to whom and when, must
 rebuild the record alone, and the record rebuilt by one party is doubted
@@ -65,7 +66,7 @@ the author's order of priority.
 **Outputs.**
 
 - The immediate goal: a maintained dataset on the partnerships, released as
-  frozen, citable editions for a declared horizon (C10).
+  frozen, citable releases for a declared horizon (C10).
 - The Observatory, the public website that shows each release.
 - Research articles on JETPs (a data paper, a short paper on progression,
   finance and operation histories, a long political-economy paper), on
@@ -73,17 +74,17 @@ the author's order of priority.
   statistics, within AEDIST (also referred to as AIRLET).
 - A book for a general readership on the USD 300 billion climate finance
   promise, in which the partnerships are a few chapters.
-- Checked statements, with the machine readings and the human verdicts kept
+- Checked statements, with the machine readings and the human decisions kept
   side by side, which serve as reference answers for research on machine
   reading within AEDIST (Q17).
 
 **Activities.**
 
 - Find and fetch the documents: Collection.
-- Read statements from them: Extraction.
-- Define what the record talks about: Ontology and Language.
-- Combine, weigh and revise statements into identities and accounts: Fusion.
-- Keep the record: Storage.
+- Extract statements from them, and read them into observations: Extraction.
+- Define what the ledger talks about: Ontology and Language.
+- Combine, weigh and revise statements into referents and accounts: Fusion.
+- Keep the ledger: Storage.
 - Compute, freeze and cite results: Results and releases.
 - Show them to readers: Presentation.
 - Run all this on two machines within budgets, and maintain it through the
@@ -104,8 +105,8 @@ the author's order of priority.
   gap to fill by inference.
 - *A neutral record is trusted by all sides.* This holds only if the
   Observer never takes a position of its own (design rule below).
-- *Machine reading is accurate enough at a bearable cost.* Two readers from
-  different vendors and a sampled human check (Q5) test this continuously,
+- *Machine reading is accurate enough at a bearable cost.* Two LLM readers
+  from different vendors and a sampled human check (Q5) test this continuously,
   and the costs are logged (Q15, Q17).
 - *One researcher can sustain it to the horizon.* The horizon is declared
   and ends with an archived release (C10); the design keeps the author's
@@ -129,10 +130,11 @@ A requirement states what the Observer must deliver, not how. Each carries a
 short identifier, the milestone that must first meet it, and a test phrased
 so that a reviewer can decide, from the specification or from the running
 Observer, whether it is met. User questions are numbered by user (OBS, OP,
-DP, SP, LP, BK, AED). Requirements are functional (F), data (D), quality (Q)
+DP, SP, LP, BK, AED). Requirements are functional (F), data (DA), quality (Q)
 and constraints (C); non-requirements (N) state what is out of scope.
 Identifiers are stable: regrouping never renumbers them, and a withdrawn
-identifier is not reused.
+identifier is not reused. The data requirements were prefixed D until
+2026-09-30 and are now DA, so that D1 to D4 name only the steps of Data.
 
 ### 2.2 Milestones and incremental delivery
 
@@ -148,8 +150,8 @@ names both milestones.
 | Milestone | What it delivers |
 |---|---|
 | M2, the instrument | An extraction pipeline that works on every document held: it replays the documents already extracted, re-running changes nothing, and every document ends with statements or a recorded disposition |
-| M3a, discover and freeze | Discovery to a cutoff date under a stopping rule stated in advance, then a frozen registry, with a recall estimate and the list of unreachable sources |
-| M3b, extract, reconcile, release | The documents new since M2 extracted, reconciliation with CRS and IATI, joins of finance to assets and outcomes, and a released dataset that cites its release identifier |
+| M3a, discover and freeze | Discovery to a cutoff date under a stopping rule stated in advance, then a frozen register, with a recall estimate and the list of unreachable documents |
+| M3b, extract, match, release | The documents new since M2 extracted, matching to CRS and IATI, joins of finance to assets and outcomes, and a released dataset that cites its release identifier |
 | M4, operation | Scheduled refresh, link-rot checks, the pass launcher, the move of the document store, code shared with AEDIST |
 | later | Not scheduled; stated so that earlier design does not preclude it |
 
@@ -189,20 +191,20 @@ who know that a figure rests on documents. They ask:
   the record about each?
 - **OBS-4** What does this word, status or measure mean, where does the
   definition come from, and when did it change?
-- **OBS-5** What changed since the last edition, and is it a development in
+- **OBS-5** What changed since the last release, and is it a development in
   the world, a late report or a correction?
 - **OBS-6** What was sought and not found, not published, or blocked?
 - **OBS-7** How do I tell the Observer that a statement is misread, and what
   became of my report?
 
-### 3.2 The operator: one researcher and development agents
+### 3.2 The author and the development agents
 
 The Observer is built and run through its repository by agentic
 development. Coding agents write the code and run the passes; tickets record
-decisions and their reasons; tests and reviews by models from other vendors
+decisions and their reasons; tests and reviews by LLMs from other vendors
 gate every change; the author steers, arbitrates and accepts each milestone.
-The Observatory serves the operator as well as the public: it is the
-instrument through which the author inspects the record and notices
+The Observatory serves the author and the agents as well as the public: it
+is the instrument through which the author inspects the ledger and notices
 anomalies. Every output of section 1 depends on the back end remaining
 correct and modifiable, over the whole horizon, by agents that did not write
 it and by a researcher who cannot read every line. Maintainability is
@@ -227,23 +229,24 @@ therefore a first-class requirement, not an operational afterthought
 
 Documents the dataset: collection, identity decisions, provenance,
 validation, coverage, uncertainty and maintenance. Its contribution is
-consistent observation and transparent limits, not proof of acceleration.
+consistent documentation and transparent limits, not proof of acceleration.
 
 - **DP-1** How were documents found, to which cutoff, with what recall, and
-  which sources could not be reached?
+  which documents could not be reached?
 - **DP-2** How were identities decided, by whom or what, and with what
   confidence?
 - **DP-3** What is the coverage by country, document type, publisher and
   financial state; where is information missing or in conflict?
 - **DP-4** Can an independent reader reconstruct one published country total
-  and one timeline from the frozen release and its source locators?
-- **DP-5** How is the dataset maintained, and how do editions differ?
+  and one timeline from the frozen release and its locators?
+- **DP-5** How is the dataset maintained, and how do releases differ?
 
 ### 3.4 Short paper: progression, public and private finance, operation histories
 
-Which components of a just transition progress within the partnerships, with
+Which transition functions (F18) progress within the partnerships, with
 which public and private finance, and from which pre-existing operations? The
-unit is the operation and, where needed, its component.
+unit is the operation, as the [language](jetp-language.md) document defines
+it, and, where needed, its component.
 
 - **SP-1** Progression: which operations, by transition function (energy
   infrastructure, fossil exit, social support), reach which documented
@@ -270,7 +273,7 @@ with rival explanations and negative cases.
 - **LP-3** Which cases are stalled, cancelled or contradictory, so that
   selected successes never stand in for the portfolio?
 - **LP-4** Where do disclosure and implementation diverge, with the
-  observation process (what was sought, published, blocked) kept apart from
+  record of the search (what was sought, published, blocked) kept apart from
   financial and physical statements?
 
 ### 3.6 Book on the USD 300 billion promise, and the climate-finance article
@@ -291,8 +294,7 @@ the partnerships as a case study.
 AEDIST (AI-driven Energy Data Integration for Sustainable Transition)
 evaluates artificial-intelligence methods for producing energy statistics
 where statistical offices cannot. Its benchmark case is the inventory of
-Viet Nam's thermal power plants, against which it compares many language
-models in single-shot, multi-turn, retrieval-augmented and web-augmented
+Viet Nam's thermal power plants, against which it compares many LLMs in single-shot, multi-turn, retrieval-augmented and web-augmented
 configurations, measuring recall, precision, cost and latency. A method,
 there, is the whole chain of acquisition, extraction, reconciliation and
 verification; the model is one parameter. Its standard is that
@@ -300,12 +302,14 @@ research-quality data is not correct data but data whose errors are
 locatable. Its motivating application is an Energy Transition Monitoring
 system, whose evidence storage layer keeps source documents identifiable,
 versioned and locatable, so that an earlier answer can be traced to the
-evidence it used after a source is revised or read again.
+evidence it used after a source is revised or read again. In this section,
+acquisition, reconciliation, model, evidence and stage are AEDIST's own
+terms.
 
 The Observer is a second domain for that method: financial rather than
 physical, in four languages, with documents that change. AEDIST needs from
 it checked statements that serve as reference answers, with every machine
-reading and human verdict kept (Q17); the cost of each method (Q15);
+reading and human decision kept (Q17); the cost of each method (Q15);
 errors located at the stage that made them (Q17); evidence that stays
 locatable across revisions (F1, F4, F10); and, from M4, the shared code
 (C8).
@@ -313,15 +317,15 @@ locatable across revisions (F1, F4, F10); and, from M4, the shared code
 - **AED-1** Can a new document produce a justified, inspectable change to the
   record, with fewer serious errors and less human work than the assisted
   process?
-- **AED-2** Against the human verdicts, how often was each machine reading
-  right, and at which stage did the wrong ones fail?
-- **AED-3** What does an accepted change cost, in model spend and in human
+- **AED-2** Against the human decisions, how often was each machine reading
+  right, and at which step did the wrong ones fail?
+- **AED-3** What does an accepted change cost, in LLM spend and in human
   minutes, per method?
-- **AED-4** When a source is revised or read again, can the evidence behind
-  an earlier result be found in the right version, and a change in the
-  source be told from a change in processing?
-- **AED-5** Which parts of the machinery (acquisition, text layer,
-  provenance, adjudication) run unchanged for a second consumer?
+- **AED-4** When a document is revised or read again, can the justification
+  behind an earlier result be found in the right version, and a change in the
+  document be told from a change in processing?
+- **AED-5** Which parts of the machinery (collection, text layer,
+  provenance, decisions) run unchanged for a second consumer?
 
 ## 4. Functional requirements
 
@@ -344,7 +348,7 @@ citable data output (F28 to F32). They apply to the archived documents only
 in part: metadata, addresses and hashes are always findable and accessible,
 but bytes are redistributed only where the source's terms allow (C6). They
 apply to the Observatory through the releases it shows, not as a separate
-object. The working record between releases is not an output, and FAIR does
+object. The working ledger between releases is not an output, and FAIR does
 not bind it. The papers and the book follow their publishers' open-access
 terms (C5).
 
@@ -354,10 +358,10 @@ Know what exists, what was fetched, by which route, and what became of it.
 
 **F7. Discovery proposes, a decision admits.** A candidate document found by
 any search is admitted only by a recorded decision, never automatically.
-*M3a.* Test: a candidate from a discovery run is absent from the registry
+*M3a.* Test: a candidate from a discovery run is absent from the register
 until an admission decision exists.
 
-**F8. The observation process is recorded.** For each authority and listed
+**F8. What was sought is recorded.** For each authority and listed
 project in the discovery frame, the Observer records a terminal verdict
 (collected, not published, blocked, not applicable), and keeps not
 published, blocked, unreadable, not sought and loss of visibility distinct.
@@ -365,10 +369,10 @@ Absence of a document is recorded with the search that failed to find it.
 *M3a.* Test: every entry of the frame has a verdict; a blocked retrieval
 does not appear as a missing event or a stalled project.
 
-**F27. Open sources only.** The Observer is an open-source intelligence
-instrument: it ingests only material that the public can legitimately
-reach, and must be able to prove that its dataset comes from such sources
-and from no other. A source is public when anyone can reach it without
+**F27. Public documents only.** The Observer is an open-source intelligence
+instrument: it collects only material that the public can legitimately
+reach, and must be able to prove that its dataset comes from such documents
+and from no other. A document is public when anyone can reach it without
 payment or selection: an open page, a public archive record, or a site
 behind a login that anyone can obtain by free public registration (a
 procurement portal, for example). Content the public cannot reach is
@@ -378,14 +382,14 @@ route: the address at which it can be reached, or the public archive record
 that preserves it, and, for a registration site, the free registration used,
 never its credentials. A check fails when any document lacks a route. A
 retrieval may use the author's own browser session or registered account to
-reach a public source. *M2* for the documents held, *M3a* for discovery.
-Test: the check runs over the whole registry and reports zero documents
+reach a public site. *M2* for the documents held, *M3a* for discovery.
+Test: the check runs over the whole register and reports zero documents
 without a public access route; a document added without one makes it fail;
 no access route contains a credential.
 
-**F3. Duplicates are resolved before reading.** One publication under two
+**F3. Duplicates are resolved before extraction.** One publication under two
 addresses or two exports is one document; succession and translation are
-recorded as relations; statements are read from one canonical member.
+recorded as relations; statements are extracted from one canonical member.
 *M2.* Test: a report fetched twice or mirrored yields one set of statements
 and no added corroboration.
 
@@ -401,16 +405,18 @@ a new snapshot is registered, the pending set contains exactly it.
 
 ### 4.2 Statements and traceability
 
-Keep every statement with the place it was read, and never overwrite one.
+Keep every statement with the place it was extracted from, and never
+overwrite one. Here, as in the extraction document, a statement is a line
+(step D2); an observation (D3) is read from it.
 
-**F1. Every statement names where it was read.** Each statement carries its
-document, the snapshot read, its locator in that snapshot, its publisher,
-the method and version that read it, and the date read. *M2.* Test: pick
+**F1. Every statement names where it was extracted.** Each statement carries
+its document, the snapshot extracted, its locator in that snapshot, its
+publisher, the method and version that extracted it, and the date extracted. *M2.* Test: pick
 any statement; its snapshot's bytes and its locator are reachable, and the
 printed text at the locator supports it.
 
 **F4. Living documents append, never overwrite.** A new dated snapshot of a
-document already read adds statements tied to that snapshot; earlier
+document already extracted adds statements tied to that snapshot; earlier
 statements never change; content restated unchanged is kept under the later
 date as persistence, not corroboration. *M2.* Test: a second snapshot of a
 living document runs through the pipeline; the earlier statements are
@@ -426,8 +432,8 @@ stated reason.
 **F21. Excerpts for qualitative work.** For any operation, party or country,
 the Observer returns the statements with their verbatim text, language,
 publisher, date and locator, so that a codebook-based coding done outside
-the record can cite them. Codebooks and codings stay outside the record;
-the record holds only the statements they cite. *M3b.* Test: for one
+the ledger can cite them. Codebooks and codings stay outside the ledger;
+the ledger holds only the statements they cite. *M3b.* Test: for one
 country, a list of excerpts about negotiation or ownership can be produced,
 each resolving to its snapshot.
 
@@ -445,13 +451,13 @@ accepted, the next release shows the correction and names the report.
 
 Decide which statements describe the same thing, and say how sure.
 
-**F11. Identities by judgement, counted at a declared cutoff.** Projects,
-components, assets, agreements, parties and publisher-stated perimeters exist
-only by a recorded judgement with likelihood and confidence; each result
-declares the match cutoff it applies, and may report figures at a cautious
-and an inclusive cutoff. Candidate matches below the cutoff are listed and
-counted apart. *M3b.* Test: a match judged "about as likely as not" changes
-no figure at a "likely" cutoff and is listed.
+**F11. Referents by decision, counted at a declared match threshold.**
+Projects, components, assets, agreements, parties and publisher-stated
+perimeters exist only by a recorded judgement with likelihood and confidence;
+each result declares the match threshold it applies, and may report figures
+at a cautious and an inclusive threshold. Candidate matches below the
+threshold are listed and counted apart. *M3b.* Test: a match judged "about
+as likely as not" changes no figure at a "likely" threshold and is listed.
 
 **F12. Organisations under authority control.** One identity per
 organisation with all its name forms; an external identifier decides where
@@ -475,9 +481,9 @@ a later discovery never changes an earlier result. *M3b.* Test: add a
 statement dated after K; the result at K is unchanged.
 
 **F13. Counts name their unit and population.** Every count names its unit
-(statements, identities of a kind, a publisher's stated count) and its
+(statements, referents of a kind, a publisher's stated count) and its
 perimeter or counting scope. The strict JETP scope requires explicit
-attribution in the source; any extended scope is reported separately and
+attribution in the document; any extended scope is reported separately and
 never fills the strict one. No count is summed across countries. *M3b.*
 Test: every count in a release carries a unit and a scope; no strict-scope
 figure includes a statement lacking JETP attribution.
@@ -503,7 +509,7 @@ not a day.
 
 **F17. Funding roles kept apart.** Funder ownership, instrument, beneficiary
 and operator are distinct; a mixed package amount not broken down stays
-mixed; observed co-financing and mobilisation attributed by a source are
+mixed; observed co-financing and mobilisation attributed by a publisher are
 distinct statements. *M3b.* Test: a public bank's commercial loan is not
 counted as private; an unallocated mixed amount appears in no
 per-contributor total.
@@ -514,12 +520,12 @@ an operation with several functions is counted once in any total across
 functions. *M3b.* Test: an operation tagged with two functions contributes
 its amount once to the all-functions total.
 
-**F19. Reconciliation with CRS and IATI.** Operations are matched to CRS and
+**F19. Matching to CRS and IATI, and the gaps between financial states.** Operations are matched to CRS and
 IATI records as candidate matches under F11; the gaps between announced,
 signed, reported and disbursed amounts are produced per country and funder;
 a public traceability rate is computed; the reporting lag of the structured
-channels is measured, not assumed. Structured channels have no precedence
-over the source closest to the event. *M3b.* Test: each reconciled aggregate
+channels is measured, not assumed. Structured search channels have no precedence
+over the document closest to the event. *M3b.* Test: each matched aggregate
 links to the events and documents it is made of; no CRS value overrides a
 primary statement without a stated judgement.
 
@@ -527,12 +533,12 @@ primary statement without a stated judgement.
 a figure, the change is attributed to one of: a development in the world, a
 late report, a publisher's correction, a changed interpretation, an error of
 the Observer, a changed method. M3b delivers a single release; attribution
-between editions begins with the second one. *M4.* Test: for each figure
+between releases begins with the second one. *M4.* Test: for each figure
 that differs between two consecutive releases, one attribution is recorded.
 
 ### 4.5 Releases and reuse
 
-Freeze results into citable editions that others can find, open, combine and
+Freeze results into citable releases that others can find, open, combine and
 reuse.
 
 **F9. Each release states two dates.** The discovery cutoff (date of the last
@@ -565,11 +571,11 @@ follows its external standard or is marked as local.
 
 **F32. Provenance in the release.** A release carries its provenance in
 machine-readable form: the code version, the method versions, the cutoffs,
-and for each statement the hash of the snapshot it was read from. *M3b.*
-Test: from the release alone, the snapshot hash and the reading method of any
-statement can be read.
+and for each statement the hash of the snapshot it was extracted from.
+*M3b.* Test: from the release alone, the snapshot hash and the extraction
+method of any statement can be read.
 
-**F23. What the Observatory serves.** Every table of the record is served to
+**F23. What the Observatory serves.** Every table of the ledger is served to
 readers or named as not served with the reason; the definitions of terms are
 served as a glossary with their sources and revision history. *M3b.* Test:
 the list of served and not-served items covers every table.
@@ -589,42 +595,43 @@ free of the builders' vocabulary.
 
 What the Observer must hold and handle.
 
-**D1. Four countries.** South Africa, Indonesia, Viet Nam and Senegal. *M2.*
+**DA1. Four countries.** South Africa, Indonesia, Viet Nam and Senegal. *M2.*
 Test: every document and statement belongs to one of the four, or to no
 recipient country for global method sources.
 
-**D2. The documents held.** 392 registered documents, 369 with a snapshot,
-254 already read (13,089 statements from 253 snapshots), 115 with a snapshot
-and nothing read yet (South Africa 49, Senegal 28, Viet Nam 25, Indonesia
+**DA2. The documents held.** 392 registered documents, 369 with a snapshot,
+254 already extracted (13,089 statements from 253 snapshots), 115 with a
+snapshot and nothing extracted yet (South Africa 49, Senegal 28, Viet Nam 25, Indonesia
 13), 23 without a snapshot. *M2.* Test: every one of the 392 satisfies F2.
 
-**D3. Document types.** At least: progress updates, project pages, data
+**DA3. Document types.** At least: progress updates, project pages, data
 portals, official news, annual reports, operator reports, project lists,
 implementation plans, investment plans, approval documents, secondary news.
-Repeated series get a dedicated reader; one-off documents get an assisted
+Repeated series get a dedicated parser; one-off documents get an assisted
 reading with row-by-row review. *M2.* Test: every type among the 115 has
-a reading path, and each document read by a dedicated reader belongs to a
-repeated series.
+an extraction path, and each document extracted by a dedicated parser
+belongs to a repeated series.
 
-**D4. Formats.** HTML, PDF with a text layer, scanned PDF read by
+**DA4. Formats.** HTML, PDF with a text layer, scanned PDF read by
 transcription, spreadsheets, JSON, JavaScript data files, and bytes of
 undetermined type. A value that exists only in a chart with no text is not
-read (N2). *M2.* Test: every format among the 369 snapshots has a reader, or
+extracted (N2). *M2.* Test: every format among the 369 snapshots has an
+extractor, or
 its documents carry a disposition that names the format.
 
-**D5. Languages.** English, Indonesian, Vietnamese and French. The language
+**DA5. Languages.** English, Indonesian, Vietnamese and French. The language
 of every document is recorded; every statement keeps its label in the
-language printed; one member of a translation pair is canonical for reading.
+language printed; one member of a translation pair is canonical for extraction.
 *M2.* Test: no document has an unknown language (20 of the 115 have none
 today); no statement cites a translation.
 
-**D6. Three document classes.** Fixed (collected once, then checked),
+**DA6. Three document classes.** Frozen (collected once, then checked),
 living (re-collected, each version kept as a dated snapshot) and series
-(each issue fixed, the series having an expected next issue). *M3a* for
+(each issue frozen, the series having an expected next issue). *M3a* for
 recording the class, *M4* for acting on it. Test: every admitted document has
 a class; at M4, a late issue of a series is signalled.
 
-**D7. The discovery frame.** Per country: the national JETP portal or
+**DA7. The discovery frame.** Per country: the national JETP portal or
 responsible ministry; the lead partner governments and every public partner
 named in the package; the multilateral and private windows named in
 official financing tables; the national electricity operator and named
@@ -632,27 +639,28 @@ project operators; every project in an official plan, pipeline or progress
 list. *M3a.* Test: each class of the frame has at least one entry per
 country, or a recorded reason it has none.
 
-**D8. A known-item list.** A list of documents known to exist, compiled
+**DA8. A known-item list.** A list of documents known to exist, compiled
 before the discovery rounds, against which recall is estimated. *M3a.* Test:
 the list predates the first round and its recovery rate is reported.
 
-**D9. Unreachable sources are data.** The list of sources that could not be
-reached, with the reason, is released with the registry. *M3a.* Test: the
-release contains it, including sources excluded by robots rules, terms of
+**DA9. Unreachable documents are data.** The list of documents and search
+channels that could not be reached, with the reason, is released with the
+register. *M3a.* Test: the release contains it, including documents excluded
+by robots rules, terms of
 use or restricted access.
 
-**D10. Structured channels.** CRS and IATI records for the four countries,
+**DA10. Structured search channels.** CRS and IATI records for the four countries,
 held as comparator records beside the documentary statements, never merged
 into them. *M3b.* Test: every CRS or IATI record used in a result is
-identified by its channel identifier and retrieval date.
+identified by its record identifier and retrieval date.
 
-**D11. Expected volume.** After M3a and three years of refresh, the Observer
+**DA11. Expected volume.** After M3a and three years of refresh, the Observer
 handles about ten times the documents held today and a weekly snapshot of
 each living document, with no change of design. *Later* (stated so that M2
 does not preclude it). Test: the design documents name no limit that the
 current volume already approaches.
 
-**D12. Reference operations outside the partnerships.** Milestones of JETP
+**DA12. Reference operations outside the partnerships.** Milestones of JETP
 operations dated before the partnership, and operations of partner lenders
 in the four countries that carry no JETP attribution, are held in a counting
 scope of their own: the pre-existing history of JETP operations and a
@@ -664,22 +672,23 @@ strict-scope figure recomputed without this scope is unchanged.
 ### 6.1 Correctness and reproducibility
 
 **Q1. Replay.** The pipeline reproduces the statements of the 254 documents
-already read, byte for byte, or every difference is explained. *M2.* Test:
+already extracted, byte for byte, or every difference is explained. *M2.* Test:
 the replay report lists zero unexplained differences.
 
-**Q2. Idempotence.** Re-running on a snapshot already read changes nothing and
+**Q2. Idempotence.** Re-running on a snapshot already extracted changes nothing and
 never renumbers a statement's identifier. *M2.* Test: two consecutive runs
 produce identical outputs.
 
-**Q3. Readers are red-tested.** Each extractor is tested by replaying a defect
-it must reject. *M2.* Test: every extractor has such a test, and the test
-fails when the defect is re-introduced.
+**Q3. Parsers are red-tested.** Each parser is tested by replaying a defect
+it must reject; the other extractors have the controls of Extraction § 12.
+*M2.* Test: every parser has such a test, and the test fails when the defect
+is re-introduced.
 
-**Q4. Language-model readings are recorded as readings.** A language-model
-read is not byte-reproducible; its recorded output is the record, with the
-model, version, prompt version, inputs and cost. Replay and idempotence bind
-the deterministic readers and the writer, not a fresh read. *M2.* Test: every
-statement read by a language model names its model and version; re-running
+**Q4. LLM readings are recorded as readings.** An LLM reading is not
+byte-reproducible; its recorded output is the record, with the LLM, version,
+prompt version, inputs and cost. Replay and idempotence bind the parsers and
+the writer, not a fresh reading. *M2.* Test: every statement extracted by an
+LLM names its LLM and version; re-running
 does not replace a recorded reading.
 
 **Q6. Released figures trace both ways.** Every published number, status and
@@ -702,29 +711,29 @@ Test: an independent reader reconstructs one country total and one timeline
 from the release, its dictionary and its locators; any undocumented choice is
 a failure.
 
-**Q9. Every method has a version.** Every reading, judgement, scope and
-calculation names its method and version; changing one produces a new result
-under a new version. *M2* for reading methods, *M3b* for judgements and
+**Q9. Every method has a version.** Every extraction, reading, judgement,
+scope and calculation names its method and version; changing one produces a
+new result under a new version. *M2* for extraction methods, *M3b* for judgements and
 calculations. Test: every result names the versions it was computed under.
 
 **Q10. Recall is stated.** Discovery follows a stopping rule stated before
 the first round; every round is logged, empty rounds included; the recall
 estimate against the known-item list is reported; the share of the main
-secondary trackers' quantitative claims traced to a primary source is
+secondary trackers' quantitative claims traced to a primary document is
 reported. *M3a.* Test: the author accepts the protocol, the recall estimate
 and the unreachable list before M3b starts.
 
 ### 6.2 Judgement and uncertainty
 
 **Q5. Machine judgements are automated, diverse and recorded.** Judgements
-made by language models (a statement read, a match, a preference, a
+made by LLMs (a statement extracted, a match, a preference, a
 classification) are made without the author, by a panel diverse in vendor,
 recorded with their likelihood and confidence, and presented sorted by
 them. The author examines a bounded share, not every item. The composition
 of the panel, the share the author examines and the milestone at which each
 part applies are specified in Extraction and in Fusion § 3. *M2* for
-statements read, *M3a* for discovery and admission judgements, *M3b* for
-identity and preference judgements. Test: every language-model judgement in
+statements extracted, *M3a* for discovery and admission judgements, *M3b* for
+identity and preference judgements. Test: every LLM judgement in
 a release carries readings from more than one vendor with likelihood and
 confidence; the share the author examined is stated and bounded.
 
@@ -737,16 +746,16 @@ statements, *M3b* for results. Test: a released figure over a subject with
 unresolved disagreement shows both values; no missing value is summed as
 zero.
 
-**Q17. Machine readings and human verdicts side by side.** Every machine
-reading of a statement or judgement, and every human verdict on it, is kept;
-neither overwrites the other, and each names its method, version and cost.
-A verdict that rejects a reading names the stage at fault (retrieval,
-reading, matching, judgement), so that errors are locatable. The checked
+**Q17. Machine readings and human decisions side by side.** Every machine
+reading of a statement or judgement, and every human decision on it, is
+kept; neither overwrites the other, and each names its method, version and
+cost. A decision that rejects a reading names the step at fault (retrieval,
+extraction, reading, matching), so that errors are locatable. The checked
 statements thus serve as reference answers for research on machine reading
 (AEDIST), and the cost per method can be compared. *M2.* Test: for a sample
-of checked statements, every machine reading and the verdict are
-retrievable with method, version and cost; a verdict that disagrees with a
-reading leaves the reading intact and names a stage.
+of checked statements, every machine reading and the decision are
+retrievable with method, version and cost; a decision that disagrees with a
+reading leaves the reading intact and names a step.
 
 ### 6.3 Integrity of the record
 
@@ -755,7 +764,7 @@ Observer computed and a number a publisher printed are always
 distinguishable, each with its own attribution. *M3b.* Test: every number in
 the Observatory and the papers is marked as one or the other.
 
-**Q13. Observation is kept apart from inference.** No product presents an
+**Q13. What is documented is kept apart from inference.** No product presents an
 association as a cause, a stage difference as speed, or a documentary gap as
 an actual absence of finance. *M3b.* Test: the integration review finds no
 causal or speed claim in the Observatory and none unsupported in the papers.
@@ -781,27 +790,27 @@ author's intervention.
 
 **Q19. Every change reviewable and reproducible.** Every change to code,
 rules or data enters through a reviewed change that states its reason and
-passes the tests, reviewed by a model of another family than the one that
+passes the tests, reviewed by an LLM of another family than the one that
 wrote it. Any release or intermediate result can be rebuilt from the
 repository at its recorded version and the archived documents, identically
-for deterministic stages. *M2.* Test: for a sampled merged change, its
+for deterministic steps. *M2.* Test: for a sampled merged change, its
 reason, review and test run are found; a sampled result rebuilt from its
 recorded version is byte-identical.
 
 **Q20. Anomalies are visible in the Observatory.** Besides its public role,
-the Observatory shows the operator what needs attention: figures whose
+the Observatory shows the author and the agents what needs attention: figures whose
 trail does not resolve, documents and countries without new statements,
 judgements awaiting the author, and changes between runs large enough to
 check. *M3b* for broken trails and pending judgements, *M4* for changes
 between runs. Test: a deliberately broken trail and a pending judgement both
-appear where the operator looks; at M4, an injected jump in a total is
+appear where the author looks; at M4, an injected jump in a total is
 flagged.
 
 **Q21. Decisions are traceable.** Every decision that shapes the Observer (a
 rule adopted, a scope changed, a value preferred by the author, a milestone
 accepted) is recorded with its author, date, reason and the alternatives
 considered, and is reachable from what it governs. *M2.* Test: for a
-sampled rule of a specification document and a sampled verdict of the
+sampled rule of a specification document and a sampled decision of the
 author, the decision record is found and states its reason.
 
 **Q14. No silent run.** Every run, launched or scheduled, ends with a report
@@ -810,7 +819,7 @@ run that finds nothing says so. *M3a* for discovery rounds, *M4* for
 scheduled passes. Test: kill a run midway; the failure is reported, and no
 report reads as an all-clear.
 
-**Q15. Cost and effort are measured.** Each run records its model spend and
+**Q15. Cost and effort are measured.** Each run records its LLM spend and
 the human minutes spent on its review, so that the cost of an accepted
 change can be computed. *M3b.* Test: the M3b release states spend and review
 time per document class.
@@ -825,18 +834,18 @@ item of a class; each queue for the author states its expected size and is
 sorted by likelihood and confidence.
 
 **C2. Two machines, one direction.** padme, a personal workstation with GPUs
-and the document bytes, runs every job that reads bytes or models; doudou, a
+and the document bytes, runs every job that reads bytes or runs LLMs; doudou, a
 laptop, supervises, verifies and defers a run when padme is unreachable, and
 says so. Data flows from padme to doudou only. *M2* for jobs, *M4* for
 supervision of scheduled runs. Test: no design rule moves data from doudou
 to padme or requires the laptop to hold all document bytes.
 
-**C3. Local compute first.** padme serves a local language model on two
-consumer GPUs (16 GB and 12 GB). Bulk reading fits that model or a paid
+**C3. Local compute first.** padme serves a local LLM on two
+consumer GPUs (16 GB and 12 GB). Bulk reading fits that LLM or a paid
 interface within budget (C4); cross-vendor judgement panels use paid
 interfaces. *M2.* Test: each reading method names where it runs.
 
-**C4. Budgets.** Paid interfaces (language-model readers, search, bibliographic
+**C4. Budgets.** Paid interfaces (LLM readers, search, bibliographic
 APIs) run under a budget stated before the run, per document and per run; a
 run that reaches its budget stops and reports. *M2.* Test: every paid call
 belongs to a run with a stated budget. The amounts are set in Operation.
@@ -877,7 +886,7 @@ credential.
 **C10. A declared horizon.** The Observer is maintained to a declared end,
 not indefinitely. The initial partnership periods run three to five years
 (South Africa to 2027, Indonesia and Viet Nam 2025 to 2027, Senegal 2026 to
-2028); structured channels report one to three years late. Default:
+2028); structured search channels report one to three years late. Default:
 maintained through 2030, an extension decision in 2028, and an archived
 final release at the end, after which every release cited by a product stays
 retrievable. *M4.* Test: Operation and Results and releases state the end
@@ -924,14 +933,14 @@ labels and summaries of documents may be added for readers; nothing depends
 on them. *Later.*
 
 **N9. No move of the document store before M4.** The move to a dedicated
-reference library is M4; earlier milestones only keep acquisition behind one
+reference library is M4; earlier milestones only keep fetching behind one
 seam so that the move rewrites nothing else.
 
 **N10. No welfare or justice measurement.** A budget allocation to a social
 objective is recorded as such; it does not measure an improvement in
 welfare.
 
-**N11. No writing or submitting of papers.** The Observer supplies evidence
+**N11. No writing or submitting of papers.** The Observer supplies dated statements
 and reproducible results; manuscripts and journal submission are outside it.
 
 **N12. Not a general climate-finance tracker.** The Observer stays specific
@@ -943,7 +952,7 @@ Observer, whoever offers it: no content behind a paid subscription, no
 invitation-only or institution-only access, no leaked or confidential
 document, no non-public dataset, no private communication. A site behind a
 free public registration is not closed (F27). Such material, where known to
-exist, may be listed as unreachable (D9); it is never read.
+exist, may be listed as unreachable (DA9); it is never read.
 
 ## 9. Requirements and the documents expected to meet them
 
@@ -955,19 +964,19 @@ document that reads statements into observations.
 |---|---|---|
 | **4.1 Discovery and holdings** | | |
 | F7 Discovery proposes, a decision admits | M3a | Collection |
-| F8 Observation process recorded | M3a | Collection; Ontology |
-| F27 Open sources only | M2, M3a | Collection; Operation |
-| F3 Duplicates resolved before reading | M2 | Fusion § 3; Extraction |
+| F8 What was sought recorded | M3a | Collection; Ontology |
+| F27 Public documents only | M2, M3a | Collection; Operation |
+| F3 Duplicates resolved before extraction | M2 | Fusion § 3; Extraction |
 | F2 Every document accounted for | M2 | Extraction |
 | F5 Pending work computable | M2 | Extraction; Operation |
 | **4.2 Statements and traceability** | | |
-| F1 Statement names where it was read | M2 | Extraction; Storage |
+| F1 Statement names where it was extracted | M2 | Extraction; Storage |
 | F4 Living documents append | M2 | Extraction; Fusion § 2 |
 | F6 Disagreeing statements retrievable | M2, M3b | Fusion § 5; Extraction |
 | F21 Excerpts for qualitative work | M3b | Results and releases |
 | F25 Reported errors are traced | M3b, M4 | Fusion § 2; Results and releases; Operation |
 | **4.3 Identities and judgements** | | |
-| F11 Identities by judgement, counted at a cutoff | M3b | Fusion § 3 |
+| F11 Referents by decision, counted at a match threshold | M3b | Fusion § 3 |
 | F12 Organisations under authority control | M3b | Fusion § 3; Ontology |
 | F20 Finance joined to assets | M3b | Fusion § 3; Ontology |
 | **4.4 Observations, accounts and results** | | |
@@ -978,7 +987,7 @@ document that reads statements into observations.
 | F16 Operation timelines with honest dates | M3b | Extraction § observations; Ontology; Fusion § 4 |
 | F17 Funding roles kept apart | M3b | Extraction § observations; Ontology; Fusion § 7 |
 | F18 Transition functions | M3b | Extraction § observations; Ontology |
-| F19 Reconciliation with CRS and IATI | M3b | Fusion § 5; Results and releases |
+| F19 Matching to CRS and IATI, gaps between financial states | M3b | Fusion § 5; Results and releases |
 | F22 Change between releases attributed | M4 | Fusion § 8; Results and releases |
 | **4.5 Releases and reuse** | | |
 | F9 Two dates per release | M3a | Results and releases; Collection |
@@ -991,23 +1000,23 @@ document that reads statements into observations.
 | F24 Principal reference per country | M3b | Presentation |
 | F26 Definitions a general reader follows | M4 | Ontology § 5; Presentation |
 | **5 Data** | | |
-| D1 Four countries | M2 | Ontology; Collection |
-| D2 Documents held | M2 | Extraction |
-| D3 Document types | M2 | Extraction |
-| D4 Formats | M2 | Extraction |
-| D5 Languages | M2 | Extraction; Storage § 5 |
-| D6 Three document classes | M3a, M4 | Collection; Operation |
-| D7 Discovery frame | M3a | Collection |
-| D8 Known-item list | M3a | Collection |
-| D9 Unreachable sources are data | M3a | Collection; Results and releases |
-| D10 Structured channels | M3b | Collection; Ontology |
-| D11 Expected volume | later | Storage; Operation |
-| D12 Reference operations outside the partnerships | M3b | Collection; Fusion § 6 |
+| DA1 Four countries | M2 | Ontology; Collection |
+| DA2 Documents held | M2 | Extraction |
+| DA3 Document types | M2 | Extraction |
+| DA4 Formats | M2 | Extraction |
+| DA5 Languages | M2 | Extraction; Storage § 5 |
+| DA6 Three document classes | M3a, M4 | Collection; Operation |
+| DA7 Discovery frame | M3a | Collection |
+| DA8 Known-item list | M3a | Collection |
+| DA9 Unreachable documents are data | M3a | Collection; Results and releases |
+| DA10 Structured search channels | M3b | Collection; Ontology |
+| DA11 Expected volume | later | Storage; Operation |
+| DA12 Reference operations outside the partnerships | M3b | Collection; Fusion § 6 |
 | **6 Quality** | | |
 | Q1 Replay | M2 | Extraction |
 | Q2 Idempotence | M2 | Extraction; Storage |
-| Q3 Readers red-tested | M2 | Extraction |
-| Q4 Language-model readings recorded | M2 | Extraction |
+| Q3 Parsers red-tested | M2 | Extraction |
+| Q4 LLM readings recorded | M2 | Extraction |
 | Q6 Released figures trace both ways | M3b | Results and releases; Presentation |
 | Q7 Corrections propagate | M3b | Results and releases |
 | Q8 Releases frozen and reproducible | M3b | Results and releases |
@@ -1015,9 +1024,9 @@ document that reads statements into observations.
 | Q10 Recall stated | M3a | Collection |
 | Q5 Machine judgements automated, diverse, recorded | M2, M3a, M3b | Extraction; Collection; Fusion § 3 |
 | Q11 Uncertainty never hidden | M2, M3b | Extraction § observations; Fusion § 1; Results and releases |
-| Q17 Machine readings and human verdicts side by side | M2 | Extraction; Fusion § 3; Storage |
+| Q17 Machine readings and human decisions side by side | M2 | Extraction; Fusion § 3; Storage |
 | Q12 Computed and published numbers apart | M3b | Presentation; Results and releases |
-| Q13 Observation apart from inference | M3b | Language; Presentation |
+| Q13 Documented apart from inference | M3b | Language; Presentation |
 | Q16 A neutral documentary record | M2 | every document; Presentation |
 | Q18 Maintainable by agents and one researcher | M2 | Operation; every document |
 | Q19 Every change reviewable and reproducible | M2 | Operation; Results and releases |
