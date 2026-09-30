@@ -1,7 +1,5 @@
 # JETP extraction: how statements are extracted from documents
 
-Status: draft for author review.
-
 Extraction turns the bytes of a held document into statements. The
 [ontology](jetp-ontology.md) fixes what a statement (the ontology's line) is;
 the [fusion rules](jetp-fusion.md) fix how statements are combined once

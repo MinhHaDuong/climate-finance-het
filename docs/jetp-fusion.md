@@ -1,7 +1,5 @@
 # JETP information fusion: methods and rules
 
-Status: draft for author review, 2026-09-30.
-
 Information fusion is what turns statements printed by many publishers into
 referents, assessments and accounts; the assessments are the occurrence and
 preference judgements of sections 4 and 5. The [ontology](jetp-ontology.md) fixes

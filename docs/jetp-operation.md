@@ -1,7 +1,5 @@
 # JETP Observer: operation
 
-Status: draft for author review; budget amounts are proposed defaults awaiting the author's decision.
-
 This document says how the JETP Observer is run: on which machine each job
 runs, who launches and supervises it, how the repository governs what
 development agents may do, what each run may spend, where secrets live, what

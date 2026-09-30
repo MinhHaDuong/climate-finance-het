@@ -1,7 +1,5 @@
 # JETP Observer: results and releases
 
-Status: draft for review, 2026-09-30.
-
 A **result** is what the JETP Observer computes from the ledger: a count, an
 account, a timeline, a gap between financial states, a descriptive table, a list of
 excerpts. In the ODEM frame of the [language](jetp-language.md) it is

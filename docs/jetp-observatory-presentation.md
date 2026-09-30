@@ -1,12 +1,14 @@
 # JETP Observatory: presentation
 
-What readers of the Observatory see and how the site is organised. Decided by
-the author on 2026-09-23 and revised after the 2026-09-24 cold read (ticket 0902)
-and the 2026-09-29 three-step trail decision (ticket 0870). Tickets [0881](../tickets/0881-le-mvp-distingue-o-d-e-et-m-et-pr-sente.erg)
+What readers of the Observatory see and how the site is organised. What the ledger's terms mean is [`jetp-ontology.md`](jetp-ontology.md);
+how the builders speak about the Observer is [`jetp-language.md`](jetp-language.md).
+
+History: decided by the author on 2026-09-23 and revised after the
+2026-09-24 cold read (ticket 0902) and the 2026-09-29 three-step trail
+decision (ticket 0870). Tickets [0881](../tickets/0881-le-mvp-distingue-o-d-e-et-m-et-pr-sente.erg)
 (organisation and page vocabulary) and
 [0882](../tickets/0882-page-ontologie-du-mvp-d-finitions-des-ob.erg) (Glossary)
-implement it. What the ledger's terms mean is [`jetp-ontology.md`](jetp-ontology.md);
-how the builders speak about the Observer is [`jetp-language.md`](jetp-language.md).
+implement it.
 
 ## Organisation and vocabulary
 
@@ -19,8 +21,7 @@ that reader. "Ontology", "Evidence", "Model", the letters O, D, E, M and the
 step codes D1 to D4 appear in code, data attributes and these documents, not
 in page copy. [M3b]
 
-The page vocabulary is a newsroom's, decided by the author on 2026-09-23:
-data desks organise document-based work the same way, and their words are
+The page vocabulary is a newsroom's: data desks organise document-based work the same way, and their words are
 plain. It keeps to the neutral side of that vocabulary, attribution rather
 than suspicion, because the readers are researchers as well as journalists. [M3b]
 
@@ -32,15 +33,14 @@ than suspicion, because the readers are researchers as well as journalists. [M3b
 | M | Nothing | none |
 | (methods) | What was done, what was not, and which tables are not served | **Methods** |
 
-**Navigation.** Decided by the author on 2026-09-23, over the cold read of
-ticket 0881 and the batches that followed it. The header holds three
+**Navigation.** The header holds three
 sections: **The paper trail** · **The tallies** · **About**. [M3b]
 
 | Section | Its pages, in sub-bar order | Tab lands on |
 |---|---|---|
 | The paper trail | Documents · Document rows · Statements; a separate side group for Projects · Funding · Organisations | `#the-paper-trail`, a short page on the three steps and what their statements describe |
-| The tallies | Counts · Non-JETP energy operations (the accounts page of ticket 0877 joins as Money) | `#counts`: two pages need no landing page |
-| About | Glossary · Methods · Who we are · Legal (author, 2026-09-30; [legal note](jetp-legal-note.md)) | `#about`, one line per page |
+| The tallies | Counts · Non-JETP energy operations (the accounts page joins as Money) | `#counts`: two pages need no landing page |
+| About | Glossary · Methods · Who we are · Legal ([legal note](jetp-legal-note.md)) | `#about`, one line per page |
 
 The Glossary sits under About: a reader consults it, and does not start
 from it. The release history is in no bar; Methods links to it and is
@@ -151,10 +151,14 @@ a general reader). [M3b]
 The serving contract, every table served or named as not served, is
 [`jetp-ledger-storage.md`](jetp-ledger-storage.md) section 2.
 
+History: the page vocabulary and the navigation were decided by the author
+on 2026-09-23, the navigation over the cold read of ticket 0881 and the
+batches that followed it; the accounts page is ticket 0877; the Legal page
+was added by the author on 2026-09-30.
+
 ## Traceability to what is published
 
-Carried from the backend design of 2026-09-14 (section 8; deleted 2026-09-30), in the
-[language](jetp-language.md) of 2026-09-23. The chain runs both ways: from the
+In the words of the [language](jetp-language.md) document, the chain runs both ways: from the
 archived bytes of a snapshot, through the line, the observation, the identity
 decisions and the frozen release, to a figure or sentence on the site or in a
 paper; and back from any published number to the observations and
@@ -169,9 +173,8 @@ calculation. [M3b]
   that a correction reaches every claim it touches. The display-occurrence
   record (`display_id`, payload, JSON pointer, page route, rendering role) is built
   and checked the same way and not published. The site's climb from a number
-  to its justification stays a read-time join over the served tables (ticket
-  0858 removed the 874 kB materialised join; rebuilding it under another name
-  is what this rule forbids). [M3b]
+  to its justification stays a read-time join over the served tables; a
+  materialised join, under any name, is what this rule forbids. [M3b]
 - `(release_id, display_id)` identifies an occurrence, so the same claim on
   two pages, or a component repeated on one page, stays distinct. A manuscript
   occurrence uses a figure, table or block label and a cell or paragraph
@@ -184,6 +187,10 @@ calculation. [M3b]
   that supported an older observation. [M3b]
 - Where bytes cannot be redistributed, the release says so and still carries
   URL, hash and locator. [M3b]
+
+History: carried from the backend design of 2026-09-14 (section 8; deleted
+2026-09-30), in the language of 2026-09-23; ticket 0858 removed the 874 kB
+materialised join.
 
 ### Country cards and pages
 

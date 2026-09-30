@@ -1,7 +1,5 @@
 # JETP collection: how documents are found and fetched
 
-Status: draft for author review, 2026-09-30.
-
 Collection is how the documents the Observer extracts are found, judged
 worth extracting and fetched, when discovery stops, and how much of what exists it
 found. It fills the register, step D1 (Register) of the Data pipeline in the

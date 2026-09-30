@@ -1,7 +1,5 @@
 # JETP Observer: purpose and requirements
 
-Status: draft for review, revised with the author's decisions of 2026-09-30.
-
 This document says what the JETP Observer is for, who uses what it
 produces, and what it must deliver to them. The Observer is the whole
 system: collection, extraction, reading, judgement, releases. The ledger is
@@ -134,8 +132,10 @@ Observer, whether it is met. User questions are numbered by user (OBS, OP,
 DP, SP, LP, BK, AED). Requirements are functional (F), data (DA), quality (Q)
 and constraints (C); non-requirements (N) state what is out of scope.
 Identifiers are stable: regrouping never renumbers them, and a withdrawn
-identifier is not reused. The data requirements were prefixed D until
-2026-09-30 and are now DA, so that D1 to D4 name only the steps of Data.
+identifier is not reused. The data requirements are prefixed DA, so that
+D1 to D4 name only the steps of Data.
+
+History: the data requirements were prefixed D until 2026-09-30.
 
 ### 2.2 Milestones and incremental delivery
 
