@@ -158,7 +158,9 @@ def test_intake_delivery_has_one_record_per_work_and_lists_the_duplicates(lane):
     assert len(recs) + len(exc) == 6 and {e["reason"] for e in exc} == {"duplicate_in_lane"}
     w1 = [r for r in recs if r["record_id"] == "1652:doi:10.1111/a"][0]
     assert w1["platform"] == "openalex" and w1["all_query_ids"].count("|") == 2
-    assert [r["platform"] for r in recs if r["doi"] == "10.9999/wp"] == ["bibcnrs_eds_repec"]
+    # an EDS DOI is a hint in the note, never the delivered identifier
+    wp = [r for r in recs if "10.9999/wp" in r["lane_note"]]
+    assert [(r["platform"], r["doi"]) for r in wp] == [("bibcnrs_eds_repec", "")]
     assert {r["completed"] for r in reg} == {"true", "false"}
     assert all(r["stop_reason"] for r in reg if r["completed"] == "false")
     manifest = json.loads((lane / "intake" / "manifest.json").read_text())
@@ -229,6 +231,20 @@ def test_conservation_check_fails_when_a_retrieved_id_is_not_delivered(lane):
         cy.check_conservation(dirs, records, delivered - {"W2"})
     with pytest.raises(SystemExit, match="conservation: 1"):
         cy.check_conservation(dirs, [r for r in records if r["openalex_id"] != "W2"], delivered)
+
+
+def test_an_eds_record_with_a_truncated_doi_joins_its_openalex_twin(lane):
+    """EDS returned `10.1016/j.rser.2018.06.02` for `...06.025`: the work is one."""
+    _run_dir(lane / "eds2", "bibCNRS EDS (ECONIS)", [("EDS-ECONIS-grid-IM-en", "grid", "IM", 1)],
+             [{"search_id": "EDS-ECONIS-grid-IM-en", "eds_an": "zbw.1", "doi": "10.1111/",
+               "title": T2, "year": 2019},
+              {"search_id": "EDS-ECONIS-grid-IM-en", "eds_an": "zbw.2", "doi": "10.1111/a",
+               "title": T1, "year": 2020}])
+    _, _, records = cy.load_runs([str(lane / "oa"), str(lane / "eds2")])
+    cy.assign_work_keys(records)
+    keys = {r.get("eds_an") or r["openalex_id"]: r["work_key"] for r in records}
+    assert keys["zbw.2"] == keys["W1"] == "doi:10.1111/a"
+    assert keys["zbw.1"] == keys["W2"] == "oa:W2"
 
 
 def test_an_openalex_record_without_doi_joins_its_eds_twin_by_title():

@@ -222,7 +222,9 @@ def assign_work_keys(records):
                              or "oa:" + r["openalex_id"])
         else:
             r["work_key"] = (doi_by_title.get(k) or oa_by_title.get(k)
-                             or ("ty:" + k if k else "an:" + r.get("eds_an", "")))
+                             or ("ty:" + k if k else "")
+                             or ("edsdoi:" + r["doi_eds"] if r.get("doi_eds") else "")
+                             or "an:" + r.get("eds_an", ""))
     return records
 
 
@@ -368,7 +370,9 @@ def intake_rows(records, registry_all, labels):
             "abstract": first.get("abstract") or "",
             "affiliation_countries": "; ".join(first.get("countries") or []),
             "lane_status": "already_in_pool" if any(r["in_unified"] for r in rs) else "candidate",
-            "lane_note": "family relevance is a cheap-model mechanism judgment, not the ICF screen",
+            "lane_note": "family relevance is a cheap-model mechanism judgment, not the ICF screen"
+                         + (f"; EDS DOI as returned, often truncated: {first['doi_eds']}"
+                            if first.get("doi_eds") else ""),
             "families": "|".join(rel), "formulations": "|".join(sorted({r["formulation"] for r in rs})),
             "all_query_ids": "|".join(r["search_id"] for r in rs),
             "family_relevance": "|".join(f"{q}={lab or 'unlabelled'}" for q, lab in rel.items()),
@@ -469,6 +473,11 @@ def load_runs(dirs):
             rec.setdefault("openalex_id", "")
             rec.setdefault("eds_an", "")
             rec["doi"] = valid_doi(rec.get("doi") or "")
+            if s["platform"] != "openalex":
+                # EDS (RePEc, ECONIS) cuts DOIs short: 528 of the 552 title+year
+                # twins of an OpenAlex work carry a strict prefix of its DOI. Kept
+                # as a hint, never used as an identifier.
+                rec["doi_eds"], rec["doi"] = rec["doi"], ""
             rec.update(question=s["question"], formulation=s["formulation"],
                        platform=s["platform"], language_q=s["language"])
             records.append(rec)
