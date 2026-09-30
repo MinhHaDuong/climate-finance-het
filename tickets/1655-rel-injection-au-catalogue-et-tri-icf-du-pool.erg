@@ -7,6 +7,7 @@ Author: haduong
 2026-09-29T15:00Z haduong created
 
 2026-09-30T13:31Z HDMX-coding-agent tracker: children 1730 (intake contract), 1731 (pool merge), 1732 (icf_screen table + REL view), 1733 (two-stage screen run)
+2026-09-30T21:56Z HDMX-coding-agent note author decisions 2026-09-30: exit rule for incertaine (stay in REL, flagged) and counting unit (work family, published version) ticked; applied in the REL view, PR 1638
 --- body ---
 ## Contexte
 
@@ -30,7 +31,7 @@ Forme retenue :
 - [ ] Les recherches (1530, 1650 à 1653) entrent au catalogue comme sources, avec provenance ; rapport de fusion par source avant dédoublonnage
 - [ ] Tri ICF de tout le pool en deux étapes, même règle et mêmes prompts, étiqueteur et modèle enregistrés pour chaque étiquette
 - [ ] Audit par échantillon de l'étape 2 par un second modèle (Fable), accord mesuré
-- [ ] Règle de sortie fixée pour les œuvres restées « incertaines » (177 à ce jour)
+- [x] Règle de sortie fixée pour les œuvres restées « incertaines » (177 à ce jour) : restent dans REL, signalées (décision du 30 septembre 2026)
 - [ ] Vue REL construite ; comptes reproductibles depuis la table
 - [ ] Les scripts qui construisent l'entree du tri (dedoublonnage, mise a l'ecart du corpus) et les tableaux de l'etape 2, aujourd'hui ponctuels (archive `adhoc-scripts/` du 2026-09-29), sont dans le depot, testes
-- [ ] Unité de compte des versions (working paper / article) fixée avant la vue finale
+- [x] Unité de compte des versions (working paper / article) fixée avant la vue finale : la famille d'œuvres, version publiée en représentante (décision du 30 septembre 2026)

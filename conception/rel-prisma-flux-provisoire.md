@@ -28,10 +28,11 @@ Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 
 |---|---:|---|
 | **Étape 1** : œuvres triées (Haiku 4.5 pour 12 491, Qwen3.8-27B pour 13 202) | 25 693 | mesuré, `screen.jsonl` |
 | exclues à l'étape 1 : hors sujet | 12 598 | mesuré (Haiku 5 965 ; Qwen 6 633) |
-| exclues à l'étape 1 : proches mais non ICF | 8 303 | mesuré (Haiku 3 819 ; Qwen 4 484) ; renvoyées à l'étape 2 par la décision du 30 septembre |
+| classées à l'étape 1 : proches mais non ICF | 8 303 | mesuré (Haiku 3 819 ; Qwen 4 484) ; ne sortent plus (décision du 30 septembre) |
+| **en attente d'étape 2** : « proches » de l'étape 1 | 9 906 | mesuré, `rel_view.csv` du 30 septembre (statut `pending_stage2`, étiquette d'étape 1 « aux », runs `t1530-*`) ; inclut les 1 686 du passage Qwen en cours, hors des 25 693 |
 | envoyées à l'étape 2 : « ICF » | 3 069 | mesuré (Haiku 2 028 ; Qwen 1 041) |
 | envoyées à l'étape 2 : « incertaines » | 1 723 | mesuré (Haiku 679 ; Qwen 1 044) |
-| **Étape 2** (Opus) : œuvres relues | 4 792 | mesuré (4 752 en 32 lots + 40 du pilote) |
+| **Étape 2** (Opus), avant relecture des 8 303 : œuvres relues | 4 792 | mesuré (4 752 en 32 lots + 40 du pilote) |
 | exclues à l'étape 2 : proches mais non ICF | 1 746 | mesuré (1 736 + 10) |
 | exclues à l'étape 2 : hors sujet | 396 | mesuré (391 + 5) |
 | **restées « incertaines »** | **177** | mesuré (174 + 3) ; restent dans REL, signalées (décision du 30 septembre) |
@@ -44,7 +45,7 @@ Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 
 
 | Case | Effectif | Statut |
 |---|---:|---|
-| **Œuvres de recherche ICF, provisoire** | **1 933** | avant fusion des versions, avant lecture des « incertaines », avant le tri du reste du pool |
+| **Œuvres de recherche ICF, provisoire** | **1 933** | série « ICF » seule, sans les 177 « incertaines » gardées et signalées ; avant comptage par familles, avant relecture des « proches », avant le tri du reste du pool |
 | Textes lus pour la synthèse narrative | — | à remplir |
 
 ## Validation des outils automatiques (à joindre au rapport)

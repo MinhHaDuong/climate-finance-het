@@ -7,17 +7,20 @@ Author: HDMX-coding-agent
 2026-09-30T08:00Z HDMX-coding-agent created
 
 2026-09-30T19:21Z HDMX-coding-agent note blocker 1732 closed — Blocked-by removed.
+2026-09-30T21:56Z HDMX-coding-agent note author decision 2026-09-30: stage 2 also rereads stage-1 aux (proche); only out leaves at stage 1 (PR 1638)
 --- body ---
 ## Contexte
 
 Enfant de 1655. Exécution du tri sur tout le pool non encore étiqueté, même règle
 et mêmes prompts que 1530 : étape 1 Qwen sur padme (ou Haiku), étape 2 Opus sur
-« icf » et « incertaine », audit d'un échantillon de l'étape 2 par Fable.
+« icf », « incertaine » et « proche » (décision du 30 septembre 2026 : seul
+« hors sujet » sort à l'étape 1 ; `config/rel_screen.yaml`), audit d'un
+échantillon de l'étape 2 par Fable.
 Incrémental : les livraisons arrivées après le premier passage sont triées par
 la même commande.
 
 ## Exit criteria
 - [ ] Étape 1 sur toutes les œuvres du pool non étiquetées, machine et run consignés
-- [ ] Étape 2 sur les « icf » et « incertaine » de l'étape 1
+- [ ] Étape 2 sur les « icf », « incertaine » et « proche » de l'étape 1
 - [ ] Audit Fable d'un échantillon de l'étape 2, accord mesuré
 - [ ] Comptes de la vue REL publiés depuis la table, avec l'identifiant du run
