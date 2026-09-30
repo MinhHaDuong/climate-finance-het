@@ -50,9 +50,10 @@ release Evidence.
 Every rule carries the milestone that needs it: M2, M3a, M3b, M4 or later
 (ladder in ticket 0725). The M2 and M3 slice is the minimum that produces
 correct, traceable results; a rule tagged M4 or later is specified now and
-not built before its milestone. Documents 0, 3, 4, 7 and 9 are written with
-tags; documents 1, 2, 5, 6 and 8 receive theirs after the vocabulary
-alignment pass (ticket 1709).
+not built before its milestone. Documents 0, 3, 4, 7 and 9 were written with
+tags; documents 1, 2, 5, 6 and 8 received theirs after the vocabulary
+alignment pass (ticket 1709). A rule already in force, implemented by the
+migration, carries the earliest milestone that relies on it.
 
 ## Around the specification
 

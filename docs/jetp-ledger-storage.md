@@ -29,7 +29,7 @@ method-source line may use `country=GLB` because `lines.country` is required;
 `GLB` means no recipient country, not a fifth JETP country (ticket 0885).
 The writer stages complete shard bytes before publishing them. A temporary
 `<table>.d.pending` marker makes an interrupted layout change a named ledger
-error; a missing first or numbered shard also fails validation.
+error; a missing first or numbered shard also fails validation. [M2]
 
 | Table | Key | Columns |
 |---|---|---|
@@ -57,7 +57,9 @@ error; a missing first or numbered shard also fails validation.
 | `routes` | `old_id` | kind, new_id |
 | `coverage` | (referent_kind, referent_id) | review_status, checked_at, route, document_ids, notes |
 | `dry-searches` | as today | |
-| `decisions.md` | as today | |
+| `decisions.md` | as today | | 
+
+[M2 for the D1 and D2 tables and the ontology tables; M3a for the record of searches; M3b for the D3 and D4 tables]
 
 A judgement of the [fusion rules](jetp-fusion.md), once recorded, is a
 decision row: a `line-referents` row, a `relations` row, or an
@@ -70,20 +72,20 @@ uses `occurrence`, `excluded` or `context`; `flow_coverage` uses
 `accepted`, `excluded` or `context`. An accepted occurrence decision needs
 at least two occurrence observations; accepted flow coverage needs a covering
 flow and a covered movement. A rejected decision retains its members as
-history but contributes none to the in-force view.
+history but contributes none to the in-force view. [M3b]
 
 Accounts, the openings, movements, closings, residuals and
 coverage gaps per agreement or perimeter that the
 [fusion rules](jetp-fusion.md) define (section 7), are derived: they are computed from observations, timings,
 rates and adjudications at build time, written under `data/derived/jetp/`
 with the run identifier, the two cutoffs (valid time and knowledge) and
-the `ontology_ref` (the hash of `data/jetp/ontology/` and of the DDL), and never edited. The adjudications they depend on are records, in the table above.
+the `ontology_ref` (the hash of `data/jetp/ontology/` and of the DDL), and never edited. The adjudications they depend on are records, in the table above. [M3b]
 
 Rules that the validator enforces:
 
-- An observation cites exactly one line and its subject exists.
+- An observation cites exactly one line and its subject exists. [M3b]
 - A line's `sha256` exists in `snapshots`, the bytes exist in the store, and
-  at least one retrieval of the line's document yields that snapshot.
+  at least one retrieval of the line's document yields that snapshot. [M2]
 - A decision row (`line-referents`, `relations`, `adjudications`) is in force only when it is
   the terminal row of its supersession chain and its status is `accepted`.
   A chain is linear: a row supersedes at most one row and is superseded by at
@@ -91,39 +93,39 @@ Rules that the validator enforces:
   accepted, with no replacement needed; a terminal `candidate` row is
   pending and not in force; an `accepted` row that any row supersedes is no
   longer in force. The same rule governs document deduplication, so a
-  rejected `same_as` re-enables extraction of the document it had folded.
+  rejected `same_as` re-enables extraction of the document it had folded. [M2]
 - An observation carries no date of its own. Each date it reports is a
   `timings` row with its role, precision and bounds; a value is stored once
   and never repeated per date role. A flow carries `period_start` and
-  `period_end` or one `event` timing.
+  `period_end` or one `event` timing. [M3b]
 - Every record row in `lines`, `observations`, `timings`, `external-ids`,
   `rates`, `deflators`, `party-names` and every decision table carries
   `recorded_at`. An
   as-of state at cutoff K is the set of rows with `recorded_at` on or
-  before K that are in force under the supersession rule.
+  before K that are in force under the supersession rule. [M2]
 - `measure`, `basis`, `flow_type`, `modality`, `classification`, `relation`,
   `date_role` and every axis take values from the terms in force ([ontology](jetp-ontology.md)
   section 5); a new value is a `terms` row, with its definition, before
-  the validator accepts it.
-- A monetary conversion cites a `rates` row; a script never carries a rate.
+  the validator accepts it. [M2]
+- A monetary conversion cites a `rates` row; a script never carries a rate. [M3b]
 - A locator has a syntax per format, and the validator checks it: for a
   PDF, the PDF page index and the printed folio when one exists, then the
   table and row for a table cell or a text anchor of at most 80 characters
   for prose; for HTML, a CSS path or a text anchor, never a byte offset;
   for an API snapshot, the record key (an SDMX key for CRS, a P-number for
   the World Bank, an activity identifier for IATI). A value printed in three
-  places is three lines related by `same_as`.
+  places is three lines related by `same_as`. [M2]
 - A publisher's cell that lists several names stays verbatim in the
   per-document fields table; the no-list rule applies to the ledger's own
   columns, and the parties in such a cell are minted through `role_in` or
-  `party_in` rows, one per name, citing the line.
+  `party_in` rows, one per name, citing the line. [M2 for keeping the cell; M3b for minting the parties]
 - A publisher's method note that governs a page or a table (a pro-rating,
   an exchange-rate policy, a footnote conditioning every row) is a line of
   classification `heading` that `groups` the lines it governs, so that an
   observation reads the note through its line. The relation is stored on the
   member: its `groups` column names the heading, a foreign key into `lines`,
   since a column holds one value and a heading governs many lines; the heading
-  is a line of the same snapshot and never the member itself (ticket 0873).
+  is a line of the same snapshot and never the member itself (ticket 0873). [M2]
 - A `line_id` is a minted key, independent of a row's changing attributes.
   Document extractors mint `<document_id>-<table>-<ordinal>` in extraction
   order; a re-extraction that finds a dropped row appends it under the next
@@ -139,12 +141,12 @@ Rules that the validator enforces:
   independent of its attributes, which is the normal form; the fingerprint and
   locator stay on the row as provenance.
   Amended by the author on 2026-09-29 to describe the API and reviewed-decision
-  families already present; no existing identifier is renamed.
+  families already present; no existing identifier is renamed. [M2]
 - A referent is minted only by a `line-referents` row with a basis; no
   ingestion script writes to `projects`, `assets`, `agreements`, `parties` or
   `perimeters`. The one exception is a party in a publishing role, which the
   document register mints: its justification is the `party-names` row that
-  cites the document printing its name.
+  cites the document printing its name. [M2]
 - One organisation is one `parties` row, whatever its roles: a publisher is a
   party that `document-publishers` links to a document, and a joint
   publication is one row per party. A party's names are `party-names` rows,
@@ -152,24 +154,24 @@ Rules that the validator enforces:
   exactly one `preferred` form is in force per party, under the in-force rule
   of the decision tables. The party row carries no name of its own. A
   publication names the form its document prints (`name_row_id`), and a page
-  that shows a document's publisher shows that form, not the preferred one.
+  that shows a document's publisher shows that form, not the preferred one. [M2]
 - `own_status` is copied, never normalised. `shared_status` appears only in
-  `status-crosswalk`.
+  `status-crosswalk`. [M2]
 - No column holds a semicolon-separated list; a list is rows in a relation
-  table.
+  table. [M2]
 - Target conventions, not yet checked by the DDL (carried from the backend
   design of 2026-09-14): money is a decimal string in whole currency units
   plus a currency, never a binary float, so 3.92 in a table headed USD billion
   is `3920000000` USD with the printed value, scale and label kept in the
   line's verbatim fields; an unknown value is an empty field with a typed
-  missingness reason, and `null` on export; zero is a measured value.
+  missingness reason, and `null` on export; zero is a measured value. [M3b]
 - `routes` maps identifiers from a published release (the pre-2026-09 site)
   to their new kind and identifier, so no public page route breaks. The
   prepublication preview IDs were never public and are recorded as retired in
   the migration report, not redirected
-  (author decision, 2026-09-24; PR #1492 removed the browser forwards).
+  (author decision, 2026-09-24; PR #1492 removed the browser forwards). [M3b]
 - Every count exported names its unit: lines of a document, referents of a
-  kind, or a perimeter observation.
+  kind, or a perimeter observation. [M3b]
 
 ## 2. What the Observatory serves
 
@@ -178,7 +180,7 @@ Observatory's methods page as not served, with the reason. The ontology tables
 are served too, as the Observatory's glossary. Nothing on a page adds lines of
 one document to lines of another or to referents, and every count states its
 unit. How the site is organised and worded is
-[`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
+[`jetp-observatory-presentation.md`](jetp-observatory-presentation.md). [M3b]
 
 ## 3. Engine
 
@@ -204,12 +206,12 @@ manifest naming the snapshot, the row count and the field spec, and the
 pull request reviews the manifest; a bulk line is adjudicated only when an
 observation cites it. The common `lines` table is chunked by country and
 year. Review by diff holds where it matters, on what the ledger asserts, and
-not on what a database published.
+not on what a database published. [M2]
 
 The one DDL of section 1 declares the common tables. It does not declare
 the per-document field tables, whose headers are the publisher's; each is
 declared by its row in `line-field-specs`, written at extraction, and the
-validator checks the file header against it. Two mechanisms, one contract.
+validator checks the file header against it. Two mechanisms, one contract. [M2]
 
 **SQLite becomes the schema, the validator and the build engine.** One DDL file
 under `config/` declares every table, key, foreign key and check of section 1.
@@ -223,7 +225,7 @@ committed file. This is what the backend design of 2026-09-14 (deleted 2026-09-3
 `<release_id>.sqlite` (`<edition_id>` there), promoted from optional to the build's only query
 engine. In the browser the Observatory keeps serving one JSON file per table
 and joining at read time; at this volume an in-browser SQL engine would add a
-dependency without a query that needs it.
+dependency without a query that needs it. [M2]
 
 **A graph engine is not warranted.** Every question the ledger asks is a
 fixed-length path: observation, line, snapshot, document, publisher; or a
@@ -235,7 +237,7 @@ world offers that is worth taking is its vocabulary. An RDF projection of the
 SQLite file over PROV-O for the justification chain and SKOS for the status
 crosswalk is a derived export, built when a consumer asks for it, and it costs
 one script. If that consumer ever runs SPARQL over several ledgers, the
-engine question reopens on their data, not on this one.
+engine question reopens on their data, not on this one. [later for the RDF export]
 
 ## 4. Matching records
 
@@ -249,21 +251,21 @@ decisions are stored.
   `method_version`, `confidence`, `justification_line_ids`, `decided_at`,
   `status` and `supersedes`, under the in-force rule of section 1. A
   candidate match stays a row, counted, as ticket 0833 requires of its
-  `possible_matches`.
+  `possible_matches`. [M3b]
 - Tier thresholds live in configuration, versioned with the method; the match
-  threshold a result applies is declared by the result (fusion section 3). The
+  threshold a result applies is declared by the result (fusion section 3). [M3b] The
   panel's stance-and-confidence rule is `matching.panel` in
   `config/jetp_tracking.yaml`; the Observatory serves the decision record
   sorted by confidence.
 - A person's adjudication is recorded in the same row shape and in
-  `decisions.md`.
+  `decisions.md`. [M3b]
 - Party name forms are `party-names` rows (a case or diacritic variant has
   form type `spelling_or_case_variant`); party identifiers are
   `external-ids` rows of kind `party`. When an accepted `same_as` folds two
   parties, the retained party gains the other's forms as `party-names` rows
-  and `routes` sends the retired identifier to it.
+  and `routes` sends the retired identifier to it. [M3b]
 - Document relations (`same_as`, `edition_of`, `translation_of`) are
-  `relations` rows between documents.
+  `relations` rows between documents. [M2]
 
 **Scope of the first implementation.** For lines: tier 1 in the identity
 split, covering the 257 register rows and the 67 plan lines matched by hand;
@@ -273,21 +275,21 @@ CIPP lines and the 1 142 progress-report lines, whose literal name
 intersection is 3, is the test bed for tier 2 and the first case for tier 3.
 For documents: tiers 1 and 2 at collection time, so a snapshot whose text already
 exists is registered as a `same_as` candidate before extraction; tier 3 as a
-candidate generator over the registered documents.
+candidate generator over the registered documents. [M3b for lines; M2 for documents]
 
 ## 5. Language, translation and summaries
 
 A scan with no text layer (the Vietnamese decision of 2026 is one) is read by
 transcription, and each of its lines names the transcription as its method
 and version, so that its label has the provenance the translation tables give
-derived text.
+derived text. [M2]
 
 The four partnerships publish in Indonesian, Vietnamese, French and English,
 and some documents exist in two languages. The ledger records the language of
 every document and keeps every line's label in the language it was printed
 in. A translation pair is two documents related by `translation_of`, with one
 of them canonical for extraction ([fusion](jetp-fusion.md) section 3). Nothing in the ledger is a
-translation presented as an original.
+translation presented as an original. [M2]
 
 Translated labels and summaries are derived text, produced by an LLM or a
 person, stored under `data/derived/jetp/` in two tables, regenerable and
@@ -306,4 +308,4 @@ reaches the snapshot in its own language. No observation cites a translation
 or a summary; the justification is the line in the publisher's language, at its
 locator, in its snapshot. The first implementation is the language column and
 the translation relation; the two derived tables are nice-to-have and wait for
-a reader who needs them.
+a reader who needs them. [M2 for the language column and the translation relation; later for the two derived tables]

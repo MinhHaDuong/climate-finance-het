@@ -54,7 +54,7 @@ an authority category, `national_government`, `jetp_secretariat`, `ipg`,
 `international`. The category `secondary_source` keeps a word the
 [language](jetp-language.md) document retires for publishers; its rename is a
 proposed schema change (ticket 1702). A consulting firm that wrote a document for a publisher is
-linked as `author`, with the publisher as `commissioner`.
+linked as `author`, with the publisher as `commissioner`. [M2]
 
 ### Document
 
@@ -67,7 +67,7 @@ register, an EVN project page. Publication is a relation, not a column, so a
 declaration co-signed by a government and the International Partners Group, or
 a report issued jointly by a secretariat and a ministry, names every publisher.
 A document may have editions; an edition is a document row related to its
-predecessor.
+predecessor. [M2]
 
 ### Retrieval
 
@@ -82,14 +82,14 @@ minutes after a collection. A retrieval's status is `collected`,
 `not_applicable`. The last two are not outcomes of a fetch: the terminal
 verdict that closes a search is collection's ([collection](jetp-collection.md)
 section 3), and how the two lists relate is a proposed schema change (ticket
-1702).
+1702). [M2]
 
 ### Snapshot
 
 Exact bytes under a SHA-256 fingerprint, with the storage path. A snapshot
 belongs to the documents whose retrievals returned it, which for a mirror is
 two. A statement in the ledger cites a snapshot, never a URL or a retrieval,
-so that what was read can be re-read.
+so that what was read can be re-read. [M2]
 
 ### Line
 
@@ -99,22 +99,22 @@ in a list of submissions, a heading that groups such lines, a count the
 publisher gives without naming what is counted. The line is the first-class
 unit of the ledger: every identity below is minted from lines, every observation
 cites one, and nothing is ever counted except lines and the identities that
-reviewed matches have produced from them.
+reviewed matches have produced from them. [M2]
 
 A line carries what every line has in common: country, snapshot, locator,
 ordinal in its table, the label the publisher printed, its classification
 (section 4), the publisher's own status word and which axis that word belongs
 to. Everything else the publisher printed for that line is kept verbatim,
-field by field as printed.
+field by field as printed. [M2]
 
 Every observation names the method and version that read it from its line,
-or the person who wrote it by hand.
+or the person who wrote it by hand. [M3b]
 
 Proposition and programme are classifications of lines, not kinds. A proposition is a line whose publisher puts something forward for a
 decision not yet taken: a Senegal Annex 2 submission, a Viet Nam Annex I.2
 partner proposal. A programme heading is a line that groups other lines under
 a governance or budget envelope. Neither is an identity. Two propositions may
-describe one future project and a proposition may die without one.
+describe one future project and a proposition may die without one. [M2]
 
 ### Project
 
@@ -123,7 +123,7 @@ assets or delivers something non-physical. Minted only by a reviewed match
 across lines, never by ingestion. Classified as `project`, `programme` or
 `component` by a dated assertion, with `component_of` carrying containment on
 the relations table. A technical-assistance project has no asset; a programme
-may have none of its own.
+may have none of its own. [M3b]
 
 ### Asset
 
@@ -134,7 +134,7 @@ status list, so that early retirement, mothballing and fuel conversion are
 expressible as asset states. Coal retirement is a unit fact: an asset may be a
 unit whose `part_of` is a plant. Minted only by a reviewed match. An asset can
 exist with no project: the plan line for Pelabuhan Ratu names a plant and a
-retirement year and matches no undertaking.
+retirement year and matches no undertaking. [M3b]
 
 ### Agreement
 
@@ -146,7 +146,7 @@ Money movements are flows on the agreement, typed by the IATI transaction list:
 pledge, commitment, disbursement, expenditure. A plan cost estimate is not an
 agreement state; it is an observation on a line ([storage contract](jetp-ledger-storage.md) section 1). An agreement
 may be a tranche of another (`tranche_of`) and finances zero or more projects
-(`finances`); the hierarchy never splits money.
+(`finances`); the hierarchy never splits money. [M3b]
 
 An agreement carries a `modality`, the OECD DAC type-of-aid code: budget support (`A01`, `A02`), core contributions (`B01`,
 `B02`, `B03`, `B04`), project-type interventions (`C01`), experts and
@@ -158,14 +158,14 @@ the agreement, because a publisher reports them at a date and another may
 contradict them. A conditionality is an observation on the agreement of
 measure `condition`, whose value is the condition as printed and whose
 `concerns` relation names the party it binds, so that an AFD loan tied to a
-tariff reform at Senelec is one agreement, one condition, one party.
+tariff reform at Senelec is one agreement, one condition, one party. [M3b]
 
 ### Party
 
 One organisation, whatever its roles: `funder`, `channel`, `promoter`,
 `implementing_entity`, `beneficiary`, `contractor`, `operator`, or publisher of
 a document. A funder and the channel its money passes through are two
-parties in two roles: "Canada via World Bank and ADB" names three.
+parties in two roles: "Canada via World Bank and ADB" names three. [M2]
 
 Parties are under authority control, as in a library's name authority file
 or the ROR and GLEIF registries. A party row holds no name;
@@ -173,7 +173,7 @@ its names are party name rows, one per form as printed, each with a form type,
 `preferred`, `acronym`, `translation`, `spelling_or_case_variant` or
 `former_name`, a language, and the document or line it was read from. Exactly
 one form is preferred at a time; a form is revised by supersession like any
-decision row.
+decision row. [M2 for the names of publishers; M3b for other parties]
 
 ### Perimeter
 
@@ -184,7 +184,7 @@ Membership is a justified relation, not a list. A count slot is a perimeter obse
 "this publisher counted 24 at this date", not 21 rows in a table. A scope
 that the analysis defines to count against, such as a reference pool of
 comparator operations, is a method choice, not a perimeter of the ontology
-([fusion](jetp-fusion.md), section 6).
+([fusion](jetp-fusion.md), section 6). [M3b]
 
 ### External identifier
 
@@ -195,7 +195,7 @@ identifier, a GEM unit id; for a party, an IATI organisation identifier, a ROR
 identifier, an LEI or a Wikidata item. One table holds them all, typed by
 scheme, so a comparator record and a ledger identity meet on a key rather than
 on a name. What an identifier decides is a fusion rule
-([fusion](jetp-fusion.md), section 3).
+([fusion](jetp-fusion.md), section 3). [M3b]
 
 ### Comparator record
 
@@ -204,7 +204,7 @@ project from the projects API, a CRS activity, an IATI activity. It is a
 line of a snapshot whose document is the dataset edition and whose publisher
 is the institution, with its own fields verbatim, its identifiers in the
 external-identifier table and its statuses crosswalked like any publisher's.
-Nothing in the ledger treats a comparator record as a project of a partnership.
+Nothing in the ledger treats a comparator record as a project of a partnership. [M3b]
 
 ### Observation
 
@@ -229,14 +229,14 @@ different value is a new observation beside the old one, and one that prints
 the same value again is a dated restatement ([fusion](jetp-fusion.md),
 section 2).
 Subjects also include `country`, for macro-fiscal indicators (GDP, external debt;
-a utility's debt ratio is on a `party`), each with its indicator code from the publisher's own list.
+a utility's debt ratio is on a `party`), each with its indicator code from the publisher's own list. [M3b]
 
 ### Crosswalk
 
 A reviewed, dated mapping from one publisher's status vocabulary to one shared
 axis. The publisher's word stays on the line and on the observation; the
 crosswalk row is the only place a shared status is asserted, and it names who
-decided it and when.
+decided it and when. [M2 for keeping the publisher's word; M3b for the crosswalk]
 
 ## 3. Relations
 
@@ -264,7 +264,9 @@ decided it and when.
 | `same_as` | any | same kind | a justified equality claim; does not choose a route |
 | `about` | observation | any subject | typed |
 | `cites` | observation | line | exactly one |
-| `timed` | observation | timing | one row per date role; the amount lives once on the observation |
+| `timed` | observation | timing | one row per date role; the amount lives once on the observation | 
+
+[M2 for the relations among documents, retrievals, snapshots and lines; M3b for the others]
 
 ## 4. Line classifications and status axes
 
@@ -275,7 +277,7 @@ own terms, from a closed list:
 `register_allocation`, `count`, `envelope`, `absence`.
 
 The list is grown when a publisher's practice needs a value; it is never
-inferred from the label.
+inferred from the label. [M2]
 
 **Sector** is a shared axis, coded with the OECD DAC CRS purpose list (five
 digits; the 231 to 236 group covers energy policy, generation by source,
@@ -289,7 +291,7 @@ as `own_sector`, on an agreement and a project as `sector` assigned through
 a referent decision, and on an observation by inheritance from its subject.
 Technology is a separate attribute of assets, aligned to the Global Energy
 Monitor list: a sector says what the money is for, a technology says what
-the plant is.
+the plant is. [M2 for the publisher's own sector word on the line; M3b for the crosswalk and the assigned sector]
 
 The `measure` of an observation is from a closed list, extended by decision:
 
@@ -309,13 +311,13 @@ year. The coefficient is a sourced parameter of a derived account, not a
 word of the ontology ([fusion](jetp-fusion.md), section 7); it is kept for
 now in the `marker-coefficients` table of section 5. A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
-both equal.
+both equal. [M3b]
 
 Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow carries
 its interval through two timing roles, `period_start` and `period_end`, so a
 quarterly register total states the quarter it covers and the account
 of the [fusion rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
-`event` timing.
+`event` timing. [M3b]
 
 Four shared status axes, each sourced from an external list and extended only
 where the four publishers' practice requires it:
@@ -326,7 +328,9 @@ where the four publishers' practice requires it:
 | `asset_state` | asset | Global Energy Monitor: `announced`, `pre_permit`, `permitted`, `construction`, `shelved`, `cancelled`, `operating`, `mothballed`, `retired` | `retirement_proposed`, `retirement_agreed` |
 | `money` | agreement | states: `announced`, `mou`, `approved`, `signed`, `cancelled`, `withdrawn`; flows: IATI `pledge`, `commitment`, `disbursement`, `expenditure` | none |
 | `delivery` | agreement | IATI activity status: `pipeline`, `implementation`, `finalisation`, `closed`, `cancelled`, `suspended` | none; the South African register's letters A to D crosswalk here |
-| comparator statuses | comparator lines | World Bank project status (pipeline, active, closed, dropped), CRS and IATI activity status | crosswalked onto the axes above, never merged |
+| comparator statuses | comparator lines | World Bank project status (pipeline, active, closed, dropped), CRS and IATI activity status | crosswalked onto the axes above, never merged | 
+
+[M3b for the axes and their crosswalks]
 
 The publisher's own words, all of them, are kept: the South African
 register's `A. Planned`
@@ -337,7 +341,7 @@ word of this design, such as Indonesia's "Modality A" and "Modality B",
 stays a verbatim field of the line; `modality` on an agreement is only ever
 the DAC type-of-aid code. Where a publisher reports one axis only, the
 other two are absent for that line: the ledger states which axes a publisher
-reports rather than filling the others.
+reports rather than filling the others. [M2 for keeping the words; M3b for the crosswalk]
 
 ## 5. Ontology tables
 
@@ -367,7 +371,7 @@ script or configuration file carries its own copy of a list. Sections 2 to 4
 write every value in code type, which is what the alignment test reads; an
 axis's `term_id` names the list of its values, and the OECD DAC purpose codes
 that `sector-crosswalk` maps onto are cited by their five digits, not copied
-as terms.
+as terms. [M2]
 
 **Traceability.** A term taken from an external vocabulary names its scheme
 (IATI, OC4IDS, GEM, OECD DAC, PROV-O, SKOS), the concept's URI or code, and a
@@ -375,7 +379,7 @@ as terms.
 `narrowMatch`, `relatedMatch`, or `local` for a word the ledger defines
 itself. Similar labels do not justify `exactMatch`. A crosswalk row maps a
 publisher's word onto a term; a perimeter row defines a population that
-counts are made against. Both name who decided and when.
+counts are made against. Both name who decided and when. [M2]
 
 **Revision.** The in-force rule of the decision tables applies: a row is in
 force when it is the accepted terminal row of its chain. Rewording a
@@ -385,11 +389,11 @@ one stays valid for every row that used it; a count made against the old
 perimeter is never silently moved to the new one. The ontology as of cutoff K
 is the set of rows in force at K, so an as-of query reconstructs the words as
 well as the data. `decisions.md` keeps the reasons in prose and cites the row
-it explains.
+it explains. [M2]
 
 **Reference from E.** Every derived result names the ontology version it was
 computed under, and a result is never recomputed under a later ontology
-without a new run record.
+without a new run record. [M3b]
 
 ### English and formal specification
 
@@ -401,17 +405,17 @@ when a value listed in sections 2 to 4 is not a term in force, or a term in
 force appears nowhere in this document, and when a table or column declared
 in the storage contract differs from the DDL. The Observatory's Glossary and a SKOS export
 (storage contract, section 3) are generated from the `terms` table, so the words a reader sees
-are the words the validator enforces.
+are the words the validator enforces. [M2 for the DDL and the alignment test; M3b for the Glossary and M4 for the SKOS export]
 
 LinkML was considered as the single source instead, generating the DDL, JSON
 Schema, OWL and documentation from one YAML file. It is not adopted now,
 because it adds a toolchain whose extra outputs have no consumer. The question
-reopens when an external consumer asks for OWL or JSON Schema.
+reopens when an external consumer asks for OWL or JSON Schema. [later]
 
 ## 6. Out of scope, by decision
 
 The following classes are out of scope by decision (2026-09-22), and the
-ledger says so rather than holding them badly:
+ledger says so rather than holding them badly: [M2]
 
 - institutional events (a body founded, launched, staffed, merged) and
   party-to-party relations other than `role_in` and `party_in`;

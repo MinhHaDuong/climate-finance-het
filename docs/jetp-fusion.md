@@ -32,35 +32,35 @@ expressed, and what it must record. Publishers make material errors (a
 journalist's misreading, a clerk's mistyped figure), and secondary documents
 sometimes contain justified harmonisation (a statistician who corrected a
 series, converted units or aligned definitions); only a reader can tell which
-is which.
+is which. [M2]
 
 **Documentary accounting.** The ledger reconstructs from public documents;
 it is not a lender's double-entry books. It cannot require debit and credit
 counterparts that no document discloses. It can require identities,
 comparable scopes, explicit movements and stated differences. An item in a
 plan is a statement of intention: it proves neither financing, nor admission
-to a later cohort, nor physical progress.
+to a later cohort, nor physical progress. [M3b]
 
 **Statements, not facts.** "The loan was signed on 3 May" enters as "this
 publisher stated, in this document read on this date, that the loan was
 signed on 3 May". Fusion combines statements; it never promotes one to a fact
-by erasing the others.
+by erasing the others. [M2]
 
 **Traceable.** Every referent, assessment and account resolves to the
 statements it rests on, the judgements that combined them, who or what made
 each judgement, by which method and version, when, and on what stated basis.
 The full chain is always within reach of the reader of a result. A result
-whose chain does not resolve is not a result.
+whose chain does not resolve is not a result. [M2 for statements and document judgements; M3b for referents, assessments and accounts]
 
 **Defeasible.** Every judgement can be revised by a later one, which records
 what it revises and why. Nothing is revised by erasure: the earlier judgement
-stays readable, so a result computed before the revision can be reproduced.
+stays readable, so a result computed before the revision can be reproduced. [M2]
 
 **Uncertainty accepted.** A value may be a range and a date an interval.
 Disagreement between publishers may remain unresolved in a released result, and
 no preferred figure is manufactured to fill a gap. Unknown is not zero, and a
 missing document is not a missing event: the absence is recorded as such,
-with the search that failed to find it.
+with the search that failed to find it. [M2 for ranges and date precision in statements; M3b for results]
 
 **Calibrated language.** Judgements are expressed on the qualitative scales
 of the IPCC guidance note on the treatment of uncertainty (Mastrandrea et al.
@@ -72,7 +72,7 @@ readers: very low,
 low, medium, high, very high. Each likelihood term is a range, so a judgement
 that knows nothing is "about as likely as not, very low confidence", never a
 made-up point value. Finer formalisms (possibility, belief functions, lower
-and upper probabilities) coincide at this grain and are not needed.
+and upper probabilities) coincide at this grain and are not needed. [M2]
 
 **Pedigree.** Each statement carries a qualitative assessment of where it
 comes from, in the sense of the NUSAP pedigree: how close its publisher is to
@@ -81,26 +81,26 @@ compiled, a statistician who harmonised, a database that aggregated, a
 newspaper that reported), how independent it is of other statements, how it
 was produced (a register, a plan estimate, a press release), and how it
 entered the ledger (parser, assisted reading, transcription, human review).
-Pedigree informs judgement; it never deletes a statement.
+Pedigree informs judgement; it never deletes a statement. [M3b]
 
 **Independence of publishers.** Two statements corroborate each other only
 if they are independent. A mirror, a reprint, a translation, a copied report
 or a secondary document quoting a primary one adds no corroboration, and one
-payment described by several documents stays one payment.
+payment described by several documents stays one payment. [M3b]
 
 **Two times.** Every conclusion is dated twice: the time of the world it
 describes, and the time the ledger knew it. A result at knowledge cutoff K
 uses only statements and judgements admitted on or before K, so a later
-discovery never changes what an earlier result said.
+discovery never changes what an earlier result said. [M2 for the knowledge time of each statement; M3b for results at K]
 
 **Declared method.** A choice that selects, weighs or transforms is a method
 with a version. Changing it produces a new result under a new version; it
-never silently rewrites an old one.
+never silently rewrites an old one. [M2]
 
 **Storage and presentation independence.** No rule depends on how statements
 are stored or how results are shown. A rule that only makes sense for one
 storage layout or one screen belongs to the storage contract or to the
-Observatory, not here.
+Observatory, not here. [M2]
 
 ## 2. Revision
 
@@ -111,13 +111,13 @@ late report or the publisher correcting itself is a judgement, which says
 which (section 8). When a later snapshot prints the same content again, the
 restatement is kept under its own date. It shows that the publisher still
 stood by the statement on the later date: persistence, not corroboration,
-since a publisher repeating itself is not independent of itself.
+since a publisher repeating itself is not independent of itself. [M2]
 
 Supersession, where one entry replaces another in force, is reserved for the
 ledger's own errors: a misread value, a wrong locator, a false match, an
 extraction rule found faulty. The superseded entry stays readable; what is in
 force is the end of the chain. A revision that is only proposed does not take
-the place of what it would revise until it is itself adopted.
+the place of what it would revise until it is itself adopted. [M2]
 
 ## 3. Identity
 
@@ -127,12 +127,12 @@ referent (project, asset, agreement, party, publisher-stated perimeter)
 exists only because a judgement minted it; extracting a document never mints
 one. A statement with no referent yet stays a subject of observations in its
 own right; it does not dissolve into an aggregate. A recorded judgement is
-what the storage contract calls a decision row.
+what the storage contract calls a decision row. [M3b; the document judgements below, M2]
 
 **A candidate match** is one pairing put up for judgement: two statements, a
 statement and a referent, two parties, or two documents that may be the
 same thing. Every judgement about identity is a judgement on a candidate
-match, and each candidate match has its own chain of judgements.
+match, and each candidate match has its own chain of judgements. [M2]
 
 **The judgement.** A judgement on a candidate match states a stance (the same,
 different, or undetermined), its likelihood and confidence on the calibrated
@@ -140,7 +140,7 @@ scales, the statements it rests on, a quoted basis, who or what judged (a
 program, an LLM reader, a panel, a person), by which method and
 version, and when. It is never altered: a later judgement names the one it
 revises. A false match is revoked by a later judgement that says so, and
-nothing else needs to be created.
+nothing else needs to be created. [M2]
 
 **Threshold per result.** No judgement is turned into a yes or a no when it
 is recorded. Each result declares, as part of its method, its match
@@ -148,14 +148,13 @@ threshold: which likelihood and confidence a candidate match needs in order
 to count, for example "likely or more, medium confidence or more". A result
 may report its figures at two thresholds, a cautious and an inclusive one,
 which turns matching uncertainty into a range on the figure. Candidate
-matches below a result's threshold stay
-listed and counted apart; they never change the result's figure.
+matches below a result's threshold stay listed and counted apart; they never change the result's figure. [M3b]
 
 - An equality claim (`same_as`) is a justified claim that two things are one; it does
-  not choose which name or route prevails.
+  not choose which name or route prevails. [M2]
 - The classification of a referent (project, programme or component) is a
   dated judgement; a later classification does not change what earlier
-  statements were about.
+  statements were about. [M3b]
 
 **Proposers.** Candidate matches come from proposers, each working only on
 what the previous ones left open and signing with its own method name.
@@ -175,7 +174,7 @@ what the previous ones left open and signing with its own method name.
 5. A person, for what the readers decline or contradict each other on.
 
 A proposer's settings are part of its method version, and are tested against
-matches already judged by hand before its judgements are used.
+matches already judged by hand before its judgements are used. [M3b]
 
 **Reading and verification.** The author is not the checker. A reading is
 done by independent readers from different vendors, on the same inputs, blind
@@ -188,7 +187,7 @@ judgement, with the readers' answers kept beside it; the author examines the
 results sorted by likelihood and confidence ("take a stance, keep track of
 the confidence level, and let me examine the results sorted by confidence
 level"). A judgement that implies a change in what a term means is a proposed
-revision of that term, never an edit of the adopted definition.
+revision of that term, never an edit of the adopted definition. [M4 for the full panel of independent readers with positive controls; until then one reader and one checker from another vendor, as extraction section 6.3 provides]
 
 **Organisations.** Parties are under authority control, as in a library's
 name authority file or the ROR and GLEIF registries: one identity per
@@ -205,7 +204,7 @@ Three rules of their own apply.
   and Agence française de développement, PLN and Perusahaan Listrik Negara),
   a translation (Vietnam Electricity and Tập đoàn Điện lực Việt Nam), a former
   name. In a result whose match threshold the judgement meets, the two parties are
-  one organisation carrying both sets of name forms.
+  one organisation carrying both sets of name forms. [M3b]
 
 **Documents.** The same judgements apply one level up, to documents, and come
 before any statement is extracted from them, because a duplicate document
@@ -224,13 +223,15 @@ a translation pair; the other members remain citable. Proposers:
    detection, a translation.
 4. A reading by LLMs of the remaining pairs, given both first
    pages.
-5. A person.
+5. A person. 
+
+[M2]
 
 ## 4. Occurrence
 
 Several statements may describe one event. Whether they do is a judgement,
 made on the content and never on the order in which statements were extracted or
-on the rank of a publisher.
+on the rank of a publisher. [M3b for all]
 
 - Statements of one event not yet judged to be one are not added together.
 - A repeated cumulative balance is not a new movement.
@@ -245,7 +246,7 @@ on the rank of a publisher.
 When statements about the same subject, measure and time disagree, all of
 them are kept. A judgement may prefer one for a given result; it states why,
 and the others stay one step away from the reader of the result. No
-preference is ever automatic.
+preference is ever automatic. [M2 for keeping every statement; M3b for preferences, and for all the rules below]
 
 - The reader first asks whether a statement is a material error: a figure
   that cannot be right against its own document, a transposed digit, a
@@ -290,11 +291,11 @@ differently.
   document; the extended scope is reported separately and never fills the
   strict one. A counting scope is a method choice with a version; changing
   its definition makes a new scope, and a count made against the old one is
-  never moved silently to the new one.
+  never moved silently to the new one. [M3b]
 
 Sharing a perimeter or a scope does not prove comparability: an account also
 checks changes in membership, instrument and basis, and unknown compatibility
-blocks the comparison without hiding the separate statements.
+blocks the comparison without hiding the separate statements. [M3b]
 
 ## 7. Counting and accounts
 
@@ -307,7 +308,7 @@ project's share needs a statement that gives it. Financial states (need,
 announced, memorandum, approved, signed, disbursed) form a chronology, not
 additive categories: an aggregate selects one state explicitly. A physical
 state never follows from a financial one, and a plan's priority ranking
-implies neither finance nor physical progress.
+implies neither finance nor physical progress. [M3b]
 
 **Money.** Values stay the publisher's, in its unit and currency. A
 conversion uses a rate that a document printed, cited like any statement; no
@@ -315,18 +316,18 @@ rate is assumed and no conversion is implicit. A conversion made by a third
 party is kept as its statement and excluded from sums in original currency.
 Gross flows are not reduced by refunds, repayments or cancellations, which
 remain their own measures. Rounded inputs carry their bounds, and a rounding
-difference is not a discrepancy.
+difference is not a discrepancy. [M3b]
 
 **Markers.** The climate finance a policy marker yields is the donor's score
 times a coefficient that depends on the donor and the year. The coefficient is
 a sourced parameter of the account, cited to the document that states it; it
 is applied only in the account, so the same loan can move from 40 to 100
-percent climate finance without any change in the loan.
+percent climate finance without any change in the loan. [M3b]
 
 **Reconstruction.** An account of a subject between two dates starts from an
 opening position with an exact cutoff (zero needs a justification), adds the
 movements that certainly fall inside the interval, and reaches a closing
-position.
+position. [M3b for all]
 
 - A movement is inside only if its earliest possible date is after the
   opening and its latest on or before the closing. A possible overlap with a
@@ -351,7 +352,7 @@ once.
 
 ## 8. Knowledge time and change
 
-A result at knowledge cutoff K is computed as follows.
+A result at knowledge cutoff K is computed as follows. [M3b]
 
 1. Admit the statements and judgements admitted on or before K, and only if
    what they refer to was admitted too.
@@ -365,7 +366,7 @@ A result at knowledge cutoff K is computed as follows.
 When a new cutoff changes a result, the change is attributed to one of: a
 development in the world, a late report of an old event, a publisher's
 correction, a changed interpretation, a ledger error, or a changed method.
-These are different reasons and are never reported as one.
+These are different reasons and are never reported as one. [M4]
 
 ## 9. Checks a method must pass
 

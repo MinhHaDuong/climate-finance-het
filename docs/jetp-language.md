@@ -44,7 +44,7 @@ The ledger is Data, guided by Ontology; Evidence comes on top; the
 Observatory shows both.
 
 **D is a pipeline.** Each step reads the steps before it, writes its own
-tables and never edits an upstream row.
+tables and never edits an upstream row. [M2]
 
 | Step | Name | Content | Tables |
 |---|---|---|---|
@@ -56,7 +56,7 @@ tables and never edits an upstream row.
 D3 and D4 both read D2. An observation's subject is a line until matching
 attaches that line to a referent. The order of the [migration](attic/jetp-ledger-migration.md) builds D4
 before rewriting D3 because the old tables key observations on old
-identities.
+identities. [M3b]
 
 **Activities.** Collection (discovery, triage and fetching;
 [collection](jetp-collection.md)) fills D1; extraction writes D2; reading
@@ -90,7 +90,7 @@ weighing and revising ([fusion](jetp-fusion.md)); results are computed as E
   extraction covers), a **counting scope** (an analyst's population, fusion
   section 6), and a project's scope, a domain word.
 
-**Terms retired or restricted.**
+**Terms retired or restricted.** [M2]
 
 | Term | Use instead | Why |
 |---|---|---|
@@ -113,4 +113,4 @@ Domain words that coincide are unaffected: a *project stage* is a value of
 the OC4IDS axis, and a PDF's *text layer* is its extractable text.
 
 This document governs the design documents and the schema: the DDL (ticket 0871) declares no table or column named `evidence`,
-`model`, `reconcil*`, `layer` or `fact`.
+`model`, `reconcil*`, `layer` or `fact`. [M2]

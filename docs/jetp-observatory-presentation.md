@@ -17,12 +17,12 @@ knows how empirical work proceeds, that a figure rests on documents and that
 words need definitions, and they never put the framework's names in front of
 that reader. "Ontology", "Evidence", "Model", the letters O, D, E, M and the
 step codes D1 to D4 appear in code, data attributes and these documents, not
-in page copy.
+in page copy. [M3b]
 
 The page vocabulary is a newsroom's, decided by the author on 2026-09-23:
 data desks organise document-based work the same way, and their words are
 plain. It keeps to the neutral side of that vocabulary, attribution rather
-than suspicion, because the readers are researchers as well as journalists.
+than suspicion, because the readers are researchers as well as journalists. [M3b]
 
 | ODEM object | What the reader sees | Label on the page |
 |---|---|---|
@@ -34,7 +34,7 @@ than suspicion, because the readers are researchers as well as journalists.
 
 **Navigation.** Decided by the author on 2026-09-23, over the cold read of
 ticket 0881 and the batches that followed it. The header holds three
-sections: **The paper trail** · **The tallies** · **About**.
+sections: **The paper trail** · **The tallies** · **About**. [M3b]
 
 | Section | Its pages, in sub-bar order | Tab lands on |
 |---|---|---|
@@ -44,7 +44,7 @@ sections: **The paper trail** · **The tallies** · **About**.
 
 The Glossary sits under About: a reader consults it, and does not start
 from it. The release history is in no bar; Methods links to it and is
-marked current when it is open.
+marked current when it is open. [M3b]
 
 **Page top: two bars.**
 
@@ -55,7 +55,7 @@ marked current when it is open.
   ArrowDown opens it on its first link; Escape and a click outside close it.
   Hover opens one as an enhancement only. At phone width the three sections
   stack inside one collapsible nav behind a Menu button. The paper trail's
-  dropdown lists the three trail steps followed by the three referent pages.
+  dropdown lists the three trail steps followed by the three referent pages. [M3b]
 - **The sub-bar.** On every page of a section, its landing page included, a
   second bar holds the section's pages as plain sibling tabs, the current one
   selected (`aria-current="page"`). It is one component for all three
@@ -67,21 +67,21 @@ marked current when it is open.
   page's position indicator, and the tabs beside it are the neighbouring
   steps. No page repeats it with an eyebrow, a trail block or in-page tabs,
   so a country's selected document rows and attributed statements are two steps
-  (`#document-rows/<CODE>`, `#statements/<CODE>`).
+  (`#document-rows/<CODE>`, `#statements/<CODE>`). [M3b]
 - **Country chip.** A trail page scoped to a country shows the country at
   the right of the sub-bar as a removable chip ("Viet Nam ×"). Removing it
-  opens the same step unscoped, and every trail tab keeps the country.
+  opens the same step unscoped, and every trail tab keeps the country. [M3b]
 - **Breadcrumbs** appear on detail pages only (Projects › Bac Ai, Funding ›
   Viet Nam): small muted text with arrows, which never looks like the
-  sub-bar's tabs.
+  sub-bar's tabs. [M3b]
 - **Title block:** an h1 and a one-sentence lede. The page's longer
-  explanation follows, word for word, folded under "About this page".
+  explanation follows, word for word, folded under "About this page". [M3b]
 
 **Markers.** A number we calculated carries "Our calculation", with its
 unit, its perimeter and a link to what was counted. A number a publisher
 printed carries "As published", with the publisher and the date. The two
 labels are a pair: each kind of number carries its own, and neither kind
-goes unmarked.
+goes unmarked. [M3b]
 
 **Addresses match labels.** Each page's address is its label's slug:
 `#documents`, `#document-rows`, `#statements`, `#projects`, `#funding`,
@@ -90,7 +90,7 @@ goes unmarked.
 release history is `#release-history`. A country's page nests under its step
 (`#funding/<CODE>`, `#document-rows/<CODE>`, `#statements/<CODE>`); a project is
 `#project/<project_id>`. The full table is in the Observatory's
-[README](../deliverables/jetp-observatory/README.md).
+[README](../deliverables/jetp-observatory/README.md). [M3b]
 
 - **Glossary.** Grouped by theme, alphabetical within each group: what the
   ledger tracks (projects, assets, agreements, parties, perimeters), how
@@ -99,7 +99,7 @@ release history is `#release-history`. A country's page nests under its step
   the hand-written first list and the generated one group alike. The terms in force, grouped by list: each class, relation
   and value with its definition, its external source and its revision
   history. A relation shows what it connects. Every term used elsewhere on
-  the site links to its glossary entry. Generated from the ontology tables, `data/jetp/ontology/` ([`jetp-ontology.md`](jetp-ontology.md) section 5).
+  the site links to its glossary entry. Generated from the ontology tables, `data/jetp/ontology/` ([`jetp-ontology.md`](jetp-ontology.md) section 5). [M3b; plain-language definitions for a general reader, M4]
 - **The paper trail.** Document rows are the ledger's lines (D2), what
   extraction and fusion call statements; Statements are its observations
   (D3). Documents is D1 (publishers, documents, retrievals, snapshots). Document rows is D2: selected rows from registers, annexes and
@@ -116,7 +116,7 @@ release history is `#release-history`. A country's page nests under its step
   The sub-bar keeps those three referent pages apart from the three sequential
   steps and lets the reader follow their justification: from
   a project to what is on the record about it, to the lines, to the page
-  of the document, and back.
+  of the document, and back. [M3b]
 - **The tallies.** A number the Observer computes is visibly set apart from
   a number a publisher printed ("Our calculation" against "As published"):
   it states its unit and perimeter and opens the items on the record it was
@@ -126,15 +126,15 @@ release history is `#release-history`. A country's page nests under its step
   grouped under a subheading per country and never summed across countries.
   The charts follow as numbered, captioned figures ("Figure 1. …"), each
   marked "Our calculation". The landing page keeps its stat grid, under the
-  eyebrow "The tallies".
+  eyebrow "The tallies". [M3b]
 - **No models.** The Observatory tests no causal explanation, and its
   navigation has no place for one. Methods says in plain words what
-  the Observatory does not do.
+  the Observatory does not do. [M3b]
 
 Words avoided on the pages: *claims* (it implies doubt about a publisher's
 statement), *deals* and *players* (loaded), *sources* (a source is also a
 person, and the language document retired the word), *entities* and *records* (opaque to
-a general reader).
+a general reader). [M3b]
 
 The serving contract, every table served or named as not served, is
 [`jetp-ledger-storage.md`](jetp-ledger-storage.md) section 2.
@@ -148,7 +148,7 @@ decisions and the frozen release, to a figure or sentence on the site or in a
 paper; and back from any published number to the observations and
 calculation it rests on. Every published number, status and substantive
 narrative claim resolves to observation identifiers or to a named
-calculation.
+calculation. [M3b]
 
 - **The provenance index is a build-time check, never a served file.** It is
   keyed by a stable claim identifier, with observation identifiers,
@@ -159,19 +159,19 @@ calculation.
   and checked the same way and not published. The site's climb from a number
   to its justification stays a read-time join over the served tables (ticket
   0858 removed the 874 kB materialised join; rebuilding it under another name
-  is what this rule forbids).
+  is what this rule forbids). [M3b]
 - `(release_id, display_id)` identifies an occurrence, so the same claim on
   two pages, or a component repeated on one page, stays distinct. A manuscript
   occurrence uses a figure, table or block label and a cell or paragraph
-  locator instead of a page route; a PDF page number is not a durable key.
+  locator instead of a page route; a PDF page number is not a durable key. [M3b]
 - Authored narrative claims carry stable block identifiers and link to their
   supporting and contradicting observations; rewording a claim reopens the
-  review of its links.
+  review of its links. [M3b]
 - A provenance entry resolves through the observation's line to the exact
   snapshot: the latest retrieval of a document cannot stand in for the bytes
-  that supported an older observation.
+  that supported an older observation. [M3b]
 - Where bytes cannot be redistributed, the release says so and still carries
-  URL, hash and locator.
+  URL, hash and locator. [M3b]
 
 ### Country cards and pages
 
@@ -186,4 +186,4 @@ where no later official item exists, the gap is stated. Example: Indonesia's
 USD 3.92bn approval headline may rest on the 8 September 2026 JDU newsletter
 while the principal reference is the 2025 report with an older USD 3.1bn:
 two dated observations, neither a payment total. Country-level claims are
-exported even when no project is attached.
+exported even when no project is attached. [M3b]
