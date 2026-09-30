@@ -13,36 +13,34 @@ Data tables under `data/jetp/`, the five ontology tables under
 `data/jetp/ontology/`, CSV, columns in this order. What the ontology tables
 mean, and how they are revised, is the [ontology](jetp-ontology.md)
 (section 5); their keys, columns and paths are here.
-A table too large for the repository's file ceiling, 512 000 bytes per
-file in `.githooks/pre-commit`, is chunked by country and year into
-`<table>.d/<CODE>-<year>.csv`, with numbered `-02`, `-03` shards when one
-country-year still exceeds the ceiling. The build joins those shards in
-numeric order, preserving row order within that country-year. The shard
-key is read from fields that never change: the year of the row's own
+
+**Chunking.** A table too large for the repository's file ceiling, 512 000
+bytes per file in `.githooks/pre-commit`, is chunked by country and year
+into `<table>.d/<CODE>-<year>.csv`, with numbered `-02`, `-03` shards when
+one country-year still exceeds the ceiling. The build joins those shards in
+numeric order, preserving row order within that country-year. The shard key
+is read from fields that never change: the year of the row's own
 `recorded_at` (of `decided_at` where the table does not carry `recorded_at`
-yet), and the row's own `country` column. `observations` and
-`timings` get their shard country from the cited `line_id`, since those tables
-have no country column; no shard key is an inferred or judged value. The `.d` suffix keeps a
-chunk directory apart from a directory that shares a table's name:
-`data/jetp/documents/` is the document store (the snapshot bytes) under DVC, not the chunks of the
-`documents` table, and the writer deletes only its `<CODE>-<year>[-NN].csv` files of
-its own `.d` directory.
-For rows such as party-alias relations that have no country, `GLB` is the shard
-filename's storage bucket. It asserts no country for the relation. A global
-method-source line may use `country=GLB` because `lines.country` is required;
-`GLB` means no recipient country, not a fifth JETP country.
-The writer stages complete shard bytes before publishing them. A temporary
-`<table>.d.pending` marker makes an interrupted layout change a named ledger
-error; a missing first or numbered shard also fails validation. [M2]
-The per-document fields table `line-fields/<document_id>` has no country or
-year to shard on. When it exceeds the ceiling it is split into
-`line-fields/<document_id>.d/NN.csv`, numbered from `01` and joined in
-numeric order, under the same pending-marker rule. The fields table of a
-living document, which grows with every snapshot, is split by the year of
-the lines' `recorded_at` instead (`<document_id>.d/<year>.csv`, with numbered
-`-02`, `-03` shards when one year exceeds the ceiling). `readings` is
-split by run (`readings.d/<run_id>.csv`, then `-02` shards), since a rejected
-proposal cites no line to take a country from. [M2]
+yet), and the row's own `country` column; `observations` and `timings` get
+their shard country from the cited `line_id`. The `.d` suffix keeps a chunk
+directory apart from a directory that shares a table's name:
+`data/jetp/documents/` is the document store (the snapshot bytes) under DVC,
+and the writer deletes only its `<CODE>-<year>[-NN].csv` files of its own
+`.d` directory. For rows that have no country, such as party-alias
+relations, `GLB` is the shard filename's storage bucket and asserts no
+country; a global method-source line may use `country=GLB` because
+`lines.country` is required, and `GLB` means no recipient country, not a
+fifth JETP country. The writer stages complete shard bytes before
+publishing them; a temporary `<table>.d.pending` marker makes an
+interrupted layout change a named ledger error, and a missing first or
+numbered shard fails validation. The per-document fields table
+`line-fields/<document_id>` is split into `line-fields/<document_id>.d/NN.csv`,
+numbered from `01` and joined in numeric order, under the same
+pending-marker rule; the fields table of a living document is split by the
+year of the lines' `recorded_at` instead (`<document_id>.d/<year>.csv`, with
+`-02`, `-03` shards). `readings` is split by run (`readings.d/<run_id>.csv`,
+then `-02` shards), since a rejected proposal cites no line to take a
+country from. [M2]
 
 | Table | Key | Columns |
 |---|---|---|
@@ -89,12 +87,10 @@ a table or column of this section differs from the DDL, and the ontology's
 alignment test (ontology section 5) checks the values. [M2]
 
 **Target schema.** The table above is the schema the DDL declares today.
-The rules of the specification require the changes below, which the DDL
-does not yet carry. Each is a target of this contract, with the milestone
-that needs it; a rule of this section that relies on a target column says
-so, and the table above changes when the DDL does. A requirement whose rule
-needs a target change is not met at a milestone while that change is still
-a target: the Milestone column is when the DDL must carry it.
+The rules of the specification require the changes below, each a target of
+this contract with the milestone by which the DDL must carry it; a rule of
+this section that relies on a target column says so, and the table above
+changes when the DDL does.
 
 | Table | Target change | Rule it serves | Milestone |
 |---|---|---|---|
@@ -196,12 +192,12 @@ at least two occurrence observations; accepted flow coverage needs a covering
 flow and a covered movement. A rejected decision retains its members as
 history but contributes none to the in-force view. [M3b]
 
-Accounts, the openings, movements, closings, residuals and
-coverage gaps per agreement or perimeter that the
-[fusion rules](jetp-fusion.md) define (section 7), are derived: they are computed from observations, timings,
-rates and adjudications at build time, written under `data/derived/jetp/`
-with the run identifier, the two cutoffs (valid time and knowledge) and
-the `ontology_ref` (the hash of `data/jetp/ontology/` and of the DDL), and never edited. The adjudications they depend on are records, in the table above. [M3b]
+Accounts, the openings, movements, closings, residuals and coverage gaps
+per agreement or perimeter of [fusion](jetp-fusion.md) section 7, are
+derived: computed from observations, timings, rates and adjudications at
+build time, written under `data/derived/jetp/` with the run identifier, the
+two cutoffs (valid time and knowledge) and the `ontology_ref` (the hash of
+`data/jetp/ontology/` and of the DDL), and never edited. [M3b]
 
 Text layers ([extraction](jetp-extraction.md) section 5) are derived but
 retained: the text layer of every snapshot with admitted lines is a DVC
@@ -246,16 +242,15 @@ Rules that the validator enforces:
   superseded by at most one. An accepted row is no longer in force once a
   row that supersedes it is itself `accepted` or `rejected`: an accepted
   successor replaces it, and a terminal `rejected` row revokes whatever its
-  chain previously accepted, with no replacement needed. While the only
-  successor of an accepted row is a `candidate`, the accepted row stays in
-  force and the candidate is pending, so a proposed revision never blanks an
-  adopted judgement ([fusion](jetp-fusion.md) section 2). The same rule
-  governs document deduplication, so a rejected `same_as` re-enables
-  extraction of the document it had folded. Lines and dispositions follow
-  it too: their rows are accepted when written, so one is in force until a
-  row that supersedes it is recorded. The DDL's in-force views still
-  apply the earlier rule, under which any successor ends an accepted row;
-  they are to follow this one. [M2]
+  chain previously accepted. While the only successor of an accepted row is
+  a `candidate`, the accepted row stays in force and the candidate is
+  pending ([fusion](jetp-fusion.md) section 2). The same rule governs
+  document deduplication, so a rejected `same_as` re-enables extraction of
+  the document it had folded. Lines and dispositions follow it too: their
+  rows are accepted when written, so one is in force until a row that
+  supersedes it is recorded. The DDL's in-force views still apply the
+  earlier rule, under which any successor ends an accepted row; they are to
+  follow this one. [M2]
 - An observation carries no date of its own. Each date it reports is a
   `timings` row with its role, precision and bounds; a value is stored once
   and never repeated per date role. A flow carries `period_start` and
@@ -267,10 +262,8 @@ Rules that the validator enforces:
   stands in for it. A row belongs to the as-of state at cutoff K when its
   `recorded_at` is on or before K and no row with `recorded_at` on or before
   K supersedes it in a way that ends it under the in-force rule; the status
-  test applies to the chain as it stood at K, not to the chain as it stands
-  today. So a row accepted before K and superseded after K is in the state
-  at K. The DDL test replays that case: A accepted, B superseding A recorded
-  after K, and the state at K returns A. [M2]
+  test applies to the chain as it stood at K. So a row accepted before K and
+  superseded after K is in the state at K, which the DDL test replays. [M2]
 - A correction release ([results](jetp-results.md) section 9) keeps its
   cutoff K and adds a named correction overlay: supersession rows that
   correct ledger errors, recorded after K, whose superseded rows were
@@ -301,9 +294,7 @@ Rules that the validator enforces:
   P-number for the World Bank, an activity identifier for IATI), or for a
   record with none its ordinal in the file and the hash of its canonical
   serialisation; for a transcribed page, the page index and a rectangle in
-  page-normalised coordinates. The
-  meaning of a locator and how it is derived are extraction's (section 5);
-  this rule fixes only its syntax. Locators admitted before the anchor rule,
+  page-normalised coordinates. Locators admitted before the anchor rule,
   such as text anchors of at most 80 characters and paraphrase anchors of
   hand-made lines, stay valid under their method version; the validator
   enforces the anchor syntax on lines admitted after it. [M2]
@@ -313,18 +304,15 @@ Rules that the validator enforces:
   rows (a funder, a channel, a promoter, an operator of the agreement,
   project or asset the line is about) or `role_in` rows (a mandate), one per
   name, citing the line. [M2 for keeping the cell; M3b for minting the parties]
-- A publisher's method note that governs a page or a table (a pro-rating,
-  an exchange-rate policy, a footnote conditioning every row) is a line of
+- A publisher's method note that governs a page or a table is a line of
   classification `heading` that `groups` the lines it governs, so that an
   observation reads the note through its line. The relation is stored on the
-  member: its `groups` column names the heading, a foreign key into `lines`,
-  since a column holds one value and a heading governs many lines; the heading
-  is a line of the same snapshot and never the member itself. A line may sit
-  under several headings (a section title and a footnote): in the target
-  schema `groups` becomes rows of the relation table `line-groups`, one per
-  member and heading; until then the column names the nearest heading, and
-  a heading may name the heading that governs it, so a line reads the
-  chain. [M2]
+  member: its `groups` column names the heading, a foreign key into `lines`;
+  the heading is a line of the same snapshot and never the member itself. A
+  line may sit under several headings: in the target schema `groups`
+  becomes rows of the relation table `line-groups`, one per member and
+  heading; until then the column names the nearest heading, and a heading
+  may name the heading that governs it, so a line reads the chain. [M2]
 - A `line_id` is a minted key, independent of a row's changing attributes.
   Document extractors mint `<document_id>-<table>-<ordinal>` in extraction
   order, where `ordinal` is the mint counter of that document and segment,
@@ -338,17 +326,15 @@ Rules that the validator enforces:
   families are appended only and never renumbered. The pair
   (`sha256`, `locator`) is unique across `lines` as a check, not as the key,
   so no two lines claim the same place in the same bytes and a locator too
-  coarse to be unique, such as a whole report, is refused at ingestion.
-  A minted key keeps the row's identity independent of its attributes,
-  which is the normal form; the fingerprint and locator stay on the row as
-  provenance. No existing identifier is renamed. [M2]
+  coarse to be unique, such as a whole report, is refused at ingestion. No
+  existing identifier is renamed. [M2]
 - The method of a line admitted before the method columns existed is
   derived from its identifier family: an extractor-minted key names the
   extraction script and the commit that wrote it; an API snapshot key names
   the ingestion run; a decision-scoped key names a person's reading or an
-  assisted reading and carries no recorded reading of another role. The first replay under
-  this specification counts the lines of each family and method
-  ([requirements](jetp-requirements.md) Q1). [M2]
+  assisted reading and carries no recorded reading of another role. The
+  first replay under this specification counts the lines of each family and
+  method ([requirements](jetp-requirements.md) Q1). [M2]
 - A referent is minted only by a `line-referents` row with a basis; no
   ingestion script writes to `projects`, `assets`, `agreements`, `parties` or
   `perimeters`. The one exception is a party in a publishing role, which the
@@ -360,9 +346,10 @@ Rules that the validator enforces:
   one per form as printed, each citing the document or line it was read from;
   exactly one preferred form is in force per party, under the in-force rule
   of the decision tables (today a row of form type `preferred`; in the
-  target schema, a flag beside the form type). The party row carries no name of its own. A
-  publication names the form its document prints (`name_row_id`), and a page
-  that shows a document's publisher shows that form, not the preferred one. [M2]
+  target schema, a flag beside the form type). The party row carries no name
+  of its own. A publication names the form its document prints
+  (`name_row_id`), and a page that shows a document's publisher shows that
+  form, not the preferred one. [M2]
 - Equality between referents is bounded to depth one: the source of an
   accepted `same_as` between referents is never the target of another, and
   a would-be chain is refused and raised as a conflict for review
@@ -377,11 +364,11 @@ Rules that the validator enforces:
   line's verbatim fields; an unknown value is an empty field with a typed
   missingness reason, and `null` on export; zero is a measured value. [M3b]
 - `routes` maps identifiers from a published release (the site published
-  before the ledger migration) to their new kind and identifier, so no public page route breaks. It is
-  reserved for identifiers retired after they appeared in a published
-  release; a fold before publication needs no route. The
-  prepublication preview IDs were never public and are recorded as retired in
-  the migration report, not redirected. [M3b]
+  before the ledger migration) to their new kind and identifier, so no public
+  page route breaks. It is reserved for identifiers retired after they
+  appeared in a published release; a fold before publication needs no route,
+  and the prepublication preview IDs are recorded as retired in the
+  migration report, not redirected. [M3b]
 - Every count exported names its unit: lines of a document, referents of a
   kind, or a perimeter observation. [M3b]
 
@@ -401,74 +388,57 @@ unit. How the site is organised and worded is
 
 ## 3. Engine
 
-Whether the settled ontology calls for moving from CSV files to a graph or
-SQLite engine has a division of labour for answer, not a replacement.
-
 **CSV in git stays the system of record.** Git is the ledger's audit log:
-every row enters through a reviewed pull request, a database file has no
-diff, and a database regenerated from files is not a record of anything.
-The tables hold 13 092 lines today ([requirements](jetp-requirements.md)
-DA2), and every edition appends more: the steady state is tens of thousands
-of lines a year, and the record format is designed for it, in two ways.
-Lines of assisted readings are reviewed through their readings and the run
-report, in one pull request per run under the run-output gate of
-[operation](jetp-operation.md) section 4, not row by row.
-Lines of bulk API snapshots are written by the ingestion script with a
-manifest naming the snapshot, the row count and the field spec, and the
-pull request reviews the manifest; a bulk line is adjudicated only when an
-observation cites it. The common `lines` table is chunked by country and
-year. Bulky raw material (raw model responses,
-text layers) is stored under DVC by its hash and named from the tables. If
-the volume of rows or their review outgrows git, Dolt, a SQL database
-versioned like git with row-level differences, is the option recorded for
-M4. [M2; M4 for the Dolt option]
+every row enters through a reviewed pull request. Lines of assisted
+readings are reviewed through their readings and the run report, in one
+pull request per run under the run-output gate of
+[operation](jetp-operation.md) section 4, not row by row. Lines of bulk API
+snapshots are written by the ingestion script with a manifest naming the
+snapshot, the row count and the field spec, and the pull request reviews
+the manifest; a bulk line is adjudicated only when an observation cites it.
+The common `lines` table is chunked by country and year. Bulky raw material
+(raw model responses, text layers) is stored under DVC by its hash and named
+from the tables. If the volume of rows or their review outgrows git, Dolt, a
+SQL database versioned like git with row-level differences, is the option
+recorded for M4. [M2; M4 for the Dolt option]
 
 The one DDL of section 1 declares the common tables. It does not declare
 the per-document field tables, whose headers are the publisher's; each is
 declared by its row in `line-field-specs`, written at extraction, and the
-validator checks the file header against it. Two mechanisms, one contract. [M2]
+validator checks the file header against it. [M2]
 
-**SQLite becomes the schema, the validator and the build engine.** One DDL file
+**SQLite is the schema, the validator and the build engine.** One DDL file
 under `config/` declares every table, key, foreign key and check of section 1.
 The CSV headers are generated from it, so a column exists in one place. At
 build time the CSVs load into a SQLite file under `data/derived/jetp/`, the
 foreign-key and check constraints run as the validator, and the Observatory's
-served JSON views and the accounts (E) are SQL queries over that file.
-The file is deterministic for a given input, disposable, and may ship as a
-downloadable release artifact, never as a
-committed file: the build's only query engine. In the browser the Observatory keeps serving one JSON file per table
-and joining at read time; at this volume an in-browser SQL engine would add a
-dependency without a query that needs it. [M2]
+served JSON views and the accounts (E) are SQL queries over that file. The
+file is deterministic for a given input, disposable, and may ship as a
+downloadable release artifact, never as a committed file. In the browser
+the Observatory keeps serving one JSON file per table and joining at read
+time. [M2]
 
 **A graph engine is not warranted.** Every question the ledger asks is a
-fixed-length path: observation, line, snapshot, document, publisher; or a
-containment tree at most three levels deep; or a `same_as` cluster that the
-design bounds to depth one. A property graph or triple store wins on
-unbounded traversal and on schema-free ingestion, and the ledger wants neither:
-its ingestion is the controlled classification of the [ontology](jetp-ontology.md), section 4. What the graph
-world offers that is worth taking is its vocabulary. An RDF projection of the
-SQLite file over PROV-O for the justification chain and SKOS for the status
-crosswalk is a derived export, built when a consumer asks for it, and it costs
-one script. If that consumer ever runs SPARQL over several ledgers, the
-engine question reopens on their data, not on this one. [later for the RDF export]
+fixed-length path, a containment tree at most three levels deep, or a
+`same_as` cluster bounded to depth one. An RDF projection of the SQLite file
+over PROV-O for the justification chain and SKOS for the status crosswalk is
+a derived export, built when a consumer asks for it. [later for the RDF
+export]
 
 History: the author asked on 2026-09-22 whether the settled ontology was
 the moment to change engine.
 
 ## 4. Matching records
 
-The matching rules (decision shape, tiers, panel verification,
-organisations, document deduplication) are
-[fusion](jetp-fusion.md) section 3. This section says only how their
-decisions are stored.
+The matching rules are [fusion](jetp-fusion.md) section 3. This section
+says only how their decisions are stored.
 
 - A matching decision is a `line-referents` row or a `relations` row, with
   `decided_by` (a script name, an LLM identifier, or a person), `method`,
   `method_version`, `confidence`, `justification_line_ids`, `decided_at`,
   `status` and `supersedes`, under the in-force rule of section 1, and the
   target columns `stance`, `likelihood`, `basis` and `recorded_at`. A
-  candidate match stays a row, counted, as the earlier `possible_matches`
-  did. [M3b]
+  candidate match stays a row, counted. [M3b]
 - Every recorded judgement has that one shape (stance, likelihood,
   confidence, quoted basis, who, method, version, time): a triage outcome of
   [collection](jetp-collection.md) section 9 in the M3a triage table, and
@@ -477,9 +447,8 @@ decisions are stored.
   last only when the author chooses to decide. Each reading is a row of the
   target journal `readings` (section 1). The likelihood is always that of
   the positive proposition (the two are the same, the proposal is right),
-  so a judgement of difference is a low likelihood of sameness, and
-  `undetermined` is an abstention that carries no likelihood ([fusion](jetp-fusion.md)
-  section 3). [M2 for readings; M3a for triage]
+  and `undetermined` is an abstention that carries no likelihood
+  ([fusion](jetp-fusion.md) section 3). [M2 for readings; M3a for triage]
 - The settings of the reading protocol (readers, arbiter, acceptance level,
   calibration mapping, part size) and the tier thresholds are one
   configuration, versioned with the method; the match threshold a result
@@ -507,19 +476,16 @@ register rows and 67 plan lines matched by hand are the reference answers
 for matching, not a review scope. The pairing of the 437 lines of the Indonesian
 plan (CIPP) with the 1 142 lines of its progress report, whose literal name
 intersection is 3, is the test bed for tier 2 and the first case for tier 3:
-it is a set of candidate matches between lines of two documents, not an
-edition relation between the documents.
-For documents, the one tagging of [fusion](jetp-fusion.md) section 3: at
-M2, tiers 1 and 2 run as deterministic proposers at registration, so a
-snapshot whose text already exists is recorded before extraction: identical
-bytes are recorded `accepted` under the rule the author adopted (fusion
-section 3, judgement by adopted rule), and tier 2 registers a `same_as`
-candidate that the judgement protocol of [extraction](jetp-extraction.md)
-section 6.3 decides; tier 3
-generates a bounded candidate list over the registered documents (at most
-about 30 pairs, sorted by likelihood), judged under the same protocol; tiers 4 and 5
-start at M3a, with the checking rule of [extraction](jetp-extraction.md)
-section 6.3, when discovery brings mirrors. [M3b for lines, except
+a set of candidate matches between lines of two documents, not an edition
+relation between the documents. For documents: at M2, tiers 1 and 2 run as
+deterministic proposers at registration, so a snapshot whose text already
+exists is recorded before extraction: identical bytes are recorded
+`accepted` under the rule the author adopted (fusion section 3), and tier 2
+registers a `same_as` candidate that the judgement protocol of
+[extraction](jetp-extraction.md) section 6.3 decides; tier 3 generates a
+bounded candidate list over the registered documents (at most about 30
+pairs, sorted by likelihood), judged under the same protocol; tiers 4 and 5
+start at M3a, when discovery brings mirrors. [M3b for lines, except
 key-based pairing across snapshots of one document (extraction section 8),
 M2; M2 for document tiers 1 to 3; M3a for document tiers 4 and 5]
 
@@ -530,15 +496,13 @@ History: counting candidate matches as rows follows ticket 0833.
 A scan with no text layer (the Vietnamese decision of 2026 is one) is read by
 transcription at M2, once the search for a born-digital copy has found none,
 and each of its lines names the transcription as its method and version,
-with a locator of page and region, so that its label has the provenance the
-translation tables give derived text ([extraction](jetp-extraction.md)
+with a locator of page and region ([extraction](jetp-extraction.md)
 section 6.4). [M2]
 
-The four partnerships publish in Indonesian, Vietnamese, French and English,
-and some documents exist in two languages. The ledger records the language of
-every document and keeps every line's label in the language it was printed
-in. A translation pair is two documents related by `translation_of`, with one
-of them canonical for extraction ([fusion](jetp-fusion.md) section 3). Nothing in the ledger is a
+The ledger records the language of every document and keeps every line's
+label in the language it was printed in. A translation pair is two documents
+related by `translation_of`, with one of them canonical for extraction
+([fusion](jetp-fusion.md) section 3). Nothing in the ledger is a
 translation presented as an original. [M2]
 
 Translated labels and summaries are derived text, produced by an LLM or a
@@ -550,10 +514,9 @@ outside the system of record:
 | `line-translations` | (line_id, language) | text, method, method_version, produced_at |
 | `document-summaries` | (document_id, language) | text, method, method_version, produced_at, snapshot_sha256 |
 
-Both carry the provenance columns of the matching record, so a served
-translation can say which LLM produced it from which bytes. The Observatory
-may show a translated label beside the original and a machine summary on a
-document's page, each marked as derived, and a reader who clicks through
-reaches the snapshot in its own language. No observation cites a translation
-or a summary; the justification is the line in the publisher's language, at its
-locator, in its snapshot. [M2 for the language column and the translation relation; later for the two derived tables]
+The Observatory may show a translated label beside the original and a
+machine summary on a document's page, each marked as derived, and a reader
+who clicks through reaches the snapshot in its own language. No observation
+cites a translation or a summary; the justification is the line in the
+publisher's language, at its locator, in its snapshot. [M2 for the language
+column and the translation relation; later for the two derived tables]
