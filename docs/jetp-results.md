@@ -127,6 +127,7 @@ operation timelines (F16); the gaps between announced, signed, reported and
 disbursed amounts and the matching coverage rate to CRS and IATI (F19,
 fusion § 5); lists of excerpts for qualitative work (F21); and the
 coverage report (DP-3). Other results are added when a product needs them.
+<!-- wave-1 W1-70: pending author decision (accounts as an M3b result; Markers and deflators at M3b or M4) -->
 
 ## 3. Two match thresholds
 
@@ -138,6 +139,7 @@ match thresholds, both declared in advance:
   (default: likely or more, medium confidence or more);
 - an **inclusive** threshold, counting also what they support weakly (default:
   about as likely as not or more, any confidence).
+<!-- wave-1 W1-30: pending author decision (confidence floor of the inclusive threshold) -->
 
 The result's range runs from the smaller to the larger of the two figures.
 Which threshold gives which end depends on the kind of result: accepting
@@ -183,8 +185,8 @@ stated.
   (section 7). (C6, F27)
 - **The validation and coverage reports**, and an editorial note in plain
   language saying what the release contains and what it does not.
-- **The cost record**: LLM spend and review time per document class.
-  (Q15)
+- **The cost record**: LLM spend and review time per document class,
+  document type and extraction method. (Q15, AED-3)
 - **The Observatory pages** of the release, built from the release alone and
   readable from its files alone. (C7)
 - **The descriptor** (section 5). The deposit's metadata record (section 6)
@@ -226,6 +228,7 @@ no file of the package refers to the descriptor's hash. *M3b* (Q8, Q19).
 
 A branch name, a moving address or a pointer to the document store alone
 does not identify a release. *M3b* (Q8, F32).
+<!-- wave-1 W1-65: pending author decision (named formats for the descriptor, the data dictionary and the metadata record) -->
 
 **Validation before publication.** The build checks, before anything is
 published, that every result carries section 2 in full, that every trail
@@ -286,6 +289,7 @@ CRS and IATI codes follow their external standards or are marked as local.
 ## 7. What is redistributed and what is only cited
 
 The Observer publishes what it made and cites what others made.
+<!-- wave-1 W1-29: pending author decision (legal basis for holding and redistributing copies; terms and robots columns) -->
 
 - **Redistributed**: the Observer's own tables, results, dictionary,
   provenance, reports and pages; the statements, including their verbatim

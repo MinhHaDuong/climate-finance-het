@@ -224,6 +224,7 @@ stops when all three conditions hold. [M3a]
    country's admitted documents at the start of the round, and at most one
    document when that 2 % is below one.
 3. **Recall.** The campaign's known-item recall (section 6) is at least 90 %.
+<!-- wave-1 W1-27: pending author decision (point-estimate or lower-bound recall gate; attribution of recoveries after a frame revision) -->
 
 The recall condition is computed on the pooled known-item list, since a list
 per country is too small to estimate from; per-country shares are reported
@@ -372,6 +373,7 @@ controls run first and readers who miss them weighted out. [M4]
 
 A triage outcome is defeasible like any judgement: a rejected candidate can be
 admitted later by a judgement that says why. [M3a]
+<!-- wave-1 W1-26: pending author decision (the admission scope, and whether a context-only candidate is registered with the disposition out_of_scope) -->
 
 ## 10. Document classes
 

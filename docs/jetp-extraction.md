@@ -597,6 +597,7 @@ statement's printed fields into that typed form. It is a step after
 extraction, with its own methods and checks, and it never changes the
 statement it reads. The Observatory's Statements page shows these
 observations (step D3). [M3b for all rules of this section]
+<!-- wave-1 W1-39: pending author decision (M3b scoping: read only measure-bearing statements in a declared counting scope; match only lines feeding a declared result) -->
 
 **How many.** A statement yields zero, one or several observations, one per
 measure it prints. A plan item that prints a capacity and a cost estimate

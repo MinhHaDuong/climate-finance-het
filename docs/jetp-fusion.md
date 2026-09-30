@@ -169,6 +169,7 @@ to count, for example "likely or more, medium confidence or more". A result
 may report its figures at two thresholds, a cautious and an inclusive one,
 which turns matching uncertainty into a range on the figure. Candidate
 matches below a result's threshold stay listed and counted apart; they never change the result's figure. [M3b]
+<!-- wave-1 W1-30: pending author decision (one judged quantity, abstention for undetermined, calibration of verbal terms, confidence floor of the inclusive threshold) -->
 
 **Referents at a threshold.** Matching is pairwise, and a result needs
 clusters. At a result's threshold, the members of a referent are the

@@ -802,9 +802,13 @@ zero.
 reading of a statement or judgement, and every human decision on it, is
 kept; neither overwrites the other, and each names its method, version and
 cost. A decision that rejects a reading names the step at fault (retrieval,
-extraction, reading, matching), so that errors are locatable. The checked
-statements thus serve as reference answers for research on machine reading
-(AEDIST), and the cost per method can be compared. *M2.* Test: for a sample
+extraction, reading, matching), so that errors are locatable. The reference
+answers for research on machine reading (AEDIST) are the human-decided
+subset: the disagreements, the missed items and the sampled rows the author
+decided. A statement admitted on the agreement of two LLMs alone carries
+that flag and is not a reference answer, and the reader and checker LLMs
+are named, so that a benchmark can exclude the Observer's own readers. The
+cost per method can be compared. *M2.* Test: for a sample
 of checked statements, every machine reading and the decision are
 retrievable with method, version and cost; a decision that disagrees with a
 reading leaves the reading intact and names a step.
@@ -869,14 +873,15 @@ author, the decision record is found and states its reason.
 
 **Q14. No silent run.** Every run, launched or scheduled, ends with a report
 that says what it did, what it found, what failed and what it deferred; a
-run that finds nothing says so. *M3a* for discovery rounds, *M4* for
-scheduled passes. Test: kill a run midway; the failure is reported, and no
+run that finds nothing says so. *M2* for hand-launched runs (C4), *M3a*
+for discovery rounds, *M4* for scheduled passes. Test: kill a run midway; the failure is reported, and no
 report reads as an all-clear.
 
 **Q15. Cost and effort are measured.** Each run records its LLM spend and
 the human minutes spent on its review, so that the cost of an accepted
-change can be computed. *M3b.* Test: the M3b release states spend and review
-time per document class.
+change can be computed. *M2* for the record, *M3b* for stating it in the
+release. Test: the M3b release states spend and review time per document
+class, document type and extraction method.
 
 ## 7. Constraints
 
@@ -931,8 +936,10 @@ Observatory of a release opens from its files alone.
 
 **C8. Build to the milestone.** A mechanism not needed by an M2 or M3
 requirement is not built before M4; code is shared with another project
-only when a second consumer runs on it. *M2.* Test: every design rule tagged
-M2 or M3 cites a requirement of that milestone.
+only when a second consumer runs on it. *M2.* Test: every section of a
+specification document that holds a rule tagged M2 or M3 maps, in the
+reverse map of section 9, to at least one requirement of that milestone; a
+section that maps to none moves to M4.
 
 **C9. Secrets.** Credentials are read at use and never written to logs,
 reports or releases. *M2.* Test: no run report or release contains a
@@ -1089,8 +1096,8 @@ document that reads statements into observations.
 | Q19 Every change reviewable and reproducible | M2 | Operation; Results and releases |
 | Q20 Anomalies visible in the Observatory | M3b, M4 | Presentation (pending judgements); Results and releases § 5 and Operation § 8 (broken trails in the build and run reports); Operation § 11 (M4) |
 | Q21 Decisions traceable | M2 | Operation; every document |
-| Q14 No silent run | M3a, M4 | Operation; Collection |
-| Q15 Cost and effort measured | M3b | Operation |
+| Q14 No silent run | M2, M3a, M4 | Operation; Collection |
+| Q15 Cost and effort measured | M2, M3b | Operation; Results and releases |
 | **7 Constraints** | | |
 | C1 One researcher's attention | M2 | Operation |
 | C2 Two machines, one direction | M2, M4 | Operation |
@@ -1104,3 +1111,62 @@ document that reads statements into observations.
 | C10 A declared horizon | M4 | Operation; Results and releases |
 | **8 Non-requirements** | | |
 | N1–N13 | — | every document: no rule may serve only these |
+
+**Sections and the requirements they serve.** The reverse map, for the
+sections that hold M2 or M3 rules, so that C8 can be checked at the grain of a
+section. The sections of checks and of milestone slices serve the
+requirements of the sections they test.
+
+| Document § | Requirements served |
+|---|---|
+| Collection § 1 Principles | F7, F8, F27, C6, Q10 |
+| Collection § 2 What collection handles | F2, F3, F27 |
+| Collection § 3 The authority frame | F8, DA7 |
+| Collection § 4 Search channel classes | DA7, Q10 |
+| Collection § 5 Rounds and the stopping rule | Q10 |
+| Collection § 6 Known items and the recall estimate | DA8, Q10 |
+| Collection § 7 The secondary-to-primary pass | Q10, F6 |
+| Collection § 8 Access and unreachable documents | F27, C6, DA9, F8 |
+| Collection § 9 Candidate triage | F7, Q5 |
+| Collection § 10 Document classes | DA6 |
+| Collection § 11 Two published dates and the freeze | F9, F2 |
+| Extraction § 1 Principles | F1, F2, Q9 |
+| Extraction § 2 Scope and preconditions | F3, F5, DA5 |
+| Extraction § 3 What a statement carries | F1, Q4, Q9, Q17 |
+| Extraction § 4 What becomes a statement | F1, DA3 |
+| Extraction § 5 Text layers by format | DA4, F1, Q1 |
+| Extraction § 6 Extraction methods | DA3, Q3, Q4, Q5, Q17, C3 |
+| Extraction § 7 Dispositions | F2, DA2, DA4 |
+| Extraction § 8 Dated snapshots and restatements | F4, F6 |
+| Extraction § 9 Identifiers and corrections | Q2, F1 |
+| Extraction § 10 Replay, idempotence and their limit | Q1, Q2 |
+| Extraction § 11 Reading statements into observations | F14, F15, F16, Q9, Q11 |
+| Extraction § 12 Red tests and controls | Q3, Q1 |
+| Fusion § 1 Principles | Q9, Q11, F6, F10 |
+| Fusion § 2 Revision | F4, F6, F25 |
+| Fusion § 3 Identity | F3, F11, F12, F20, Q5 |
+| Fusion § 4 Occurrence | F13, F14 |
+| Fusion § 5 Conflicting values | F6, F19 |
+| Fusion § 6 Perimeters and counting scopes | F13, DA12 |
+| Fusion § 7 Counting and accounts | F13, F14, F15, F16, OBS-1 |
+| Fusion § 8 Knowledge time and change | F10 |
+| Ontology § 2 to § 4 Vocabulary, relations, classifications | OBS-4, F13, F14, F17, F31 |
+| Ontology § 5 Ontology tables | OBS-4, Q9, F23, F31 |
+| Storage § 1 Tables and rules | F1, F2, F32, Q2, Q9, Q17 |
+| Storage § 2 What the Observatory serves | F23 |
+| Storage § 3 Engine | Q19, C7 |
+| Storage § 4 Matching records | F3, F11, Q5, Q17 |
+| Storage § 5 Language, translation and summaries | DA5 |
+| Results § 1 to § 3 Principles, results, thresholds | Q6, Q8, Q9, Q11, F10, F11, F13 |
+| Results § 4 to § 8 Releases: contents, build, identity, redistribution, citation | F9, F23, F28, F29, F30, F31, F32, C5, C6, Q8, BK-2 |
+| Results § 9 Correction and restoration | Q7, F25, F28 |
+| Results § 10 The Observatory as a view of one release | C7, Q8 |
+| Presentation | Q6, Q12, Q20, F23, F24 |
+| Operation § 1 to § 3 Principles, machines, data flow | C1, C2, C3, C4 |
+| Operation § 4 The repository as control plane | Q19, Q21 |
+| Operation § 5 LLM readers and the checking rule | Q5, Q17, C3 |
+| Operation § 6 Secrets | C9 |
+| Operation § 7 and § 8 Budgets, logging spend and review time | C1, C4, Q14, Q15 |
+| Operation § 9 Backups and recovery | Q19 |
+| Operation § 10 Failure handling | Q14, C2 |
+| Language | Q13, Q18 |

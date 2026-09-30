@@ -11,16 +11,21 @@ read in the order below. Tracker: ticket 1703.
 
 | # | Document | Question it answers | State |
 |---|---|---|---|
-| 0 | [Requirements](jetp-requirements.md) | What is the Observer for, for whom, and what must it deliver at each milestone? | draft, PR #1597 |
+| 0 | [Requirements](jetp-requirements.md) | What is the Observer for, for whom, and what must it deliver at each milestone? | draft |
 | 1 | [Language](jetp-language.md) | Which words do the documents, schema and code use, and in which sense? | in force |
 | 2 | [Ontology](jetp-ontology.md) | What does the ledger talk about: classes, relations, value lists, status axes? | in force |
-| 3 | [Collection](jetp-collection.md) | How are documents sought, fetched and registered, and when does a search stop? | draft, PR #1598 |
-| 4 | [Extraction](jetp-extraction.md) | How is a publisher's statement extracted from a document into a line, and read into an observation? | draft, PR #1596 |
-| 5 | [Fusion](jetp-fusion.md) | How are statements matched to referents, weighed against each other and revised? | draft for author review |
+| 3 | [Collection](jetp-collection.md) | How are documents sought, fetched and registered, and when does a search stop? | draft |
+| 4 | [Extraction](jetp-extraction.md) | How is a publisher's statement extracted from a document into a line, and read into an observation? | draft |
+| 5 | [Fusion](jetp-fusion.md) | How are statements matched to referents, weighed against each other and revised? | draft |
 | 6 | [Storage](jetp-ledger-storage.md) | Which tables hold the ledger, which rules validate them, which engine builds them? | in force |
-| 7 | [Results and releases](jetp-results.md) | Which results are computed, and how is a release frozen, versioned and corrected? | being drafted (ticket 1707) |
+| 7 | [Results and releases](jetp-results.md) | Which results are computed, and how is a release frozen, versioned and corrected? | draft |
 | 8 | [Presentation](jetp-observatory-presentation.md) | What do readers of the Observatory see, and how are its pages organised? | in force |
-| 9 | [Operation](jetp-operation.md) | Who runs the Observer, on which machine, on which schedule, and how does it recover? | being drafted (ticket 1708) |
+| 9 | [Operation](jetp-operation.md) | Who runs the Observer, on which machine, on which schedule, and how does it recover? | draft |
+
+State is one of *draft* (complete, under review), *reviewed* (review findings
+answered, awaiting acceptance) or *in force* (accepted, and what the build
+implements or targets).
+<!-- wave-1 W1-43: pending author decision (whether ticket numbers and dates leave the normative text) -->
 
 ## Structure
 
@@ -35,7 +40,10 @@ kept as rows, triples or text, and name no storage and no presentation.
 Documents 6 to 9 carry the implementation: tables, engines, release
 packages, pages and machines. A conceptual rule that needs an implementation
 is stated once, in the conceptual document, and realised in the
-implementation document that cites it.
+implementation document that cites it. Where the implementation does not
+yet realise a rule, the storage contract lists the change as a target
+(section 1, target schema).
+<!-- wave-1 W1-41: pending author decision (the ontology tables of ontology section 5: a stated exception to this rule, or moved to the storage contract) -->
 
 The frame is ODEM, defined in the [language](jetp-language.md) document:
 **Ontology** (what the ledger talks about), **Data** (what publishers said, as
@@ -59,5 +67,6 @@ migration, carries the earliest milestone that relies on it.
 
 Design history, superseded plans and dated review records are in
 [`attic/`](attic/README.md): provenance, never authority. Reviews of the
-specification itself are tickets 1710 and 1711; version 1 is tagged
+specification itself are tickets 1710 and 1711, archived with their findings
+ledgers under [`jetp-spec-review/`](jetp-spec-review/wave-1/README.md); version 1 is tagged
 `jetp-spec-v1` once the author accepts it.
