@@ -31,29 +31,28 @@ const STAGE_COLOURS = {
   Need: "#bc9c7d",
   "Not documented": "#dce0d5",
 };
-let overview, countries, comparison, editions, evidence, m1a, projects, documentsData, documentIndex, documentsBySha, ontology, partyNames;
+let overview, accounts, countries, comparison, editions, evidence, m1a, m1b, projects, documentsData, documentIndex, documentsBySha, ontology, partyNames;
 const country = (code) => overview.countries.find((c) => c.code === code);
-const undisclosedCount = () =>
-  overview.countries.reduce((total, c) => total + c.undisclosed, 0);
+const agreementCount = () =>
+  overview.countries.reduce((total, c) => total + c.agreement_count, 0);
 const sourceLink = (s, label) =>
   s
-    ? `<a href="${esc(cleanURL(s.url))}" target="_blank" rel="noopener">${esc(label || s.title)} ↗</a>`
+    ? `<a href="${esc(cleanURL(s.url))}" data-link="publisher" target="_blank" rel="noopener">${esc(label || s.title)} ↗</a>`
     : "";
 const pill = (text) => `<span class="pill">${esc(text)}</span>`;
 /* Ticket 0881 (docs/jetp-observatory-presentation.md): the pages are organised
  * by the four objects of docs/jetp-language.md and never name them. The page
  * top is two bars (author, 2026-09-23). The header holds three sections as
- * tabs, each with a dropdown of its pages. Under it, on every page of a
- * section, the section's sub-bar: one component for all three, plain sibling
- * tabs with the current page selected — no separators, no grouping. The
- * paper trail's tabs keep their step codes in data attributes; their order
- * is the trail's, carried by position and explained on #the-paper-trail. A
+ * tabs, each with a dropdown of its pages. The section's sub-bar marks the
+ * current page. The paper trail has three sequential steps and a separate
+ * side group for the identities its statements describe (author, 2026-09-29).
+ * Step codes stay in data attributes; the order is explained on #the-paper-trail. A
  * trail page scoped to a country shows it at the bar's right as a removable
  * chip, and every trail tab keeps the country. */
 const SECTIONS = {
   "the-paper-trail": ["the-paper-trail", "documents", "entries", "on-the-record", "projects",
-    "project", "funding", "whos-who"],
-  "the-tallies": ["counts", "comparisons"],
+    "project", "referents", "funding", "whos-who"],
+  "the-tallies": ["counts", "money", "comparisons"],
   about: ["about", "glossary", "methods", "who-we-are", "release-history"],
 };
 /* Where each header tab lands: a section's landing page, or its first page
@@ -68,20 +67,20 @@ const STEPS = [
     href: (code) => (code ? `#document-rows/${code}` : "#document-rows") },
   { step: "D3", page: "on-the-record", label: "Statements",
     href: (code) => (code ? `#statements/${code}` : "#statements") },
-  { step: "D4", page: "projects", label: "Projects",
+];
+const REFERENT_PAGES = [
+  { page: "projects", label: "Projects",
     href: (code) => (code ? `#projects?country=${code}` : "#projects") },
-  { step: "D4", page: "funding", label: "Funding",
+  { page: "funding", label: "Funding",
     href: (code) => (code ? `#funding/${code}` : "#funding") },
-  { step: "D4", page: "whos-who", label: "Organisations",
+  { page: "whos-who", label: "Organisations",
     href: (code) => (code ? `#organisations?country=${code}` : "#organisations") },
 ];
 const plain = (page, label, extra = {}) => ({ page, label, href: () => "#" + page, ...extra });
-/* The pages of each section, in the order its sub-bar and its dropdown list
- * them. The tallies lists only pages with content today; the accounts page of
- * ticket 0877 joins it as "Money". */
+/* The pages of each section, in the order its sub-bar and its dropdown list. */
 const SUB_PAGES = {
-  "the-paper-trail": STEPS,
-  "the-tallies": [plain("counts", "Counts", { object: "E" }),
+  "the-paper-trail": [...STEPS, ...REFERENT_PAGES],
+  "the-tallies": [plain("counts", "Counts", { object: "E" }), plain("money", "Money"),
     plain("comparisons", "Non-JETP energy operations", { href: () => "#non-jetp-energy-operations" })],
   about: [
     plain("glossary", "Glossary", { object: "O" }),
@@ -91,7 +90,7 @@ const SUB_PAGES = {
 };
 /* The page a sub-bar marks as current: a project under Projects, the release
  * history under Methods, which links to it. */
-const CURRENT = { project: "projects", "release-history": "methods" };
+const CURRENT = { project: "projects", referents: "projects", "release-history": "methods" };
 // Internal page keys stay stable while public addresses follow their labels.
 // An internal key is not itself an address, and no earlier address is kept:
 // the site was never published (author, 2026-09-24).
@@ -106,16 +105,17 @@ const knownCountry = (code) => (code && overview.countries.some((c) => c.code ==
 function subBar(section, page, rawCode) {
   const current = CURRENT[page] || page;
   const code = section === "the-paper-trail" ? knownCountry(rawCode) : "";
-  const tabs = SUB_PAGES[section]
+  const tab = (s) => `<li><a href="${esc(s.href(code))}" data-sub="${s.page}"${s.step ? ` data-step="${s.step}"` : ""}${s.object ? ` data-object="${s.object}"` : ""}${s.page === current ? ' aria-current="page"' : ""}>${esc(s.label)}</a></li>`;
+  const tabs = (section === "the-paper-trail" ? STEPS : SUB_PAGES[section])
     .map(
-      (s) =>
-        `<li><a href="${esc(s.href(code))}" data-sub="${s.page}"${s.step ? ` data-step="${s.step}"` : ""}${s.object ? ` data-object="${s.object}"` : ""}${s.page === current ? ' aria-current="page"' : ""}>${esc(s.label)}</a></li>`,
+      tab,
     )
     .join("");
   const chip = code
     ? `<span class="scope-chip">${esc(country(code).name)} <a href="#${esc(CANONICAL[current] || current)}" aria-label="Remove the ${esc(country(code).name)} filter" data-scope-remove="${esc(code)}">×</a></span>`
     : "";
-  return `<ul class="sub-tabs" data-sub-bar="${section}">${tabs}</ul>${chip}`;
+  const side = section === "the-paper-trail" ? `<ul class="sub-tabs referent-tabs" data-side-group="referents" aria-label="What the statements describe">${REFERENT_PAGES.map(tab).join("")}</ul>` : "";
+  return `<ul class="sub-tabs" data-sub-bar="${section}">${tabs}</ul>${side}${chip}`;
 }
 /* One sentence under the title; the rest of the page's explanation, word for
  * word, folded under "About this page". */
@@ -150,10 +150,10 @@ const countStages = (rows) =>
 const header = (title, description) =>
   `<div class="page-head"><h1>${title}</h1>${titleBlock(description)}</div>`;
 function card(c) {
-  return `<article class="country-card" style="--accent:${c.colour}"><span class="country-code">${c.code} · SINCE ${c.signed_on.slice(0, 4)}</span><h3><a href="#funding/${c.code}" style="text-decoration:none">${esc(c.name)}</a></h3><div class="headline published">${esc(c.headline)}</div><p class="detail">${esc(c.headline_detail)}</p><div class="asof"><span class="published-tag">As published</span> ${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}</div><div class="card-bottom"><span class="computed" data-unit="named projects"><span class="computed-tag">Our calculation</span> ${c.named} named projects${c.undisclosed ? " + " + c.undisclosed + " unnamed" : ""}</span><a href="#funding/${c.code}" aria-label="Explore ${esc(c.name)}">Explore ↗</a></div></article>`;
+  return `<article class="country-card" style="--accent:${c.colour}"><span class="country-code">${c.code} · SINCE ${c.signed_on.slice(0, 4)}</span><h3><a href="#funding/${c.code}" style="text-decoration:none">${esc(c.name)}</a></h3><div class="headline published">${esc(c.headline)}</div><p class="detail">${esc(c.headline_detail)}</p><div class="asof"><span class="published-tag">As published</span> ${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}${readingState(c.headline_source) ? " · " + readingState(c.headline_source) : ""}</div>${citationNote(c.headline_citation)}<div class="card-bottom"><span class="computed" data-unit="reviewed projects"><span class="computed-tag">Our calculation</span> ${c.named} reviewed projects · ${c.agreement_count} agreements</span><a href="#funding/${c.code}" aria-label="Explore ${esc(c.name)}">Explore ↗</a></div></article>`;
 }
 function stageChart(cs) {
-  return `<div role="img" aria-label="Furthest financing milestone on the record, by country. Counts of named projects, not assets or amounts.">${cs
+  return `<div role="img" aria-label="Furthest financing milestone on the record, by country. Counts of reviewed project identities, not assets, agreements or amounts.">${cs
     .map(
       (c) =>
         `<div class="chart-row"><a href="#funding/${c.code}">${esc(c.short)}</a><div class="bar-track">${Object.entries(
@@ -192,10 +192,10 @@ function technologyChart(rows) {
  * us and linked to what it counts. */
 function headlineCounts(tag) {
   return [
-    computedMetric(projects.length, "named projects", "projects, programmes and components of the four portfolios", "#projects", tag),
+    computedMetric(projects.length, "reviewed projects", "project identities supported by reviewed lines", "#projects", tag),
     computedMetric(overview.historical_count, "closed World Bank operations", "same four countries, before each partnership", "#non-jetp-energy-operations", tag),
     computedMetric(overview.source_count, "documents cited", "the curated collection the country pages cite", "#documents", tag),
-    computedMetric(undisclosedCount(), "unpublished project identities", "counted in the countries' own disclosures", "#funding", tag),
+    computedMetric(agreementCount(), "agreements", "financing instruments recorded separately from projects", "#funding", tag),
   ].join("");
 }
 function overviewPage() {
@@ -211,7 +211,7 @@ function countriesPage() {
       "Financing reported for each partnership",
       "Read each partnership’s published headline alongside the financing statements recorded for its projects and programmes. Financing needs describe money required; pledges, approvals, signatures and payments describe different commitments or events, and their amounts are not added here.",
     ) +
-    `<div class="country-grid">${overview.countries.map(card).join("")}</div><section class="section" style="margin-top:35px"><h2>Side by side</h2><div class="table-wrap"><table><thead><tr><th>Country</th><th>Named projects <small class="computed-tag">Our calculation</small></th><th>Unpublished identities <small class="computed-tag">Our calculation</small></th><th>Original pledge</th><th>Announcement</th></tr></thead><tbody>${overview.countries.map((c) => `<tr><td><a href="#funding/${c.code}">${esc(c.name)}</a></td><td><a href="#projects?country=${c.code}">${c.named}</a></td><td>${c.undisclosed}</td><td>${esc(c.pledge_label)}</td><td>${date(c.signed_on)}</td></tr>`).join("")}</tbody></table></div><p class="note" style="margin-top:15px">Original political pledges are context, not committed transactions. Counts include programmes and components; they are not additive counts of power plants.</p></section>`;
+    `<div class="country-grid">${overview.countries.map(card).join("")}</div><section class="section" style="margin-top:35px"><h2>Side by side</h2><div class="table-wrap"><table><thead><tr><th>Country</th><th>Reviewed projects <small class="computed-tag">Our calculation</small></th><th>Agreements <small class="computed-tag">Our calculation</small></th><th>Original pledge</th><th>Announcement</th></tr></thead><tbody>${overview.countries.map((c) => `<tr><td><a href="#funding/${c.code}">${esc(c.name)}</a></td><td><a href="#projects?country=${c.code}">${c.named}</a></td><td>${c.agreement_count}</td><td>${esc(c.pledge_label)}</td><td>${date(c.signed_on)}</td></tr>`).join("")}</tbody></table></div><p class="note" style="margin-top:15px">Original political pledges are context, not committed transactions. Projects and agreements are different kinds of record and are counted separately.</p></section>`;
 }
 function markdown(text) {
   return text
@@ -244,12 +244,32 @@ function fundingDocument(event, code) {
   const link = archived
     ? `<a href="${esc(archived)}" target="_blank" rel="noopener">Archived document ↗</a>`
     : sourceLink(documentOf(code, event.source_id), "Publisher's document");
-  return `${link || esc(event.source_id)}<small>${esc(event.locator || "No locator recorded")}</small>`;
+  const state = readingState(event.source_id);
+  return `${link || esc(event.source_id)}${state ? " · " + state : ""}<small>${esc(event.locator || "No locator recorded")}</small>`;
+}
+/* Ticket 1610 (author, 2026-09-29): the channel an agreement's money passes
+ * through is a second, muted line under the funder — never a funder, never a
+ * column or a filter of its own. `channels` is a "; " string on a statement
+ * and a list on an agreement or a project. */
+function throughChannel(channels) {
+  const names = Array.isArray(channels) ? channels : (channels || "").split("; ").filter(Boolean);
+  return names.length ? `<br><small class="note" data-channels="${esc(names.join("; "))}">through ${esc(names.join("; "))}</small>` : "";
+}
+/* The funder and the instrument on one line; a channel with no funder on
+ * record says so rather than letting the channel stand in for one. */
+function funderCell(row) {
+  const names = Array.isArray(row.channels) ? row.channels : (row.channels || "").split("; ").filter(Boolean);
+  const funder = row.funder || (names.length ? "No funder recorded" : "");
+  return esc([funder, row.instrument].filter(Boolean).join(" · ") || "Not stated") + throughChannel(names);
 }
 function fundingStatements(data, code) {
-  const rows = data.projects.flatMap((project) =>
-    project.events.map((event) => ({ ...event, project })),
-  );
+  const subjects = new Map([
+    ...data.projects.map((item) => [item.id, item]),
+    ...data.agreements.map((item) => [item.id, item]),
+  ]);
+  const rows = data.statements.map((statement) => ({
+    ...statement, subject: subjects.get(statement.subject_id),
+  }));
   const needs = rows.filter((row) => row.status === "Need");
   const financing = rows.filter((row) => row.status !== "Need");
   const table = filterTable("funding-statements", financing, {
@@ -260,12 +280,13 @@ function fundingStatements(data, code) {
         options: [...new Set(financing.map((row) => row.funder).filter(Boolean))].sort() },
     ],
     columns: [
-      { label: "Project or programme", cell: (row) =>
-        `<a href="#project/${encodeURIComponent(row.project.id)}">${esc(row.project.name)}</a>` },
+      { label: "Project or agreement", cell: (row) =>
+        row.subject_kind === "project"
+          ? `<a href="#project/${encodeURIComponent(row.subject_id)}">${esc(row.subject?.name || row.subject_id)}</a>`
+          : `${esc(row.subject?.name || row.subject_id)} <small>${esc(row.subject_kind)}</small>` },
       { label: "Reported milestone", cell: (row) => pill(row.status) },
       { label: "Original amount", cell: (row) => esc(money(row.amount, row.currency)) },
-      { label: "Funder · instrument", cell: (row) =>
-        esc([row.funder, row.instrument].filter(Boolean).join(" · ") || "Not stated") },
+      { label: "Funder · instrument", cell: funderCell },
       { label: "Date and its role", cell: fundingDate },
       { label: "Document and location", cell: (row) => fundingDocument(row, code) },
     ],
@@ -275,13 +296,20 @@ function fundingStatements(data, code) {
   });
   const needsList = needs.length
     ? `<section class="section"><h2>Financing needs stated in the documents</h2><p>These amounts describe money required, not financing supplied. They are not added to the statements above.</p><ul class="citing">${needs.map((row) =>
-      `<li><a href="#project/${encodeURIComponent(row.project.id)}">${esc(row.project.name)}</a> · ${esc(money(row.amount, row.currency))} · ${fundingDate(row)} · ${fundingDocument(row, code)}</li>`
+      `<li>${esc(row.subject?.name || row.subject_id)} · ${esc(money(row.amount, row.currency))} · ${fundingDate(row)} · ${fundingDocument(row, code)}</li>`
     ).join("")}</ul></section>`
     : "";
   return {
-    head: `<section class="section" id="funding-statements"><div class="section-head"><h2>Financing statements in the documents</h2><a class="text-link" href="#projects?country=${code}">Browse all named projects →</a></div><p>Each row reports one milestone for one project or programme. These rows should not be added together: the same amount may appear at several milestones. Amounts stay in the publisher's currency.</p>${table.head}${needsList}</section>`,
+    head: `<section class="section" id="funding-statements"><div class="section-head"><h2>Financing statements in the documents</h2><a class="text-link" href="#projects?country=${code}">Browse reviewed projects →</a></div><p>Each row cites one statement about a project, agreement or asset. An agreement is not a project, and repeated milestones are not amounts to add together. Amounts stay in the publisher's currency.</p>${table.head}${needsList}</section>`,
     mount: table.mount,
   };
+}
+function citationNote(citation) {
+  if (!citation) return "";
+  const document = citation.document_url
+    ? `${esc(citation.document_title)} · ${sourceLink({url: citation.document_url, title: citation.document_title}, "Read the cited document")}`
+    : `Source: ${esc(citation.document_title)} (no public URL)`;
+  return `<small class="note">${document} · ${esc(citation.locator)} · ledger observation <code>${esc(citation.observation_id)}</code> · cited line <code>${esc(citation.line_id)}</code></small>`;
 }
 function countryPage(code) {
   const d = countries[code],
@@ -289,18 +317,17 @@ function countryPage(code) {
   if (!d) return notFound();
   const refs = Object.keys(d.sources).length;
   const funding = fundingStatements(d, code);
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#funding">Funding</a> › ${esc(c.name)}</div><h1>${esc(c.name)}: funding</h1>${titleBlock("Read this partnership's published headline alongside the financing statements recorded for its projects and programmes. Financing needs are listed separately because they describe money required, not money provided.")}${countryTabs(code)}</div><div class="callout published"><h3>${esc(c.headline)}</h3><p><span class="published-tag">As published</span> ${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}</p></div><div class="metrics">${computedMetric(c.named, "named projects", "this partnership's portfolio", `#projects?country=${code}`)}${computedMetric(c.undisclosed, "unpublished identities", "counted in the country's own disclosure, which lists none of them by name")}${computedMetric(refs, "documents cited", "by this country's projects and headline", "#documents")}<div class="metric published"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span><small><span class="published-tag">As published</span> · announced ${date(c.signed_on)}</small></div></div><div class="split"><div><h2>Reading this partnership</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Browse named projects ↗</a><a class="text-link" href="#non-jetp-energy-operations?country=${code}">Earlier energy operations →</a></div></div><div class="panel"><h3>Furthest financing milestone reported</h3>${stageChart([c])}<p class="note" style="margin-top:20px"><span class="computed-tag">Our calculation</span> Each named project appears once at its furthest recorded milestone. A later milestone does not make an earlier amount a second tranche.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}<p class="note" style="margin-top:10px">Named projects by the theme or technology their documents give.</p></div></div>${code === "VNM" ? vietnamSideBySide(d) : ""}${funding.head}`;
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#funding">Funding</a> › ${esc(c.name)}</div><h1>${esc(c.name)}: funding</h1>${titleBlock("Read this partnership's published headline alongside the financing statements recorded for its projects and programmes. Financing needs are listed separately because they describe money required, not money provided.")}${countryTabs(code)}</div><div class="callout published"><h3>${esc(c.headline)}</h3><p><span class="published-tag">As published</span> ${esc(c.stage_label)} at ${date(c.headline_date)} · ${according(c.headline_source_record)} · ${sourceLink(c.headline_source_record, "Read the document")}${readingState(c.headline_source) ? " · " + readingState(c.headline_source) : ""}</p>${citationNote(c.headline_citation)}</div><div class="metrics">${computedMetric(c.named, "reviewed projects", "project identities supported by reviewed lines", `#projects?country=${code}`)}${computedMetric(c.agreement_count, "agreements", "financing instruments recorded separately from projects")}${computedMetric(refs, "documents cited", "by this country's projects, agreements and headline", "#documents")}<div class="metric published"><strong>${esc(c.pledge_label)}</strong><span>Original political pledge</span><small><span class="published-tag">As published</span> · announced ${date(c.signed_on)}</small>${citationNote(c.pledge_citation)}</div></div><div class="split"><div><h2>Reading this partnership</h2><div class="markdown">${markdown(d.editorial)}</div><div class="actions"><a class="button" href="#projects?country=${code}">Browse reviewed projects ↗</a><a class="text-link" href="#non-jetp-energy-operations?country=${code}">Earlier energy operations →</a></div></div><div class="panel"><h3>Furthest financing milestone reported</h3>${stageChart([c])}<p class="note" style="margin-top:20px"><span class="computed-tag">Our calculation</span> Each reviewed project appears once at its furthest recorded milestone. A later milestone does not make an earlier amount a second tranche.</p><h3 style="margin-top:25px">Portfolio composition</h3>${technologyChart(d.projects)}<p class="note" style="margin-top:10px">Reviewed projects by the theme or technology their documents give.</p></div></div>${code === "VNM" ? vietnamSideBySide(d) : ""}${funding.head}`;
   funding.mount();
 }
-/* Rendering only: both figures already exist — the RMP row count in the M1a
- * manifest and the portfolio record count in the country view — and no field
- * joins them. The two columns are two objects of two dates, shown side by side
- * because that is the recipe of ticket 0834; matching a 2023 position to a 2025
- * record is the matching work of ticket 0833, not this page's. */
+/* The 2023 plan rows and the publisher's 2025 proposal counts have different
+ * scopes. The v2 project table names only reviewed project identities. */
 function vietnamSideBySide(d) {
   const rmp = m1a.countries.VNM;
   const source = rmp.sublayers[0]?.source_id || "vnm-rmp-2023";
-  return `<section class="section" id="vnm-side-by-side" style="margin-top:35px"><div class="section-head"><h2>Two lists, kept apart</h2></div><div class="split"><div class="panel" data-side="rmp-2023"><h3>RMP 2023 initial table</h3><p><strong>${fmt(rmp.row_count)}</strong> positions listed in the annexes of the Resource Mobilisation Plan, document <code>${esc(source)}</code>. <span class="computed-tag">Our calculation</span></p><a class="text-link" href="#document-rows/VNM">Browse the ${fmt(rmp.row_count)} positions →</a></div><div class="panel" data-side="portfolio-2025"><h3>2025 portfolio</h3><p><strong>${fmt(d.record_count)}</strong> projects: ${fmt(d.projects.length)} named and ${fmt(d.undisclosed)} unpublished identities. <span class="computed-tag">Our calculation</span></p><a class="text-link" href="#projects?country=VNM">Browse the named projects →</a></div></div><p class="note" style="margin-top:15px">No link between the 2023 table and the 2025 portfolio is established here: a position in the plan and a project in the portfolio are neither matched nor counted together. Matching them is the work of ticket 0833.</p></section>`;
+  const initial = d.reported_counts.find((row) => row.id === "0877.vnm-2025-initial-count");
+  const screened = d.reported_counts.find((row) => row.id === "0877.vnm-2025-screened-count");
+  return `<section class="section" id="vnm-side-by-side" style="margin-top:35px"><div class="section-head"><h2>Two lists, kept apart</h2></div><div class="split"><div class="panel" data-side="rmp-2023"><h3>RMP 2023 plan</h3><p><strong>${fmt(rmp.row_count)}</strong> document rows in the Resource Mobilisation Plan, <code>${esc(source)}</code>. <span class="computed-tag">Our calculation</span></p><a class="text-link" href="#document-rows/VNM">Browse the plan rows →</a></div><div class="panel" data-side="portfolio-2025"><h3>2025 portfolio report</h3><p><strong>${esc(initial?.value || "—")}</strong> initial proposals and <strong>${esc(screened?.value || "—")}</strong> newly screened proposals. <span class="published-tag">As published</span></p><p>${d.project_count} reviewed project identity in this ledger. The reported counts do not name every proposal.</p><a class="text-link" href="#projects?country=VNM">Browse reviewed projects →</a> · <a href="#statements/VNM?perimeter=vnm-jetp-portfolio-2025">Follow the published counts to their cited lines →</a></div></div><p class="note">These plan rows, reported proposal counts and reviewed project identities are separate units. They are not added or matched by their position in a list.</p></section>`;
 }
 function projectTable(rows) {
   if (!rows.length)
@@ -421,6 +448,7 @@ function filterTable(id, rows, opts) {
     if (next) next.addEventListener("click", step(1));
   };
   const mount = () => {
+    if (opts.search?.selected) document.getElementById(id + "-search").value = opts.search.selected;
     document
       .querySelectorAll(`#${id}-filters input,#${id}-filters select`)
       .forEach((el) =>
@@ -492,6 +520,27 @@ const documentTitle = (entry) => documentTitles[entry.id]?.title || "";
 const documentName = (entry) =>
   (documentTitle(entry) ? `<span data-document-title>${esc(documentTitle(entry))}</span><br>` : "") +
   `<code>${esc(entry.id)}</code>`;
+/* Ticket 1610: the state of our collection and reading of a document,
+ * derived at build time into the same view (collection_state) and joined
+ * here on the identifier. A shape and a word, never a colour alone, so it
+ * reads in grayscale and to a screen reader. The later states of the
+ * extraction backlog are not shown until they exist. */
+const READING_STATES = {
+  not_collected: ["○", "Not collected", "no copy in our collection"],
+  collected: ["◐", "Collected, not extracted", "a copy, nothing read from it yet"],
+  stub: ["◔", "Stub", "a copy, and one placeholder line that only says where to look"],
+  extracted: ["●", "Extracted", "lines we read from it"],
+};
+const readingStateOf = (id) => documentTitles[id]?.collection_state || "";
+function readingState(id) {
+  const state = READING_STATES[readingStateOf(id)];
+  if (!state) return "";
+  return `<span class="reading-state" data-reading-state="${esc(readingStateOf(id))}" title="${esc(state[2])}"><span aria-hidden="true">${state[0]}</span> ${esc(state[1])}</span>`;
+}
+const readingLegend = () =>
+  `<div class="legend reading-legend" id="reading-legend"><strong>State of our collection and reading:</strong>${Object.entries(READING_STATES)
+    .map(([key, [icon, word, gloss]]) => `<span data-reading-state="${key}"><span aria-hidden="true">${icon}</span> ${esc(word)} — ${esc(gloss)}</span>`)
+    .join("")}</div>`;
 const webArchiveOf = (entry) => {
   const capture = webArchive[entry?.url];
   return capture?.capture_url && ["captured", "reused"].includes(capture.outcome) ? capture : null;
@@ -629,9 +678,13 @@ const COLLECTION_METHODS = {
 };
 const collectionMethod = (entry) =>
   COLLECTION_METHODS[entry.collection_method] || entry.collection_method || "";
-function collectedFacts(entry, separator = " · ") {
+/* The reading state rides along (ticket 1610) except where the caller shows
+ * it in a column of its own, as the Documents page does. */
+function collectedFacts(entry, separator = " · ", withState = true) {
   const method = collectionMethod(entry);
-  const when = (entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded") +
+  const state = withState ? readingState(entry.id) : "";
+  const when = (state ? state + separator : "") +
+    (entry.collected_on ? "Collected " + date(entry.collected_on.slice(0, 10)) : "Collection date not recorded") +
     (method ? ` <span data-collection-method="${esc(entry.collection_method)}">${esc(method)}</span>` : "");
   return entry.sha256
     ? `${when}${separator}SHA-256 <code data-sha256="${esc(entry.sha256)}" title="${esc(entry.sha256)}">${esc(entry.sha256.slice(0, 12))}…</code>`
@@ -724,12 +777,15 @@ function extractedPageLink(row, entry, key) {
 function extractedItem(row, entry) {
   if (row.product === "m1a")
     return `<li><a href="#document-rows/${esc(row.country)}?row=${Number(row.row)}"><code>${esc(row.source_row_id)}</code></a> ${esc(row.label || "Identity not published")}${extractedPageLink(row, entry, row.source_row_id)}<small>${esc(row.source_layer)} · ${esc(row.evidence_locator || "No locator recorded")}</small></li>`;
-  return `<li><a href="#document-rows/${esc(row.country)}">${esc(OBSERVATION_KINDS[row.kind] || row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}${extractedPageLink(row, entry, row.id)}<small>${esc(row.table)} · <a href="#project/${encodeURIComponent(row.project_id)}">${esc(row.project_id)}</a> · ${esc(row.locator || "No locator recorded")}</small></li>`;
+  const subject = row.subject_kind === "project"
+    ? `<a href="#project/${encodeURIComponent(row.subject_id)}">${esc(row.subject_id)}</a>`
+    : `<code>${esc(row.subject_id)}</code>`;
+  return `<li><a href="#statements/${esc(row.country)}">${esc(row.kind)} <code>${esc(row.id)}</code></a> · ${pill(row.verification)}${extractedPageLink(row, entry, row.id)}<small>${esc(row.table)} · ${subject} · ${esc(row.locator || "No locator recorded")}</small></li>`;
 }
 function factItem(fact) {
   return fact.record_id
     ? `<li><a href="#statements">${esc(fact.label)}</a><small>Reviewed item on the record · ${esc(fact.status.replaceAll("_", " "))} · ${esc(country(fact.country)?.short || fact.country)}</small></li>`
-    : `<li><a href="#project/${encodeURIComponent(fact.project_id)}">${esc(fact.name)}</a><small>Named project · ${esc(country(fact.country)?.short || fact.country)}</small></li>`;
+    : `<li><a href="#project/${encodeURIComponent(fact.project_id)}">${esc(fact.name)}</a><small>Reviewed project · ${esc(country(fact.country)?.short || fact.country)}</small></li>`;
 }
 function foldout(label, items, item, key, none, attrs = "") {
   return `<details class="foldout"${attrs} data-${key}-count="${items.length}"><summary>${esc(label)} · ${fmt(items.length)}</summary>${items.length ? `<ul class="citing">${items.map(item).join("")}</ul>` : `<p class="note">${esc(none)}</p>`}</details>`;
@@ -854,7 +910,8 @@ function collectionFailure(error) {
 function documentsPage(params) {
   // One row per document, on its best attempt (ticket 1210): the facets, the
   // search and the count all read that attempt, so they count documents.
-  const rows = documentRows(documentsData.documents);
+  const rows = documentRows(documentsData.documents)
+    .map((r) => ({ ...r, collection_state: readingStateOf(r.id) }));
   const values = (key) =>
     [...new Set(rows.map((r) => r[key]).filter(Boolean))].sort();
   // Both links open at the file's own first page until the join says
@@ -863,7 +920,7 @@ function documentsPage(params) {
   // of its own. The publisher's page is always there; the archived copy only
   // where this server holds it (ticket 0915).
   const links = (r) =>
-    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${r.sha256 ? collectedFacts(r, "<br>") : noCopy(r)}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>${attemptsFold(r)}`;
+    `<span id="publisher-${esc(r.row_key)}">${sourceLinks(r, null, documentAttrs(r))}</span><small>${r.sha256 ? collectedFacts(r, "<br>", false) : noCopy(r)}</small><span id="archived-${esc(r.row_key)}">${archivedLink(r, null, documentAttrs(r))}</span>${attemptsFold(r)}`;
   const table = filterTable("documents", rows, {
     facets: [
       {
@@ -891,6 +948,14 @@ function documentsPage(params) {
           value, label: COLLECTION_METHODS[value] || value })),
       },
       {
+        key: "collection_state",
+        label: "State of our collection and reading",
+        all: "All states",
+        options: Object.keys(READING_STATES)
+          .filter((value) => rows.some((r) => r.collection_state === value))
+          .map((value) => ({ value, label: READING_STATES[value][1] })),
+      },
+      {
         key: "content_type",
         label: "Content type",
         all: "All content types",
@@ -899,6 +964,7 @@ function documentsPage(params) {
     ],
     search: {
       label: "Search document titles, identifiers and addresses",
+      selected: params.get("source") || "",
       placeholder: "Try investment plan, jet-investment-register, .pdf…",
       text: (r) => (documentTitle(r) + " " + r.id + " " + (r.url || "")).toLowerCase(),
     },
@@ -908,7 +974,7 @@ function documentsPage(params) {
         label: "Country",
         cell: (r) => esc(country(r.country)?.short || r.country),
       },
-      { label: "Collection", cell: (r) => pill(r.status) },
+      { label: "Collection", cell: (r) => pill(r.status) + (readingState(r.id) ? "<br>" + readingState(r.id) : "") },
       { label: "Content type", cell: (r) => esc(r.content_type || "Not recorded") },
       { label: "Size", cell: (r) => esc(byteSize(r.size_bytes)), width: "short" },
       { label: "Publisher's page · what we read", cell: links },
@@ -924,6 +990,7 @@ function documentsPage(params) {
       "See which publications we sought, who issued them, when we tried to retrieve them, and whether an archived copy is available. Inclusion here does not endorse everything a publication says; failed attempts remain visible.",
     ) +
     copiesCallout() +
+    readingLegend() +
     table.head +
     `<div class="downloads"><a class="button light" href="data/documents.json" download>Download the collection registry ↓</a></div>`;
   table.mount();
@@ -1017,7 +1084,8 @@ function rowDetail(row, summary, open) {
       ([key, value]) =>
         `<dt>${esc(key)}</dt><dd>${
           value === "" || value == null ? "Not published" : key === "raw_project_description"
-            ? linkedDescription(value) : FIELD_TERMS[key] ? FIELD_TERMS[key](value) : esc(value)
+            ? linkedDescription(value) : key === "own_status" && row.axis === "money"
+              ? termLink("money", value) : FIELD_TERMS[key] ? FIELD_TERMS[key](value) : esc(value)
         }</dd>`,
     )
     .join("")}</dl></details>`;
@@ -1053,22 +1121,10 @@ function inventoryEvidence(row) {
     "",
   );
 }
-/* The second stage-two product: the ledger rows analysts wrote from the same
- * documents, under a different schema. The three tables keep their own names,
- * the ones data/jetp uses, rather than a display vocabulary invented here. */
-const OBSERVATION_TABLES = [
-  "events",
-  "implementation-events",
-  "project-source-links",
-];
-const OBSERVATION_KINDS = {
-  financial_event: "Financial event",
-  implementation_event: "Implementation event",
-  project_source_link: "Project–document link",
-};
-/* Each table names its rows with its own key. */
-const observationId = (row) =>
-  row.event_id || row.implementation_event_id || row.link_id || "";
+/* The v2 statements and identity citations remain two separate tables. */
+const OBSERVATION_TABLES = ["observations", "line-referents"];
+const OBSERVATION_KINDS = {};
+const observationId = (row) => row.observation_id || row.referent_row_id || "";
 /* Counted from the rows this tab serves, never from a stored total: a head
  * count that can drift from the table below it is a claim, not a summary. */
 const observationCounts = (rows) =>
@@ -1085,7 +1141,7 @@ function observationTotals(rows, code) {
           `<div class="metric computed" data-unit="items on the record" data-observation-table="${esc(table)}"><strong>${fmt(count)}</strong><span>${esc(table)}</span><small><span class="computed-tag">Our calculation</span> · items recorded for ${esc(c?.short || code)}</small></div>`,
       )
       .join("")}</div>` +
-    `<p class="note">Document rows and statements are two readings of some of the same publications. A row may support several statements, and statements may come from prose; their counts are never added together. Legacy event rows without a precise cited line are held for review and do not appear as observations here.</p>`
+    `<p class="note">Document rows, observations and identity citations are separate readings of some of the same publications. A document line may support more than one row; their counts are never added together. Rows without a precise cited line remain outside this view.</p>`
   );
 }
 function observationDetail(row) {
@@ -1123,7 +1179,7 @@ function observationsTable(rows) {
       {
         key: "table",
         label: "Ledger table",
-        all: "All three tables",
+        all: "Both tables",
         options: values("table"),
       },
       {
@@ -1131,17 +1187,6 @@ function observationsTable(rows) {
         label: "Kind",
         all: "All kinds",
         options: values("kind"),
-      },
-      // Only the financial events publish a funder. The other two tables have
-      // no such column, so their rows carry no such key and can never match a
-      // chosen funder — which is the honest answer: the ledger does not record
-      // one for them, and inventing a blank would make the absence look like a
-      // value.
-      {
-        key: "funder",
-        label: "Funder",
-        all: "All funders",
-        options: values("funder"),
       },
       {
         key: "verification",
@@ -1172,15 +1217,16 @@ function observationsTable(rows) {
         label: "Kind",
         cell: (row) => esc(OBSERVATION_KINDS[row.kind] || row.kind),
       },
-      { label: "Project", cell: (row) => `<code>${esc(row.project_id)}</code>` },
-      { label: "Funder", cell: (row) => esc(row.funder || "Not recorded here") },
+      { label: "Subject", cell: (row) => row.subject_kind === "project"
+        ? `<a href="#project/${encodeURIComponent(row.subject_id)}">${esc(row.subject_id)}</a>`
+        : `<code>${esc(row.subject_kind)} · ${esc(row.subject_id)}</code>` },
       // Verbatim, as the ledger wrote it: this is the word a reader has to be
       // able to check against the source, not a grade assigned here.
       { label: "Verification", cell: (row) => pill(row.verification) },
       { label: "According to", cell: (row) => according(documentOf(row.country, row.source_id)) },
       { label: "Document page", cell: observationEvidence },
     ],
-    empty: "No statements or project–document links match these filters.",
+    empty: "No observations or identity citations match these filters.",
     resultNoun: "items on the record",
     pageSize: 50,
   });
@@ -1289,10 +1335,11 @@ function inventoryPage(code, params, tab) {
 function cataloguePage(params) {
   main.innerHTML =
     header(
-      "Named projects, programmes and components",
+      "Reviewed projects, programmes and components",
       "Search the undertakings named in the documents and follow their links to recorded statements and publications. Programmes and components can overlap, so their number is not a count of distinct physical assets.",
     ) +
-    `<div class="note"><span class="computed-tag">Our calculation</span> ${projects.length} named projects · ${undisclosedCount()} unpublished identities remain in the countries' own disclosures. Programmes and components may overlap.</div><div class="filters"><label class="search">Search projects, operators or locations<input id="search" type="search" placeholder="Try transmission, geothermal, Bac Ai…"></label><label>Country<select id="country-filter"><option value="">All countries</option>${overview.countries.map((c) => `<option value="${c.code}" ${params.get("country") === c.code ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select></label><label>Theme / technology<select id="technology-filter"><option value="">All themes / technologies</option>${options([...new Set(projects.map((p) => p.technology))].sort())}</select></label><label>Funder<select id="funder-filter"><option value="">All funders</option>${options([...new Set(projects.flatMap((p) => p.funders))].sort())}</select></label><label>Financing milestone<select id="stage-filter"><option value="">All milestones</option>${options(Object.keys(STAGE_COLOURS))}</select></label></div><p id="result-count" class="result-count" aria-live="polite"></p><div id="results"></div>`;
+    `<p><a class="button light" href="#referents">Explore the frozen document catalogue: projects, assets, agreements, parties and pending matches →</a></p>` +
+    `<div class="note"><span class="computed-tag">Our calculation</span> ${projects.length} reviewed projects · ${agreementCount()} agreements. These are different kinds of record.</div><div class="filters"><label class="search">Search projects, operators or locations<input id="search" type="search" placeholder="Try transmission, geothermal, Bac Ai…"></label><label>Country<select id="country-filter"><option value="">All countries</option>${overview.countries.map((c) => `<option value="${c.code}" ${params.get("country") === c.code ? "selected" : ""}>${esc(c.name)}</option>`).join("")}</select></label><label>Theme / technology<select id="technology-filter"><option value="">All themes / technologies</option>${options([...new Set(projects.map((p) => p.technology))].sort())}</select></label><label>Funder<select id="funder-filter"><option value="">All funders</option>${options([...new Set(projects.flatMap((p) => p.funders))].sort())}</select></label><label>Financing milestone<select id="stage-filter"><option value="">All milestones</option>${options(Object.keys(STAGE_COLOURS))}</select></label></div><p id="result-count" class="result-count" aria-live="polite"></p><div id="results"></div>`;
   const update = () => {
     const q = document.getElementById("search").value.toLowerCase();
     const code = document.getElementById("country-filter").value,
@@ -1312,7 +1359,7 @@ function cataloguePage(params) {
         (!funder || p.funders.includes(funder)),
     );
     document.getElementById("result-count").textContent =
-      `${filtered.length} of ${projects.length} named projects`;
+      `${filtered.length} of ${projects.length} reviewed projects`;
     document.getElementById("results").innerHTML = projectTable(filtered);
   };
   document
@@ -1321,6 +1368,59 @@ function cataloguePage(params) {
       el.addEventListener(el.tagName === "INPUT" ? "input" : "change", update),
     );
   update();
+}
+
+function referentJustification(row, view) {
+  const decisionIds = new Set(row.decision_ids || []);
+  const decisions = view.decisions.filter((decision) => decisionIds.has(decision.referent_row_id));
+  const relationIds = new Set(row.relation_decision_ids || []);
+  const roles = view.relations.filter((decision) => relationIds.has(decision.relation_id));
+  const lineIds = new Set(decisions.flatMap((decision) => [decision.line_id, decision.justification_line_ids]).filter(Boolean));
+  roles.forEach((decision) => lineIds.add(decision.line_id));
+  if (row.name_record?.line_id) lineIds.add(row.name_record.line_id);
+  return `<details data-referent-id="${esc(row.id)}"><summary>${esc(row.name)} · ${esc(row.id)}</summary>${rowDetail(row.record, "Referent record")}${row.name_record ? rowDetail(row.name_record, "Accepted name record") : ""}${decisions.map((decision) => rowDetail(decision, "Decision · " + decision.referent_row_id)).join("")}${roles.map((decision) => rowDetail(decision, "Role decision · " + decision.relation_id)).join("")}${view.lines.filter((line) => lineIds.has(line.line_id)).map((line) => `<p><code>${esc(line.line_id)}</code> · ${esc(line.label)}<br>${observationEvidence({ ...line, observation_id: line.line_id })}</p>`).join("")}</details>`;
+}
+function matchJustification(row, view) {
+  const { view: ignoredView, country: ignoredCountry, review, ...decision } = row;
+  const ids = new Set([row.line_id, ...["from", "to"].filter((side) => row[side + "_kind"] === "line").map((side) => row[side + "_id"])]);
+  return rowDetail(decision, "Decision · " + (row.relation_id || row.referent_row_id)) + (review ? rowDetail(review, "M1b review · " + review.decision_id) : "") + view.lines.filter((line) => ids.has(line.line_id)).map((line) => `<p><code>${esc(line.line_id)}</code> · ${esc(line.label)}<br>${observationEvidence({ ...line, observation_id: line.line_id })}</p>`).join("");
+}
+function legacyDisposition(row) {
+  const { decision, ownership_decision, related_records, ...disposition } = row;
+  return `<details><summary>${esc(row.legacy_id)} · ${esc(row.disposition)}</summary>${rowDetail(disposition, "Recorded disposition")}${rowDetail(decision, "M1b bounded review")}${rowDetail(ownership_decision, "Ownership decision from 1620")}${(related_records || []).map((record) => rowDetail(record, "Related later record · " + record.scope + " · " + record.legacy_event_id)).join("")}</details>`;
+}
+async function referentsPage(code) {
+  const selected = knownCountry(code);
+  main.innerHTML = header("Frozen document catalogue", "Explore identities justified by the four frozen document inventories. Projects, assets, agreements and parties are counted separately; pending matches are listed below and have no effect on those counts.") + '<p class="loading">Opening the catalogue…</p>';
+  try {
+    const codes = selected ? [selected] : Object.keys(m1b.countries);
+    const unpack = (table) => table.rows.map((values) => Object.fromEntries(table.fields.map((key, index) => [key, values[index]])));
+    const views = (await Promise.all(codes.map(async (c) => {
+      const [view, decisions] = await Promise.all([load("m1b/" + c), load("m1b/" + c + "-decisions")]);
+      return { ...view, ...decisions };
+    }))).map((view) => ({ ...view,
+      referents: view.referents.map((row) => ({ ...row, record: unpack(view.referent_records[row.kind])[row.record_index] })),
+      decisions: unpack(view.decisions), relations: unpack(view.relations), lines: unpack(view.lines),
+      candidates: { in_force: false, line_referents: unpack(view.candidates.line_referents), relations: unpack(view.candidates.relations) } }));
+    if (!location.hash.startsWith("#referents")) return;
+    const rows = views.flatMap((view) => view.referents.map((row) => ({ ...row, country: view.country, view })));
+    const relations = views.flatMap((view) => view.relations.map((row) => ({ ...row, country: view.country, view })));
+    const candidates = views.flatMap((view) => [...view.candidates.line_referents.map((row) => ({ ...row, relation: "refers_to" })), ...view.candidates.relations].map((row) => ({ ...row, country: view.country, view })));
+    const counts = views.map((view) => `<tr><td><a href="#referents/${view.country}">${esc(country(view.country)?.name || view.country)}</a></td>${["project", "asset", "agreement", "party"].map((kind) => `<td data-unit="${kind} referents">${fmt(view.counts.referents[kind])}</td>`).join("")}<td>${fmt(view.counts.lines_with_accepted_referent)} / ${fmt(view.counts.lines)}</td><td>${Object.entries(view.counts.candidate_relations).map(([relation, count]) => `${esc(relation)}: ${fmt(count)}`).join("; ") || "0"}${Object.entries(view.counts.candidate_referents).map(([kind, count]) => `; refers_to ${esc(kind)}: ${fmt(count)}`).join("")}</td></tr>`).join("");
+    main.innerHTML = header("Frozen document catalogue", "Explore identities justified by the four frozen document inventories. Projects, assets, agreements and parties are counted separately; pending matches are listed below and have no effect on those counts.") +
+      `<p><a href="#referents">All countries</a> · ${Object.keys(m1b.countries).map((c) => `<a href="#referents/${c}">${esc(country(c)?.name || c)}</a>`).join(" · ")}</p><div class="table-wrap"><table><thead><tr><th>Country</th><th>Projects</th><th>Assets</th><th>Agreements</th><th>Parties</th><th>Lines with an accepted identity / inventory lines</th><th>Pending decisions by relation</th></tr></thead><tbody>${counts}</tbody></table></div><p class="note"><span class="computed-tag">Our calculation</span> Counts cover only the frozen inventories. A line can justify several kinds of referent; a party appearing in two countries is counted in each country's catalogue. A party's country of incorporation is separate from the country whose lines justify its role. Lines without a decided identity remain document rows, including headings and unnamed items; <a href="#document-rows${selected ? '/' + selected : ''}">browse the frozen document rows</a>.</p><h2>Accepted identities</h2><div id="m1b-identities"></div><h2>Accepted relations</h2><div id="m1b-relations"></div><h2>Pending matches — not in force</h2><p>Counts below are decisions by country and relation, separate from accepted identities. Generic names and unverified aliases stay pending.</p><div id="m1b-candidates"></div><h2>Legacy coverage dispositions</h2>${views.flatMap((view) => view.legacy_coverage_dispositions || []).map(legacyDisposition).join("") || '<p>No carried legacy coverage identifiers for this country.</p>'}<h2>Frozen ontology and reproducibility</h2><p>Ontology release ${esc(m1b.ontology.release_id)}: <code>${esc(m1b.ontology.ontology_ref)}</code>. The descriptor pins every input hash and the ontology rows in force.</p><div class="downloads">${codes.map((c) => `<a class="button light" href="data/m1b/${c}.json" download>${esc(country(c)?.name || c)} catalogue ↓</a>`).join("")}<a class="button light" href="data/m1b/manifest.json" download>Release descriptor ↓</a></div>`;
+    main.innerHTML += `<div class="downloads">${codes.map((c) => `<a class="button light" href="data/m1b/${c}-decisions.json" download>${esc(country(c)?.name || c)} decisions ↓</a>`).join("")}</div>`;
+    const mountTable = (id, table) => {
+      document.getElementById(id).innerHTML = table.head;
+      table.mount();
+    };
+    mountTable("m1b-identities", filterTable("m1b-identities", rows, { resultNoun: "accepted referents", empty: "No accepted referents in this selection.", pageSize: 30, facets: [{ key: "country", label: "Country", all: "All countries", options: codes }, { key: "kind", label: "Kind", all: "All kinds", options: ["project", "asset", "agreement", "party"] }], columns: [{ label: "Country", cell: (r) => esc(r.country) }, { label: "Kind", cell: (r) => esc(r.kind) }, { label: "Identity and justification", cell: (r) => referentJustification(r, r.view) }] }));
+    const showMatches = (id, matches) => mountTable(id, filterTable(id, matches, { resultNoun: "decisions", empty: "No decisions in this selection.", pageSize: 30, facets: [{ key: "country", label: "Country", all: "All countries", options: codes }, { key: "relation", label: "Relation", all: "All relations", options: distinctValues(matches, "relation") }], columns: [{ label: "Country", cell: (r) => esc(r.country) }, { label: "Relation", cell: (r) => esc(r.relation) }, { label: "Decision and justification", cell: (r) => matchJustification(r, r.view) }] }));
+    showMatches("m1b-relations", relations);
+    showMatches("m1b-candidates", candidates);
+  } catch (error) {
+    if (location.hash.startsWith("#referents")) main.innerHTML = `<div class="error"><h1>The catalogue could not load.</h1><p>${esc(error.message)}</p></div>`;
+  }
 }
 function eventView(e, sources) {
   const timing = e.date
@@ -1338,46 +1438,33 @@ function eventView(e, sources) {
   ]
     .filter(Boolean)
     .join(" · ");
-  return `<li data-event-id="${esc(e.id)}"><div class="date">${esc(timing)}</div><p class="note">${esc(context)} · ${esc(e.date_basis)}</p><h3>${esc(e.status)}${e.amount != null ? " · " + esc(money(e.amount, e.currency)) + ' <span class="published-tag">As published</span>' : ""}</h3>${e.funder ? `<p>${esc(e.funder)} · ${esc(e.instrument)}</p>` : ""}<p>${esc(e.notes)}</p>${sourceLink(sources[e.source_id], "Read the document")} <span class="date-tag">${esc(e.locator)}</span></li>`;
+  const state = readingState(e.source_id);
+  return `<li data-event-id="${esc(e.id)}"><div class="date">${esc(timing)}</div><p class="note">${esc(context)} · ${esc(e.date_basis)}</p><h3>${esc(e.status)}${e.amount != null ? " · " + esc(money(e.amount, e.currency)) + ' <span class="published-tag">As published</span>' : ""}</h3>${e.funder ? `<p>${esc(e.funder)} · ${esc(e.instrument)}</p>` : ""}<p>${esc(e.notes)}</p>${sourceLink(sources[e.source_id], "Read the document")}${state ? " · " + state : ""} <span class="date-tag">${esc(e.locator)}</span></li>`;
 }
-function sourceAdjudication(p, id) {
-  return (p.source_links || [])
-    .filter((link) => link.source_id === id)
-    .map(
-      (link) =>
-        `<div class="source-adjudication" data-link-id="${esc(link.link_id)}"><small><strong>${esc(link.relationship.replaceAll("_", " "))}</strong> · ${esc(link.review_status.replaceAll("_", " "))}</small><small>${esc(link.locator)}</small><p class="note">${esc(link.notes)}</p></div>`,
-    )
-    .join("");
+/* Ticket 1610: a coverage row is a review record — what our review of that
+ * day collected for the project, not what a document says. Its documents
+ * are listed in a block of their own, never merged into the cited documents
+ * beside it and counted nowhere as support. Each is named by its title,
+ * links where the registry knows an address, and shows its reading state. */
+function coverageReview(p) {
+  const ids = p.coverage_documents || [];
+  if (!ids.length) return "";
+  const item = (id) => {
+    const entry = documentIndex[id];
+    const title = documentTitles[id]?.title || id;
+    const link = entry ? sourceLinks(entry, null, "", esc(title)) : `<span data-link="none">${esc(title)}</span>`;
+    const archived = entry ? archivedLink(entry, null) : "";
+    return `<li data-coverage-document="${esc(id)}">${link}<small><code>${esc(id)}</code>${readingState(id) ? " · " + readingState(id) : ""}</small>${archived ? `<small>${archived}</small>` : ""}</li>`;
+  };
+  return `<div class="panel" id="coverage-review" data-coverage-review="${ids.length}"><h3>Collected in the coverage review of ${esc(date(p.coverage_checked_at))} (not cited)</h3><p class="note">What our review gathered for this project on that day. A collected document is not a cited one: nothing on this page rests on it until a line read from it is cited.</p><ul class="review-documents">${ids.map(item).join("")}</ul>${readingLegend()}</div>`;
 }
-/* The descent, fact → its stage-two rows: the country's ledger observations
- * addressed to this record, read from observations/<CODE>.json — the view the
- * Observations tab loads — and filtered on project_id here, never copied into
- * the country view (ticket 0855). Same detail, same evidence cell, same
- * fingerprint resolution, so the two pages are one reading. */
-function projectEvidenceRow(row) {
-  return `<tr data-evidence-row="${esc(observationId(row))}"><td>${esc(row.table)}</td><td>${observationDetail(row)}</td><td>${pill(row.verification)}</td><td>${according(documentOf(row.country, row.source_id))}</td><td>${observationEvidence(row)}</td></tr>`;
-}
-function projectEvidence(rows) {
-  return rows.length
-    ? `<details class="foldout" data-evidence-count="${rows.length}"><summary>${fmt(rows.length)} ${rows.length === 1 ? "item" : "items"} on the record</summary><div class="table-wrap"><table><thead><tr><th>Table</th><th>Row</th><th>Verification</th><th>According to</th><th>Document page</th></tr></thead><tbody>${rows.map(projectEvidenceRow).join("")}</tbody></table></div></details>`
-    : emptyNote("evidence-count", 0, "Nothing on the record is addressed to this project in this release.");
-}
-/* Fills the section once the view arrives, if the reader is still on this
- * page. The view absent, the section says so and points at the tab that
- * would have shown the same rows, rather than showing an empty list. */
-function fillProjectEvidence(p) {
-  const still = () =>
-    location.hash.slice(1).split("?")[0] === "project/" + encodeURIComponent(p.id);
-  const section = () => document.getElementById("project-evidence-rows");
-  observationsView(p.country)
-    .then((rows) => {
-      if (!still() || !section()) return;
-      section().innerHTML = projectEvidence(rows.filter((row) => row.project_id === p.id));
-    })
-    .catch((error) => {
-      if (!still() || !section()) return;
-      section().innerHTML = emptyNote("evidence-count", "unavailable", `The ${esc(p.country)} items on the record could not load (${esc(error.message)}). They are the items <a href="#statements/${esc(p.country)}">recorded for this country</a> addressed to <code>${esc(p.id)}</code>.`);
-    });
+/* A project identity cites reviewed document lines in the v2 ledger. These
+ * are identity citations; money statements remain in its timeline. */
+function projectEvidence(p) {
+  const rows = p.evidence || [];
+  if (!rows.length)
+    return emptyNote("evidence-count", 0, "No cited identity line is available for this project in this release.");
+  return `<details class="foldout" data-evidence-count="${rows.length}"><summary>${fmt(rows.length)} cited ${rows.length === 1 ? "line" : "lines"}</summary><div class="table-wrap"><table><thead><tr><th>Document</th><th>Line</th><th>Location</th></tr></thead><tbody>${rows.map((row) => `<tr data-evidence-row="${esc(row.line_id)}"><td>${sourceLink(documentOf(p.country, row.source_id), "Read the document")}${readingState(row.source_id) ? " · " + readingState(row.source_id) : ""}</td><td>${esc(row.label || row.line_id)}</td><td>${esc(row.locator)}</td></tr>`).join("")}</tbody></table></div></details>`;
 }
 /* A source card's title already links to the publisher's page; under it, the
  * host of that very link (the country view's address, which can differ from
@@ -1397,17 +1484,17 @@ function projectPage(id) {
   if (!p) return notFound();
   const c = country(p.country),
     sources = countries[p.country].sources;
-  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> › ${esc(p.name)}</div><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Country</dt><dd><a href="#funding/${c.code}">${esc(c.name)}</a></dd><dt>Theme / technology</dt><dd>${esc(p.technology)}</dd><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See the individual documents; no funder entry yet")}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Document follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation event has yet been added to this project\'s timeline. Its documents may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Statements about this project</h2><p class="note">Reported amounts, dates and statuses about this project, plus project–document links, each with a publisher and document location. These items are not amounts to add together.</p><div id="project-evidence-rows"><p class="note">Loading statements for ${esc(c.short)}…</p></div></section>${p.claims.length ? `<section class="section"><h2>What other documents say</h2>${p.claims.map((r) => `<article style="margin:20px 0"><p>${esc(r.claim_summary)}</p><p class="note">${according(sources[r.source_id])} · Match verdict: ${esc(r.match_status.replaceAll("_", " "))} · ${esc(r.notes)}</p>${sourceLink(sources[r.source_id], "Read the document")} <span class="date-tag">${esc(r.section)}</span></article>`).join("")}</section>` : ""}</div><aside><div class="panel"><h3>Documents</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
+  main.innerHTML = `<div class="page-head"><div class="breadcrumb"><a href="#projects">Projects</a> › ${esc(p.name)}</div><h1>${esc(p.name)} <span class="badge" data-review-state="${esc(p.coverage)}">Review state · ${esc(p.coverage.replaceAll("_", " "))}</span></h1><p class="lede">${esc(p.location)}</p>${pill(p.finance_stage === "Not documented" ? "Financial events not yet coded" : p.finance_stage)}</div><div class="project-layout"><div><h2>Essential features</h2><dl class="facts"><dt>Country</dt><dd><a href="#funding/${c.code}">${esc(c.name)}</a></dd><dt>Theme / technology</dt><dd>${esc(p.technology)}</dd><dt>Operator</dt><dd>${esc(p.operator)}</dd><dt>Funders</dt><dd>${esc(p.funders.join("; ") || "See the individual documents; no funder entry yet")}${throughChannel(p.channels)}</dd><dt>Project ID</dt><dd>${esc(p.id)}</dd><dt>Document follow-up</dt><dd>${esc(p.coverage.replaceAll("_", " "))}</dd></dl><p class="note">${esc(p.notes)}</p><section class="section"><h2>Documented timeline</h2><p class="note">Events and dated status reports are distinguished. A financing amount at approval and again at signature is not two separate amounts to add.</p>${p.events.length ? `<ol class="timeline">${p.events.map((e) => eventView(e, sources)).join("")}</ol>` : '<div class="callout">No financial or implementation event has yet been added to this project\'s timeline. Its documents may establish more; absence from this timeline is not zero progress.</div>'}</section><section class="section" id="project-evidence"><h2>Lines citing this project</h2><p class="note">Reviewed document lines supporting this project identity. Reported money statements, where present, appear in the timeline above.</p><div id="project-evidence-rows"></div></section></div><aside><div class="panel"><h3>Documents</h3><p class="note">${esc(p.coverage_note)}</p><ul class="sources">${p.sources
     .map((id) => {
       const s = sources[id];
       return s
-        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id, s)}${sourceAdjudication(p, id)}</li>`
+        ? `<li>${sourceLink(s)}<small>${esc(s.publisher)} · ${esc(s.collection.replaceAll("_", " "))}</small>${s.retrieved ? `<small>Retrieved ${esc(s.retrieved.slice(0, 10))}</small>` : ""}${archivedCopy(id, s)}</li>`
         : "";
     })
     .join(
       "",
-    )}</ul></div><p class="note" style="margin-top:20px">Each item keeps its document's scope. An agreement, approval or register entry does not establish a payment or physical delivery.</p><a class="button light" href="data/${c.code}.json" download>Download the country's data ↓</a></aside></div>`;
-  fillProjectEvidence(p);
+    )}</ul></div>${coverageReview(p)}<p class="note" style="margin-top:20px">Each item keeps its document's scope. An agreement, approval or register entry does not establish a payment or physical delivery.</p><a class="button light" href="data/${c.code}.json" download>Download the country's data ↓</a></aside></div>`;
+  document.getElementById("project-evidence-rows").innerHTML = projectEvidence(p);
 }
 function median(values) {
   if (!values.length) return null;
@@ -1482,9 +1569,9 @@ function countRows(c) {
   const readings = evidence.evidence_depth?.structured_atomic_observations?.by_country?.[code];
   const reviewed = (evidence.records || []).filter((r) => r.country === code);
   const rows = [
-    ["Named projects", c.named, "projects", "the partnership's portfolio; programmes and components may overlap", cutoff, `#projects?country=${code}`],
-    ["Unpublished identities", c.undisclosed, "identities", "counted in the country's own disclosure, which names none of them", cutoff, null],
-    ["Documents cited", Object.keys(countries[code].sources).length, "documents", "by this country's projects and headline", cutoff, `#documents?country=${code}`],
+    ["Reviewed projects", c.named, "projects", "reviewed project identities in the v2 ledger", cutoff, `#projects?country=${code}`],
+    ["Agreements", c.agreement_count, "agreements", "financing instruments counted separately from projects", cutoff, null],
+    ["Documents cited", Object.keys(countries[code].sources).length, "documents", "by this country's projects, agreements and headline", cutoff, `#documents?country=${code}`],
     ["Document rows in the export", inventory?.row_count, "rows", "the frozen export, its extracts laid end to end; a file size, not a project count", inventory?.sublayers.map((s) => (/^\d{4}-\d{2}-\d{2}$/.test(s.cutoff) ? date(s.cutoff) : s.cutoff)).join(", "), `#document-rows/${code}`],
     ["Reviewed items on the record", reviewed.length, "items", "national headlines reviewed one by one, never added", cutoff, "#statements"],
     ["Closed World Bank operations", pool.length, "operations", "energy-related operations approved before the partnership, the historical pool", snapshot ? date(snapshot.retrieved_on) : "Not dated in this release", `#non-jetp-energy-operations?country=${code}`],
@@ -1510,9 +1597,19 @@ function numbersPage() {
           `<tbody data-country="${c.code}"><tr class="group"><th scope="colgroup" colspan="6"><a href="#funding/${c.code}">${esc(c.name)}</a></th></tr>${countRows(c)}</tbody>`,
       )
       .join("")}</table></div>` +
-    `<figure class="counts-figure" data-figure="1"><figcaption><strong>Figure 1.</strong> Furthest financing milestone on the record, named projects by country. <span class="computed-tag">Our calculation</span> Each named project once, at the most advanced milestone on the record for it. Registered financing is not an independently verified signature or payment, and “Not coded in ledger” can coexist with financing described in a document.</figcaption>${stageChart(overview.countries)}</figure>` +
-    `<figure class="counts-figure" data-figure="2"><figcaption><strong>Figure 2.</strong> Named projects by theme or technology, the seven most frequent. <span class="computed-tag">Our calculation</span> Categories keep each document's own wording.</figcaption>${technologyChart(projects)}</figure>` +
-    `<section class="section"><h2>Accounts</h2><p>No account of pledges, allocations and payments is computed in this release: nothing on these pages adds amounts across documents, or a project's amounts to a partnership's headline.</p><p><a class="text-link" href="#release-history">Release history →</a></p></section>`;
+    `<figure class="counts-figure" data-figure="1"><figcaption><strong>Figure 1.</strong> Furthest financing milestone on the record, reviewed projects by country. <span class="computed-tag">Our calculation</span> Each reviewed project once, at the most advanced milestone coded for it. “Not coded in ledger” can coexist with financing described in a document.</figcaption>${stageChart(overview.countries)}</figure>` +
+    `<figure class="counts-figure" data-figure="2"><figcaption><strong>Figure 2.</strong> Reviewed projects by theme or technology, the seven most frequent. <span class="computed-tag">Our calculation</span> Categories keep each document's own wording.</figcaption>${technologyChart(projects)}</figure>` +
+    `<section class="section"><h2>Money</h2><p>See the <a href="#money">commitment accounts</a> and their documented gaps. Partnership headlines remain separate publisher figures. The <a href="#release-history">release history</a> shows this snapshot.</p></section>`;
+}
+function moneyPage() {
+  const rows = accounts.accounts || [];
+  main.innerHTML = header(
+    "Money: what can be accounted for",
+    "These original-currency commitment accounts include only dated, admitted flows with reviewed membership and coverage. A documented subtotal is never presented as a complete closing balance when an opening or coverage is missing. Partnership headlines have different scopes and are shown separately on their country pages.",
+  ) + (rows.length
+    ? `<div class="table-wrap"><table><thead><tr><th>Agreement</th><th>Perimeter</th><th>Documented subtotal</th><th>Closing</th><th>Residual</th><th>What remains open</th></tr></thead><tbody>${rows.map((a) => `<tr><td>${esc(a.agreement_id)}</td><td>${esc(a.perimeter_id)}</td><td>${esc(a.documented_subtotal)} ${esc(a.currency)}</td><td>${a.reconstructed_closing == null ? "Unavailable" : esc(a.reconstructed_closing) + " " + esc(a.currency)}</td><td>${a.residual == null ? "Unavailable" : esc(a.residual) + " " + esc(a.currency)}</td><td>${esc(a.uncertainty.join("; ") || "None")}</td></tr>`).join("")}</tbody></table></div>`
+    : `<div class="empty">${esc(accounts.availability || "No commitment account is available for this cutoff.")}</div>`) +
+    `<p class="note">Valid cutoff: ${date(accounts.valid_cutoff)}. Knowledge cutoff: ${date(accounts.knowledge_cutoff)}. Each account retains its observation and decision identifiers in the <a href="data/accounts.json" download>account data ↓</a>.</p>`;
 }
 function editionHistoryPage() {
   const rows = editions.editions;
@@ -1578,6 +1675,7 @@ function organisationIndex() {
   const byKey = new Map();
   for (const project of projects) {
     const named = [...project.funders.map((name) => [name, "Funder"]),
+      ...(project.channels || []).map((name) => [name, "Channel"]),
       [project.operator, "Operator"]];
     for (const [name, role] of named) {
       if (!name || name === "Not specified") continue;
@@ -1597,8 +1695,33 @@ function organisationIndex() {
       row.projects.set(project.id, project);
     }
   }
+  for (const [code, data] of Object.entries(countries)) {
+    for (const agreement of data.agreements) {
+      const named = [...agreement.funders.map((name) => [name, "Funder"]),
+        ...(agreement.channels || []).map((name) => [name, "Channel"])];
+      for (const [name, role] of named) {
+        const ids = new Set((formsByName.get(name) || [])
+          .filter((form) => !form.country || form.country === code)
+          .map((form) => form.party_id));
+        const partyId = ids.size === 1 ? [...ids][0] : null;
+        const forms = partyId ? formsByParty.get(partyId) : [];
+        const preferred = forms.find((form) => form.form_type === "preferred");
+        const key = [partyId || name, code].join("\u0000");
+        if (!byKey.has(key)) byKey.set(key, {
+          name: preferred?.name || name, country: code,
+          roles: new Set(), projects: new Map(), agreements: new Map(),
+          aliases: forms.filter((form) => form.name !== preferred?.name),
+        });
+        const row = byKey.get(key);
+        row.roles.add(role);
+        row.agreements ||= new Map();
+        row.agreements.set(agreement.id, agreement);
+      }
+    }
+  }
   return [...byKey.values()].map((row) => ({
     ...row, roles: [...row.roles].sort(), projects: [...row.projects.values()],
+    agreements: [...(row.agreements || new Map()).values()],
   })).sort((a, b) => a.name.localeCompare(b.name));
 }
 function organisationProjects(row) {
@@ -1606,9 +1729,10 @@ function organisationProjects(row) {
     `<a href="#project/${encodeURIComponent(project.id)}">${esc(project.name)}</a>`;
   const first = row.projects.slice(0, 3).map(link).join(", ");
   const rest = row.projects.slice(3);
+  const agreementNames = row.agreements.slice(0, 3).map((item) => esc(item.name)).join(", ");
   return `<div class="organisation-projects" data-party-projects-count="${row.projects.length}">${first}${rest.length
     ? `<details><summary>and ${rest.length} more</summary><ul class="citing">${rest.map((project) => `<li>${link(project)}</li>`).join("")}</ul></details>`
-    : ""}</div>`;
+    : ""}${agreementNames ? `<small>${first ? " · " : ""}${agreementNames}${row.agreements.length > 3 ? ` and ${row.agreements.length - 3} more agreements` : ""}</small>` : ""}</div>`;
 }
 function organisationName(row) {
   const aliases = row.aliases.filter((form) => form.name !== row.name);
@@ -1624,8 +1748,8 @@ function whosWhoPage(params) {
   const rows = whosWhoRows;
   const table = filterTable("parties", rows, {
     facets: [
-      { key: "roles", label: "Named as", all: "Funders and operators",
-        options: ["Funder", "Operator"], matches: (row, value) => row.roles.includes(value) },
+      { key: "roles", label: "Named as", all: "Funders, channels and operators",
+        options: ["Funder", "Channel", "Operator"], matches: (row, value) => row.roles.includes(value) },
       { key: "country", label: "Country", all: "All four countries",
         options: overview.countries.map((c) => ({ value: c.code, label: c.name })),
         selected: knownCountry(params.get("country")) },
@@ -1636,13 +1760,13 @@ function whosWhoPage(params) {
       { label: "Name in the documents", cell: organisationName },
       { label: "Named as", cell: (row) => row.roles.map(pill).join(" ") },
       { label: "Country", cell: (row) => esc(country(row.country)?.short || row.country) },
-      { label: "Projects naming it", cell: organisationProjects, width: "wide" },
+      { label: "Projects and agreements naming it", cell: organisationProjects, width: "wide" },
     ],
     empty: "No names match these filters.", resultNoun: "names", pageSize: 50,
   });
   main.innerHTML = header(
     "Organisations named in the documents",
-    "See which organisations are named as funders or operators and which projects name them. Rows with the same name and country are grouped; only reviewed name forms are shown as aliases, and a shared spelling alone does not establish a shared identity.",
+    "See which organisations are named as funders, channels or operators and which projects or agreements name them. Rows with the same name and country are grouped; only reviewed name forms are shown as aliases, and a shared spelling alone does not establish a shared identity.",
   ) + table.head;
   table.mount();
 }
@@ -1662,7 +1786,7 @@ const GLOSSARY_THEMES = [
   ["How documents are read", {
     classes: ["comparator_record", "crosswalk", "document", "external_identifier", "line",
       "observation", "publisher", "retrieval", "snapshot", "timing"],
-    lists: ["date_precision", "date_role", "decision_status", "decision_type", "document_type",
+    lists: ["adjudication_role", "date_precision", "date_role", "decision_status", "decision_type", "document_type",
       "line_classification", "mapping_relation", "retrieval_status", "term_kind"],
   }],
   ["Statuses", { lists: ["asset_state", "axis", "delivery", "money", "project_stage"] }],
@@ -1829,7 +1953,58 @@ function methodsPage() {
       "Methods",
       "What we collected, how we read it, what we counted, and what this observatory does not do. Every figure can be followed back to its page.",
     ) +
-    `<div class="method-list"><h2>What this release contains</h2><p>${projects.length} named projects, ${undisclosedCount()} unpublished identities, ${overview.source_count} curated documents and ${comparison.projects.length} closed historical operations. The named projects include programmes and components; they are not ${projects.length} distinct physical assets. Knowledge cutoff: ${date(overview.provenance.cutoff)}. Each country's reports keep their own dates.</p><h2>The paper trail, step by step</h2><p>The <a href="#documents">Documents</a> page lists the publications sought and the outcome of each retrieval. The <a href="#document-rows">Document rows</a> page preserves selected rows and their document wording. The <a href="#statements">Statements</a> page shows reported amounts, dates and statuses with publisher and document location, and also lists project–document links. A row may support several statements, while statements may come from prose. <a href="#projects">Projects</a>, <a href="#funding">Funding</a> and <a href="#organisations">Organisations</a> show the undertakings, financing and named organisations those documents discuss.</p><h2>Words and numbers</h2><p>The <a href="#glossary">Glossary</a> defines the words these pages use. A number a publisher printed is marked “As published” and shown with its publisher and date. A number we counted is marked “Our calculation”, with its unit and what it covers, and links to what was counted; <a href="#counts">The tallies</a> gathers them.</p><h2>What this observatory does not do</h2><p>It does not explain. It tests no causal explanation of why a partnership moves fast or slow, and estimates no effect of the partnerships. It does not add amounts across documents, nor a project's amounts to a partnership's headline. It does not convert or deflate amounts. It does not treat a plan, an approval or a register line as a payment. It does not match a 2023 plan position to a 2025 portfolio project. Missing payment data is not a zero payment.</p><h2>Three different kinds of progress</h2><p>Financial items distinguish needs, announcements, memoranda, approvals, signatures and disbursements. Implementation items are a separate table. Documentary coverage describes what we could locate, not what a project achieved. Register-derived dates are not presented as verified signature dates.</p><h2>How the national figures work</h2><p>Headline financing amounts reproduce attributed national reports; they are not computed by adding project events. The milestones differ across countries, so headline amounts must not be pooled. Portfolio bars count each named project once, at the most advanced financing milestone on the record for it; tranches may be at different milestones. “Not coded in ledger” does not mean “no finance”. No project-level disbursement total is available in this release.</p><h2>Earlier energy operations: context, not an effect estimate</h2><p>${esc(comparison.method)} ${esc(comparison.date_note)} The API may contain older status snapshots; retrieval date is not the date of its latest substantive update. Energy-related includes mixed-sector operations, and additional-financing operations may refer to the same underlying investment. Comparisons of preparation speed require a credible causal design from the separate lifecycle research programme.</p><h2>Dates, conflicts and missing items</h2><p>Event dates, date intervals, dated status reports and collection dates remain distinct. Timing is adjudicated independently of the publisher's authority; unreviewed timing is labelled and cannot supply an event date. Document cards keep provisional, contextual and confirmed link decisions. Historical downloads preserve each acquisition date and query-page hash; the substantive update date is unknown unless separately documented. Conflicting values are preserved in notes; we do not average them. Unpublished identities appear in country disclosure counts rather than invented project pages. Original-currency amounts remain the reference. An extract's unknown field values count the cells its document prints but leaves blank or unreadable, not the empty columns of our own extraction.</p><section data-method="fingerprints"><h2>Fingerprints and archived copies</h2><p>Every document we collected is listed with the SHA-256 fingerprint of the bytes we read: a short code computed from the file, which changes if a single byte does. Compute it on any copy you obtain — from the publisher today, from a colleague, or from the Web Archive — and compare. The same fingerprint means exactly the file we read; a different one means a different file, even when it looks the same, because a publisher may replace a file at the same address. A PDF's “Web Archive copy” link opens the archived file itself, which can be checked this way. An archived web page cannot, and a mismatch there is expected: the Web Archive replays the page with its own banner and rewritten links, and a live page changes from one visit to the next, so its bytes never match what we read even when its text does.</p></section><h2>Download this snapshot</h2><div class="downloads">${overview.countries.map((c) => `<a class="button light" href="data/${c.code}.json" download>${esc(c.name)} ↓</a>`).join("")}<a class="button light" href="data/comparison.json" download>Historical cohort ↓</a><a class="button light" href="data/documents.json" download>Collection registry ↓</a><a class="button light" href="data/overview.json" download>Overview & input hashes ↓</a><a class="button light" href="data/provenance.json" download>Where each headline comes from ↓</a></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa document rows ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia document rows ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam document rows ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal document rows ↓</a><a class="button light" href="data/m1a/manifest.json" download>Document rows manifest ↓</a></div><p>JSON downloads include project data, document addresses and locators. Input SHA-256 hashes identify the files used to build this preview. This is a local preview, not yet a formally deposited monthly release; the <a href="#release-history">release history</a> lists what was prepared. Original documents retain their publishers' rights; their bulk redistribution is not implied.</p><h2>Reproducible, without a live database</h2><p>Markdown provides editorial context; CSV registries provide the structured data. The static website reads generated JSON. DVC preserves the research document archive, independently of the website. No visitor needs access to the archive or a database service.</p><p class="note">Input Git revision: <code>${esc(overview.provenance.input_git_sha || "Uncommitted preview inputs; use the file hashes")}</code><br>Release: ${esc(overview.provenance.edition)}</p></div>`;
+    `<div class="method-list"><h2>What this release contains</h2><p>${projects.length} reviewed projects, ${agreementCount()} agreements, ${overview.source_count} documents cited by country pages and ${comparison.projects.length} closed historical operations. Reviewed project identities include programmes and components; they are not ${projects.length} distinct physical assets. Knowledge cutoff: ${date(overview.provenance.cutoff)}. Each country's reports keep their own dates.</p><h2>The paper trail, step by step</h2><p>The <a href="#documents">Documents</a> page lists the publications sought and the outcome of each retrieval. The <a href="#document-rows">Document rows</a> page preserves selected rows and their document wording. The <a href="#statements">Statements</a> page shows v2 observations and identity citations with their publisher and document location. A row may support several statements, while statements may come from prose. <a href="#projects">Projects</a>, <a href="#funding">Funding</a> and <a href="#organisations">Organisations</a> show the undertakings, financing and named organisations those documents discuss.</p><h2>Words and numbers</h2><p>The <a href="#glossary">Glossary</a> defines the words these pages use. A number a publisher printed is marked “As published” and shown with its publisher and date. A number we counted is marked “Our calculation”, with its unit and what it covers, and links to what was counted; <a href="#counts">The tallies</a> gathers them.</p><h2>What this observatory does not do</h2><p>It does not explain. It tests no causal explanation of why a partnership moves fast or slow, and estimates no effect of the partnerships. It does not add amounts across documents, nor a project's amounts to a partnership's headline. It does not convert or deflate amounts. It does not treat a plan, an approval or a register line as a payment. It does not match a 2023 plan position to a 2025 portfolio project. Missing payment data is not a zero payment.</p><h2>Three different kinds of progress</h2><p>Financial items distinguish needs, announcements, memoranda, approvals, signatures and disbursements. Delivery observations remain distinct from financing observations. Documentary coverage describes what we could locate, not what a project achieved. Register-derived dates are not presented as verified signature dates.</p><h2>How the national figures work</h2><p>Headline financing amounts reproduce attributed national reports; they are not computed by adding project events. The milestones differ across countries, so headline amounts must not be pooled. Portfolio bars count each reviewed project once, at the most advanced financing milestone coded for it; agreements and assets are counted separately. “Not coded in ledger” does not mean “no finance”. No project-level disbursement total is available in this release.</p><h2>Earlier energy operations: context, not an effect estimate</h2><p>${esc(comparison.method)} ${esc(comparison.date_note)} The API may contain older status snapshots; retrieval date is not the date of its latest substantive update. Energy-related includes mixed-sector operations, and additional-financing operations may refer to the same underlying investment. Comparisons of preparation speed require a credible causal design from the separate lifecycle research programme.</p><h2>Dates, conflicts and missing items</h2><p>Event dates, date intervals, dated status reports and collection dates remain distinct. Timing is adjudicated independently of the publisher's authority; unreviewed timing is labelled and cannot supply an event date. Document cards show cited v2 identity lines and collection outcomes. Historical downloads preserve each acquisition date and query-page hash; the substantive update date is unknown unless separately documented. Conflicting values are preserved in notes; we do not average them. Publisher proposal counts appear separately from reviewed project identities; unnamed proposals do not receive invented project pages. Original-currency amounts remain the reference. An extract's unknown field values count the cells its document prints but leaves blank or unreadable, not the empty columns of our own extraction.</p><section data-method="fingerprints"><h2>Fingerprints and archived copies</h2><p>Every document we collected is listed with the SHA-256 fingerprint of the bytes we read: a short code computed from the file, which changes if a single byte does. Compute it on any copy you obtain — from the publisher today, from a colleague, or from the Web Archive — and compare. The same fingerprint means exactly the file we read; a different one means a different file, even when it looks the same, because a publisher may replace a file at the same address. A PDF's “Web Archive copy” link opens the archived file itself, which can be checked this way. An archived web page cannot, and a mismatch there is expected: the Web Archive replays the page with its own banner and rewritten links, and a live page changes from one visit to the next, so its bytes never match what we read even when its text does.</p></section><h2>Download this snapshot</h2><div class="downloads">${overview.countries.map((c) => `<a class="button light" href="data/${c.code}.json" download>${esc(c.name)} ↓</a>`).join("")}<a class="button light" href="data/comparison.json" download>Historical cohort ↓</a><a class="button light" href="data/documents.json" download>Collection registry ↓</a><a class="button light" href="data/overview.json" download>Overview & input hashes ↓</a><a class="button light" href="data/provenance.json" download>Where each headline comes from ↓</a></div><div class="downloads"><a class="button light" href="data/m1a/ZAF.csv" download>South Africa document rows ↓</a><a class="button light" href="data/m1a/IDN.csv" download>Indonesia document rows ↓</a><a class="button light" href="data/m1a/VNM.csv" download>Viet Nam document rows ↓</a><a class="button light" href="data/m1a/SEN.csv" download>Senegal document rows ↓</a><a class="button light" href="data/m1a/manifest.json" download>Document rows manifest ↓</a></div><p>JSON downloads include project data, document addresses and locators. Input SHA-256 hashes identify the files used to build this preview. This is a local preview, not yet a formally deposited monthly release; the <a href="#release-history">release history</a> lists what was prepared. Original documents retain their publishers' rights; their bulk redistribution is not implied.</p><h2>Reproducible, without a live database</h2><p>Markdown provides editorial context; CSV registries provide the structured data. The static website reads generated JSON. DVC preserves the research document archive, independently of the website. No visitor needs access to the archive or a database service.</p><p class="note">Input Git revision: <code>${esc(overview.provenance.input_git_sha || "Uncommitted preview inputs; use the file hashes")}</code><br>Release: ${esc(overview.provenance.edition)}</p></div>`;
+  main.innerHTML += `<section id="storage-inventory"><h2>Ledger tables and reviewed decisions</h2><p>Loading the table inventory…</p></section>`;
+  methodsLedger();
+}
+
+const ledgerObjects = (view) => view.rows.map((row) => Object.fromEntries(view.fields.map((key, i) => [key, row[i]])));
+function decisionConfidence(row) {
+  for (const value of [row.stance_confidence, row.confidence]) {
+    if (value == null || String(value).trim() === "") continue;
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) return numeric;
+  }
+  return null;
+}
+function orderDecisions(rows, high) {
+  return [...rows].sort((a, b) => {
+    const left = decisionConfidence(a), right = decisionConfidence(b);
+    if (left == null) return right == null ? 0 : 1;
+    if (right == null) return -1;
+    return (left - right) * (high ? -1 : 1);
+  });
+}
+async function methodsLedger() {
+  const inventory = await load("ledger/inventory");
+  const target = document.getElementById("storage-inventory");
+  if (!target || !location.hash.startsWith("#methods")) return;
+  target.innerHTML = `<h2>Ledger tables and reviewed decisions</h2><p>${esc(inventory.register_policy)}</p><p>A complete download preserves the canonical CSV bytes, headers and identity keys. Shards are parts of one table. Partial projections are labelled separately; their row counts must not be added to complete tables or country views.</p><div class="table-wrap"><table><thead><tr><th>Table · keys</th><th>Complete download</th><th>Partial projection / reason for omission</th></tr></thead><tbody>${inventory.tables.map((t) => `<tr data-storage-table="${esc(t.table)}"><td><code>${esc(t.table)}</code><small>${esc(t.keys.join(" · "))}</small></td><td>${t.fully_served ? t.files.map((f) => `<a href="${esc(f.path)}" download>${esc(f.path.split("/").pop())} ↓</a>`).join("<br>") : "Not fully served"}${t.rows == null ? "" : `<small>${fmt(t.rows)} canonical rows in this one table</small>`}</td><td>${esc(t.reason)}${t.projections.map((p) => `<p><a href="${esc(p.path)}" download>Partial projection (${fmt(p.rows)} rows) ↓</a> · ${esc(p.reason)}</p>`).join("")}</td></tr>`).join("")}</tbody></table></div><h2>Reviewed register decisions</h2><p>The 152 decision rows preserve stance, confidence, quoted justification and the independent readers. Rows with the lowest stance confidence appear first; reading confidence is used when stance confidence is absent, and unscored rows stay last.</p><p><a href="${esc(inventory.decision_record.path)}" download>Complete decision record (CSV) ↓</a></p><label>Sort by stance confidence<select id="register-confidence-sort"><option value="low">Lowest first</option><option value="high">Highest first</option></select></label><div id="register-decision-rows"></div>`;
+  const records = ledgerObjects(await load("ledger/register-decisions"));
+  if (!location.hash.startsWith("#methods") || document.getElementById("storage-inventory") !== target) return;
+  const update = () => {
+    const high = document.getElementById("register-confidence-sort").value === "high";
+    const ordered = orderDecisions(records, high);
+    document.getElementById("register-decision-rows").innerHTML = `<div class="table-wrap"><table><thead><tr><th>Register · row</th><th>Stance confidence</th><th>Disposition · owner</th><th>Stance, justification and readers</th></tr></thead><tbody>${ordered.map((r) => `<tr data-register-row="${esc(r.register + ":" + r.row_key)}" data-confidence="${esc(decisionConfidence(r) ?? "")}"><td>${esc(r.register)}<small><code>${esc(r.row_key)}</code></small></td><td>${esc(decisionConfidence(r) ?? "Unscored")}</td><td>${esc(r.disposition)} · ${esc(r.owner)}</td><td><details><summary>${esc(r.stance)}</summary><p>${esc(r.evidence)}</p><p>${esc(r.note)}</p><p>Panel: ${esc(r.panel_decided_by)} · ${esc(r.agreement)}</p><p>Fable: ${esc(r.fable_verdict)} · ${esc(r.fable_score)}<br>Codex: ${esc(r.codex_verdict)} · ${esc(r.codex_score)} · ${esc(r.codex_basis)}<br>Vibe: ${esc(r.vibe_verdict)} · ${esc(r.vibe_score)} · ${esc(r.vibe_basis)}</p><p>Recorded by ${esc(r.decided_by)} on ${esc(r.decided_at)}; reading confidence ${esc(r.confidence)}.</p></details></td></tr>`).join("")}</tbody></table></div>`;
+  };
+  document.getElementById("register-confidence-sort").addEventListener("change", update);
+  update();
+}
+
+async function perimeterPage() {
+  const route = location.hash;
+  main.innerHTML = header("Viet Nam: published portfolio counts", "Two statements about the same July 2025 portfolio. Seven initial proposals and seventeen new screened proposals remain separate; no inferred total or invented project identities.") + '<p>Loading the cited statements…</p>';
+  const [observationView, lineView, coverageView] = await Promise.all([
+    load("ledger/vnm-perimeter-observations"), load("ledger/vnm-perimeter-lines"), load("coverage"),
+  ]);
+  if (location.hash !== route) return;
+  const lines = ledgerObjects(lineView);
+  const coverage = coverageView.coverage.filter((r) => r.referent_kind === "perimeter" && r.referent_id === "vnm-jetp-portfolio-2025");
+  const observations = ledgerObjects(observationView).filter((o) => observationView.in_force.includes(o.observation_id));
+  main.innerHTML = header("Viet Nam: published portfolio counts", "The publisher's seven initial proposals and seventeen newly screened proposals describe separate populations. Their identities are not completely published; these counts are not sums of project pages.") + observations.map((o) => {
+    const line = lines.find((l) => l.line_id === o.line_id);
+    return `<section data-perimeter-observation="${esc(o.observation_id)}"><h2><span class="reported-tag">As published</span> ${esc(o.value)} ${esc(o.unit)}</h2><p>${esc(o.notes)}</p><dl class="facts"><dt>Observation</dt><dd><code>${esc(o.observation_id)}</code></dd><dt>Perimeter</dt><dd><code>${esc(o.subject_id)}</code></dd><dt>Method</dt><dd>${esc(o.method)} · version ${esc(o.method_version)}</dd></dl><details data-perimeter-line="${esc(line.line_id)}"><summary>Cited line: ${esc(line.line_id)}</summary><p>${esc(line.label)}</p><p>Locator: ${esc(line.locator)}<br>Snapshot: <code>${esc(line.sha256)}</code></p><p>${esc(line.notes)}</p><p>This line is a preserved local transcription; its locator and notes retain the original document identifiers and locations. The coverage review below records the three documents separately.</p></details></section>`;
+  }).join("") + `<h2>Coverage of this perimeter</h2>${coverage.map((r) => `<section data-perimeter-coverage="${esc(r.referent_id)}"><p>${esc(r.review_status)} · checked ${esc(r.checked_at)} · ${esc(r.route)}</p><p>${esc(r.notes)}</p><ul>${r.document_ids.split(";").filter(Boolean).map((id) => `<li data-perimeter-document="${esc(id)}"><a href="#documents?country=VNM&source=${encodeURIComponent(id)}">${esc(documentIndex[id]?.title || id)} →</a><small><code>${esc(id)}</code></small>${sourceLink(documentIndex[id], "Publisher's page")}</li>`).join("")}</ul></section>`).join("")}<p><a href="data/ledger/vnm-perimeter-observations.csv" download>Partial perimeter observations ↓</a> · <a href="data/ledger/vnm-perimeter-lines.csv" download>Partial cited lines ↓</a> · <a href="data/ledger/coverage.csv" download>Complete coverage table ↓</a></p>`;
 }
 function notFound() {
   main.innerHTML =
@@ -1843,6 +2018,7 @@ const TITLES = {
   "the-paper-trail": "The paper trail",
   funding: "Funding",
   projects: "Projects",
+  referents: "Frozen document catalogue",
   project: "Project",
   "comparisons": "Non-JETP energy operations",
   "on-the-record": "Statements",
@@ -1851,6 +2027,7 @@ const TITLES = {
   entries: "Document rows",
   "whos-who": "Organisations",
   counts: "Counts",
+  money: "Money",
   glossary: "Glossary",
   about: "About",
   methods: "Methods",
@@ -1973,15 +2150,16 @@ function paperTrailPage() {
       "Start with a project, amount or count and follow its links to the documents behind it. You can also start with a document and see what we recorded from it; these pages show different views of the same material, so their row counts should not be added together.",
     ) +
     `<ol class="trail-intro">${STEPS.map((s) => `<li><a href="${s.href("")}"><strong>${esc(s.label)}</strong></a> ${esc(STEP_NOTES[s.page])}</li>`).join("")}</ol>` +
+    `<aside class="referent-intro"><h2>What the statements describe</h2><p>Identities are matched from document rows and linked by the statements. Browse them separately:</p><ul>${REFERENT_PAGES.map((s) => `<li><a href="${s.href("")}">${esc(s.label)}</a> ${esc(STEP_NOTES[s.page])}</li>`).join("")}</ul></aside>` +
     `<p>For example, South Africa's <a href="#document-rows/ZAF?row=1">ACTIP001 register row</a> names the Skills Research Programme and prints USD 2.28 million. A <a href="#statements/ZAF">separate statement</a> shows that amount at the signed milestone, citing the same register row (ACTIP001). One document row need not yield exactly one statement.</p><p class="note">The words are defined in the <a href="#glossary">Glossary</a>.</p>`;
 }
 const STEP_NOTES = {
   documents: "Each report, register and plan we tried to retrieve, linked to its publisher and to the copy we read when available.",
   entries: "Selected rows from registers, annexes and lists, preserving document wording.",
   "on-the-record": "Reported amounts, dates and statuses, plus links between projects and documents.",
-  projects: "Named projects, programmes and components, which can overlap.",
+  projects: "Reviewed projects, programmes and components, which can overlap.",
   funding: "Published headlines and separate financing statements for each partnership.",
-  "whos-who": "Funders and operators named by project documents, with reviewed alternative names.",
+  "whos-who": "Funders named on agreements and projects, with reviewed alternative names.",
 };
 function render() {
   const raw = location.hash.slice(1) || "overview";
@@ -1996,14 +2174,16 @@ function render() {
   else if (page === "the-paper-trail") paperTrailPage();
   else if (page === "funding") id ? countryPage(id) : countriesPage();
   else if (page === "projects") cataloguePage(params);
+  else if (page === "referents") referentsPage(id);
   else if (page === "project") projectPage(decodeURIComponent(id || ""));
   else if (page === "comparisons") comparisonPage(params);
-  else if (page === "on-the-record") id ? inventoryPage(id, params, "record") : evidencePage();
+  else if (page === "on-the-record") id === "VNM" && params.get("perimeter") === "vnm-jetp-portfolio-2025" ? perimeterPage() : id ? inventoryPage(id, params, "record") : evidencePage();
   else if (page === "release-history") editionHistoryPage();
   else if (page === "documents") documentsPage(params);
   else if (page === "entries") id ? inventoryPage(id, params, "") : entriesPage();
   else if (page === "whos-who") whosWhoPage(params);
   else if (page === "counts") numbersPage();
+  else if (page === "money") moneyPage();
   else if (page === "glossary") glossaryPage(params.get("term"));
   else if (page === "about") aboutPage();
   else if (page === "who-we-are") whoWeArePage();
@@ -2037,8 +2217,9 @@ const load = async (file) => {
 async function start() {
   try {
     let termsView, statusCrosswalkView, staged, captures, checks, ledgerDocuments;
-    [overview, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks, ledgerDocuments] = await Promise.all([
+    [overview, accounts, comparison, documentsData, editions, evidence, m1a, termsView, statusCrosswalkView, partyNames, staged, captures, checks, ledgerDocuments, m1b] = await Promise.all([
       load("overview"),
+      load("accounts"),
       load("comparison"),
       load("documents"),
       load("editions").catch(() => ({ editions: [] })),
@@ -2051,6 +2232,7 @@ async function start() {
       load("web-archive").catch(() => ({ captures: [] })),
       load("publisher-links").catch(() => ({ checks: [] })),
       load("ledger-documents").catch(() => ({ documents: [] })),
+      load("m1b/manifest"),
     ]);
     stagedCopies = new Set(staged?.objects || []);
     webArchive = indexBy(captures.captures, "url");

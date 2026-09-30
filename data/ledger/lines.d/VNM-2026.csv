@@ -1,0 +1,757 @@
+line_id,country,sha256,locator,ordinal,label,classification,own_status,own_status_axis,own_sector,groups,recorded_at,notes
+vnm-rmp-2023-annex-i.1-1,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 1,1,1 Long Tao Hydropower plan Dien Bien 44 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-2,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 2,2,2 Yen Son Hydropower plan Tuyen Quang 90 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-3,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 3,3,3 Song Lo 6 Hydropower plan Tuyen Quang 60 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-4,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 4,4,4 Song Lo 7 Hydropower plan Tuyen Quang 36 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-5,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 5,5,5 Pac Ma Hydropower plan Lai Chau 160 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-6,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 6,6,"6 Nam Cum 1,4,5 Hydropower plan Lai Chau 95.8 MW 2021-2030 Decision No. 500/QD-TTg PDP8",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-7,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 7,7,"7 Nam Cum 2,3,6 Hydropower plan Lai Chau 79.5 MW 2021-2030 Decision No. 500/QD-TTg PDP8",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-8,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 8,8,8 Hoi Xuan Hydropower plan Thanh Hoa 102 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-9,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 9,9,9 Song Hieu (Ban Mong) Hydropower plan Nghe An 45 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-10,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 10,10,10 Phu Tan 2 Hydropower plan Dong Nai 93 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-11,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 11,11,11 Duc Thanh Hydropower plan Binh Phuoc 40 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-12,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 12,12,12 La Ngau Hydropower plan Binh Thuan 46 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-13,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 13,13,13 Thanh Son Hydropower plan Dong Nai 40 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-14,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 14,14,14 Cam Thuy 2 Hydropower plan Thanh Hoa 38 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-15,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 15,15,15 My Ly Hydropower plan Nghe An 120 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-16,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 16,16,16 Nam Mo 1 Hydropower plan Nghe An 51 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-17,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 155; printed pages 139; ordinal 17,17,17 Đak Mi 2 Hydropower plan Kon Tum 147 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-18,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 18,18,18 Song Tranh 4 Hydropower plan Quang Nam 48 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-19,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 19,19,19 Đak Mi 1 Hydropower plan Kon Tum 84 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-20,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 20,20,20 Thuong Kon Tum Hydropower plan Kon Tum 220 MW 2021-2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-21,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 21,21,21 Thien Tan 1.4 Solar Farm Ninh Thuan 79 MW 2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-22,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 22,22,22 KN Tri An Floating Solar Farm Dong Nai 928 MW 2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-23,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 23,23,23 Buon Tua Srah Floating Solar Farm 312 MW 2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-24,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 24,24,24 Mi Floating Solar Farm 80 MW 2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-25,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 25,25,25 Ialy Gia Lai Floating Solar Farm Gia Lai 400 MW 2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-26,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 26,26,26 Vuc Mau Floating Solar Farm Nghe An 160 MW 2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-27,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 27,27,27 Khe Go Reservoir Floating Solar Farm Nghe An 200 MW 2030 Decision No. 500/QD-TTg PDP8,named_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-28,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 28,28,"28 Bio-fuel Manufacture in Northern region 100,000-200,000 2021-2030 Decision No. 893/QD-TTg
+ton per year National energy master plan",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-29,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 29,29,"29 Bio-fuel Manufacture in Central region 100,000-200,000 2021-2030 Decision No. 893/QD-TTg
+ton per year National energy master plan",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-30,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 30,30,"30 Bio-fuel Manufacture in Southern region 100,000-200,000 2021-2030 Decision No. 893/QD-TTg
+ton per year National energy master plan",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-31,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 31,31,"31 Bio-fuel Manufacture in Northern region 2,000,000-6,000,000 2031-2050 Decision No. 893/QD-TTg
+ton per year National energy master plan",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-32,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 32,32,"32 Bio-fuel Manufacture in Central region 1,000,000-4,000,000 2031-2050 Decision No. 893/QD-TTg
+ton per year National energy master plan",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-33,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 156; printed pages 140; ordinal 33,33,"33 Bio-fuel Manufacture in Southern region 2,000,000-8,000,000 2031-2050 Decision No. 893/QD-TTg
+ton per year National energy master plan",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-34,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 157; printed pages 141; ordinal 34,34,"- New development: 49.350 MVA,
+Renovation: 38.168 MVA
+transmission station 500 kV;
+- New development: 12.300 km,
+Revolution: 1.324 km transmission
+Projects belong to Transmission line de-
+line 500 kV;
+34 velopment program under National Power National 2030 Decision No. 500/QDD-TTg PDP8
+- New development: 78.525 MVA,
+Development Plan in 2021 - 2030
+Renovation: 34.997 MVA
+transmission station 220 kV;
+- New development 16.285 km,
+Renovation: 6.484 km
+transmission line 220 kV.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-35,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 157; printed pages 141; ordinal 35,35,"35 Develop infrastructure for electric vehi- National - 2022 - 2030 Decision No. 876/QD-TTg in
+cles, including: electric charging system, 2022
+power supply, depot for vehicles.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-36,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 157; printed pages 141; ordinal 36,36,"36 Convert and replace 244 locomotives and National 2031 - 2050 Decision No. 876/QD-TTg in
+80 generator cars to use electricity and - 2022
+green energy",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.1-37,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.1; PDF pages 158; printed pages 142; ordinal 37,37,"37 Pilot project for the application of the Thai Binh – 5 MW 2024 – 2030 Resolution No. 10 NQ/TW;
+coal gasification technology, carbon Nam Dinh Decision No. 888/QD-TTg dated
+recovery and carbon capture under the 25/7/2022
+Red River basin coal seams (ouside of the
+dike)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-1,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 159; printed pages 143; ordinal 1,1,"1 Pilot testing for 3-4 suitable coal-fired power plants (CFPPs) TBD 2023-2025 IPG Danish Embassy - Technical CN
+with different characteristics to operate more flexibility and on Coal Power Plant Flexibility
+integrate higher shares of renewable energy production.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-2,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 159; printed pages 143; ordinal 2,2,"2 Transition of the Cao Ngan Coal-Thermal Power Plant to Thai Nguyen 115 MW 2028-2045 UNDP-Institute of Energy - CN on
+100% biomass and establishing a biomass supply chain Transition of the Cao Ngan Coal-
+Thermal Power Plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-3,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 159; printed pages 143; ordinal 3,3,"3 Transition of the Na Duong Coal-Thermal Power Plant to Lang Son 110 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-4,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 159; printed pages 143; ordinal 4,4,"4 Transition of the Cam Pha Coal-Thermal Power Plant to Quang Ninh 670 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-5,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 159; printed pages 143; ordinal 5,5,"5 Transition of the Dong Trieu Coal-Thermal Power Plant to Quang Ninh 440 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-6,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 159; printed pages 143; ordinal 6,6,"6 Transition of the Son Dong Coal-Thermal Power Plant to Bac Giang 220 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-7,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 160; printed pages 144; ordinal 7,7,"7 Transition of the Nong Son Coal-Thermal Power Plant to Quang Nam 30 MW 2028 - 2045 Vietnam National Coal - Mineral
+100% biomass and establishing a biomass supply chain Industries Holding Corporation
+Limited - Proposal",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-8,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 160; printed pages 144; ordinal 8,8,"8 Transitioning of the Pha Lai 1 Coal-Thermal Power Plant to Pha Lai Ward, 440 MW 2023-2045 UNDP-Institute of Energy CN on
+100% green hydrogen for 2 x 100 MW units if technology is Chi Linh Transitioning of the Pha Lai Coal-
+economically feasible and readily available Town, Hai Thermal Power Plant
+Duong Prov-
+ince",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-9,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 160; printed pages 144; ordinal 9,9,"9 Transitioning of the Pha Lai 2 Coal-Thermal Power Plant to Pha Lai Ward, 600 MW 2023-2045 UNDP-Institute of Energy CN on
+100% green ammonia through gradually shifting co-firing to Chi Linh Transitioning of the Pha Lai Coal-
+increasing GNH3 uptake Town, Hai Thermal Power Plant
+Duong Prov-
+ince",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-10,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 160; printed pages 144; ordinal 10,10,"10 Transitioning of the Van Phong Coal-Thermal Power Plant Phan Phong, 1,000 MW 2024-2045 UNDP-Institute of Energy CN on
+to partly biomass and building in Carbon Capture, Use, and Nha Trang, Transitioning of the Van Phong
+Storage (CCUS) Khanh Hoa Coal-Thermal Power Plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-11,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 160; printed pages 144; ordinal 11,11,"11 Duyen Hai 1 Coal-Thermal Power Plant (ST Unit 1) Tra Vinh 600 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-12,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 160; printed pages 144; ordinal 12,12,"12 Duyen Hai 1 Coal-Thermal Power Plant (ST Unit 2) Tra Vinh 600 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-13,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 160; printed pages 144; ordinal 13,13,"13 Hai Phong 2 Coal-Thermal Power Plant (ST Unit 2.1) Hai Phong 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-14,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 160; printed pages 144; ordinal 14,14,"14 Hai Phong 2 Coal-Thermal Power Plant (ST Unit 2.2) Hai Phong 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-15,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 15,15,"15 Mong Duong 1 Coal-Thermal Power Plant (ST Unit 1) Quang Ninh 540 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-16,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 16,16,"16 Mong Duong 1 Coal-Thermal Power Plant (ST Unit 2) Quang Ninh 540 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-17,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 17,17,"17 Mong Duong 2 Coal-Thermal Power Plant (ST Unit 1) Quang Ninh 621 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-18,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 18,18,"18 Mong Duong 2 Coal-Thermal Power Plant (ST Unit 2) Quang Ninh 621 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-19,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 19,19,"19 Nghi Son 1 Coal-Thermal Power Plant (ST Unit 1) Thanh Hoa 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-20,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 20,20,"20 Nghi Son 1 Coal-Thermal Power Plant (ST Unit 2) Thanh Hoa 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-21,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 21,21,"21 Quang Ninh Coal-Thermal Power Plant (ST Unit 2.1) Quang Ninh 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-22,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 22,22,"22 Quang Ninh Coal-Thermal Power Plant (ST Unit 2.2) Quang Ninh 300 Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-23,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 23,23,"23 Thai Binh 1 Coal-Thermal Power Plant (ST Unit 1) Thai Binh 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-24,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 24,24,"24 Thai Binh 1 Coal-Thermal Power Plant (ST Unit 2) Thai Binh 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-25,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 161; printed pages 145; ordinal 25,25,"25 Thang Long Coal-Thermal Power Plant (ST Unit 1) Quang Ninh 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-26,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 26,26,"26 Thang Long Coal-Thermal Power Plant (ST Unit 2) Quang Ninh 300 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-27,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 27,27,"27 Vinh Tan 1 Coal-Thermal Power Plant (ST Unit 1) Binh Thuan 620 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-28,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 28,28,"28 Vinh Tan 1 Coal-Thermal Power Plant (ST Unit 2) Binh Thuan 620 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-29,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 29,29,"29 Vinh Tan 2 Coal-Thermal Power Plant (ST Unit 1) Binh Thuan 622 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-30,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 30,30,"30 Vinh Tan 2 Coal-Thermal Power Plant (ST Unit 2) Binh Thuan 622 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-31,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 31,31,"31 Vinh Tan 4 Coal-Thermal Power Plant (ST Unit 1) Binh Thuan 600 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-32,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 32,32,"32 Vinh Tan 4 Coal-Thermal Power Plant (ST Unit 2) Binh Thuan 600 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-33,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 33,33,"33 Vung Ang 1 Coal-Thermal Power Plant (ST Unit 1) Ha Tinh 600 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-34,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 34,34,"34 Vung Ang 1 Coal-Thermal Power Plant (ST Unit 2) Ha Tinh 600 MW Standard Chartered Bank
+(Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-35,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 35,35,"35 Dai Ninh Floating Solar Farm 49,9 +130 MW 2030 PDP8-Technical Report",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-36,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 162; printed pages 146; ordinal 36,36,36 Thac Mo 1 Floating Solar Farm 200 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-37,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 37,37,37 Thac Mo 2 Floating Solar Farm 150 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-38,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 38,38,38 Solar Farm on the Srepok 3 hydropower reservoir 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-39,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 39,39,39 Ham Thuan Floating Solar Farm 325 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-40,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 40,40,"40 Phu My 1, 2, 3 Solar Farm Project Binh Dinh 160 MW 2030 VietinBank",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-41,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 41,41,41 Thanh Long Phu Yen Solar Farm Project Phu Yen 50 MW 2030 VietinBank,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-42,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 42,42,42 Europlast Phu Yen Solar Farm Project Phu Yen 50 MW 2030 VietinBank,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-43,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 43,43,"43 BWID DPPA Solar Farm Project in industrial park in Binh Binh Duong, 36 MW 2030 VietinBank
+Duong, Dong Nai Dong Nai",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-44,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 44,44,"44 DPPA Rooftop Solar plant in VSIP industrial park Hai Phong, 22 MW 2030 VietinBank
+Nghe An,
+Binh Duong",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-45,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 45,45,"45 TTC Hue Duc 2 Solar Farm Southern 49 MW 2030 Standard Chartered (Viet Nam)
+Region",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-46,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 46,46,"46 LEGO Corporation Solar Farm next to Viet Nam LEGO Manu- Binh Duong 50 MW 2024-2030 LEGO
+facture, capacity testing for BESS application",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-47,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 47,47,"47 Investment project on rooftop solar panel installation in Provinces 20 MW 2025 - 2030 Vietnam National Petroleum Group
+more than 2.700 Petrolimex gasoil stations, 43 company and Cities – Petrolimex (PLX)
+offices and more that 30 petroleum warehouses",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-48,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 48,48,48 Dau Tieng 5 Solar Power Plant Tay Ninh 450 MW 2024 BIDV,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-49,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 163; printed pages 147; ordinal 49,49,49 Rooftop Solar plant Ha Noi 2024-2026 BIDV,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-50,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 50,50,"50 Rooftop solar power system belongs to Saigon Steel Pipe Ba Ria- 3 MW 2024-2026 BIDV
+Factory project Vung Tau",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-51,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 51,51,"51 Rooftop Solar plant in VSIP industrial park VSIP 2023-2030 BIDV
+industrial
+park",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-52,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 52,52,52 V.P.L Ben Tre Solar Farm 42 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-53,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 53,53,53 Thuan Nhien Phong wind power Famr 32 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-54,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 54,54,54 Tan Phu Dong Windpower Farm 150 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-55,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 55,55,55 Yang Trung Windpower Farm 145 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-56,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 56,56,56 Xanh Song Cau Windpower Farm – Phase 1 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-57,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 57,57,57 Vien An Windpower Farm (remain part without COD) 25.2 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-58,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 58,58,58 TNC Quang Tri 1 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-59,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 59,59,59 TNC Quang Tri 2 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-60,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 60,60,60 Thien Phu 2 Windpower Farm 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-61,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 61,61,61 Thien Phu Windpower Farm 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-62,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 62,62,62 Thach Phu Windpower Farm 120 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-63,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 63,63,63 Thanh Phong Windpower Farm – Phase 1 29.7 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-64,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 64,64,64 Tan Tan Nhat – Dak Glei Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-65,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 164; printed pages 148; ordinal 65,65,65 Tan Hop Windpower Farm 38 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-66,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 66,66,66 Tan An 1 Windpower Farm – Phase 2021-2025 45 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-67,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 67,67,67 Sunpro Windpower Farm 29.4 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-68,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 68,68,68 Song An Windpower Farm 46.2 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-69,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 69,69,69 No. 7 Windpower Farm – Phase 2 88.2 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-70,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 70,70,70 No. 5 Windpower Farm - Thach Hai 4 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-71,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 71,71,71 No. 5 Windpower Farm - Thach Hai 3 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-72,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 72,72,72 No. 5 Windpower Farm - Thach Hai 2 28 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-73,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 73,73,73 Soc Trang (V2-1) No. 3 Windpower Farm 29.4 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-74,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 74,74,74 Ben Tre No. 20 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-75,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 75,75,75 Soc Trang No. 2 Windpower Farm 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-76,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 76,76,76 Ben Tre No. 19 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-77,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 77,77,77 Soc Trang No. 18 Windpower Farm 22 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-78,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 78,78,78 Phuoc The Windpower Farm 26 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-79,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 79,79,79 Phong Dien 1 – Binh Thuan Windpower Farm – Phase 2 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-80,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 80,80,80 Windpower Farm for the mountainous development 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-81,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 81,81,"81 Nhon Hoi Windpower Farm – Phase 2 30 MW 2030 PDP8-Technical Report, Vietinbank",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-82,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 165; printed pages 149; ordinal 82,82,"82 Nexif Energy Ben Tre Windpower Farm – Phase 2, 3 50 MW 2030 PDP8-Technical Report, BIDV",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-83,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 83,83,"83 Nexif Energy Ben Tre Windpower Farm 30 MW 2030 PDP8-Technical Report, BIDV",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-84,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 84,84,84 Nam Binh 1 Windpower Farm 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-85,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 85,85,85 Lig Huong Hoa 2 Windpower Farm 48 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-86,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 86,86,86 Lig Huong Hoa 1 Windpower Farm 48 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-87,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 87,87,87 Lac Hoa Windpower Farm 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-88,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 88,88,88 Krong Buk 2 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-89,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 89,89,89 Krong Buk 1 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-90,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 90,90,90 Ia Pech 2 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-91,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 91,91,91 Huong Linh 4 Windpower Farm 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-92,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 92,92,92 Huong Linh 3 Windpower Farm 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-93,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 93,93,93 Hoa Thang 2.2 Windpower Farm 19.8 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-94,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 94,94,94 Hoa Thang 2.1 Windpower Farm 100 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-95,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 95,95,95 Hoa Dong Windpower Farm 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-96,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 96,96,"96 HBRE Ha Tinh Windpower Farm 120 MW 2030 PDP8-Technical Report, Vietinbank",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-97,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 97,97,"97 Hai Anh Windpower Farm 40 MW 2030 PDP8-Technical Report, Vietinbank",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-98,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 98,98,98 Duyen Hai (V1-4) Windpower Farm 48 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-99,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 99,99,99 Dak N’Drung 3 Windpower Farm 100 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-100,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 166; printed pages 150; ordinal 100,100,100 Dak N’Drung 2 Windpower Farm 100 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-101,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 101,101,101 Dak N’Drung 1 Windpower Farm 100 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-102,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 102,102,102 Cu Ne 2 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-103,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 103,103,103 Cu Ne 1 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-104,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 104,104,104 Cong Ly Soc Trang Windpower Farm – Phase 1 30 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-105,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 105,105,105 Tay Nguyen Processing Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-106,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 106,106,106 Cau Dat Windpower Farm 68 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-107,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 107,107,107 Ca Mau 1D Windpower Farm 86 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-108,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 108,108,108 Ca Mau 1C Windpower Farm 88 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-109,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 109,109,109 Ca Mau 1B Windpower Farm 88 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-110,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 110,110,110 Ca Mau 1A Windpower Farm 88 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-111,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 111,111,111 Bac Lieu Windpower Farm – Phase 3 140.6 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-112,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 112,112,112 Asia Dak Song 1 Windpower Farm 50 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-113,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 113,113,"113 Yale 1 Windpower Farm Gia Lai 47,2 MW has 2030 PDP8-Technical Report, Vietinbank
+COD; 52,8 MW
+has not COD",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-114,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 114,114,114 IA Pet - Dak Doa 2 Windpower Farm Gia Lai 100 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-115,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 115,115,115 IA Pet - Dak Doa 1 Windpower Farm Gia Lai 100 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-116,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 167; printed pages 151; ordinal 116,116,"116 Tra Vinh 1, 2 Windpower Farm Project Tra Vinh 200 MW 2030 Standard Chartered (Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-117,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 117,117,"117 Ca Mau 1,2,3 Windpower Farm Project Ca Mau 300 MW 2030 Standard Chartered (Viet Nam)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-118,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 118,118,118 Cho Long Windpower Farm Project Gia Lai 105.5 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-119,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 119,119,119 Lac Hoa Windpower Farm Project – Phase 1 Soc Trang 5 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-120,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 120,120,120 Ie Pech Windpower Farm Project Gia Lai 33.5 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-121,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 121,121,121 Khai Long - Ca Mau Windpower Farm Project - Phase 1 Ca Mau 100 MW 2030 PDP8-Technical Report,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-122,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 122,122,122 Binh Dinh Offshore windpower Farm Project Binh Dinh 3200 MW 2025-2027 BIDV,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-123,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 123,123,123 Tan An 1 Windpower Farm Project Ca Mau 30 MW 2023-2025 BIDV,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-124,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 124,124,124 Lien Lap Windpower Farm Project Quang Tri 48 MW 2030 VietinBank,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-125,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 125,125,125 Phong Huy Windpower Farm Project Quang Tri 48 MW 2030 VietinBank,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-126,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 126,126,126 Phong Nguyen Windpower Farm Project Quang Tri 48 MW 2030 VietinBank,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-127,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 127,127,"127 Dak Nong Offshore windpower Farm Project Dak Nong 660 MW 2026-2027 Total Energies Renewables
+Corporation và Viet Phuong
+Corporation",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-128,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 128,128,128 Binh Đai Offshore windpower Farm Project Ben Tre 30 MW - BIDV,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-129,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 129,129,129 Binh Đai 2 Offshore windpower Farm Project Ben Tre 30 MW - BIDV,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-130,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 130,130,130 Binh Đai 3 Offshore windpower Farm Project Ben Tre 30 MW - BIDV,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-131,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 131,131,"131 Offshore windpower Farm and Green hydrogen Manufacture Vung Tau/ 130 MW 2024-2030 GIZ
+Phu My",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-132,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 168; printed pages 152; ordinal 132,132,132 Quang Ninh Offshore windpower Farm Project Quang Ninh 3.000 MW 2029-2035 SOVICO - BP,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-133,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 169; printed pages 153; ordinal 133,133,133 Hai Phong Windpower offshore Farm Project Hai Phong 3.000 MW 2029-2035 SOVICO - BP,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-134,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 169; printed pages 153; ordinal 134,134,134 Ben Tre 500MW Offshore windpower Farm Project Ben Tre 500MW 2023-2025 Mainstream AIT Corporation,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-135,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 169; printed pages 153; ordinal 135,135,"135 Binh Thuan Offshore windpower Farm Project, connect at Binh Thuan 3.000 MW 2030-2035 BP
+Vinh Tan",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-136,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 169; printed pages 153; ordinal 136,136,"136 Nhà máy điện gió ngoài khơi Thăng Long Offshore windpow- Binh Thuan 3.400 MW 2029 Enterprize Energy
+er Farm Project includes transmission line from Ham Thuan Pte. Corporation Ltd
+Nam (Binh Thuan) to Long Thanh (Dong Nai), heading to
+Binh Duong",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-137,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 169; printed pages 153; ordinal 137,137,"137 Thang Long Wind 2 Offshore windpower Farm Binh Thuan 2.000 MW 2029 Enterprize Energy
+Pte. Corporation Ltd",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-138,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 169; printed pages 153; ordinal 138,138,"138 DEEP C Industrial Park combines Solar, windpower energy Hai Phong, 100 MW 2023-2030 DEEP C.
+and storage Quang Ninh",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-139,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 169; printed pages 153; ordinal 139,139,"139 Pilot Green Ammonia and Hydrogen Initiative to Enable Ca Mau ~1,095 tGH2 2024-2025 UNDP
+Production (GAHIEP) at a Fertilizer Producer and Enhance per year
+Resilience of Smallholder Agriculture in Cà Mau Province,
+Viet Nam - Promoting the development and application of
+green hydrogen and ammonia as well as regulatory/policy
+development of GH2",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-140,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 169; printed pages 153; ordinal 140,140,"140 Green hydrogen production pilot project in Viet Nam, National - 2030 Vietnam National Petroleum Group
+infrastructure investment engineering (tanks, warehouses, – Petrolimex (PLX)
+transportation fleets, gas pipelines, distribution stations,
+hydrogen filling, etc.);",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-141,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 170; printed pages 154; ordinal 141,141,"141 Pilot construction of centres/facilities for the production of National - 2030 Vietnam National Petroleum Group
+specialized equipment for hydrogen transportation, storage – Petrolimex (PLX)
+and distribution;",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-142,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 170; printed pages 154; ordinal 142,142,"142 Building a pilot hydrogen distribution station integrating National - 2030 Vietnam National Petroleum Group
+into Petrolimex petroleum stations to supply hydrogen buses – Petrolimex (PLX)
+in the immediate future;",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-143,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 170; printed pages 154; ordinal 143,143,143 Tra Vinh Green hydrogen Project Tra Vinh - 2024 - 2027 Standard Chartered (Viet Nam),unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-144,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 170; printed pages 154; ordinal 144,144,"144 Development of hybrid power plant of renewable energy 3 potential - 2023-2028 HDF Energy Company
+combined with hydrogen and battery storage. sites identi-
+fied: Phu Quy
+Island, Phu
+Quoc Island,
+At a site rec-
+ommended by
+PTSC",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-145,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 170; printed pages 154; ordinal 145,145,"145 PVN Fertilizer Plant Solar + Electrolyzer Vung Tau/ 400 MW PV 2024-2030 GIZ
+Phu My and 100 MW
+Electrolyzer",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-146,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 170; printed pages 154; ordinal 146,146,"146 PVN Fertilizer Plant Solar + Electrolyzer Ca Mau/ Can 400 MW PV 2024-2030 GIZ
+Tho and 100 MW
+Electrolyzer",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-147,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 170; printed pages 154; ordinal 147,147,"147 Xuan Thien Nghia Hung Green Steel Factory Project Nam Dinh 2,000,000 TPA - Xuan Thien Group",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-148,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 148,148,"148 Xuan Thien Nam Green Steel Factory No. 1 Project Nam Dinh 7,500,000 TPA - Xuan Thien Group",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-149,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 149,149,"149 Renewable energy for glass manufacturer Solar + Electro- Vung Tau/Phy 8 MW PV / 2 2024-2030 GIZ
+lyzer My MW electro-
+lyzer",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-150,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 150,150,"150 Renewable energy for various companies such as NSG (float Vung Tau/Phy 80 MW PV/20 2024-2030
+glass) and Nippon Sanso (industrial gas) My MW electro- GIZ
+lyzer",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-151,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 151,151,"151 Renewable energy for various companies such as Ho Chi Minh 80 MW PV/20 2024-2030
+semiconductor manufacturing and Air Liquide (industrial City/ Binh MW electro- GIZ
+gas). Duong lyzer",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-152,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 152,152,"152 Waste to Energy Power Plant Ho Chi Minh 3.000 ton per - Standard Chartered (Viet Nam)
+City day",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-153,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 153,153,"153 Baigoc Ammonia Complex Phu Yen 270.000 ton - Standard Chartered (Viet Nam)
+per year",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-154,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 154,154,154 LNG O Mon II Project Can Tho 1.050 2026-2027 VietinBank,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-155,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 155,155,155 Establish and operate Credit Enhancement Facility (CEF) National - 2024-2025 UK,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-156,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 156,156,"156 Project to utilize residual heat to generate electricity - Lam Quang Ninh - 2023 - 2025 BIDV
+Thach Cement Plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-157,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 171; printed pages 155; ordinal 157,157,157 Investment project for solar panel manufacturing factory Thai Binh - 2023 - 2025 BIDV,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-158,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 158,158,"158 EaTih Hydropower Project 8,6 MW 2024 BIDV",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-159,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 159,159,"159 South-East Asia Link Project to reduce transmission loss and Ha Tinh, Tra - 2030 Electricité de France (EDF)
+increase transmission capacity in North – South Vinh",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-160,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 160,160,"160 Northern battery energy storage system development – Northern Viet 50MW/ 2023 ~ 2025 ADB
+Phase 1 Nam 50MWh",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-161,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 161,161,"161 Northern battery energy storage system development – Northern Viet 100MW/ 2026 ~ 2030 ADB
+Phase 2 Nam 200MWh",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-162,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 162,162,"162 Southern battery energy storage system development Southern Viet 150MW/ 2031 - 2050 ADB
+Nam 300MWh",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-163,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 163,163,"163 Development of Dong Phu Yen pumped storage hydropower Son La 1.200 2031 - 2050 ADB
+plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-164,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 164,164,"164 Development of Tay Phu Yen pumped storage hydropower Son La 1.000 2031 - 2050 ADB
+plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-165,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 165,165,"165 Development of Moc Chau pumped storage hydropower Son La 900 2031 - 2050 ADB
+plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-166,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 166,166,"166 Development of Chau Thon pumped storage hydropower Thanh Hoa 1.000 2031 - 2050 ADB
+plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-167,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 167,167,"167 Development of Don Duong pumped storage hydropower Lam Đong 1.200 2031 - 2050 ADB
+plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-168,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 172; printed pages 156; ordinal 168,168,168 Development of Ninh Son pumped storage hydropower plant Ninh Thuan 1.200 2031 - 2050 ADB,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-169,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 173; printed pages 157; ordinal 169,169,"169 Development of Ham Thuan Bac pumped storage Binh Thuan 1.200 2031 - 2050 ADB
+hydropower plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-170,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 173; printed pages 157; ordinal 170,170,"170 Development of Phuoc Hoa pumped storage hydropower Ninh Thuan 3.600 2031 - 2050 ADB
+plant",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-171,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 173; printed pages 157; ordinal 171,171,"171 Phong Phu pumped storage hydropower plant project Binh Thuan 150 MW 2025-2028 Ecotech Vietnam Technology
+Investment and Trading Joint Stock
+Company",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-172,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 173; printed pages 157; ordinal 172,172,172 Smart and Energy Efficiency city Project (SEECP) National - 2023-2025 ADB Proposal,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-173,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 173; printed pages 157; ordinal 173,173,"173 Energy efficiency and electrification in administrative, National, and - 2024-2027 MOC-MOIT-UNDP and City people’s
+commercial, and residential buildings in Ha Noi, Committees
+Ho Chi Minh,
+and Da Nang
+cities",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-174,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 173; printed pages 157; ordinal 174,174,174 Scaling up co-processing in cement sector in Vietnam National - 2024-2030 Norway Embassy Proposal,unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-175,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 173; printed pages 157; ordinal 175,175,"175 Installing 110/22 kV power lines and stations, using part of Quang Ngai - 2024-2026 Viet Nam Oil and Gas Group -(PVN)
+the EVN grid to operate Dung Quat oil refinery",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-176,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 173; printed pages 157; ordinal 176,176,"176 Additional power capacity for Block 09-1 with wind turbines, Vung Tau - 2024-2026 Viet Nam Oil and Gas Group -(PVN)
+serving the needs of oil and gas exploitation",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-177,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 174; printed pages 158; ordinal 177,177,"177 Investment project in electric charging station system National 500 Grade 2025-2030 Vietnam National Petroleum Group
+providing charging services for electric cars of different 3 charging – Petrolimex (PLX)
+brands – Phase 1 stations",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-178,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 174; printed pages 158; ordinal 178,178,"178 Investment project in electric charging station system pro- National 500 Grade 2030 Vietnam National Petroleum Group
+viding charging services for electric cars of different brands 3 charging – Petrolimex (PLX)
+– Phase 2 stations",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-179,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 174; printed pages 158; ordinal 179,179,"179 Several heavy-duty trucks and corresponding hydrogen Ca Mau/ - 2024-2030 GIZ Proposal
+refueling stations to connect in order to demonstrate Can Tho
+heavy-duty road transport",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-180,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 174; printed pages 158; ordinal 180,180,"180 Build laboratories for new products such as hydrogen, National - - Vietnam National Petroleum Group
+biofuel, synthetic fuel, etc. – Petrolimex (PLX)",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-i.2-181,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex I.2; PDF pages 174; printed pages 158; ordinal 181,181,"181 Support the development of a database that is integrated National - 2022-2030 Decision 896/QD-TTg:
+and synchronized with the national database system on National Climate Change Strategy
+greenhouse gas emission reduction",unnamed_item,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-1,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 175; printed pages 159; ordinal 1,1,"1 Technical support for the Secretariat to implement the JETP 2023-2030 Grant ODA, and JETP Political Declaration
+Declaration, the Secretariat’s standing agency and working support from
+groups supporting JETP implementation GFANZ and other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-2,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 175; printed pages 159; ordinal 2,2,"2 Support the review of relevant legal documents and propose 2023-2030 Grant ODA, and Decision
+to competent authorities to amend, supplement, abolish or support from 1009/QD-TTg: Scheme to Implement the
+promulgate new regulations, ensuring compliance with the GFANZ and other JETP Declaration
+process of implementing the JETP Declaration stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-3,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 175; printed pages 159; ordinal 3,3,"3 Support research and propose a roadmap to build and 2024-2025 Grant ODA, and Decision
+complete a long-term legal framework in accordance with support from 1009/QD-TTg: Scheme to Implement the
+the roadmap to achieve net zero emissions and meet the GFANZ and other JETP Declaration
+requirements of low-emission development, transition from stakeholders
+exploitation and use of fossil fuel to renewable energy or
+low-emission energy",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-4,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 175; printed pages 159; ordinal 4,4,"4 Support the development and completion of regulations to 2024-2025 Grant ODA, and Decision
+create conditions for businesses implementing energy support from 1009/QD-TTg: Scheme to Implement the
+transition projects to directly access financial resources from GFANZ and other JETP Declaration
+international support sources without government stakeholders
+guarantees.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-5,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 176; printed pages 160; ordinal 5,5,"5 Conduct impact assessment for JETP implementation on Viet 2022-2025 Grant ODA, and MOF proposal
+Nam’s public finance. support from
+GFANZ and other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-6,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 176; printed pages 160; ordinal 6,6,"6 Complete the measurement, reporting, verification (MRV) 2022-2030 State Budget, Decree 06/2022/ND-CP,
+system and conduct greenhouse gas inventories at facility, grant ODA National Climate Change Strategy,
+sector and area levels. business capital Green Growth Action Plan
+and other
+support sources",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-7,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 176; printed pages 160; ordinal 7,7,"7 Support proposals to develop reasonable price and fee 2022-2025 State Budget, Decison 882/QD-TTg:
+mechanisms for shared energy infrastructure (power grant ODA National Green Growth Strategy
+transmission lines, gas pipelines, liquefied natural gas
+warehouses...).",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-8,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 176; printed pages 160; ordinal 8,8,"8 Support reviewing, proposing the development and completion 2022-2025 State Budget, Decision 1009/QD-TTg:
+of incentive policies and support for disadvantaged groups and grant ODA Scheme to Implement the JETP Declaration
+groups negatively affected by employment during the energy
+transition process.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-9,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 176; printed pages 160; ordinal 9,9,"9 Support the construction, establishment and operation of a 2022-2030 State Budget, Decision 882/QD-TTg:
+domestic carbon credit exchange and connect with the world grant ODA National Green Growth Strategy 2021-2030
+carbon market",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-10,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 176; printed pages 160; ordinal 10,10,"10 Support the proposal and implementation of measures to 2024-2030 German GIZ- Concept Note
+promote economic restructuring towards long-term carbon Government Decision 896/QD-TTg:
+neutrality beyond fossil fuel-based growth National Climate Change Strategy to 2050",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-11,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 177; printed pages 161; ordinal 11,11,"11 Support the development and implementation of the Green 2024-2030 Grant ODA IPG proposal
+Hydrogen Development in Viet Nam",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-12,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 177; printed pages 161; ordinal 12,12,"12 Negotiate the suspension of investment in coal-fired power 2023-2030 Grant ODA, and Decision 1009/QD-TTg:
+plants that are behind schedule and facing difficulties in support from Scheme to Implement the JETP Declaration
+changing shareholders and arranging capital; negotiate the GFANZ and
+closure of inefficient and old coal-fired power plants other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-13,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 177; printed pages 161; ordinal 13,13,"13 Develop a roadmap to reduce greenhouse gas emissions from 2023-2030 Grant ODA, and Decision 1009/QD-TTg:
+coal-fired power plants in sync with the carbon market support from Scheme to Implement the JETP Declaration
+development roadmap in Vietnam, connecting with the global GFANZ and
+carbon market. other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-14,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 177; printed pages 161; ordinal 14,14,"14 Select coal power plants to pilot energy conversion to learn from 2026-2028 IPG, and other IPG proposal
+experiences and propose a roadmap to apply to other coal power Development
+plants through the JETP Flexible Platform Partners",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-15,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 178; printed pages 162; ordinal 15,15,"15 Research and develop proposed mechanisms to support 2023-2030 Grant ODA, and Decision 1009/QD-TTg:
+domestic enterprises in developing, manufacturing, and support from Scheme to Implement the JETP Declaration
+maintaining renewable energy equipment GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-16,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 178; printed pages 162; ordinal 16,16,"16 Research and develop two inter-regional renewable energy 2024-2025 Grant ODA, and Decision 1009/QD-TTg:
+industrial and service centres, including electricity production, support from Scheme to Implement the JETP Declaration
+transmission and consumptionrenewable energy equipment GFANZ and
+manufacturing industry, construction, installation, related other
+services, building renewable energy industrial ecosystems in stakeholders
+areas with great potential such as the North, South Central,
+and South.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-17,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 178; printed pages 162; ordinal 17,17,"17 Support the development and implementation of the project to 2024-2030 Grant ODA, state
+establish the National Renewable Energy Center the budget,
+development of renewable energy industry. corporate
+capital and
+other sources",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-18,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 178; printed pages 162; ordinal 18,18,"18 Research and establish the Vietnam Energy Data Center. 2025-2030 State Budget, Decision 280/QD-TTg:
+and other National Energy Efficiency Programme
+support sources",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-19,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 178; printed pages 162; ordinal 19,19,"19 Develop and implement regulations on renewable energy ratio 2023-2025 Grant ODA, and Decision 1009/QĐ-TTg:
+for electric distribution organizations, combined with building support from Scheme to Implement the JETP Declaration
+renewable energy credit markets GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-20,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 179; printed pages 163; ordinal 20,20,"20 Develop a map of potential off-shore wind in Vietnam 2024-2027 Grant ODA, and Petrovietnam
+support from
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-21,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 179; printed pages 163; ordinal 21,21,"21 Develop and implement the Offshore Wind Power Development 2024-2030 Federal Republic IPG proposal
+Support Program of Germany",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-22,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 179; printed pages 163; ordinal 22,22,"22 Supporting the development of offshore wind power capacities 2024 - 2028 Grant ODA, and Decision 1009/QD-TTg:
+and provide technical assistance to MOIT, MONRE, on marine support from Scheme to Implement the JETP Declaration
+spatial planning and offshore wind power policies GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-23,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 179; printed pages 163; ordinal 23,23,"23 Technical support for wind speed measurement, geophysical 2024 - 2028 Grant ODA, and Decision 1009/QD-TTg:
+survey for pilot installation of 2 GW of offshore wind power; support from Scheme to Implement the JETP Declaration
+propose measures to complete processes and regulations GFANZ and
+related to offshore wind power monitoring other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-24,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 179; printed pages 163; ordinal 24,24,"24 Support to Offshore windpower development and National 2023-2029 Grant ODA, and UNDP - Norway
+marine spatial masterplan - Phase 1 support from
+GFANZ and other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-25,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 179; printed pages 163; ordinal 25,25,"25 Support to Offshore windpower development and National ma- 2024-2029 Grant ODA, and UNDP - Norway
+rine spatial masterplan - Phase 2 support from
+GFANZ and other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-26,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 180; printed pages 164; ordinal 26,26,"26 Support the development and application of the energy saving 2023 - 2025 Grant ODA, and Decision 1009/QD-TTg:
+service company (ESCO) business model support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-27,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 180; printed pages 164; ordinal 27,27,"27 Technical support to determine energy consumption and GHG 2022-2025 Grant ODA, state Decision 385/QD-BXD:
+emissions targets, propose measures to save and improve budget and Construction Sector Action Plan on
+energy efficiency for different types of housing, construction other sources Responding to Climate Change
+projects, and construction material production facilities",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-28,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 180; printed pages 164; ordinal 28,28,"28 Strengthen the capacity of businesses and other stakeholders 2023 - 2030 State budget, Decree 06/2022/ND-CP:
+to prepare and participate in domestic and international carbon grant ODA, Decision 896/QD-TTg: National Climate
+markets corporate Change Strategy
+capital and
+Decison 882/QD-TTg: National Green
+other sources
+Growth Strategy",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-29,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 180; printed pages 164; ordinal 29,29,"29 Support the development of the smart grid to enhance the 2024 – 2025 Grant ODA, and Decision 1009/QD-TTg:
+ability to integrate renewable energy into the power system and support from Scheme to Implement the JETP Declaration
+reduce power losses on the grid GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-30,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 181; printed pages 165; ordinal 30,30,"30 Research, propose a mechanism to encourage load reduction 2024 - 2026 Grant ODA, and Decision 1009/QD-TTg:
+during peak hours of the power system or change management support from Scheme to Implement the JETP Declaration
+methods to operate during periods of low electricity prices GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-31,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 181; printed pages 165; ordinal 31,31,"31 Research and propose the scope, priorities and models of 2024 - 2026 Grant ODA, and Decision 1009/QD-TTg:
+private sector investment in the power grid support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-32,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 181; printed pages 165; ordinal 32,32,"32 Support to review and propose improvements to the legal 2024 - 2026 Grant ODA, and Decison 882/QD-TTg:
+framework to facilitate private sector investment support from National Green Growth Strategy
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-33,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 181; printed pages 165; ordinal 33,33,"33 Support the development of a policy framework and improve the 2024 - 2026 Grant ODA, and Decision 1009/QD-TTg:
+capacity of officials and technicians to develop energy storage support from Scheme to Implement the JETP Declaration
+systems GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-34,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 181; printed pages 165; ordinal 34,34,"34 Assess the need for Battery Energy Storage Systems (BESS) and 2024 - 2026 Grant ODA, and Decision 1009/QD-TTg:
+other storage units; support Feasibility Studies support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-35,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 182; printed pages 166; ordinal 35,35,"35 Support the development and implementation of regulations 2025-2030 Grant ODA, and Decision 1009/QD-TTg:
+and preferential policies for the development of shared charging support from Scheme to Implement the JETP Declaration
+systems providing green energy for transport vehicles GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-36,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 182; printed pages 166; ordinal 36,36,"36 Support the proposal of measures to restructure the 2022-2030 State budget, Decision 896/QD-TTg:
+transport market, promote individuals and transport enterprises grant ODA National Climate Change Strategy
+to convert to electric and high-volume transport vehicles;
+enhance the connection of transport modes, reduce costs, Decison 882/QD-TTg:
+improve the quality of transport services National Green Growth Strategy",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-37,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 182; printed pages 166; ordinal 37,37,"37 Promote bus and taxi transportation business to convert to 2022 - 2030 State budget, Decision No. 876/QD-TTg in 2022
+electric vehicles grant ODA",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-38,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 182; printed pages 166; ordinal 38,38,"38 Support the establishment of a Centre of Excellence (CoE) for 2023-2024 UK Government IPG proposal
+offshore wind power",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-39,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 182; printed pages 166; ordinal 39,39,"39 Research and propose national criteria, standards, and 2024-2026 Grant ODA, and Decision 1009/QD-TTg:
+technical regulations for identifying clean technologies and support from Scheme to Implement the JETP Declaration
+green transformation projects; supplement national standards GFANZ and
+and regulations in the field of recycling and waste utilization other
+from energy production stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-40,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 182; printed pages 166; ordinal 40,40,"40 Research and develop applications of new energy sources (green 2024-2028 Grant ODA, and Decision 1009/QD-TTg:
+hydrogen, green ammonia); pilot study for carbon capture, use support from Scheme to Implement
+and storage (CCUS); co-firing with ammonia for boilers GFANZ and the JETP Declaration;
+(coal-fired power), methane recovery in coal mining and oil and other
+gas exploitation, storage, processing, and transportation of stakeholders Petrovietnam
+coal, petroleum, and other fuel, include on-shore, off-shore, and
+continental shelf of Vietnam.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-41,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 183; printed pages 167; ordinal 41,41,"41 Pilot project on green hydrogen production 2024-2028 Grant ODA, and Petrovietnam
+support from
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-42,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 183; printed pages 167; ordinal 42,42,"42 Pilot project on integrating green hydrogen into Ca Mau 2024-2028 Grant ODA, and Petrovietnam
+Fertilizer Plant support from
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-43,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 183; printed pages 167; ordinal 43,43,"43 Support research on international experience to propose 2024-2028 Grant ODA, state Decision 1009/QD-TTg:
+roadmaps, solutions for transfer and application of green budget and Scheme to Implement
+hydrogen technology, green ammonia, carbon capture, use and other sources the JETP Declaration;
+storage.
+Petrovietnam",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-44,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 183; printed pages 167; ordinal 44,44,"44 Develop and update a list of GHG emission reduction 2022-2025 State budget, Decision 1009/QD-TTg:
+technologies to propose solutions and cooperation mechanisms grant ODA Scheme to Implement the JETP Declaration
+for transfer and application to promote energy transition
+in Viet Nam.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-45,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 183; printed pages 167; ordinal 45,45,"45 Research on technology and solutions to adjust the combustion 2024-2025 Grant ODA, state Decision 500/QD-TTg PDP8
+mode in boilers of the thermal power plant when the actual load budget and
+and fuel supply vary unpredictably from the original design, in other sources
+order to increase operational and energy efficiency and reduce
+greenhouse gas emissions.",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-46,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 184; printed pages 168; ordinal 46,46,"46 Research on technology and solutions to co-burn biomass 2024-2025 Grant ODA, state Decision 500/QD-TTg PDP8
+pellets with coal in thermal power plants to contribute to budget and
+proactive fuel sources and reduce emissions other sources",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-47,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 184; printed pages 168; ordinal 47,47,"47 Research of using heat from exhaust fumes of thermal 2024-2026 Grant ODA, state Decision 1009/QĐ-TTg:
+power plants to co-generate and supply refrigeration to reduce budget and Scheme to Implement the JETP Declaration
+self-consumption and promote energy efficiency. other sources",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-48,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 184; printed pages 168; ordinal 48,48,"48 Investigate and evaluate overall geothermal potential for green 2024-2030 State budget, Decision 680/QD-TTg:
+energy production. grant ODA and Master plan for geological baseline survey
+other sources on minerals for the period 2021-2030, with
+a vision to 2050",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-49,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 184; printed pages 168; ordinal 49,49,"49 Assess and forecast human resource needs and the ability to 2022-2030 State budget, Decision 896/QD-TTg:
+supply human resources to meet the energy transition needs of grant ODA and National Climate Change Strategy
+different sectors; support the development of a national labour other sources
+market information system for green industries, connecting Decison 882/QD-TTg:
+supply and demand in the green labour market. National Green Growth Strategy",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-50,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 184; printed pages 168; ordinal 50,50,"50 Research and propose a support mechanisms to ensure reason- 2024-2026 Grant ODA, and Decision 1009/QD-TTg:
+able electricity prices for affected, vulnerable, and low-income support from Scheme to Implement the JETP Declaration
+groups. GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-51,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 184; printed pages 168; ordinal 51,51,"51 Support the development and application of guidance on impact 2024-2027 State budget, Decision 1009/QD-TTg:
+assessment, readiness to participate in a just energy transition grant ODA Scheme to Implement the JETP Declaration
+and capacity building needs of target groups",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-52,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 185; printed pages 169; ordinal 52,52,"52 Review and analyze the statistics of workers who have lost 2024-2028 Grant ODA, IPG, IPG proposal;
+their jobs due to the energy transition; develop and implement GFANZ Decision 1009/QD-TTg:
+training and retraining programs for employees; promote social Scheme to Implement the JETP Declaration
+dialogue that ensures a just energy transition",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-53,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 185; printed pages 169; ordinal 53,53,"53 Support research and propose measures towards equitable and 2024-2029 UNDP, IPG IPG: Concept Note 6
+sustainable energy transition of Quang Ninh and Thai Nguyen
+coal power plants",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-54,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 185; printed pages 169; ordinal 54,54,"54 Support the implementation of economic, social and 2024-2026 Grant ODA, and Decision 1009/QD-TTg:
+environmental impact assessments in the process of just energy support from Scheme to Implement the JETP Declaration
+transition for relevant stakeholders GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-55,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 185; printed pages 169; ordinal 55,55,"55 Establish vocational training and career centers to ensure the 2024-2028 Grant ODA Decision 1009/QD-TTg:
+objectives of a just energy transition Scheme to Implement the JETP Declaration",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-56,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 185; printed pages 169; ordinal 56,56,"56 Improve the capacity of organizations and enterprises in 2024-2030 State Budget, Decision 1009/QD-TTg:
+proposing and implementing projects using resources from grant ODA Scheme to Implement the JETP Declaration
+financial institutions, funds and international private investors",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-57,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 185; printed pages 169; ordinal 57,57,"57 Develop and propose advocacy programs to raise awareness of 2024-2030 Grant ODA, and Decision 1009/QD-TTg:
+implementing a just energy transition support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-58,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 185; printed pages 169; ordinal 58,58,"58 Capacity building for the National Innovation Center on green 2024-2030 Grant ODA,
+hydrogen and related vocational training and support
+from GFANZ
+and other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-59,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 186; printed pages 170; ordinal 59,59,"59 Support the development and implementation of traceability 2024-2029 State budget, IPG proposal
+and carbon monitoring in the production, preservation, grant ODA
+processing and transportation of pangasius, shrimp and dragon
+fruit, contributing to promoting the application of renewable
+energy and improving energy efficiency",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-60,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 186; printed pages 170; ordinal 60,60,"60 Establishment of the International Center for Renewable Energy 2024 - 2025 Grant ODA, and Decision 1009/QD-TTg:
+located in Viet Nam support from Scheme to Implement the JETP Declaration
+GFANZ and
+other
+stakeholders",heading,,,,,2026-09-23,
+vnm-rmp-2023-annex-ii-61,VNM,b145af2e7f4a441dc87d7ec2d99a29e1e6d7b265406d398dd64013dd4560733c,Annex II; PDF pages 186; printed pages 170; ordinal 61,61,"61 Research and propose solutions and roadmaps to promote 2024 - 2025 Grant ODA, and Decision 1009/QD-TTg:
+cooperation in connecting power grids with countries in the re- support from Scheme to Implement the JETP Declaration
+gion to enhance system connectivity, power exchange, and take GFANZ and
+advantage of countries’ resource strengths other
+stakeholders",heading,,,,,2026-09-23,
+vnm-pilot-manifest-local-record-row-1,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 2,1,vnm-pilot-ipg-political-declaration-2022-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-001; source_sha256=a3a3d6cb192128ccd69e6d294849061a6615d9d32d735b675a6be44690a062aa; collection_status=collected
+vnm-pilot-manifest-local-record-row-2,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 3,2,vnm-pilot-eu-political-declaration-2022-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-002; source_sha256=eb9656627352ff68528ec59954b8ffe009f207bb9917680835b7e25c32ba9340; collection_status=collected
+vnm-pilot-manifest-local-record-row-3,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 4,3,vnm-pilot-us-embassy-declaration-2022-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-003; source_sha256=d014f2594eff1e130a09d7207ec3d64f24e790e0f95cab421d02d6a485956ccd; collection_status=collected
+vnm-pilot-manifest-local-record-row-4,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 5,4,vnm-pilot-ipg-rmp-launch-joint-statement-2023-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-004; source_sha256=7d29a74efd099f347cd303e8ae811f60d27a115230253fc8486663acf47e8dbf; collection_status=collected
+vnm-pilot-manifest-local-record-row-5,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 6,5,vnm-pilot-eu-rmp-launch-joint-statement-2023-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-005; source_sha256=9887b882c3968fda8c50b3cd98c70495b775795db846f2f74cbc20b7fd4f075e; collection_status=collected
+vnm-pilot-manifest-local-record-row-6,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 7,6,vnm-pilot-baochinhphu-rmp-announcement-2023-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-006; source_sha256=cffe2fd1dd0f9b2d1dd732d635934e362b1288eb8d684cc93d2280bd639d44df; collection_status=collected
+vnm-pilot-manifest-local-record-row-7,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 8,7,vnm-pilot-moit-jetp-portal-2023-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-007; source_sha256=958fccb4f73ee5ab5a4a791ea065c3bf4200ec2bdb272fb20bf05801c4231be0; collection_status=collected
+vnm-pilot-manifest-local-record-row-8,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 9,8,vnm-pilot-moit-decision-458-2026-03-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-008; source_sha256=e5b6669603e8c9367d2ee996c08a7b1f2ae896711d3a281e93f560c6a1094bbe; collection_status=collected
+vnm-pilot-manifest-local-record-row-9,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 10,9,vnm-pilot-nangluongvietnam-decision-458-analysis-2026-03-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-009; source_sha256=e467d3ad2464369b771d4f903261b827f3e8d78ad1d12e34e309d90c2aab6f44; collection_status=collected
+vnm-pilot-manifest-local-record-row-10,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 11,10,vnm-pilot-moit-decision-1929-implementation-2026-07-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-010; source_sha256=339c2bbfc2b8be0179c40cd7f0df484757b6f16b1f355300693e0d4719f68abc; collection_status=collected
+vnm-pilot-manifest-local-record-row-11,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 12,11,vnm-pilot-eeas-jetp-progress-projects-2025-07-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-011; source_sha256=c6c5c4ea5da37216b4f5604997669cd55fa91fa59b75249c3afb6eeab177071c; collection_status=collected
+vnm-pilot-manifest-local-record-row-12,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 13,12,vnm-pilot-vneconomy-24-projects-2025-07-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-012; source_sha256=eed8fc5c974a85e74749422ef6b0ffb64cfe728efe72820f40464cca176aada6; collection_status=collected
+vnm-pilot-manifest-local-record-row-13,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 14,13,vnm-pilot-uk-eu-jetp-progress-statement-2025-05-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-013; source_sha256=e1f0247f0d5060a1065ed624b2f30fc1361ee430462195c0991fc297a3dcd468; collection_status=collected
+vnm-pilot-manifest-local-record-row-14,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 15,14,vnm-pilot-eeas-jetp-progress-macron-2025-05-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-014; source_sha256=6ac542e12367258e06af6f1fc02853767227d1c77719257e54292255ea66ea3d; collection_status=collected
+vnm-pilot-manifest-local-record-row-15,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 16,15,vnm-pilot-bmz-flasbarth-us-withdrawal-2025-03-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-015; source_sha256=5bd3635107f8b021f612ab7c7de71d9de79ae44fb4c9c23a50c9bcb9bcfdcab2; collection_status=collected
+vnm-pilot-manifest-local-record-row-16,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 17,16,vnm-pilot-moit-jetp-secretariat-portal-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-016; source_sha256=958fccb4f73ee5ab5a4a791ea065c3bf4200ec2bdb272fb20bf05801c4231be0; collection_status=collected
+vnm-pilot-manifest-local-record-row-17,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 18,17,vnm-pilot-bmz-factsheet-jetp-objectives-2022-12-pdf,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-017; source_sha256=645127a6b2e7aba0005b503b4ad5102a1e9a5a667c650d5fcf5c3b3de1ec8eba; collection_status=collected
+vnm-pilot-manifest-local-record-row-18,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 19,18,vnm-pilot-eib-jetp-mou-500m-2025-03-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-018; source_sha256=4dd3b653c02a33b343bdac0b17527a716fe9a95ceb7cfa7c370b2527b1e7bc09; collection_status=collected
+vnm-pilot-manifest-local-record-row-19,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 20,19,vnm-pilot-eib-bac-ai-430m-2025-10-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-019; source_sha256=c5fe53a343fe6d4d44bb2ac01c02281436c65757139bcf2d98850123f6b57f8c; collection_status=collected
+vnm-pilot-manifest-local-record-row-20,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 21,20,vnm-pilot-eib-global-jetp-programme-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-020; source_sha256=66b2bec07969b895da320dd8c8e2ff6a19a5da166dc5d3cf12b69c155c30b6b8; collection_status=collected
+vnm-pilot-manifest-local-record-row-21,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 22,21,vnm-pilot-eib-techcombank-200m-2026-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-021; source_sha256=261c61168bd365a519f547f9acd3e1df3514454f825b3232e5e6be1048b0dbfb; collection_status=collected
+vnm-pilot-manifest-local-record-row-22,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 23,22,vnm-pilot-evn-evnnpt-afd-67m-2025-05-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-022; source_sha256=fa40cf580e9d92a49cd9f869d780f19753688b5115af9fcfbfb546dd806f96f0; collection_status=collected
+vnm-pilot-manifest-local-record-row-23,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 24,23,vnm-pilot-vnplus-afd-bacai-76m-2025-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-023; source_sha256=fed2e11537543b69427c454328bebd95cca33f0c293078863aa11e77a161cd52; collection_status=collected
+vnm-pilot-manifest-local-record-row-24,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 25,24,vnm-pilot-evn-kfw-trian-65m-2024-06-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-024; source_sha256=a4b4bd27e2179fc9aafd5fe5346d460e43db11f1173ccb8de0361222c3736a46; collection_status=collected
+vnm-pilot-manifest-local-record-row-25,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 26,25,vnm-pilot-kfw-getfit-vietnam-14-5m-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-025; source_sha256=545532394438f9dcbc99ef7978616e471d9c6bf669a7f5226dbcb5ba11428018; collection_status=collected
+vnm-pilot-manifest-local-record-row-26,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 27,26,vnm-pilot-ec-presscorner-teameurope-500m-2023-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-026; source_sha256=155d44d94b9ab40ca5058b6059bbe0de8b61acd0837264b8b8d5fa8280c62c1a; collection_status=collected
+vnm-pilot-manifest-local-record-row-27,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 28,27,vnm-pilot-ec-intpa-jetp-vietnam-policy-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-027; source_sha256=0ca324abbdef477d41335559780d62585072fa10941eadd383ec39d6040f4e11; collection_status=collected
+vnm-pilot-manifest-local-record-row-28,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 29,28,vnm-pilot-eeas-jetp-progress-2025-07-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-028; source_sha256=c6c5c4ea5da37216b4f5604997669cd55fa91fa59b75249c3afb6eeab177071c; collection_status=collected
+vnm-pilot-manifest-local-record-row-29,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 30,29,vnm-pilot-norway-ipg-join-2022-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-029; source_sha256=37de256d572839350fd1aa4b85de3cffd4a0468df8615b40dd89be6b02795714; collection_status=collected
+vnm-pilot-manifest-local-record-row-30,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 31,30,vnm-pilot-ens-dk-vietnam-energy-partnership-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-030; source_sha256=40355af7b692f352b6f978b671540804fe8e506c9e5cbda0f61cdd76023c7f92; collection_status=collected
+vnm-pilot-manifest-local-record-row-31,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 32,31,vnm-pilot-bmz-jetp-vietnam-factsheet-pdf,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-031; source_sha256=645127a6b2e7aba0005b503b4ad5102a1e9a5a667c650d5fcf5c3b3de1ec8eba; collection_status=collected
+vnm-pilot-manifest-local-record-row-32,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 33,32,vnm-pilot-evn-cdp-bacai-loi-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-032; source_sha256=c378a51aa6f6fb616448a2d202dcbf22f61baceb7ca2488c3550bb76cb6b9492; collection_status=collected
+vnm-pilot-manifest-local-record-row-33,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 34,33,vnm-pilot-etm-adb-page-2026-08-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-033; source_sha256=none; collection_status=blocked
+vnm-pilot-manifest-local-record-row-34,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 35,34,vnm-pilot-etm-partnership-trust-fund-adb-2026-08-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-034; source_sha256=none; collection_status=blocked
+vnm-pilot-manifest-local-record-row-35,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 36,35,vnm-pilot-adb-projects-viet-nam-index-2026-08-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-035; source_sha256=none; collection_status=blocked
+vnm-pilot-manifest-local-record-row-36,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 37,36,vnm-pilot-adb-55327-001-vinfast-loan-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-036; source_sha256=none; collection_status=blocked
+vnm-pilot-manifest-local-record-row-37,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 38,37,vnm-pilot-adb-58382-001-bess-project-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-037; source_sha256=none; collection_status=blocked
+vnm-pilot-manifest-local-record-row-38,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 39,38,vnm-pilot-adb-135m-electric-mobility-news-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-038; source_sha256=none; collection_status=blocked
+vnm-pilot-manifest-local-record-row-39,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 40,39,vnm-pilot-wb-vietnam-country-page-2026-08-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-039; source_sha256=fd0ec711c40e0481392dac1b6c4d2b294214229b01e5ce3fd8b88237c472af47; collection_status=collected
+vnm-pilot-manifest-local-record-row-40,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 41,40,vnm-pilot-wb-dpf-tranche2-2023-06-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-040; source_sha256=6ec6722855b2f686fbefc984504381718e2d15b2abd864f4dabfea2eda1b6119; collection_status=collected
+vnm-pilot-manifest-local-record-row-41,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 42,41,vnm-pilot-jica-gx-dpl-signing-2026-03-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-041; source_sha256=3de57a0175aceb5b7e752712df6cd804ec79740fca72b0d7488c0894c11b1ac6; collection_status=collected
+vnm-pilot-manifest-local-record-row-42,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 43,42,vnm-pilot-jica-mof-seminar-2026-03-18-pdf,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-042; source_sha256=e83e2987bf26f4c06b067e6ba75d5f5175e9fa86ae1c732200e6f7453b5207bb; collection_status=collected
+vnm-pilot-manifest-local-record-row-43,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 44,43,vnm-pilot-vir-japan-oda-320m-2026-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-043; source_sha256=5ff174d3049c679325d023330dae07f98fa1798f4d3534ffe4bde771e1982ef3; collection_status=collected
+vnm-pilot-manifest-local-record-row-44,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 45,44,vnm-pilot-uk-eu-jetp-progress-2025-05-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-044; source_sha256=e1f0247f0d5060a1065ed624b2f30fc1361ee430462195c0991fc297a3dcd468; collection_status=collected
+vnm-pilot-manifest-local-record-row-45,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 46,45,vnm-pilot-bii-vpbank-50m-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-045; source_sha256=none; collection_status=blocked
+vnm-pilot-manifest-local-record-row-46,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 47,46,vnm-pilot-gfanz-vietnam-working-group-2023-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-046; source_sha256=9ae431a5cb33d84e87abf642949657aad65f63e8a03d74d582ef5bd0ea65603a; collection_status=collected
+vnm-pilot-manifest-local-record-row-47,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 48,47,vnm-pilot-theinvestor-8-projects-2024-10-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-047; source_sha256=95cd42d24ee7f337b58078f67ebd7d70c317ca423a0c225af55a7656b5fd1415; collection_status=collected
+vnm-pilot-manifest-local-record-row-48,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 49,48,vnm-pilot-ccnews-us-withdraws-2025-03-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-048; source_sha256=9f55c97666d9eb55f19f0b98769655e007a923a27db74bf6e63f957111f99eb9; collection_status=collected
+vnm-pilot-manifest-local-record-row-49,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 50,49,vnm-pilot-developmentaid-us-exit-2025-03-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-049; source_sha256=none; collection_status=blocked
+vnm-pilot-manifest-local-record-row-50,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 51,50,vnm-pilot-ustda-advances-clean-energy-vietnam-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-050; source_sha256=ddb4577d82c3db9ff7a57ff8ebd50d95ca9d0e085602dfeeeea0d5f5e39111e9; collection_status=collected
+vnm-pilot-manifest-local-record-row-51,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 52,51,vnm-pilot-ustda-npt-smartgrid-2022-07-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-051; source_sha256=0662e35f2b0ab4363ff9cc3010520aab59d02fc877d95cb9f524f5915e9dd9cb; collection_status=collected
+vnm-pilot-manifest-local-record-row-52,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 53,52,vnm-pilot-evn-annual-report-2024-2025-pdf,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-052; source_sha256=304153ae8bbf9b980f36ef474d187aef887a506b70c165de5f02f9bdacb00e26; collection_status=collected
+vnm-pilot-manifest-local-record-row-53,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 54,53,vnm-pilot-evn-annual-report-2022-2023-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-053; source_sha256=b61df87c12e43c3ec315916913f992b037c9c6155b225e582cd0718490810d85; collection_status=collected
+vnm-pilot-manifest-local-record-row-54,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 55,54,vnm-pilot-evn-baocao-tongket-2023-pdf,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-054; source_sha256=6670e8916d60e8f2f2f18b93df61ea82c1534ffc22ca6dd3b694dc303051e631; collection_status=collected
+vnm-pilot-manifest-local-record-row-55,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 56,55,vnm-pilot-qd500-pdp8-2023-05-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-055; source_sha256=b33c47f207a89355bf4e02ed24a5c8c1d4f6f14bb1ce6bdd85be074376cc8abf; collection_status=collected
+vnm-pilot-manifest-local-record-row-56,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 57,56,vnm-pilot-qd768-pdp8-revised-2025-04-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-056; source_sha256=da0eac23cd8777e835e4a6e2404f1d38e7d687d2a1e2716594650686bf8b09d1; collection_status=collected
+vnm-pilot-manifest-local-record-row-57,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 58,57,vnm-pilot-qd262-pdp8-implementation-plan-2024-04-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-057; source_sha256=dfcb639575a1865a2cf46382c06bee05e9f7a7fb8998a310e85324a359993ce5; collection_status=collected
+vnm-pilot-manifest-local-record-row-58,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 59,58,vnm-pilot-1509-qd-bct-pdp8-implementation-revised-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-058; source_sha256=none; collection_status=missing
+vnm-pilot-manifest-local-record-row-59,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 60,59,vnm-pilot-qd1009-jetp-implementation-plan-2023-08-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-059; source_sha256=none; collection_status=missing
+vnm-pilot-manifest-local-record-row-60,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 61,60,vnm-pilot-qd458-jetp-plan-update-2026-03-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-060; source_sha256=none; collection_status=missing
+vnm-pilot-manifest-local-record-row-61,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 62,61,vnm-pilot-evn-announce-rmp-dubai-2023-12-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-061; source_sha256=cffe2fd1dd0f9b2d1dd732d635934e362b1288eb8d684cc93d2280bd639d44df; collection_status=collected
+vnm-pilot-manifest-local-record-row-62,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 63,62,vnm-pilot-jetp-portal-moit-2026-08-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-062; source_sha256=958fccb4f73ee5ab5a4a791ea065c3bf4200ec2bdb272fb20bf05801c4231be0; collection_status=collected
+vnm-pilot-manifest-local-record-row-63,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 64,63,vnm-pilot-moit-jetp-projects-2025-07-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-063; source_sha256=6f701a776825c8c8659b8746043c0aabaae7c052f091764900c37620cf378b47; collection_status=collected
+vnm-pilot-manifest-local-record-row-64,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 65,64,vnm-pilot-vungangii-unit2-comop-2026-04-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-064; source_sha256=9918206d98fe0d419005d272ce39c323edf54b579a134c2ce1446a294c0fecd8; collection_status=collected
+vnm-pilot-manifest-local-record-row-65,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 66,65,vnm-pilot-vapco-overview-html,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-065; source_sha256=98ffcae3e60fd4b982c8c1b4da765626067f1ed44551647c65a22bcf0d4a9b20; collection_status=collected
+vnm-pilot-manifest-local-record-row-66,VNM,b205467d8407cb91cf69a6893d1ce08cb566687a565e70e11a3cf74102c02818,CSV row 67,66,vnm-pilot-jetp-rmp-full-document-pdf,named_item,,,,,2026-09-24,method=pilot_manifest; version=1; pilot_row_id=vnm-pilot-source-066; source_sha256=none; collection_status=missing
+vnm-pilot-observations-local-record-row-1,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 2,1,Enveloppe globale JETP Viet Nam — mobilisation initiale,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-001; source_filename=ipg-political-declaration-2022-12.html; publisher_locator=Déclaration politique, paragraphe numéroté 18 : « To mobilise an initial amount of at least $15.5 billion over the next 3 to 5 years »"
+vnm-pilot-observations-local-record-row-2,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 3,2,Enveloppe globale JETP — part publique IPG,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-002; source_filename=ipg-political-declaration-2022-12.html; publisher_locator=Paragraphe 18, 2e phrase : « IPG members will mobilise $7.75 billion of public sector finance »"
+vnm-pilot-observations-local-record-row-3,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 4,3,Enveloppe globale JETP — part privée GFANZ,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-003; source_filename=ipg-political-declaration-2022-12.html; publisher_locator=Paragraphe 18, 3e phrase : « at least $7.75 billion in private finance, subject to mobilisation of the catalytic public sector finance »"
+vnm-pilot-observations-local-record-row-4,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 5,4,Enveloppe JETP — attribution alternative de la part publique,envelope,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-004; source_filename=us-embassy-declaration-2022-12.html; publisher_locator=Ligne 34 du texte extrait : « Initial contributions to the Vietnam JETP include $7.75 billion in pledges from the IPG together with the Asian Development Bank and the International Finance Corporation »
+vnm-pilot-observations-local-record-row-5,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 6,5,Resource Mobilisation Plan — total révisé,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-005; source_filename=ipg-rmp-launch-joint-statement-2023-12.html; publisher_locator=Corps du communiqué, paragraphe « The RMP provides further details on USD 15.8 billion of finance that has been committed to the JETP »"
+vnm-pilot-observations-local-record-row-6,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 7,6,Resource Mobilisation Plan — part IPG révisée,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-006; source_filename=ipg-rmp-launch-joint-statement-2023-12.html; publisher_locator=Même paragraphe : « USD 8.08 billion being provided by IPG » ; instruments décrits au paragraphe suivant : « grants, concessional loans and risk-sharing instruments over a period of 3 to 5 years »"
+vnm-pilot-observations-local-record-row-7,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 8,7,Resource Mobilisation Plan — part GFANZ,envelope,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-007; source_filename=ipg-rmp-launch-joint-statement-2023-12.html; publisher_locator=Même paragraphe : « USD 7.75 billion by the Glasgow Financial Alliance for Net Zero (GFANZ) »
+vnm-pilot-observations-local-record-row-8,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 9,8,Resource Mobilisation Plan — version vietnamienne du total,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-008; source_filename=baochinhphu-rmp-announcement-2023-12.html; publisher_locator=Article « Viet Nam announces resource mobilization plan to implement JETP in Dubai », paragraphe « Partners committed to mobilise an initial US$15.5 billion over the next three to five years »"
+vnm-pilot-observations-local-record-row-9,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 10,9,Resource Mobilisation Plan — part IPG selon le gouvernement vietnamien,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-009; source_filename=baochinhphu-rmp-announcement-2023-12.html; publisher_locator=Même paragraphe : « Of this, US$7.75 billion is to be mobilised by IPG members, with more attractive loan conditions than the current capital market »"
+vnm-pilot-observations-local-record-row-10,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 11,10,Enveloppe JETP — restatement UK/UE 2025,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-010; source_filename=uk-eu-jetp-progress-2025-05.html; publisher_locator=Section « Background », dernier paragraphe : « original funding commitments of $15.5 billion, including $7.5 billion public sector finance from IPG members (grants, concessional and commercial loans and instruments) and $7.5 billion private sector finance facilitated by GFANZ »"
+vnm-pilot-observations-local-record-row-11,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 12,11,Enveloppe JETP — chiffre de presse post-retrait américain,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-011; source_filename=ccnews-us-withdraws-2025-03.html; publisher_locator=4e paragraphe de l'article : « Indonesia negotiated a JETP deal with a $20-billion commitment from the IPG, including $10 billion from commercial investors, followed by Vietnam with $15 billion »"
+vnm-pilot-observations-local-record-row-12,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 13,12,Contribution bilatérale française au JETP,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-012; source_filename=evn-evnnpt-afd-67m-2025-05.html; publisher_locator=Article « EVNNPT and AFD sign €67 million financing agreement », paragraphe : « France has pledged to mobilize up to €500 million in concessional loans to support Vietnam's energy transition between 2023 and 2027 »"
+vnm-pilot-observations-local-record-row-13,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 14,13,Prêt-cadre EIB / Ministère des Finances pour la mise en oeuvre du JETP,named_item,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-013; source_filename=eib-jetp-mou-500m-2025-03.html; publisher_locator=Section « Strengthening Viet Nam's green transition through strategic investment » : « the EIB is committed to establishing a €500 million framework loan with the Ministry of Finance to support JETP implementation »
+vnm-pilot-observations-local-record-row-14,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 15,14,Contribution agrégée Team Europe au JETP,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-014; source_filename=eib-bac-ai-430m-2025-10.html; publisher_locator=Section « EU-Vietnam partnership » : « the EU, EIB, and the Member States, contribute over €2.8 billion to the JETP »"
+vnm-pilot-observations-local-record-row-15,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 16,15,Enveloppe UE Global Gateway Viet Nam 2021-2027,envelope,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-015; source_filename=eib-bac-ai-430m-2025-10.html; publisher_locator=Section « EU-Vietnam partnership » : « The EU's financial commitment for 2021-2027 is at least €293 million »
+vnm-pilot-observations-local-record-row-16,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 17,16,Ligne 500 kV Ho Chi Minh-Ville (ex-Binh Duong) / Dong Nai,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-016; source_filename=evn-evnnpt-afd-67m-2025-05.html; publisher_locator=Titre et 1er paragraphe : « On May 26 in Hanoi, EVNNPT and AFD signed a financing agreement worth €67 million ». Signataires nommés au 4e paragraphe (Rémy Rioux / Pham Le Phu)"
+vnm-pilot-observations-local-record-row-17,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 18,17,Ligne 500 kV HCMV - Binh Duong — valorisation MOIT en USD,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-017; source_filename=moit-decision-1929-implementation-2026-07.html; publisher_locator=Section « Hoàn thiện chính sách phát triển năng lượng », paragraphe : « Dự án đường dây truyền tải điện Thành phố Hồ Chí Minh - Bình Dương (78 triệu USD) »"
+vnm-pilot-observations-local-record-row-18,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 19,18,Extension de la centrale hydroélectrique de Tri An (+200 MW),named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-018; source_filename=evn-kfw-trian-65m-2024-06.html; publisher_locator=Titre et 1er paragraphe : « On June 24, 2025, in Frankfurt, EVN signed a €65 million loan agreement with KfW for the Tri An Hydropower Plant Expansion Project. This marks the first project financed by KfW for EVN through a direct loan without a Government guarantee »"
+vnm-pilot-observations-local-record-row-19,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 20,19,Extension de Tri An — valorisation MOIT en USD,named_item,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-019; source_filename=moit-decision-1929-implementation-2026-07.html; publisher_locator=Même paragraphe : « dự án mở rộng Nhà máy Thuỷ điện Trị An (79 triệu USD) »
+vnm-pilot-observations-local-record-row-20,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 21,20,STEP de Bac Ai (1 200 MW) — facilité de crédit consortiale,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-020; source_filename=uk-eu-jetp-progress-2025-05.html; publisher_locator=Corps du communiqué : « On 27 May 2025, a Memorandum of Understanding (MoU) was signed between EVN and AFD as coordinator of six IPG Development Finance Institutions (AFD, EIB, JICA, KfW, CDP, and Proparco) to provide up to €480 million »"
+vnm-pilot-observations-local-record-row-21,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 22,21,STEP de Bac Ai — assistance technique UE,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-021; source_filename=uk-eu-jetp-progress-2025-05.html; publisher_locator=Même paragraphe : « The project also benefits from €10 million of technical assistance, funded by the EU and managed by AFD »"
+vnm-pilot-observations-local-record-row-22,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 23,22,STEP de Bac Ai — paquet Team Europe annoncé au Global Gateway Forum,named_item,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-022; source_filename=eib-bac-ai-430m-2025-10.html; publisher_locator=Chapeau du communiqué : « the European Commission and other Team Europe actors announced a comprehensive €430 million package to advance the Bac Ai Pumped Hydro Storage Project »
+vnm-pilot-observations-local-record-row-23,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 24,23,STEP de Bac Ai — premier tirage AFD,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-023; source_filename=vnplus-afd-bacai-76m-2025-12.html; publisher_locator=Titre « AFD provides 76-million-EUR loan » et 1er paragraphe : « EVN has announced that it signed a credit agreement with AFD for a loan worth 76 million EUR (89.47 million USD) ». Rang précisé au paragraphe suivant : « This is the first of six loans, totaling nearly 480 million EUR »"
+vnm-pilot-observations-local-record-row-24,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 25,24,STEP de Bac Ai — coût total du projet,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-024; source_filename=vnplus-afd-bacai-76m-2025-12.html; publisher_locator=Chapeau sous le titre : « The Bac Ai hydropower project has a designed capacity of 1,200 MW, comprising four turbines of 300 MW each, with a total investment of 21.1 trillion VND (802.5 million USD) »"
+vnm-pilot-observations-local-record-row-25,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 26,25,STEP de Bac Ai — montant mobilisé déclaré par le MOIT,named_item,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-025; source_filename=moit-decision-1929-implementation-2026-07.html; publisher_locator=Section « Hoàn thiện chính sách phát triển năng lượng » : « Dự án Thuỷ điện tích năng Bắc Ái (565 triệu USD) »
+vnm-pilot-observations-local-record-row-26,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 27,26,STEP de Bac Ai — lettre d'intention CDP,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-026; source_filename=evn-cdp-bacai-loi.html; publisher_locator=1er paragraphe : « On the morning of September 4, 2025, within the framework of the Vietnam-Italy Business Forum held in Hanoi, EVN and Italy's CDP exchanged a Letter of Intent on cooperation for the Bac Ai Pumped-Storage Hydropower Plant Project »"
+vnm-pilot-observations-local-record-row-27,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 28,27,Contribution combinée France+IPG aux deux projets phares,envelope,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-027; source_filename=uk-eu-jetp-progress-2025-05.html; publisher_locator=Paragraphe suivant les deux annonces projet : « France's and IPG's €547 million financial contribution to these two flagship energy transition projects »
+vnm-pilot-observations-local-record-row-28,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 29,28,Ligne de crédit climat EIB Global / Techcombank,named_item,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-028; source_filename=eib-techcombank-200m-2026.html; publisher_locator=Premier bullet du chapeau : « The €200 million financing agreement between EIB Global and Techcombank was announced during the EU-Vietnam Global Gateway Business and Investment Forum in Hanoi ». Fiche projet en bas de page : « VIET NAM JETP CLIMATE ACTION FL I »
+vnm-pilot-observations-local-record-row-29,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 30,29,Encours EIB cumulé au Viet Nam depuis 1997,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-029; source_filename=eib-jetp-mou-500m-2025-03.html; publisher_locator=Section « Strengthening Viet Nam's green transition through strategic investment », 1re phrase : « EIB Global has been a trusted partner of Viet Nam since 1997, providing over €561 million in financing »"
+vnm-pilot-observations-local-record-row-30,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 31,30,Encours EIB cumulé au Viet Nam depuis 1997 (mise à jour),envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-030; source_filename=eib-techcombank-200m-2026.html; publisher_locator=Encadré « Background information », rubrique EIB : « active in Viet Nam since 1997, providing about €800 million to support sustainable infrastructure, renewable energy, climate action and urban transport »"
+vnm-pilot-observations-local-record-row-31,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 32,31,Accords ODA/dons KfW-EVN cumulés depuis 2009,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-031; source_filename=evn-kfw-trian-65m-2024-06.html; publisher_locator=Avant-dernier paragraphe : « Since 2009, KfW has signed nine ODA and grant loan agreements with EVN, totaling €891.5 million, six of which have been completed with full disbursement of KfW funds »"
+vnm-pilot-observations-local-record-row-32,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 33,32,Engagement KfW pour projets EVN à venir,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-032; source_filename=evn-kfw-trian-65m-2024-06.html; publisher_locator=Dernier paragraphe : « For upcoming projects, KfW has committed approximately €800 million in ODA, concessional loans, and non-guaranteed loans to support new initiatives by EVN and its subsidiary corporations »"
+vnm-pilot-observations-local-record-row-33,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 34,33,Facilité GET FiT Viet Nam (primes aux producteurs ENR),named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-033; source_filename=kfw-getfit-vietnam-14.5m.html; publisher_locator=Tableau de la fiche projet, lignes « Deutscher Finanzierungsbeitrag : 14,5 Mio. EUR », « Status : aktiv », « Nummer : 32519 », « Projektpartner : ELECTRICITY OF VIETNAM »"
+vnm-pilot-observations-local-record-row-34,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 35,34,Pipeline JETP — 7 premiers projets identifiés,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-034; source_filename=vneconomy-24-projects-2025-07.html; publisher_locator=Ligne 31 du texte extrait : « phía IPG đưa ra 7 dự án đầu tiên đã được xác định có thể triển khai trong khuôn khổ JETP với tổng nguồn vốn cần huy động là hơn 1,5 tỷ USD »"
+vnm-pilot-observations-local-record-row-35,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 36,35,Pipeline JETP — 17 projets retenus au criblage 2025,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-035; source_filename=moit-jetp-projects-2025-07.html; publisher_locator=Dernier paragraphe de fond : « Đối với 25 dự án đề xuất mới nhận được, có 17 dự án được sơ bộ xác định phù hợp 4 nguyên tắc JETP với nguồn vốn cần huy động khoảng 5,52 tỷ USD »"
+vnm-pilot-observations-local-record-row-36,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 37,36,Pipeline JETP — portefeuille total à juillet 2025,envelope,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-036; source_filename=moit-jetp-projects-2025-07.html; publisher_locator=Dernier paragraphe de fond : « Tổng số dự án phù hợp JETP đã được xác định đến thời điểm hiện nay là 24 dự án, với tổng nguồn vốn cần huy động là 7,04 tỷ USD »"
+vnm-pilot-observations-local-record-row-37,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 38,37,Pipeline JETP — portefeuille total à juillet 2026,envelope,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-037; source_filename=moit-decision-1929-implementation-2026-07.html; publisher_locator=Section « Hoàn thiện chính sách phát triển năng lượng » : « Việt Nam và các đối tác đã thống nhất xác định được 50 dự án đầu tư phù hợp JETP với số vốn cần huy động để thực hiện lên đến trên 11 tỷ USD »
+vnm-pilot-observations-local-record-row-38,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 39,38,Total effectivement mobilisé au titre du JETP (3 projets),envelope,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-038; source_filename=moit-decision-1929-implementation-2026-07.html; publisher_locator=Section « Hoàn thiện chính sách phát triển năng lượng » : « Đến nay mới có 3 dự án huy động thành công gần 800 triệu USD từ nguồn tài chính JETP »
+vnm-pilot-observations-local-record-row-39,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 40,39,Constat d'absence de décaissement JETP (2024),absence,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-039; source_filename=theinvestor-8-projects-2024-10.html; publisher_locator=Avant-dernier paragraphe de l'article du 21/02/2025 : « In October 2024, Deputy Minister of Finance Vo Thanh Hung said Vietnam is yet to receive any loan from the JETP »"
+vnm-pilot-observations-local-record-row-40,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 41,40,Retrait des États-Unis du JETP Viet Nam,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-040; source_filename=bmz-flasbarth-us-withdrawal-2025-03.html; publisher_locator=Chapeau : « Regarding the withdrawal of the United States from the Just Energy Transition Partnerships with Indonesia, South Africa and Viet Nam, Development State Secretary Jochen Flasbarth made the following statement », 6 mars 2025. Composition post-retrait en bas de page : « The IPG for Viet Nam is comprised of the EU and the UK (co-leads), France, Canada, Italy, Japan, Denmark and Norway »"
+vnm-pilot-observations-local-record-row-41,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 42,41,Engagement USAID cité lors de la signature du JETP,named_item,,,,,2026-09-24,method=pilot_observation; version=1; observation_id=vnm-pilot-observation-041; source_filename=us-embassy-declaration-2022-12.html; publisher_locator=Citation de l'ambassadeur des États-Unis (ligne 74 du texte extrait) : « through USAID we have already committed over $50 million invested over five years »
+vnm-pilot-observations-local-record-row-42,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 43,42,Assistance technique smart grid à EVNNPT,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-042; source_filename=ustda-npt-smartgrid-2022-07.html; publisher_locator=1er paragraphe : « Today, USTDA announced it has awarded a grant to the National Power Transmission Corporation of Vietnam (NPT) for technical assistance to advance the deployment of smart grid technologies »"
+vnm-pilot-observations-local-record-row-43,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 44,43,Prêt-programme JICA pour la transformation verte (GX),named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-043; source_filename=jica-gx-dpl-signing-2026-03.html; publisher_locator=1er paragraphe : « On March 30, JICA signed a loan agreement with the Government of the Socialist Republic of Viet Nam ». Conditions dans la fiche « Terms and Amount of Loan » : « Maximum Loan Amount : 50,000 million Japanese Yen ; Annual Interest Rate : 1.5% ; Repayment Period : 15 Years ; Grace Period : 5 Years ; Procurement : General untied ; Executing Agency : Ministry of Finance »"
+vnm-pilot-observations-local-record-row-44,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 45,44,Prêt-programme JICA GX — date de cérémonie divergente,named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-044; source_filename=vir-japan-oda-320m-2026.html; publisher_locator=1er paragraphe de l'article : « On March 18, the Japan International Cooperation Agency Vietnam office and the Ministry of Finance co-organised a signing ceremony for a $320 million green loan programme »"
+vnm-pilot-observations-local-record-row-45,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 46,45,Crédit IDA d'appui budgétaire (DPF tranche 2),named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-045; source_filename=wb-dpf-tranche2-2023-06.html; publisher_locator=1er paragraphe : « WASHINGTON, June 29, 2023 — The World Bank Board of Directors today approved a US$263.9-million International Development Association credit for Vietnam… reforms aimed at supporting households, businesses, and expansion of renewable energy »"
+vnm-pilot-observations-local-record-row-46,VNM,0033db0de8f0bd25e693e203ee3681e4247709cb410e451f78ae3a667bcbe917,CSV row 47,46,Crédit IDA d'appui budgétaire (DPF tranche 1),named_item,,,,,2026-09-24,"method=pilot_observation; version=1; observation_id=vnm-pilot-observation-046; source_filename=wb-dpf-tranche2-2023-06.html; publisher_locator=1er paragraphe, dernière phrase : « This credit marks the second and final installment in a Development Policy Financing (DPF) series of two operations, following a US$221.5 million operation approved in 2021 »"
+vnm-evn-cdp-bac-ai-2025-discovery-1,VNM,81f8b5b58bd1cf49e513164d6405f2c0365a7d4e7595c6a4bcd4a2c140ed5a6f,term sheet and letter of intent,1,EVN and CDP sign letter of intent on Bac Ai pumped-storage hydropower,named_item,,,,,2026-09-24,"method=legacy_link; version=1; source_id=vnm-evn-cdp-bac-ai-2025; migration_recorded_at=2026-09-24; legacy_links=[{""project_id"":""vnm-project-bac-ai-pumped-hydro"",""relationship"":""named_in"",""review_status"":""confirmed""}]"
