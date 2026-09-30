@@ -11,24 +11,18 @@ Deduplication is one union-find over all rows, catalogue and lanes alike:
 1. same normalized DOI;
 2. same OpenAlex id (the union is transitive: a record whose DOI matches one
    work and whose OpenAlex id matches another joins the two);
-2b. same normalized ``url`` (``norm_url``: scheme and host lowercased,
-   trailing slash dropped, ``hdl.handle.net/X`` and ``<host>/handle/X`` both
-   ``hdl:X``, query and fragment dropped; under the unregistered DSpace
-   default prefix ``123456789`` a repository Handle keeps its host,
-   ``hdl:<host>/123456789/…``). A resolver URL is not a URL key: ``doi.org/…``
-   fills an empty DOI and ``openalex.org/W…`` an empty OpenAlex id instead.
-   A URL never overrides an identifier disagreement: it joins only rows whose
-   components (after steps 1-2) carry no two DOIs and no two OpenAlex ids, a
-   shared landing page such as a journal issue URL cannot fuse two DOIs;
+2b. same normalized ``url`` (``norm_url``; a resolver URL is not a URL key:
+   ``doi.org/…`` fills an empty DOI, ``openalex.org/W…`` an empty OpenAlex
+   id), joining only components (after steps 1-2) that carry no two DOIs and
+   no two OpenAlex ids: a shared landing page cannot fuse two DOIs;
 3. same normalized title and same year, decided on the components steps 1-2b
    left: the rows sharing a title + year join when their identifier-bearing
    rows form at most one component, or components that cannot disagree (no
    identifier kind, DOI or OpenAlex id, on both sides). When two components
-   both carry DOIs (or both OpenAlex ids), the title is **ambiguous**: nothing joins them, and rows with no identifier join only
-   one another. A URL is no veto: the same work often has several (publisher
-   page, repository copy), so rows differing only in URL join on title + year.
-   A working paper and
-   its article with their own DOIs therefore stay two works, an id-less
+   both carry DOIs (or both OpenAlex ids), the title is **ambiguous**:
+   nothing joins them, and rows with no identifier join only one another. A
+   URL is no veto (one work often has several). A working paper and its
+   article with their own DOIs therefore stay two works, an id-less
    "Editorial" cannot fuse distinct DOIs, and a title never joins across
    years. Each row's ``version_hint`` is carried so the counting-unit decision
    (open, ticket 1655) can be applied later;
@@ -131,11 +125,11 @@ DSPACE_DEFAULT_PREFIX = "123456789"
 
 
 def norm_url(v):
-    """Normalized URL key, ``hdl:<handle>`` for a Handle, ``""`` if not http(s).
+    """Normalized URL key, ``""`` if not http(s).
 
-    A Handle URL drops its query string and fragment (``?show=full`` is a view
-    of the same item). Under the DSpace default prefix a repository Handle
-    keeps its host: ``hdl:<host>/123456789/X``.
+    Scheme and host lowercased, trailing slash dropped. ``hdl.handle.net/X``
+    and ``<host>/handle/X`` both give ``hdl:X``, query and fragment dropped;
+    under the DSpace default prefix the host stays: ``hdl:<host>/123456789/X``.
     """
     m = _URL.match(str(v or "").strip())
     if not m:
