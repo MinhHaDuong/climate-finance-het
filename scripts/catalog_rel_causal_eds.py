@@ -203,7 +203,7 @@ def search_all(session, domain, term, provider, cap, per_page, delay):
                 yield ("end", "record cap")
                 return
         if not results or page >= max_page or received >= total:
-            yield ("end", "")
+            yield ("end", f"short cursor: {received} of {total}" if received < total else "")
             return
         page += 1
 

@@ -257,6 +257,9 @@ def write_matrix(rows, path):
 
 # --- metered OpenAlex run ---------------------------------------------------
 
+MISSING_COST_USD = 0.001
+
+
 class Meter:
     """Lane spend summed from ``x-ratelimit-cost-usd``; the day's remaining
     budget from ``x-ratelimit-remaining-usd``."""
@@ -269,7 +272,8 @@ class Meter:
         h = {k.lower(): v for k, v in (headers or {}).items()}
         self.requests += 1
         try:
-            self.spent += float(h.get("x-ratelimit-cost-usd") or 0)
+            # a response without the header is charged a search page, so the cap still binds
+            self.spent += float(h.get("x-ratelimit-cost-usd") or MISSING_COST_USD)
         except ValueError:
             pass
         for attr, key in (("remaining", "x-ratelimit-remaining-usd"),
@@ -289,7 +293,7 @@ class Meter:
 
 def fetch_metered(spec, api_key, cap, delay, meter):
     """Yield ('meta', count), ('work', dict), ('page', cost); last ('end', reason)."""
-    cursor, received = "*", 0
+    cursor, received, count = "*", 0, None
     while cursor:
         if reason := meter.stop_reason():
             yield ("end", reason)
@@ -328,7 +332,8 @@ def fetch_metered(spec, api_key, cap, delay, meter):
                 yield ("end", "record cap")
                 return
         cursor = next_cursor
-    yield ("end", "")
+    # OpenAlex can end the cursor before the announced count: not a finished query
+    yield ("end", f"short cursor: {received} of {count}" if count and received < count else "")
 
 
 def run(search_cfg, families_cfg, sentinels, args, api_key, fetch=fetch_metered):

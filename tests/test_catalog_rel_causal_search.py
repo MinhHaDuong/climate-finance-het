@@ -187,3 +187,19 @@ def test_fetch_metered_reads_headers_and_stops_before_overspending(monkeypatch):
     meter = rc.Meter(1.0, 0.30)
     out = list(rc.fetch_metered({"filter": "x"}, None, 0, 0, meter))
     assert out[-1][1].startswith("budget: daily remaining")
+
+
+def test_a_cursor_that_ends_before_the_announced_count_is_not_complete(monkeypatch):
+    """Replay of the 193-of-1,944 rerun: OpenAlex ended the cursor early."""
+    pages = [_Resp({"meta": {"count": 1944, "next_cursor": None},
+                    "results": [{"id": f"W{i}"} for i in range(193)]})]
+    monkeypatch.setattr(rc, "polite_get", lambda url, params=None, delay=0: pages.pop(0))
+    out = list(rc.fetch_metered({"filter": "x"}, None, 0, 0, rc.Meter(1.0, 0.30)))
+    assert out[-1] == ("end", "short cursor: 193 of 1944")
+
+
+def test_a_response_without_the_cost_header_is_still_charged():
+    m = rc.Meter(0.002, 0.30)
+    m.observe({})
+    m.observe({})
+    assert m.stop_reason().startswith("budget: lane cap")
