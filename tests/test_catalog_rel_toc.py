@@ -3,7 +3,7 @@
 import csv
 import os
 
-import catalog_rel_toc as toc
+import _rel_toc_core as toc
 import pytest
 
 pytestmark = pytest.mark.domain_corpus
@@ -107,6 +107,73 @@ def test_match_by_title_surname_year_tolerates_one_year():
 def test_title_year_match_only_when_pool_entry_has_no_author():
     rec = {"doi": "", "title": "No author paper", "first_author_surname": "smith", "year": 2005}
     assert _pool().match(rec) == "title_year_noauthor"
+
+
+def test_generic_title_never_matches_by_title():
+    pool = toc.PoolIndex([{"doi": "", "title": "Front Matter", "first_author": "",
+                           "year": "2014", "openalex_id": ""}])
+    rec = {"doi": "10.1257/x", "title": "Front Matter", "first_author_surname": "", "year": 2014}
+    assert pool.match(rec) == ""
+
+
+def _oa(**kw):
+    rec = {"journal_key": "j", "openalex_id": "W9", "doi": "", "title": "Carbon pricing works",
+           "item_class": "article", "openalex_type": "article", "authors": "Ann Smith",
+           "first_author_surname": "smith", "year": 1995, "pub_date": "1995-03-01",
+           "volume": "85", "issue": "1", "abstract": "abs"}
+    rec.update(kw)
+    return rec
+
+
+def _crrec(**kw):
+    rec = {"journal_key": "j", "issn": "x", "journal": "J", "doi": "10.1/a",
+           "title": "Carbon pricing works", "item_class": "article",
+           "crossref_type": "journal-article", "authors": "Smith, Ann",
+           "first_author_surname": "smith", "year": 1995, "pub_date": "1995-3",
+           "volume": "85", "issue": "1", "online_first": False, "abstract": "",
+           "openalex_id": ""}
+    rec.update(kw)
+    return rec
+
+
+def test_merge_toc_links_same_doi_and_fills_abstract():
+    (rec,) = toc.merge_toc([_crrec()], [_oa(doi="10.1/a")])
+    assert rec["openalex_id"] == "W9"
+    assert rec["in_openalex"] is True
+    assert rec["abstract"] == "abs"
+    assert rec["toc_source"] == "crossref"
+
+
+def test_merge_toc_folds_doi_alias_by_title_author_year():
+    recs = toc.merge_toc([_crrec()], [_oa(doi="10.3763/alias")])
+    assert len(recs) == 1
+    assert recs[0]["openalex_id"] == "W9"
+    assert recs[0]["alias_dois"] == "10.3763/alias"
+
+
+def test_merge_toc_keeps_openalex_only_item_without_doi():
+    (rec,) = toc.merge_toc([], [_oa(title="An old JSTOR article", volume="80", issue="2")])
+    assert rec["toc_source"] == "openalex-only"
+    assert rec["online_first"] is False
+    assert toc.issue_key(rec) == ("j", 1995, "80", "2")
+
+
+def test_merge_toc_openalex_only_adopts_crossref_issue_year():
+    recs = toc.merge_toc([_crrec(year=1996)], [_oa(title="Another paper", doi="10.9/b")])
+    other = [r for r in recs if r["toc_source"] == "openalex-only"][0]
+    assert other["year"] == 1996
+
+
+def test_merge_toc_redates_misdated_openalex_item_by_annual_volume():
+    # OpenAlex dates many JSTOR-era AER works 2016-01-01; volume 62 is 1972.
+    cr = [_crrec(volume="89", year=1999, doi="10.1/a"),
+          _crrec(volume="90", year=2000, doi="10.1/b", title="Other paper here")]
+    recs = toc.merge_toc(cr, [_oa(title="Behavior of the firm", volume="62", issue="5",
+                                  year=2016)])
+    old = [r for r in recs if r["toc_source"] == "openalex-only"][0]
+    assert old["year"] == 1972
+    assert old["year_source"] == "volume-offset"
+    assert not toc.in_window(old)
 
 
 def test_register_never_counts_a_needs_human_issue_as_scanned():

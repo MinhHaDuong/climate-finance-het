@@ -31,26 +31,33 @@ import collections
 import csv
 import glob
 import gzip
-import html
 import json
 import os
 import random
 import re
 import sys
 import time
-import unicodedata
 from datetime import datetime, timezone
 
 import requests
+from _rel_toc_core import (
+    FROM_DATE,
+    UNTIL_DATE,
+    PoolIndex,
+    build_register,
+    crossref_record,
+    in_window,
+    issue_key,
+    merge_toc,
+    openalex_record,
+)
 from pipeline_keystore import read_credential
-from utils import get_logger, normalize_doi, reconstruct_abstract
+from utils import get_logger, normalize_doi
 
 log = get_logger("rel_toc")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST = os.path.join(ROOT, "config", "rel_toc_manifest.csv")
-FROM_DATE = "1990-01-01"
-UNTIL_DATE = "2026-09-28"  # config/rel_review.yaml search date
 CR_API = "https://api.crossref.org"
 OA_API = "https://api.openalex.org"
 CR_SELECT = ",".join(["DOI", "title", "author", "issued", "published-print",
@@ -62,211 +69,17 @@ BROWSER_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/126 Safari/537.36")
 
 REGISTER_FIELDS = [
-    "journal_key", "year", "volume", "issue", "expected", "scanned", "in_pool",
+    "journal_key", "year", "volume", "issue", "expected", "crossref_n", "openalex_only_n",
+    "scanned", "in_pool",
     "candidates", "candidate_articles", "status", "reason", "toc_source",
     "publisher_n", "publisher_only",
 ]
 CANDIDATE_FIELDS = [
     "journal_key", "journal", "issn", "volume", "issue", "online_first", "item_class",
-    "crossref_type", "doi", "title", "authors", "year", "pub_date", "abstract",
-    "openalex_id", "toc_source", "endpoint", "retrieved_at", "in_openalex",
+    "crossref_type", "openalex_type", "doi", "alias_dois", "title", "authors", "year",
+    "pub_date", "abstract", "openalex_id", "toc_source", "endpoint", "retrieved_at",
+    "in_openalex",
 ]
-
-
-# ---------------------------------------------------------------------------
-# Pure functions
-# ---------------------------------------------------------------------------
-
-_TAG = re.compile(r"<[^>]+>")
-
-
-def normalize_title(title):
-    """Casefold, strip markup and accents, keep letters and digits."""
-    if not isinstance(title, str) or not title:
-        return ""
-    t = html.unescape(_TAG.sub("", title))
-    t = unicodedata.normalize("NFKD", t)
-    t = "".join(c for c in t if not unicodedata.combining(c)).casefold()
-    t = re.sub(r"[^\w\s]|_", " ", t)
-    return re.sub(r"\s+", " ", t).strip()
-
-
-def surname_key(name):
-    """Last token of a surname, from 'Given Family', 'Family, Given' or 'Family'."""
-    if not isinstance(name, str) or not name.strip():
-        return ""
-    if "," in name:
-        name = name.split(",", 1)[0]
-    tokens = normalize_title(name).split()
-    return tokens[-1] if tokens else ""
-
-
-_CLASSES = [
-    ("front-back-matter", r"^(front|back) matter|^issue information|^editorial board"
-                          r"|^masthead|^table of contents|^contents|^cover|^index\b"
-                          r"|^subscription|^instructions? (to|for) authors|^announcement"),
-    ("book-review", r"^books? (reviews?|received)|^review of\b|^book notes?"),
-    ("erratum", r"^(erratum|errata|corrigend|correction|retraction|expression of concern)"),
-    ("editorial", r"^editorial\b|^editors?'? (note|introduction)|^introduction to the (special )?issue"
-                  r"|^foreword|^preface"),
-    ("society-report", r"^report of the\b|^minutes of\b|^annual report|^program of\b"
-                       r"|^papers and proceedings\b|^list of members|^in memoriam|^obituary"),
-]
-
-
-def classify_item(title):
-    """Type a TOC item from its title; the type is recorded, never used to drop."""
-    t = normalize_title(title)
-    if not t:
-        return "untitled"
-    for label, pat in _CLASSES:
-        if re.search(pat, t):
-            return label
-    return "article"
-
-
-def _date_year(item, *keys):
-    for k in keys:
-        parts = (item.get(k) or {}).get("date-parts") or [[None]]
-        if parts and parts[0] and parts[0][0]:
-            return int(parts[0][0]), "-".join(str(p) for p in parts[0])
-    return None, ""
-
-
-def crossref_record(item, journal_key, issn):
-    """Flatten one Crossref work into a TOC record."""
-    authors = item.get("author") or []
-    names = []
-    for a in authors:
-        fam, giv = a.get("family") or a.get("name") or "", a.get("given") or ""
-        names.append(f"{fam}, {giv}".strip(", ") if giv else fam)
-    volume = (item.get("volume") or "").strip()
-    online_first = not volume
-    if online_first:
-        year, date = _date_year(item, "published-online", "issued")
-    else:
-        year, date = _date_year(item, "published-print", "issued", "published-online")
-    title = " ".join(item.get("title") or [])
-    return {
-        "journal_key": journal_key, "issn": issn,
-        "journal": " ".join(item.get("container-title") or []),
-        "doi": normalize_doi(item.get("DOI") or ""),
-        "title": title, "item_class": classify_item(title),
-        "crossref_type": item.get("type") or "",
-        "authors": "; ".join(names),
-        "first_author_surname": surname_key(names[0]) if names else "",
-        "year": year, "pub_date": date,
-        "volume": volume, "issue": "" if online_first else (item.get("issue") or "").strip(),
-        "online_first": online_first,
-        "abstract": re.sub(r"\s+", " ", _TAG.sub(" ", item.get("abstract") or "")).strip()[:3000],
-        "openalex_id": "",
-    }
-
-
-def openalex_record(work, journal_key):
-    biblio = work.get("biblio") or {}
-    names = [(a.get("author") or {}).get("display_name") or ""
-             for a in work.get("authorships") or []]
-    title = work.get("display_name") or ""
-    return {
-        "journal_key": journal_key,
-        "openalex_id": (work.get("id") or "").rsplit("/", 1)[-1],
-        "doi": normalize_doi(work.get("doi") or ""),
-        "title": title, "item_class": classify_item(title),
-        "openalex_type": work.get("type") or "",
-        "authors": "; ".join(names),
-        "first_author_surname": surname_key(names[0]) if names else "",
-        "year": work.get("publication_year"), "pub_date": work.get("publication_date") or "",
-        "volume": biblio.get("volume") or "", "issue": biblio.get("issue") or "",
-        "abstract": (reconstruct_abstract(work.get("abstract_inverted_index")) or "")[:3000],
-    }
-
-
-def issue_key(rec):
-    """(journal, year, volume, issue); online-first items group by year."""
-    if rec["online_first"]:
-        return (rec["journal_key"], rec["year"], "", "online-first")
-    return (rec["journal_key"], rec["year"], rec["volume"], rec["issue"])
-
-
-def _year(value):
-    try:
-        return int(float(value))
-    except (TypeError, ValueError):
-        return None
-
-
-class PoolIndex:
-    """Match keys of the pool: DOI, OpenAlex id, title+surname, title (no author)."""
-
-    def __init__(self, rows):
-        self.dois, self.ids = set(), set()
-        self.title_author = collections.defaultdict(set)
-        self.title_noauthor = collections.defaultdict(set)
-        for r in rows:
-            if r.get("doi"):
-                self.dois.add(normalize_doi(r["doi"]))
-            if r.get("openalex_id"):
-                self.ids.add(r["openalex_id"])
-            t, y = normalize_title(r.get("title")), _year(r.get("year"))
-            if not t:
-                continue
-            s = surname_key(r.get("first_author"))
-            if s:
-                self.title_author[(t, s)].add(y)
-            else:
-                self.title_noauthor[t].add(y)
-        self.size = len(rows)
-
-    @staticmethod
-    def _near(years, y):
-        return y is not None and any(v is not None and abs(v - y) <= 1 for v in years)
-
-    def match(self, rec):
-        """How the record is found in the pool: a method name, or '' if absent."""
-        if rec.get("doi") and normalize_doi(rec["doi"]) in self.dois:
-            return "doi"
-        if rec.get("openalex_id") and rec["openalex_id"] in self.ids:
-            return "openalex_id"
-        t, y = normalize_title(rec.get("title")), _year(rec.get("year"))
-        if not t:
-            return ""
-        s = rec.get("first_author_surname") or ""
-        if s and self._near(self.title_author.get((t, s), ()), y):
-            return "title_author_year"
-        if self._near(self.title_noauthor.get(t, ()), y):
-            return "title_year_noauthor"
-        return ""
-
-
-def build_register(records, checks):
-    """One row per journal/year/volume/issue.
-
-    ``checks`` maps (journal, year, volume, issue) to the publisher check. Only a
-    ``verified`` issue counts its items as scanned.
-    """
-    groups = collections.OrderedDict()
-    for rec in sorted(records, key=lambda r: (r["journal_key"], r["year"] or 0,
-                                              str(r["volume"]), str(r["issue"]))):
-        groups.setdefault(issue_key(rec), []).append(rec)
-    rows = []
-    for key, recs in groups.items():
-        chk = checks.get(key) or {"status": "not-checked", "reason": "",
-                                  "toc_source": "crossref", "publisher_n": "",
-                                  "publisher_only": ""}
-        n_pool = sum(1 for r in recs if r["in_pool"])
-        rows.append({
-            "journal_key": key[0], "year": key[1], "volume": key[2], "issue": key[3],
-            "expected": len(recs),
-            "scanned": len(recs) if chk["status"] == "verified" else 0,
-            "in_pool": n_pool, "candidates": len(recs) - n_pool,
-            "candidate_articles": sum(1 for r in recs if not r["in_pool"]
-                                      and r.get("item_class", "article") == "article"),
-            "status": chk["status"], "reason": chk["reason"],
-            "toc_source": chk["toc_source"], "publisher_n": chk["publisher_n"],
-            "publisher_only": chk["publisher_only"],
-        })
-    return rows
 
 
 # ---------------------------------------------------------------------------
@@ -438,16 +251,22 @@ def aea_check(journal, records, run_dir, delay=1.0):
     raw_dir = os.path.join(run_dir, f"publisher_{journal['journal_key']}")
     os.makedirs(raw_dir, exist_ok=True)
     for iid, _label, vol, no in issues:
-        resp = _get(session, f"https://www.aeaweb.org/issues/{iid}",
-                    headers={"User-Agent": BROWSER_UA})
-        calls += 1
-        time.sleep(delay)
-        if resp is None or resp.status_code != 200:
-            listed[(vol, no)] = (None, f"http {getattr(resp, 'status_code', 'none')}")
-            continue
-        with gzip.open(os.path.join(raw_dir, f"{iid}.html.gz"), "wt", encoding="utf-8") as fh:
-            fh.write(resp.text)
-        dois = {normalize_doi(d) for d in re.findall(r"/articles\?id=(10\.[^\"'&]+)", resp.text)}
+        cached = os.path.join(raw_dir, f"{iid}.html.gz")
+        if os.path.exists(cached):  # a rerun re-reads the saved page
+            with gzip.open(cached, "rt", encoding="utf-8") as fh:
+                text = fh.read()
+        else:
+            resp = _get(session, f"https://www.aeaweb.org/issues/{iid}",
+                        headers={"User-Agent": BROWSER_UA})
+            calls += 1
+            time.sleep(delay)
+            if resp is None or resp.status_code != 200:
+                listed[(vol, no)] = (None, f"http {getattr(resp, 'status_code', 'none')}")
+                continue
+            text = resp.text
+            with gzip.open(cached, "wt", encoding="utf-8") as fh:
+                fh.write(text)
+        dois = {normalize_doi(d) for d in re.findall(r"/articles\?id=(10\.[^\"'&]+)", text)}
         listed[(vol, no)] = (dois, "" if dois else "issue page lists no DOI")
     for r in records:
         key = issue_key(r)
@@ -548,66 +367,78 @@ def _read_jsonl(path):
         return [json.loads(line) for line in fh]
 
 
-def match_journal(journal, run_dir, pool, retrieved_at):
+def journal_toc(journal, run_dir):
+    """Merged Crossref + OpenAlex TOC records of one journal from its run files."""
     key = journal["journal_key"]
     issn = journal["pissn"] or journal["eissn"]
     cr = [crossref_record(it, key, issn) for it in
           _read_jsonl(os.path.join(run_dir, f"crossref_{key}.jsonl.gz"))]
     oa = [openalex_record(w, key) for w in
           _read_jsonl(os.path.join(run_dir, f"openalex_{key}.jsonl.gz"))]
-    oa_by_doi = {r["doi"]: r for r in oa if r["doi"]}
-    for r in cr:
-        o = oa_by_doi.get(r["doi"])
-        r["openalex_id"] = o["openalex_id"] if o else ""
-        r["in_openalex"] = bool(o)
-        if o and not r["abstract"]:
-            r["abstract"] = o["abstract"]
+    merged = merge_toc(cr, oa)
+    recs = [r for r in merged if in_window(r)]
+    for r in recs:
+        r["issn"], r["journal"] = issn, r["journal"] or journal["title"]
+    out_of_window = [r for r in merged if not in_window(r)]
+    return recs, oa, out_of_window
+
+
+def match_journal(journal, run_dir, pool, retrieved_at):
+    key = journal["journal_key"]
+    issn = journal["pissn"] or journal["eissn"]
+    recs, oa, out_of_window = journal_toc(journal, run_dir)
+    for r in recs:
         r["in_pool"] = pool.match(r)
-    cr_dois = {r["doi"] for r in cr}
-    oa_only = [o for o in oa if not o["doi"] or o["doi"] not in cr_dois]
-    for o in oa_only:
-        o["in_pool"] = pool.match(o)
     checks_path = os.path.join(run_dir, f"checks_{key}.json")
     checks = {}
     if os.path.exists(checks_path):
         with open(checks_path, encoding="utf-8") as fh:
             checks = {tuple(json.loads(k)): v for k, v in json.load(fh).items()}
-    register = build_register(cr, checks)
-    endpoint = f"{CR_API}/journals/{issn}/works?filter=from-pub-date:{FROM_DATE},until-pub-date:{UNTIL_DATE}"
+    register = build_register(recs, checks)
+    endpoints = {
+        "crossref": f"{CR_API}/journals/{issn}/works?filter=from-pub-date:{FROM_DATE},"
+                    f"until-pub-date:{UNTIL_DATE}",
+        "openalex-only": f"{OA_API}/works?filter=primary_location.source.id (ISSN {issn}),"
+                         f"from_publication_date:{FROM_DATE},to_publication_date:{UNTIL_DATE}",
+    }
     candidates = [{**{f: r.get(f, "") for f in CANDIDATE_FIELDS},
-                   "toc_source": "crossref", "endpoint": endpoint,
-                   "retrieved_at": retrieved_at} for r in cr if not r["in_pool"]]
-    for o in oa_only:
-        if o["in_pool"]:
-            continue
-        candidates.append({**{f: o.get(f, "") for f in CANDIDATE_FIELDS}, "issn": issn,
-                           "journal": journal["title"], "crossref_type": "",
-                           "online_first": not o["volume"], "toc_source": "openalex-only",
-                           "endpoint": f"{OA_API}/works primary_location.source.id",
-                           "retrieved_at": retrieved_at, "in_openalex": True})
+                   "endpoint": endpoints[r["toc_source"]], "retrieved_at": retrieved_at}
+                  for r in recs if not r["in_pool"]]
+    cr = [r for r in recs if r["toc_source"] == "crossref"]
+    only = [r for r in recs if r["toc_source"] == "openalex-only"]
+    absent = [r for r in recs if not r["in_pool"]]
     summary = {
         "journal": key,
+        "toc_items": len(recs),
         "crossref_items": len(cr),
         "crossref_by_class": dict(collections.Counter(r["item_class"] for r in cr)),
         "crossref_by_type": dict(collections.Counter(r["crossref_type"] for r in cr)),
         "crossref_online_first": sum(r["online_first"] for r in cr),
-        "crossref_issues": sum(1 for g in register if g["issue"] != "online-first"),
+        "crossref_first_year": min((r["year"] for r in cr if r["year"]), default=None),
         "openalex_items": len(oa),
         "openalex_by_type": dict(collections.Counter(o["openalex_type"] for o in oa)),
         "openalex_no_doi": sum(1 for o in oa if not o["doi"]),
         "crossref_not_in_openalex": sum(1 for r in cr if not r["in_openalex"]),
-        "openalex_not_in_crossref": len(oa_only),
-        "openalex_not_in_crossref_with_doi": sum(1 for o in oa_only if o["doi"]),
-        "in_pool": sum(1 for r in cr if r["in_pool"]),
-        "in_pool_by_method": dict(collections.Counter(r["in_pool"] for r in cr if r["in_pool"])),
-        "absent": sum(1 for r in cr if not r["in_pool"]),
-        "absent_articles": sum(1 for r in cr if not r["in_pool"] and r["item_class"] == "article"),
-        "openalex_only_absent": sum(1 for o in oa_only if not o["in_pool"]),
+        "crossref_with_openalex_alias_doi": sum(1 for r in cr if r["alias_dois"]),
+        "openalex_only": len(only),
+        "openalex_only_with_doi": sum(1 for r in only if r["doi"]),
+        "openalex_only_by_type": dict(collections.Counter(r["openalex_type"] for r in only)),
+        "openalex_only_year_source": dict(collections.Counter(r["year_source"] for r in only)),
+        "openalex_redated_out_of_window": len(out_of_window),
+        "openalex_only_years": dict(sorted(collections.Counter(r["year"] for r in only).items(),
+                                           key=lambda kv: kv[0] or 0)),
+        "issues": sum(1 for g in register if g["issue"] != "online-first"),
+        "online_first_items": sum(1 for r in recs if r["online_first"]),
+        "in_pool": len(recs) - len(absent),
+        "in_pool_by_method": dict(collections.Counter(r["in_pool"] for r in recs if r["in_pool"])),
+        "absent": len(absent),
+        "absent_by_class": dict(collections.Counter(r["item_class"] for r in absent)),
+        "absent_by_source": dict(collections.Counter(r["toc_source"] for r in absent)),
         "issues_by_status": dict(collections.Counter(g["status"] for g in register)),
+        "items_scanned": sum(g["scanned"] for g in register),
         "needs_human_reasons": dict(collections.Counter(
-            g["reason"].split(":")[0] for g in register if g["status"] == "needs-human")),
-        "by_year": {y: sum(1 for r in cr if r["year"] == y)
-                    for y in sorted({r["year"] for r in cr if r["year"]})},
+            g["reason"].split(":")[0].split("(")[0].strip()
+            for g in register if g["status"] == "needs-human")),
     }
     return register, candidates, summary
 
@@ -644,8 +475,7 @@ def main(argv=None):
             steps.write(**openalex_sweep(j, args.run_dir, key, mailto, args.max_usd))
     elif args.step == "publisher":
         for j in journals:
-            recs = [crossref_record(it, j["journal_key"], j["pissn"] or j["eissn"]) for it in
-                    _read_jsonl(os.path.join(args.run_dir, f"crossref_{j['journal_key']}.jsonl.gz"))]
+            recs, _, _ = journal_toc(j, args.run_dir)
             if j["publisher_method"] == "aea":
                 checks, info = aea_check(j, recs, args.run_dir)
             else:
