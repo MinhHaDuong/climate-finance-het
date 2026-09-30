@@ -21,6 +21,8 @@ import sys
 from collections import Counter
 from datetime import date
 
+from _rel_pool_keys import url_is_key
+
 RECORD_COLUMNS = [
     "record_id", "query_id", "platform", "retrieved_at", "title",
     "platform_record_id", "doi", "openalex_id", "title_original",
@@ -42,37 +44,12 @@ COVERAGE_VALUES = {"complete", "incomplete"}
 
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}([T ][0-9:.]+(Z|[+-]\d{2}:?\d{2})?)?$")
 DOI = re.compile(r"^10\.\d{4,9}/\S+$")
-HTTP_URL = re.compile(r"^https?://[^/\s]+\S*$", re.IGNORECASE)
 OPENALEX_ID = re.compile(r"^W\d+$")
 YEAR = re.compile(r"^\d{4}$")
 LANE = re.compile(r"^t\d{4}-[a-z0-9][a-z0-9-]*$")
 DELIVERY = re.compile(r"^\d{4}-\d{2}-\d{2}[a-z]?$")
 
 FILES = ["records.csv", "registry.csv", "excluded.csv", "manifest.json"]
-
-# Resolver hosts: the pool reads such a URL as the DOI or OpenAlex id it names,
-# never as a URL key (corpus_rel_pool.ids_from_url shares these definitions).
-URL_PARTS = re.compile(r"^(https?)://([^/?#\s]+)(\S*)$", re.IGNORECASE)
-DOI_RESOLVERS = {"doi.org", "dx.doi.org", "www.doi.org"}
-OPENALEX_HOSTS = {"openalex.org", "api.openalex.org"}
-
-
-def resolver_url_names_nothing(url):
-    """True for a DOI or OpenAlex resolver URL that names no DOI / work id.
-
-    Such a URL yields no deduplication key in the pool: ``https://doi.org/``
-    has no DOI, ``https://openalex.org/authors/A1`` no work id.
-    """
-    m = URL_PARTS.match(str(url or "").strip())
-    if not m:
-        return False
-    host, path = m.group(2).lower(), m.group(3)
-    if host in DOI_RESOLVERS:
-        return not path.strip("/")
-    if host in OPENALEX_HOSTS:
-        return not OPENALEX_ID.match(path.rsplit("/", 1)[-1].upper())
-    return False
-
 
 def _read_csv(path, errors):
     """Return (header, rows); on a decode error, record it and return (None, [])."""
@@ -130,14 +107,12 @@ def check_records(header, rows, query_ids):
         if r["year"] and not YEAR.match(r["year"]):
             errors.append(f"{where}: year {r['year']!r} is not four digits")
         url = (r.get("url") or "").strip()
-        has_key = r["doi"] or r["openalex_id"] or r["year"]
-        if not has_key and not HTTP_URL.match(url):
-            errors.append(f"{where}: needs at least one of doi, openalex_id, year, or an "
-                          f"http(s) url (got url {url!r})" if url else
-                          f"{where}: needs at least one of doi, openalex_id, year, url")
-        elif not has_key and resolver_url_names_nothing(url):
-            errors.append(f"{where}: url {url!r} is a resolver URL with no DOI or OpenAlex "
-                          f"id, so it is no dedup key; give doi, openalex_id or year")
+        if not (r["doi"] or r["openalex_id"] or r["year"] or url_is_key(url)):
+            errors.append(
+                f"{where}: needs at least one of doi, openalex_id, year, or a persistent "
+                f"url (Handle, DOI or OpenAlex work URL); got url {url!r}; a titled "
+                f"record with none of them goes to excluded.csv as no_dedup_key" if url else
+                f"{where}: needs at least one of doi, openalex_id, year, url")
     return errors
 
 
