@@ -75,24 +75,19 @@ him, with the panel's stance. [M2]
   another session's branch. Runs use a worktree (populated with
   `make jetp-data`, a local copy from the DVC cache with no network), or
   from M4 the persistent checkout. [M2]
-- **Non-interactive shells.** `uv` is at `~/.local/bin/uv` and is not on the
-  non-interactive PATH. A command sent over SSH prepends it:
-  `ssh padme 'cd ~/CNRS/projets/actifs/climate-finance-het/<worktree> && PATH=$HOME/.local/bin:$PATH make <target>'`.
-  A run that fails with "uv: command not found" has not started and is
+- **Non-interactive shells.** A command sent to padme over SSH does not get
+  the interactive environment, so it sets the tool path itself (section 15).
+  A run that fails because a tool is not found has not started and is
   reported as not started, not as failed. [M2]
 - **Long runs survive the session.** padme has no systemd user linger, so a
   user timer or `systemd-run --user` unit dies when the last session closes.
   A run expected to outlast the launching session runs inside a named
   `tmux` session on padme (one per run, named after the run identifier) and
   writes its progress to its report as it goes. [M2]
-- **The local LLM is a shared service.** `llama-server.service`
-  (llama.cpp, system unit) serves Qwen3.8-27B, quantised Q4_K_M, with a
-  context of 131,072 tokens on `127.0.0.1:8080`, all layers on the two GPUs.
-  Other projects use it. A run never restarts or reconfigures the unit;
-  more parallel slots, tool-calling flags or another LLM require the
-  author's agreement first. Requests send
-  `"chat_template_kwargs": {"enable_thinking": false}`, without which the
-  LLM spends its output on reasoning and returns nothing parsable. [M2]
+- **The local LLM is a shared service.** padme serves its local models
+  through a system service that other projects use (section 15). A run
+  never restarts or reconfigures it; more parallel slots, tool-calling
+  flags or another LLM require the author's agreement first. [M2]
 
 ## 3. Data flow
 
@@ -189,7 +184,7 @@ Dolt option]
   author, from `main`, after a release is accepted).
 - Pass a site's human check, use a login the public cannot freely obtain, or
   fetch past a paywall (requirement C6).
-- Restart or reconfigure the shared `llama-server.service`.
+- Restart or reconfigure the shared local LLM service (section 15).
 - Run `dvc gc`, push DVC from doudou, force-push, or rewrite published
   history.
 - Read, print, copy or commit a credential value (section 6).
@@ -269,6 +264,18 @@ makers. [M2]
 A document longer than a reader's context is split into parts with their
 own scope, as extraction § 6.3 provides; the largest held PDF has a text
 layer of about 950,000 characters, beyond a local reader's context. [M2]
+
+**What reaches a hosted model.** A document whose recorded terms forbid
+third-party processing by an explicit reservation is marked for local
+reading only (the target column `documents.hosted_reading` of the storage
+contract): it is never sent to OpenRouter, and what its local readers leave
+open ends undetermined (extraction § 6.3). Every hosted call asks the
+provider not to collect or retain the input (OpenRouter's data-collection
+and zero-retention settings), goes only to an endpoint that honours them,
+and fails closed when none does; the run records the settings and the
+endpoint that served each call. The legal position on hosted calls, and the
+agreements it may need, are the [legal note](jetp-legal-note.md)'s section
+4, settled at the legal review before go-live. [M2]
 
 **Every call is recorded.** Each LLM call records the run, the LLM
 identifier, the prompt version, the sampling settings where the service
@@ -455,6 +462,15 @@ milestone the author or an agent restores the document store into an empty
 worktree on padme from the machine backup and runs the replay; it must
 pass. [M2 once; M4 per release]
 
+**Handover note.** Before the first release identifier is minted, a note in
+the repository states where each credential lives (by provider, never the
+value), who owns the repository, the release deposits and the Observatory's
+domain, and the restore steps of this section, so that the cited releases
+stay retrievable and a withdrawal can be carried out when the author cannot
+act. It is reread at each release. [M3b]
+
+<!-- batch-2 X-24: pending author decision -->
+
 ## 10. Failure handling
 
 **Run states.** A run ends `complete` (everything in its scope done or
@@ -524,6 +540,17 @@ earlier.
   single document-write function; at M4 the document store behind it moves
   to a Zotero group library, the pipeline reading a committed export, never
   live Zotero. The Zotero copy of section 9 then becomes the store.
+- **Drift register.** A register of what moves under the Observer between
+  releases, reviewed at each release: sources (addresses, formats, a site
+  that stopped publishing), publishers' schemas and field lists, the models
+  behind each role and their prices, sites' terms and robots rules, and the
+  ontology's terms. Each entry names what it affects and the rule or
+  method version that answers it.
+- **Adaptive cadence.** A living document is refetched at an interval set
+  from its observed rate of change, within the weekly maximum of
+  requirement N6: a page unchanged over several fetches is fetched less
+  often, one that changed is fetched sooner, so restatements do not
+  multiply with no change behind them.
 - **Recalibration.** Before a scheduled pass whose models or prompts
   changed, the readers and the arbiter are scored again on the held-out
   reference answers; the budgets of section 7 are revised on the measured
@@ -575,7 +602,7 @@ Each has a default, applied unless the author decides otherwise.
 | A candidate reader fails its positive controls during selection on OpenRouter. | It is weighted out and never installed on padme. |
 | A run is killed midway by a power cut. | The report, written as the run goes, has no final state and is treated as failed; the rerun takes the pending list, and nothing already admitted is renumbered. |
 | An extraction run completes over half the countries of a release's scope. | No release and no Observatory publication are built until every run in the scope is complete. |
-| An agent needs more parallel slots from the local LLM. | It asks the author; it does not restart `llama-server.service`. |
+| An agent needs more parallel slots from the local LLM. | It asks the author; it does not restart the shared service. |
 | The Anthropic key is missing on padme. | The run stops before its first paid call and reports the missing provider; it does not fall back to another vendor. |
 | A run report is about to include a request header with an API key. | The report names the provider and the LLM only; the key never appears. A key found in a tracked file is revoked first, then removed. |
 | An agent's branch adds 12 new document objects. | They are tracked and pushed to DVC from padme only after the branch's review passes, and uploaded one way to the Zotero group with their SHA-256. |
@@ -585,3 +612,21 @@ Each has a default, applied unless the author decides otherwise.
 | The author, browsing results sorted by confidence, overturns 3 of 80 low-confidence items. | Each decision is recorded as a judgement of the role author, beside the readers' and the arbiter's answers, superseding the earlier judgement with his reason; no run waited for him. |
 | An agent proposes to publish the Observatory after merging a run. | It does not: publication is the author's act, from `main`, after the release is accepted. |
 | At M2, someone proposes a weekly cron job for discovery. | Declined as M4; M2 and M3 runs are launched by hand. |
+
+## 15. Runbook: facts of the current machines
+
+The facts below describe padme and doudou as they are today. They are not
+rules: they change without a change of the specification, and the rules of
+sections 2 and 3 name only the roles they fill.
+
+- **Tool path.** `uv` is at `~/.local/bin/uv`, not on the non-interactive
+  PATH. A command sent over SSH prepends it:
+  `ssh padme 'cd ~/CNRS/projets/actifs/climate-finance-het/<worktree> && PATH=$HOME/.local/bin:$PATH make <target>'`.
+  "uv: command not found" means the run has not started.
+- **Local LLM service.** `llama-server.service` (llama.cpp, system unit)
+  serves Qwen3.8-27B, quantised Q4_K_M, with a context of 131,072 tokens on
+  `127.0.0.1:8080`, all layers on the two GPUs, until the two selected
+  readers of section 5 replace it. Requests send
+  `"chat_template_kwargs": {"enable_thinking": false}`, without which the
+  model spends its output on reasoning and returns nothing parsable; an
+  empty answer is checked for this setting first (section 10).

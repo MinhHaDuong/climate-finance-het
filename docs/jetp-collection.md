@@ -52,7 +52,9 @@ access route records the free registration used, never its credentials
 (requirements C6). Collection never circumvents a technical measure that a
 member of the public could not pass. A site's stated position on automated access (its terms of use,
 its crawler rules) is recorded with the attempts made there, and any change in
-it is reported, never passed over. The legal basis for holding the copies
+it is reported, never passed over. Terms that forbid third-party processing
+by an explicit reservation keep the document's reading local
+([operation](jetp-operation.md) section 5). The legal basis for holding the copies
 (the research text-and-data-mining exception, CPI art. L122-5-3 II and R122-23,
 conditional on the Observer being recorded as a CNRS research activity) and the
 lawful-access record are stated in the [legal note](jetp-legal-note.md) §1. [M3a]
@@ -395,6 +397,19 @@ claim's outcome in the secondary-to-primary pass, a duplicate. [M3a]
 
 A triage outcome is defeasible like any judgement: a rejected candidate can be
 admitted later by a judgement that says why. [M3a]
+
+**Material later found closed.** A held document later found not to have
+been public when it was retrieved (leaked, confidential, reached through
+access the public could not obtain) was admitted in error. Its admission
+is superseded by a rejection with the reason, its statements and every row
+that cites them are superseded, and its bytes are removed from the document
+store, from its off-site copies and from every release not yet published;
+its register row, retrievals, hash and the reason stay, so the removal is
+itself on record. A published release that carried its content is withdrawn
+and corrected ([results](jetp-results.md) section 9). Two limits are
+stated, not hidden: verbatim fields already committed stay in the
+repository's history, and machine backups age out on their own schedule.
+[M3a; M2 for the documents held]
 
 ## 10. Document classes
 

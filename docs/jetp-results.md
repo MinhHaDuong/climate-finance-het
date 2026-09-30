@@ -252,9 +252,12 @@ published, that every result carries section 2 in full, that every trail
 resolves, that every file listed exists with its hash, and that the
 redistribution list excludes every document whose terms forbid it. A failed
 check stops the build and publishes nothing. The validation also screens the
-release's text for email addresses and telephone numbers and lists every hit
-for the author, who removes a natural person's contact details before
-acceptance; the screen reports, it does not block. *M3b* (Q6, Q8, C6, N2).
+release's text for email addresses and telephone numbers, and the speaker
+and verbatim fields of prose statements for the names of natural persons
+other than signatories printed as such, and lists every hit for the author,
+who removes a natural person's contact details, or a name recorded where the
+office should be (extraction § 4), before acceptance; the screen reports, it
+does not block. *M3b* (Q6, Q8, C6, N2).
 
 **A reviewed act.** No program publishes a release on its own. A named
 reviewer accepts the validated package; acceptance is recorded in the
@@ -402,7 +405,10 @@ ledger ([operation](jetp-operation.md) § 4). A report ends in one of three
 outcomes: a ledger error accepted and corrected; rejected, with the reason;
 or reported, awaiting a public source, when only a publisher's revision not
 yet public would settle it (N13, F27). A table of reports may be derived
-from the tickets at M4. *M3b* for tracing, *M4* for publishing the counts
+from the tickets at M4. A request to remove personal data or content (a
+takedown) is a report like any other: when granted, the ledger rows are
+superseded with the reason and released content is withdrawn as above,
+followed by a correction release. *M3b* for tracing, *M4* for publishing the counts
 and a derived table (F25).
 
 **Restoration after a failed publication.** When a publication fails midway,

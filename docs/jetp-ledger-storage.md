@@ -123,6 +123,7 @@ a target: the Milestone column is when the DDL must carry it.
 | `sector-crosswalk` | gains `mapping_relation`, as for `status-crosswalk` | ontology section 5, traceability | M3b |
 | `retrievals` | gains `terms_position` (open licence, public-sector reuse, rights reserved, unknown), `robots_position` (the site's robots rules for the path fetched: allowed, excluded, none published) and `registration_used` (the name of the free public registration used, never a credential); the validator requires them non-empty from M3a | requirements F27 and C6; results section 7 | M2 for the columns; M3a for the check |
 | `documents` | gains `access_route_kind` (address, archive record, registration) and `registration` (the free public registration a registration route needs, named, never a credential); the validator requires a route kind on every document from M3a | requirement F27 | M2 for the columns; M3a for the check |
+| `documents` | gains `hosted_reading` (`allowed`, `local_only`): `local_only` when the recorded terms forbid third-party processing by an explicit reservation; a `local_only` document is never sent to a hosted model | operation section 5; extraction section 6.3 | M2 |
 | `document-addresses` | new table: a document's recorded addresses, each with the date from which it holds, so a relocation is a new address of the same document | relocation rule (below) | M4 |
 | `lines` | gains `run_id`, `method` and `method_version`: the run that admitted the line and the method version that extracted it | extraction section 3, method and version; requirement Q4 | M2 |
 | `observations` | gains `run_id` beside `method` and `method_version` | extraction section 11; requirement Q4 | M3b |
@@ -160,7 +161,8 @@ under the in-force rule below. [M2]
   (operation section 10). It is the structured twin of the run report
   (operation section 8): run identifier, job, commit of the code, machine,
   start and end times, final state, method and method version, prompt hash,
-  LLM and routed provider, sampling settings, adapter version, spend per
+  LLM and routed provider with the endpoint and the data-collection and
+  retention settings of its hosted calls, sampling settings, adapter version, spend per
   vendor, GPU time and the paths of the run report and of the raw responses
   it stored. Every `run_id` of another table names a row here.
 

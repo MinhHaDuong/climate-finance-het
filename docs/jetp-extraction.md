@@ -291,6 +291,12 @@ resolves against the stored bytes through that named adapter version. The
 adapter is pinned by exact version with the pipeline's other dependencies.
 [M2]
 
+**Adapters in a closed room.** Parsing is the one step that handles hostile
+bytes before anything has read them. Adapters and renderers run without
+network access and without the credentials of the pipeline, and never
+execute macros, scripts, embedded objects or form actions, nor follow
+external links or references. [M2]
+
 **Retained layers.** A locator resolves only against the text layer of one
 adapter version, and an adapter version may become unavailable, so the text
 layer of every snapshot with admitted statements is retained beside its
@@ -426,6 +432,11 @@ record, and no item waits for the author.
 - **Untrusted input.** Documents are written by interested parties. LLM
   readers and the arbiter are called without tools, network or file access,
   and receive the text layer as quoted data, never as instructions. [M2]
+- **Local reading only.** A document whose recorded terms forbid
+  third-party processing by an explicit reservation is read by local
+  readers only and never sent to a hosted model; an item its readers leave
+  open ends undetermined instead of going to the arbiter
+  ([operation](jetp-operation.md) section 5). [M2]
 - **Two readers.** Each reader is given the document's text layer, the
   declared scope and the field list that the method version fixes for the
   document's class or series (a reader never proposes one), and, blind to
@@ -804,7 +815,13 @@ not used on held documents until its checks pass. [M2 for all]
   is deleted and whose adapter version is unavailable fails loudly; it
   never reports the statements as unresolvable in silence.
 - **The adapters** turn a corrupt or empty object into a disposition, not a
-  crash.
+  crash. A fixture carrying a macro, an embedded script and an external link
+  is parsed with no network request and nothing executed.
+- **Hidden text.** An HTML fixture with text under the `hidden` attribute
+  and an inline `display:none` yields statements marked as hidden. White
+  text on a white ground, overlaid objects, annotations and a text layer
+  that disagrees with the rendered page are fixtures of the finer detection
+  of section 5, at M4.
 - **Ingestion runs** fail on a snapshot whose records read differ in number
   from the count the service or file states (section 6.2).
 - **The pending list** lists a snapshot with neither statements nor a

@@ -995,7 +995,8 @@ maintained through 2030, an extension decision in 2028, and an archived
 final release at the end, after which every release cited by a product stays
 retrievable. *M4.* Test: Operation and Results and releases state the end
 date, the date of the extension decision, and how the final release is
-archived; a release identifier cited in a paper resolves after the end.
+archived; a release identifier cited in a paper resolves after the end;
+the handover note of Operation § 9 exists before the first release.
 
 ## 8. Non-requirements
 
@@ -1062,7 +1063,9 @@ Observer, whoever offers it: no content behind a paid subscription, no
 invitation-only or institution-only access, no leaked or confidential
 document, no non-public dataset, no private communication. A site behind a
 free public registration is not closed (F27). Such material, where known to
-exist, may be listed as unreachable (DA9); it is never read.
+exist, may be listed as unreachable (DA9); it is never read. Material
+admitted in error and later found closed is removed as Collection § 9
+states.
 
 ## 9. Requirements and the documents expected to meet them
 
