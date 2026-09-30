@@ -1,7 +1,5 @@
 # JETP Observer: results and releases
 
-Status: draft for review, 2026-09-30.
-
 A **result** is what the JETP Observer computes from the ledger: a count, an
 account, a timeline, a gap between financial states, a descriptive table, a list of
 excerpts. In the ODEM frame of the [language](jetp-language.md) it is
@@ -122,12 +120,16 @@ sentence of the Observatory or of a paper is cited as the pair of the
 release identifier and the result's identifier. *M3b* (Q6).
 
 The kinds of result the M3b release must contain are those the requirements
-name: counts per country, state and scope (F13); accounts (fusion § 7);
+name: counts per country, state and scope (F13); accounts, the opening,
+movements, closing and residual of fusion § 7, which serve OBS-1 and F19;
 operation timelines (F16); the gaps between announced, signed, reported and
 disbursed amounts and the matching coverage rate to CRS and IATI (F19,
 fusion § 5); lists of excerpts for qualitative work (F21); and the
 coverage report (DP-3). Other results are added when a product needs them.
-<!-- wave-1 W1-70: pending author decision (accounts as an M3b result; Markers and deflators at M3b or M4) -->
+Accounts at M3b are in the publishers' currencies and current prices:
+deflators are deferred. The Markers account and its coefficients
+(fusion § 7) are M4, unless the comparison of F19 uses CRS climate-marked
+amounts, in which case they are M3b.
 
 ## 3. Two match thresholds
 
@@ -138,8 +140,12 @@ match thresholds, both declared in advance:
 - a **cautious** threshold, counting only what the judgements support strongly
   (default: likely or more, medium confidence or more);
 - an **inclusive** threshold, counting also what they support weakly (default:
-  about as likely as not or more, any confidence).
-<!-- wave-1 W1-30: pending author decision (confidence floor of the inclusive threshold) -->
+  about as likely as not or more, low confidence or more).
+
+Both are conjunctions of a likelihood of sameness and a confidence level
+(fusion § 3); an undetermined judgement counts at neither. The verbal terms
+carry meaning through their calibration (fusion § 1), which publishes the
+observed precision of each term with the method version.
 
 The result's range runs from the smaller to the larger of the two figures.
 Which threshold gives which end depends on the kind of result: accepting
@@ -228,7 +234,15 @@ no file of the package refers to the descriptor's hash. *M3b* (Q8, Q19).
 
 A branch name, a moving address or a pointer to the document store alone
 does not identify a release. *M3b* (Q8, F32).
-<!-- wave-1 W1-65: pending author decision (named formats for the descriptor, the data dictionary and the metadata record) -->
+
+**Named formats.** The descriptor is a Frictionless Data Package
+(`datapackage.json`), and the data dictionary is its Table Schema for each
+file; both are generated from the DDL. The metadata record is the DataCite
+record deposited through Zenodo, which relates the release chain and the
+code (IsNewVersionOf, IsPreviousVersionOf, IsSupplementTo). The persistent
+identifier is reserved before the build, so the descriptor can name it.
+RO-Crate, with W3C PROV for the run record, is recorded as the M4 option.
+*M3b* for the Data Package and DataCite; *M4* for RO-Crate (F29, F31).
 
 **Validation before publication.** The build checks, before anything is
 published, that every result carries section 2 in full, that every trail
@@ -268,8 +282,8 @@ whose metadata remains resolvable even if the data must be withdrawn. The
 release identifier and the persistent identifier are recorded in each
 other's metadata. *M3b* (F28).
 
-**Metadata.** The deposit carries a metadata record in a standard,
-harvestable schema, with at least: title, creator, version (the release
+**Metadata.** The deposit carries a metadata record in the DataCite schema,
+deposited through Zenodo (section 5, named formats), with at least: title, creator, version (the release
 identifier), countries, discovery cutoff, newest document date, knowledge
 cutoff, method versions, licence, the related persistent identifiers (the
 previous release, the superseded release, the code), the papers that cite
@@ -282,7 +296,7 @@ that produced it is under an open-source licence, stated likewise. *M3b*
 (F30, C5).
 
 **Open formats.** Tables are in open, plain-text formats readable with free
-software; every field is in the dictionary; country, currency, organisation,
+software; every field is in the dictionary (the Table Schema of section 5); country, currency, organisation,
 CRS and IATI codes follow their external standards or are marked as local.
 *M3b* (F31).
 
@@ -292,7 +306,15 @@ The Observer publishes what it made and cites what others made. The legal
 basis for each case (short quotation assessed per use, database right assessed
 per table and producer, public-sector re-use, per-publisher terms) and the
 export review at each release are stated in the [legal note](jetp-legal-note.md) §2 and §6.
-<!-- wave-1 W1-29: pending author decision (legal basis for holding and redistributing copies; terms and robots columns) -->
+The open licence of the release (CC BY) covers the Observer's own
+contributions; publisher text reproduced in the release (verbatim labels,
+excerpts, the per-document fields) is quoted data, reproduced under
+attribution to its publisher, and is not relicensed. The legal position is
+assessed under French law. Each retrieval records the site's terms
+position, robots position and the free registration used, and each
+document its access route kind (storage contract § 1, target schema), so
+that the redistribution list reads its cases from the ledger. *M2* for the
+columns; *M3b* for the redistribution list (C6, F27, F30).
 
 - **Redistributed**: the Observer's own tables, results, dictionary,
   provenance, reports and pages; the statements, including their verbatim
@@ -370,9 +392,15 @@ lists them. *M3b* (Q7, Q6).
 a reader is recorded and answered by an accepted or rejected judgement (fusion
 § 2). An accepted report that changes a released figure produces a
 correction release `YYYY-MM-rN`; otherwise it enters the next regular
-release. Either names the report. *M3b* for tracing, *M4* for publishing the
-counts (F25).
-<!-- wave-1 W1-37: pending author decision (where reports are received and recorded) -->
+release. Either names the report. Each reported error is one ticket, and
+the ticket number is the report identifier cited from the correction row;
+the reporter's identity stays in the ticket and no personal data enters the
+ledger ([operation](jetp-operation.md) § 4). A report ends in one of three
+outcomes: a ledger error accepted and corrected; rejected, with the reason;
+or reported, awaiting a public source, when only a publisher's revision not
+yet public would settle it (N13, F27). A table of reports may be derived
+from the tickets at M4. *M3b* for tracing, *M4* for publishing the counts
+and a derived table (F25).
 
 **Restoration after a failed publication.** When a publication fails midway,
 the last accepted complete release is served again, whole. A failed

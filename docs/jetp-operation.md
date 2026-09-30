@@ -1,7 +1,5 @@
 # JETP Observer: operation
 
-Status: draft for author review; budget amounts are proposed defaults awaiting the author's decision.
-
 This document says how the JETP Observer is run: on which machine each job
 runs, who launches and supervises it, how the repository governs what
 development agents may do, what each run may spend, where secrets live, what
@@ -145,11 +143,31 @@ author steers, arbitrates and accepts each milestone (requirements § 3.2).
   request before merge.
 - The ticket a change serves is closed in the same pull request.
 
-**Run outputs are changes like any other.** A run writes its products
-(statements, dispositions, candidates, retrievals, its report) on a branch
-and opens a pull request. Nothing a run produces reaches `main`, the ledger
-of record or the Observatory without that review. [M2]
-<!-- wave-1 W1-20: pending author decision (a lighter gate for run-output pull requests) -->
+**Run outputs have their own gate.** A run writes its products
+(statements, dispositions, candidates, retrievals, readings, its report) on
+a branch and opens one pull request per run. Nothing a run produces reaches
+`main`, the ledger of record or the Observatory without that review. A
+run-output pull request carries no code; its gate is lighter than a code
+change's and checks the run rather than its rows: [M2]
+
+- the validator over the ledger with the run's rows;
+- the planted-item and fabricated-locator controls of extraction § 12;
+- replay and idempotence over the run's snapshots;
+- the run report (section 8), which carries a table-aware summary: rows
+  added, superseded and rejected per table and per document.
+
+The cross-family reviewer (requirement Q19) reads the run report and a
+sample of traceability chains, each from a statement or judgement down to
+its readings, its locator and its snapshot, not every row; the row check is
+the readers' protocol of section 5. A pull request that changes code, rules
+or configuration keeps the full gate above.
+
+Ledger tables stay CSV in git. Bulky raw material, the full raw model
+responses and the text layers, is stored under DVC by its hash and named
+from the tables and the run report, never committed. If the volume of run
+output or its review outgrows git, Dolt (a SQL database versioned like git,
+with row-level differences) is the option recorded for M4. [M2; M4 for the
+Dolt option]
 
 **What agents may do.** [M2]
 
@@ -185,6 +203,15 @@ the contract means. No item of a run is routed to him; when he chooses to
 decide one, his decision is recorded as a judgement like any other
 (section 5). Decisions are batched: an agent collects the foreseeable
 questions of a run into one round, each with a recommended default. [M2]
+
+**Reported errors.** A report of an error, received through the channel
+named on the Observatory's methods page, is recorded as one ticket; the
+ticket number is the report identifier, which the correction row cites.
+The reporter's identity stays in the ticket and never enters a ledger
+table. The report ends in one of the three outcomes of
+[results and releases](jetp-results.md) § 9, "reported, awaiting a public
+source" included. A table of reports may be derived from the tickets at M4
+if their volume warrants it. [M3b; M4 for the derived table]
 
 ## 5. LLM readers and the checking rule
 
@@ -381,39 +408,50 @@ supervision view]
 
 | Content | System of record | Copies |
 |---|---|---|
-| Code, rules, tickets, ledger tables (the register included), run reports | The git repository | GitHub; every checkout |
-| Document bytes, structured bulk data | DVC cache on padme | The DVC remote, on the same padme disk |
-| Retained text layers of snapshots with admitted statements | DVC cache on padme, beside the document bytes | As for the document bytes; a lost layer is regenerated only by the same adapter version |
+| Code, rules, tickets, ledger tables (the register included), run reports | The git repository | GitHub; every checkout; padme's machine backup |
+| Document bytes, structured bulk data | DVC cache on padme | The DVC remote, on the same padme disk; the Zotero group (each snapshot, off-site); padme's machine backup (off-site) |
+| Retained text layers and raw model responses | DVC cache on padme, beside the document bytes | The DVC remote; padme's machine backup; a lost layer is regenerated only by the same adapter version |
 | Public copies of document addresses | The Internet Archive | — |
 | A frozen release | The release deposit [M3b] | Zenodo |
 | Local LLM weights | Downloaded | Re-downloadable |
 
-**The gap.** The DVC cache and the DVC remote are on the same NVMe
-partition of padme. A disk failure loses every document byte not otherwise
-recoverable, and the Internet Archive holds only the documents it captured,
-not those collected by browser or behind a check.
+**Why two copies off the disk.** The DVC cache and the DVC remote are on
+the same NVMe partition of padme, and the Internet Archive holds only the
+documents it captured, not those collected by browser or behind a check. A
+disk failure must not lose a document byte.
 
-**Rule: a second copy off padme.** After every DVC push of document bytes,
-doudou pulls them (`dvc pull data/jetp/documents.dvc`), in the permitted
-direction; this copy is a backup only, which no job reads, and the laptop may
-drop it without harm to operation. The author may prefer an external or
-institutional disk instead; either satisfies the rule. [M2]
-<!-- wave-1 W1-22: pending author decision (where the retained second copy lives) -->
+**The off-site copy: Zotero.** Each snapshot is uploaded, one way, to the
+project's Zotero group, with its SHA-256 in the item's metadata, when it is
+pushed to DVC. No job reads from Zotero: DVC stays the working store until
+the document store moves behind the same interface at M4 (section 11). [M2]
+
+**The machine backup.** padme runs a nightly restic backup of
+`/home/haduong`, `/data` and `/etc` to a Hetzner Storage Box, keeping 7
+daily, 4 weekly, 12 monthly and 5 yearly snapshots. It covers the DVC cache
+and remote, the retained layers and the repository checkouts. A backup that
+stops silently is the failure to guard against: the test of recovery reads
+the date of the latest backup snapshot. [M2]
+
+History: the machine backup was found failing on 2026-09-30 (last snapshot
+around 13 September 2026, after the padme repository moved and left the
+exclude-file symlink broken) and repaired by the author the same day.
 
 **Recovery.** [M2]
 
 - Code and ledger: clone from GitHub.
-- Document bytes: restore the DVC remote on padme from the backup copy,
-  then check every object against the hashes in the DVC pointers and the
-  SHA-256 of `snapshots.csv`; an object that fails is refetched from its
-  publisher or its Web Archive copy, as a new retrieval, never substituted
-  silently.
+- Document bytes: restore the DVC remote on padme from the machine backup,
+  or object by object from the Zotero group by SHA-256, then check every
+  object against the hashes in the DVC pointers and the SHA-256 of
+  `snapshots.csv`; an object that fails is refetched from its publisher or
+  its Web Archive copy, as a new retrieval, never substituted silently.
 - A recovery is recorded as a run with its report, listing what was
   restored, refetched and lost.
 
-**Test of recovery.** Once per milestone the author or an agent restores the
-document store into an empty worktree on padme from the backup copy and
-runs the replay; it must pass. [M2 once; M4 per release]
+**Test of recovery.** At M2, one snapshot is restored from each copy, the
+Zotero group and the machine backup, and checked against its hash. Once per
+milestone the author or an agent restores the document store into an empty
+worktree on padme from the machine backup and runs the replay; it must
+pass. [M2 once; M4 per release]
 
 ## 10. Failure handling
 
@@ -483,8 +521,7 @@ earlier.
 - **The storage seam used.** Every retrieval already writes through the
   single document-write function; at M4 the document store behind it moves
   to a Zotero group library, the pipeline reading a committed export, never
-  live Zotero. The Zotero cloud copy then also closes part of the backup gap
-  of section 9.
+  live Zotero. The Zotero copy of section 9 then becomes the store.
 - **Recalibration.** Before a scheduled pass whose models or prompts
   changed, the readers and the arbiter are scored again on the held-out
   reference answers; the budgets of section 7 are revised on the measured
@@ -503,7 +540,8 @@ earlier.
 1. Runs launched by hand on padme, each with an identifier, declared
    budgets, a `tmux` session when long, and a report with a final state.
 2. Bytes and LLMs on padme, data one way, DVC pushed from padme after
-   review, a backup copy of document bytes off padme.
+   review, two copies of document bytes off padme's disk (the Zotero group
+   and the machine backup), each restored once.
 3. The repository gates of section 4, and the agents' permissions and
    prohibitions.
 4. Two local readers from different model families, one per GPU,
@@ -517,8 +555,6 @@ earlier.
 Each has a default, applied unless the author decides otherwise.
 
 - **Budget amounts** (section 7.2). Default: the table as proposed.
-- **Backup location.** Default: a copy on doudou pulled after each push;
-  alternative, an external or institutional disk.
 - **Paid web search provider for discovery.** Default: the search API whose
   key is already in the keystore, under the per-campaign budget.
 
@@ -540,8 +576,10 @@ Each has a default, applied unless the author decides otherwise.
 | An agent needs more parallel slots from the local LLM. | It asks the author; it does not restart `llama-server.service`. |
 | The Anthropic key is missing on padme. | The run stops before its first paid call and reports the missing provider; it does not fall back to another vendor. |
 | A run report is about to include a request header with an API key. | The report names the provider and the LLM only; the key never appears. A key found in a tracked file is revoked first, then removed. |
-| An agent's branch adds 12 new document objects. | They are tracked and pushed to DVC from padme only after the branch's review passes; doudou then pulls them as the backup copy. |
-| padme's disk fails. | Code and ledger are cloned from GitHub; document bytes are restored from the backup copy and checked against their hashes; an object that fails is refetched as a new retrieval and the losses are listed in a recovery report. |
+| An agent's branch adds 12 new document objects. | They are tracked and pushed to DVC from padme only after the branch's review passes, and uploaded one way to the Zotero group with their SHA-256. |
+| padme's disk fails. | Code and ledger are cloned from GitHub; document bytes are restored from the machine backup or the Zotero group and checked against their hashes; an object that fails is refetched as a new retrieval and the losses are listed in a recovery report. |
+| The latest machine backup snapshot is two weeks old at a test of recovery. | The test fails and the backup is repaired before the milestone is accepted. |
+| A run writes 3,000 rows and opens its pull request. | The gate runs the validator, the controls, replay and idempotence, and reads the run report; the cross-family reviewer reads the report and a sample of traceability chains, not the 3,000 rows. |
 | The author, browsing results sorted by confidence, overturns 3 of 80 low-confidence items. | Each decision is recorded as a judgement of the role author, beside the readers' and the arbiter's answers, superseding the earlier judgement with his reason; no run waited for him. |
 | An agent proposes to publish the Observatory after merging a run. | It does not: publication is the author's act, from `main`, after the release is accepted. |
 | At M2, someone proposes a weekly cron job for discovery. | Declined as M4; M2 and M3 runs are launched by hand. |

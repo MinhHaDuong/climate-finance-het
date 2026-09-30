@@ -1,15 +1,17 @@
 # JETP ledger: language
 
 How the JETP Observer's design documents, schema and code speak about it.
-Decided by the author on 2026-09-23 (decision 11 of the ontology design,
-[attic](attic/jetp-ontology-decisions-2026-09.md)), after the
-[ODEM acceptance review](attic/jetp-odem-acceptance-review-2026-09-23.md),
-and aligned across the ten specification documents on 2026-09-30 (ticket
-1703). The ontology itself, what the ledger's classes, relations and values
+The ontology itself, what the ledger's classes, relations and values
 mean, is [`jetp-ontology.md`](jetp-ontology.md). What readers of the
 Observatory see is
 [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md): the
 words below are for the people who build the Observer, not for its readers.
+
+History: decided by the author on 2026-09-23 (decision 11 of the ontology
+design, [attic](attic/jetp-ontology-decisions-2026-09.md)), after the
+[ODEM acceptance review](attic/jetp-odem-acceptance-review-2026-09-23.md),
+and aligned across the ten specification documents on 2026-09-30 (ticket
+1703).
 
 ## The Observer, the ledger, the register, the Observatory
 
@@ -29,7 +31,7 @@ it is not a table of the ledger.
 ## The ODEM frame
 
 ODEM (Ontology, Data, Evidence, Models) is the framework of the author's
-design note of 22 September 2026 on interactive causal inquiry. It names four
+design note on interactive causal inquiry. It names four
 objects, each versioned, and keeps them apart. The Observer adopts its four
 words and uses them in no other sense.
 
@@ -38,7 +40,7 @@ words and uses them in no other sense.
 | **O, Ontology** | What the ledger talks about and how it records it: classes, relations, closed value lists, status and sector axes, perimeter definitions, crosswalks and conversion rules. Every term has a definition, an external mapping where one exists, and a revision history | `data/jetp/ontology/` ([ontology](jetp-ontology.md) section 5); the Observatory's Glossary |
 | **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the Observatory's paper trail: Documents, Document rows, Statements, Projects, Funding, Organisations |
 | **E, Evidence** | Results computed from D under a declared O version: every count shown with its unit and perimeter, the accounts of [fusion](jetp-fusion.md) section 7, descriptive tables. E comes on top of D and never edits it | `data/derived/jetp/`, with a run record naming its inputs, cutoffs and ontology version |
-| **M, Models** | Candidate causal explanations. The Observer has none. A causal study, deferred in ticket 0729, would consume a frozen release from outside the Observer | none |
+| **M, Models** | Candidate causal explanations. The Observer has none. A causal study, deferred, would consume a frozen release from outside the Observer | none |
 
 The ledger is Data, guided by Ontology; Evidence comes on top; the
 Observatory shows both.
@@ -52,6 +54,10 @@ tables and never edits an upstream row. [M2]
 | D2 | Lines | One publisher's statement at one locator in one snapshot, with its own fields verbatim | `lines`, `line-fields/<document_id>`, `line-field-specs` |
 | D3 | Observations | A line read into a typed statement, measure, value and timings, by a named method version | `observations`, `timings`, `external-ids`, `rates`, `deflators` |
 | D4 | Referents | Referents (projects, assets, agreements, parties, perimeters) minted by matching decisions over lines, and the relations between them | `projects`, `assets`, `agreements`, `parties`, `line-referents`, `relations`, `adjudications`, `adjudication-members`, `routes` |
+
+The target journals `readings` and `runs` of the storage contract (section
+1) record how the rows of every step were read and by which run; they
+belong to no single step. [M2]
 
 D3 and D4 both read D2. An observation's subject is a line until matching
 attaches that line to a referent. The order of the [migration](attic/jetp-ledger-migration.md) builds D4
@@ -99,7 +105,7 @@ weighing and revising ([fusion](jetp-fusion.md)); results are computed as E
 | *reconciliation* | **matching** for D4 decisions that mint or attach referents ([fusion](jetp-fusion.md) section 3), including **matching to CRS and IATI**; **account** for the E computation of opening, movements, closing and residual; **gaps between financial states** for the differences between announced, signed, reported and disbursed amounts, where *reported* is the amount a comparator record (CRS or IATI) reports | One word named two operations at two ODEM levels |
 | *edition*, for the ledger's own output | **release** for a frozen package of ledger and site (`data/jetp/releases/<release_id>/`). *Edition* keeps only its document sense: a publisher's successive issue (`edition_of`) | "Evidence edition", "monthly edition" and "document edition" were three different objects |
 | *layer*, *stage* (*étage*), *fact* | **step D1 to D4** for the levels of the pipeline; **observation** for what a publisher stated | *Layer* named M1a sub-tables and *stage* the MVP levels; a ledger row is a publisher's statement read by a method, not a fact |
-| *source*, for who publishes | **publisher**, the party that publishes and answers for a document; **document**, **snapshot** or URL when one of those is meant. The authority category `secondary_source` keeps the old word until the schema renames it (ticket 1702) | The word has meant a URL since the first collection |
+| *source*, for who publishes | **publisher**, the party that publishes and answers for a document; **document**, **snapshot** or URL when one of those is meant. The authority category `secondary_source` keeps the old word until the schema renames it, a proposed schema change | The word has meant a URL since the first collection |
 | *harvest*, *acquisition*, *ingest*, for finding and fetching | **collection** for the activity; **discovery** for the finding part; **retrieval** for one fetch. *Ingestion* keeps only one sense: a script's bulk write of API lines to D2 | Three words named one activity |
 | *registry* | **register** for step D1 | Two spellings named one step |
 | *cutoff*, for a likelihood-and-confidence bar | **match threshold**: the likelihood and confidence a candidate match needs in order to count in a result, declared per result, often as a **cautious** and an **inclusive** threshold. *Cutoff* names dates only: knowledge cutoff, discovery cutoff, reporting cutoff | One word named a date and a bar |
@@ -112,5 +118,10 @@ weighing and revising ([fusion](jetp-fusion.md)); results are computed as E
 Domain words that coincide are unaffected: a *project stage* is a value of
 the OC4IDS axis, and a PDF's *text layer* is its extractable text.
 
-This document governs the design documents and the schema: the DDL (ticket 0871) declares no table or column named `evidence`,
+This document governs the design documents and the schema: the DDL declares no table or column named `evidence`,
 `model`, `reconcil*`, `layer` or `fact`. [M2]
+
+History: the ODEM frame comes from the author's design note of 22 September
+2026; the causal study was deferred in ticket 0729; the rename of
+`secondary_source` is proposed in ticket 1702; the DDL was introduced by
+ticket 0871.

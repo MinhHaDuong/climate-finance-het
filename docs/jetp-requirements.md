@@ -1,7 +1,5 @@
 # JETP Observer: purpose and requirements
 
-Status: draft for review, revised with the author's decisions of 2026-09-30.
-
 This document says what the JETP Observer is for, who uses what it
 produces, and what it must deliver to them. The Observer is the whole
 system: collection, extraction, reading, judgement, releases. The ledger is
@@ -134,8 +132,10 @@ Observer, whether it is met. User questions are numbered by user (OBS, OP,
 DP, SP, LP, BK, AED). Requirements are functional (F), data (DA), quality (Q)
 and constraints (C); non-requirements (N) state what is out of scope.
 Identifiers are stable: regrouping never renumbers them, and a withdrawn
-identifier is not reused. The data requirements were prefixed D until
-2026-09-30 and are now DA, so that D1 to D4 name only the steps of Data.
+identifier is not reused. The data requirements are prefixed DA, so that
+D1 to D4 name only the steps of Data.
+
+History: the data requirements were prefixed D until 2026-09-30.
 
 ### 2.2 Milestones and incremental delivery
 
@@ -174,6 +174,19 @@ that no document meets is a gap in the specification; a rule in another
 document that serves no requirement is removed or moved to a later
 milestone. Where a requirement and another document disagree, the
 disagreement is resolved in one of them, never left standing.
+
+### 2.5 Documents in scope
+
+A document is in scope, and is admitted to the register, when it states
+something about a Just Energy Transition Partnership's projects, money,
+perimeters, parties or states, or when it belongs to the reference pool of
+DA12 (milestones of JETP operations dated before the partnership, and
+operations of partner lenders in the four countries that carry no JETP
+attribution). A document of the reference pool is counted in its own
+counting scope and never in a strict JETP figure (F13). A document kept for
+context only is registered and given the disposition `out_of_scope`
+(Collection § 9, Extraction § 7). N2, N12 and N13 still exclude what they
+name. *M3a* for triage; *M2* for the documents held.
 
 ## 3. Users and their questions
 
@@ -449,9 +462,12 @@ country, a list of excerpts about negotiation or ownership can be produced,
 each resolving to its snapshot.
 
 **F25. Reported errors are traced.** A publisher or a reader can report an
-error. Each report is recorded, answered by a judgement (accepted, with the
-correction made as a revision that names the report; or rejected, with the
-reason), and an accepted correction reaches every published claim it touches
+error. Each report is recorded as one ticket, whose number identifies it,
+and answered by a judgement: accepted, with the correction made as a
+revision that names the report; rejected, with the reason; or reported,
+awaiting a public source, when only a publisher's revision not yet public
+would settle it. No personal data of a reporter enters the ledger. An
+accepted correction reaches every published claim it touches
 (Q7). An accepted report that changes a released figure produces a
 correction release; otherwise it enters the next regular release (Results
 and releases § 9). The number of reports received and corrections made is
@@ -460,7 +476,6 @@ published with each release, as a signal of use and of quality gained.
 Test: a report submitted against a released statement ends with a recorded
 judgement, and, if accepted, the correction release or the next release
 shows the correction and names the report.
-<!-- wave-1 W1-37: pending author decision (report record: a ticket per report or a served table) -->
 
 ### 4.3 Identities and judgements
 
@@ -646,7 +661,11 @@ specification was reviewed.
 | Documents with a snapshot and no statement | 115 |
 
 The number of statements per identifier family and extraction method is
-added here once the first replay has counted it (Q1).
+added here once the first replay has counted it (Q1). Of the 13,092
+statements, 10,452 are comparator records (CRS, IATI and World Bank) in the
+snapshots kept outside the document store; they are read and replayed at M2
+by the ingestion run of Extraction § 6.2, with a count control per
+snapshot, and count among the extracted statements of this requirement.
 
 **DA3. Document types.** At least: progress updates, project pages, data
 portals, official news, annual reports, operator reports, project lists,
@@ -692,8 +711,9 @@ the list predates the first round and its recovery rate is reported.
 channels that could not be reached, with the reason, is released with the
 register. *M3a.* Test: the M3a collection report contains it, and from M3b
 the release does, with each entry's reason taken from the reasons of
-Collection § 8.
-<!-- wave-1 W1-29: pending author decision (whether and how documents excluded by robots rules or terms of use are listed) -->
+Collection § 8, including documents reachable only through paths the
+site's robots rules exclude, with the robots position recorded on their
+retrieval.
 
 **DA10. Structured search channels.** CRS and IATI records for the four countries,
 held as comparator records beside the documentary statements, never merged
@@ -720,7 +740,8 @@ strict-scope figure recomputed without this scope is unchanged.
 **Q1. Replay.** The pipeline reproduces the statements of the 254 documents
 already extracted, byte for byte, or every difference is explained. *M2.* Test:
 the replay report lists zero unexplained differences for statements minted
-by extractors and written by ingestion runs, and, for the others, the result
+by extractors and written by ingestion runs (the held comparator records
+included, each snapshot's record count equal to the count it states), and, for the others, the result
 of the locator-and-text check, listed by method; it counts the statements
 of each identifier family and method.
 
@@ -1051,7 +1072,7 @@ document that reads statements into observations.
 | F4 Living documents append | M2 | Extraction; Fusion § 2 |
 | F6 Disagreeing statements retrievable | M2, M3b | Fusion § 5; Extraction |
 | F21 Excerpts for qualitative work | M3b | Results and releases |
-| F25 Reported errors are traced | M3b, M4 | Results and releases § 9; Fusion § 2 (the judgement); Operation (the intake, pending an author decision) |
+| F25 Reported errors are traced | M3b, M4 | Results and releases § 9; Fusion § 2 (the judgement); Operation § 4 (the intake: a ticket per report) |
 | **4.3 Identities and judgements** | | |
 | F11 Referents by decision, counted at a match threshold | M3b | Fusion § 3 |
 | F12 Organisations under authority control | M3b | Fusion § 3; Ontology |

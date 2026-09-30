@@ -1,9 +1,5 @@
 # JETP ledger ontology
 
-Status: in force. Version 2 of the ontology, drafted 2026-09-22, reviewed by
-four independent panels
-([`jetp-study/ontology-review-2026-09-22/`](jetp-study/ontology-review-2026-09-22/))
-and migrated by the 0870 train (closed 2026-09-30).
 It fixes what the ledger talks about: its classes, relations, value lists and
 status axes, and the ontology tables that define and revise them. It holds
 no rule for combining statements, no storage and no presentation:
@@ -13,10 +9,14 @@ no rule for combining statements, no storage and no presentation:
 - [`attic/jetp-ledger-migration.md`](attic/jetp-ledger-migration.md), the migration from the previous tables;
 - [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md), what readers see.
 
-The author's design decisions of 2026-09-22 and 2026-09-23, with their
-reasons, are kept in
-[`attic/jetp-ontology-decisions-2026-09.md`](attic/jetp-ontology-decisions-2026-09.md);
-their effect is the text below.
+The author's design decisions, with their reasons, are kept in the
+[attic](attic/jetp-ontology-decisions-2026-09.md); their effect is the text
+below.
+
+History: version 2 of the ontology, drafted 2026-09-22 and decided by the
+author on 2026-09-22 and 2026-09-23, reviewed by four independent panels
+([review](jetp-study/ontology-review-2026-09-22/)) and migrated by the 0870
+train (closed 2026-09-30).
 
 ## 0. Frame
 
@@ -53,7 +53,7 @@ an authority category, `national_government`, `jetp_secretariat`, `ipg`,
 `secondary_source`, and a country (`ZAF`, `IDN`, `VNM`, `SEN`) or
 `international`. The category `secondary_source` keeps a word the
 [language](jetp-language.md) document retires for publishers; its rename is a
-proposed schema change (ticket 1702). A consulting firm that wrote a document for a publisher is
+proposed schema change. A consulting firm that wrote a document for a publisher is
 linked as `author`, with the publisher as `commissioner`. [M2]
 
 ### Document
@@ -83,8 +83,7 @@ minutes after a collection. A retrieval's status is `collected`,
 `retryable_http_error`, `http_error`, `fetch_error`, `not_published` or
 `not_applicable`. The last two are not outcomes of a fetch: the terminal
 verdict that closes a search is collection's ([collection](jetp-collection.md)
-section 3), and how the two lists relate is a proposed schema change (ticket
-1702). [M2]
+section 3), and how the two lists relate is a proposed schema change. [M2]
 
 ### Snapshot
 
@@ -249,6 +248,10 @@ axis. The publisher's word stays on the line and on the observation; the
 crosswalk row is the only place a shared status is asserted, and it names who
 decided it and when. [M2 for keeping the publisher's word; M3b for the crosswalk]
 
+History: the rename of the authority category `secondary_source` and the
+relation between retrieval statuses and terminal verdicts are proposed
+schema changes tracked in ticket 1702.
+
 ## 3. Relations
 
 | Relation | From | To | Meaning |
@@ -282,10 +285,13 @@ A line's classification says what kind of statement it is, in the publisher's
 own terms, from a closed list:
 
 `named_item`, `unnamed_item`, `quota`, `heading`, `submission`, `evaluation`,
-`register_allocation`, `count`, `envelope`, `absence`.
+`register_allocation`, `count`, `envelope`, `absence`, `target`, `event`, `decision`.
 
-The list is grown when a publisher's practice needs a value; it is never
-inferred from the label. [M2]
+A classification is never inferred from the label. The list grows only by
+decision of the author, since a new value changes the contract: when readers
+answer "cannot classify", the panel groups those statements and proposes a
+new value with a stance and a confidence ([extraction](jetp-extraction.md)
+section 3), and the author adopts it or not. [M2]
 
 **Sector** is a shared axis, coded with the OECD DAC CRS purpose list (five
 digits; the 231 to 236 group covers energy policy, generation by source,
@@ -317,7 +323,9 @@ marker yields is the score times a coefficient, 100 percent for principal
 and 40, 50 or 100 percent for significant depending on the donor and the
 year. The coefficient is a sourced parameter of a derived account, not a
 word of the ontology ([fusion](jetp-fusion.md), section 7); it is kept for
-now in the `marker-coefficients` table of section 5. A value may be a range: `value_low` and
+now in the `marker-coefficients` table (section 5), which is used from M4,
+or from M3b if the comparison of requirement F19 uses climate-marked
+amounts. A value may be a range: `value_low` and
 `value_high` bound it, as the timing bounds bound a date, and a scalar has
 both equal. [M3b]
 
@@ -353,20 +361,12 @@ reports rather than filling the others. [M2 for keeping the words; M3b for the c
 
 ## 5. Ontology tables
 
-The ontology is data about the ledger's words, stored like the ledger itself
-([storage contract](jetp-ledger-storage.md)), reviewed by diff, revised by
-supersession and never edited in place. Each table is keyed by a row
-identifier; the columns in *italics* are the chain key that successive
-revisions of one entry share. A term's `term_id` is unique within its
-`list`, so `cancelled` can be a value of several axes.
-
-| Table | Key | Columns |
-|---|---|---|
-| `terms` | `term_row_id` | *term_id*, kind, *list*, label, definition, scope_note, domain, range, external_scheme, external_uri, mapping_relation, recorded_at, decided_by, status, supersedes, notes |
-| `status-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_status)*, axis, shared_status, recorded_at, decided_by, status, supersedes, notes |
-| `sector-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_sector)*, purpose_code, recorded_at, decided_by, status, supersedes, notes |
-| `perimeters` | `perimeter_row_id` | *perimeter_id*, country, name, scope, definition, recorded_at, decided_by, status, supersedes, notes |
-| `marker-coefficients` | `coefficient_row_id` | *(donor_party_id, marker, score, year)*, coefficient, line_id, recorded_at, decided_by, status, supersedes |
+The ontology is data about the ledger's words, stored like the ledger itself,
+reviewed by diff, revised by supersession and never edited in place. Five
+tables hold it: `terms`, `status-crosswalk`, `sector-crosswalk`,
+`perimeters` and `marker-coefficients`. Their keys, columns, chain keys and
+paths are defined in the [storage contract](jetp-ledger-storage.md)
+(section 1); this section says what they mean and how they are revised.
 
 **Definition.** Every word the schema admits as a value is a `terms` row: the
 classes and relations of sections 2 and 3, the line classifications, measures,
@@ -417,7 +417,7 @@ without a new run record. [M3b]
 This document is the English specification: it gives the reasons and the
 rules. The formal specification is the DDL of the [storage contract](jetp-ledger-storage.md) (section 3) together with the
 `terms` table. Nothing else is: no OWL file, no SHACL shapes and no second
-prose glossary. Alignment is checked, not trusted. A test (ticket 0880) fails
+prose glossary. Alignment is checked, not trusted. A test fails
 when a value listed in sections 2 to 4 is not a term in force, or a term in
 force appears nowhere in this document, and when a table or column declared
 in the storage contract differs from the DDL. The Observatory's Glossary and a SKOS export
@@ -431,10 +431,14 @@ Schema, OWL and documentation from one YAML file. It is not adopted now,
 because it adds a toolchain whose extra outputs have no consumer. The question
 reopens when an external consumer asks for OWL or JSON Schema. [later]
 
+History: the alignment test was written under ticket 0880; the ontology
+tables' keys and columns moved to the storage contract in review wave 1
+(W1-41).
+
 ## 6. Out of scope, by decision
 
-The following classes are out of scope by decision (2026-09-22), and the
-ledger says so rather than holding them badly: [M2]
+The following classes are out of scope by decision, and the ledger says so
+rather than holding them badly: [M2]
 
 - institutional events (a body founded, launched, staffed, merged) and
   party-to-party relations other than `role_in` and `party_in`;
@@ -449,3 +453,5 @@ ledger says so rather than holding them badly: [M2]
 - physical outcomes beyond capacity, length and state: emissions, jobs,
   people, generation, tonnage, hectares. When one is needed, it enters
   as a measure by decision with its unit and the IPCC or ILO list it maps to.
+
+History: these exclusions were decided by the author on 2026-09-22.

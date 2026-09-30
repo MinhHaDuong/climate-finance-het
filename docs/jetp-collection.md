@@ -1,7 +1,5 @@
 # JETP collection: how documents are found and fetched
 
-Status: draft for author review, 2026-09-30.
-
 Collection is how the documents the Observer extracts are found, judged
 worth extracting and fetched, when discovery stops, and how much of what exists it
 found. It fills the register, step D1 (Register) of the Data pipeline in the
@@ -226,8 +224,10 @@ stops when all three conditions hold. [M3a]
    were each quiet. A round is quiet when its yield is at most 2 % of the
    country's admitted documents at the start of the round, and at most one
    document when that 2 % is below one.
-3. **Recall.** The campaign's known-item recall (section 6) is at least 90 %.
-<!-- wave-1 W1-27: pending author decision (point-estimate or lower-bound recall gate; attribution of recoveries after a frame revision) -->
+3. **Recall.** The campaign's known-item recall (section 6) is at least 90 %
+   as a point estimate: at least 36 of 40 items on a list of 40. The gate is
+   the point estimate, not the lower bound of its interval; the Wilson
+   interval and the known biases (section 6) are published beside it.
 
 The recall condition is computed on the pooled known-item list, since a list
 per country is too small to estimate from; per-country shares are reported
@@ -262,13 +262,20 @@ register only at declared checkpoints and at the end. [M3a]
 
 **Recall.** Recall is the share of known items found by the campaign's
 rounds, admitted or held from round zero, reported with its 95 % Wilson
-interval, for example "36 of 40, 90 % (77 to 96 %)". [M3a]
+interval, for example "36 of 40, 90 % (77 to 96 %)". An item found only
+after the frame was widened because of its own miss counts as missed.
+Recall is reported under the frame as declared before the first round and
+under the frame as widened, each with its interval, and the share of the
+list already held at round zero is stated. If the list is enlarged, a
+held-out part is reserved that no diagnosis reads. [M3a]
 
 **A missed item is a diagnosis.** At a checkpoint, a missed item is examined
 for the search channel that would have found it. If that search channel is missing from the
 frame, the frame is revised (a recorded revision) and the new search channel is
-searched like the others. An item fetched by looking it up from the list
-enters the register if in scope but never counts as recovered. [M3a]
+searched like the others. The item whose diagnosis widened the frame
+counts as missed, even when the new search channel then finds it. An item
+fetched by looking it up from the list enters the register if in scope but
+never counts as recovered. [M3a]
 
 **Limits stated.** Known items are more visible than the average document,
 since someone cited them, so known-item recall tends to overstate recall. The
@@ -333,6 +340,16 @@ cookies and tokens never appear in any record. Sending a request for a
 document to its publisher needs the author's explicit authorisation, case by
 case. [M3a]
 
+**Scans.** Before any scan is transcribed ([extraction](jetp-extraction.md)
+section 6.4), collection searches hard for a born-digital copy of the same
+document that stayed digital: the official gazette, the ministry's portal,
+the national legal database (for Viet Nam, Công báo, the Ministry of
+Industry and Trade's portal, vbpl.vn and similar). The search is recorded
+like any recorded search (section 7). A born-digital copy found is
+registered and extracted instead, and related to the scan; the scan is
+transcribed only when none is found. [M2 for the scans held; M3a for scans
+found by discovery]
+
 **Unreachable documents are data.** The unreachable list is released with
 the frozen register. Each entry names what is missing (an expected document,
 or a search channel of an expected authority), why it is expected, the rungs tried
@@ -349,8 +366,8 @@ Each candidate gets one triage outcome. [M3a]
 
 | Triage outcome | Meaning |
 |---|---|
-| admit | in scope as the requirements document defines it; it becomes a document of the register and is extracted |
-| context only | kept and citable, not extracted: a general news item, background reading, a document about the partnership but with no statement the ledger records |
+| admit | in scope as the requirements define it (requirements § 2.5: statements about a partnership's projects, money, perimeters, parties or states, or the reference pool of DA12, counted in its own counting scope); it becomes a document of the register and is extracted |
+| context only | registered as a document and given the disposition `out_of_scope` (extraction § 7), so it stays citable and is not extracted: a general news item, background reading, a document about the partnership but with no statement the ledger records |
 | reject | out of scope, with the reason |
 | duplicate | the same document as one held, judged as in fusion section 3; recorded against the held document |
 
@@ -378,7 +395,6 @@ claim's outcome in the secondary-to-primary pass, a duplicate. [M3a]
 
 A triage outcome is defeasible like any judgement: a rejected candidate can be
 admitted later by a judgement that says why. [M3a]
-<!-- wave-1 W1-26: pending author decision (the admission scope, and whether a context-only candidate is registered with the disposition out_of_scope) -->
 
 ## 10. Document classes
 
