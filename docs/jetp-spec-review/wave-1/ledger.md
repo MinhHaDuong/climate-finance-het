@@ -94,7 +94,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Where do readings and run records live? (a) ledger CSV tables served or named not-served under F23, with a `runs` table; (b) DVC-tracked JSONL per run with only a run_id column on `lines` and the run report as the record; (c) tables for readings, no `runs` table (operation §8's committed report suffices). Recommended: (a); Q17 serves readings and AED-2/3 need them joinable, and a `runs` row is cheap.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-02 (blocker, M2)
 
@@ -102,7 +102,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** State the rule once in extraction §5 and cite it from storage §1: a prose locator is page index plus start and end anchors derived by code from the reader's verbatim quote after whitespace normalisation and declared furniture removal, unique in the text layer or carrying an occurrence index; folio recorded only when the adapter reads it. Reorder §6.3: reader, derived locator, one repair call, checker sees every proposal with failures marked, missed list de-duplicated against proposals and rejections. Locators admitted before the rule stay valid under their method version and replay lists them as outside its reach; the validator enforces the new syntax on new lines only.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-03 (major, M2)
 
@@ -110,7 +110,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Use 'registered' in extraction §1, §7, §10, §13 and the §15 row ('A registered document has no bytes'); 'held' only for having a snapshot. Widen §7's opening and language's 'disposition' row to 'a registered document, or a snapshot of a held one'. Collection §11: the recorded access outcome is the disposition `no_snapshot` whose reason cites the latest retrieval status. Define pending once in §2: a snapshot with no statements, no snapshot-level disposition, whose document has no document-level disposition; cite from §7, §12 and F5; add the §12 control that a run over a `duplicate` document leaves nothing pending.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-04 (major, M2)
 
@@ -120,7 +120,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Set the audit parameters: sample floor per document (options: 3, 10, or a share such as 10% with floor 3) and the per-class precision floor that reopens a stratum (options: 90%, 95%). Recommended: floor 3 per document drawn to a target interval width, precision floor 95% lower bound per class, revisited after the first two logged sittings.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-05 (major, M2)
 
@@ -130,7 +130,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Fix the M2 attention total and the deferral stance. Options: (a) a milestone total (e.g. 40 h) with residue deferred by part and accepted by list; (b) no total, accept the deferred list at milestone review; (c) add a third reader with a two-of-three rule to cut disagreements before setting a total. Recommended: (a) with 40 h provisional, re-set after the first two sittings; (c) goes to a later round once real minutes are logged.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-06 (major, M2)
 
@@ -138,7 +138,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Rewrite storage §1: a row is in the as-of state at K when its recorded_at is on or before K and no row with recorded_at on or before K supersedes it; the status test applies to the chain as it stood at K. Add recorded_at (ledger write time, what K uses) to `line-referents` and `relations`; define decided_at as descriptive judgement time. For documents, make admission at M3a a defeasible decision row (status, supersedes) per collection §9; at M2, holding is dated by the earliest retrieval that yielded the snapshot (extraction §3). Add a fusion §9 row and a DDL test: A accepted, B superseding A after K, returns A at K.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-07 (major, M2)
 
@@ -146,7 +146,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** In storage §1 and ontology §5: an accepted row is no longer in force once a row that supersedes it is itself accepted or rejected; while its only successor is a candidate, the accepted row stays in force and the candidate is pending. Add a validator test (candidate over accepted: accepted still in force) and a fusion §9 check row.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-08 (major, M2)
 
@@ -154,7 +154,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Add stance, likelihood, basis to `line-referents` and `relations` [M2] and to `adjudications` with method, method_version and justification [M3b]; keep `confidence`; keep `status` as the separate workflow axis (an accepted 'different' row is meaningful). Make justification_line_ids rows. State in storage §4 that triage outcomes (collection §9) and checker stances use the same shape, in the M3a triage table and the readings table of W1-01.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-09 (major, M2)
 
@@ -162,7 +162,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Adopt storage's meaning: `ordinal` is the mint counter in extraction order, never reassigned; delete 'in reading order' from extraction §3 and let the locator carry position. Name the `<table>` segment for prose (for example `text`) in storage §1 so the family covers the 44 pending PDFs.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-10 (major, M2)
 
@@ -170,7 +170,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Adopt storage §4's split as the one tagging: M2 tiers 1-2 deterministic, tier 3 as a bounded candidate list to the author (at most about 30 pairs, sorted by likelihood); tiers 4-5 M3a with the §6.3 checker when discovery brings mirrors. Retag fusion §3 Documents and collection §2; add 'document identity judgements' to the M2 list of Q5 and operation §5; Q9 becomes 'M2 for extraction methods and document judgements, M3a for triage, M3b for the rest'.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-11 (major, M2)
 
@@ -178,7 +178,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Publish one reconciliation table from a script (documents, documents with snapshot, distinct snapshots, shared snapshots, store objects, snapshots without a store object and their retrieval method, lines, statements per snapshot) and cite it from DA2, operation §7.1 and storage §3; say where `local-record` bytes live; replace 'about 8 000 rows' and 13,089 with the script's figures.
 
-**Outcome.** open
+**Outcome.** partly fixed in fd7c1f4c; the counts are reconciled in requirements DA2 and cited, the script that regenerates them is code and left to the implementation.
 
 ### W1-12 (major, M2)
 
@@ -188,7 +188,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Two scope calls: should the classification list grow now with `target`, `event`, `decision` (the spike's uncovered cases) or only after the author sees cases in the first sittings; and are typed value spans excluded from M2 prose extraction (typing deferred to M3b reading)? Recommended: grow by decision after cases are seen; no typed spans at M2.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-13 (major, M2)
 
@@ -196,7 +196,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Key the field list by (document, table), as `<document_id>-<table>-<ordinal>` already anticipates; allow a parser-declared, versioned mapping from printed header to field name, keep the printed header (with unit and scale wording) beside the mapped name; the §11 scale check reads the printed header; replay treats a mapped rename as explained. A mapping shared across publishers (the Senegal annexes reusing Indonesian names) is a defect corrected by a new spec row, not an explained difference.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-14 (major, M2)
 
@@ -204,7 +204,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** §8: a new snapshot whose normalised text of the declared scope, under a named adapter version and furniture rule, equals the last extracted snapshot's is treated as identical bytes (persistence dated by the retrieval, recorded as a whole-snapshot restatement carrying the adapter version so replay regenerates the verdict). A restatement links to the origin line (star, depth one). Define 'statements of a document' as origin lines, restatements counted apart. §13 and F4: the M2 test runs on a fixture (a held snapshot with one value changed) plus this document. Storage §1: `line-fields/<document_id>` of a living document shards by year of recorded_at.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-15 (major, M2)
 
@@ -214,7 +214,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Scope: is replay of the 10,452 comparator lines part of M2 acceptance? Options: (a) yes, by the ingestion run with the count control; (b) no, retag them M3b and exclude from Q1. Recommended: (a); they are held bytes and the replay is mechanical.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-16 (major, M2)
 
@@ -224,7 +224,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Transcribe Decision 458 at M2 (one author sitting over 23 pages, recogniser as method) or defer it to M3b with the deferral named in the M2 acceptance? Recommended: transcribe at M2; OBS-1 for Viet Nam depends on it and the cost is one sitting.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-17 (major, M2)
 
@@ -232,7 +232,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Add one rule to §6.3, not a size gate: a part is a declared scope part (§4: appendix, section, page range), so parts do not overlap; the page-break rule extends to part boundaries (one statement, locator spans, owned by the part where it starts); seam de-duplication keys on the code-derived locator of W1-02; the checker lists missed items within its part only; each part's queue counts against the document cap; printed totals covering several parts are checked after merging. State in §6.2 that the portal verdict precedes any LLM call. Add a §12 red test: a fixture cut so an item straddles the seam yields one statement.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-18 (major, M2)
 
@@ -240,7 +240,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Fusion §3: before a `translation_of` or non-identical `same_as` judgement reaches 'likely', compare the multiset of numerals with units, dates, percentages and printed identifiers plus page and table counts, recorded as the quoted basis; beyond a declared tolerance the judgement is 'different' (`edition_of` for a changed re-export), both members are extracted and §5's same-publisher rule handles non-independence. Extraction §2: the canonical member is chosen among members holding a snapshot; a bundle's declared scope excludes an annex held alone and names where it was extracted. §13 item 1: the three pending document judgements are decided and in force before the first run. Add a §15 row: an English version with a different annex is its own document.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-19 (major, M2)
 
@@ -248,7 +248,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Derive the method of each existing line from its identifier family in storage §1 (extractor-minted keys: script name and commit; API keys: ingestion run; decision-scoped keys: person or assisted reading, exempt from checker-stance fields). Require the first M2 replay report to count lines per family and method; phrase Q1's test as 'zero unexplained differences for extractor-minted and ingested lines; locator-and-text check for the others, listed by method'. Add the per-method count to DA2 once measured.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-20 (major, M2)
 
@@ -258,7 +258,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Accept a lighter gate for run-output PRs (validator, controls, report and a sampled trail instead of full cross-family row review)? Options: (a) yes as proposed; (b) keep the full loop but batch one PR per run; (c) keep full loop per document. Recommended: (a); the real row check is the §6.3 queue.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-21 (major, M2)
 
@@ -266,7 +266,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** §5: the text layer of every snapshot with admitted statements is retained as a DVC artifact keyed by (sha256, adapter, version, hash), listed in storage §1 as derived and in operation §9's table; a later adapter writes a second layer beside it and the §9 mapping is reviewed old-layer to new-layer; pin the adapter by exact version in the existing lockfile, no container. §12 red test: replay against a snapshot whose retained layer is deleted and whose adapter version is unavailable fails loudly. Operation §2: the fast tier on doudou does not resolve locators.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-22 (major, M2)
 
@@ -276,7 +276,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Where does the retained second copy live? Options: (a) an external disk kept off-site or at the institution; (b) institutional storage (CNRS or lab NAS); (c) the laptop, upgraded to a retained and verified copy. Recommended: (b) if available, else (a), with the laptop as a third copy.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-23 (major, M3a)
 
@@ -284,7 +284,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Add the M3a tables with the collection fields, keyed without a new family: an authority is a `party_id` and a listed project is the `line_id` of the plan line listing it, so `frame-entries` keys on (kind, party_id or line_id). Map the four `collection_method` values onto the five rungs explicitly and add the web-archive rung (or state that an archive copy is a retrieval whose host party is the archive). Add a document-class column or relation for DA6. Terms, robots, registration and archive columns per W1-29.
 
-**Outcome.** open
+**Outcome.** fixed in 2034d335; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-24 (major, M3a)
 
@@ -292,7 +292,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Keep N4 and principle 1. Fusion §3: a program records a judgement only under a rule the author adopted by version (identical bytes, same external identifier, case or diacritic variant), recorded `accepted` by that method under a decision in `decisions.md`; every other program or LLM proposal is `candidate` until the checking rule of operation §5 or the author accepts it; storage §4's 'registered as a same_as candidate' then applies to tiers 2 and up. N4: 'No program, and no rule without a recorded judgement, admits a document'; F7's test: 'until an admission decision, which may be a checked LLM judgement under Q5, exists'; operation §4: 'development agents'.
 
-**Outcome.** open
+**Outcome.** fixed in 2034d335.
 
 ### W1-25 (major, M3a)
 
@@ -300,7 +300,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Call the M3a product a collection report accepted by the author (collection §12, results §13); reword F9, DA9 and C6 tests as 'in the M3a report' and 'in the release and every product citing it' at M3b, no retag; extend results §4's collection record with the protocol, round log, verdict table, cap statement and tracker traceability rate.
 
-**Outcome.** open
+**Outcome.** fixed in 2034d335.
 
 ### W1-26 (major, M3a)
 
@@ -310,7 +310,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Adopt the proposed admission scope (statements about a partnership's projects, money, perimeters, parties or states, plus the DA12 reference pool)? Options: (a) as proposed; (b) strict JETP attribution only, DA12 pool as context-only; (c) broader (any energy-transition finance in the four countries). Recommended: (a).
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-27 (major, M3a)
 
@@ -320,7 +320,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Is the 90% recall stopping condition a point-estimate gate or a lower-bound gate? Options: (a) point estimate at n=40 (36 of 40), with the biases reported beside it; (b) Wilson lower bound at 90%, which needs about 38 of 40 or a larger list. Recommended: (a) with the two-frame reporting; (b) only if the list grows past about 80 items.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-28 (major, M3a)
 
@@ -328,7 +328,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Record the capture address on the retrieval as the 'public archive record' F27 names; add a 'public copy' column to the release's redistribution list (redistributed bytes, archive capture, or none with reason); restate the Q8 and DP-4 tests over documents with a public copy; re-fetch frozen documents once at the freeze (identical bytes are free under extraction §8; different bytes are a new snapshot).
 
-**Outcome.** open
+**Outcome.** fixed in 2034d335; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-29 (major, M3a)
 
@@ -338,7 +338,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Commission a one-page legal note under Q21 on the basis for holding and redistributing copies (TDM exception, quotation, public-sector re-use, per jurisdiction)? Options: (a) yes, before M3a, from the institution's legal service; (b) proceed on the stated attribution-as-quotation basis and note the risk. Recommended: (a); it is not a build gate but it precedes go-live.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-30 (major, M3b)
 
@@ -348,7 +348,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Set the confidence floor of the default inclusive threshold. Options: (a) 'any confidence' as drafted, which admits know-nothing judgements; (b) 'low or more', which excludes them; (c) 'medium or more', close to the cautious end. Recommended: (b).
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-31 (major, M3b)
 
@@ -356,7 +356,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Fusion §3 and storage §1: (a) at a threshold a referent's members are the lines whose in-force `line-referents` row meets it; two referents joined by an in-force `same_as` meeting it are one; the validator enforces depth one (a source of an accepted `same_as` is never the target of another; `routes` redirects it), so a would-be chain is a conflict raised for review; (b) per method version, publish blocking recall (share of hand-judged true pairs the proposers surface), pairwise precision and recall on the hand-judged set, and one cluster metric; (c) tier 1 on a plan ordinal or operator code requires country agreement and one corroborating attribute for 'virtually certain', else 'very likely'.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-32 (major, M3b)
 
@@ -364,7 +364,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Extend `party_in` to project and asset with the Party roles as its closed list; keep `role_in` for mandates; state which roles attach to which subject kinds; drop `operator_party_id` (an asset's operator is a dated `party_in` row).
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-33 (major, M3b)
 
@@ -372,7 +372,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Make `preferred` a flag column and keep form_type a kind. Fold physically only under the deterministic rules fusion §3 calls 'never two parties' (same identifier, case or diacritic variant), the retained party's preferred form stated by supersession of the other's; every other party `same_as` stays a judgement, and each result computes its party view at its threshold. Reserve `routes` for identifiers retired in a published release.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-34 (major, M3b)
 
@@ -380,7 +380,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Delete 'here the date of the freeze'; say the freeze fixes the register's membership while K is declared per release at or after the discovery cutoff, as results §4 already requires.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-35 (major, M3b)
 
@@ -388,7 +388,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Rewrite §4 bullet 5 as 'an occurrence is never inferred from a state change; an observed later state implies no earlier one and no payment'; keep the chronology rule in §7 only, in ontology terms (agreement states of the money axis, IATI flow types, `estimate` or `envelope` for need, `mou` for memorandum); define 'reported' as the amount a comparator record (CRS or IATI) reports, or drop it from F19 and the language document; add one §9 check row.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-36 (major, M3b)
 
@@ -396,7 +396,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** §4: list the descriptor only; the deposit's metadata record sits outside the frozen package and alone gains citations, supersession pointers and a status (current, superseded by rN, withdrawn with reason); reword the check row to 'bytes unchanged; the deposit record points to the correction'. Define the as-of state by cutoff K plus a named correction overlay (ledger-error supersession rows recorded after K whose superseded rows were recorded on or before K); a correction release keeps K, names its overlay rows in the descriptor, and rN is an ordinal; reword F10 so 'a later discovery' means a new record row, never a named overlay row; add the rule to fusion §8 and storage §1. §9: an accepted report that changes a released figure produces `-rN`, otherwise it enters the next regular release; align F25. Withdrawal removes the deposit's files and Observatory pages, keeps descriptor, hashes and reason, and the identifier resolves to that record; add the status column to `#release-history` and a §14 row. Banners on earlier-release pages stay M4.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-37 (major, M3b)
 
@@ -406,7 +406,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Report record: (a) a ticket per report, the ticket number as identifier, cited from the supersession row (lighter, no personal data in the ledger); (b) a served `reports` table without reporter identity, with a report_id, target, claim, adjudication and outcome. Recommended: (a); a table can be derived from tickets at M4 if the volume warrants it.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-38 (major, M3b)
 
@@ -414,7 +414,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Add two decision types to `adjudications` as `terms` rows [M3b]: `revision` (members: earlier and later line; verdict: development, late_report, correction, rounded_restatement) and `preference` (members: candidate, accepted, excluded; verdict names the fusion §5 reason). Collection §10: the M4 check of a frozen document fetches and registers new bytes as a snapshot. Add `corrects` as a role of the line-to-line `cites` relation when the first correction notice is met, not before; no `erratum` document type or `withdrawn_by_publisher` status.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-39 (major, M3b)
 
@@ -424,7 +424,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Accept the M3b scoping (read only measure-bearing statements in a declared counting scope; match only lines feeding a declared result, top-k per line; the rest listed, not counted)? Options: (a) as proposed; (b) read everything, match everything, accept a longer M3b. Recommended: (a); it is what F11's 'listed, not counted' already allows.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-40 (minor, M2)
 
@@ -432,7 +432,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** State in §3 and §1: a statement is admitted only with a classification; 'waits for review' means the proposal stays in the run's review queue (assisted reading: the author's queue; parser: the document is not admitted, per §6.1's no-partial rule). DDL: `lines.classification` NOT NULL; no candidate status on `lines`.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-41 (minor, M2)
 
@@ -442,7 +442,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Keep the ontology tables in the ontology with a stated exception to the ground rule, or move the table rows to storage §1? Recommended: the stated exception; it is one sentence and keeps the ontology self-contained.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-42 (minor, M2)
 
@@ -450,7 +450,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Keep one `same_as` term with domain 'any', range 'same kind', presenting the document and line rows as cases (the canonical-member rule is extraction's, not the relation's); state that the observation `cites` is the `line_id` column, not a relation row.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-43 (minor, M2)
 
@@ -460,7 +460,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Adopt a no-dates, no-ticket-numbers rule in normative text (provenance pointers moved to an attic section) or keep pointers where they explain provenance? Recommended: keep provenance pointers, fix the State column, no attic move.
 
-**Outcome.** open
+**Outcome.** partly fixed in 954d6e84 (State column); rest pending author.
 
 ### W1-44 (minor, M2)
 
@@ -468,7 +468,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Drop `documents.edition_of` or declare it a derived cache of the `relations` row. Extraction §8: restatement is judged between snapshots of one document only; pairing across editions or issues is a candidate match of fusion §3 [M3b], not a restatement. Qualify `edition_of` through the existing `relations.role` column (`issue`, `revision`); no `issue_of` term. Reword storage §4: the CIPP-to-progress-report pair is a tier-2 candidate-match test bed, not an edition relation.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-45 (minor, M2)
 
@@ -476,7 +476,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Restrict M2 retries to rungs 1 and 2 (script, browser-session) in collection §11; align `collection_method` with the five rung names at M3a (W1-23); state in collection §2 that a rendered capture is its own retrieval yielding its own snapshot.
 
-**Outcome.** open
+**Outcome.** fixed in 2034d335; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-46 (minor, M2)
 
@@ -484,7 +484,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Operation §8: attribute minutes per run and per document (class and type joined later); Q15 and results §4: 'per document class, document type and extraction method'.
 
-**Outcome.** open
+**Outcome.** fixed in 954d6e84.
 
 ### W1-47 (minor, M2)
 
@@ -492,7 +492,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Reword DA3's test to 'belongs to a repeated series or a repeated format of one publisher'; add 'or a page template' to §6.1's examples; add to §4: a record page is one item statement for its subject, its labelled fields are its verbatim fields under the printed labels, and its description follows the prose rule.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-48 (minor, M2)
 
@@ -500,7 +500,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** State in §3 that `own_status_axis` is set only by a parser's reviewed, versioned status list for its series (adopted as `status-crosswalk` rows at M3b) and is empty for assisted readings, transcriptions and a person's reading; an LLM reader is never asked for it; replay reproduces the 2,678 values from the parser configuration.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-49 (minor, M2)
 
@@ -508,7 +508,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** §4: page furniture carrying a date, issue number, period or publisher name that governs the statements is in scope by default (add 'dateline, masthead date or issue period' to the method-note examples); no completion from the register. Collection §11: for a living document the publication date of a snapshot is the date its publisher prints in it, else its retrieval date; the release states the latest retrieval date of living documents beside the newest document date. Speaker handling per W1-12.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-50 (minor, M2)
 
@@ -516,7 +516,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Q17: the reference answers are the human-decided subset (disagreements, missed items, sampled rows); machine-agreed-only rows carry that flag; the reader and checker LLMs are named so a benchmark can exclude them. Operation §8: the run report records the sample rate and seed.
 
-**Outcome.** open
+**Outcome.** fixed in 954d6e84.
 
 ### W1-51 (minor, M2)
 
@@ -524,7 +524,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** One rule in collection §10/§11 and storage §1, tagged M4 but written now: a relocation of a held document is a recorded change of its address (a `document-addresses` row with valid_from, or a superseded `documents` row), never a second document; a retrieval of any recorded address is a retrieval of that document, and the validator rule reads accordingly.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-52 (minor, M2)
 
@@ -534,7 +534,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Keep the local-reader pilot at M2 (bounded to one long document) or defer it to M4? Recommended: keep it bounded at M2 since C3 asks for local compute first and the cost is one run; defer if GPU time on padme is contended.
 
-**Outcome.** open
+**Outcome.** partly fixed in 954d6e84 (M2 cost derived from the 115 pending documents); rest pending author.
 
 ### W1-53 (minor, M2)
 
@@ -542,7 +542,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Storage §1: a per-document field file above the ceiling is split into `line-fields/<document_id>.d/NN.csv`, numbered, joined in order, with the same pending-marker rule (and the living-document year shard of W1-14).
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-54 (minor, M2)
 
@@ -550,7 +550,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Retag Q14 'M2 for hand-launched runs (C4), M3a discovery, M4 scheduled' and Q15 'M2 record, M3b state'. Add a `class` column to `documents` at M3a or move DA6's recording to M4 with the `series` flag kept for parser selection. Rephrase C8's test at section granularity and extend requirements §9 with a reverse map (section to requirements) for M2 and M3 sections; a section mapping to nothing moves to M4.
 
-**Outcome.** open
+**Outcome.** fixed in 954d6e84; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-55 (minor, M2)
 
@@ -558,7 +558,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** State in §6.3 and collection §9 that readers and checkers are called without tools, network or file access and receive the text layer as quoted data. Add a planted instruction to the §12 control document that must not alter any proposal. Mark visibility only for the cheap unambiguous cases (HTML `hidden`, inline `display:none`), exclude OCR layers; finer marking is M4.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-56 (minor, M2)
 
@@ -566,7 +566,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** §3 and §4: contact columns (email, phone, personal address) are declared out of scope per document and not extracted; a quoted speaker is recorded as the office or institution as printed, the person's name only when the publisher prints it as signatory of an in-scope document. Results §5: a regex screen for emails and phone numbers in release validation lists hits for the author. Error-report contact details stay in the ticket (W1-37).
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
 
 ### W1-57 (minor, M3a)
 
@@ -574,7 +574,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Cross-reference §7's standard from §3 and say how its three parts read for an authority and for a listed project. Define §8's reason as 'a named document another document says exists, never found' or delete it; align DA9's test with §8's reasons. In F8 say where the other states are recorded: 'unreadable' in the extraction disposition, 'not sought' as a frame entry with no round (which the stopping rule forbids), 'loss of visibility' at M4, or drop them.
 
-**Outcome.** open
+**Outcome.** fixed in 2034d335.
 
 ### W1-58 (minor, M3a)
 
@@ -582,7 +582,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** State that the pass is how the 'secondary trackers and news' class is searched: its claims traced for one country in one language are that class's round and its admissions that round's yield; correct the cross-reference to §7; add a check row.
 
-**Outcome.** open
+**Outcome.** fixed in 2034d335.
 
 ### W1-59 (minor, M3a)
 
@@ -590,7 +590,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Name them 'tracker traceability rate' (collection §7, Q10, results §4) and 'matching coverage rate' (F19, results §2, defined in fusion §5). Publish the distribution over the five outcomes; the headline tracker rate counts held and admitted only, with 'identified, unreachable' beside it; Q10 reads 'traced to a primary document read by the Observer'.
 
-**Outcome.** open
+**Outcome.** fixed in 2034d335.
 
 ### W1-60 (minor, M3b)
 
@@ -598,7 +598,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Reword Q20's M3b part: broken trails appear in the build and run reports (results §5, operation §8); pending judgements in the served candidate-status decision record storage §4 already promises, named in presentation as a page under About or the paper trail (a sorted list on Methods or document rows). Keep countries and documents without new statements, and cross-run flags, at M4; correct the §9 row.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-61 (minor, M3b)
 
@@ -606,7 +606,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** One closed list of nine date roles in ontology §2, cited from §4 and from extraction §11 instead of repeated.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-62 (minor, M3b)
 
@@ -614,7 +614,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Replace with: the range is the minimum and maximum of the two figures; which threshold gives which end depends on the result kind; it is the result's sensitivity to the declared thresholds, not a probability interval. Add the label 'sensitivity to matching' to presentation for such ranges; no grid computation.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-63 (minor, M3b)
 
@@ -622,7 +622,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Rewrite the paragraph: pedigree is not a stored score; it is what a judgement reads from the publisher category, document type, extraction method and the relations that fold copies, and the judgement records which it weighed in its basis. Independence: two statements are independent supports when, after folding `same_as`, `translation_of` and `cites`, they have different publishers; undetected copying is not excluded. Publish independent-support counts at M4, or M3b only if F19 needs them.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-64 (minor, M3b)
 
@@ -630,7 +630,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Add `mapping_relation` to both crosswalks, required at acceptance; a shared-status or sector result states the weakest mapping among the rows it used (results §2). Drop `broader_term_id`. State that the M4 SKOS export covers `kind = value` lists only, one ConceptScheme per `list`.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633; the `broader_term_id` column the fix drops does not exist in the DDL or the contract; schema or validator change written as a storage-contract target and an exit criterion of ticket 1702.
 
 ### W1-65 (minor, M3b)
 
@@ -640,7 +640,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Adopt Frictionless Data Package plus DataCite via Zenodo as the named formats, or RO-Crate (JSON-LD, can carry the run record), or leave the format private? Recommended: Frictionless plus DataCite; both are lightweight, generated from the DDL, and need no heavy dependency.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-66 (minor, M3b)
 
@@ -648,7 +648,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Add the derivation as a fusion §7 timeline rule (Evidence, not reading): an event stated without its own date gets an upper bound equal to the statement's report or reporting-cutoff timing and an open lower bound; correct the F16 row of §9.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-67 (minor, M3b)
 
@@ -656,7 +656,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Extraction §11: a figure printed as cumulative or 'to date' is a flow whose `period_end` is the as-of date and whose `period_start` has precision `unknown`, bounded below by the agreement's earliest printed date when one exists. Fusion §7: such a flow is a closing-position candidate and never a movement. Add the case to §15.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-68 (minor, M3b)
 
@@ -664,7 +664,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Add to §11: a column the publisher derives from another by a printed rate is the same measure, not a second one; the reading rule declares which column is original and each derived column becomes a `rates` row citing the line when the rate can be recovered, else nothing. Add the red test 'a row with three money columns yields one `amount`' to §11's checks.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-69 (minor, M3b)
 
@@ -672,7 +672,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Results §8: a product citing a release supplies a machine-readable list of (result_id, occurrence locator in the product), kept with the release's metadata under F29 and not served (F23); the list of §9 is produced from it.
 
-**Outcome.** open
+**Outcome.** fixed in 9c8b3633.
 
 ### W1-70 (minor, M3b)
 
@@ -682,7 +682,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Scope: are accounts (opening, movements, closing, residual) an M3b result, and does the F19 comparison use CRS climate-marked amounts (which would keep the Markers machinery at M3b)? Recommended: accounts at M3b under OBS-1 and F19 with `deflators` deferred; Markers to M4 unless F19 needs marked amounts.
 
-**Outcome.** open
+**Outcome.** open, needs author.
 
 ### W1-71 (minor, M3b)
 
@@ -690,4 +690,4 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Fix.** Add one sentence to extraction §6.3 and operation §5: a replacement reader or checker is admitted after passing the §12 controls and reaching a stated minimum agreement with the author-checked statements of Q17 on a fixed sample stratified by language; the coverage report states which method version read each document class. Drop the coding-agent vendor clause, outside the specification.
 
-**Outcome.** open
+**Outcome.** fixed in fd7c1f4c.
