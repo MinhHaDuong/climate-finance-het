@@ -380,14 +380,24 @@ def run(args):
     with open(args.families, encoding="utf-8") as fh:
         fam_cfg = yaml.safe_load(fh)
     mech = {q: m["mechanism"].strip() for q, m in {**fam_cfg["families"], **fam_cfg["themes"]}.items()}
-    registry, registry_all, records = [], [], []
-    for d in filter(None, [args.run_dir, args.eds_dir]):
-        registry_all += read_registry(os.path.join(d, "registry.csv"), with_econlit=True)
-        reg = read_registry(os.path.join(d, "registry.csv"))
-        registry += reg
-        meta = {r["search_id"]: r for r in reg}
+    run_dirs = args.run_dir if isinstance(args.run_dir, list) else [args.run_dir]
+    dirs = [d for d in run_dirs + [args.eds_dir] if d]
+    # a later run directory supersedes an earlier one for the ids it reran
+    winner, econlit_rows = {}, []
+    for d in dirs:
+        for r in read_registry(os.path.join(d, "registry.csv"), with_econlit=True):
+            if r["platform"] == "econlit":
+                econlit_rows.append(r)
+            else:
+                winner[r["search_id"]] = (d, r)
+    registry = [r for _, r in winner.values()]
+    registry_all = registry + econlit_rows
+    records = []
+    for d in dirs:
         for rec in read_jsonl_gz(os.path.join(d, "results.jsonl.gz")):
-            s = meta[rec["search_id"]]
+            if winner[rec["search_id"]][0] != d:
+                continue
+            s = winner[rec["search_id"]][1]
             rec.setdefault("openalex_id", "")
             rec.setdefault("eds_an", "")
             rec["doi"] = normalize_doi(rec.get("doi") or "")
@@ -487,7 +497,8 @@ def run(args):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--run-dir", required=True)
+    ap.add_argument("--run-dir", required=True, nargs="+",
+                    help="OpenAlex run directories; a later one supersedes the ids it reran")
     ap.add_argument("--eds-dir")
     ap.add_argument("--refined")
     ap.add_argument("--unified")

@@ -364,6 +364,16 @@ def fetch_metered(spec, api_key, cap, delay, meter):
 
 def run(search_cfg, families_cfg, sentinels, args, api_key, fetch=fetch_metered):
     specs, matrix = build_matrix(search_cfg, families_cfg, sentinels)
+    only = getattr(args, "only", None)
+    if only:
+        # a follow-up run (errors, uncapped reruns): these ids only, in this order;
+        # the yield script lets a later run directory supersede an earlier one
+        by_id = {s["search_id"]: s for s in specs}
+        unknown = [i for i in only if i not in by_id]
+        if unknown:
+            log.error("unknown search ids: %s", ", ".join(unknown))
+            return 2
+        specs, matrix = [by_id[i] for i in only], []
     if args.dry_run:
         for s in specs:
             log.info("%s %s", s["search_id"], s["filter"][:160])
@@ -377,7 +387,9 @@ def run(search_cfg, families_cfg, sentinels, args, api_key, fetch=fetch_metered)
     write_matrix(matrix, os.path.join(args.output_dir, "matrix.csv"))
     corpus_dois, corpus_ids = load_corpus_keys(args.corpus)
     budget = search_cfg["budget"]
-    meter = Meter(budget["lane_cap_usd"], budget["daily_floor_usd"])
+    lane_cap = getattr(args, "lane_cap", None)
+    meter = Meter(budget["lane_cap_usd"] if lane_cap is None else lane_cap,
+                  budget["daily_floor_usd"])
     cap = search_cfg["cap"] if args.cap is None else args.cap
     started = datetime.now(timezone.utc).isoformat(timespec="seconds")
     with open(reg_path, "w", encoding="utf-8", newline="") as reg_fh, \
@@ -455,6 +467,9 @@ def main(argv=None):
     ap.add_argument("--corpus", default=None,
                     help="refined_works.csv, to flag works already in the corpus")
     ap.add_argument("--cap", type=int, default=None, help="override the config record cap")
+    ap.add_argument("--only", nargs="+", help="run only these search ids (follow-up run)")
+    ap.add_argument("--lane-cap", type=float, default=None,
+                    help="spend cap of this run in USD: the lane cap minus what earlier runs spent")
     ap.add_argument("--delay", type=float, default=0.2)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args(argv)

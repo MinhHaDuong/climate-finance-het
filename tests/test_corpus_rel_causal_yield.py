@@ -164,6 +164,20 @@ def test_intake_delivery_has_one_record_per_work_and_lists_the_duplicates(lane):
     assert manifest["coverage"] == "incomplete"  # the EconLit rows were not run
 
 
+def test_a_later_run_directory_supersedes_the_ids_it_reran(lane):
+    _run_dir(lane / "oa2", "openalex", [("RC-grid-IO-en", "grid", "IO", 1)],
+             [{"search_id": "RC-grid-IO-en", "openalex_id": "W7", "doi": "10.7/new",
+               "title": "A rerun record", "year": 2024}])
+    args = _args(lane)
+    args.run_dir = [str(lane / "oa"), str(lane / "oa2")]
+    assert cy.run(args) == 0
+    rows = _csv(lane / "out" / "delivery.csv")
+    io = [r for r in rows if r["search_id"] == "RC-grid-IO-en"]
+    assert [r["doi"] for r in io] == ["10.7/new"]
+    by_search = {r["group"] for r in _csv(lane / "out" / "yield_by_search.csv")}
+    assert "RC-grid-IO-en" in by_search and len(rows) == 6
+
+
 def test_judge_batches_one_mechanism_and_parses_labels(tmp_path):
     recs = [{"pair_id": f"{q}::{i}", "question": q, "mechanism": f"M {q}", "title": f"t{i}"}
             for q in ("b", "a") for i in range(3)]
