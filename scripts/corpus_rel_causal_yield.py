@@ -46,6 +46,16 @@ DELIVERY_FIELDS = [
 ]
 
 
+_DOI = re.compile(r"^10\.\d{4,9}/\S+$")
+
+
+def valid_doi(doi):
+    """The normalised DOI, or "" for a truncated one (EDS returns bare
+    prefixes such as `10.35219`, which would join unrelated works)."""
+    d = normalize_doi(doi or "")
+    return d if _DOI.match(d) else ""
+
+
 def norm_title(title):
     t = unicodedata.normalize("NFKD", title or "").encode("ascii", "ignore").decode().lower()
     return re.sub(r"[^a-z0-9]+", " ", t).strip()
@@ -312,8 +322,19 @@ def intake_rows(records, registry_all, labels):
         by_work[r["work_key"]].append(r)
     out, excluded = [], []
     for wk, rs in by_work.items():
-        rs.sort(key=lambda r: (r["platform"] != "openalex", order[r["search_id"]]))
+        rs.sort(key=lambda r: (not (r.get("title") or "").strip(), r["platform"] != "openalex",
+                               order[r["search_id"]]))
         first = rs[0]
+        if not (first.get("title") or "").strip():
+            # no retrieval of this work carries a title: the contract's not_retrievable
+            excluded.append({"record_id": f"1652:{wk}", "query_id": first["search_id"],
+                             "reason": "not_retrievable", "title": "",
+                             "note": f"{first.get('openalex_id') or first.get('eds_an')}: "
+                                     "no title in the platform record"})
+            excluded += [{"record_id": f"1652:{wk}", "query_id": r["search_id"],
+                          "reason": "duplicate_in_lane", "title": "", "note": "untitled work"}
+                         for r in rs[1:]]
+            continue
         rel = {q: labels.get((wk, q), "") for q in dict.fromkeys(r["question"] for r in rs)}
         year = first.get("year")
         out.append({
@@ -401,7 +422,7 @@ def load_runs(dirs):
             s = winner[rec["search_id"]][1]
             rec.setdefault("openalex_id", "")
             rec.setdefault("eds_an", "")
-            rec["doi"] = normalize_doi(rec.get("doi") or "")
+            rec["doi"] = valid_doi(rec.get("doi") or "")
             rec.update(question=s["question"], formulation=s["formulation"],
                        platform=s["platform"], language_q=s["language"])
             records.append(rec)

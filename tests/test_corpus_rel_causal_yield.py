@@ -43,22 +43,22 @@ def lane(tmp_path):
     _run_dir(tmp_path / "oa", "openalex",
              [("RC-grid-IM-en", "grid", "IM", 2), ("RC-grid-IO-en", "grid", "IO", 1),
               ("RC-fiscal_substitution-IM-en", "fiscal_substitution", "IM", 1)],
-             [{"search_id": "RC-grid-IM-en", "openalex_id": "W1", "doi": "10.1/a", "title": T1,
+             [{"search_id": "RC-grid-IM-en", "openalex_id": "W1", "doi": "10.1111/a", "title": T1,
                "year": 2020, "abstract": "x"},
               {"search_id": "RC-grid-IM-en", "openalex_id": "W2", "doi": "", "title": T2, "year": 2019},
-              {"search_id": "RC-grid-IO-en", "openalex_id": "W1", "doi": "10.1/a", "title": T1, "year": 2020},
+              {"search_id": "RC-grid-IO-en", "openalex_id": "W1", "doi": "10.1111/a", "title": T1, "year": 2020},
               {"search_id": "RC-fiscal_substitution-IM-en", "openalex_id": "W2", "doi": "",
                "title": T2, "year": 2019}])
     _run_dir(tmp_path / "eds", "bibCNRS EDS (RePEc)",
              [("EDS-RePEc-grid-IM-en", "grid", "IM", 2)],
              [{"search_id": "EDS-RePEc-grid-IM-en", "eds_an": "edsrep.1", "doi": "",
                "title": T1.upper() + "!", "year": 2020},
-              {"search_id": "EDS-RePEc-grid-IM-en", "eds_an": "edsrep.2", "doi": "10.9/wp",
+              {"search_id": "EDS-RePEc-grid-IM-en", "eds_an": "edsrep.2", "doi": "10.9999/wp",
                "title": "A working paper on transmission lines and donors", "year": 2025}])
     with open(tmp_path / "refined.csv", "w", encoding="utf-8", newline="") as fh:
         w = csv.DictWriter(fh, ["source", "source_id", "doi", "title", "year", "abstract"])
         w.writeheader()
-        w.writerow({"source": "openalex", "source_id": "W1", "doi": "10.1/a", "title": T1,
+        w.writerow({"source": "openalex", "source_id": "W1", "doi": "10.1111/a", "title": T1,
                     "year": "2020", "abstract": "climate finance for transmission lines"})
     with gzip.open(tmp_path / "sud.jsonl.gz", "wt", encoding="utf-8") as fh:
         fh.write(json.dumps({"openalex_id": "W2", "doi": "", "title": T2, "year": 2019}) + "\n")
@@ -67,9 +67,9 @@ def lane(tmp_path):
                                 "openalex_id", "title"])
         w.writeheader()
         w.writerow({"sentinel": "C1", "family": "grid", "set": "holdout", "source": "t",
-                    "lang": "en", "year": "2020", "doi": "10.1/A", "openalex_id": "W1", "title": T1})
+                    "lang": "en", "year": "2020", "doi": "10.1111/A", "openalex_id": "W1", "title": T1})
         w.writerow({"sentinel": "C2", "family": "grid", "set": "tuning", "source": "t",
-                    "lang": "en", "year": "2011", "doi": "10.5/none", "openalex_id": "W9", "title": "Absent"})
+                    "lang": "en", "year": "2011", "doi": "10.5555/none", "openalex_id": "W9", "title": "Absent"})
     return tmp_path
 
 
@@ -90,11 +90,11 @@ def _csv(path):
 
 def test_work_keys_join_doi_openalex_and_title():
     recs = cy.assign_work_keys([
-        {"doi": "10.1/a", "openalex_id": "W1", "title": T1, "year": 2020},
+        {"doi": "10.1111/a", "openalex_id": "W1", "title": T1, "year": 2020},
         {"doi": "", "openalex_id": "W1", "title": T1, "year": 2020},
         {"doi": "", "openalex_id": "", "eds_an": "e", "title": T1.lower(), "year": 2020},
         {"doi": "", "openalex_id": "", "eds_an": "f", "title": "short", "year": 2020}])
-    assert [r["work_key"] for r in recs] == ["doi:10.1/a"] * 3 + ["an:f"]
+    assert [r["work_key"] for r in recs] == ["doi:10.1111/a"] * 3 + ["an:f"]
 
 
 def test_yields_reference_sets_uniqueness_and_delivery(lane):
@@ -115,7 +115,7 @@ def test_yields_reference_sets_uniqueness_and_delivery(lane):
     assert {r["lane"] for r in rows} == {"1652"}
     assert rows[0]["archive_path"] == "/archive/x" and rows[0]["manifest_sha256"] == "abc"
     eds_title_match = [r for r in rows if r["eds_an"] == "edsrep.1"][0]
-    assert eds_title_match["work_key"] == "doi:10.1/a" and eds_title_match["in_refined"] == "True"
+    assert eds_title_match["work_key"] == "doi:10.1111/a" and eds_title_match["in_refined"] == "True"
     rec = {r["sentinel"]: r for r in _csv(out / "sentinel_recall.csv")}
     assert rec["C1"]["found_own_family"] == "True" and rec["C1"]["found_eds"] == "True"
     assert rec["C2"]["found_any_search"] == "False"
@@ -129,7 +129,7 @@ def test_labels_count_relevant_per_question_and_feed_the_outcomes(lane):
     assert cy.run(_args(lane)) == 0
     labels = lane / "labels.jsonl"
     with open(labels, "w", encoding="utf-8") as fh:
-        for pid, lab in (("grid::doi:10.1/a", "relevant"), ("grid::oa:W2", "not"),
+        for pid, lab in (("grid::doi:10.1111/a", "relevant"), ("grid::oa:W2", "not"),
                          ("fiscal_substitution::oa:W2", "relevant")):
             fh.write(json.dumps({"pair_id": pid, "label": lab}) + "\n")
     args = _args(lane, labels=str(labels))
@@ -156,9 +156,9 @@ def test_intake_delivery_has_one_record_per_work_and_lists_the_duplicates(lane):
     reg = _csv(lane / "intake" / "registry.csv")
     assert len(recs) == 3 and len({r["record_id"] for r in recs}) == 3
     assert len(recs) + len(exc) == 6 and {e["reason"] for e in exc} == {"duplicate_in_lane"}
-    w1 = [r for r in recs if r["record_id"] == "1652:doi:10.1/a"][0]
+    w1 = [r for r in recs if r["record_id"] == "1652:doi:10.1111/a"][0]
     assert w1["platform"] == "openalex" and w1["all_query_ids"].count("|") == 2
-    assert [r["platform"] for r in recs if r["doi"] == "10.9/wp"] == ["bibcnrs_eds_repec"]
+    assert [r["platform"] for r in recs if r["doi"] == "10.9999/wp"] == ["bibcnrs_eds_repec"]
     assert {r["completed"] for r in reg} == {"true", "false"}
     assert all(r["stop_reason"] for r in reg if r["completed"] == "false")
     manifest = json.loads((lane / "intake" / "manifest.json").read_text())
@@ -168,21 +168,21 @@ def test_intake_delivery_has_one_record_per_work_and_lists_the_duplicates(lane):
 
 def test_a_later_run_directory_supersedes_the_ids_it_reran(lane):
     _run_dir(lane / "oa2", "openalex", [("RC-grid-IO-en", "grid", "IO", 1)],
-             [{"search_id": "RC-grid-IO-en", "openalex_id": "W7", "doi": "10.7/new",
+             [{"search_id": "RC-grid-IO-en", "openalex_id": "W7", "doi": "10.7777/new",
                "title": "A rerun record", "year": 2024}])
     args = _args(lane)
     args.run_dir = [str(lane / "oa"), str(lane / "oa2")]
     assert cy.run(args) == 0
     rows = _csv(lane / "out" / "delivery.csv")
     io = [r for r in rows if r["search_id"] == "RC-grid-IO-en"]
-    assert [r["doi"] for r in io] == ["10.7/new"]
+    assert [r["doi"] for r in io] == ["10.7777/new"]
     by_search = {r["group"] for r in _csv(lane / "out" / "yield_by_search.csv")}
     assert "RC-grid-IO-en" in by_search and len(rows) == 6
 
 
 def test_an_unfinished_rerun_with_fewer_records_does_not_supersede(lane):
     _run_dir(lane / "oa2", "openalex", [("RC-grid-IM-en", "grid", "IM", 1)],
-             [{"search_id": "RC-grid-IM-en", "openalex_id": "W7", "doi": "10.7/new",
+             [{"search_id": "RC-grid-IM-en", "openalex_id": "W7", "doi": "10.7777/new",
                "title": "A rerun record", "year": 2024}])
     reg = _csv(lane / "oa2" / "registry.csv")
     reg[0]["completed"], reg[0]["stop_reason"] = "False", "error: RuntimeError"
@@ -195,6 +195,23 @@ def test_an_unfinished_rerun_with_fewer_records_does_not_supersede(lane):
     assert cy.run(args) == 0
     im = [r for r in _csv(lane / "out" / "delivery.csv") if r["search_id"] == "RC-grid-IM-en"]
     assert sorted(r["openalex_id"] for r in im) == ["W1", "W2"]
+
+
+def test_truncated_dois_are_dropped_and_untitled_works_are_not_retrievable():
+    assert cy.valid_doi("https://doi.org/10.35219") == ""
+    assert cy.valid_doi("10.1016/J.X.2020.1") == "10.1016/j.x.2020.1"
+    reg = [{"search_id": "S1", "platform": "openalex", "run_at": "2026-09-30T10:00:00+00:00",
+            "query_string": "q", "n_received": 2, "completed": "True"}]
+    recs = cy.assign_work_keys([
+        {"search_id": "S1", "platform": "openalex", "openalex_id": "W1", "doi": "", "title": "",
+         "year": 2020, "question": "grid", "formulation": "IM", "in_refined": False,
+         "in_unified": False, "in_sud": False},
+        {"search_id": "S1", "platform": "openalex", "openalex_id": "W2", "doi": "", "title": "T",
+         "year": 2021, "question": "grid", "formulation": "IM", "in_refined": False,
+         "in_unified": False, "in_sud": False}])
+    rows, _, excluded = cy.intake_rows(recs, reg, {})
+    assert [r["openalex_id"] for r in rows] == ["W2"]
+    assert [(e["record_id"], e["reason"]) for e in excluded] == [("1652:oa:W1", "not_retrievable")]
 
 
 def test_judge_batches_one_mechanism_and_parses_labels(tmp_path):
