@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
+2026-09-30T12:07Z HDMX-coding-agent note drafted docs/jetp-requirements.md: 60 requirements (M2 24, M3a 10, M3b 24, M4 1, later 1), 6 marked inferred for author confirmation; product tensions listed in the PR
 
 --- body ---
 ## Context
@@ -31,6 +32,6 @@ built before it.
 
 ## Exit criteria
 
-- [ ] `docs/jetp-requirements.md` names the products (observatory, data paper, short paper, long paper, AEDIST reuse), the questions each asks of the system, the data held and expected, and what is out of scope
-- [ ] Each requirement names the milestone that must meet it
-- [ ] Each requirement is testable: the review in [[1710]] can say met or not met
+- [x] `docs/jetp-requirements.md` names the products (observatory, data paper, short paper, long paper, AEDIST reuse), the questions each asks of the system, the data held and expected, and what is out of scope
+- [x] Each requirement names the milestone that must meet it
+- [x] Each requirement is testable: the review in [[1710]] can say met or not met
