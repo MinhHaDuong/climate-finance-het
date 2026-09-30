@@ -161,8 +161,8 @@ three sections.
   the downloads; the release history is linked from here. **Who we are**:
   the author's own text, from his published homepage bio, with links to his
   homepage and ORCID. **Legal**: the French legal notice, the licence and
-  attribution statement, the publishers' terms, the correction and takedown
-  route and the privacy statement (`docs/jetp-legal-note.md`); what the
+  attribution statement, the publishers' terms, the correction, right-of-reply and takedown
+  route and the privacy notice (`docs/jetp-legal-note.md`); what the
   author has not supplied is a visible `[TO CONFIRM]`. The footer links it.
 
 Breadcrumbs appear on detail pages only. The title block is an h1 and a

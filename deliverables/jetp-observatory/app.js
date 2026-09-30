@@ -1949,7 +1949,7 @@ function whoWeArePage() {
     `<p>The observatory reads what the four partnerships and their funders publish, archives every document it relies on, and shows how each figure was reached. Its data and code are open.</p>` +
     `<p>Homepage: <a href="https://minh.haduong.com" target="_blank" rel="noopener">https://minh.haduong.com</a> · ORCID: <a href="https://orcid.org/0000-0001-9988-2100" target="_blank" rel="noopener">https://orcid.org/0000-0001-9988-2100</a></p></div>`;
 }
-/* Legal: the French legal notice (LCEN art. 6-III), the licence and
+/* Legal: the French legal notice (LCEN art. 1-1), the licence and
  * attribution statement, the publishers' terms, the correction and takedown
  * route and the privacy statement (author, 2026-09-30: "add the legalese
  * page to the MVP"; docs/jetp-legal-note.md). What the author has not yet
@@ -1959,11 +1959,12 @@ function legalPage() {
   main.innerHTML =
     header("Legal", "Who publishes this site, under which licence its own work is offered, whose terms the quoted documents keep, and how to ask for a correction.") +
     `<div class="legal" data-legal>
-<section data-legal="notice"><h2>Legal notice <small>(<i>mentions légales</i>, LCEN art. 6-III)</small></h2>
+<section data-legal="notice"><h2>Legal notice <small>(<i>mentions légales</i>, LCEN art. 1-1)</small></h2>
 <dl class="facts">
 <dt>Publisher</dt><dd>${TO_CONFIRM("CNRS as legal person, or the researcher; registered office and telephone")}</dd>
 <dt>Director of publication</dt><dd>${TO_CONFIRM("name")}</dd>
 <dt>Host</dt><dd>GitHub Pages, operated by GitHub, Inc. ${TO_CONFIRM("postal address and telephone, copied from GitHub's legal page")}</dd>
+<dt>Other storage provider</dt><dd>None: the pages and their downloads are served by the host alone.</dd>
 <dt>Contact</dt><dd>${TO_CONFIRM("an institutional address for legal and correction requests")}</dd>
 </dl></section>
 <section data-legal="licence"><h2>Licence and attribution</h2>
@@ -1979,10 +1980,18 @@ function legalPage() {
 <tr><td>Development banks and agencies</td><td>Each bank's disclosure policy and site terms</td><td>Short quotations, addresses and fingerprints</td></tr>
 <tr><td>News</td><td>All rights reserved</td><td>A headline and a sentence at most, with the address</td></tr>
 </tbody></table></div></section>
-<section data-legal="takedown"><h2>Corrections and takedown</h2>
-<p>A publisher who finds its material quoted beyond a short quotation, a person who finds personal information about them on these pages, or a reader who finds an error, writes to the contact above with the page address and the reason. The request is acknowledged within five working days and answered within one month ${TO_CONFIRM("delays, with the CNRS legal service")}. A correction to a published release is listed on the <a href="#release-history">release history</a> with its reason; material removed at a publisher's request is replaced by its address and fingerprint.</p></section>
+<section data-legal="takedown"><h2>Corrections, right of reply and takedown</h2>
+<p>A publisher who finds its material quoted beyond a short quotation, a person or organisation named on these pages, or a reader who finds an error, writes to the contact above with the page address and the reason. A right of reply (LCEN art. 1-1 III) is inserted within three days of receipt, the request being made within three months of publication. A request about personal data is answered within one month (GDPR art. 12). Any other correction or takedown request is acknowledged within five working days and answered within one month ${TO_CONFIRM("the CNRS procedure that applies")}. A correction to a published release is listed on the <a href="#release-history">release history</a> with its reason; material removed at a publisher's request is replaced by its address and fingerprint.</p></section>
 <section data-legal="privacy"><h2>Privacy</h2>
-<p>These pages set no cookie, run no analytics and load nothing from a third party. The host keeps the connection logs (visitor IP address) that its own privacy statement describes; the Observatory receives none of them. Names of officials and signatories appearing inside quoted documents are processed by the CNRS as part of its public research mission (GDPR art. 6(1)(e) and art. 89); no contact detail of a person is extracted or served. Questions about personal data go to the contact above or to the CNRS data-protection officer ${TO_CONFIRM("DPO address")}.</p></section>
+<p>These pages set no cookie, run no analytics and load nothing from a third party. The host, GitHub, logs visitors' IP addresses under its own privacy statement, on its own servers outside the European Union; the Observatory receives none of those logs.</p>
+<dl class="facts">
+<dt>Controller</dt><dd>${TO_CONFIRM("CNRS, or the researcher; decided with the CNRS data-protection officer")}</dd>
+<dt>What is processed, and from where</dt><dd>Names of officials and signatories as they appear inside publicly available documents, quoted as the author or signatory of a statement; no contact detail of a person is extracted or served.</dd>
+<dt>Purpose and basis</dt><dd>Scientific research on the Just Energy Transition Partnerships, a task in the public interest of the CNRS research mission (GDPR art. 6(1)(e), with the safeguards of art. 89).</dd>
+<dt>Recipients and transfers</dt><dd>Readers of these pages and of the deposited releases; the programs that read documents run on the researcher's machines or, as a fallback, through a hosted service ${TO_CONFIRM("the provider list and the transfer mechanism")}.</dd>
+<dt>Retention</dt><dd>For the duration of the research and the verification of its results; a deposited release is kept by its repository under its own terms.</dd>
+<dt>Your rights</dt><dd>Access, rectification, erasure and objection, within the limits of art. 17(3)(d) and art. 89 for research, by writing to the contact above or to the CNRS data-protection officer ${TO_CONFIRM("DPO address")}; a complaint may be lodged with the CNIL.</dd>
+</dl></section>
 </div>`;
 }
 function methodsPage() {

@@ -1218,6 +1218,7 @@ def test_the_legal_page_holds_the_notice_licence_terms_takedown_and_privacy() ->
         "notice", "licence", "publishers", "takedown", "privacy"]
     text = text_of(main)
     assert "CC BY 4.0" in text and "L122-5" in text and "no cookie" in text
+    assert "three days" in text and "CNIL" in text
     assert "[TO CONFIRM" in text and "@" not in text
     assert 'href="#release-history"' in main and 'href="#methods"' in main
 

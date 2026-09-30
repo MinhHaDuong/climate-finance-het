@@ -55,8 +55,9 @@ access route records the free registration used, never its credentials
 member of the public could not pass. A site's stated position on automated access (its terms of use,
 its crawler rules) is recorded with the attempts made there, and any change in
 it is reported, never passed over. The legal basis for holding the copies
-(the research text-and-data-mining exception, CPI art. L122-5-3 II) and for
-the lawful-access record is stated in the [legal note](jetp-legal-note.md) §1. [M3a]
+(the research text-and-data-mining exception, CPI art. L122-5-3 II and R122-23,
+conditional on the Observer being recorded as a CNRS research activity) and the
+lawful-access record are stated in the [legal note](jetp-legal-note.md) §1. [M3a]
 
 **Crawler rules.** Automated link-following, where a program walks a site
 from page to page, obeys the site's crawler rules (robots.txt). A single fetch
