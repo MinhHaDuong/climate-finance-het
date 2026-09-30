@@ -155,14 +155,21 @@ required of it at this step.
 - **Classification**: one value from the closed list of the
   [ontology](jetp-ontology.md) (section 4): `named_item`, `unnamed_item`,
   `quota`, `heading`, `submission`, `evaluation`, `register_allocation`,
-  `count`, `envelope`, `absence`. It is assigned by the extraction from what the
-  publisher presents, never inferred from words in the label. A statement
-  is admitted only with a classification. When the extraction cannot tell,
-  the proposal takes no default: for an assisted reading it goes to the
-  arbiter, and if the arbiter cannot tell either it ends undetermined and is
-  not admitted (section 6.3); for a parser, the document is not admitted (section 6.1). A classification
-  is never added to an admitted statement afterwards. [M2]
-  <!-- wave-1 W1-12: pending author decision (whether the closed list grows now, and a reader's 'cannot classify' answer) -->
+  `count`, `envelope`, `absence`, `target`, `event`, `decision`. It is
+  assigned by the extraction from what the publisher presents, never
+  inferred from words in the label. A statement is admitted only with a
+  classification. When the extraction cannot tell, the proposal takes no
+  default: for an assisted reading it goes to the arbiter, and if the
+  arbiter cannot tell either it ends undetermined and is not admitted
+  (section 6.3); for a parser, the document is not admitted (section 6.1).
+  A reader or the arbiter may also answer "cannot classify" when no value
+  of the list fits what the publisher asserts. Such a statement is not
+  admitted; it is recorded with its readings, and the panel (the two readers
+  and the arbiter) groups the unclassified statements of a run and proposes
+  new classes for them, each with a stance and a confidence. A new class is
+  adopted only by the author, since it changes the contract; the statements
+  it covers are then read again. A classification is never added to an
+  admitted statement afterwards. [M2]
 - **The publisher's own status word**, copied as printed, when the publisher
   prints one. The axis it belongs to is set only by a parser's reviewed,
   versioned status list for its series (adopted as crosswalk rows at M3b);
@@ -176,9 +183,11 @@ required of it at this step.
   programme heading, a method note, a section title that conditions every
   item under it). The heading is a statement of the same snapshot. [M2]
 - **Verbatim fields**: everything else the publisher printed for the item,
-  field by field. The list of fields is declared per document and per table
-  (the table segment of the statement identifier), and every statement of
-  that table conforms to it. Each field keeps the header as printed, with
+  field by field. The list of fields is fixed by the method version for
+  each document class or series, never by a reader, and applies per table
+  (the table segment of the statement identifier); every statement of that
+  table conforms to it. Each document's declared list is copied from its
+  class or series. Each field keeps the header as printed, with
   its unit and scale wording; a parser may map a printed header to a field
   name under a declared, versioned mapping, and the printed header stays
   beside the mapped name. Replay treats a mapped rename as explained. A
@@ -224,8 +233,16 @@ cases that recur in the documents held. [M2 for all]
   own words, attributed to its speaker when the publisher quotes someone. A
   quoted speaker is recorded as the office or institution the publisher
   prints; a person's name is recorded only when the publisher prints it as
-  the signatory of an in-scope document.
-  <!-- wave-1 W1-12: pending author decision (statement shape for prose: label span, fixed field list per class, typed values at M2) -->
+  the signatory of an in-scope document. The label of a prose statement is
+  the shortest verbatim span of the text that carries the assertion. Its
+  verbatim fields are the fixed list of its document class or series
+  (section 3), for prose at least the speaker, the date and the amount as
+  printed, each a verbatim substring of the text layer. Amounts and dates
+  stay as printed at extraction; typing them is reading (section 11).
+  Prose statements made by hand before this rule, with composed labels and
+  paraphrase locators, keep their identifiers under a named legacy method
+  and are re-anchored by supersession when read again. [M2 for the
+  statement shape; M3b for typed values]
 - A record page (a project page of a development bank, a portal's entry for
   one project) is one item statement for its subject; its labelled fields
   are its verbatim fields under the printed labels, and its description
@@ -321,9 +338,10 @@ received. [M2]
 - **JSON and other structured records.** Each record is read under its own
   key. A locator is the publisher's record identifier (a register code, an
   activity identifier, an SDMX key), and the record's fields are the
-  verbatim fields. [M2 for the documents held; the comparator records of
-  CRS and IATI, M3b]
-  <!-- wave-1 W1-15: pending author decision (whether replay of the held comparator lines is part of M2 acceptance) -->
+  verbatim fields. [M2 for the documents held, including the comparator
+  snapshots already held (CRS, IATI and World Bank records), which are read
+  and replayed at M2 by the ingestion run of section 6.2; new comparator
+  draws, M3b]
 - **Scripts.** Data embedded as a literal inside a script (an array behind a
   dashboard) is read as a structured record from the literal. A script is
   never executed to obtain data. [M2]
@@ -368,8 +386,19 @@ is examined individually when an observation first cites it. Before a
 portal is read, its snapshot is inspected and given a verdict: it holds
 data, it is a shell around a service, or it holds nothing to read. The
 verdict precedes any LLM call on the portal's content, so a portal bundle
-that is a shell is never sent to an LLM reader. [M2 for the portals held;
-the comparator records, M3b]
+that is a shell is never sent to an LLM reader. [M2 for the portals held]
+
+**Count control.** An ingestion run compares, for each snapshot, the number
+of records it read with the number the service or the file states (a total
+returned by the API, a row count, the records of a declared query slice);
+when they differ the run fails for that snapshot and admits nothing from
+it. A later draw of the same query slice is a new document dated by its
+draw and related to the previous draw by `edition_of`, not a new snapshot
+of one living document. The comparator snapshots already held (CRS, IATI
+and World Bank records) are read and replayed at M2 by an ingestion run
+under this control; what the comparator tag of M3b adds is new draws and
+the use of comparator records in matching and results. [M2 for the held
+comparator snapshots; M3b for new draws]
 
 ### 6.3 Assisted reading of one-off documents
 
@@ -383,7 +412,9 @@ record, and no item waits for the author.
   readers and the arbiter are called without tools, network or file access,
   and receive the text layer as quoted data, never as instructions. [M2]
 - **Two readers.** Each reader is given the document's text layer, the
-  declared scope and the declared field list, and, blind to the other,
+  declared scope and the field list that the method version fixes for the
+  document's class or series (a reader never proposes one), and, blind to
+  the other,
   proposes statements with a label, a verbatim quote of the assertion, a
   classification, the verbatim fields and a likelihood that the proposal is
   right. The two readings are aligned on their derived locators. [M2]
@@ -445,12 +476,19 @@ record, and no item waits for the author.
 
 ### 6.4 Transcription
 
-A scan, an image or a chart is read by transcription: a person, or a
-recogniser whose output is checked as in section 6.3. Each transcribed statement names
-the transcription as its method and version, and its locator gives the page
-and the region transcribed. A transcribed label has the same standing as a
-printed one once checked; its pedigree says it was transcribed. [M2 for the
-held documents that need it]
+A scan, an image or a chart is read by transcription, and only after
+collection has searched for a born-digital copy and found none
+([collection](jetp-collection.md) section 8). A recogniser produces a text
+layer; two vision-capable LLM readers from different model families, each
+blind to the other, read the page images and that layer under the protocol
+of section 6.3, and the arbiter settles what they leave open. Each
+transcribed statement names the transcription as its method and version,
+records its likelihood and confidence, and has a locator that gives the
+page and the region transcribed. No author sitting is needed. A
+transcribed label has the same standing as a printed one once checked; its
+pedigree says it was transcribed. The held scan without a text layer, the
+Vietnamese plan decision (Decision 458, 23 pages), is transcribed at M2 by
+this method. [M2 for the held documents that need it]
 
 A person may also read a document directly, without a proposing method. The
 statement then names the person as its method, and the same automatic
@@ -479,7 +517,7 @@ The kinds, closed and grown only by decision:
 | `unreadable` | snapshot | corrupt, truncated or in a format no adapter handles, with the format named |
 | `no_extractable_content` | snapshot | readable, but nothing in scope is stated in text: a shell around a service, a page of links, a chart with no text behind it; the reason says which |
 | `out_of_scope` | document | held for context, and nothing in it concerns the partnerships' projects, money, perimeters, parties or states |
-| `deferred` | snapshot | held and in scope, not extracted yet; names the milestone it waits for and why (a scan awaiting transcription, a run budget reached) |
+| `deferred` | snapshot | held and in scope, not extracted yet; names the milestone it waits for and why (a run budget reached, a format no method reads yet) |
 
 A snapshot that is byte-identical to one already extracted is not a new snapshot
 and needs neither statements nor a disposition; nor does a new snapshot
@@ -599,7 +637,16 @@ statement's printed fields into that typed form. It is a step after
 extraction, with its own methods and checks, and it never changes the
 statement it reads. The Observatory's Statements page shows these
 observations (step D3). [M3b for all rules of this section]
-<!-- wave-1 W1-39: pending author decision (M3b scoping: read only measure-bearing statements in a declared counting scope; match only lines feeding a declared result) -->
+
+**Scope.** Reading is bounded by the results it serves. Only statements that
+print a measure and belong to a declared counting scope (the strict scope
+of a partnership, or a declared reference pool) are read into observations;
+the others are listed, not counted. Matching is bounded the same way
+([fusion](jetp-fusion.md) section 3): only statements that feed a declared
+result are matched, against the top candidates per statement. Reading and
+matching run on the two local readers ([operation](jetp-operation.md)
+section 5: one model per GPU, the calibrated winners); a hosted model is
+called only as the arbiter, on escalation.
 
 **How many.** A statement yields zero, one or several observations, one per
 measure it prints. A plan item that prints a capacity and a cost estimate
@@ -721,6 +768,8 @@ not used on held documents until its checks pass. [M2 for all]
   never reports the statements as unresolvable in silence.
 - **The adapters** turn a corrupt or empty object into a disposition, not a
   crash.
+- **Ingestion runs** fail on a snapshot whose records read differ in number
+  from the count the service or file states (section 6.2).
 - **The pending list** lists a snapshot with neither statements nor a
   disposition, and stops listing it once either exists; a run over a
   document with the disposition `duplicate` leaves nothing of it pending.
@@ -741,7 +790,9 @@ It comprises:
    version, every reader's and the arbiter's answer, and any decision the
    author chose to make.
 3. The text layers of section 5 for every format present among the held
-   snapshots, each other format given a disposition that names it.
+   snapshots, each other format given a disposition that names it; the held
+   scan transcribed (section 6.4); the held comparator snapshots read and
+   replayed by the ingestion run of section 6.2, with its count control.
 4. The four methods of section 6, with the automatic locator check and,
    for assisted readings, two readers from different model families on
    every row and the arbiter on what they leave open, both readers and the
@@ -765,7 +816,7 @@ After M2:
   readings. Discovery may bring formats or series not held at M2; they are
   extracted in M3b.
 - **M3b** extracts the documents new since M2 with the same pipeline,
-  extracts the comparator records (CRS, IATI) as structured sources, and reads
+  extracts new comparator draws (CRS, IATI) as structured sources, and reads
   statements into observations (section 11).
 - **M4** runs the pipeline on schedule from the pending list, pairs
   statements across snapshots without a publisher's key, and swaps the document store behind
@@ -798,7 +849,7 @@ does well.
 | A report is held under the publisher's address and a partner's mirror, with the same bytes. | It is extracted once, from the canonical member; the other has the disposition `duplicate`. |
 | A plan is held in English and in Vietnamese. | One language is extracted; the other has the disposition `translation_not_canonical`. |
 | A dashboard's stored markup holds no data, which arrives by script. | Disposition `no_extractable_content`, reason "shell around a service"; collection may seek the data. |
-| A decision is held only as a scan. | It is transcribed with the transcription named as method, or deferred with that reason; it is never skipped silently. <!-- wave-1 W1-16: pending author decision --> |
+| A decision is held only as a scan. | Collection searches for a born-digital copy (the official gazette, the ministry portal, the national legal database) and records the search; if one is found it is registered and extracted instead. Otherwise the scan is transcribed by a recogniser and two vision-capable readers, with the arbiter on escalation; every statement names the transcription as method, gives page and region, and records its likelihood and confidence; it is never skipped silently. |
 | A figure appears only in a chart. | No statement; the extraction's scope note records the chart. |
 | The LLM proposes an item whose quote cannot be found in the text layer. | The derived locator fails; one repair call is made; if it still fails, the arbiter sees the proposal marked as failed, the failure is recorded, and the proposal is not admitted. |
 | The two readers agree on 40 rows of a Vietnamese plan at "likely" or more and differ on 3. | The 40 stand; the arbiter reads the 3 with both readings and the pages; all 43 end with a stance, a likelihood and a confidence, recorded with every reader's answer; nothing is queued for the author. |

@@ -333,6 +333,16 @@ cookies and tokens never appear in any record. Sending a request for a
 document to its publisher needs the author's explicit authorisation, case by
 case. [M3a]
 
+**Scans.** Before any scan is transcribed ([extraction](jetp-extraction.md)
+section 6.4), collection searches hard for a born-digital copy of the same
+document that stayed digital: the official gazette, the ministry's portal,
+the national legal database (for Viet Nam, Công báo, the Ministry of
+Industry and Trade's portal, vbpl.vn and similar). The search is recorded
+like any recorded search (section 7). A born-digital copy found is
+registered and extracted instead, and related to the scan; the scan is
+transcribed only when none is found. [M2 for the scans held; M3a for scans
+found by discovery]
+
 **Unreachable documents are data.** The unreachable list is released with
 the frozen register. Each entry names what is missing (an expected document,
 or a search channel of an expected authority), why it is expected, the rungs tried

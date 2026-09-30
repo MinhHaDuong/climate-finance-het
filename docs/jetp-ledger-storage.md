@@ -467,10 +467,11 @@ tiers 1 to 3; M3a for document tiers 4 and 5]
 ## 5. Language, translation and summaries
 
 A scan with no text layer (the Vietnamese decision of 2026 is one) is read by
-transcription, and each of its lines names the transcription as its method
-and version, so that its label has the provenance the translation tables give
-derived text. [M2]
-<!-- wave-1 W1-16: pending author decision (transcribe the scan at M2 or defer it) -->
+transcription at M2, once the search for a born-digital copy has found none,
+and each of its lines names the transcription as its method and version,
+with a locator of page and region, so that its label has the provenance the
+translation tables give derived text ([extraction](jetp-extraction.md)
+section 6.4). [M2]
 
 The four partnerships publish in Indonesian, Vietnamese, French and English,
 and some documents exist in two languages. The ledger records the language of

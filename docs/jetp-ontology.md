@@ -282,10 +282,13 @@ A line's classification says what kind of statement it is, in the publisher's
 own terms, from a closed list:
 
 `named_item`, `unnamed_item`, `quota`, `heading`, `submission`, `evaluation`,
-`register_allocation`, `count`, `envelope`, `absence`.
+`register_allocation`, `count`, `envelope`, `absence`, `target`, `event`, `decision`.
 
-The list is grown when a publisher's practice needs a value; it is never
-inferred from the label. [M2]
+A classification is never inferred from the label. The list grows only by
+decision of the author, since a new value changes the contract: when readers
+answer "cannot classify", the panel groups those statements and proposes a
+new value with a stance and a confidence ([extraction](jetp-extraction.md)
+section 3), and the author adopts it or not. [M2]
 
 **Sector** is a shared axis, coded with the OECD DAC CRS purpose list (five
 digits; the 231 to 236 group covers energy policy, generation by source,

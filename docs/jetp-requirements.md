@@ -646,7 +646,11 @@ specification was reviewed.
 | Documents with a snapshot and no statement | 115 |
 
 The number of statements per identifier family and extraction method is
-added here once the first replay has counted it (Q1).
+added here once the first replay has counted it (Q1). Of the 13,092
+statements, 10,452 are comparator records (CRS, IATI and World Bank) in the
+snapshots kept outside the document store; they are read and replayed at M2
+by the ingestion run of Extraction § 6.2, with a count control per
+snapshot, and count among the extracted statements of this requirement.
 
 **DA3. Document types.** At least: progress updates, project pages, data
 portals, official news, annual reports, operator reports, project lists,
@@ -720,7 +724,8 @@ strict-scope figure recomputed without this scope is unchanged.
 **Q1. Replay.** The pipeline reproduces the statements of the 254 documents
 already extracted, byte for byte, or every difference is explained. *M2.* Test:
 the replay report lists zero unexplained differences for statements minted
-by extractors and written by ingestion runs, and, for the others, the result
+by extractors and written by ingestion runs (the held comparator records
+included, each snapshot's record count equal to the count it states), and, for the others, the result
 of the locator-and-text check, listed by method; it counts the statements
 of each identifier family and method.
 
