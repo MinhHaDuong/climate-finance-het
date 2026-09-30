@@ -189,6 +189,11 @@ stated.
   the release or only cited, on which terms, and its public copy:
   redistributed bytes, a public archive capture, or none with the reason
   (section 7). (C6, F27)
+- **The share of support by public copy**: for each result and for the
+  release as a whole, the share of the supporting statements whose document
+  has its bytes redistributed, a public archive capture, a live address
+  only, a registration route only, or no public copy, so that a reader
+  knows how far a figure can be checked from outside. (Q8, C6, F27)
 - **The validation and coverage reports**, and an editorial note in plain
   language saying what the release contains and what it does not. The
   validation reports include the calibration record of every method version

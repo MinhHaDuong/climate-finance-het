@@ -446,6 +446,9 @@ implies neither finance nor physical progress. [M3b]
 conversion uses a rate that a document printed, cited like any statement; no
 rate is assumed and no conversion is implicit. A conversion made by a third
 party is kept as its statement and excluded from sums in original currency.
+Since few documents print a rate, a total across currencies is often
+impossible; a result then reports one figure per currency rather than
+converting.
 Gross flows are not reduced by refunds, repayments or cancellations, which
 remain their own measures. Rounded inputs carry their bounds, and a rounding
 difference is not a discrepancy. [M3b]
@@ -476,6 +479,13 @@ position. [M3b for all]
 - A residual (reported closing minus reconstructed closing) exists only when
   the two share cutoff, currency, coverage and basis; otherwise both are kept
   with the condition that failed.
+- An account that reaches no exact closing, or no residual, names its
+  cause from one list: totals that overlap in part with no supported
+  decomposition; an opening position unknown or with an open bound; a
+  movement whose interval straddles a boundary; coverage not judged
+  complete; a cutoff, currency, coverage or basis that differs between the
+  reported and the reconstructed closing. A result counts its accounts per
+  cause, so that what blocks the reconstruction is itself a finding.
 - A figure printed as cumulative or "to date" is a closing-position
   candidate, never a movement: it is read as a flow over an interval whose
   end is its as-of date and whose start is unknown (extraction section 11),
@@ -543,3 +553,4 @@ well.
 | A report of March 2026 says a plant was commissioned, without a date. | The commissioning is an interval with an open start ending in March 2026, not a day. |
 | An accepted match has a later revision that is only proposed. | The accepted match stays in force and counts; the proposal is listed as pending until it is itself accepted or rejected. |
 | A match accepted before cutoff K is superseded by a judgement admitted after K. | A result at K counts the accepted match; a result at a later cutoff applies the revision. |
+| A partner announces its withdrawal from a partnership. | The announcement is a statement read as a dated event; the partner's `party_in` rows end at the date it gives, by later judgements that close them and cite the statement. Nothing earlier is deleted: a result at an earlier cutoff still shows the partner's role and the amounts it had stated. |
