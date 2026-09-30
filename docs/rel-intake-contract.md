@@ -148,17 +148,21 @@ closed list above.
 
 ## What 1655 does with a delivery: the per-source merge report
 
-The pool merge (ticket 1731) reads the pinned `data/catalogs/unified_works.csv`
-and every delivery, and writes `data/rel_pool/merge_report.json` plus a
-readable table. For each delivery, **before cross-source deduplication**:
+The pool merge (ticket 1731, `make rel-pool`, `scripts/corpus_rel_pool.py`)
+reads the pinned catalogue (`data/catalogs/unified_works_rel_pin.csv`, catalog_merge
+run 20260729T161924Z, 43,179 works, fetched by hash with `make rel-pool-data`;
+not the `unified_works.csv` that `dvc.lock` currently pins) and every delivery
+no other supersedes, and writes `data/rel_pool/pool.csv`,
+`data/rel_pool/merge_report.json` and a readable `merge_report.md`. For each
+delivery, per source (a work two lanes found counts in both):
 
 | field | meaning |
 |---|---|
 | `records` | rows in `records.csv` |
 | `excluded` | per-reason counts from `excluded.csv` |
-| `with_doi`, `with_openalex_id`, `title_year_only` | identifier coverage |
-| `dup_within_delivery` | rows that collapse onto another row of the same delivery |
-| `in_catalogue` | matched to `unified_works` (by DOI, OpenAlex id, then title + year; each count reported) |
+| `with_doi`, `doi_malformed`, `with_openalex_id`, `title_year_only` | identifier coverage (DOIs are compared as strings, never resolved) |
+| `dup_within_delivery` | rows that land in the same pool work as another row of the same delivery |
+| `in_catalogue` | matched to the catalogue (by DOI, OpenAlex id, then title + year, or `via_other_lane` when only another lane's record bridges them; each count reported) |
 | `in_other_lane_only` | not in the catalogue, matched to another delivery |
 | `new_to_pool` | matched to nothing else: the lane's unique yield |
 | `already_screened` | of the delivery's works, how many already carry an ICF label in `icf_screen` |

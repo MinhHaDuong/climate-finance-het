@@ -1,0 +1,9 @@
+# REL pool catalogue (ticket 1731): catalog_merge run 20260729T161924Z,
+# 43,179 works, the count the REL protocol cites. Pinned by hash so the pool
+# never follows the catalog_merge stage, whose dvc.lock output differs
+# (recorded in commit 732c7f5e, superseded by 7cf4eee0).
+outs:
+- md5: 3633ad9f4517c02618a0ecab722a8051
+  size: 81934596
+  hash: md5
+  path: unified_works_rel_pin.csv

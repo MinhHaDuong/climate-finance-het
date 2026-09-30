@@ -1,0 +1,6 @@
+outs:
+- md5: 5c3aeb546d97e23f4c2b88cb585bd159.dir
+  size: 47714871
+  nfiles: 4
+  hash: md5
+  path: t1530-sud-openalex
