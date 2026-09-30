@@ -30,17 +30,17 @@ Usage:
 """
 
 import argparse
+import bisect
 import csv
 import gzip
 import json
 import os
 import re
 import sys
-import unicodedata
 from collections import Counter, defaultdict
 
 import yaml
-from utils import get_logger, normalize_doi
+from utils import get_logger, normalize_doi, normalize_title
 
 log = get_logger("rel_causal_yield")
 
@@ -63,8 +63,9 @@ def valid_doi(doi):
 
 
 def norm_title(title):
-    t = unicodedata.normalize("NFKD", title or "").encode("ascii", "ignore").decode().lower()
-    return re.sub(r"[^a-z0-9]+", " ", t).strip()
+    """The pool's title normaliser (``_rel_pool_dedup``), so that the lane and
+    the pool group the same titles: `China’s` and `China's` are one title."""
+    return normalize_title(title or "")
 
 
 def title_key(title, year):
@@ -204,10 +205,24 @@ def _agrees(hint, doi):
     return not hint or doi.startswith(hint)
 
 
-def _title_groups(records, by_oa):
+def _prefix_of_another(hint, lane_sorted):
+    """True when ``hint`` is a strict prefix of a DOI or EDS DOI anywhere in
+    the lane (``lane_sorted``, sorted): a truncated DOI, whatever its title."""
+    i = bisect.bisect_right(lane_sorted, hint)
+    return i < len(lane_sorted) and lane_sorted[i].startswith(hint)
+
+
+def _title_groups(records, by_oa, resolves=None):
     """Per title+year key: the DOIs records carry, the first OpenAlex work
-    without DOI, and the anchors (those DOIs plus every EDS DOI that is no
-    strict prefix of another DOI of the group)."""
+    without DOI, and the anchors: those DOIs plus the EDS DOIs that can name
+    a work of their own.
+
+    An EDS DOI is no anchor when it is a strict prefix of any DOI or EDS DOI
+    of the lane (truncated). In a group with several anchors, an EDS DOI that
+    no record carries as its DOI must also resolve at doi.org (``resolves``,
+    a ``doi -> bool`` callable; ``None`` resolves nothing): a DOI cut at a
+    field boundary (`...2004.`, `..._v1`) is no prefix of anything the lane
+    holds, and only the resolver catches it."""
     dois_by_title, hints_by_title, oa_by_title = defaultdict(set), defaultdict(set), {}
     for r in records:
         k = title_key(r.get("title"), r.get("year"))
@@ -220,11 +235,16 @@ def _title_groups(records, by_oa):
             hints_by_title[k].add(r["doi_eds"])
         if r.get("openalex_id"):
             oa_by_title.setdefault(k, by_oa.get(r["openalex_id"], "oa:" + r["openalex_id"]))
-    anchors = {}
-    for k in set(dois_by_title) | set(hints_by_title):
-        every = dois_by_title[k] | hints_by_title[k]
-        anchors[k] = dois_by_title[k] | {h for h in hints_by_title[k]
-                                         if not any(d != h and d.startswith(h) for d in every)}
+    known = set().union(*dois_by_title.values()) if dois_by_title else set()
+    lane_sorted = sorted(known | {h for r in records if (h := r.get("doi_eds"))})
+    candidates = {k: dois_by_title[k] | {h for h in hints_by_title[k]
+                                         if not _prefix_of_another(h, lane_sorted)}
+                  for k in set(dois_by_title) | set(hints_by_title)}
+    to_check = sorted({h for k, c in candidates.items() if len(c) > 1
+                       for h in c - dois_by_title[k] if h not in known})
+    ok = {h for h in to_check if resolves is not None and resolves(h)}
+    anchors = {k: {a for a in c if a in dois_by_title[k] or a in known or a in ok or len(c) == 1}
+               for k, c in candidates.items()}
     return dois_by_title, oa_by_title, anchors
 
 
@@ -232,8 +252,9 @@ def _split_group_key(r, hint, group, own, k):
     """Key of a record without DOI in a title+year group holding works whose
     DOIs disagree: the one anchor its EDS DOI agrees with; else its OpenAlex
     id; else the title+year key, which the group's other unplaceable EDS
-    records share (the pool's rule: rows with neither id join only one
-    another). A record that anchors a work with its own EDS DOI gets it as
+    records share. (The pool joins such rows with one another only when the
+    pool's title group holds two DOI components; with one, it joins them to
+    it.) A record that anchors a work with its own EDS DOI gets it as
     ``doi``."""
     agreeing = sorted(a for a in group if _agrees(hint, a))
     if len(agreeing) != 1:
@@ -245,7 +266,7 @@ def _split_group_key(r, hint, group, own, k):
     return "edsdoi:" + agreeing[0]
 
 
-def assign_work_keys(records):
+def assign_work_keys(records, resolves=None):
     """Work key per record: its DOI; else the DOI another record gives its
     OpenAlex id; else, within its title+year group, the one DOI it agrees
     with; else its OpenAlex id; else the key of an identified record with the
@@ -253,17 +274,17 @@ def assign_work_keys(records):
     OpenAlex record without DOI and an EDS record carrying one, which an
     id-first rule would keep apart.
 
-    A title+year group whose records carry two DOIs that disagree (the OpenAlex
-    DOIs, and the EDS DOIs that are no prefix of another one in the group) holds
-    several works (ticket 1755): a record joins only the one DOI it agrees
-    with, and a record that agrees with several, or none, keeps its own key.
-    An EDS DOI that anchors such a split is not truncated, so it becomes the
-    record's ``doi``: without it the pool's title+year join would fuse the
-    works again."""
+    A title+year group whose records carry two DOIs that disagree (the
+    OpenAlex DOIs, and the EDS DOIs that ``_title_groups`` accepts as anchors:
+    no prefix of a lane DOI, and resolving at doi.org) holds several works
+    (ticket 1755): a record joins only the one DOI it agrees with, and a
+    record that agrees with several, or none, keeps its own key. An EDS DOI
+    that anchors such a split becomes the record's ``doi``: without it the
+    pool's title+year join would fuse the works again."""
     by_oa = {r["openalex_id"]: "doi:" + r["doi"] for r in records
              if r.get("doi") and r.get("openalex_id")}
     known_dois = {r["doi"] for r in records if r.get("doi")}
-    dois_by_title, oa_by_title, anchors = _title_groups(records, by_oa)
+    dois_by_title, oa_by_title, anchors = _title_groups(records, by_oa, resolves)
     for r in records:
         k = title_key(r.get("title"), r.get("year"))
         hint = r.get("doi_eds") or ""
@@ -668,6 +689,49 @@ def write_delivery(path, records, registry, labels, archive_path, manifest_sha25
                 "in_refined": r["in_refined"], "in_unified": r["in_unified"], "in_sud": r["in_sud"]})
 
 
+HANDLE_API = "https://doi.org/api/handles/"
+DOI_CHECK_FIELDS = ["doi", "resolves", "checked_at"]
+
+
+def handle_lookup(doi):
+    """True when doi.org's handle API knows ``doi`` (free, no key); raises on
+    anything but a definite answer, so a network failure never demotes a DOI."""
+    import time
+    from urllib.parse import quote
+
+    import requests
+    resp = requests.get(HANDLE_API + quote(doi, safe="/"), timeout=30)
+    time.sleep(0.2)
+    if resp.status_code == 404:
+        return False
+    resp.raise_for_status()
+    return resp.json().get("responseCode") == 1
+
+
+class DoiChecks:
+    """doi.org answers, cached in a CSV so each EDS DOI is looked up once and
+    the evidence is archived with the analysis (``--doi-checks``)."""
+
+    def __init__(self, path, lookup=handle_lookup):
+        self.path, self.lookup, self.done = path, lookup, {}
+        if os.path.exists(path):
+            with open(path, encoding="utf-8", newline="") as fh:
+                self.done = {r["doi"]: r["resolves"] == "true" for r in csv.DictReader(fh)}
+
+    def __call__(self, doi):
+        if doi not in self.done:
+            from datetime import datetime, timezone
+            self.done[doi] = self.lookup(doi)
+            new = not os.path.exists(self.path)
+            with open(self.path, "a", encoding="utf-8", newline="") as fh:
+                w = csv.DictWriter(fh, DOI_CHECK_FIELDS)
+                if new:
+                    w.writeheader()
+                w.writerow({"doi": doi, "resolves": str(self.done[doi]).lower(),
+                            "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
+        return self.done[doi]
+
+
 def run(args):
     with open(args.families, encoding="utf-8") as fh:
         fam_cfg = yaml.safe_load(fh)
@@ -675,7 +739,7 @@ def run(args):
     run_dirs = args.run_dir if isinstance(args.run_dir, list) else [args.run_dir]
     dirs = [d for d in run_dirs + [args.eds_dir] if d]
     registry, registry_all, records = load_runs(dirs)
-    assign_work_keys(records)
+    assign_work_keys(records, DoiChecks(args.doi_checks) if args.doi_checks else None)
     refined, unified, sud = load_catalog(args.refined), load_catalog(args.unified), load_sud(args.sud_results)
     for r in records:
         r.update(in_refined=r in refined, in_unified=r in unified, in_sud=r in sud)
@@ -726,13 +790,13 @@ def run(args):
     # conservation: every raw id retrieved in any run lands in the delivery
     n_ids = check_conservation(dirs, records, intake_rows(records, registry_all, labels)[3])
     log.info("conservation: %d distinct raw ids, all delivered", n_ids)
-    if getattr(args, "intake_dir", None):
+    if args.intake_dir:
         if not args.manifest_base:
             raise SystemExit("--intake-dir needs --manifest-base")
         with open(args.manifest_base, encoding="utf-8") as fh:
             base = json.load(fh)
         n, x = write_intake(args.intake_dir, records, registry_all, labels, base,
-                            force=getattr(args, "force_intake", False))
+                            force=args.force_intake)
         log.info("intake delivery: %d records, %d excluded rows", n, x)
     return 0
 
@@ -756,6 +820,8 @@ def main(argv=None):
     ap.add_argument("--intake-dir", help="also write the delivery in the 1730 intake format")
     ap.add_argument("--force-intake", action="store_true",
                     help="replace an existing, not yet merged delivery")
+    ap.add_argument("--doi-checks", help="CSV cache of doi.org lookups of the EDS DOIs that "
+                    "would split a title group; without it no EDS DOI is promoted to doi")
     ap.add_argument("--manifest-base", help="JSON with lane, ticket, delivery, delivered_at, "
                     "producer, needs_human, supersedes, notes (counts and coverage are added)")
     # Multi-output script (yields, recall, judge input, delivery): --output-dir.

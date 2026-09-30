@@ -80,7 +80,8 @@ def _args(p, labels=None):
         families=os.path.join(ROOT, "config", "rel_causal_families.yaml"),
         sentinels=str(p / "sent.csv"),
         search_config=os.path.join(ROOT, "config", "rel_causal_search.yaml"),
-        archive_path="/archive/x", manifest_sha256="abc", output_dir=str(p / "out"))
+        archive_path="/archive/x", manifest_sha256="abc", output_dir=str(p / "out"),
+        intake_dir=None, manifest_base=None, force_intake=False, doi_checks=None)
 
 
 def _csv(path):
@@ -297,7 +298,7 @@ def test_a_title_join_never_fuses_two_records_with_different_full_dois():
          "title": SURVEY, "year": 2007},
         # a truncated EDS DOI is a prefix of its twin's and still joins it
         {"doi": "", "doi_eds": "10.1080/0007491070128", "openalex_id": "", "eds_an": "e2",
-         "title": SURVEY.upper(), "year": 2007}])
+         "title": SURVEY.upper(), "year": 2007}], resolves=lambda d: True)
     assert [r["work_key"] for r in recs] == ["doi:10.1080/00074910701286370",
                                             "edsdoi:10.1080/00074910701408040",
                                             "doi:10.1080/00074910701286370"]
@@ -317,12 +318,68 @@ def test_two_eds_records_with_different_full_dois_stay_apart():
         # records with no id at all join only one another
         {"doi": "", "openalex_id": "W5", "title": title, "year": 2016},
         {"doi": "", "openalex_id": "", "eds_an": "c", "title": title, "year": 2016},
-        {"doi": "", "openalex_id": "", "eds_an": "d", "title": title.upper(), "year": 2016}])
+        {"doi": "", "openalex_id": "", "eds_an": "d", "title": title.upper(), "year": 2016}],
+        resolves=lambda d: True)
     ty = "ty:" + cy.title_key(title, 2016)
     assert [r["work_key"] for r in recs] == ["edsdoi:10.5089/9781498318426.002",
                                             "edsdoi:10.5089/9781484390429.002", "oa:W5", ty, ty]
     assert [r["doi"] for r in recs] == ["10.5089/9781498318426.002",
                                         "10.5089/9781484390429.002", "", "", ""]
+
+
+def test_a_truncated_eds_doi_is_never_promoted():
+    """Round-1 review of PR #1637: `10.1111/j.0092-5853.2004.` was promoted.
+    It is a strict prefix of a DOI elsewhere in the lane (another title), so
+    it is truncated even if doi.org were to answer; and an EDS DOI that
+    doi.org does not know (`..._v1`) is no identifier either. Both records
+    join their title twin, as before the split."""
+    ajps = "Policy Responsiveness and Electoral Incentives"
+    osf = "Climate Finance Flows to Small Island States"
+    recs = cy.assign_work_keys([
+        {"doi": "10.1111/j.0092-5853.2004.00065.x", "openalex_id": "W1",
+         "title": "A different article of the same issue", "year": 2004},
+        {"doi": "10.2307/1519875", "openalex_id": "W2", "title": ajps, "year": 2004},
+        {"doi": "", "doi_eds": "10.1111/j.0092-5853.2004.", "openalex_id": "", "eds_an": "e1",
+         "title": ajps, "year": 2004},
+        {"doi": "10.31219/osf.io/75vez", "openalex_id": "W3", "title": osf, "year": 2021},
+        {"doi": "", "doi_eds": "10.31219/osf.io/75vez_v1", "openalex_id": "", "eds_an": "e2",
+         "title": osf, "year": 2021}],
+        resolves=lambda d: d != "10.31219/osf.io/75vez_v1")
+    assert [r["work_key"] for r in recs[2:]] == ["doi:10.2307/1519875", "doi:10.31219/osf.io/75vez",
+                                                "doi:10.31219/osf.io/75vez"]
+    assert [r["doi"] for r in recs if r.get("eds_an")] == ["", ""]
+    # without a resolver nothing is promoted and nothing splits
+    recs = cy.assign_work_keys([
+        {"doi": "10.1080/00074910701286370", "openalex_id": "W1", "title": SURVEY, "year": 2007},
+        {"doi": "", "doi_eds": "10.1080/00074910701408040", "openalex_id": "", "eds_an": "e1",
+         "title": SURVEY, "year": 2007}])
+    assert recs[1]["work_key"] == "doi:10.1080/00074910701286370" and recs[1]["doi"] == ""
+
+
+def test_curly_and_straight_apostrophes_make_one_title():
+    """Round-1 review of PR #1637: "China\u2019s" and "China's" were two lane
+    title keys, one pool title; the lane now uses the pool's normaliser."""
+    straight = "The Determinants of China's International Portfolio Equity Allocations"
+    curly = straight.replace("'", "\u2019")
+    assert cy.title_key(straight, 2020) == cy.title_key(curly, 2020)
+    recs = cy.assign_work_keys([
+        {"doi": "10.1057/s41308-020-00113-x", "openalex_id": "W1", "title": straight, "year": 2020},
+        {"doi": "", "doi_eds": "10.1057/s41308-020-00113", "openalex_id": "", "eds_an": "e",
+         "title": curly, "year": 2020},
+        {"doi": "", "doi_eds": "10.1016/j.other.2020.1", "openalex_id": "", "eds_an": "f",
+         "title": straight, "year": 2020}], resolves=lambda d: True)
+    assert recs[1]["work_key"] == "doi:10.1057/s41308-020-00113-x" and recs[1]["doi"] == ""
+
+
+def test_doi_checks_look_each_doi_up_once_and_keep_the_answer(tmp_path):
+    calls = []
+    checks = cy.DoiChecks(str(tmp_path / "doi_checks.csv"),
+                          lookup=lambda d: calls.append(d) or d.endswith("x"))
+    assert checks("10.1/x") is True and checks("10.1/y") is False and checks("10.1/x") is True
+    assert calls == ["10.1/x", "10.1/y"]
+    again = cy.DoiChecks(str(tmp_path / "doi_checks.csv"), lookup=lambda d: 1 / 0)
+    assert again("10.1/y") is False
+    assert [r["resolves"] for r in _csv(tmp_path / "doi_checks.csv")] == ["true", "false"]
 
 
 def _run_with_repeats(path, sid, rows, distinct, expected, completed="True", stop=""):
