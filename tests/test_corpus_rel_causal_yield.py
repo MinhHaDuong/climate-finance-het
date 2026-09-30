@@ -281,6 +281,120 @@ def test_truncated_dois_are_dropped_and_untitled_works_are_not_retrievable():
     assert [(e["record_id"], e["reason"]) for e in excluded] == [("1652:oa:W1", "not_retrievable")]
 
 
+# --- ticket 1755: the corrections of the replacement delivery
+
+SURVEY = "Survey of Recent Developments"
+
+
+def test_a_title_join_never_fuses_two_records_with_different_full_dois():
+    """Replay of a pair the round-2 panel found fused (Bulletin of Indonesian
+    Economic Studies, 2007): an OpenAlex record and an EDS record with the same
+    title and year but two different, complete DOIs are two works; the EDS DOI
+    becomes the record's identifier so the pool keeps them apart too."""
+    recs = cy.assign_work_keys([
+        {"doi": "10.1080/00074910701286370", "openalex_id": "W1", "title": SURVEY, "year": 2007},
+        {"doi": "", "doi_eds": "10.1080/00074910701408040", "openalex_id": "", "eds_an": "e1",
+         "title": SURVEY, "year": 2007},
+        # a truncated EDS DOI is a prefix of its twin's and still joins it
+        {"doi": "", "doi_eds": "10.1080/0007491070128", "openalex_id": "", "eds_an": "e2",
+         "title": SURVEY.upper(), "year": 2007}])
+    assert [r["work_key"] for r in recs] == ["doi:10.1080/00074910701286370",
+                                            "edsdoi:10.1080/00074910701408040",
+                                            "doi:10.1080/00074910701286370"]
+    assert recs[1]["doi"] == "10.1080/00074910701408040" and recs[2]["doi"] == ""
+
+
+def test_two_eds_records_with_different_full_dois_stay_apart():
+    """IMF pair: 10.5089/9781498318426.002 and 10.5089/9781484390429.002, both
+    from EDS, same title and year, no OpenAlex twin."""
+    title = "Republic of Mozambique: Selected Issues Paper"
+    recs = cy.assign_work_keys([
+        {"doi": "", "doi_eds": "10.5089/9781498318426.002", "openalex_id": "", "eds_an": "a",
+         "title": title, "year": 2016},
+        {"doi": "", "doi_eds": "10.5089/9781484390429.002", "openalex_id": "", "eds_an": "b",
+         "title": title, "year": 2016},
+        # a record of the same title with no identifier cannot be placed: its own work
+        {"doi": "", "openalex_id": "W5", "title": title, "year": 2016}])
+    assert [r["work_key"] for r in recs] == ["edsdoi:10.5089/9781498318426.002",
+                                            "edsdoi:10.5089/9781484390429.002", "oa:W5"]
+
+
+def _run_with_repeats(path, sid, rows, distinct, expected, completed="True", stop=""):
+    """A run directory whose cursor served ``rows`` rows for ``distinct`` ids."""
+    _run_dir(path, "openalex", [(sid, "construction_emissions", "SY", expected)],
+             [{"search_id": sid, "openalex_id": f"W{i % distinct}", "doi": "",
+               "title": f"Construction emissions record number {i % distinct}", "year": 2020}
+              for i in range(rows)])
+    _set_registry(path / "registry.csv", **{sid: {"n_received": str(rows), "completed": completed,
+                                                  "stop_reason": stop}})
+
+
+def test_completeness_counts_distinct_ids_and_names_the_exhausted_cursor(tmp_path):
+    """Replay of run d, RC-construction_emissions-SY-en: the cursor served 1,946
+    rows, 1,940 distinct ids, of 1,944 announced. The cursor was exhausted: the
+    row is complete (lead's arbitration at the merge of #1609), but the state
+    says so explicitly and the counts are distinct ids."""
+    sid = "RC-construction_emissions-SY-en"
+    _run_with_repeats(tmp_path / "d", sid, 1946, 1940, 1944)
+    registry, _, _ = cy.load_runs([str(tmp_path / "d")])
+    row = [r for r in registry if r["search_id"] == sid][0]
+    assert row["n_received"] == 1940
+    assert row["completed"] == "True" and row["cursor_state"] == "cursor_exhausted"
+    assert row["cursor_note"] == "d: cursor exhausted (1946 rows, 1940 distinct ids of 1944 announced)"
+    # a cursor that ended with fewer rows than announced is a short cursor, not complete
+    _run_with_repeats(tmp_path / "a", sid, 658, 658, 659)
+    row = cy.load_runs([str(tmp_path / "a")])[0][0]
+    assert row["completed"] == "False" and row["cursor_state"] == "short_cursor"
+    assert row["stop_reason"] == "a: short cursor (658 of 659)"
+    # a capped run is neither
+    _run_with_repeats(tmp_path / "c", sid, 800, 800, 1944, completed="False", stop="record cap")
+    row = cy.load_runs([str(tmp_path / "c")])[0][0]
+    assert row["completed"] == "False" and row["cursor_state"] == "record_cap"
+    # all distinct ids announced: plainly complete
+    _run_with_repeats(tmp_path / "b", sid, 441, 440, 440)
+    row = cy.load_runs([str(tmp_path / "b")])[0][0]
+    assert row["completed"] == "True" and row["cursor_state"] == "complete" and row["cursor_note"] == ""
+
+
+def test_every_eds_doi_survives_in_the_delivery(lane):
+    """An EDS retrieval joined to an OpenAlex record without DOI is a
+    duplicate_in_lane; its DOI is carried by the kept record and the exclusion
+    note, not left in the archive."""
+    _run_dir(lane / "eds2", "bibCNRS EDS (ECONIS)", [("EDS-ECONIS-grid-IM-en", "grid", "IM", 1)],
+             [{"search_id": "EDS-ECONIS-grid-IM-en", "eds_an": "zbw.9", "doi": "10.4444/fungib",
+               "title": T2, "year": 2019}])
+    registry, registry_all, records = cy.load_runs([str(lane / "oa"), str(lane / "eds2")])
+    cy.assign_work_keys(records)
+    for r in records:
+        r.update(in_refined=False, in_unified=False, in_sud=False)
+    rows, _, excluded, _ = cy.intake_rows(records, registry_all, {})
+    w2 = [r for r in rows if r["openalex_id"] == "W2"][0]
+    assert w2["doi"] == "" and w2["doi_eds_hint"] == "10.4444/fungib"
+    assert "10.4444/fungib" in w2["lane_note"]
+    zbw = [e for e in excluded if e["note"].startswith("zbw.9")][0]
+    assert "10.4444/fungib" in zbw["note"]
+
+
+def test_write_intake_refuses_an_existing_delivery_without_force(lane, tmp_path):
+    registry, registry_all, records = cy.load_runs([str(lane / "oa")])
+    cy.assign_work_keys(records)
+    for r in records:
+        r.update(in_refined=False, in_unified=False, in_sud=False)
+    base = {"lane": "t1652-causal-econlit", "ticket": "1652", "delivery": "2026-09-30b"}
+    out = tmp_path / "delivery"
+    cy.write_intake(str(out), records, registry_all, {}, base)
+    (out / "records.csv").write_text("sentinel")
+    with pytest.raises(SystemExit, match="--force-intake"):
+        cy.write_intake(str(out), records, registry_all, {}, base)
+    assert (out / "records.csv").read_text() == "sentinel"
+    # any delivery file, not only records.csv, marks the directory as taken
+    (out / "records.csv").unlink()
+    with pytest.raises(SystemExit, match="--force-intake"):
+        cy.write_intake(str(out), records, registry_all, {}, base)
+    cy.write_intake(str(out), records, registry_all, {}, base, force=True)
+    assert (out / "records.csv").read_text().startswith("record_id,")
+
+
 def test_judge_batches_one_mechanism_and_parses_labels(tmp_path):
     recs = [{"pair_id": f"{q}::{i}", "question": q, "mechanism": f"M {q}", "title": f"t{i}"}
             for q in ("b", "a") for i in range(3)]
