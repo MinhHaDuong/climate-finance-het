@@ -839,12 +839,9 @@ readers are selected and calibrated on held-out reference answers before
 use and a reader that fails its positive controls is weighted out;
 escalated, since what the readers disagree on or hold with too little
 likelihood goes to a stronger arbiter; recorded, since every item ends with
-a stance, possibly undetermined, and a calibrated likelihood and
-confidence, with every reader's answer; and served sorted by likelihood and
-confidence. No item is queued for the author: he examines the results when
-he chooses, and a decision he makes is recorded like any other judgement.
-Only a question that changes what a term or the contract means goes to
-him, with the panel's stance. No person reviews high-impact items one by
+a stance and, unless undetermined, a calibrated likelihood and confidence,
+with every reader's answer; and served in the order of Fusion § 3. No item
+is queued for the author (C1). No person reviews high-impact items one by
 one: the held-out reference answers are the only human check, and the
 agree-but-wrong rate and calibration error measured on them are published
 with each release instead (Extraction § 6.3). The readers, the escalation and the
@@ -853,7 +850,8 @@ Collection and Fusion § 3. *M2* for statements extracted and for document
 identity judgements, *M3a* for discovery and admission judgements, *M3b*
 for the other identity judgements and for preference judgements. Test:
 every LLM judgement in a release carries readings from more than one model
-family, a stance and a calibrated likelihood and confidence; every reader
+family, a stance and, unless undetermined, a calibrated likelihood and
+confidence; every reader
 used has a recorded calibration on held-out reference answers, with its
 agree-but-wrong rate and calibration error per stratum; no design rule
 queues an item for the author.
@@ -936,7 +934,7 @@ the Observatory shows the author and the agents what needs attention: figures wh
 trail does not resolve, documents and countries without new statements,
 the least certain and the undetermined judgements, and changes between runs
 large enough to check. *M3b* for broken trails, in the build and run
-reports, and for judgements, on a page sorted by likelihood and confidence;
+reports, and for judgements, on a page in the order of Fusion § 3;
 *M4* for countries and documents without new statements and for changes
 between runs. Test: a deliberately broken trail appears in the build report
 and stops the release, and an undetermined judgement appears on the sorted
@@ -966,8 +964,7 @@ type and extraction method.
 **C1. One researcher's attention.** The author is the only person working on
 the Observer, and the author's attention is its scarcest resource.
 Decisions are batched, and no machine judgement is routed to the author
-(Q5): he examines results sorted by likelihood and confidence when he
-chooses. *M2.* Test: no design rule requires the author to review, audit or
+(Q5). *M2.* Test: no design rule requires the author to review, audit or
 sample any item of a class; only questions that change what a term or the
 contract means are put to him, batched with a recommended default.
 

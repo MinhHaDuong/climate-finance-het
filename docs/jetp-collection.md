@@ -398,7 +398,7 @@ Where both give the same triage outcome at a calibrated likelihood at or
 above the acceptance level, that outcome is in force; otherwise the
 arbiter, a stronger model given both answers and the candidate's text,
 decides, and a candidate may end undetermined. Nothing is queued for the
-author: the outcomes are served sorted by likelihood and confidence, and a
+author: the outcomes are served in the order of fusion section 3, and a
 decision he chooses to make is recorded as a judgement like any other. A
 triage outcome counts, for yield and for the register, once it is in
 force; an undetermined candidate adds no yield. The same protocol applies

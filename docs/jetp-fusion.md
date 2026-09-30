@@ -70,15 +70,16 @@ readers: very low,
 low, medium, high, very high. Each likelihood term is a range, never a
 made-up point value, and a reader who knows nothing abstains (the stance
 `undetermined`, section 3) rather than stating "about as likely as not".
-Finer formalisms (possibility, belief functions, lower and upper
+For calibration, a term stands for its range less the ranges of the
+stronger terms beside it (likely 66–90 %, very likely 90–99 %), so the bins
+are disjoint; the words shown stay the IPCC's. Finer formalisms (possibility, belief functions, lower and upper
 probabilities) coincide at this grain and are not needed. [M2]
 
 **Calibration.** The verbal terms mean something only once measured. For
 each method version, the observed precision of each likelihood term is
-measured on the judgements already made by hand (the register rows and plan
-lines matched by hand, and any decision the author chose to make), held out
-from the tuning of the method as extraction section 6.3 states, and published with the
-method version; a result translates its threshold into an expected error
+measured on held-out reference answers made blind to the machine readings
+(extraction section 6.3; for matching, the matches decided by hand of the
+storage contract, section 4), and published with the method version; a result translates its threshold into an expected error
 from those observed rates. [M2]
 
 **Pedigree.** Pedigree, in the sense of NUSAP, is not a stored score. It is
@@ -198,8 +199,8 @@ statements whose in-force attachment to it meets the threshold, and two
 referents joined by an in-force `same_as` that meets it are one. Equality
 between referents is bounded to depth one: the source of an accepted
 `same_as` is never the target of another, so a chain of three (A same as B,
-B same as C) is raised as a conflict for review, and resolved by judging A
-against C, never closed by transitivity. A rejected `same_as` between two
+B same as C) is raised as a conflict, which the panel resolves by judging
+A against C, never closed by transitivity. A rejected `same_as` between two
 members of one would-be cluster is such a conflict too. The reason is that
 a `same_as` judgement is pairwise evidence, not an equivalence: likelihoods
 do not compose along a chain, so "A same as B" and "B same as C", each
@@ -232,7 +233,8 @@ what the previous ones left open and signing with its own method name.
 4. A reading by two LLM readers of the remaining candidate matches, given
    both statements and the pages they come from.
 5. The arbiter, a stronger LLM given both readings and the pages, for what
-   the readers contradict each other on or hold below the threshold.
+   the readers contradict each other on or hold below the acceptance level
+   (extraction section 14).
 
 A proposer's settings are part of its method version, and are tested against
 matches already judged by hand before its judgements are used. Each method
@@ -258,7 +260,8 @@ requirement N4 cites it.
 | Decision | Decided by | In force when | What downstream accepts | Reversed by |
 |---|---|---|---|---|
 | Identical bytes; the same identifier of a declared scheme (Organisations, below); a case or diacritic variant of one name | a program applying a rule the author adopted by version | recorded as accepted under that rule | every result, whatever its threshold | a later judgement of the panel or of the author, or a new version of the rule |
-| A statement admitted or rejected; a disposition; a document identity beyond the adopted rules; a triage outcome; a document's class | the panel: two readers, the arbiter on escalation (extraction section 6.3) | its final stance, admitted or accepted | an admitted statement, by every result; a document judgement, before extraction | a later judgement of the panel or of the author, naming the one it revises |
+| A statement or disposition made by a parser, an ingestion run or a rule of the method (a pairing on a publisher's stable key across snapshots of one document; a disposition the register, the adapter or an earlier judgement determines) | the program, under its method version, merged through the code gate of operation section 4 | merged | every result | a new method version, or a supersession for a ledger error |
+| A statement admitted or rejected by reading; a disposition `out_of_scope` or `no_extractable_content`; a document identity beyond the adopted rules; a triage outcome; a document's class | the panel: two readers, the arbiter on escalation (extraction section 6.3) | its final stance, admitted or accepted | an admitted statement, by every result; a document judgement, before extraction | a later judgement of the panel or of the author, naming the one it revises |
 | A match, an occurrence, a coverage, a compatibility, a revision, a preference | the panel | accepted, with its likelihood and confidence | a result, only at or above its declared match threshold | as above |
 | A new line classification, a new term or a changed meaning, a new disposition kind | the author, on the panel's proposal and its stance | adopted, as a new method or ontology version | runs under that version and after | a later decision of the author |
 | The collection protocol, the recall estimate and the freeze; the publication of a release | the author | recorded in the collection report or in the release's descriptor | M3b; the products that cite the release | a recorded revision of the protocol; a correction release |
@@ -269,28 +272,17 @@ and the author's rows; M3a for triage and classes; M3b for the other
 judgements]
 
 **Reading and verification.** The author is not the checker, and no
-machine judgement is routed to him. A reading is one answer to one
-candidate match, choosing from a closed list of options with a quoted basis
-and a calibrated likelihood, and it names its role: *reader* and *second
-reader*, two LLMs from different model families reading the same inputs
-independently, blind to each other's answers; *arbiter*, a stronger LLM
-given both readings and the source pages when the readers disagree or
-either is below the match threshold; *author*, only when he chooses to
-decide. Every reader and the arbiter are calibrated on held-out reference
-answers before use (the accepted and rejected match judgements of the M1b
-catalogue), their raw self-scores mapped to the likelihood terms, and a
-model that fails its positive controls is weighted out. A versioned rule
-turns the readings into one judgement: where the two readers agree at or
-above the threshold, their stance; otherwise the arbiter's, possibly
-undetermined; with a confidence that falls when they disagree. Every
-candidate match gets a judgement, with every reading kept beside it, and
-the results are served sorted by likelihood and confidence ("take a stance,
-keep track of the confidence level, and let me examine the results sorted
-by confidence level"). A decision the author makes is recorded as a reading
-of the role *author* and a judgement like any other. Only a question that
-changes what a term or the contract means goes to him, with the panel's
-stance: a judgement that implies such a change is a proposed revision of
-that term, never an edit of the adopted definition. [M2]
+machine judgement is routed to him. A judgement is read under the protocol
+of [extraction](jetp-extraction.md) section 6.3: two readers of different
+model families, blind to each other, the arbiter on what they leave open or
+hold below the acceptance level, and the calibration and versioned rule
+that turn the readings into one judgement. Every candidate match gets a
+judgement, with every reading kept beside it. Judgements are served
+undetermined first, then by ascending confidence, then by ascending
+likelihood ("let me examine the results sorted by confidence level"). A
+decision the author makes is a reading of the role *author*. Only a
+question that changes what a term or the contract means goes to him, with
+the panel's stance, as a proposed revision of that term. [M2]
 
 **Organisations.** Parties are under authority control, as in a library's
 name authority file or the ROR and GLEIF registries: one identity per
@@ -334,11 +326,10 @@ a translation pair; the other members remain citable. Proposers:
 5. The arbiter, for what the readers leave open.
 
 Proposers 1 and 2 are deterministic and run at M2; proposer 3 runs at M2 as
-a bounded list of candidate pairs sorted by likelihood, judged under the
+a bounded list of candidate pairs, which the panel judges under the
 protocol of [extraction](jetp-extraction.md) section 6.3; proposers 4 and
-5 start at M3a, with the checking rule of
-[extraction](jetp-extraction.md) section 6.3, when discovery brings
-mirrors. [M2 for proposers 1 to 3; M3a for proposers 4 and 5]
+5, which read the pairs beyond that list, start at M3a, when discovery
+brings mirrors. [M2 for proposers 1 to 3; M3a for proposers 4 and 5]
 
 **Content check before a document judgement.** Before a `translation_of` or
 a `same_as` between non-identical documents reaches "likely", the judgement

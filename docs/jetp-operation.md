@@ -47,12 +47,8 @@ data enters the record through a branch, a review and passing tests. A
 decision is a ticket entry or a commit message, not a conversation. [M2]
 
 **No machine judgement waits for the author.** Runs work in complete
-autonomy: every item ends with a stance, possibly undetermined, and a
-calibrated likelihood and confidence, recorded with every reader's and the
-arbiter's answer. Nothing is queued for the author; the results are served
-sorted by likelihood and confidence, and he examines them when he chooses.
-Only a question that changes what a term or the contract means goes to
-him, with the panel's stance. [M2]
+autonomy under the protocol of extraction § 6.3, and nothing is queued for
+the author (requirement C1). [M2]
 
 ## 2. Machines
 
@@ -216,9 +212,8 @@ every item by two LLM readers on padme, from different model families,
 each blind to the other. Where they agree at a calibrated likelihood at or
 above the level the method declares, the result stands; where they
 disagree, or either is below that level, a stronger model reached through
-OpenRouter arbitrates, given both readings and the source pages. Every
-item ends with a stance and a calibrated likelihood and confidence, and
-nothing is queued for the author. The rules are those of extraction § 6.3,
+OpenRouter arbitrates, given both readings and the source pages. The rules
+are those of extraction § 6.3,
 collection § 9 and fusion § 3; this section only says what runs where. [M2 for statements extracted and document identity
 judgements; M3a for discovery and triage; M3b for the other identity
 judgements and for preference judgements]
@@ -227,20 +222,19 @@ judgements and for preference judgements]
 card: one on the RTX A4000 (16 GB), the other on the RTX 3060 (12 GB), the
 two from different families, served side by side. [M2]
 
-**Selection and calibration before installation.** Model selection and
-calibration run first on OpenRouter, over candidate open-weight models of
-the sizes that fit each card, scored on held-out reference answers: lines
-of the extracted documents made by hand, for extraction; the accepted and
-rejected match judgements of the M1b catalogue, for matching. Selection
-reads only the tuning part of those answers; the held-out part, its strata
-and what each calibration records are fixed in extraction § 6.3. Each
-candidate's raw self-scores are mapped to the likelihood terms of fusion
-§ 1 from those scores, and a candidate that fails its positive controls is
-weighted out. Only the winning pair, the best-scoring model for each card
-with the two from different families, is installed on padme. The arbiter, a
-stronger hosted model, is calibrated on the same answers. The scores, the
-mapping and the models chosen are recorded as a method version, and no
-unattended run starts before them. [M2, before the first unattended run]
+**Selection and calibration before installation.** Candidate open-weight
+models of the sizes that fit each card are selected and calibrated on
+OpenRouter, on the reference answers of extraction § 6.3 (for matching,
+the matches decided by hand of storage contract § 4), selection reading
+only their tuning part; a candidate that fails its positive controls is
+weighted out. The winning pair, the best-scoring model for each card, of
+two families, is installed on padme. A reader is its exact weights,
+quantisation, context, sampling, template and serving software, so the
+installed pair is scored again on the held-out part before its first
+unattended run, and that score, with the arbiter's, is the calibration the
+method version runs under; a change of any of these, or a switch between
+local and hosted, is a new method version. [M2, before the first
+unattended run]
 
 **Replacing a reader.** A reader or the arbiter that is retired, repriced
 or unavailable is replaced only under extraction § 6.3: the replacement
@@ -257,9 +251,10 @@ makers. [M2]
 
 | Role | Default | Alternatives |
 |---|---|---|
-| Reader | The selected open-weight model on padme's RTX A4000 (16 GB) | The same model through OpenRouter |
-| Second reader | The selected open-weight model, of another family, on padme's RTX 3060 (12 GB) | The same model through OpenRouter |
+| Reader | The selected open-weight model on padme's RTX A4000 (16 GB) | The same model through OpenRouter, as another method version |
+| Second reader | The selected open-weight model, of another family, on padme's RTX 3060 (12 GB) | As for the reader |
 | Arbiter | A stronger hosted model through OpenRouter, calibrated like the readers | Another hosted model that passed calibration |
+| Transcription readers | Two vision-capable hosted models of different families through OpenRouter, for a document not `local_only`, within the per-document budget (extraction § 6.4) | — |
 
 A document longer than a reader's context is split into parts with their
 own scope, as extraction § 6.3 provides; the largest held PDF has a text

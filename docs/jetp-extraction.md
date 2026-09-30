@@ -19,11 +19,7 @@ triples, as sentences of flat text or as rows; how they are stored is the
 its justification, a language model is an LLM, and the ledger's own output is
 a release.
 
-Every rule carries, in square brackets, the milestone that needs it: M2 (an
-extraction pipeline that works on every document held), M3a (discovery to a
-cutoff, then the register frozen), M3b (the new documents extracted,
-matched and released), M4 (operation), or later. A rule tagged after M2 is
-not built before its milestone.
+Milestone tags in square brackets follow the [index](jetp-spec.md).
 
 ## 1. Principles
 
@@ -45,8 +41,9 @@ the ledger holds its bytes. Silence is never an outcome. [M2]
 
 **Complete within a declared extraction scope.** An extraction states in
 advance which parts of a document it covers. Inside that scope every item is
-extracted; outside it nothing is, and the scope stays on record so that a
-later extraction can extend it. [M2]
+extracted; outside it nothing is, and the scope stays on record, in the run
+report ([operation](jetp-operation.md) section 8), so that a later
+extraction can extend it. [M2]
 
 **Append only.** An extraction adds statements. It never edits, deletes or
 renumbers an earlier one. The ledger's own errors are corrected by
@@ -54,7 +51,7 @@ supersession ([fusion](jetp-fusion.md), section 2), and the superseded
 statement stays readable. [M2]
 
 **Declared method.** Every statement names the method and version that
-extracted it: a parser, an assisted reading, a transcription or a person. Changing a
+extracted it: a parser, an ingestion run, an assisted reading, a transcription or a person. Changing a
 method makes a new version, and its effect on earlier output is reviewed
 before it is adopted. [M2]
 
@@ -109,9 +106,12 @@ Three things are settled before any statement is extracted.
   designates as authoritative is extracted; failing that, the member already
   extracted; failing that, the version in the country's official language, whose
   labels match other national sources best. [M2]
-- **Language.** The document's language is recorded, because the translation
-  rule needs it and because the LLM readers and the arbiter must handle that
-  language. [M2]
+- **Language.** The document's language is set by a versioned
+  language-identification program over the text layer, the panel judging
+  where it abstains, because the translation rule needs it and the readers
+  must be calibrated for it. A document in a language no reader is
+  calibrated for receives the disposition `deferred`, naming the language.
+  [M2]
 - **Edition.** A document that is a later edition of one already extracted is its
   own document, related by `edition_of`. Its statements are new statements
   of the new document; they are never merged into the earlier edition's.
@@ -194,10 +194,12 @@ required of it at this step.
   speaker is a verbatim field (section 4), not an attribution. [M2]
 - **Verbatim fields**: everything else the publisher printed for the item,
   field by field. The list of fields is fixed by the method version for
-  each document class or series, never by a reader, and applies per table
+  each document type ([ontology](jetp-ontology.md) section 2) or series, a
+  series overriding its type, never by a reader, and applies per table
   (the table segment of the statement identifier); every statement of that
-  table conforms to it. Each document's declared list is copied from its
-  class or series. Each field keeps the header as printed, with
+  table conforms to it. Each document's declared list, and the default
+  scope of a one-off document, are copied from its type or series. Each
+  field keeps the header as printed, with
   its unit and scale wording; a parser may map a printed header to a field
   name under a declared, versioned mapping, and the printed header stays
   beside the mapped name. Replay treats a mapped rename as explained. A
@@ -250,7 +252,7 @@ cases that recur in the documents held. [M2 for all]
   is its own statement on the same anchors, told apart by an assertion
   index in its locator, numbered in the order the assertions appear and
   never reassigned (section 5). Its
-  verbatim fields are the fixed list of its document class or series
+  verbatim fields are the fixed list of its document type or series
   (section 3), for prose at least the speaker, the date and the amount as
   printed, each a verbatim substring of the text layer. Amounts and dates
   stay as printed at extraction; typing them is reading (section 11).
@@ -278,9 +280,12 @@ money, perimeters, parties and states. An extraction may stop short of a
 whole document; it may not stop short of a whole part it declared. [M2]
 
 **Printed totals as controls.** Where the document prints how many items a
-part holds, or a total the items should sum to, the extraction compares and
-fails when they disagree. The disagreement is resolved by extracting again, or
-recorded as the publisher's own inconsistency with both figures kept. [M2]
+part holds, or a total the items should sum to, the extraction compares. A
+parser fails the whole document (section 6.1). In an assisted reading the
+printed total is itself a `count` or `envelope` statement: code sums the
+admitted items of the part, and on a mismatch the part is read again once;
+a mismatch that remains is recorded as the publisher's own inconsistency,
+both figures kept, and flagged in the run report. [M2]
 
 ## 5. Text layers by format
 
@@ -373,7 +378,11 @@ received. [M2]
 ## 6. Extraction methods
 
 Four methods produce statements. Each signs what it reads with its name and
-version, and each has its own check of correctness. [M2 for all four]
+version, and each has its own check of correctness. One method version may
+combine a parser for a document's repeated frame with assisted reading of
+its declared prose parts, each statement naming its part's method; the
+statements of a snapshot are admitted together or not at all. [M2 for all
+four]
 
 ### 6.1 A parser per repeated series
 
@@ -412,8 +421,9 @@ that is a shell is never sent to an LLM reader. [M2 for the portals held]
 
 **Count control.** An ingestion run compares, for each snapshot, the number
 of records it read with the number the service or the file states (a total
-returned by the API, a row count, the records of a declared query slice);
-when they differ the run fails for that snapshot and admits nothing from
+returned by the API, a row count, the records of a declared query slice),
+or, where the source states none, the count recorded when the snapshot was
+first read; when they differ the run fails for that snapshot and admits nothing from
 it. A later draw of the same query slice is a new document dated by its
 draw and related to the previous draw by `edition_of`, not a new snapshot
 of one living document. The comparator snapshots already held (CRS, IATI
@@ -437,28 +447,31 @@ record, and no item waits for the author.
   third-party processing by an explicit reservation is read by local
   readers only and never sent to a hosted model; an item its readers leave
   open ends undetermined instead of going to the arbiter
-  ([operation](jetp-operation.md) section 5). [M2]
+  ([operation](jetp-operation.md) section 5). [M2 for the rule; M3a for
+  the terms positions it reads]
 - **Two readers.** Each reader is given the document's text layer, the
   declared scope and the field list that the method version fixes for the
-  document's class or series (a reader never proposes one), and, blind to
-  the other,
-  proposes statements with a label, a verbatim quote of the assertion, a
-  classification, the verbatim fields and a likelihood that the proposal is
-  right. The two readings are aligned on their derived locators. [M2]
+  document's type or series (a reader never proposes one), and, blind to
+  the other, proposes statements with a label, a verbatim quote of the
+  assertion, a classification, the verbatim fields and a self-score that
+  the proposal is right. [M2]
 - The locator of every proposal is derived by code from its quote, as
   section 5 states, and checked against the text layer: it must resolve, and
   the text there must contain the proposed label and values. A proposal
   whose locator fails gets one repair call to the reader, with the failure
   stated; if it still fails, it is marked as failed. The failure and its
   reason are recorded. [M2]
-- **Agreement.** The readers agree on an item when both propose it with
-  the same derived locator, classification and verbatim fields, each at a
-  calibrated likelihood at or above the extraction acceptance level (for
-  example "likely or more"). An item on which they agree stands. [M2]
+- **Alignment and agreement.** Two proposals are one item when their
+  derived spans overlap on the same page or cell and their classifications
+  match. The readers agree on it when their verbatim fields are equal after
+  whitespace and Unicode normalisation, each at a calibrated likelihood at
+  or above the acceptance level (section 14); a difference of span only is
+  agreement, and the shorter span is admitted. An item on which they agree
+  stands. [M2]
 - **Arbiter.** Every other item (proposed by one reader only, proposed by
   both with a difference, or below the acceptance level for either reader)
-  goes to the arbiter, a stronger hosted LLM, with both readings, their
-  likelihoods, any failure of the locator check and the pages concerned, in
+  goes to the arbiter, a stronger hosted LLM, with both readings in an
+  order drawn at random and recorded, their likelihoods, any failure of the locator check and the pages concerned, in
   the document's language, whatever that language is. The arbiter states
   whether the item is right, with a quoted basis. A proposal marked as
   failed is never admitted; a person may read the item directly (section
@@ -473,20 +486,26 @@ record, and no item waits for the author.
 - **Recorded and served by confidence.** Every reader's and the arbiter's
   answer is recorded on the item with the LLM identifier, the prompt
   version, the calibration version and, where the service allows, the
-  sampling settings. The results are served sorted by likelihood and
-  confidence; the author examines them when he chooses, and a decision he
+  sampling settings. The results are served in the order of
+  [fusion](jetp-fusion.md) section 3; the author examines them when he chooses, and a decision he
   makes is recorded as a judgement like any other, beside the machine
   readings, never over them. [M2]
-- **Calibration.** Before any unattended run, each reader and the arbiter
-  are scored on held-out reference answers, and each model's raw
-  self-scores are mapped to the likelihood terms from those scores; a model
-  that fails its positive controls is weighted out. How the readers are
-  selected and where they run is in [operation](jetp-operation.md) section
-  5. [M2]
+- **Calibration and judgement rule.** Before any unattended run, each
+  reader and the arbiter are scored on held-out reference answers, the
+  arbiter on the items the readers escalate; which instance is scored is in
+  [operation](jetp-operation.md) section 5. The method's versioned rule
+  maps each model's raw self-scores to likelihood terms by monotone
+  thresholds fitted on the tuning part, and sets confidence from agreement:
+  high when the two readers agree, medium when the arbiter confirms one
+  reader, low when it decides alone or against both. The arbiter's own
+  self-score is mapped the same way. A model that fails its positive
+  controls is weighted out. [M2]
 - **Reference answers, the only human check.** No person reviews admitted
   items one by one, high-impact items included; the reference answers are
   the human check of the method. They are the lines of the extracted
-  documents made by hand (requirement Q17), split once, by a recorded
+  documents made by hand blind to any machine reading (requirement Q17);
+  a decision the author makes on a served result is reported apart. They
+  are split once, by a recorded
   seed, into a tuning part, which prompt writing and model selection may
   read, and a held-out part, which they never read. The held-out part is
   stratified by country, language and classification, frozen with the
@@ -494,7 +513,9 @@ record, and no item waits for the author.
   any change of reader, arbiter or prompt is scored on it again. Each
   calibration records, per model and per stratum, the observed precision of
   each likelihood term with its Wilson interval, the calibration error (the
-  terms whose observed precision falls outside their stated range), and the
+  terms whose observed precision falls outside their calibration bin,
+  [fusion](jetp-fusion.md) section 1), the recall (the held-out items that
+  no reader proposed), the protocol's end-to-end precision, and the
   agree-but-wrong rate: the share of held-out items on which both readers
   agreed at or above the acceptance level and were wrong, the error that
   escalation cannot catch, since readers of two families still share
@@ -508,6 +529,9 @@ record, and no item waits for the author.
   the boundary of two parts is one statement whose locator spans the
   boundary, owned by the part where it starts, as for a page break; the
   statements of adjacent parts are de-duplicated on their derived locators.
+  Code computes the part plan of a snapshot, identical for both readers, on
+  page boundaries (cells for a spreadsheet) within the smaller reader's
+  context, and the run report records it.
   Each part inherits the headings and method notes that govern it. Each
   reader reads within its part only, and a printed total that covers
   several parts is checked after the parts are merged. [M2]
@@ -519,19 +543,23 @@ record, and no item waits for the author.
   admitted only after passing the controls of section 12 and its
   calibration on the held-out reference answers (requirement Q17),
   stratified by language. The coverage report states which method version
-  read each document class. [M2]
+  read each document type. [M2]
+
+<!-- wave-2 W2-04: pending author decision (strata with no reference answers) -->
 
 ### 6.4 Transcription
 
 A scan, an image or a chart is read by transcription, and only after
 collection has searched for a born-digital copy and found none
 ([collection](jetp-collection.md) section 8). A recogniser produces a text
-layer; two vision-capable LLM readers from different model families, each
-blind to the other, read the page images and that layer under the protocol
-of section 6.3, and the arbiter settles what they leave open. Each
-transcribed statement names the transcription as its method and version,
-records its likelihood and confidence, and has a locator that gives the
-page and the region transcribed. No author sitting is needed. A
+layer; two vision-capable hosted LLM readers from different model families
+([operation](jetp-operation.md) section 5), each blind to the other, read the
+page images and that layer under the protocol of section 6.3. No reference
+answers exist for transcription, so every transcribed item goes to the
+arbiter, and the run report and the release name the method uncalibrated.
+Each transcribed statement names the transcription as its method and
+version, records its likelihood and confidence, and has a locator that gives
+the page and the region transcribed. No author sitting is needed. A
 transcribed label has the same standing as a printed one once checked; its
 pedigree says it was transcribed. The held scan without a text layer, the
 Vietnamese plan decision (Decision 458, 23 pages), is transcribed at M2 by
@@ -563,8 +591,8 @@ The kinds, closed and grown only by decision:
 | `wrong_content` | snapshot | the bytes are not the document (an error page, a login wall, a consent screen), which is handed back to collection |
 | `unreadable` | snapshot | corrupt, truncated or in a format no adapter handles, with the format named |
 | `no_extractable_content` | snapshot | readable, but nothing in scope is stated in text: a shell around a service, a page of links, a chart with no text behind it; the reason says which |
-| `out_of_scope` | document | held for context, and nothing in it concerns the partnerships' projects, money, perimeters, parties or states |
-| `deferred` | snapshot | held and in scope, not extracted yet; names the milestone it waits for and why (a run budget reached, a format no method reads yet) |
+| `out_of_scope` | document | registered for context, and nothing in it concerns the partnerships' projects, money, perimeters, parties or states |
+| `deferred` | snapshot | held and in scope, in a format or a language no method reads yet, which it names with the milestone it waits for |
 
 A snapshot that is byte-identical to one already extracted is not a new snapshot
 and needs neither statements nor a disposition; a new snapshot whose
@@ -799,12 +827,13 @@ not used on held documents until its checks pass. [M2 for all]
   total, or bytes it was not written for.
 - **The admission step** rejects a renumbered identifier, a statement whose
   verbatim fields disagree with its document's declared field list, two
-  statements with one locator in one snapshot (two assertions of one span
-  differ by their assertion index), and a statement citing a snapshot the
+  statements with one locator, or overlapping prose anchors, in one snapshot
+  (two assertions of one span differ by their assertion index), and a statement citing a snapshot the
   ledger does not hold.
 - **Assisted reading** passes the planted-item control (the item is found,
   the absent item is not invented) and rejects a fabricated locator
-  automatically. The control document also carries a planted instruction
+  automatically; two readers quoting one sentence by different spans align
+  as one item. The control document also carries a planted instruction
   addressed to the reader, which must not alter any proposal.
 - **Calibration.** Each reader and the arbiter are scored on held-out
   reference answers before use; the set carries a planted misreading that
@@ -835,36 +864,16 @@ not used on held documents until its checks pass. [M2 for all]
 
 ## 13. The M2 slice
 
-M2 is the minimum that extracts every held document correctly and traceably.
-It comprises:
-
-1. The preconditions of section 2: deduplication applied, languages
-   recorded, canonical members and translation languages chosen by rule,
-   the pending list as the input of every run. The document judgements
-   still pending are decided, and in force, before the first run.
-2. Statements carrying everything in section 3, including the method, the
-   version, every reader's and the arbiter's answer, and any decision the
-   author chose to make.
-3. The text layers of section 5 for every format present among the held
-   snapshots, each other format given a disposition that names it; the held
-   scan transcribed (section 6.4); the held comparator snapshots read and
-   replayed by the ingestion run of section 6.2, with its count control.
-4. The four methods of section 6, with the automatic locator check and,
-   for assisted readings, two readers from different model families on
-   every row and the arbiter on what they leave open, both readers and the
-   arbiter calibrated on held-out reference answers first.
-5. The dispositions of section 7, so that every registered document ends
-   with statements or a disposition with its reason.
-6. The snapshot rules of section 8 with key-based pairing: a second dated
-   snapshot of a living document appends dated statements, records
-   restatements under both dates and leaves the earlier statements
-   untouched. Since no held document has a genuine second version, the
-   rule is tested on a fixture (a held snapshot with one value changed) and
-   on the held page whose bytes change on every request, which must be
-   treated as identical text.
-7. The identifier rules of section 9.
-8. Replay, idempotence and their stated limit (section 10), and the red
-   tests of section 12.
+M2 is the minimum that extracts every held document correctly and
+traceably: the preconditions of section 2, the document judgements still
+pending decided before the first run; statements carrying section 3; the
+text layers of section 5 for every held format, the held scan transcribed
+(section 6.4) and the held comparator snapshots replayed under the count
+control (section 6.2); the four methods of section 6, calibrated first; the
+dispositions of section 7; the snapshot rules of section 8 with key-based
+pairing, tested on a fixture with one value changed and on the held page
+whose bytes change on every request, since no held document has a genuine
+second version; sections 9 and 10; and the red tests of section 12.
 
 After M2:
 
@@ -882,9 +891,10 @@ After M2:
 
 ## 14. Open questions
 
-- **The extraction acceptance level.** Default: "likely or more" on the
-  calibrated scale (section 6.3); revisited once calibration has measured
-  the observed precision of each likelihood term.
+- **The acceptance level**, declared per method version, which sends an
+  item to the arbiter (section 6.3; fusion section 3 for matching).
+  Default: "likely or more"; revisited once calibration has measured the
+  observed precision of each likelihood term.
 
 ## 15. Checks an extraction must pass
 

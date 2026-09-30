@@ -56,10 +56,10 @@ marked current when it is open. It lists every release with its status:
 current, superseded by a named correction, or withdrawn with the reason.
 [M3b]
 
-**Pending judgements.** The judgements still awaiting a decision (candidate
-matches and other decision rows with a candidate status, which the storage
-contract serves as the decision record sorted by confidence) are listed on a
-page linked from Methods, sorted by likelihood and confidence, so that the
+**Pending judgements.** The judgements still awaiting a decision (decision
+rows with a candidate status, and the undetermined items of the readings
+journal) are listed on a page linked from Methods, in the order of
+[fusion](jetp-fusion.md) section 3, so that the
 author and the agents see them where they look. Broken trails are not a page:
 the build refuses a release whose trails do not resolve, and the build and
 run reports list them. [M3b]
