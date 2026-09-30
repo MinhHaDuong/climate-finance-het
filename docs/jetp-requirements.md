@@ -146,7 +146,9 @@ and operational convenience are deferred to operation (M4) unless a
 requirement of an earlier milestone needs them. A requirement names the
 first milestone that must meet it; once met, it stays met at every later
 milestone. Where a requirement binds in part earlier and in full later, it
-names both milestones.
+names both milestones. A requirement is not met at a milestone while a
+table or column its rules need is still a target of the storage contract
+(Storage § 1, target schema).
 
 | Milestone | What it delivers |
 |---|---|
@@ -432,7 +434,8 @@ overwrite one. Here, as in the extraction document, a statement is a line
 
 **F1. Every statement names where it was extracted.** Each statement carries
 its document, the snapshot extracted, its locator in that snapshot, its
-publisher, the method and version that extracted it, and the date extracted. *M2.* Test: pick
+publisher (its document's publishers, or the one party the document
+attributes the statement's part to, Extraction § 3), the method and version that extracted it, and the date extracted. *M2.* Test: pick
 any statement; its snapshot's bytes and its locator are reachable, and the
 printed text at the locator supports it.
 

@@ -181,9 +181,16 @@ required of it at this step.
   here; it lives only in the crosswalk. [M2]
 - **The publisher's own sector word**, copied as printed, when there is one.
   [M2]
-- **Group**: the heading statement that governs it, when one does (a
+- **Group**: the heading statements that govern it, when some do (a
   programme heading, a method note, a section title that conditions every
-  item under it). The heading is a statement of the same snapshot. [M2]
+  item under it); a statement may sit under several. Each heading is a
+  statement of the same snapshot. [M2]
+- **Attributed party**, when the document attributes the part that carries
+  the statement to one party: an annex signed by one partner, a chapter by
+  one co-publisher, the consultant who wrote a commissioned report. The
+  party is one of the document's publishers or a party the document names.
+  Otherwise the statement is its document's publishers', jointly. A quoted
+  speaker is a verbatim field (section 4), not an attribution. [M2]
 - **Verbatim fields**: everything else the publisher printed for the item,
   field by field. The list of fields is fixed by the method version for
   each document class or series, never by a reader, and applies per table
@@ -236,7 +243,12 @@ cases that recur in the documents held. [M2 for all]
   quoted speaker is recorded as the office or institution the publisher
   prints; a person's name is recorded only when the publisher prints it as
   the signatory of an in-scope document. The label of a prose statement is
-  the shortest verbatim span of the text that carries the assertion. Its
+  the shortest verbatim span of the text that carries the assertion. When
+  one span carries several assertions (a sentence saying that a plan was
+  approved in March and that a loan was disbursed in June), each assertion
+  is its own statement on the same anchors, told apart by an assertion
+  index in its locator, numbered in the order the assertions appear and
+  never reassigned (section 5). Its
   verbatim fields are the fixed list of its document class or series
   (section 3), for prose at least the speaker, the date and the amount as
   printed, each a verbatim substring of the text layer. Amounts and dates
@@ -293,7 +305,8 @@ For a table cell, it is the page (or sheet), the table and the row. For
 prose, it is the page index plus start and end anchors that code derives
 from the reader's verbatim quote, after whitespace is normalised and the
 page furniture the method declares is removed; the anchors must be unique in
-the text layer, or carry an occurrence index. The folio the publisher
+the text layer, or carry an occurrence index, and a span that carries several
+statements adds an assertion index (section 4). The folio the publisher
 printed is recorded only when the adapter reads it. The locator check
 (section 6.3) resolves the anchors in the text layer and compares the text
 between them with the quote under the same normalisation; there is no
@@ -773,8 +786,9 @@ not used on held documents until its checks pass. [M2 for all]
   total, or bytes it was not written for.
 - **The admission step** rejects a renumbered identifier, a statement whose
   verbatim fields disagree with its document's declared field list, two
-  statements with one locator in one snapshot, and a statement citing a
-  snapshot the ledger does not hold.
+  statements with one locator in one snapshot (two assertions of one span
+  differ by their assertion index), and a statement citing a snapshot the
+  ledger does not hold.
 - **Assisted reading** passes the planted-item control (the item is found,
   the absent item is not invented) and rejects a fabricated locator
   automatically. The control document also carries a planted instruction
@@ -888,6 +902,7 @@ does well.
 | A footnote conditions every row of a list. | A heading statement that the rows name as their group. |
 | One cell names three funders. | One statement, the cell kept whole; the three parties are minted later by matching. |
 | An item runs over a page break. | One statement whose locator spans both pages. |
+| One sentence says that the plan was approved in March and that ADB disbursed USD 100 million in June. | Two statements on the same anchors, with assertion indexes 1 and 2; neither is refused as a duplicate locator. |
 | An object is served as a generic byte stream and is a PDF. | It is extracted as a PDF; the declared type stays on the retrieval. |
 | A PDF is truncated. | Disposition `unreadable`, with the reason; the run continues. |
 | A registered document has no bytes. | Disposition `no_snapshot`, whose reason cites the latest retrieval status. |

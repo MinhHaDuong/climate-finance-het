@@ -105,7 +105,9 @@ reviewed matches have produced from them. [M2]
 A line carries what every line has in common: country, snapshot, locator,
 ordinal in its table, the label the publisher printed, its classification
 (section 4), the publisher's own status word and which axis that word belongs
-to. Everything else the publisher printed for that line is kept verbatim,
+to, and, when its document attributes the part that carries it to one of its
+publishers or to another party it names, that party; otherwise the line is its
+document's publishers', jointly. Everything else the publisher printed for that line is kept verbatim,
 field by field as printed. [M2]
 
 Every observation names the method and version that read it from its line,

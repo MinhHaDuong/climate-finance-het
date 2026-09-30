@@ -495,6 +495,7 @@ process produces.
 | A figure's judgements all meet both thresholds. | One figure, with the note that matching does not move it. |
 | An error is found in release `2026-11` after publication. | A new release `2026-11-r1` names what it supersedes and keeps the cutoff of `2026-11`; the bytes of `2026-11` are unchanged, and its deposit's metadata record points to the correction. |
 | A ledger error in a row of `2026-11` is corrected after its cutoff, when new statements have also been admitted. | `2026-11-r1` carries the correction as a named overlay row and none of the new statements. |
+| A line is extracted after the cutoff of `2026-11` from a snapshot retrieved before it. | It is a new line, not a correction: `2026-11-r1` does not carry it, and it first counts in the next regular release. |
 | A release must be withdrawn. | Its files and pages are removed; its descriptor, hashes and reason stay, its persistent identifier resolves to them, and its status reads "withdrawn". |
 | A revoked match touches three country totals and one paper figure. | The correction's editorial note lists all four before it is published. |
 | The build of a new release fails halfway through writing the site. | The previous accepted release is served whole; no page mixes the two; the ledger keeps its newer rows. |
