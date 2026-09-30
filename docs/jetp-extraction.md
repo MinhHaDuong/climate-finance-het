@@ -444,8 +444,9 @@ record, and no item waits for the author.
   reading (requirement Q17); a decision the author makes on a served result
   is reported apart. They are split once, by a recorded seed, into a tuning
   part, which prompt writing and model selection may read, and a held-out
-  part, which they never read. The held-out part is stratified by country,
-  language and classification, frozen with the method version it
+  part, which they never read. The held-out part is stratified by language
+  and statement shape (table row, record page, prose span, transcription),
+  so that strata fill sooner, frozen with the method version it
   calibrates, and changed only by a new method version; any change of
   reader, arbiter or prompt is scored on it again. Each calibration
   records, per model and per stratum, the observed precision of each
@@ -456,7 +457,9 @@ record, and no item waits for the author.
   agree-but-wrong rate: the share of held-out items on which both readers
   agreed at or above the acceptance level and were wrong, the error that
   escalation cannot catch. A stratum with fewer than 30 held-out items is
-  reported as uninformative. The calibration record of every method version
+  reported as uninformative; an unattended run in it uses the fallback:
+  the pooled mapping of the items' language, every item escalated to the
+  arbiter, and the stratum named uncalibrated in every release. The calibration record of every method version
   a release uses is part of its validation reports
   ([results](jetp-results.md) section 4). [M2]
 - **Parts.** A document too long for one reading is read in parts, each a
@@ -476,8 +479,6 @@ record, and no item waits for the author.
   section 12 and its calibration on the held-out reference answers,
   stratified by language. The coverage report states which method version
   read each document type. [M2]
-
-<!-- wave-2 W2-04: pending author decision (strata with no reference answers) -->
 
 ### 6.4 Transcription
 

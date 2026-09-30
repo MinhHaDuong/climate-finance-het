@@ -266,10 +266,10 @@ register if in scope but never counts as recovered. [M3a]
 **Limits stated.** Known items are more visible than the average document,
 since someone cited them, so known-item recall tends to overstate recall.
 The results say so. A second estimate from the overlap between two
-independent search channel classes (capture and recapture) is later work.
-[M3a for the caveat, later for the second estimate]
-
-<!-- batch-2 X-17: pending author decision -->
+independent search channel classes (capture and recapture) is later work;
+every round that yields a candidate is recorded against it, not only the
+first, so that the estimate needs no new collection. [M3a for the caveat
+and the record, later for the second estimate]
 
 ## 7. The secondary-to-primary pass
 

@@ -398,7 +398,7 @@ chronology, not additive categories: in the terms of the
 [ontology](jetp-ontology.md) (section 4), a need (a plan's estimate or an
 envelope), then the agreement states of the money axis (announced, a
 memorandum of understanding, approved, signed), then the flows of the IATI
-list (pledge, commitment, disbursement, expenditure); an amount *reported* is the
+list that form the chronology (pledge, commitment, disbursement, expenditure); an amount *reported* is the
 amount a comparator record (CRS or IATI) reports for the same operation. An
 aggregate selects one state explicitly. A physical state never follows from
 a financial one, and a plan's priority ranking implies neither finance nor
@@ -409,8 +409,9 @@ conversion uses a rate that a document printed, cited like any statement; no
 rate is assumed and no conversion is implicit. A conversion made by a third
 party is kept as its statement and excluded from sums in original currency.
 Where no document prints a rate, a result reports one figure per currency
-rather than converting. Gross flows are not reduced by refunds, repayments
-or cancellations, which remain their own measures. Rounded inputs carry
+rather than converting. Gross flows are not reduced by refunds, loan repayments
+or cancellations, which remain their own measures, and a credit guarantee,
+which moves no money, is never summed with them. Rounded inputs carry
 their bounds, and a rounding difference is not a discrepancy. [M3b]
 
 **Markers.** The climate finance a policy marker yields is the donor's score

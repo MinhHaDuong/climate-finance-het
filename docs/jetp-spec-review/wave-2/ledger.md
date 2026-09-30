@@ -10,11 +10,13 @@ ledgers that passed the merge rules). The merge rules are in the
 ## Summary
 
 Batch 1: 54 applied (13 of them in part, the rejected part and its reason in
-the row), 0 rejected whole, 2 deferred to M4 (W2-46, W2-55), 1 pending
-author (W2-04). Batch 2: 8 applied, 1 pending author (folded into W2-04); 21
+the row), 0 rejected whole, 2 deferred to M4 (W2-46, W2-55), 1 decided by
+the author's default (W2-04, 2026-09-30). Batch 2: 8 applied, 1 folded into
+W2-04; 21
 groups of external findings not admitted, listed with their reasons. The
 blocker W2-01 is applied, so the ledger agent's verdict ("no: one blocker
-remains") becomes: ready for the author's acceptance once W2-04 is decided.
+remains") becomes: ready for the author's acceptance; W2-04 took its default on
+2026-09-30.
 The specification did not grow: docs/jetp-*.md held 82 773 words before the
 merge and 82 727 after (wc -w).
 
@@ -71,7 +73,7 @@ line) wait with it, since they depend on which set is calibrated.
 | W2-01 | blocker | M2 | applied |
 | W2-02 | major | M2 | applied in part |
 | W2-03 | major | M2 | applied |
-| W2-04 | major | M2 | pending author |
+| W2-04 | major | M2 | default accepted by the author 2026-09-30 |
 | W2-05 | major | M2 | applied in part |
 | W2-06 | major | M2 | applied |
 | W2-07 | major | M2 | applied |
@@ -303,8 +305,8 @@ with (b) offered as the one sitting that would make the M2 calibration
 record say something about the documents M2 reads; (c) is not recommended,
 since it re-creates the attention bottleneck the autonomy rule removed.
 
-**Outcome.** pending author decision; nothing applied (see "Question for the
-author" below; comment at extraction 6.3).
+**Outcome.** default accepted by the author 2026-09-30; applied in "docs(jetp): apply the author's defaults for the last five decisions and the licence": options (a) and (d), extraction 6.3 (strata by language
+and statement shape; the fallback for an uncalibrated stratum).
 
 ### W2-05 (major, M2)
 
@@ -1728,7 +1730,7 @@ merge rules.
 | E2-06 | minor | M2 | Grok 4.7 | applied |
 | E2-07 | minor | M2 | GLM-5.3 | applied |
 | E2-08 | minor | M2 | Qwen3.8-Max | applied |
-| E2-09 | minor | M2 | Grok 4.7 | pending author |
+| E2-09 | minor | M2 | Grok 4.7 | default accepted by the author 2026-09-30 |
 
 ### E2-01 (minor, M3b)
 
@@ -1850,7 +1852,7 @@ from the hand-made answers; the published calibration will read
 
 **Proposed fix.** Coarsen the strata (language x method x statement shape).
 
-**Outcome.** pending author: folded into W2-04 as option (d).
+**Outcome.** folded into W2-04 as option (d); default accepted by the author 2026-09-30; applied in "docs(jetp): apply the author's defaults for the last five decisions and the licence".
 
 ## External findings not admitted
 
@@ -1875,5 +1877,5 @@ from the hand-made answers; the published calibration will read
 | DA2 reconciliation does not add up (91 against 87) | GLM | It adds up: 81 + 6 + 4 = 91; the reviewer's extraction dropped the IATI term. |
 | "No evidence" versus the inclusive threshold | GLM | The confidence floor (low or more) is what excludes a judgement made on no evidence; consistent as written. |
 | Glossary of external references (B-cubed, NUSAP, AEDIST); "operation" overloaded; valid and transaction time | GLM | Cited at first use or defined in the language document; renaming serves no requirement. M1b is W2-35. |
-| Workload model, recalibration effort, succession plan, served corrections table at M3b, F19 scoped to the horizon | Qwen, GLM, Grok | Covered or decided: costs are measured on the first calibration run (W2-26); the handover and deputy are X-24 (pending author); F25 counts are M4; Q16 wording already stops a gap reading as a verdict. |
+| Workload model, recalibration effort, succession plan, served corrections table at M3b, F19 scoped to the horizon | Qwen, GLM, Grok | Covered or decided: costs are measured on the first calibration run (W2-26); the handover and deputy are X-24 (default accepted 2026-09-30); F25 counts are M4; Q16 wording already stops a gap reading as a verdict. |
 | Findings already in the wave-1 or wave-2 ledgers (restatements, in-force DDL, IPCC bins, M1b, cost bases, captures at fetch time, personal-data screen, line-groups, recorded_at targets) | all three | Merged into the existing rows (W2-01, W2-02, W2-05, W2-26, W2-35, W2-37, W2-43, W2-17; X-22, X-27, W1-06). |
