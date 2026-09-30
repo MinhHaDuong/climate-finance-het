@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
+2026-09-30T12:12Z HDMX-coding-agent note draft docs/jetp-collection.md written (13 sections, milestone tag per rule, checks table); stopping rule kept at 2 % / two rounds / 90 %, now judged per country with a one-document floor and a frame-coverage precondition; scattered sources not yet repointed, left for after review
 
 --- body ---
 ## Context
@@ -33,6 +34,6 @@ built before it.
 
 ## Exit criteria
 
-- [ ] `docs/jetp-collection.md`, conceptual (no storage, no presentation), covers the authority frame, channel classes and their pedigree, rounds and the stopping rule, recall estimation with a known-item list, access limits and terms of use, living documents and series
-- [ ] Every rule carries its milestone; the M3a slice is the minimum that yields a citable recall estimate
+- [x] `docs/jetp-collection.md`, conceptual (no storage, no presentation), covers the authority frame, channel classes and their pedigree, rounds and the stopping rule, recall estimation with a known-item list, access limits and terms of use, living documents and series
+- [x] Every rule carries its milestone; the M3a slice is the minimum that yields a citable recall estimate
 - [ ] The scattered sources above point to it or are reduced to what is operational
