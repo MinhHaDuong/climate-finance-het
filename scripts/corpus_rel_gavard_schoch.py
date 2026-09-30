@@ -30,18 +30,21 @@ Usage:
         --pool unified=data/catalogs/unified_works.csv \
         --pool refined=data/catalogs/refined_works.csv \
         --pool rel_sud_1530=.../screen_input_union.jsonl \
-        --retrieved 2026-09-30 --out-dir data/rel/gavard_schoch
+        --retrieved 2026-09-30 --output-dir data/rel/gavard_schoch
 """
 
 import argparse
 import csv
 import hashlib
 import json
+import logging
 import os
 import re
 import sys
 import unicodedata
 from difflib import SequenceMatcher
+
+log = logging.getLogger("rel_gavard_schoch")
 
 csv.field_size_limit(sys.maxsize)
 
@@ -175,7 +178,7 @@ def run(references, pools, retrieved, lane="1651"):
     decisions, delivery = [], []
     for ref in references:
         hits, near = [], None
-        for name, pool in pools.items():
+        for pool in pools.values():
             hit, cand = match_one(ref, pool)
             if hit:
                 hits.append(hit)
@@ -223,8 +226,9 @@ def main(argv=None):
     ap.add_argument("--references", required=True)
     ap.add_argument("--pool", action="append", required=True, metavar="NAME=PATH")
     ap.add_argument("--retrieved", required=True, help="retrieval date, YYYY-MM-DD")
-    ap.add_argument("--out-dir", required=True)
+    ap.add_argument("--output-dir", required=True)
     args = ap.parse_args(argv)
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     with open(args.references, newline="", encoding="utf-8") as fh:
         references = list(csv.DictReader(fh))
@@ -239,17 +243,17 @@ def main(argv=None):
     decisions, delivery = run(references, pools, args.retrieved)
     for row in delivery:
         row["pool_revision"] = revision
-    os.makedirs(args.out_dir, exist_ok=True)
-    write_csv(os.path.join(args.out_dir, "decisions.csv"), DECISION_FIELDS, decisions)
-    write_csv(os.path.join(args.out_dir, "delivery_1655.csv"), DELIVERY_FIELDS, delivery)
-    with open(os.path.join(args.out_dir, "pool_manifest.json"), "w", encoding="utf-8") as fh:
+    os.makedirs(args.output_dir, exist_ok=True)
+    write_csv(os.path.join(args.output_dir, "decisions.csv"), DECISION_FIELDS, decisions)
+    write_csv(os.path.join(args.output_dir, "delivery_1655.csv"), DELIVERY_FIELDS, delivery)
+    with open(os.path.join(args.output_dir, "pool_manifest.json"), "w", encoding="utf-8") as fh:
         json.dump({"retrieved": args.retrieved, "title_threshold": TITLE_THRESHOLD,
                    "title_threshold_no_author": TITLE_THRESHOLD_NO_AUTHOR,
                    "year_tolerance": YEAR_TOLERANCE, "pools": manifest},
                   fh, indent=2, ensure_ascii=False)
         fh.write("\n")
     counts = {d: sum(r["decision"] == d for r in decisions) for d in DECISIONS}
-    print(json.dumps({"references": len(decisions), "decisions": counts,
+    log.info("%s", json.dumps({"references": len(decisions), "decisions": counts,
                       "delivered": len(delivery)}, ensure_ascii=False))
 
 
