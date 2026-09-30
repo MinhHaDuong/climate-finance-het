@@ -148,3 +148,9 @@ def test_rsync_counts(tmp_path):
             c["deleted"], c["deleted_dirs"], c["new_dirs"], c["finished"]) == (1, 2, 1, 1, 1, 1, 1, True)
     log.write_text(">f+++++++++ a/x.rdf\n")
     assert cat.rsync_counts(str(log))["finished"] is False
+
+
+def test_clean_replaces_surrogates():
+    assert cat.clean("a\udc92b") == "a\ufffdb"
+    assert cat.clean("Café") == "Café"
+    assert cat.clean("x\ud800y") == "x?y"

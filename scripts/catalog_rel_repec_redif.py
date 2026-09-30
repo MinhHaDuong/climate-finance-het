@@ -96,7 +96,7 @@ def parse_file(path: str, root: str) -> tuple[list[dict], list[tuple[str, str]],
             continue
         row["source_file"] = rel
         row["encoding"] = enc
-        rows.append(row)
+        rows.append({k: clean(v) for k, v in row.items()})
     return rows, series, c
 
 
@@ -112,6 +112,17 @@ def parse_dir(args: tuple[str, str]) -> tuple[list[dict], list[tuple[str, str]],
         series += s
         c.update(cc)
     return rows, series, c
+
+
+def clean(value: str) -> str:
+    """A string pyarrow can write: lone surrogates (an undecodable byte in a
+    file name, kept by ``os.walk`` as surrogateescape) become U+FFFD."""
+    if not value:
+        return value
+    try:
+        return value.encode("utf-8", "surrogateescape").decode("utf-8", "replace")
+    except UnicodeEncodeError:  # a surrogate outside the escape range
+        return value.encode("utf-8", "replace").decode("utf-8")
 
 
 def _backup_last(path: str) -> tuple[int, str]:
