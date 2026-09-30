@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-09-29T09:14Z HDMX-coding-agent decision reframed by the author as milestone M2 of [[0725]]: the goal is code, an extraction pipeline that works on all we hold, run over all 392 documents, code polished. Children reshaped into code children (1506 to 1509) and run children (1501 to 1505). Milestone definitions: [[0725]] section "Milestones after M1".
 2026-09-30T08:09Z HDMX-coding-agent decision author (2026-09-30, interactive): M2 must be reusable by the periodic harvest — dated lines per snapshot, restatement as weak confirmation; criterion and invariant added, mechanism in [[1506]]
 2026-09-30T11:48Z HDMX-coding-agent note author decision 2026-09-30: M2 code waits for the accepted system specification (tracker [[1703]], gate [[1711]], carried by 1506)
+2026-09-30T15:10Z HDMX-coding-agent note invariant on duplicates aligned with the storage contract (author, 2026-09-30): a revoked same_as re-enables extraction of the folded document; spec docs/jetp-extraction.md § 2
 --- body ---
 ## Context
 
@@ -106,7 +107,8 @@ VNM and ZAF first inside each wave: they are the acceptance cases.
 - Lines of an earlier snapshot are never edited by a later snapshot's run.
 - `make jetp-ledger-check` passes at every child.
 - A `line_id` is `<document_id>-<table>-<ordinal>`, appended, never renumbered.
-- Duplicates are resolved before extraction, never after.
+- Duplicates are resolved before extraction; a revoked duplicate judgement
+  re-enables extraction of the document it had folded (storage contract § 1).
 
 ## Exit criteria
 
