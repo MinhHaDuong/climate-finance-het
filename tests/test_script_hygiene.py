@@ -702,6 +702,7 @@ _PIPELINE_PREFIXES = (
 _PRINT_ALLOWLIST = {
     "analysis/compute_regression_hashes.py",
     "analysis/compute_regression_history.py",
+    "qa_rel_intake.py",  # verdict checker run by REL lanes (ticket 1730)
 }
 
 
@@ -1240,6 +1241,7 @@ class TestOutputFlag:
         "analyze_unfccc_topics.py",
         # Analysis-only reporters (stdout, no output file)
         "analyze_zscore_vs_pvalue.py",
+        "qa_rel_intake.py",
     }
 
     def test_all_producing_scripts_accept_output(self):

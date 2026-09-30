@@ -1,0 +1,177 @@
+"""The REL intake contract checker accepts a valid delivery and names each fault."""
+
+import csv
+import json
+import os
+
+import pytest
+import qa_rel_intake as ric
+
+pytestmark = pytest.mark.domain_corpus
+
+
+def _write_csv(path, header, rows):
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=header)
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: r.get(k, "") for k in header})
+
+
+def _record(rid, **kw):
+    base = {"record_id": rid, "query_id": "q1", "platform": "crossref",
+            "retrieved_at": "2026-10-01", "title": f"Title {rid}",
+            "doi": f"10.1234/{rid}", "year": "2020"}
+    base.update(kw)
+    return base
+
+
+def _delivery(tmp_path, records=None, registry=None, excluded=None, manifest=None):
+    d = tmp_path / "t1650-sommaires" / "2026-10-01"
+    d.mkdir(parents=True)
+    records = records if records is not None else [_record("r1"), _record("r2")]
+    registry = registry if registry is not None else [{
+        "query_id": "q1", "platform": "crossref", "query": "ISSN 0002-8282 2020",
+        "run_at": "2026-10-01", "n_received": "3", "completed": "true"}]
+    excluded = excluded if excluded is not None else [{
+        "record_id": "r3", "query_id": "q1", "reason": "front_matter",
+        "title": "Editorial board", "note": ""}]
+    _write_csv(d / "records.csv", ric.RECORD_COLUMNS, records)
+    _write_csv(d / "registry.csv", ric.REGISTRY_REQUIRED + ["filter", "n_expected", "stop_reason"],
+               registry)
+    _write_csv(d / "excluded.csv", ric.EXCLUDED_COLUMNS, excluded)
+    m = {"lane": "t1650-sommaires", "ticket": "1650", "delivery": "2026-10-01",
+         "delivered_at": "2026-10-01T12:00:00Z",
+         "producer": {"script": "scripts/x.py", "commit": "abc123", "machine": "padme"},
+         "counts": {"records": len(records),
+                    "excluded": {"front_matter": 1} if excluded else {}},
+         "coverage": "complete", "incomplete": [], "needs_human": [],
+         "supersedes": None, "notes": ""}
+    m.update(manifest or {})
+    (d / "manifest.json").write_text(json.dumps(m), encoding="utf-8")
+    return d
+
+
+def test_valid_delivery_passes(tmp_path, capsys):
+    d = _delivery(tmp_path)
+    assert ric.check_delivery(str(d)) == []
+    assert ric.main([str(d)]) == 0
+    assert "OK" in capsys.readouterr().out
+
+
+def test_relevance_is_never_an_exclusion_reason(tmp_path):
+    d = _delivery(tmp_path, excluded=[{"record_id": "r3", "query_id": "q1",
+                                       "reason": "off_topic", "title": "x", "note": ""}],
+                  manifest={"counts": {"records": 2, "excluded": {"off_topic": 1}}})
+    errors = ric.check_delivery(str(d))
+    assert any("off_topic" in e and "relevance is never a reason" in e for e in errors)
+
+
+def test_every_violation_is_reported_not_only_the_first(tmp_path):
+    bad = [_record("r1", title="", doi="https://doi.org/10.1/x"),
+           _record("r1", query_id="q9", retrieved_at="01/10/2026"),
+           _record("r4", doi="", year="", openalex_id="")]
+    d = _delivery(tmp_path, records=bad, manifest={"counts": {"records": 2,
+                                                               "excluded": {"front_matter": 1}}})
+    errors = ric.check_delivery(str(d))
+    text = "\n".join(errors)
+    for fragment in ("appears 2 times", "title is empty", "not a bare",
+                     "'q9' not in registry", "not ISO 8601",
+                     "needs at least one of doi, openalex_id, year",
+                     "counts.records is 2, records.csv has 3 rows"):
+        assert fragment in text
+
+
+def test_missing_column_and_missing_file_are_named(tmp_path):
+    d = _delivery(tmp_path)
+    _write_csv(d / "records.csv", ["record_id", "title"], [{"record_id": "r1", "title": "t"}])
+    assert any("missing column(s)" in e and "query_id" in e for e in ric.check_delivery(str(d)))
+    os.remove(d / "excluded.csv")
+    assert ric.check_delivery(str(d)) == ["missing file(s): excluded.csv"]
+
+
+def test_incomplete_query_needs_stop_reason_and_coverage_must_agree(tmp_path):
+    d = _delivery(tmp_path,
+                  registry=[{"query_id": "q1", "platform": "crossref", "query": "x",
+                             "run_at": "2026-10-01", "n_received": "3", "completed": "false"}],
+                  manifest={"coverage": "incomplete", "incomplete": []})
+    text = "\n".join(ric.check_delivery(str(d)))
+    assert "needs a stop_reason" in text
+    assert "coverage incomplete but nothing listed" in text
+
+
+def test_manifest_must_match_directory_and_counts(tmp_path):
+    d = _delivery(tmp_path, manifest={"lane": "t1651-gavard", "delivery": "2026-10-02",
+                                      "producer": {"script": "s"},
+                                      "counts": {"records": 2, "excluded": {}}})
+    text = "\n".join(ric.check_delivery(str(d)))
+    assert "differs from directory 't1650-sommaires'" in text
+    assert "differs from directory '2026-10-01'" in text
+    assert "producer needs script, commit and machine" in text
+    assert "counts.excluded {} differs" in text
+
+
+def test_excluded_record_cannot_also_be_delivered(tmp_path):
+    d = _delivery(tmp_path, excluded=[{"record_id": "r1", "query_id": "q1",
+                                       "reason": "front_matter", "title": "x", "note": ""}])
+    assert any("is also delivered" in e for e in ric.check_delivery(str(d)))
+
+
+@pytest.mark.parametrize("excluded", [["front_matter"], 1])
+def test_malformed_counts_excluded_is_a_violation_not_a_crash(tmp_path, excluded):
+    d = _delivery(tmp_path, manifest={"counts": {"records": 2, "excluded": excluded}})
+    assert any("counts.excluded must be an object" in e for e in ric.check_delivery(str(d)))
+
+
+@pytest.mark.parametrize("coverage", [["complete"], {"a": 1}])
+def test_unhashable_coverage_is_a_violation_not_a_crash(tmp_path, coverage):
+    d = _delivery(tmp_path, manifest={"coverage": coverage})
+    assert any("is not complete/incomplete" in e for e in ric.check_delivery(str(d)))
+
+
+@pytest.mark.parametrize("name", ric.FILES)
+def test_non_utf8_file_is_named_and_other_files_still_checked(tmp_path, name):
+    d = _delivery(tmp_path, excluded=[{"record_id": "r3", "query_id": "q1",
+                                       "reason": "off_topic", "title": "x", "note": ""}],
+                  manifest={"counts": {"records": 2, "excluded": {"off_topic": 1}}})
+    if name == "excluded.csv":
+        _write_csv(d / "registry.csv", ["query_id"], [{"query_id": "q1"}])
+    raw = (d / name).read_bytes()
+    (d / name).write_bytes(raw + "Économie\n".encode("latin-1"))
+    errors = ric.check_delivery(str(d))
+    assert any(e.startswith(f"{name}: not UTF-8") for e in errors)
+    other = "registry.csv: missing column" if name == "excluded.csv" else "off_topic"
+    assert any(other in e for e in errors)
+
+
+def test_utf8_bom_is_tolerated(tmp_path):
+    d = _delivery(tmp_path)
+    for name in ("records.csv", "registry.csv", "excluded.csv"):
+        raw = (d / name).read_bytes()
+        (d / name).write_bytes(b"\xef\xbb\xbf" + raw)
+    assert ric.check_delivery(str(d)) == []
+
+
+def test_records_header_failure_skips_the_row_count_check(tmp_path):
+    d = _delivery(tmp_path)
+    _write_csv(d / "records.csv", ["title"], [{"title": "t"}])
+    errors = ric.check_delivery(str(d))
+    assert any("records.csv: missing column(s)" in e for e in errors)
+    assert not any("counts.records" in e for e in errors)
+
+
+@pytest.mark.parametrize("bad", ["2026-13-45", "2026-02-30T10:00:00Z"])
+def test_dates_must_be_real_calendar_days(tmp_path, bad):
+    d = _delivery(tmp_path, records=[_record("r1", retrieved_at=bad), _record("r2")],
+                  manifest={"delivered_at": bad})
+    text = "\n".join(ric.check_delivery(str(d)))
+    assert f"retrieved_at {bad!r} is not ISO 8601" in text
+    assert "delivered_at is not ISO 8601" in text
+
+
+@pytest.mark.parametrize("declared", [True, "2", 2.0, None])
+def test_counts_records_must_be_an_integer(tmp_path, declared):
+    d = _delivery(tmp_path, records=[_record("r1")],
+                  manifest={"counts": {"records": declared, "excluded": {"front_matter": 1}}})
+    assert any("counts.records" in e and "is not an integer" in e
+               for e in ric.check_delivery(str(d)))
