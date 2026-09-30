@@ -236,7 +236,9 @@ two from different families, served side by side. [M2]
 calibration run first on OpenRouter, over candidate open-weight models of
 the sizes that fit each card, scored on held-out reference answers: lines
 of the extracted documents made by hand, for extraction; the accepted and
-rejected match judgements of the M1b catalogue, for matching. Each
+rejected match judgements of the M1b catalogue, for matching. Selection
+reads only the tuning part of those answers; the held-out part, its strata
+and what each calibration records are fixed in extraction § 6.3. Each
 candidate's raw self-scores are mapped to the likelihood terms of fusion
 § 1 from those scores, and a candidate that fails its positive controls is
 weighted out. Only the winning pair, the best-scoring model for each card

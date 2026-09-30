@@ -491,7 +491,8 @@ as likely as not" changes no figure at a "likely" threshold and is listed.
 
 **F12. Organisations under authority control.** One identity per
 organisation with all its name forms; an external identifier decides where
-one exists. *M3b.* Test: "Senelec" and "SENELEC" are one party; "PLN" and
+one exists in a scheme declared as naming exactly one organisation (Fusion
+§ 3). *M3b.* Test: "Senelec" and "SENELEC" are one party; "PLN" and
 "Perusahaan Listrik Negara" are one party only through a recorded judgement.
 
 **F20. Finance joined to assets.** An operation joins a physical asset only by
@@ -811,15 +812,19 @@ confidence, with every reader's answer; and served sorted by likelihood and
 confidence. No item is queued for the author: he examines the results when
 he chooses, and a decision he makes is recorded like any other judgement.
 Only a question that changes what a term or the contract means goes to
-him, with the panel's stance. The readers, the escalation and the
+him, with the panel's stance. No person reviews high-impact items one by
+one: the held-out reference answers are the only human check, and the
+agree-but-wrong rate and calibration error measured on them are published
+with each release instead (Extraction § 6.3). The readers, the escalation and the
 milestone at which each part applies are specified in Extraction,
 Collection and Fusion § 3. *M2* for statements extracted and for document
 identity judgements, *M3a* for discovery and admission judgements, *M3b*
 for the other identity judgements and for preference judgements. Test:
 every LLM judgement in a release carries readings from more than one model
 family, a stance and a calibrated likelihood and confidence; every reader
-used has a recorded calibration on held-out reference answers; no design
-rule queues an item for the author.
+used has a recorded calibration on held-out reference answers, with its
+agree-but-wrong rate and calibration error per stratum; no design rule
+queues an item for the author.
 
 **Q11. Uncertainty is never hidden.** A value may be a range and a date an
 interval; judgements use the calibrated likelihood and confidence scales;
@@ -1011,10 +1016,14 @@ generation). Each enters only by a decision that adds it as a measure.
 documents; it does not require debit and credit counterparts that no
 document discloses.
 
-**N4. No automatic truth.** No program, and no rule without a recorded
-judgement, admits a document, merges two identities, prefers a value or
-publishes a release on its own. A program that applies a rule the author
-adopted by version applies the author's judgement (Fusion § 3).
+**N4. No automatic truth.** Nothing is admitted, merged, preferred or
+published without a recorded judgement that names who or what made it, by
+which method and version, and on what basis. A deterministic program
+applies only a rule the author adopted by version, and so applies the
+author's judgement; the panel of LLM readers and arbiter judges under a
+versioned, calibrated protocol (Q5); a release is published only by the
+author's act (N6). Who decides each kind of decision is the table of
+Fusion § 3 ("Who decides what").
 
 **N5. No claim of completeness.** Coverage is quantified; universal
 completeness is never claimed.

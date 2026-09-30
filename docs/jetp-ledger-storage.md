@@ -448,7 +448,7 @@ decisions are stored.
   form type `spelling_or_case_variant`); party identifiers are
   `external-ids` rows of kind `party`. Two parties are folded physically
   only under the rules that fusion section 3 says never make two parties
-  (the same external identifier, a case or diacritic variant): the retained
+  (the same identifier of a declared scheme, a case or diacritic variant): the retained
   party gains the other's forms as `party-names` rows, its preferred form is
   stated by superseding the other's, and the retired identifier is recorded.
   Every other `same_as` between parties stays a judgement, and each result

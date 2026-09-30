@@ -76,7 +76,8 @@ probabilities) coincide at this grain and are not needed. [M2]
 **Calibration.** The verbal terms mean something only once measured. For
 each method version, the observed precision of each likelihood term is
 measured on the judgements already made by hand (the register rows and plan
-lines matched by hand, and the audited decisions) and published with the
+lines matched by hand, and any decision the author chose to make), held out
+from the tuning of the method as extraction section 6.3 states, and published with the
 method version; a result translates its threshold into an expected error
 from those observed rates. [M2]
 
@@ -199,7 +200,10 @@ between referents is bounded to depth one: the source of an accepted
 `same_as` is never the target of another, so a chain of three (A same as B,
 B same as C) is raised as a conflict for review, and resolved by judging A
 against C, never closed by transitivity. A rejected `same_as` between two
-members of one would-be cluster is such a conflict too. [M3b]
+members of one would-be cluster is such a conflict too. The reason is that
+a `same_as` judgement is pairwise evidence, not an equivalence: likelihoods
+do not compose along a chain, so "A same as B" and "B same as C", each
+likely, say nothing calibrated about A and C. [M3b]
 
 - An equality claim (`same_as`) is a justified claim that two things are one; it does
   not choose which name or route prevails. [M2]
@@ -234,18 +238,35 @@ A proposer's settings are part of its method version, and are tested against
 matches already judged by hand before its judgements are used. Each method
 version publishes, on the hand-judged set, its blocking recall (the share of
 true pairs that the proposers put up at all), its pairwise precision and
-recall, and one cluster metric. [M3b]
+recall, and one cluster metric, B-cubed precision and recall. [M3b]
 
 **Judgement by adopted rule.** A program records an accepted judgement only
 under a rule the author adopted, by version, in a recorded decision: identical
-bytes, the same external identifier, a case or diacritic variant of one
-name. Such a rule is the author's judgement applied by a program, and its
+bytes, the same identifier of a declared scheme (Organisations, below), a
+case or diacritic variant of one name. Such a rule is the author's judgement applied by a program, and its
 rows name the rule as their method. Every other proposal, by a program or an
 LLM, is recorded as a candidate match until the judgement protocol of
 [extraction](jetp-extraction.md) section 6.3 accepts it, or the author,
 when he chooses to, decides it. This
 is how the first principle ("no rule below selects a value or merges two
 things on its own") and the proposers above hold together. [M2]
+
+**Who decides what.** Every decision of the Observer falls under one row
+of this table, which is the one statement of decision authority; the
+requirements (N4, F7, Q5) and the other documents cite it.
+
+| Decision | Decided by | In force when | What downstream accepts | Reversed by |
+|---|---|---|---|---|
+| Identical bytes; the same identifier of a declared scheme (Organisations, below); a case or diacritic variant of one name | a program applying a rule the author adopted by version | recorded as accepted under that rule | every result, whatever its threshold | a later judgement of the panel or of the author, or a new version of the rule |
+| A statement admitted or rejected; a disposition; a document identity beyond the adopted rules; a triage outcome; a document's class | the panel: two readers, the arbiter on escalation (extraction section 6.3) | its final stance, admitted or accepted | an admitted statement, by every result; a document judgement, before extraction | a later judgement of the panel or of the author, naming the one it revises |
+| A match, an occurrence, a coverage, a compatibility, a revision, a preference | the panel | accepted, with its likelihood and confidence | a result, only at or above its declared match threshold | as above |
+| A new line classification, a new term or a changed meaning, a new disposition kind | the author, on the panel's proposal and its stance | adopted, as a new method or ontology version | runs under that version and after | a later decision of the author |
+| The collection protocol, the recall estimate and the freeze; the publication of a release | the author | recorded in the collection report or in the release's descriptor | M3b; the products that cite the release | a recorded revision of the protocol; a correction release |
+| Any item the author chooses to decide | the author, as a reading of the role *author* | recorded beside the machine readings, superseding the judgement it revises | as for the judgement it supersedes | a later judgement |
+
+[M2 for the adopted rules, statements, dispositions, document judgements
+and the author's rows; M3a for triage and classes; M3b for the other
+judgements]
 
 **Reading and verification.** The author is not the checker, and no
 machine judgement is routed to him. A reading is one answer to one
@@ -276,9 +297,14 @@ name authority file or the ROR and GLEIF registries: one identity per
 organisation, every form of its name attached to it, one form preferred.
 Three rules of their own apply.
 
-- An external identifier decides: an IATI organisation identifier, a ROR
-  identifier, an LEI or a Wikidata item. Two names that carry the same
-  identifier are one organisation.
+- An external identifier decides when its scheme is declared, in the
+  method version, as naming exactly one organisation at the grain of a
+  party: an IATI organisation identifier, a ROR identifier, the LEI of a
+  legal entity, a Wikidata item for an organisation. Two names that carry
+  the same identifier of a declared scheme are one organisation. A code
+  that can name a branch, a programme or a group of entities (an IATI
+  identifier reused for an umbrella programme, an LEI of a branch) is a
+  strong proposer, judged like any candidate match, never a decision.
 - Forms that differ only by case, diacritics or spacing (Senelec and
   SENELEC) are one party with several name forms, never two parties joined by
   an equality claim.

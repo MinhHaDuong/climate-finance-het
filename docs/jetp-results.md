@@ -190,7 +190,10 @@ stated.
   redistributed bytes, a public archive capture, or none with the reason
   (section 7). (C6, F27)
 - **The validation and coverage reports**, and an editorial note in plain
-  language saying what the release contains and what it does not.
+  language saying what the release contains and what it does not. The
+  validation reports include the calibration record of every method version
+  the release uses, with its agree-but-wrong rate and calibration error per
+  stratum ([extraction](jetp-extraction.md) § 6.3). (Q5)
 - **The cost record**: LLM spend and compute time per document class,
   document type and extraction method. (Q15, AED-3)
 - **The Observatory pages** of the release, built from the release alone and

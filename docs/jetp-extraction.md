@@ -164,10 +164,14 @@ required of it at this step.
   of the list fits what the publisher asserts. Such a statement is not
   admitted; it is recorded with its readings, and the panel (the two readers
   and the arbiter) groups the unclassified statements of a run and proposes
-  new classes for them, each with a stance and a confidence. A new class is
-  adopted only by the author, since it changes the contract; the statements
-  it covers are then read again. A classification is never added to an
-  admitted statement afterwards. [M2]
+  new classes for them, each with a stance and a confidence. A proposed
+  class is a candidate and classifies nothing. A new class is adopted only
+  by the author, since it changes the contract, and its adoption is a new
+  method version, which lists the statements recorded as unclassifiable
+  under earlier versions and reads them again. Between two method versions
+  the list is closed: no run admits a statement under a class not yet
+  adopted. A classification is never added to an admitted statement
+  afterwards. [M2]
 - **The publisher's own status word**, copied as printed, when the publisher
   prints one. The axis it belongs to is set only by a parser's reviewed,
   versioned status list for its series (adopted as crosswalk rows at M3b);
@@ -449,11 +453,30 @@ record, and no item waits for the author.
   makes is recorded as a judgement like any other, beside the machine
   readings, never over them. [M2]
 - **Calibration.** Before any unattended run, each reader and the arbiter
-  are scored on held-out reference answers, lines of the extracted documents
-  made by hand, and each model's raw self-scores are mapped to the
-  likelihood terms from those scores; a model that fails its positive
-  controls is weighted out. How the readers are selected and where they run
-  is in [operation](jetp-operation.md) section 5. [M2]
+  are scored on held-out reference answers, and each model's raw
+  self-scores are mapped to the likelihood terms from those scores; a model
+  that fails its positive controls is weighted out. How the readers are
+  selected and where they run is in [operation](jetp-operation.md) section
+  5. [M2]
+- **Reference answers, the only human check.** No person reviews admitted
+  items one by one, high-impact items included; the reference answers are
+  the human check of the method. They are the lines of the extracted
+  documents made by hand (requirement Q17), split once, by a recorded
+  seed, into a tuning part, which prompt writing and model selection may
+  read, and a held-out part, which they never read. The held-out part is
+  stratified by country, language and classification, frozen with the
+  method version it calibrates, and changed only by a new method version;
+  any change of reader, arbiter or prompt is scored on it again. Each
+  calibration records, per model and per stratum, the observed precision of
+  each likelihood term with its Wilson interval, the calibration error (the
+  terms whose observed precision falls outside their stated range), and the
+  agree-but-wrong rate: the share of held-out items on which both readers
+  agreed at or above the acceptance level and were wrong, the error that
+  escalation cannot catch, since readers of two families still share
+  training data. A stratum with fewer than 30 held-out items is reported as
+  uninformative, not as calibrated. The calibration record of every method
+  version a release uses is part of its validation reports
+  ([results](jetp-results.md) section 4). [M2]
 - **Parts.** A document too long for one reading is read
   in parts, and a part is a declared scope part (section 4: an appendix, a
   section, a page range), so parts never overlap. An item that runs across
@@ -759,7 +782,8 @@ not used on held documents until its checks pass. [M2 for all]
 - **Calibration.** Each reader and the arbiter are scored on held-out
   reference answers before use; the set carries a planted misreading that
   each must reject, and a model that fails a positive control is weighted
-  out.
+  out. A prompt revised after reading a held-out item makes that item part
+  of the tuning set, and the calibration is rerun without it.
 - **Parts.** A fixture cut so that an item straddles the boundary of two
   parts yields one statement.
 - **Retained layers.** Replay against a snapshot whose retained text layer

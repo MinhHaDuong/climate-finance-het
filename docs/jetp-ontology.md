@@ -291,7 +291,9 @@ A classification is never inferred from the label. The list grows only by
 decision of the author, since a new value changes the contract: when readers
 answer "cannot classify", the panel groups those statements and proposes a
 new value with a stance and a confidence ([extraction](jetp-extraction.md)
-section 3), and the author adopts it or not. [M2]
+section 3), and the author adopts it or not. An adopted value takes effect
+with a new method version, which reads the unclassified statements again;
+between versions the list is closed. [M2]
 
 **Sector** is a shared axis, coded with the OECD DAC CRS purpose list (five
 digits; the 231 to 236 group covers energy policy, generation by source,
