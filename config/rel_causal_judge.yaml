@@ -1,0 +1,44 @@
+# Family-relevance judge of the REL causal-map lane (ticket 1652).
+# This is NOT the ICF inclusion screen (ticket 1655 runs that once over the
+# whole pool). It only says whether a record addresses the mechanism of the
+# family or theme whose search retrieved it, with international climate,
+# energy or forest finance or aid as the treatment; it measures lane yield.
+model: openrouter/anthropic/claude-haiku-4.5
+batch_size: 20
+workers: 6
+max_tokens: 1800
+title_max_chars: 220
+abstract_max_chars: 700
+
+answer_format: |-
+  Answer with ONLY a JSON list, one object per record, in the same order:
+  [{"n": 1, "label": "relevant", "why": "<max 12 words>"}, ...]
+
+prompt_template: |
+  You judge bibliographic records retrieved by a search for ONE mechanism of a
+  causal map linking international climate finance to emissions.
+
+  Mechanism searched ({question}):
+  {mechanism}
+
+  A record is "relevant" when its study addresses this mechanism (or a clear
+  part of it) AND the treatment or object is international climate, energy or
+  forest finance or aid: climate funds, development-bank or bilateral climate
+  or energy finance, official development assistance, REDD+ and results-based
+  payments, international carbon credits, export credit or overseas finance.
+  For a map-free theme, "relevant" means the record's main object is that
+  theme with international climate finance at its centre.
+
+  Labels:
+  - "relevant": addresses the mechanism with that international finance as
+    treatment or object.
+  - "not": does not (other mechanism, purely domestic finance or policy, no
+    finance at all, other field).
+  - "unsure": the record does not allow a decision (no abstract, ambiguous title).
+
+  Records may be in any language; judge them in their own language.
+
+  {answer_format}
+
+  Records:
+  {records}
