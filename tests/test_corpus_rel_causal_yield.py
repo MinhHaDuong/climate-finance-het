@@ -313,10 +313,16 @@ def test_two_eds_records_with_different_full_dois_stay_apart():
          "title": title, "year": 2016},
         {"doi": "", "doi_eds": "10.5089/9781484390429.002", "openalex_id": "", "eds_an": "b",
          "title": title, "year": 2016},
-        # a record of the same title with no identifier cannot be placed: its own work
-        {"doi": "", "openalex_id": "W5", "title": title, "year": 2016}])
+        # a record of the same title that no DOI places keeps its own id, and
+        # records with no id at all join only one another
+        {"doi": "", "openalex_id": "W5", "title": title, "year": 2016},
+        {"doi": "", "openalex_id": "", "eds_an": "c", "title": title, "year": 2016},
+        {"doi": "", "openalex_id": "", "eds_an": "d", "title": title.upper(), "year": 2016}])
+    ty = "ty:" + cy.title_key(title, 2016)
     assert [r["work_key"] for r in recs] == ["edsdoi:10.5089/9781498318426.002",
-                                            "edsdoi:10.5089/9781484390429.002", "oa:W5"]
+                                            "edsdoi:10.5089/9781484390429.002", "oa:W5", ty, ty]
+    assert [r["doi"] for r in recs] == ["10.5089/9781498318426.002",
+                                        "10.5089/9781484390429.002", "", "", ""]
 
 
 def _run_with_repeats(path, sid, rows, distinct, expected, completed="True", stop=""):

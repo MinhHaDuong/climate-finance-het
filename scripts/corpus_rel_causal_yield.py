@@ -228,13 +228,16 @@ def _title_groups(records, by_oa):
     return dois_by_title, oa_by_title, anchors
 
 
-def _split_group_key(r, hint, group, own):
+def _split_group_key(r, hint, group, own, k):
     """Key of a record without DOI in a title+year group holding works whose
-    DOIs disagree: the one anchor its EDS DOI agrees with, else its own id.
-    A record that anchors a work with its own EDS DOI gets it as ``doi``."""
+    DOIs disagree: the one anchor its EDS DOI agrees with; else its OpenAlex
+    id; else the title+year key, which the group's other unplaceable EDS
+    records share (the pool's rule: rows with neither id join only one
+    another). A record that anchors a work with its own EDS DOI gets it as
+    ``doi``."""
     agreeing = sorted(a for a in group if _agrees(hint, a))
     if len(agreeing) != 1:
-        return "oa:" + r["openalex_id"] if r.get("openalex_id") else "an:" + r.get("eds_an", "")
+        return "oa:" + r["openalex_id"] if r.get("openalex_id") else "ty:" + k
     if agreeing[0] in own:
         return "doi:" + agreeing[0]
     if hint == agreeing[0]:
@@ -273,7 +276,7 @@ def assign_work_keys(records):
             # an EDS DOI that equals a DOI another record carries is not truncated
             r["work_key"] = "doi:" + hint
         elif len(group) > 1:
-            r["work_key"] = _split_group_key(r, hint, group, dois_by_title[k])
+            r["work_key"] = _split_group_key(r, hint, group, dois_by_title[k], k)
         else:
             one_doi = "doi:" + next(iter(dois_by_title[k])) if dois_by_title.get(k) else ""
             if r.get("openalex_id"):
