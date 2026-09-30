@@ -7,7 +7,7 @@ Author: HDMX-coding-agent
 2026-09-29T09:10Z HDMX-coding-agent created
 2026-09-29T09:10Z HDMX-coding-agent note author decisions (2026-09-29, interactive): waves by yield; parser per repeated series, LLM-assisted reading with row-by-row diff review for one-offs, bulk data through an ingestion script with a manifest; independent of M1b ([[0833]]) and M1b goes first; tracker plus one child per wave, dedup pass first.
 2026-09-29T09:14Z HDMX-coding-agent decision reframed by the author as milestone M2 of [[0725]]: the goal is code, an extraction pipeline that works on all we hold, run over all 392 documents, code polished. Children reshaped into code children (1506 to 1509) and run children (1501 to 1505). Milestone definitions: [[0725]] section "Milestones after M1".
-
+2026-09-30T08:09Z HDMX-coding-agent decision author (2026-09-30, interactive): M2 must be reusable by the periodic harvest — dated lines per snapshot, restatement as weak confirmation; criterion and invariant added, mechanism in [[1506]]
 --- body ---
 ## Context
 
@@ -36,8 +36,15 @@ one title matches an already extracted document (to be checked by 1501). Tier 2
 - **Replay:** the pipeline reproduces the lines of the 254 extracted documents
   byte for byte, or every difference is explained. This is the oracle; the 115
   have none, so they get row-by-row review.
-- **Idempotence:** re-running on an extracted document changes nothing and
+- **Idempotence:** re-running on an extracted snapshot changes nothing and
   never renumbers a `line_id`.
+- **Reuse by the periodic harvest:** a new dated snapshot of a document
+  already extracted appends lines tied to that snapshot; earlier lines never
+  change, and content restated unchanged is kept under the later date as weak
+  confirmation that it still holds (author, 2026-09-30; mechanism in
+  [[1506]]). A pending list of snapshots without lines or disposition is the
+  input of every run, so the M4 recurring passes ([[1184]], [[1140]]) reuse
+  this pipeline instead of building their own.
 - **Complete run:** all 392 documents end with lines or a recorded disposition
   (duplicate of a canonical document, translation not canonical, no snapshot,
   judged without extractable content, with the reason).
@@ -95,6 +102,7 @@ VNM and ZAF first inside each wave: they are the acceptance cases.
 ## Invariants
 
 - Lines of the 254 extracted documents are byte-identical before and after.
+- Lines of an earlier snapshot are never edited by a later snapshot's run.
 - `make jetp-ledger-check` passes at every child.
 - A `line_id` is `<document_id>-<table>-<ordinal>`, appended, never renumbered.
 - Duplicates are resolved before extraction, never after.
@@ -105,4 +113,5 @@ VNM and ZAF first inside each wave: they are the acceptance cases.
 - [ ] The replay of the 254 extracted documents passes (1507)
 - [ ] All 392 documents have lines or a recorded disposition with the reason
 - [ ] Each extractor was red-tested against a defect it must reject
+- [ ] A second dated snapshot of a living document runs through the pipeline and appends dated lines without touching earlier ones (1506)
 - [ ] Author acceptance of M2 after an integration review, recorded in [[0725]]
