@@ -345,9 +345,12 @@ rel-intake-1530:
 		--run-dir $(REL_SUD_RUNS)/20260929f --run-dir $(REL_SUD_RUNS)/20260929g \
 		--output-dir data/rel_intake/t1530-sud-openalex/2026-09-29
 
-# ICF screen (ticket 1732): data/rel_screen/icf_screen.csv is append-only and
-# tracked with `dvc add data/rel_screen` (never a dvc.yaml out, never rebuilt).
-# The import is idempotent; the view is regenerable from pool + table.
+# ── ICF screen (ticket 1732) ──
+# data/rel_screen/icf_screen.csv is append-only and tracked with
+# `dvc add data/rel_screen` (never a dvc.yaml out, never rebuilt). Fetch it
+# first (make rel-pool-data); the writers refuse to start a new table where
+# data/rel_screen.dvc tracks one. The import is idempotent; the view is
+# regenerable from pool + table.
 .PHONY: rel-screen-import-1530 rel-view
 rel-screen-import-1530:
 	$(PYTHON) scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv t1530
