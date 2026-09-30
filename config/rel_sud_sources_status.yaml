@@ -1,5 +1,5 @@
 # REL "Sud et langues", sources outside OpenAlex (ticket 1653): status of each
-# source on 2026-09-30. Read by scripts/export_rel_sud_sources_intake.py to
+# source on 2026-09-30. Read by scripts/catalog_rel_1653_delivery.py to
 # fill the delivery manifest (incomplete, needs_human); narrated in
 # docs/rel-sud-sources-2026-09-30.md.
 #

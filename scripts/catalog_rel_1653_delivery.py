@@ -23,15 +23,25 @@ What is delivered, per route (decision of 2026-09-30, see
 
 A record with neither DOI nor year gets a DOI found in its URL, else a year
 from ``year_enrichment.csv`` in its run directory (written by the
-``enrich-years`` subcommand from the GARUDA detail page); what still lacks
-both cannot enter ``records.csv`` (the checker refuses it): it is listed in
-``excluded.csv`` as ``no_dedup_key`` with its Handle or URL, and counted in
-the manifest, never dropped silently.
+``enrich-years`` subcommand from the GARUDA detail page). A persistent URL (a
+Handle, ``_rel_pool_keys.url_is_key``) is a key too. What still has no key
+cannot enter ``records.csv`` (the checker refuses it): it is listed in
+``excluded.csv`` as ``no_dedup_key`` with its URL, and counted in the
+manifest, never dropped silently.
+
+A source DOI carried by delivered records with different titles (Redalyc
+puts issue-level DOIs on unrelated articles) is not a key for them: it is
+blanked, and ``lane_note`` keeps it, so the pool does not fuse distinct works.
+Deduplication in lane is by record id only; same-item records under two ids
+(GARUDA indexes some articles twice) are left to the pool's DOI and title
+joins.
+
+The name follows the delivery precedent ``catalog_rel_1530_delivery.py``.
 
 Usage:
-    python scripts/export_rel_sud_sources_intake.py export \\
+    python scripts/catalog_rel_1653_delivery.py export \\
         --run DIR[:SOURCE,SOURCE] ... --output-dir data/rel_intake/<lane>/<delivery>
-    python scripts/export_rel_sud_sources_intake.py enrich-years \\
+    python scripts/catalog_rel_1653_delivery.py enrich-years \\
         --run-dir DIR --source garuda
 """
 
@@ -47,14 +57,26 @@ from collections import Counter, OrderedDict
 from datetime import datetime, timezone
 
 import yaml
+from _rel_pool_keys import url_is_key
 from pipeline_io import polite_get
 from rel_sud_sources import (
     _garuda as garuda,
 )
-from rel_sud_sources._common import HARVEST_ROUTES, discover, find_doi, sentinel_report
+from rel_sud_sources._common import (
+    HARVEST_ROUTES,
+    _norm,
+    discover,
+    find_doi,
+    sentinel_report,
+)
 from utils import get_logger
 
-log = get_logger("rel_sud_sources")
+log = get_logger("catalog_rel_1653_delivery")
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# The listing adapters' route before it was named "listing" (runs of
+# 2026-09-30 in series-b/ and ceew/): their registry already counts matches
+# in n_received and the listing size in n_expected.
+LEGACY_LISTING_ROUTES = {"export"}
 
 LANE = "t1653-sud-hors-openalex"
 # The intake contract's columns (docs/rel-intake-contract.md), in its order;
@@ -77,10 +99,11 @@ REGISTRY_COLUMNS = ["query_id", "platform", "query", "run_at", "n_received",
                     "completed", "stop_reason", "filter", "n_expected",
                     "source", "route", "endpoint", "run_dir", "query_id_run",
                     "n_announced", "n_harvested", "n_delivered"]
-# A titled record whose source holds no DOI, OpenAlex id or year: contract
-# reason no_dedup_key (ticket 1730); the pool takes it in as a title-only work.
-NO_KEY_NOTE = ("no publication year, DOI or OpenAlex id in the source metadata (at most "
-               "deposit dates)")
+# A titled record whose source holds no DOI, OpenAlex id, year or persistent
+# URL: contract reason no_dedup_key (ticket 1730); the pool takes it in as a
+# title-only work.
+NO_KEY_NOTE = ("no publication year, DOI, OpenAlex id or persistent URL in the source "
+               "metadata (at most deposit dates)")
 # OAI-PMH identifier prefix of a DSpace repository, by source, so an excluded
 # record keeps every persistent identifier the pool may later accept as a key.
 OAI_PREFIX = {"uwi": "oai:uwispace.sta.uwi.edu:"}
@@ -167,8 +190,9 @@ def build(runs, root=None, languages=None):
                 qid = f"{qid}@{label}"
             qmap[r["query_id"]] = qid
             harvest = r["route"] in HARVEST_ROUTES
+            legacy = r["route"] in LEGACY_LISTING_ROUTES
             query = r["query_string"]
-            if harvest:
+            if harvest or legacy:
                 langs = "/".join(languages.get(r["source"], []))
                 query += (f" || candidates selected by local 1530 lexicon match on "
                           f"title+abstract (titles only where the source gives no "
@@ -176,10 +200,10 @@ def build(runs, root=None, languages=None):
             registry[qid] = {
                 "query_id": qid, "platform": r["source"], "query": query,
                 "run_at": r["run_at"],
-                "n_received": r["n_matched"] if harvest else r["n_received"],
+                "n_received": r["n_matched"] if harvest or legacy else r["n_received"],
                 "completed": "true" if r["completed"] == "True" else "false",
                 "stop_reason": r["stop_reason"],
-                "filter": "local lexicon match" if harvest else "",
+                "filter": "local lexicon match" if harvest or legacy else "",
                 "n_expected": r["n_received"] if harvest else r["n_expected"],
                 "source": r["source"], "route": r["route"], "endpoint": r["endpoint"],
                 "run_dir": label, "query_id_run": r["query_id"],
@@ -201,11 +225,15 @@ def build(runs, root=None, languages=None):
                 continue
             records[rid] = to_record(c, rid, qid, registry[qid], label, enrich, stats)
             registry[qid]["n_delivered"] += 1
+    unshare_dois(records.values(), stats)
     delivered = []
     for rec in records.values():
-        if rec["doi"] or rec["year"]:
+        if rec["doi"] or rec["year"] or url_is_key(rec["url"]):
+            if not (rec["doi"] or rec["year"]):
+                stats["url_key_only"] += 1
             delivered.append(rec)
             continue
+        stats["no_dedup_key"] += 1
         # No dedup key: records.csv refuses the row; the contract lists it here
         # and the pool merge still takes it in, as a title-only work.
         excluded.append({"record_id": rec["record_id"], "query_id": rec["query_id"],
@@ -214,6 +242,25 @@ def build(runs, root=None, languages=None):
                          "platform_record_id": rec["platform_record_id"]})
         registry[rec["query_id"]]["n_delivered"] -= 1
     return delivered, list(registry.values()), excluded, stats
+
+
+def unshare_dois(records, stats):
+    """Blank a DOI carried by records with different normalized titles.
+
+    Such a DOI names an issue or a container, not the work (Redalyc: one DOI
+    on 17 unrelated articles). The original stays in ``lane_note``."""
+    titles = {}
+    for rec in records:
+        if rec["doi"]:
+            titles.setdefault(rec["doi"], set()).add(_norm(rec["title"]))
+    for rec in records:
+        doi = rec["doi"]
+        if doi and len(titles[doi]) > 1:
+            rec["doi"] = ""
+            rec["lane_note"] = (f"source DOI {doi} is carried by {len(titles[doi])} "
+                                f"different titles in this delivery, so it is not used "
+                                f"as this record's key; " + rec["lane_note"])
+            stats["doi_shared_blanked"] += 1
 
 
 def to_record(c, rid, qid, reg, label, enrich, stats):
@@ -234,8 +281,6 @@ def to_record(c, rid, qid, reg, label, enrich, stats):
         year = e["year"]
         notes.append(f"year from {e['source_url']} ({e['fetched_at'][:10]})")
         stats["year_enriched"] += 1
-    if not doi and not year:
-        stats["no_doi_no_year"] += 1
     authors = [a.strip() for a in (c["authors"] or "").split(";") if a.strip()]
     matched = c["matched_terms"]
     notes.append(f"lexicon match on title/abstract: {matched}" if matched
@@ -265,7 +310,7 @@ def manifest(records, registry, excluded, stats, status, producer, delivery, not
         by_source.setdefault(r["source"], []).append(r)
     for name, s in status["sources"].items():
         if s["status"] in {"partial", "impossible"}:
-            incomplete.append({"unit": f"{name} ({s.get('stratum', '')})",
+            incomplete.append({"unit": f"{name}: {s.get('stratum', '')}",
                                "reason": f"{s['status']}: {' '.join(s['reason'].split())}"})
         elif s["status"] == "run":
             short = [r for r in by_source.get(name, []) if r["completed"] != "true"]
@@ -290,9 +335,11 @@ def manifest(records, registry, excluded, stats, status, producer, delivery, not
         "counts": {"records": len(records),
                    "excluded": dict(Counter(e["reason"] for e in excluded)),
                    "by_platform": dict(Counter(r["platform"] for r in records)),
-                   "no_doi_no_openalex_no_year": stats["no_doi_no_year"],
+                   "no_dedup_key": stats["no_dedup_key"],
+                   "url_key_only": stats["url_key_only"],
                    "doi_from_url": stats["doi_from_url"],
-                   "year_enriched": stats["year_enriched"]},
+                   "year_enriched": stats["year_enriched"],
+                   "doi_shared_blanked": stats["doi_shared_blanked"]},
         "coverage": "incomplete",
         "incomplete": incomplete,
         "needs_human": needs_human,
@@ -310,7 +357,7 @@ def write_csv(path, fields, rows):
 
 def git_commit():
     try:
-        return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
+        return subprocess.run(["git", "-C", ROOT, "rev-parse", "HEAD"], capture_output=True,
                               text=True, check=True).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
@@ -332,17 +379,24 @@ def cmd_export(args):
     report = sentinel_report(sentinels, [{**r, "query_id": r["query_ids_all"]} for r in records])
     write_csv(os.path.join(args.output_dir, "sentinels.csv"),
               ["sentinel", "found", "sources", "query_ids", "title"], report)
-    producer = {"script": "scripts/export_rel_sud_sources_intake.py",
+    producer = {"script": "scripts/catalog_rel_1653_delivery.py",
                 "commit": args.commit or git_commit(),
                 "machine": args.machine or socket.gethostname(),
                 "runs": [a for a in args.run], "runs_root": args.root or ""}
     delivery = os.path.basename(os.path.abspath(args.output_dir))
     notes = args.notes or ""
-    if stats["no_doi_no_year"]:
-        notes += (f" {stats['no_doi_no_year']} record(s) carry no DOI, OpenAlex id or year "
-                  "anywhere in their source: listed in excluded.csv as no_dedup_key, "
-                  "with their Handle or stable URL, for the pool to take in as "
+    if stats["url_key_only"]:
+        notes += (f" {stats['url_key_only']} record(s) have no DOI or year: their "
+                  "persistent URL (a Handle) is their key.")
+    if stats["no_dedup_key"]:
+        notes += (f" {stats['no_dedup_key']} record(s) carry no DOI, OpenAlex id, year "
+                  "or persistent URL anywhere in their source: listed in excluded.csv "
+                  "as no_dedup_key, with their URL, for the pool to take in as "
                   "title-only works.")
+    if stats["doi_shared_blanked"]:
+        notes += (f" {stats['doi_shared_blanked']} record(s) had a source DOI shared with "
+                  "differently titled records (issue-level DOIs); it is kept in lane_note, "
+                  "not used as a key.")
     man = manifest(records, registry, excluded, stats, status, producer, delivery,
                    notes.strip())
     with open(os.path.join(args.output_dir, "manifest.json"), "w", encoding="utf-8") as fh:
@@ -399,7 +453,9 @@ def main(argv=None):
     en = sub.add_parser("enrich-years")
     en.add_argument("--run-dir", required=True)
     en.add_argument("--source", required=True)
-    en.add_argument("--delay", type=float, default=1.0)
+    en.add_argument("--delay", type=float, default=1.0,
+                    help="seconds between requests (the runner's default; "
+                         "GARUDA publishes no crawl-delay)")
     args = ap.parse_args(argv)
     return cmd_export(args) if args.cmd == "export" else cmd_enrich_years(args)
 
