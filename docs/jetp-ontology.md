@@ -25,7 +25,7 @@ guided by the Ontology this document defines; Evidence is computed on top,
 and there is no Model. Data is a pipeline of four steps: D1 register, D2
 lines, D3 observations, D4 referents. The frame, the step-to-table map and the
 terms the design documents and schema use or avoid are
-[`jetp-language.md`](jetp-language.md). What readers of the observatory see is
+[`jetp-language.md`](jetp-language.md). What readers of the Observatory see is
 [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
 
 ## 1. Why a new schema
@@ -37,7 +37,7 @@ unit. The case, from four reviews, is in the
 
 ## 2. Vocabulary
 
-Terms are ordered from the register outward: who says it, in what, then what it
+Terms are ordered from the document register outward: who says it, in what, then what it
 is about.
 
 ### Publisher
@@ -51,7 +51,9 @@ report and the one that funds a loan are one organisation. The party carries
 an authority category, `national_government`, `jetp_secretariat`, `ipg`,
 `bilateral_funder`, `multilateral_funder`, `private_finance`, `operator` or
 `secondary_source`, and a country (`ZAF`, `IDN`, `VNM`, `SEN`) or
-`international`. A consulting firm that wrote a document for a publisher is
+`international`. The category `secondary_source` keeps a word the
+[language](jetp-language.md) document retires for publishers; its rename is a
+proposed schema change (ticket 1702). A consulting firm that wrote a document for a publisher is
 linked as `author`, with the publisher as `commissioner`.
 
 ### Document
@@ -77,7 +79,10 @@ snapshot, as the manifest already shows with a `not_modified` re-fetch three
 minutes after a collection. A retrieval's status is `collected`,
 `not_modified`, `blocked`, `missing`, `invalid_content`, `invalid_response`,
 `retryable_http_error`, `http_error`, `fetch_error`, `not_published` or
-`not_applicable`.
+`not_applicable`. The last two are not outcomes of a fetch: the terminal
+verdict that closes a search is collection's ([collection](jetp-collection.md)
+section 3), and how the two lists relate is a proposed schema change (ticket
+1702).
 
 ### Snapshot
 
@@ -89,7 +94,7 @@ so that what was read can be re-read.
 ### Line
 
 One publisher's dated assertion at one locator in one snapshot. A row of the
-grants register, a line of a plan appendix, a position in an annex, a submission
+South African grants register, a line of a plan appendix, a position in an annex, a submission
 in a list of submissions, a heading that groups such lines, a count the
 publisher gives without naming what is counted. The line is the first-class
 unit of the ledger: every identity below is minted from lines, every observation
@@ -134,7 +139,7 @@ retirement year and matches no undertaking.
 ### Agreement
 
 Funder-side money: a party commits an amount under an instrument to a
-counterparty. A grant line of the register, a loan, a results-based lending
+counterparty. A grant line of the South African grants register, a loan, a results-based lending
 operation, a term sheet before signature. States are states of the document
 that embodies it: announced, MoU, approved, signed, cancelled, withdrawn.
 Money movements are flows on the agreement, typed by the IATI transaction list:
@@ -176,14 +181,15 @@ A coverage definition stated by a publisher: the partnership pledge envelope
 and its revisions, a publisher-defined portfolio of 24 records of which 21 are
 unnamed, a procurement quota of 250 MW, a plan's list at a cutoff.
 Membership is a justified relation, not a list. A count slot is a perimeter observation,
-"this publisher counted 24 at this date", not 21 rows in a registry. A scope
+"this publisher counted 24 at this date", not 21 rows in a table. A scope
 that the analysis defines to count against, such as a reference pool of
 comparator operations, is a method choice, not a perimeter of the ontology
 ([fusion](jetp-fusion.md), section 6).
 
 ### External identifier
 
-A code another register uses for one of the ledger's identities or lines: a
+A code another identifier scheme uses for one of the ledger's identities or
+lines: a
 World Bank P-number, a CRS `crs_id` or `donor_project_id`, an IATI activity
 identifier, a GEM unit id; for a party, an IATI organisation identifier, a ROR
 identifier, an LEI or a Wikidata item. One table holds them all, typed by
@@ -322,7 +328,8 @@ where the four publishers' practice requires it:
 | `delivery` | agreement | IATI activity status: `pipeline`, `implementation`, `finalisation`, `closed`, `cancelled`, `suspended` | none; the South African register's letters A to D crosswalk here |
 | comparator statuses | comparator lines | World Bank project status (pipeline, active, closed, dropped), CRS and IATI activity status | crosswalked onto the axes above, never merged |
 
-The publisher's own words, all of them, are kept: the register's `A. Planned`
+The publisher's own words, all of them, are kept: the South African
+register's `A. Planned`
 to `D. Completed`, Indonesia's modality and approval, Viet Nam's published or
 not published, Senegal's submitted, evaluated and quick win. Each maps through
 the crosswalk to at most one axis. A publisher's own scheme that reuses a
@@ -354,7 +361,7 @@ classes and relations of sections 2 and 3, the line classifications, measures,
 bases, flow types, modalities, date roles, roles, axes and axis values of
 section 4. `kind` says which (`class`, `relation`, `value`); `list` names the closed
 list a value belongs to. The definition is plain English, one or two
-sentences, written for a reader of the observatory. A relation term also
+sentences, written for a reader of the Observatory. A relation term also
 states its `domain` and `range`. The DDL's checks read the terms in force; no
 script or configuration file carries its own copy of a list. Sections 2 to 4
 write every value in code type, which is what the alignment test reads; an
@@ -392,7 +399,7 @@ rules. The formal specification is the DDL of the [storage contract](jetp-ledger
 prose glossary. Alignment is checked, not trusted. A test (ticket 0880) fails
 when a value listed in sections 2 to 4 is not a term in force, or a term in
 force appears nowhere in this document, and when a table or column declared
-in the storage contract differs from the DDL. The observatory's Glossary and a SKOS export
+in the storage contract differs from the DDL. The Observatory's Glossary and a SKOS export
 (storage contract, section 3) are generated from the `terms` table, so the words a reader sees
 are the words the validator enforces.
 

@@ -1,16 +1,16 @@
-# JETP observatory: presentation
+# JETP Observatory: presentation
 
-What readers of the observatory see and how the site is organised. Decided by
+What readers of the Observatory see and how the site is organised. Decided by
 the author on 2026-09-23 and revised after the 2026-09-24 cold read (ticket 0902)
 and the 2026-09-29 three-step trail decision (ticket 0870). Tickets [0881](../tickets/0881-le-mvp-distingue-o-d-e-et-m-et-pr-sente.erg)
 (organisation and page vocabulary) and
 [0882](../tickets/0882-page-ontologie-du-mvp-d-finitions-des-ob.erg) (Glossary)
 implement it. What the ledger's terms mean is [`jetp-ontology.md`](jetp-ontology.md);
-how the builders speak about the ledger is [`jetp-language.md`](jetp-language.md).
+how the builders speak about the Observer is [`jetp-language.md`](jetp-language.md).
 
 ## Organisation and vocabulary
 
-The four ODEM objects of [`jetp-language.md`](jetp-language.md) are the observatory's organising
+The four ODEM objects of [`jetp-language.md`](jetp-language.md) are the Observatory's organising
 principle: they decide what is grouped with what, in which order, and what
 may link to what. They are not its vocabulary. The pages assume a reader who
 knows how empirical work proceeds, that a figure rests on documents and that
@@ -28,7 +28,7 @@ than suspicion, because the readers are researchers as well as journalists.
 |---|---|---|
 | O | What each word, status, measure and relation means, where the definition comes from, and when it changed | **Glossary** |
 | D | The documented route from a figure back to the page that supports it, walked in both directions | **The paper trail**: **Documents** → **Document rows** → **Statements**; separately, **Projects**, **Funding**, **Organisations** |
-| E | Counts and totals computed by the ledger, each with its unit, its perimeter and a link to what it was computed from | **The tallies** |
+| E | Counts and totals computed by the Observer, each with its unit, its perimeter and a link to what it was computed from | **The tallies** |
 | M | Nothing | none |
 | (methods) | What was done, what was not, and which tables are not served | **Methods** |
 
@@ -62,7 +62,7 @@ marked current when it is open.
   sections. On the paper trail, Documents, Document rows and Statements
   form the three sequential tabs. Projects, Funding and Organisations form
   a separate side group, since identity matching reads document rows rather
-  than forming three further stages after statements. The order is explained
+  than forming three further steps after statements. The order is explained
   on `#the-paper-trail`, not by arrows or numerals. The selected tab is the
   page's position indicator, and the tabs beside it are the neighbouring
   steps. No page repeats it with an eyebrow, a trail block or in-page tabs,
@@ -89,19 +89,20 @@ goes unmarked.
 `#who-we-are`, and the landing pages `#the-paper-trail` and `#about`; the
 release history is `#release-history`. A country's page nests under its step
 (`#funding/<CODE>`, `#document-rows/<CODE>`, `#statements/<CODE>`); a project is
-`#project/<project_id>`. The full table is in the observatory's
+`#project/<project_id>`. The full table is in the Observatory's
 [README](../deliverables/jetp-observatory/README.md).
 
 - **Glossary.** Grouped by theme, alphabetical within each group: what the
   ledger tracks (projects, assets, agreements, parties, perimeters), how
-  documents are read (documents, entries, locators, publishers), statuses,
+  documents are read (documents, lines, locators, publishers), statuses,
   measures, relations. These themes are the lists of the ontology tables, so
   the hand-written first list and the generated one group alike. The terms in force, grouped by list: each class, relation
   and value with its definition, its external source and its revision
   history. A relation shows what it connects. Every term used elsewhere on
   the site links to its glossary entry. Generated from the ontology tables, `data/jetp/ontology/` ([`jetp-ontology.md`](jetp-ontology.md) section 5).
-- **The paper trail.** Documents is D1 (publishers, documents, retrievals,
-  snapshots). Document rows is D2: selected rows from registers, annexes and
+- **The paper trail.** Document rows are the ledger's lines (D2), what
+  extraction and fusion call statements; Statements are its observations
+  (D3). Documents is D1 (publishers, documents, retrievals, snapshots). Document rows is D2: selected rows from registers, annexes and
   lists, with the original column wording preserved where available; an
   extracted row is not necessarily a unique project. Statements is D3:
   attributed amounts, dates and statuses, plus project–document links, with
@@ -114,9 +115,9 @@ release history is `#release-history`. A country's page nests under its step
   party-name forms appear as aliases without guessing unreviewed matches.
   The sub-bar keeps those three referent pages apart from the three sequential
   steps and lets the reader follow their justification: from
-  a project to what is on the record about it, to the entries, to the page
+  a project to what is on the record about it, to the lines, to the page
   of the document, and back.
-- **The tallies.** A number the ledger computes is visibly set apart from
+- **The tallies.** A number the Observer computes is visibly set apart from
   a number a publisher printed ("Our calculation" against "As published"):
   it states its unit and perimeter and opens the items on the record it was
   computed from. Accounts, when they exist, appear only here. The page is
@@ -126,13 +127,13 @@ release history is `#release-history`. A country's page nests under its step
   The charts follow as numbered, captioned figures ("Figure 1. …"), each
   marked "Our calculation". The landing page keeps its stat grid, under the
   eyebrow "The tallies".
-- **No models.** The observatory tests no causal explanation, and its
+- **No models.** The Observatory tests no causal explanation, and its
   navigation has no place for one. Methods says in plain words what
-  the observatory does not do.
+  the Observatory does not do.
 
 Words avoided on the pages: *claims* (it implies doubt about a publisher's
 statement), *deals* and *players* (loaded), *sources* (a source is also a
-person, and the ledger retired the word), *entities* and *records* (opaque to
+person, and the language document retired the word), *entities* and *records* (opaque to
 a general reader).
 
 The serving contract, every table served or named as not served, is
@@ -154,7 +155,7 @@ calculation.
   derivation, method version, input and output hashes and editorial
   justification, and it proves at build time that the chain resolves and
   that a correction reaches every claim it touches. The display-occurrence
-  record (`display_id`, payload, JSON pointer, route, rendering role) is built
+  record (`display_id`, payload, JSON pointer, page route, rendering role) is built
   and checked the same way and not published. The site's climb from a number
   to its justification stays a read-time join over the served tables (ticket
   0858 removed the 874 kB materialised join; rebuilding it under another name
@@ -162,7 +163,7 @@ calculation.
 - `(release_id, display_id)` identifies an occurrence, so the same claim on
   two pages, or a component repeated on one page, stays distinct. A manuscript
   occurrence uses a figure, table or block label and a cell or paragraph
-  locator instead of a route; a PDF page number is not a durable key.
+  locator instead of a page route; a PDF page number is not a durable key.
 - Authored narrative claims carry stable block identifiers and link to their
   supporting and contradicting observations; rewording a claim reopens the
   review of its links.

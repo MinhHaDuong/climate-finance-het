@@ -15,12 +15,12 @@ One file is one table, joins happen at read time, nothing is materialised
 A table too large for the repository's file ceiling, 512 000 bytes per
 file in `.githooks/pre-commit`, is chunked by country and year into
 `<table>.d/<CODE>-<year>.csv`, with numbered `-02`, `-03` shards when one
-country-year still exceeds the ceiling. Readers join those shards in numeric
-order, preserving row order within that country-year. `observations` and
+country-year still exceeds the ceiling. The build joins those shards in
+numeric order, preserving row order within that country-year. `observations` and
 `timings` get their shard country from the cited `line_id`, since those tables
 have no country column. The `.d` suffix keeps a
 chunk directory apart from a directory that shares a table's name:
-`data/jetp/documents/` is the snapshot store under DVC, not the chunks of the
+`data/jetp/documents/` is the document store (the snapshot bytes) under DVC, not the chunks of the
 `documents` table, and the writer deletes only its `<CODE>-<year>[-NN].csv` files of
 its own `.d` directory.
 For rows such as party-alias relations that have no country, `GLB` is the shard
@@ -59,6 +59,10 @@ error; a missing first or numbered shard also fails validation.
 | `dry-searches` | as today | |
 | `decisions.md` | as today | |
 
+A judgement of the [fusion rules](jetp-fusion.md), once recorded, is a
+decision row: a `line-referents` row, a `relations` row, or an
+`adjudications` row, which holds the typed decisions (occurrence, flow
+coverage, perimeter compatibility, identity) with their members.
 Adjudication member roles are typed by decision: `occurrence_membership`
 uses `occurrence`, `excluded` or `context`; `flow_coverage` uses
 `covering_flow`, `covered_movement`, `excluded`, `opening`, `closing` or
@@ -159,18 +163,19 @@ Rules that the validator enforces:
   is `3920000000` USD with the printed value, scale and label kept in the
   line's verbatim fields; an unknown value is an empty field with a typed
   missingness reason, and `null` on export; zero is a measured value.
-- `routes` maps identifiers from a published edition to their new kind and
-  identifier, so no public route breaks. The prepublication preview IDs were
-  never public and are dispositions in the migration report, not redirects
+- `routes` maps identifiers from a published release (the pre-2026-09 site)
+  to their new kind and identifier, so no public page route breaks. The
+  prepublication preview IDs were never public and are recorded as retired in
+  the migration report, not redirected
   (author decision, 2026-09-24; PR #1492 removed the browser forwards).
 - Every count exported names its unit: lines of a document, referents of a
   kind, or a perimeter observation.
 
-## 2. What the observatory serves
+## 2. What the Observatory serves
 
 Every table of section 1 is served, one file per table, or named on the
-observatory's methods page as not served, with the reason. The ontology tables
-are served too, as the observatory's glossary. Nothing on a page adds lines of
+Observatory's methods page as not served, with the reason. The ontology tables
+are served too, as the Observatory's glossary. Nothing on a page adds lines of
 one document to lines of another or to referents, and every count states its
 unit. How the site is organised and worded is
 [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md).
@@ -186,8 +191,8 @@ by reading a diff in a pull request; a database file has no diff, and a
 database that is regenerated from files is not a record of anything. The
 tables in section 1 hold about 8 000 rows today, but they will not stay
 small: every edition is a new document and lines are appended, never
-renumbered. A monthly register edition adds about 3 000 lines a year for
-South Africa alone, the Indonesian plan appendices add 1 500 per edition
+renumbered. The monthly edition of the South African grants register adds
+about 3 000 lines a year for South Africa alone, the Indonesian plan appendices add 1 500 per edition
 pair, and the comparator pools add 1 100 World Bank records now and, for the
 four countries' energy sector, about 8 000 CRS rows and 1 301 IATI country
 lines in the September 2026 draw. The steady state is tens of thousands of
@@ -210,13 +215,13 @@ validator checks the file header against it. Two mechanisms, one contract.
 under `config/` declares every table, key, foreign key and check of section 1.
 The CSV headers are generated from it, so a column exists in one place. At
 build time the CSVs load into a SQLite file under `data/derived/jetp/`, the
-foreign-key and check constraints run as the validator, and the observatory's
+foreign-key and check constraints run as the validator, and the Observatory's
 served JSON views and the accounts (E) are SQL queries over that file.
 The file is deterministic for a given input, disposable, and may ship as a
 downloadable release artifact, never as a
 committed file. This is what the backend design of 2026-09-14 (deleted 2026-09-30) reserved as an optional
 `<release_id>.sqlite` (`<edition_id>` there), promoted from optional to the build's only query
-engine. In the browser the observatory keeps serving one JSON file per table
+engine. In the browser the Observatory keeps serving one JSON file per table
 and joining at read time; at this volume an in-browser SQL engine would add a
 dependency without a query that needs it.
 
@@ -243,11 +248,12 @@ decisions are stored.
   `decided_by` (a script name, an LLM identifier, or a person), `method`,
   `method_version`, `confidence`, `justification_line_ids`, `decided_at`,
   `status` and `supersedes`, under the in-force rule of section 1. A
-  candidate stays a row, counted, as ticket 0833 requires of its
+  candidate match stays a row, counted, as ticket 0833 requires of its
   `possible_matches`.
-- Tier thresholds live in configuration, versioned with the method. The
+- Tier thresholds live in configuration, versioned with the method; the match
+  threshold a result applies is declared by the result (fusion section 3). The
   panel's stance-and-confidence rule is `matching.panel` in
-  `config/jetp_tracking.yaml`; the observatory serves the decision record
+  `config/jetp_tracking.yaml`; the Observatory serves the decision record
   sorted by confidence.
 - A person's adjudication is recorded in the same row shape and in
   `decisions.md`.
@@ -265,7 +271,7 @@ tier 2 as a candidate generator reviewed by hand; tiers 3 to 5 as method names
 reserved in the vocabulary. The Indonesian edition relation between the 437
 CIPP lines and the 1 142 progress-report lines, whose literal name
 intersection is 3, is the test bed for tier 2 and the first case for tier 3.
-For documents: tiers 1 and 2 at harvest time, so a snapshot whose text already
+For documents: tiers 1 and 2 at collection time, so a snapshot whose text already
 exists is registered as a `same_as` candidate before extraction; tier 3 as a
 candidate generator over the registered documents.
 
@@ -293,7 +299,7 @@ outside the system of record:
 | `document-summaries` | (document_id, language) | text, method, method_version, produced_at, snapshot_sha256 |
 
 Both carry the provenance columns of the matching record, so a served
-translation can say which LLM produced it from which bytes. The observatory
+translation can say which LLM produced it from which bytes. The Observatory
 may show a translated label beside the original and a machine summary on a
 document's page, each marked as derived, and a reader who clicks through
 reaches the snapshot in its own language. No observation cites a translation

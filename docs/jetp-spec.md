@@ -1,9 +1,10 @@
 # JETP Observer: specification
 
 The JETP Observer is the system that finds the public documents on the Just
-Energy Transition Partnerships, reads what their publishers state, judges how
-those statements combine, keeps the result and releases it. The Observatory
-is its website. This page is the entry to the specification: ten documents,
+Energy Transition Partnerships, extracts and reads what their publishers
+state, judges how those statements combine, keeps the result and releases it.
+The ledger is its Data, the tables of steps D1 to D4; the Observatory is its
+website. The [language](jetp-language.md) document defines these words. This page is the entry to the specification: ten documents,
 read in the order below. Tracker: ticket 1703.
 
 ## Reading order
@@ -14,8 +15,8 @@ read in the order below. Tracker: ticket 1703.
 | 1 | [Language](jetp-language.md) | Which words do the documents, schema and code use, and in which sense? | in force |
 | 2 | [Ontology](jetp-ontology.md) | What does the ledger talk about: classes, relations, value lists, status axes? | in force |
 | 3 | [Collection](jetp-collection.md) | How are documents sought, fetched and registered, and when does a search stop? | draft, PR #1598 |
-| 4 | [Extraction](jetp-extraction.md) | How is a publisher's statement read from a document into a line and an observation? | draft, PR #1596 |
-| 5 | [Fusion](jetp-fusion.md) | How are statements matched to identities, weighed against each other and revised? | draft for author review |
+| 4 | [Extraction](jetp-extraction.md) | How is a publisher's statement extracted from a document into a line, and read into an observation? | draft, PR #1596 |
+| 5 | [Fusion](jetp-fusion.md) | How are statements matched to referents, weighed against each other and revised? | draft for author review |
 | 6 | [Storage](jetp-ledger-storage.md) | Which tables hold the ledger, which rules validate them, which engine builds them? | in force |
 | 7 | [Results and releases](jetp-results.md) | Which results are computed, and how is a release frozen, versioned and corrected? | being drafted (ticket 1707) |
 | 8 | [Presentation](jetp-observatory-presentation.md) | What do readers of the Observatory see, and how are its pages organised? | in force |
@@ -23,8 +24,8 @@ read in the order below. Tracker: ticket 1703.
 
 ## Structure
 
-The documents follow the flow of the work: **collect, read, judge, keep,
-release, show, run**. Collection (3) collects, extraction (4) reads, fusion
+The documents follow the flow of the work: **collect, extract, judge, keep,
+release, show, run**. Collection (3) collects, extraction (4) extracts, fusion
 (5) judges, storage (6) keeps, results (7) release, presentation (8) shows,
 operation (9) runs. Requirements (0) state what the flow is for; language (1)
 and ontology (2) fix the words it is written in.

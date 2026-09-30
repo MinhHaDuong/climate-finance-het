@@ -7,6 +7,7 @@ Blocked-by: 1711
 --- log ---
 2026-09-30T11:35Z HDMX-coding-agent created
 2026-09-30T15:10Z HDMX-coding-agent note two exit criteria added from the extraction spec review (author, 2026-09-30): reading method, version and reviewer on every line; ordinal continuation across snapshots in the line identifier scheme
+2026-09-30T18:00Z HDMX-coding-agent note exit criterion added from the vocabulary pass (ticket 1703): proposed schema changes the specification documents cannot make
 
 --- body ---
 ## Context
@@ -42,3 +43,4 @@ Author decisions (2026-09-30, interactive):
 - [ ] The storage contract § 1 and § 4 describe what the code does
 - [ ] A statement (line) records the method, method version and reviewer (checking reader, and the author where they decided) that read it, as `docs/jetp-extraction.md` § 3 requires
 - [ ] The statement identifier scheme says how ordinals continue across snapshots of one document, so a new snapshot's statements get new identifiers without collision (`docs/jetp-extraction.md` § 9)
+- [ ] Proposed schema changes from the vocabulary pass (ticket 1703) are decided and, where accepted, migrated: the D1 `coverage` table, which records the search per listed referent, is renamed to say search (for example `referent-searches`), and the round log and unreachable list of `docs/jetp-collection.md` § 5 and § 8 get tables of their own; the authority category `secondary_source` is renamed so that the retired word *source* leaves the schema; the retrieval statuses `not_published` and `not_applicable`, which are verdicts rather than fetch outcomes, are related to collection's terminal verdicts; the report's proposed rename of the row status `candidate` to `proposed` is decided (its verifier advised against it)
