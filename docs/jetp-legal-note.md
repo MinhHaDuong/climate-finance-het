@@ -6,7 +6,8 @@ the author on 2026-09-30 under review finding W1-29
 by a language model (Fable), reviewed by a second model (Astra, GPT-6,
 verdict "needs corrections", review archived at
 [`jetp-spec-review/legal/astra-review.md`](jetp-spec-review/legal/astra-review.md))
-and revised on the same day; to be reviewed by a human lawyer. **This note
+and revised on the same day. A human legal review is a go-live gate, not a
+build gate: no one is consulted while the Observatory is undeployed. **This note
 is not legal advice.** It states, for each activity of the Observer, the
 rule it relies on under French law and EU law as applied in France, how the
 Observer complies or what it must change, a residual risk rating, and what
@@ -416,6 +417,10 @@ document's bytes are served under that document's terms, stated in the
 redistribution list." Results §7: the three labels.
 
 ## Open points for a human lawyer, the CNRS legal service (DAJ) and the DPO
+
+These points are raised only when the author decides to deploy the
+Observatory publicly [M3b go-live gate]; until then the Observer runs on the
+basis stated above and no legal service is consulted.
 
 1. Is the Observer formally conducted within the CNRS research mission,
    and which institution assumes responsibility given CIRED's structure
