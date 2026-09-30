@@ -86,8 +86,8 @@ Order of work, each step a ticket with its own byte-level check:
 4. Identity split: referents and the five identity tables. The 404 identifiers
    from the unpublished preview have dispositions without new `routes` rows
    (author decision, 2026-09-24). The party table, which step 1 starts
-   with the publishers under authority control (decision 12 of the
-   [ontology](jetp-ontology.md)), gains the funders and channels here, each
+   with the publishers under authority control (decision 12 of the ontology design, now in the
+   [attic](attic/jetp-ontology-decisions-2026-09.md)), gains the funders and channels here, each
    with its `party-names` rows and, where one exists, its external identifier
    (IATI organisation identifier, ROR, LEI, Wikidata), and the `party_in`
    relation with a role. The 61 funder strings and the register's 14 funder prefixes

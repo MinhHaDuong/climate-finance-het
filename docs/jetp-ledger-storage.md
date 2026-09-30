@@ -69,11 +69,11 @@ flow and a covered movement. A rejected decision retains its members as
 history but contributes none to the in-force view.
 
 Accounts, the openings, movements, closings, residuals and
-coverage gaps per agreement or perimeter that section 5 of the backend
-design defines, are derived: they are computed from observations, timings,
+coverage gaps per agreement or perimeter that the
+[fusion rules](jetp-fusion.md) define (section 7), are derived: they are computed from observations, timings,
 rates and adjudications at build time, written under `data/derived/jetp/`
 with the run identifier, the two cutoffs (valid time and knowledge) and
-the `ontology_ref`, and never edited. The adjudications they depend on are records, in the table above.
+the `ontology_ref` (the hash of `data/jetp/ontology/` and of the DDL), and never edited. The adjudications they depend on are records, in the table above.
 
 Rules that the validator enforces:
 
@@ -358,6 +358,11 @@ whose text already exists is registered as a `same_as` candidate before it is
 extracted; tier 3 as a candidate generator on the current 301 documents.
 
 ## 5. Language, translation and summaries
+
+A scan with no text layer (the Vietnamese decision of 2026 is one) is read by
+transcription, and each of its lines names the transcription as its method
+and version, so that its label has the provenance the translation tables give
+derived text.
 
 The four partnerships publish in Indonesian, Vietnamese, French and English,
 and some documents exist in two languages. The ledger records the language of

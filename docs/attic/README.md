@@ -3,8 +3,8 @@
 Old planning notes and superseded design documents, kept whole so that they
 can be read without digging through git history. Nothing in this directory
 governs the project: where an attic file disagrees with a document outside
-it, the document outside wins, and no rule, test or ticket may cite an attic
-file as its authority.
+it, the document outside wins. An attic file may be cited as provenance
+(where and why a decision was taken), never as the authority for a rule.
 
 A file enters the attic when its live content has been moved to its current
 home and what remains is worth rereading as it stood, for the reasoning or the

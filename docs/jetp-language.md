@@ -1,7 +1,7 @@
 # JETP ledger: language
 
 How the ledger's design documents, schema and code speak about it. Decided by
-the author on 2026-09-23 (decision 11 of [`jetp-ontology.md`](jetp-ontology.md)),
+the author on 2026-09-23 (decision 11 of the ontology design, [attic](attic/jetp-ontology-decisions-2026-09.md)),
 after the [ODEM acceptance review](jetp-odem-acceptance-review-2026-09-23.md).
 The ontology itself, what the ledger's classes, relations and values mean, is
 [`jetp-ontology.md`](jetp-ontology.md). What readers of the observatory see is
@@ -39,7 +39,7 @@ attaches that line to a referent. The order of the [migration](jetp-ledger-migra
 before rewriting D3 because the old tables key observations on old
 identities.
 
-**Five terms retired or restricted.**
+**Six terms retired or restricted.**
 
 | Term | Use instead | Why |
 |---|---|---|
@@ -48,6 +48,7 @@ identities.
 | *reconciliation* | **matching** for D4 decisions that mint or attach identities ([storage contract](jetp-ledger-storage.md) section 4); **account** for the E computation of opening, movements, closing and residual | One word named two operations at two ODEM levels |
 | *edition*, for the ledger's own output | **release** for a frozen package of ledger and site (`data/jetp/releases/<release_id>/`). *Edition* keeps only its document sense: a publisher's successive issue (`edition_of`) | "Evidence edition", "monthly edition" and "document edition" were three different objects |
 | *layer*, *stage* (*étage*), *fact* | **step D1 to D4** for the levels of the pipeline; **observation** for what a publisher stated | *Layer* named M1a sub-tables and *stage* the MVP levels; a ledger row is a publisher's statement read by a method, not a fact |
+| *source*, for who publishes | **publisher**, the party that publishes and answers for a document; **document**, **snapshot** or URL when one of those is meant | The word has meant a URL since the first harvest |
 
 Domain words that coincide are unaffected: a *project stage* is a value of
 the OC4IDS axis, and a PDF's *text layer* is its extractable text.
