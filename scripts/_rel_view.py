@@ -9,6 +9,7 @@ import csv
 import hashlib
 from collections import Counter, defaultdict
 
+import _icf_screen as ics
 import pandas as pd
 from pipeline_loaders import classify_rel_review_works
 
@@ -53,7 +54,22 @@ def match_labels(pool: list[dict], labels: list[dict]) -> tuple[dict, list, Coun
     return matched, unmatched, how
 
 
-def work_status(labs: list[dict]) -> dict:
+def screen_rule(cfg: dict) -> dict:
+    """The stage-1 exit rule of ``config/rel_screen.yaml``, checked.
+
+    ``stage1_exit_labels`` and ``stage2_labels`` must partition the labels, so
+    that every stage-1 label has exactly one fate.
+    """
+    rule = {k: sorted(cfg.get(k) or []) for k in ("stage1_exit_labels", "stage2_labels")}
+    exit_, s2 = set(rule["stage1_exit_labels"]), set(rule["stage2_labels"])
+    if exit_ & s2 or exit_ | s2 != ics.LABELS:
+        raise ics.IcfScreenError(
+            f"stage1_exit_labels {sorted(exit_)} and stage2_labels {sorted(s2)} must "
+            f"partition the labels {sorted(ics.LABELS)}")
+    return rule
+
+
+def work_status(labs: list[dict], rule: dict) -> dict:
     """Status of one work from its labels (table order: the last one wins)."""
     by_stage = defaultdict(list)
     for lab in labs:
@@ -65,7 +81,8 @@ def work_status(labs: list[dict]) -> dict:
         status = "unsure_unresolved" if s2["label"] == "unsure" else s2["label"]
         final = s2
     elif s1:
-        status = {"out": "stage1_out", "aux": "stage1_aux"}.get(s1["label"], "pending_stage2")
+        status = (f"stage1_{s1['label']}" if s1["label"] in rule["stage1_exit_labels"]
+                  else "pending_stage2")
         final = s1
     else:
         status, final = "unscreened", None
@@ -82,8 +99,9 @@ def work_status(labs: list[dict]) -> dict:
     }
 
 
-def build_view(pool: list[dict], labels: list[dict], window_cfg: dict) -> tuple[list[dict], dict]:
-    """View rows (pool order) and the label-matching summary."""
+def build_view(pool: list[dict], labels: list[dict], window_cfg: dict,
+               rule: dict) -> tuple[list[dict], dict]:
+    """View rows (pool order) and the label-matching summary; ``rule``: ``screen_rule``."""
     matched, unmatched, how = match_labels(pool, labels)
     win = classify_rel_review_works(
         pd.DataFrame({"title": [p["title"] for p in pool],
@@ -92,7 +110,7 @@ def build_view(pool: list[dict], labels: list[dict], window_cfg: dict) -> tuple[
     for i, p in enumerate(pool):
         row = {k: p[k] for k in ("work_key", "openalex_id", "doi", "title", "year",
                                  "in_catalogue", "sources", "version_hint")}
-        row.update(work_status(matched.get(i, [])))
+        row.update(work_status(matched.get(i, []), rule))
         row["rel_disposition"] = win["rel_disposition"].iat[i]
         row["rel_year_status"] = win["rel_year_status"].iat[i]
         rows.append(row)
