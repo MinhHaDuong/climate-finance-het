@@ -65,16 +65,21 @@ def types_names(item, terms):
 
 
 def term_names(get, delay):
-    """``{term id: name}`` over the two small taxonomies used in records."""
-    out = {}
+    """``({term id: name}, error)`` over the two small taxonomies used in
+    records; a lost taxonomy page would make years fall back to upload dates,
+    so its error joins the query's stop reason."""
+    out, errors = {}, []
     for tax in ("publication_year", "publication_type"):
-        items, _ = wp_listing(get, f"{BASE}/{tax}", {"_fields": "id,name"}, delay)
+        items, error = wp_listing(get, f"{BASE}/{tax}", {"_fields": "id,name"}, delay)
         out.update({t["id"]: html_text(t["name"]) for t in items})
-    return out
+        if error:
+            errors.append(f"{tax}: {error}")
+    return out, "; ".join(errors)
 
 
 def fetch(spec, delay, get=polite_get):
     items, error = wp_listing(get, SOURCE["endpoint"], {"_fields": FIELDS}, delay)
-    terms = term_names(get, delay) if items else {}
+    terms, term_error = term_names(get, delay) if items else ({}, "")
+    error = "; ".join(e for e in (error, term_error) if e)
     yield from emit((to_record(it, spec["match"], terms) for it in items),
                     len(items), error)

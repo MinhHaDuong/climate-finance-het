@@ -145,13 +145,13 @@ def test_cpd_takes_publication_year_and_matches_bengali():
 # South Centre RSS
 # ---------------------------------------------------------------------------
 
-def rss(items):
+def rss(items, start=0):
     body = "".join(
         f"<item><title>{label}</title><link>https://sc/{i}</link><guid>sc:{i}</guid>"
         f"<pubDate>Tue, 14 Jul 2026 16:18:04 +0000</pubDate><category>Climate Change</category>"
         f"<description>{sub}</description>"
         f"<content:encoded><![CDATA[<p>{body}</p>]]></content:encoded></item>"
-        for i, (label, sub, body) in enumerate(items))
+        for i, (label, sub, body) in enumerate(items, start))
     return ('<?xml version="1.0"?><rss version="2.0" '
             'xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel>'
             f"{body}</channel></rss>")
@@ -161,7 +161,7 @@ def test_south_centre_reads_every_feed_page_at_crawl_delay():
     p1 = rss([("Research Paper 180, 12 May 2023", "Loss and damage finance", "abstract"),
               ("Research Paper 181, 1 June 2023", "Patents", "TRIPS")])
     p2 = rss([("Documento de Investigación 180, 12 de mayo de 2023",
-               "Read moreFinanciamiento climático y pérdidas", "resumen")])
+               "Read moreFinanciamiento climático y pérdidas", "resumen")], start=2)
     feed = south_centre.FEED
     get = FakeGet({(feed, (("paged", 1),)): Resp(p1), (feed, (("paged", 2),)): Resp(p2)})
     evs = events(south_centre, get)
@@ -296,10 +296,67 @@ def test_ajol_plan_lists_every_category_page_once_per_journal(monkeypatch):
     assert "economics-and-development, earth-sciences" in eje["query_string"]
 
 
-def test_ajol_plan_refuses_a_partial_journal_list(monkeypatch):
+def test_ajol_lost_category_is_one_incomplete_row_not_a_crash(monkeypatch):
     monkeypatch.setattr(ajol, "CATEGORIES", ["earth-sciences"])
-    with pytest.raises(RuntimeError, match="incomplete"):
-        ajol.plan(CFG, get=FakeGet({}))
+    (spec,) = ajol.plan(CFG, get=FakeGet({}))
+    assert spec["query_id"] == "S-ajol-earth-sciences-journals"
+    (end,) = list(ajol.fetch(spec, 0))
+    assert end[0] == "end" and end[1].startswith("error: journal list: earth-sciences")
+
+
+# ---------------------------------------------------------------------------
+# Review fixes (#1625): answers that must never read as complete
+# ---------------------------------------------------------------------------
+
+def test_wp_listing_without_page_count_or_short_of_its_total_is_incomplete():
+    url = "https://x/wp-json/wp/v2/things"
+    bare = FakeGet({(url, (("page", 1), ("per_page", 100))): Resp([{"id": 1}])})
+    assert listing.wp_listing(bare, url, {}, 0) == (
+        [], "error: no X-WP-TotalPages header on page 1")
+    short = FakeGet({(url, (("page", 1), ("per_page", 100))):
+                     Resp([{"id": 1}, {"id": 1}],
+                          headers={"X-WP-TotalPages": "1", "X-WP-Total": "3"})})
+    assert listing.wp_listing(short, url, {}, 0) == ([{"id": 1}], "short: 1 of 3")
+
+
+def test_an_empty_listing_is_an_error_not_a_complete_series():
+    assert list(listing.emit([], 0, "")) == [("meta", 0), ("end", "error: empty listing")]
+    get = FakeGet({f"{adb_ewp.SERIES}.html": Resp("<ul></ul>")})
+    assert events(adb_ewp, get)[-1] == ("end", "error: no paper on listing page 1")
+    get = FakeGet({ceew.SITEMAP: Resp("<urlset></urlset>")})
+    assert events(ceew, get) == [("end", "error: no publication page in the sitemap")]
+
+
+def test_ceew_skips_disallowed_paths_site_suffix_and_titleless_pages():
+    assert ceew.publication_urls(
+        "<loc>https://www.ceew.in/cop26/publications/x</loc>"
+        "<loc>https://www.ceew.in/publications/y?page=2</loc>") == []
+    title, _, _ = ceew.parse_page('<meta property="og:title" content="A | CEEW" />')
+    assert title == "A"
+    sitemap = "<loc>https://www.ceew.in/publications/a</loc>"
+    get = FakeGet({ceew.SITEMAP: Resp(sitemap),
+                   "https://www.ceew.in/publications/a": Resp("<html>Just a moment</html>")})
+    evs = events(ceew, get)
+    assert works(evs) == [] and evs[-1] == ("end", "1 of 1 pages failed")
+
+
+def test_south_centre_stops_when_a_cache_serves_an_earlier_page_again():
+    p1 = rss([("Research Paper 1", "Climate finance", "x")])
+    feed = south_centre.FEED
+    get = FakeGet({(feed, (("paged", 1),)): Resp(p1), (feed, (("paged", 2),)): Resp(p1)})
+    evs = events(south_centre, get)
+    assert evs[0] == ("meta", 1) and evs[-1] == ("end", "")
+    assert len(get.calls) == 2
+
+
+def test_cpd_lost_taxonomy_joins_the_stop_reason():
+    page = [wp_item(5, "Climate finance", "<p>x</p>", excerpt={"rendered": ""},
+                    publication_year=[31])]
+    one = {"X-WP-TotalPages": "1"}
+    get = FakeGet({cpd.SOURCE["endpoint"]: Resp(page, headers=one),
+                   f"{cpd.BASE}/publication_year": Resp("", 500),
+                   f"{cpd.BASE}/publication_type": Resp([], headers=one)})
+    assert events(cpd, get)[-1] == ("end", "publication_year: http 500 on page 1")
 
 
 OAI = """<?xml version="1.0"?>
@@ -319,14 +376,15 @@ OAI = """<?xml version="1.0"?>
 </ListRecords></OAI-PMH>"""
 
 
-def test_ajol_fetch_keeps_the_window_and_the_runner_keeps_matches(monkeypatch):
+def test_ajol_fetch_applies_no_year_window_and_the_runner_keeps_matches(monkeypatch):
     monkeypatch.setattr(ajol, "_state", {"challenged_in_a_row": 0})
     spec = {"query_id": "S-ajol-eje", "endpoint": "https://oai", "query_string": "q",
             "match": listing.matcher(CFG, ajol.LANGUAGES)}
     evs = events(ajol, FakeGet({"https://oai": Resp(OAI)}), spec)
     assert evs[0] == ("meta", 3) and evs[-1] == ("end", "")
     recs = works(evs)
-    assert [r["matched_terms"] for r in recs] == ["climate finance", ""]  # 1985 out of window
+    # no year window here (the pool applies it): the 1985 match stays a match
+    assert [r["matched_terms"] for r in recs] == ["climate finance", "climate finance"]
     assert all(runner.keep(ajol.SOURCE["route"], r) == bool(r["matched_terms"]) for r in recs)
 
 

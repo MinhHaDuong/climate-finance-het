@@ -18,7 +18,7 @@ from email.utils import parsedate_to_datetime
 
 from pipeline_io import polite_get
 
-from rel_sud_sources._common import empty_record, find_year
+from rel_sud_sources._common import empty_record, find_year, xml_clean
 from rel_sud_sources._listing import emit, html_text, listing_query, matcher, soft
 
 FEED = "https://www.southcentre.int/category/research-papers/feed/"
@@ -47,7 +47,7 @@ def plan(cfg):
 
 def parse_feed(content):
     """``[item dict]`` of one RSS page."""
-    channel = ET.fromstring(content).find("channel")
+    channel = ET.fromstring(xml_clean(content)).find("channel")
     return [] if channel is None else channel.findall("item")
 
 
@@ -74,7 +74,7 @@ def to_record(item, match):
     except (TypeError, ValueError):
         posted = ""
     return empty_record(
-        record_id=(item.findtext("guid") or "").strip(),
+        record_id=(item.findtext("guid") or item.findtext("link") or "").strip(),
         url=(item.findtext("link") or "").strip(), title=title,
         authors="; ".join(c.text.strip() for c in item.findall(NS_DC) if c.text),
         year=find_year([label, posted]), language=label_language(label),
@@ -86,7 +86,7 @@ def to_record(item, match):
 def fetch(spec, delay, get=polite_get):
     get = soft(get)
     delay = max(delay, CRAWL_DELAY)
-    items, error = [], ""
+    items, seen, error = [], set(), ""
     for page in range(1, MAX_PAGES + 1):
         try:
             resp = get(FEED, params={"paged": page}, delay=delay)
@@ -105,7 +105,11 @@ def fetch(spec, delay, get=polite_get):
             break
         if not batch:
             break
-        items.extend(batch)
+        new = [it for it in batch if (it.findtext("guid") or it.findtext("link")) not in seen]
+        if not new:
+            break  # a cache serving an earlier page again: nothing more to read
+        seen.update(it.findtext("guid") or it.findtext("link") for it in new)
+        items.extend(new)
     else:
         error = "page guard reached"
     yield from emit((to_record(it, spec["match"]) for it in items), len(items), error)

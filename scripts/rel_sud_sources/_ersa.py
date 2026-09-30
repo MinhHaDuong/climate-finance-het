@@ -4,7 +4,8 @@ ERSA is not a RePEc archive (IDEAS ``/s/rza/wpaper`` 404), and its site offers
 no search API beyond WordPress's own. The series (``publication-types`` =
 working-paper, about 1000 items) is small, so the whole listing is read from
 ``/wp-json/wp/v2/publications`` and matched locally on title + abstract.
-robots.txt (checked 2026-09-30) disallows only ``/wp-admin/``.
+robots.txt (checked 2026-09-30) disallows ``/wp-admin/`` and a WP Defender
+honeypot path.
 """
 
 from pipeline_io import polite_get

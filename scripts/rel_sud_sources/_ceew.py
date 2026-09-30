@@ -19,7 +19,10 @@ from rel_sud_sources._listing import html_text, listing_query, matcher, script_l
 SITEMAP = "https://www.ceew.in/sitemap.xml"
 LANGUAGES = ["en", "hi"]
 CRAWL_DELAY = 10.0
-PUB_PATH = re.compile(r"^https://www\.ceew\.in/(?:[a-z0-9-]+/)?(?:hindi-)?publications/[^/]+$")
+# robots.txt disallows /cop26/publications/ and query strings on listings.
+PUB_PATH = re.compile(
+    r"^https://www\.ceew\.in/(?!cop26/)(?:[a-z0-9-]+/)?(?:hindi-)?publications/[^/?#]+$")
+SITE_SUFFIX_RE = re.compile(r"\s*[|–-]\s*CEEW\s*$")
 
 SOURCE = {
     "name": "ceew",
@@ -56,7 +59,8 @@ def parse_page(text):
     meta = {}
     for k, v in META_RE.findall(text):
         meta.setdefault(k.lower(), html_text(v))
-    return meta.get("og:title", ""), meta, html_text(DROP_RE.sub(" ", text))
+    title = SITE_SUFFIX_RE.sub("", meta.get("og:title", ""))
+    return title, meta, html_text(DROP_RE.sub(" ", text))
 
 
 def overview(title, text):
@@ -64,13 +68,13 @@ def overview(title, text):
     m = re.search(r"\bOverview\b(.*?)(?:\bKey Highlights\b|\bDownload\b|$)", text, re.S)
     if m and m.group(1).strip():
         return m.group(1).strip()[:3000]
-    i = text.rfind(title) if title else -1
+    i = text.find(title) if title else -1
     return text[i:i + 3000] if i >= 0 else ""
 
 
 def to_record(url, title, meta, text, match):
     abstract = overview(title, text)
-    head = text[text.rfind(title):][:600] if title and title in text else ""
+    head = text[text.find(title):][:600] if title and title in text else ""
     year = MONTH_YEAR_RE.search(head)
     return empty_record(
         record_id=url, url=url, title=title,
@@ -91,6 +95,9 @@ def fetch(spec, delay, get=polite_get):
         yield ("end", f"http {resp.status_code} on sitemap")
         return
     urls = publication_urls(resp.text)
+    if not urls:
+        yield ("end", "error: no publication page in the sitemap")
+        return
     yield ("meta", len(urls))
     failed = 0
     for url in urls:
@@ -103,5 +110,8 @@ def fetch(spec, delay, get=polite_get):
             failed += 1
             continue
         title, meta, text = parse_page(page.text)
+        if not title:  # an interstitial or error page served with 200
+            failed += 1
+            continue
         yield ("work", to_record(url, title, meta, text, spec["match"]))
     yield ("end", f"{failed} of {len(urls)} pages failed" if failed else "")

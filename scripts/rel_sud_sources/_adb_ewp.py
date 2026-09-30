@@ -5,7 +5,7 @@ Cloudflare JavaScript challenge (HTTP 403 "Just a moment...", 2026-09-30), so
 the publisher is out of reach without a browser. The series is RePEc
 ``ris:adbewp`` (about 870 papers): the IDEAS series pages list every paper,
 and each paper page carries the abstract and date in ``citation_*`` meta tags.
-IDEAS robots.txt disallows only ``/cgi-bin/`` and a few service paths.
+IDEAS robots.txt disallows only ``/cgi-bin/`` to all robots.
 """
 
 import html
@@ -87,7 +87,7 @@ def listing(get, delay):
             return items, f"http {resp.status_code} on listing page {page}"
         batch = parse_listing(resp.text)
         if not batch:
-            return items, ""
+            return items, "" if page > 1 else "error: no paper on listing page 1"
         items.extend(batch)
     return items, "page guard reached"
 
@@ -110,6 +110,7 @@ def fetch(spec, delay, get=polite_get):
         except Exception:  # one paper page lost: matched on its title alone
             failed += 1
         yield ("work", to_record(path, title, authors, meta, spec["match"]))
-    if failed and not error:
-        error = f"{failed} paper pages failed (matched on title only)"
+    if failed:
+        error = "; ".join(e for e in (error, f"{failed} paper pages failed "
+                                              "(matched on title only)") if e)
     yield ("end", error)

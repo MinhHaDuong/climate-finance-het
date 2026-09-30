@@ -54,10 +54,12 @@ def script_language(text, default="en"):
 def wp_listing(get, url, params, delay, per_page=100):
     """Every item of a WordPress REST collection: ``(items, error)``.
 
-    Pages until ``X-WP-TotalPages``; ``error`` is ``''`` when the last page was
-    read, else the reason the listing stopped short.
+    Pages until ``X-WP-TotalPages``; ``error`` is ``''`` only when the last
+    page was read and, where ``X-WP-Total`` is sent, every item arrived. A
+    missing page count is an error, never a one-page listing. Items are
+    deduplicated by ``id`` (a post published mid-crawl shifts the offsets).
     """
-    items, page = [], 1
+    items, seen, page = [], set(), 1
     while True:
         try:
             resp = get(url, params={**params, "per_page": per_page, "page": page},
@@ -66,16 +68,30 @@ def wp_listing(get, url, params, delay, per_page=100):
             return items, f"error: {type(exc).__name__} on page {page}"
         if resp.status_code != 200:
             return items, f"http {resp.status_code} on page {page}"
+        pages_header = resp.headers.get("X-WP-TotalPages")
+        if pages_header is None or not str(pages_header).isdigit():
+            return items, f"error: no X-WP-TotalPages header on page {page}"
         batch = resp.json()
-        items.extend(batch)
-        total_pages = int(resp.headers.get("X-WP-TotalPages", "0") or 0)
-        if not batch or page >= total_pages:
+        for it in batch:
+            key = it.get("id") if isinstance(it, dict) else None
+            if key is None or key not in seen:
+                seen.add(key)
+                items.append(it)
+        if not batch or page >= int(pages_header):
+            total = str(resp.headers.get("X-WP-Total", ""))
+            if total.isdigit() and len(items) < int(total):
+                return items, f"short: {len(items)} of {total}"
             return items, ""
         page += 1
 
 
 def emit(records, n_listing, error):
-    """Runner protocol over built records: listing size, every record, end."""
+    """Runner protocol over built records: listing size, every record, end.
+
+    An empty listing without an error is reported as one: a series with no
+    item at all means the listing call went wrong, not that it is complete."""
+    if not n_listing and not error:
+        error = "error: empty listing"
     yield ("meta", n_listing)
     for rec in records:
         yield ("work", rec)
