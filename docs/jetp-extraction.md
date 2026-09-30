@@ -407,7 +407,7 @@ reviewed as a difference against what was there before.
   before it is adopted, and the difference is reviewed under the rules of
   section 9. [M2]
 
-### 6.2 Structured sources read in bulk
+### 6.2 Structured records read in bulk
 
 A data portal or an export that holds many records in a stable structure is
 read by an ingestion run. The run states the snapshot, the number of records

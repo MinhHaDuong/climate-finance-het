@@ -88,7 +88,7 @@ on padme and travel to doudou by `git pull` and `dvc pull` (or
 `make corpus-sync`). Nothing is copied from doudou to padme: no `scp`, no
 `dvc push` from doudou. [M2]
 
-**New sources found on the laptop travel as changes, not as data.** A
+**New documents found on the laptop travel as changes, not as data.** A
 document the author spots while working on doudou enters as a register or
 query change on a branch; padme then fetches it. [M2]
 
@@ -318,7 +318,7 @@ measurements, or a judgement. [M2]
 - **Size of the held documents** (measured on padme, on the document store
   of record: 278 objects, 282 MB; the 91 other snapshots, CRS and World Bank
   extracts and IATI country files, are kept under the comparator data
-  directories; the reconciliation of these counts is requirements DA2). The 84 PDFs have a text layer of 11.65
+  directories; the counts add up in requirements DA2). The 84 PDFs have a text layer of 11.65
   million characters in all (median 54,000 per document, 90th percentile
   463,000, largest 947,000). The 194 other objects (HTML, spreadsheets,
   structured records) total 31.9 MB of bytes; their text share was not

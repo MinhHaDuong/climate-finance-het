@@ -332,6 +332,11 @@ Technology is a separate attribute of assets, aligned to the Global Energy
 Monitor list: a sector says what the money is for, a technology says what
 the plant is. [M2 for the publisher's own sector word on the line; M3b for the crosswalk and the assigned sector]
 
+A **transition function** (requirement F18) is a classification of an
+agreement or a project, assigned like `sector` through a referent decision,
+from the three functions F18 names; its values become terms with the other
+M3b axes. [M3b]
+
 <!-- batch-2 X-06: pending author decision -->
 
 The `measure` of an observation is from a closed list, extended by decision:
@@ -420,7 +425,8 @@ the row is accepted, since "D. Completed" onto `closed` and a word onto its
 identical label are not the same mapping; the two crosswalk tables gain
 `mapping_relation` as a target of the storage contract (section 1), and a
 result that counts by shared status or sector states the weakest mapping
-among the rows it used. [M2 for terms; M3b for crosswalk rows]
+among the rows it used, in the order exactMatch, closeMatch, broadMatch or
+narrowMatch, relatedMatch, with the count of rows per relation. [M2 for terms; M3b for crosswalk rows]
 
 **Revision.** The in-force rule of the decision tables applies (storage
 contract, section 1): a row is in force when it is the accepted terminal row

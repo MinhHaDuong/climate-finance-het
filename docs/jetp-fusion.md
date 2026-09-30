@@ -419,15 +419,16 @@ blocks the comparison without hiding the separate statements. [M3b]
 
 **Counting.** Every count names its unit: statements of a document,
 referents of a kind, or a count a publisher stated. There is no default sum
-of projects, programmes and components, and a publisher's count of records is
-not relabelled a count of assets. Overlapping hierarchies need an explicit
+of projects, programmes and components, an operation tagged with several
+transition functions counts once in a total across them, and a publisher's
+count of records is not relabelled a count of assets. Overlapping hierarchies need an explicit
 selection before any aggregate, and a hierarchy never splits money: a
 project's share needs a statement that gives it. Financial states form a
 chronology, not additive categories: in the terms of the
 [ontology](jetp-ontology.md) (section 4), a need (a plan's estimate or an
 envelope), then the agreement states of the money axis (announced, a
 memorandum of understanding, approved, signed), then the flows of the IATI
-list (commitment, disbursement, expenditure); an amount *reported* is the
+list (pledge, commitment, disbursement, expenditure); an amount *reported* is the
 amount a comparator record (CRS or IATI) reports for the same operation. An
 aggregate selects one state explicitly. A physical
 state never follows from a financial one, and a plan's priority ranking

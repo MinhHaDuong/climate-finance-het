@@ -372,7 +372,7 @@ locatable across revisions (F1, F4, F10); and, from M4, the shared code
 The Observer's outputs are research outputs, and it follows the principles
 of reproducible research throughout. Every result is traceable to the
 inputs it was computed from. Every released result is reproducible from a
-frozen release and the recorded methods. Nothing is overwritten: statements,
+frozen release in the sense of Q8. Nothing is overwritten: statements,
 judgements and releases are appended and versioned. Every method that
 selects, weighs or transforms is declared with a version. Uncertainty is
 reported, not resolved away. The functional requirements below and the
@@ -384,7 +384,7 @@ for scientific data management and stewardship", *Scientific Data* 3:
 160018) apply fully to the released datasets, which are the Observer's
 citable data output (F28 to F32). They apply to the archived documents only
 in part: metadata, addresses and hashes are always findable and accessible,
-but bytes are redistributed only where the source's terms allow (C6). They
+but bytes are redistributed only where the publisher's terms allow (C6). They
 apply to the Observatory through the releases it shows, not as a separate
 object. The working ledger between releases is not an output, and FAIR does
 not bind it. The papers and the book follow their publishers' open-access
@@ -544,11 +544,9 @@ never fills the strict one. No count is summed across countries. *M3b.*
 Test: every count in a release carries a unit and a scope; no strict-scope
 figure includes a statement lacking JETP attribution.
 
-**F14. Financial states are selected, not added.** A need (a plan's estimate
-or an envelope), the agreement states of the ontology's money axis
-(announced, memorandum of understanding, approved, signed) and its flows
-(commitment, disbursement, expenditure) are a chronology, one closed list
-stated in Fusion § 7; an aggregate selects one state explicitly. Physical state is a separate dimension and
+**F14. Financial states are selected, not added.** Needs, agreement states
+and flows are a chronology, one closed list stated in Fusion § 7; an
+aggregate selects one state explicitly. Physical state is a separate dimension and
 never follows from a financial one. *M3b.* Test: no released figure adds
 signed and disbursed amounts; no physical state is inferred from a
 disbursement.
@@ -611,8 +609,8 @@ metadata remains resolvable even if the data must be withdrawn. *M3b.* Test:
 the identifier of the M3b release resolves to its deposit.
 
 **F29. Rich metadata.** Each release is described by a metadata record in a
-standard, harvestable schema, giving at least its title, creator, version,
-countries, discovery cutoff, newest document date, method versions, licence,
+standard, harvestable schema, giving at least its title, creator,
+publisher, resource type, version, countries, discovery cutoff, newest document date, method versions, licence,
 and the papers that cite it. *M3b.* Test: the deposit's metadata record
 contains each of these fields.
 
@@ -664,7 +662,7 @@ recipient country for global method sources.
 snapshot and nothing extracted yet (South Africa 49, Senegal 28, Viet Nam 25, Indonesia
 13), 23 without a snapshot. *M2.* Test: every one of the 392 satisfies F2.
 
-The counts reconcile as follows. At M2 the table is produced by a script over
+The counts add up as follows. At M2 the table is produced by a script over
 the register and cited here, from Operation § 7.1 and from the storage
 contract § 3; the figures below were counted from the ledger tables when the
 specification was reviewed.
@@ -890,8 +888,9 @@ the Observatory and the papers is marked as one or the other.
 
 **Q13. What is documented is kept apart from inference.** No product presents an
 association as a cause, a stage difference as speed, or a documentary gap as
-an actual absence of finance. *M3b.* Test: the integration review finds no
-causal or speed claim in the Observatory and none unsupported in the papers.
+an actual absence of finance. *M3b.* Test: the build's search of the presentation's word list finds no
+causal or speed claim in the Observatory, and a review none unsupported in
+the papers.
 
 **Q16. A neutral documentary record.** Everything the Observer outputs is
 either a statement attributed to its publisher or a finding of one of three
@@ -990,16 +989,16 @@ article processing charges; each release carries its reuse terms and its
 citation (F28 to F30). *M3b.* Test: the release states reuse terms,
 citation and deposit identifier.
 
-**C6. Terms of use of sources.** Automated link-following obeys each site's
+**C6. Publishers' terms of use.** Automated link-following obeys each site's
 robots rules. A single fetch of a known document that the public can open
 in a browser goes ahead, and the site's stated position (robots rules, terms
 of use) is recorded with the retrieval. Technical checks and logins on
-public sources, including sites behind a free public registration, are
+public sites, including sites behind a free public registration, are
 passed by the author in person, never by automation, and the registration
 used is recorded without its credentials; content the public cannot reach
 (paid subscription, invitation-only or institution-only access) is not
 fetched (F27, N13). A change of a site's terms or robots rules is signalled, never
-silent. Document bytes are redistributed only where the source's terms
+silent. Document bytes are redistributed only where the publisher's terms
 allow; otherwise a release carries the address, hash and locator. *M3a.*
 Test: no automated crawl fetches a path the site's robots rules exclude;
 every single fetch records the site's stated position; the M3a collection
@@ -1133,7 +1132,7 @@ document that reads statements into observations.
 | F15 Money in publisher's currency | M3b | Extraction § observations; Fusion § 7 |
 | F16 Operation timelines with honest dates | M3b | Fusion § 7 (timelines); Extraction § observations; Ontology |
 | F17 Funding roles kept apart | M3b | Extraction § observations; Ontology; Fusion § 7 |
-| F18 Transition functions | M3b | Extraction § observations; Ontology |
+| F18 Transition functions | M3b | Ontology § 4; Fusion § 7 |
 | F19 Matching to CRS and IATI, gaps between financial states | M3b | Fusion § 5; Results and releases |
 | F22 Change between releases attributed | M4 | Fusion § 8; Results and releases |
 | **4.5 Releases and reuse** | | |
@@ -1187,7 +1186,7 @@ document that reads statements into observations.
 | C3 Local compute first | M2 | Operation; Extraction |
 | C4 Budgets, amounts set in Operation | M2 | Operation |
 | C5 Open access | M3b | Results and releases |
-| C6 Terms of use of sources | M3a | Collection; Results and releases |
+| C6 Publishers' terms of use | M3a | Collection; Results and releases |
 | C7 Static publication | M3b | Presentation; Storage § 3 |
 | C8 Build to the milestone | M2 | every document |
 | C9 Secrets | M2 | Operation |
@@ -1231,9 +1230,9 @@ requirements of the sections they test.
 | Fusion § 4 Occurrence | F13, F14 |
 | Fusion § 5 Conflicting values | F6, F19 |
 | Fusion § 6 Perimeters and counting scopes | F13, DA12 |
-| Fusion § 7 Counting and accounts | F13, F14, F15, F16, OBS-1 |
+| Fusion § 7 Counting and accounts | F13, F14, F15, F16, F18, OBS-1 |
 | Fusion § 8 Knowledge time and change | F10 |
-| Ontology § 2 to § 4 Vocabulary, relations, classifications | OBS-4, F13, F14, F17, F31 |
+| Ontology § 2 to § 4 Vocabulary, relations, classifications | OBS-4, F13, F14, F17, F18, F31 |
 | Ontology § 5 Ontology tables | OBS-4, Q9, F23, F31 |
 | Storage § 1 Tables and rules | F1, F2, F32, Q2, Q9, Q17 |
 | Storage § 2 What the Observatory serves | F23 |

@@ -27,7 +27,9 @@ than suspicion, because the readers are researchers as well as journalists. [M3b
 
 **Evaluative words.** Outside a quoted statement, page copy never uses:
 *on track*, *off track*, *delayed*, *behind schedule*, *failed*, *broken
-promise*, *promise kept*, *underperforming*, *success*. A gap is written as
+promise*, *promise kept*, *underperforming*, *success*, nor, for cause and
+speed (requirement Q13), *because of*, *led to*, *resulted in*, *faster*,
+*slower*, *accelerated*. A gap is written as
 what was and was not found ("no public document found states a
 disbursement as of the knowledge cutoff"), and a publisher's own word of
 that kind is shown as the publisher's, in quotation. The build searches the
@@ -53,7 +55,9 @@ sections: **The paper trail** · **The tallies** · **About**. [M3b]
 The Glossary sits under About: a reader consults it, and does not start
 from it. The release history is in no bar; Methods links to it and is
 marked current when it is open. It lists every release with its status:
-current, superseded by a named correction, or withdrawn with the reason.
+current, superseded by a named correction, or withdrawn with the reason,
+generated at publication from the deposits' metadata records, outside any
+frozen package.
 [M3b]
 
 **Pending judgements.** The judgements still awaiting a decision (decision
