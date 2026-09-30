@@ -19,7 +19,7 @@ words and uses them in no other sense.
 |---|---|---|
 | **O, Ontology** | What the ledger talks about and how it records it: classes, relations, closed value lists, status and sector axes, perimeter definitions, crosswalks and conversion rules. Every term has a definition, an external mapping where one exists, and a revision history | `data/jetp/ontology/` ([ontology](jetp-ontology.md) section 5); the observatory's Glossary |
 | **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the observatory's paper trail: Documents, Document rows, Statements, Projects, Funding, Organisations |
-| **E, Evidence** | Results computed from D under a declared O version: every count shown with its unit and perimeter, the accounts of backend-design section 5, descriptive tables. E comes on top of D and never edits it | `data/derived/jetp/`, with a run record naming its inputs, cutoffs and ontology version |
+| **E, Evidence** | Results computed from D under a declared O version: every count shown with its unit and perimeter, the accounts of [fusion](jetp-fusion.md) section 7, descriptive tables. E comes on top of D and never edits it | `data/derived/jetp/`, with a run record naming its inputs, cutoffs and ontology version |
 | **M, Models** | Candidate causal explanations. The observatory has none. A causal study, deferred in ticket 0729, would consume a frozen release from outside the ledger | none |
 
 The observatory is Data, guided by Ontology. Evidence comes on top.

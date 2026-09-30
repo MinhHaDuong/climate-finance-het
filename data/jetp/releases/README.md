@@ -39,3 +39,14 @@ ownership are kept. A restored release shows its real cutoff, and a later
 correction is a new release. (Carried from the backend implementation plan of
 2026-09-14, deleted by ticket 1701.)
 
+## Release identifiers and pinning
+
+Carried from the storage note of 2026-09-13 (deleted by ticket 1701). A
+regular monthly release is `YYYY-MM`; a correction is `YYYY-MM-rN`, starting
+at r1, and records what it supersedes; the bytes at a published release URL
+are never replaced. The current-release pointer advances only after the
+complete release passes validation, so a failed update leaves the last good
+release available. A paper pins a release and its input SHA, never a moving
+current link; its sample selection and code carry their own version
+references beside the release.
+

@@ -140,7 +140,7 @@ The serving contract, every table served or named as not served, is
 
 ## Traceability to what is published
 
-Carried from the backend design of 2026-09-14 (section 8), in the
+Carried from the backend design of 2026-09-14 (section 8; deleted 2026-09-30), in the
 [language](jetp-language.md) of 2026-09-23. The chain runs both ways: from the
 archived bytes of a snapshot, through the line, the observation, the identity
 decisions and the frozen release, to a figure or sentence on the site or in a

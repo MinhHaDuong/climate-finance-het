@@ -1,0 +1,40 @@
+%erg 0.1
+Title: Matching judgements as calibrated stances with a cutoff per result; storage and code follow fusion
+Created: 2026-09-30
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-30T11:35Z HDMX-coding-agent created
+
+--- body ---
+## Context
+
+`docs/jetp-fusion.md` (ticket 1701, author decisions 2026-09-30) changes the
+model of a matching judgement; the storage contract § 1 and § 4, the DDL, the
+in-force views and the builders still implement the previous one.
+
+Author decisions (2026-09-30, interactive):
+
+1. "A pending revision does not erase an accepted decision." The storage rule
+   (the terminal row decides, so a terminal `candidate` removes the accepted
+   row it supersedes) is replaced by the fusion rule. Measured 2026-09-30: 0
+   candidate rows supersede an accepted row across `line-referents`,
+   `party-names` and `relations.d` (about 4,600 rows), so no published figure
+   moves today.
+2. No threshold at write time. The author asked "Why accept, not list with
+   dynamic cutoff?": each judgement keeps its stance, and each result declares
+   the cutoff a candidate match needs in order to count.
+3. Likelihood and confidence use the IPCC calibrated scales (Mastrandrea et
+   al. 2010), not a single number in [0, 1]: "NP, DST, LUP ... are all the
+   same thing ... we are NOT doing automatic fusion, we are doing LLM-based
+   smart fusion. Refer to the qualitative IPCC judgement scale."
+4. Analyst-defined counting scopes leave the ontology's `perimeters`: the
+   World Bank reference pool in `data/jetp/ontology/perimeters.csv` is one.
+
+## Exit criteria
+
+- [ ] The in-force rule keeps an accepted decision in force while a later revision is only proposed; a red test replays a candidate superseding an accepted row
+- [ ] A matching judgement records a stance, an IPCC likelihood term and an IPCC confidence level; the `matching.panel` rule emits them; existing `confidence` values are mapped by a stated, reviewed rule
+- [ ] Every derived result declares its matching cutoff in its run record, and the observatory's counts are produced at that cutoff; figures at the current default are unchanged or each change is explained
+- [ ] Counting scopes are stored apart from publisher-stated perimeters, and nothing in the build reads the World Bank pool as a perimeter
+- [ ] The storage contract § 1 and § 4 describe what the code does

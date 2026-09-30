@@ -130,7 +130,7 @@ Order of work, each step a ticket with its own byte-level check:
    dates; the undated Diass factsheet), 7 pending physical claims rejected,
    the previously accepted Nagajaya claim revoked by a superseding row, and 1
    left with ticket 0920; every read judgment verified by a three-reader panel
-   (storage contract § 4, `matching.panel` version 1) with the stance and
+   (storage contract § 4 at the time, now [fusion](jetp-fusion.md) § 3; `matching.panel` version 1) with the stance and
    confidence recorded per row; 33 authorities attached to parties (8
    minted from lines that print their names), 4 left uncovered for want of a
    line, 17 project identifiers handed to M1b.

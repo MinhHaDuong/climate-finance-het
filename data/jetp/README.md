@@ -6,7 +6,7 @@ Start with the [storage contract](../../docs/jetp-ledger-storage.md), the
 
 - `editorial/`: Markdown country/project narratives and monthly commentary.
 - Root CSV files: canonical identities, observations, source references and
-  collection history; their ownership is defined in the tracking contract.
+  collection history; their ownership is defined in the storage contract.
 - `ledger-snapshots/world-bank/`: frozen World Bank source fields for the historical reference pool.
 - `documents/`: content-addressed source snapshots, tracked by `documents.dvc`.
 - `releases/`: versioned publication descriptor guidance; no edition released yet.

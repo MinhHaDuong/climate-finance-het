@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-09-30T08:27Z HDMX-coding-agent created
 2026-09-30T09:20Z HDMX-coding-agent decision author (2026-09-30): delete jetp-storage.md and jetp-backend-design.md outright after moving live content; destinies executed (fusion, storage contract, presentation, plan, 1506, 1184)
 2026-09-30T09:35Z HDMX-coding-agent note ontology sweep finished (author request): decisions and old-schema case to docs/attic/jetp-ontology-decisions-2026-09.md; counts, paper ties, storage and display detail moved or deleted. Open: perimeters.csv data split, storage § 4 matching into fusion
+2026-09-30T11:36Z HDMX-coding-agent note review of PR 1594 (5 panels) and author answers (2026-09-30) applied: judgements as calibrated stances on the IPCC scales, cutoff per result, "candidate match" for the thing judged, precedence never automatic, check table rewritten, no ticket references in fusion; storage and code follow-up is [[1702]]; storage § 4 matching moved to fusion § 3
 --- body ---
 ## Context
 
@@ -36,7 +37,7 @@ Author decisions (2026-09-30, interactive):
 ## Exit criteria
 
 - [x] `docs/attic/` exists with a README saying what goes there and that nothing in it governs
-- [x] `docs/jetp-fusion.md` opens with the principles and names no table, file, column, page or format
-- [x] The ontology restricts `supersedes` to ledger errors and keeps only publisher-defined perimeters; the rules it held point to the fusion file
+- [x] `docs/jetp-fusion.md` opens with the principles and names no storage table, column, file or display, and cites no ticket
+- [x] The ontology restricts `supersedes` to ledger errors and defines a perimeter as publisher-stated (the data split of `perimeters.csv` and the code follow in 1702); the rules it held point to the fusion file
 - [x] Each section of `jetp-storage.md` and `jetp-backend-design.md` has a recorded destiny and is executed; the files are deleted, not atticked (author, 2026-09-30); the worktree snapshot procedure lives in `data/jetp/README.md`
 - [x] Every link to a deleted file from a current document is repointed; closed tickets and dated review records keep their text as history

@@ -2,8 +2,8 @@
 
 The tables that store the ledger, the rules the validator enforces, the build
 engine, the matching record and the derived translation tables. Split from
-[`jetp-ontology.md`](jetp-ontology.md) on 2026-09-23; the decisions listed
-there govern this document. What the ledger's words mean is the
+[`jetp-ontology.md`](jetp-ontology.md) on 2026-09-23. How statements are
+combined and judged is [fusion](jetp-fusion.md). What the ledger's words mean is the
 [ontology](jetp-ontology.md); how the current tables become these is the
 [migration](jetp-ledger-migration.md).
 
@@ -214,7 +214,7 @@ foreign-key and check constraints run as the validator, and the observatory's
 served JSON views and the accounts (E) are SQL queries over that file.
 The file is deterministic for a given input, disposable, and may ship as a
 downloadable release artifact, never as a
-committed file. This is what the backend design (2026-09-14) reserved as an optional
+committed file. This is what the backend design of 2026-09-14 (deleted 2026-09-30) reserved as an optional
 `<release_id>.sqlite` (`<edition_id>` there), promoted from optional to the build's only query
 engine. In the browser the observatory keeps serving one JSON file per table
 and joining at read time; at this volume an in-browser SQL engine would add a

@@ -11,5 +11,6 @@ home and what remains is worth rereading as it stood, for the reasoning or the
 path not taken. A file with nothing left worth rereading is deleted instead;
 git keeps it.
 
-Each file moves here unchanged, under its original name, with one line added
-at the top: the date it was retired and where its live content went.
+Each file moves here under its original name, with one line added at the top
+(the date it was retired and where its live content went) and its relative
+links rebased; nothing else changes.

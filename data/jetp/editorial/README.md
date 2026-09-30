@@ -1,7 +1,16 @@
 # Editorial dossiers
 
-Markdown is the human reading/editing layer. See
-[storage contract](../../../docs/jetp-ledger-storage.md) for fact ownership and publication.
+Markdown is the human reading/editing layer. Ledger tables are in the
+[storage contract](../../../docs/jetp-ledger-storage.md).
+
+Prose owns explanation, interpretation and context, never numbers: front
+matter holds join IDs, review state and referenced statements, not a
+project's operator, amount or stage. A narrative may quote a dated statement
+with its reference, but prose is never an input to an aggregate. When a
+ledger observation changes, the release check lists the narratives that
+depend on it for review, so a contradicting narrative is not published
+silently. A missing dossier is acceptable; an unsupported narrative claim is
+not. (Carried from the storage note of 2026-09-13, deleted by ticket 1701.)
 
 | Folder | Filename | Content |
 |---|---|---|
