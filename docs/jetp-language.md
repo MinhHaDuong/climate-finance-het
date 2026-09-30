@@ -1,11 +1,11 @@
 # JETP ledger: language
 
 How the JETP Observer's design documents, schema and code speak about it.
-The ontology itself, what the ledger's classes, relations and values
-mean, is [`jetp-ontology.md`](jetp-ontology.md). What readers of the
-Observatory see is
-[`jetp-observatory-presentation.md`](jetp-observatory-presentation.md): the
-words below are for the people who build the Observer, not for its readers.
+What the ledger's classes, relations and values mean is
+[`jetp-ontology.md`](jetp-ontology.md); what readers of the Observatory see
+is [`jetp-observatory-presentation.md`](jetp-observatory-presentation.md):
+the words below are for the people who build the Observer, not for its
+readers.
 
 History: decided by the author on 2026-09-23 (decision 11 of the ontology
 design, [attic](attic/jetp-ontology-decisions-2026-09.md)); aligned under
@@ -15,23 +15,22 @@ ticket 1703.
 
 The **JETP Observer** is the whole system: collection, extraction, reading,
 matching, results and releases ([requirements](jetp-requirements.md)). The
-**ledger** is the Data of the ODEM frame: the tables of steps D1 to D4 below,
-as [ontology](jetp-ontology.md) section 0 states; *ledger* in the titles of
-the language, ontology and storage documents names these tables, not the
-whole system. The **register** is step D1, a part of the ledger: the
-documents the ledger holds, who published them, and how they were sought and
-fetched; where a publisher's own register is nearby (the South African grants
-register), it is the *document register*. The **Observatory** is the public
-website that shows a release of the ledger and of the results computed from
-it. The **document store** keeps the snapshot bytes the register points to;
-it is not a table of the ledger.
+**ledger** is the Data of the ODEM frame: the tables of steps D1 to D4 below;
+*ledger* in the titles of the language, ontology and storage documents names
+these tables, not the whole system. The **register** is step D1, a part of
+the ledger: the documents the ledger holds, who published them, and how they
+were sought and fetched; where a publisher's own register is nearby (the
+South African grants register), it is the *document register*. The
+**Observatory** is the public website that shows a release of the ledger and
+of the results computed from it. The **document store** keeps the snapshot
+bytes the register points to; it is not a table of the ledger.
 
 ## The ODEM frame
 
 ODEM (Ontology, Data, Evidence, Models) is the framework of the author's
-design note on interactive causal inquiry. It names four
-objects, each versioned, and keeps them apart. The Observer adopts its four
-words and uses them in no other sense.
+design note on interactive causal inquiry. It names four objects, each
+versioned, and keeps them apart. The Observer adopts its four words and
+uses them in no other sense.
 
 | ODEM object | In the JETP Observer | Where it lives |
 |---|---|---|
@@ -39,9 +38,6 @@ words and uses them in no other sense.
 | **D, Data** | What publishers said, as the ledger read it. A pipeline of four steps, below | `data/jetp/` tables; the Observatory's paper trail: Documents, Document rows, Statements, Projects, Funding, Organisations |
 | **E, Evidence** | Results computed from D under a declared O version: every count shown with its unit and perimeter, the accounts of [fusion](jetp-fusion.md) section 7, descriptive tables. E comes on top of D and never edits it | `data/derived/jetp/`, with a run record naming its inputs, cutoffs and ontology version |
 | **M, Models** | Candidate causal explanations. The Observer has none. A causal study, deferred, would consume a frozen release from outside the Observer | none |
-
-The ledger is Data, guided by Ontology; Evidence comes on top; the
-Observatory shows both.
 
 **D is a pipeline.** Each step reads the steps before it, writes its own
 tables and never edits an upstream row. [M2]
@@ -57,9 +53,7 @@ The target journals `readings` and `runs` (storage contract, section 1)
 record how the rows of every step were read and by which run. [M2]
 
 D3 and D4 both read D2. An observation's subject is a line until matching
-attaches that line to a referent. The order of the [migration](attic/jetp-ledger-migration.md) builds D4
-before rewriting D3 because the old tables key observations on old
-identities. [M3b]
+attaches that line to a referent. [M3b]
 
 **Activities.** Collection (discovery, triage and fetching;
 [collection](jetp-collection.md)) fills D1; extraction writes D2; reading
@@ -120,8 +114,9 @@ weighing and revising ([fusion](jetp-fusion.md)); results are computed as E
 Domain words that coincide are unaffected: a *project stage* is a value of
 the OC4IDS axis, and a PDF's *text layer* is its extractable text.
 
-This document governs the design documents and the schema: the DDL declares no table or column named `evidence`,
-`model`, `reconcil*`, `layer` or `fact`. [M2]
+This document governs the design documents and the schema: the DDL declares
+no table or column named `evidence`, `model`, `reconcil*`, `layer` or
+`fact`. [M2]
 
 History: the ODEM frame comes from the author's design note of 22 September
 2026; the causal study was deferred in ticket 0729; the rename of
