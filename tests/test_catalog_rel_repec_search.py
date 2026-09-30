@@ -93,6 +93,7 @@ def test_run_and_deliver_meets_the_contract(units, tmp_path):
         row("RePEc:aaa:wpaper:2", "Unrelated labour economics", jel="J31"),
         row("RePEc:bbb:journl:3", "Loss and damage finance", year="", doi=""),
         row("RePEc:bbb:journl:4", "Aid and environment", jel="F35; Q56", year="", doi="10.1000/ABC"),
+        row("RePEc:bbb:journl:5", "", abstract="Climate finance without a title"),
     ]
     hits = rs.run_units(units, rows)
     assert 0 in hits["RP-SUD-T1-en"] and 0 in hits["RP-RC-cost_of_capital-IM-en"]
@@ -101,7 +102,7 @@ def test_run_and_deliver_meets_the_contract(units, tmp_path):
     assert all(1 not in h for h in hits.values())
     out = tmp_path / rs.LANE / "2026-10-01"
     m = rs.deliver(units, hits, rows, str(out), "2026-10-01", "2026-10-01T10:00:00+00:00")
-    assert m["counts"] == {"records": 2, "excluded": {"no_dedup_key": 1}}
+    assert m["counts"] == {"records": 2, "excluded": {"no_dedup_key": 1, "not_retrievable": 1}}
     recs = list(csv.DictReader(open(out / "records.csv", encoding="utf-8")))
     assert [r["record_id"] for r in recs] == ["RePEc:aaa:wpaper:1", "RePEc:bbb:journl:4"]
     r0 = recs[0]
@@ -137,3 +138,15 @@ def test_sentinel_recall_positive_control(tmp_path):
     summ = rs.summarize_sentinels(res)
     assert summ["reserve"]["s.csv"]["missed_in_mirror"] == ["S03"]
     assert summ["non_reserve"]["s.csv"]["retrieved"] == 1
+
+
+def test_zero_hit_controls_show_each_and_group(units):
+    rows = [row("RePEc:a:b:1", "Financement climatique et réseau"),
+            row("RePEc:a:b:2", "تمويل المناخ")]
+    keep = {}
+    hits = rs.run_units(units, rows, keep=keep)
+    ctl = {c["query_id"]: c for c in rs.zero_hit_controls(units, hits, keep["phrase_hits"], rows)}
+    assert "RP-SUD-T1-ar" not in ctl                   # retrieved row 2
+    g = ctl["RP-RC-grid-IM-fr"]["and_group_hits"].split("|")
+    assert g[0] == "1" and g[1] == "0"                 # ICF block seen, mediator absent
+    assert ctl["RP-SUD-T1-hi"]["titles_in_script"] == 0

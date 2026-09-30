@@ -12,7 +12,9 @@ and the declared JEL filter. It writes a delivery in the layout of
 - a record with neither DOI nor year has no deduplication key under the
   contract (a RePEc handle is not a CNRI Handle, and an EconPapers or IDEAS
   page is a landing page): it goes to ``excluded.csv`` as ``no_dedup_key``,
-  which the pool still takes in as a title-only work;
+  which the pool still takes in as a title-only work; a template without a
+  title (retrieved by its abstract, keywords or JEL codes) is
+  ``not_retrievable``: the contract requires title-level metadata;
 - the registry has one row per unit with its exact string (the expanded
   OpenAlex string, or the JEL groups) and its hit count. Nothing is capped, so
   every unit is complete.
@@ -174,11 +176,38 @@ def all_phrase_hits(texts: list[str], plist: list[str], jobs: int) -> dict[str, 
     return {p: out.get(p, set()) for p in plist}
 
 
-def run_units(units: list[dict], rows: list[dict], jobs: int = 1) -> dict[str, set[int]]:
-    """{query_id: indices of ``rows`` it retrieves}."""
+SCRIPTS = {"arabic": r"[\u0600-\u06ff]", "devanagari": r"[\u0900-\u097f]",
+           "bengali": r"[\u0980-\u09ff]", "cyrillic": r"[\u0400-\u04ff]",
+           "cjk": r"[\u3400-\u9fff]"}
+
+
+def zero_hit_controls(units: list[dict], hits: dict[str, set[int]], ph: dict[str, set[int]],
+                      rows: list[dict]) -> list[dict]:
+    """Positive controls for every unit that retrieved nothing: the hit count of
+    each of its top-level AND groups alone (the matcher sees the vocabulary; the
+    conjunction is what is empty), and how many table titles are written in the
+    unit's script at all."""
+    script_n = {k: sum(1 for r in rows if re.search(v, r.get("title") or "")) for k, v in SCRIPTS.items()}
+    lang_script = {"ar": "arabic", "hi": "devanagari", "bn": "bengali", "ru": "cyrillic", "zh": "cjk"}
+    out = []
+    for u in units:
+        if hits[u["query_id"]] or "ast" not in u:
+            continue
+        groups = split_and_groups(u["query"])
+        sizes = [len(lq.evaluate(lq.parse(g), ph.__getitem__, lambda: set())) for g in groups]
+        out.append({"query_id": u["query_id"], "and_group_hits": "|".join(map(str, sizes)),
+                    "titles_in_script": script_n.get(lang_script.get(u["language"], ""), "")})
+    return out
+
+
+def run_units(units: list[dict], rows: list[dict], jobs: int = 1,
+              keep: dict | None = None) -> dict[str, set[int]]:
+    """{query_id: indices of ``rows`` it retrieves}; ``keep`` receives the phrase hits."""
     texts = folded_texts(rows)
     plist = sorted({p for u in units if "ast" in u for p in lq.phrases(u["ast"])})
     ph = all_phrase_hits(texts, plist, jobs)
+    if keep is not None:
+        keep["phrase_hits"] = ph
     jel = [[c for c in (r.get("jel") or "").split(";")] for r in rows]
     universe = set(range(len(rows)))
     out: dict[str, set[int]] = {}
@@ -258,7 +287,11 @@ def deliver(units: list[dict], hits: dict[str, set[int]], rows: list[dict], out_
     records, excluded = [], []
     for i in sorted(by_rec, key=lambda i: rows[i]["handle"].lower()):
         rec = to_record(rows[i], by_rec[i], retrieved_at)
-        if not rec["doi"] and not rec["year"]:
+        if not rec["title"].strip():
+            excluded.append({"record_id": rec["record_id"], "query_id": rec["query_id"],
+                             "reason": "not_retrievable", "title": "",
+                             "note": f"ReDIF template without a title; {rec['url']}"})
+        elif not rec["doi"] and not rec["year"]:
             excluded.append({"record_id": rec["record_id"], "query_id": rec["query_id"],
                              "reason": "no_dedup_key", "title": rec["title"],
                              "note": f"no DOI and no year in ReDIF; {rec['url']}"})
@@ -307,7 +340,11 @@ def cmd_search(a: argparse.Namespace) -> int:
     units = plan_units(cfg)
     run_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     rows = load_rows(a.table)
-    hits = run_units(units, rows, a.jobs)
+    keep: dict = {}
+    hits = run_units(units, rows, a.jobs, keep)
+    if a.controls:
+        ctl = zero_hit_controls(units, hits, keep["phrase_hits"], rows)
+        _write_csv(a.controls, ["query_id", "and_group_hits", "titles_in_script"], ctl)
     counts = None
     if a.counts:
         with open(a.counts, encoding="utf-8") as fh:
@@ -437,6 +474,7 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--retrieved-at", required=True, help="mirror refresh date (ISO)")
     s.add_argument("--counts", help="the table's counts.json, copied into the manifest")
     s.add_argument("--jobs", type=int, default=1)
+    s.add_argument("--controls", help="CSV of positive controls for zero-hit units (outside the delivery)")
     r = sub.add_parser("recall")
     r.add_argument("--table", required=True)
     r.add_argument("--delivery", required=True)
