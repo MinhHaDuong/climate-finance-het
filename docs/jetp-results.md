@@ -288,7 +288,9 @@ CRS and IATI codes follow their external standards or are marked as local.
 
 ## 7. What is redistributed and what is only cited
 
-The Observer publishes what it made and cites what others made.
+The Observer publishes what it made and cites what others made. The legal
+basis for each case (short quotation, facts, database right, public-sector
+re-use, per-publisher terms) is stated in the [legal note](jetp-legal-note.md) §2 and §6.
 <!-- wave-1 W1-29: pending author decision (legal basis for holding and redistributing copies; terms and robots columns) -->
 
 - **Redistributed**: the Observer's own tables, results, dictionary,
