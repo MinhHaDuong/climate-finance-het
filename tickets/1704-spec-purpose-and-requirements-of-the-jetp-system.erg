@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
 2026-09-30T12:07Z HDMX-coding-agent note drafted docs/jetp-requirements.md: 60 requirements (M2 24, M3a 10, M3b 24, M4 1, later 1), 6 marked inferred for author confirmation; product tensions listed in the PR
+2026-09-30T13:05Z HDMX-coding-agent note revised with the author decisions: the system is the JETP Observer, § 1 rewritten as a theory of change, book product, horizon through 2030, JETP-specific scope; 65 requirements (M2 26, M3a 10, M3b 25, M4 3, later 1)
 
 --- body ---
 ## Context
