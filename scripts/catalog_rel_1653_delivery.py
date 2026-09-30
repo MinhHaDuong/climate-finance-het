@@ -244,21 +244,44 @@ def build(runs, root=None, languages=None):
     return delivered, list(registry.values()), excluded, stats
 
 
+def same_title(a, b):
+    """Two normalized titles of one work: one extends the other (a subtitle),
+    or they share at least half their words (punctuation, encoding noise)."""
+    if a.startswith(b) or b.startswith(a):
+        return True
+    wa, wb = set(a.split()), set(b.split())
+    return bool(wa and wb) and len(wa & wb) / len(wa | wb) >= 0.5
+
+
+def title_clusters(titles):
+    """Number of distinct works among normalized titles (greedy clustering)."""
+    heads = []
+    for t in titles:
+        if not any(same_title(t, h) for h in heads):
+            heads.append(t)
+    return len(heads)
+
+
 def unshare_dois(records, stats):
-    """Blank a DOI carried by records with different normalized titles.
+    """Blank a DOI carried by records whose titles name different works.
 
     Such a DOI names an issue or a container, not the work (Redalyc: one DOI
-    on 17 unrelated articles). The original stays in ``lane_note``."""
+    on 17 unrelated articles; a GARUDA template DOI ending in ``p%p``). Titles
+    that differ only by a subtitle or by noise count as one work. A title and
+    its translation count as two, so the DOI is blanked there too: the
+    conservative side, since a missed join costs a duplicate to screen and a
+    false one loses a work. The original stays in ``lane_note``."""
     titles = {}
     for rec in records:
         if rec["doi"]:
-            titles.setdefault(rec["doi"], set()).add(_norm(rec["title"]))
+            titles.setdefault(rec["doi"], []).append(_norm(rec["title"]))
+    works = {doi: title_clusters(ts) for doi, ts in titles.items()}
     for rec in records:
         doi = rec["doi"]
-        if doi and len(titles[doi]) > 1:
+        if doi and works[doi] > 1:
             rec["doi"] = ""
-            rec["lane_note"] = (f"source DOI {doi} is carried by {len(titles[doi])} "
-                                f"different titles in this delivery, so it is not used "
+            rec["lane_note"] = (f"source DOI {doi} is carried by {works[doi]} "
+                                f"different works in this delivery, so it is not used "
                                 f"as this record's key; " + rec["lane_note"])
             stats["doi_shared_blanked"] += 1
 

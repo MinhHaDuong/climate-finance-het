@@ -268,3 +268,12 @@ def test_enrich_years_reads_the_garuda_detail_page(tmp_path):
     assert [(r["record_id"], r["year"], r["status"]) for r in rows] == [
         ("garuda:7", "2023", "ok")]
 
+
+
+def test_a_subtitle_or_encoding_variant_keeps_the_shared_doi():
+    assert ex.title_clusters(["wakaf dan energi terbarukan",
+                              "wakaf dan energi terbarukan analisis potensi wakaf"]) == 1
+    assert ex.title_clusters(["patterns of public spaces based on a sport for all",
+                              "patterns of public spaces based on a sport for all x"]) == 1
+    assert ex.title_clusters(["implementasi kebijakan pos pembinaan terpadu",
+                              "implementasi bantuan pangan non tunai"]) == 2
