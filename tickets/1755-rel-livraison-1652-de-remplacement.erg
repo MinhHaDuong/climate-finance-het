@@ -1,0 +1,55 @@
+%erg 0.1
+Title: REL — livraison 1652 de remplacement : DOI, jointures et complétude
+Created: 2026-09-30
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-30T20:30Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Enfant de 0700, suite de 1652 (fermé par la PR #1609, fusion `4cb67a43`).
+Voie science : les défauts sont dans la livraison
+`data/rel_intake/t1652-causal-econlit/2026-09-30/` que 1655 (1731, 1733)
+consomme. Le contrat d'injection (`docs/rel-intake-contract.md`) rend une
+livraison immuable une fois fusionnée : la correction est une **livraison de
+remplacement** (`manifest.json` → `supersedes`), pas une réécriture.
+
+Constats du panel de vérification de la PR #1609, round 2 (commentaire du
+panel sur la PR, sections « New in round 2 » ; chaque chiffre recompté sur
+l'archive `~/data/projets/climate-finance-het/rel_causal/2026-09-30/`) :
+
+- La jointure titre + année fusionne des œuvres distinctes portant deux DOI
+  complets différents et en classe une en `duplicate_in_lane` (une dizaine de
+  paires, p. ex. « Survey of Recent Developments » 10.1080/00074910701286370
+  vs 10.1080/00074910701408040 ; FMI « Republic of Mozambique »
+  9781498318426.002 vs 9781484390429.002 ; « Reform of the Policy on Public
+  Debt Limits » 9781513573991.007 vs 9781513560885.007 ; josdi v3i1.32 vs .43).
+- Les DOI EDS sont rétrogradés en indices (528 des 552 jumeaux étaient des
+  préfixes tronqués) : les 2 161 notices EDS conservées portent leur DOI dans
+  `lane_note` seulement, colonne `doi` vide ; ~88 DOI EDS valides (102 lignes
+  `duplicate_in_lane` jointes à une notice OpenAlex sans DOI) ne survivent que
+  dans l'archive, `lane_note` prenant l'indice de la première notice.
+- La complétude d'une recherche est jugée sur un compte de lignes, que les
+  répétitions de pages du curseur gonflent (run d, `construction_emissions-SY-en` :
+  1 946 lignes, 1 940 identifiants distincts, 1 944 annoncés ; livrée
+  `completed=true` à 1 941). Arbitrage du chef d'équipe à la fusion : un curseur
+  épuisé est complet ; l'écart de 3 identifiants n'est pas une limite déclarée
+  saturation. Reste à donner à cet état un nom explicite.
+- `docs/rel-causal-map-search-2026-09-30.md` ~84-87 : « Every row that hit
+  HTTP 500 in run a or c was recovered by a rerun » est faux pour
+  `implementation_capacity-IM-en` (run c HTTP 500 à 400 de 2 631, aucune
+  reprise, la ligne garde le plafond 800 du run a) ; les 19 lignes plafonnées
+  dites « broad synonym, country/sector, IO and theme strings » comptent deux
+  chaînes IM.
+- La garde `--force-intake` de `write_intake` (`scripts/corpus_rel_causal_yield.py`)
+  ne teste que la présence de `records.csv` et n'a pas de test.
+
+## Exit criteria
+- [ ] La jointure titre + année ne fusionne plus deux notices portant chacune un DOI complet différent ; test rouge sur une des paires ci-dessus
+- [ ] Les DOI EDS valides sont portés dans une vraie colonne DOI, ou, s'ils restent des indices, 1655/1731 sont informés (contrat d'injection ou `notes` du manifeste) de la façon de les lire ; les ~88 DOI restés dans l'archive sont rétablis dans `lane_note` ou la note d'exclusion
+- [ ] La complétude est jugée sur les identifiants distincts, avec un état explicite « curseur épuisé » distinct de « plafond » et de « curseur court » ; test rejouant le run d (1 946 lignes, 1 940 distincts, 1 944 annoncés)
+- [ ] Phrases corrigées dans `docs/rel-causal-map-search-2026-09-30.md` ~84-87 (implementation_capacity-IM-en non repris ; lignes IM parmi les plafonnées)
+- [ ] Test de la garde `--force-intake` (refus sans l'option, écrasement avec)
+- [ ] Livraison de remplacement régénérée sur padme (`supersedes` = 2026-09-30, hash DVC `fb4bb39e…`), `scripts/qa_rel_intake.py` passe, `dvc push`, pointeur `.dvc` mis à jour dans la PR
