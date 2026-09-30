@@ -1,0 +1,37 @@
+%erg 0.1
+Title: REL Sud — demandes de déblocage des sources hors OpenAlex (accès, exports, relecteurs)
+Created: 2026-09-30
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-09-30T16:30Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Suite de 1653 (sources du Sud hors OpenAlex), livrée au pool 1655 dans
+`data/rel_intake/t1653-sud-hors-openalex/2026-09-30/` (couverture
+`incomplete`). Détail des sources, motifs et preuves :
+`docs/rel-sud-sources-2026-09-30.md` ; statut machine-lisible :
+`config/rel_sud_sources_status.yaml`.
+
+Les strates suivantes restent « incomplètes » tant qu'un humain n'a pas
+obtenu l'accès ou l'export. Chaque demande est indépendante ; un export
+obtenu se livre comme nouvelle livraison de la voie 1653 (le contrat
+d'intake, `docs/rel-intake-contract.md`, s'applique).
+
+## Demandes
+
+- [ ] CNKI (Chine) : accès institutionnel via bibCNRS, export manuel des 4 requêtes zh
+- [ ] Wanfang (Chine) : inscription sur apps.wanfangdata.com.cn/open ou abonnement, sinon export manuel des 4 requêtes zh
+- [ ] eLIBRARY.ru (Russie) : contrat API (api@elibrary.ru) ou export manuel des 4 requêtes ru
+- [ ] CyberLeninka (Russie) : autorisation, liste blanche OAI ou dump, à demander à skynet@cyberleninka.ru
+- [ ] AJOL (Afrique) : liste blanche ou dump, à demander à support@ajol.info
+- [ ] Dépôt USP (Pacifique) : liste blanche ou dump OAI, à demander à la bibliothèque de l'USP
+- [ ] Shodhganga (Inde) : accès OAI ou export auprès d'INFLIBNET, ou API BASE après enregistrement d'IP
+- [ ] SciELO (ALC) : accès OAI ou dump pour Brésil, Chili, Pérou, Argentine, Colombie, Cuba
+- [ ] Relecteurs compétents pour les chaînes zh, ru, hi, bn, id, ar (rédigées par machine, statut « non résolu »)
+
+## Exit criteria
+- [ ] Chaque demande ci-dessus : obtenue et livrée, ou refusée / abandonnée avec motif consigné dans le log
