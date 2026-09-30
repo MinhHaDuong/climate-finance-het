@@ -128,6 +128,15 @@ def test_garuda_http_error_or_short_pages_are_incomplete(monkeypatch):
     assert list(garuda.fetch(spec, 0)) == [("end", "error: no result count on page 1")]
 
 
+def test_garuda_detail_page_gives_the_publish_year():
+    page = ('<h4 class="ui header">Article Info</h4>\n'
+            "<p>Publish Date <br>01 Jul 2023</p></div><p>&copy; 2018</p>")
+    assert garuda.publish_year(page) == 2023
+    assert garuda.publish_year("<p>&copy; 2018</p>") is None
+    assert garuda.detail_url("garuda:3912393") == (
+        "https://garuda.kemdiktisaintek.go.id/documents/detail/3912393")
+
+
 def test_garuda_zero_hits_is_complete(monkeypatch):
     spec = garuda.plan({"lexicon": LEXICON})[0]
     monkeypatch.setattr(garuda, "get", fake_get([_page(0, [])]))

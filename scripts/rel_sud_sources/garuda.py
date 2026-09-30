@@ -141,3 +141,19 @@ def fetch(spec, delay):
             yield ("end", f"empty page {page} before {n_found} records")
             return
         page += 1
+
+
+# The detail page states the publication date ("Publish Date <br>01 Jul 2023")
+# where the search page's venue line carries no year (about 100 records).
+PUBLISH_DATE_RE = re.compile(r"Publish Date\s*<br\s*/?>\s*([^<]+?)\s*<", re.I)
+
+
+def detail_url(record_id):
+    """Detail page of a ``garuda:<id>`` record."""
+    return f"{BASE}/documents/detail/{record_id.split(':', 1)[1]}"
+
+
+def publish_year(text):
+    """Year of the "Publish Date" of one detail page, or None."""
+    m = PUBLISH_DATE_RE.search(text or "")
+    return find_year([m.group(1)]) if m else None
