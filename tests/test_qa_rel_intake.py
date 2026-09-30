@@ -115,3 +115,15 @@ def test_excluded_record_cannot_also_be_delivered(tmp_path):
     d = _delivery(tmp_path, excluded=[{"record_id": "r1", "query_id": "q1",
                                        "reason": "front_matter", "title": "x", "note": ""}])
     assert any("is also delivered" in e for e in ric.check_delivery(str(d)))
+
+
+@pytest.mark.parametrize("excluded", [["front_matter"], 1])
+def test_malformed_counts_excluded_is_a_violation_not_a_crash(tmp_path, excluded):
+    d = _delivery(tmp_path, manifest={"counts": {"records": 2, "excluded": excluded}})
+    assert any("counts.excluded must be an object" in e for e in ric.check_delivery(str(d)))
+
+
+@pytest.mark.parametrize("coverage", [["complete"], {"a": 1}])
+def test_unhashable_coverage_is_a_violation_not_a_crash(tmp_path, coverage):
+    d = _delivery(tmp_path, manifest={"coverage": coverage})
+    assert any("is not complete/incomplete" in e for e in ric.check_delivery(str(d)))

@@ -163,7 +163,10 @@ def _check_counts(manifest, n_records, excluded_counts):
         errors.append(
             f"manifest.json: counts.records is {counts.get('records')!r}, "
             f"records.csv has {n_records} rows")
-    declared = {k: v for k, v in (counts.get("excluded") or {}).items() if v}
+    excluded = counts.get("excluded") or {}
+    if not isinstance(excluded, dict):
+        return errors + [f"manifest.json: counts.excluded must be an object, got {excluded!r}"]
+    declared = {k: v for k, v in excluded.items() if v}
     if declared != dict(excluded_counts):
         errors.append(
             f"manifest.json: counts.excluded {declared} differs from "
@@ -174,7 +177,7 @@ def _check_counts(manifest, n_records, excluded_counts):
 def _check_coverage(manifest):
     """Coverage and the incomplete list must agree; each unit carries a reason."""
     errors = []
-    if manifest["coverage"] not in COVERAGE_VALUES:
+    if not isinstance(manifest["coverage"], str) or manifest["coverage"] not in COVERAGE_VALUES:
         errors.append(f"manifest.json: coverage {manifest['coverage']!r} is not complete/incomplete")
     incomplete = manifest["incomplete"]
     if not isinstance(incomplete, list):
