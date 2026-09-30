@@ -4,7 +4,7 @@ import json
 import types
 
 import pytest
-from rel_sud_sources import clacso, ipea, latam_dspace, redalyc, uwi
+from rel_sud_sources import clacso, ipea, latam_dspace, redalyc, scielo, uwi
 
 pytestmark = pytest.mark.domain_corpus
 
@@ -153,6 +153,70 @@ def test_redalyc_decodes_utf8_pages_until_total_and_encodes_the_path():
     assert recs[2]["matched_terms"] == "justicia climática"
     assert calls[0][0].endswith("/%22financiamiento%20clim%C3%A1tico%22/1/200/1/default")
     assert calls[1][0].endswith("/2/200/1/default")
+
+
+# ---------------------------------------------------------------------------
+# SciELO: journal selection, then per-journal OAI harvest matched locally
+# ---------------------------------------------------------------------------
+
+def am_journal(code, title, area="", wos=""):
+    j = {"code": code, "v100": [{"_": title}]}
+    if area:
+        j["v441"] = [{"_": area}]
+    if wos:
+        j["v854"] = [{"_": wos}]
+    return j
+
+
+SCIELO_OAI = """<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"><ListRecords>
+<record><header><identifier>oai:scielo:S0301-70362019000100001</identifier></header>
+<metadata><oai-dc:dc xmlns:oai-dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+ xmlns:dc="http://purl.org/dc/elements/1.1/">
+<dc:title><![CDATA[El financiamiento climático en México]]></dc:title>
+<dc:creator><![CDATA[Pérez,Ana]]></dc:creator><dc:date>2019-03-01</dc:date>
+<dc:identifier>http://www.scielo.org.mx/scielo.php?script=sci_arttext&amp;pid=S0301-70362019000100001</dc:identifier>
+<dc:relation>10.22201/iiec.20078951e.2019.196.1</dc:relation>
+</oai-dc:dc></metadata></record>
+<record><header status="deleted"><identifier>oai:scielo:gone</identifier></header></record>
+<record><header><identifier>oai:scielo:S2</identifier></header>
+<metadata><oai-dc:dc xmlns:oai-dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>Poesía</dc:title></oai-dc:dc></metadata></record>
+<resumptionToken completeListSize="3"></resumptionToken>
+</ListRecords></OAI-PMH>""".encode("utf-8")
+
+
+def test_scielo_selects_social_science_journals_one_spec_per_set():
+    listing = [am_journal("0301-7036", "Problemas del desarrollo", area="Applied Social Sciences"),
+               am_journal("1111-1111", "Revista de poesía", area="Linguistics, Letters and Arts"),
+               am_journal("2222-2222", "Ambiente y Desarrollo", wos="ENVIRONMENTAL STUDIES")]
+    seen = []
+
+    def get(url, params=None, delay=0):
+        seen.append(params["collection"])
+        return types.SimpleNamespace(status_code=200, json=lambda: listing,
+                                     raise_for_status=lambda: None)
+    specs = scielo.plan({"lexicon": LEXICON}, get=get)
+    assert seen == list(scielo.COLLECTIONS)
+    mex = [s for s in specs if s["query_id"].startswith("H-scielo-mex-")]
+    assert [s["set"] for s in mex] == ["0301-7036", "2222-2222"]
+    assert mex[0]["endpoint"] == scielo.COLLECTIONS["mex"]
+    assert "set=0301-7036 (Problemas del desarrollo)" in mex[0]["query_string"]
+    assert "local lexicon of languages es, pt, en" in mex[0]["query_string"]
+
+
+def test_scielo_fetch_matches_locally_and_drops_deleted():
+    spec = {"endpoint": "http://x/oai", "set": "0301-7036",
+            "terms": ["financiamiento climático", "REDD"]}
+    get, calls = recorder([resp(SCIELO_OAI)])
+    events = list(scielo.fetch(spec, 1.0, get=get))
+    assert events[0] == ("meta", 3) and events[-1] == ("end", "")
+    recs = [v for k, v in events if k == "work"]
+    assert len(recs) == 2
+    assert recs[0]["matched_terms"] == "financiamiento climático"
+    assert recs[0]["doi"] == "10.22201/iiec.20078951e.2019.196.1"
+    assert recs[1]["matched_terms"] == ""
+    assert calls[0][1]["set"] == "0301-7036"
 
 
 def test_redalyc_empty_page_before_total_is_incomplete():
