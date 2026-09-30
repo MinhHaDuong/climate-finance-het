@@ -3,10 +3,12 @@ Title: REL — export EconLit à la main (hors bibCNRS)
 Created: 2026-09-30
 Author: haduong
 Label: needs-human
+Closed: author decision 2026-09-30: EconLit not licensed via bibCNRS; substitutes accepted (ECONIS and RePEc via bibCNRS in 1652, full local RePEc mirror in 1810); EconLit declared a coverage limit in the protocol
 
 --- log ---
 2026-09-30T16:00Z HDMX-coding-agent created
 
+2026-09-30T20:11Z HDMX-coding-agent closed — author decision 2026-09-30: EconLit not licensed via bibCNRS; substitutes accepted (ECONIS and RePEc via bibCNRS in 1652, full local RePEc mirror in 1810); EconLit declared a coverage limit in the protocol
 --- body ---
 ## Contexte
 
