@@ -1,0 +1,21 @@
+%erg 0.1
+Title: REL — contrat de livraison des voies au pool (format, emplacement, provenance)
+Created: 2026-09-30
+Author: HDMX-coding-agent
+
+--- log ---
+2026-09-30T08:00Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Enfant de 1655 (tracker). Les voies 1650 à 1653, puis 1654, livrent des notices
+« à 1655 avec provenance » et tournent en parallèle : elles ont besoin d'un
+contrat publié sur `main` avant de finaliser leur livraison. Premier livrable de
+1655, petit PR fusionné vite.
+
+## Exit criteria
+- [ ] Format, emplacement et champs de provenance d'une livraison écrits dans un document du dépôt
+- [ ] Règle : une voie livre tout ce qu'elle a retrouvé, sans tri de pertinence ; toute mise à l'écart avant livraison est non thématique et comptée
+- [ ] Vérificateur exécutable qu'une voie lance sur sa livraison avant son PR, testé sur une livraison valide et sur des livraisons fautives
+- [ ] Forme du rapport de fusion par source (avant dédoublonnage) fixée

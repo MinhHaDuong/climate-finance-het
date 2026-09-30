@@ -1,0 +1,23 @@
+%erg 0.1
+Title: REL — fusion du pool (catalogue épinglé + livraisons) et rapport par source
+Created: 2026-09-30
+Author: HDMX-coding-agent
+Blocked-by: 1730
+
+--- log ---
+2026-09-30T08:00Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Enfant de 1655. Construit le pool REL à partir du catalogue fusionné épinglé
+(`unified_works.csv`) et des livraisons au format de 1730 (1530 d'abord, puis
+1650 à 1654), sans régénérer `unified_works` ni `refined_works`. Remplace les
+scripts ponctuels de dédoublonnage et de construction de l'entrée du tri
+(archive `~/data/projets/climate-finance-het/rel_sud/2026-09-29/adhoc-scripts/`).
+
+## Exit criteria
+- [ ] Script du dépôt qui fusionne catalogue et livraisons, dédoublonne (DOI, puis identifiant OpenAlex, puis titre normalisé + année) et garde la provenance de chaque source par œuvre
+- [ ] Rapport de fusion par source avant dédoublonnage : notices, déjà au catalogue, déjà dans une autre voie, nouvelles
+- [ ] Livraison 1530 convertie au contrat et fusionnée
+- [ ] Tests sur jeux réduits, dont le cas « working paper et article »

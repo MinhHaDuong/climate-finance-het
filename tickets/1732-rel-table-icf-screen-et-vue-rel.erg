@@ -1,0 +1,23 @@
+%erg 0.1
+Title: REL — table icf_screen en ajout seul et vue REL dérivée
+Created: 2026-09-30
+Author: HDMX-coding-agent
+Blocked-by: 1731
+
+--- log ---
+2026-09-30T08:00Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Enfant de 1655. Forme retenue dans 1655 : table `icf_screen` en ajout seul
+(œuvre, étape, étiqueteur et modèle, étiquette, type de document, pays étudié,
+motif, date), jamais dans un fichier régénérable ; vue REL dérivée par jointure.
+Les 25 693 étiquettes d'étape 1 et 4 792 d'étape 2 de 1530 restent valables
+(même règle) et entrent dans la table sans être refaites.
+
+## Exit criteria
+- [ ] Écriture en ajout seul, refus de réécrire ou d'effacer une ligne, testé
+- [ ] Import des étiquettes 1530 (étapes 1 et 2) avec étiqueteur, modèle et hachage du prompt
+- [ ] Vue REL construite par jointure pool × table ; comptes reproductibles depuis la table
+- [ ] Tableaux d'étape 2 (entrée Opus, échantillon d'audit) construits par script testé
