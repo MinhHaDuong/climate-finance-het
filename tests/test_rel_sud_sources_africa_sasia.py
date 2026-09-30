@@ -340,6 +340,19 @@ def test_ceew_skips_disallowed_paths_site_suffix_and_titleless_pages():
     assert works(evs) == [] and evs[-1] == ("end", "1 of 1 pages failed")
 
 
+def test_ceew_rereads_a_failed_page_once_and_recovers_it():
+    url = "https://www.ceew.in/publications/myth-private-finance"
+    answers = {url: [Resp("", 503), Resp(CEEW_PAGE)]}
+    base = FakeGet({ceew.SITEMAP: Resp(f"<loc>{url}</loc>")})
+
+    def get(u, params=None, delay=0):
+        return answers[u].pop(0) if answers.get(u) else base(u, params, delay)
+
+    evs = events(ceew, get)
+    assert [w["title"] for w in works(evs)] == ["The Myth of Climate Finance"]
+    assert evs[-1] == ("end", "")
+
+
 def test_south_centre_stops_when_a_cache_serves_an_earlier_page_again():
     p1 = rss([("Research Paper 1", "Climate finance", "x")])
     feed = south_centre.FEED
@@ -425,7 +438,31 @@ def test_oai_requests_carry_no_mailto_argument(monkeypatch):
     common.oai_get("https://oai", params={"verb": "ListRecords"}, delay=0)
     assert sent[0][0] == {"verb": "ListRecords"}
     assert "mailto:" in sent[0][1]["User-Agent"]
-    assert ajol.fetch.__defaults__[0] is common.oai_get
+    assert ajol.GET is common.oai_get  # the default getter; --browser swaps it
+
+
+def test_ajol_journal_not_started_by_the_deadline_is_skipped_not_absent():
+    spec = {"endpoint": "https://oai", "match": listing.matcher(CFG, ajol.LANGUAGES),
+            "deadline": "2000-01-01T00:00:00+00:00"}
+    get = FakeGet({"https://oai": Resp(OAI)})
+    assert list(ajol.fetch(spec, 0, get=get)) == [
+        ("end", "skipped: time budget reached before this journal")]
+    assert get.calls == []
+
+
+def test_browser_getter_runs_a_waf_challenge_once_in_the_page(monkeypatch):
+    from rel_sud_sources import _browser as browser
+
+    answers = [(202, {"x-amzn-waf-action": "challenge"}, b""), (200, {}, b"<OAI-PMH/>")]
+    visited = []
+    g = browser.BrowserGet()
+    g._ctx = object()  # started
+    g._page = type("P", (), {"goto": lambda self, u, timeout: visited.append(u),
+                             "wait_for_timeout": lambda self, ms: None})()
+    monkeypatch.setattr(g, "_request", lambda url: answers.pop(0))
+    r = g("https://oai", params={"verb": "Identify"})
+    assert (r.status_code, r.text) == (200, "<OAI-PMH/>")
+    assert visited == ["https://oai?verb=Identify"] and g.challenges == 1
 
 
 def test_ajol_survives_a_character_xml_forbids(monkeypatch):

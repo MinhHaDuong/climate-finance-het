@@ -20,7 +20,7 @@ stop reason ``exception: <type>``) before the run stops.
 
 Usage:
     python scripts/catalog_rel_sud_sources.py --output-dir DIR [--source NAME ...]
-        [--list] [--dry-run] [--cap N]
+        [--list] [--dry-run] [--cap N] [--browser] [--set KEY=VALUE ...]
 """
 
 import argparse
@@ -102,6 +102,12 @@ def main(argv=None):
     ap.add_argument("--source", action="append", help="adapter name (repeatable)")
     ap.add_argument("--cap", type=int, default=0, help="max records per query (0 = none)")
     ap.add_argument("--delay", type=float, default=1.0, help="seconds between requests")
+    ap.add_argument("--browser", action="store_true",
+                    help="adapters with a GET attribute fetch through headless Chromium "
+                         "(rel_sud_sources._browser; ticket 1790)")
+    ap.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                    help="adapter option into cfg, e.g. scielo_collections=arg or "
+                         "deadline=2026-10-01T06:00:00+00:00 (repeatable)")
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args(argv)
@@ -116,6 +122,17 @@ def main(argv=None):
         log.error("unknown source(s): %s", ", ".join(unknown))
         return 2
     cfg = {"lexicon": load_lexicon(args.config)}
+    for kv in args.set:
+        key, sep, value = kv.partition("=")
+        if not sep:
+            ap.error(f"--set expects KEY=VALUE, got {kv!r}")
+        cfg[key] = value
+    if args.browser:
+        from rel_sud_sources._browser import BrowserGet
+        browser = BrowserGet()
+        for name in chosen:
+            if hasattr(adapters[name], "GET"):
+                adapters[name].GET = browser
     if args.dry_run:
         for name in chosen:
             for spec in adapters[name].plan(cfg):

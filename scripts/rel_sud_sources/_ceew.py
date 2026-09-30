@@ -99,19 +99,34 @@ def fetch(spec, delay, get=polite_get):
         yield ("end", "error: no publication page in the sitemap")
         return
     yield ("meta", len(urls))
-    failed = 0
+    failed = []
     for url in urls:
-        try:
-            page = get(url, delay=delay)
-        except Exception:  # one page lost; counted below
-            failed += 1
-            continue
-        if page.status_code != 200:
-            failed += 1
-            continue
-        title, meta, text = parse_page(page.text)
-        if not title:  # an interstitial or error page served with 200
-            failed += 1
-            continue
-        yield ("work", to_record(url, title, meta, text, spec["match"]))
-    yield ("end", f"{failed} of {len(urls)} pages failed" if failed else "")
+        rec = _read(url, get, delay, spec["match"])
+        if rec is None:
+            failed.append(url)
+        else:
+            yield ("work", rec)
+    # One more pass over the failed pages: a transient error (a timeout, an
+    # interstitial) cost 13 pages on 2026-09-30 (ticket 1790).
+    lost = 0
+    for url in failed:
+        rec = _read(url, get, delay, spec["match"])
+        if rec is None:
+            lost += 1
+        else:
+            yield ("work", rec)
+    yield ("end", f"{lost} of {len(urls)} pages failed" if lost else "")
+
+
+def _read(url, get, delay, match):
+    """The record of one publication page, or None when the page is lost."""
+    try:
+        page = get(url, delay=delay)
+    except Exception:  # network failure after retries
+        return None
+    if page.status_code != 200:
+        return None
+    title, meta, text = parse_page(page.text)
+    if not title:  # an interstitial or error page served with 200
+        return None
+    return to_record(url, title, meta, text, match)
