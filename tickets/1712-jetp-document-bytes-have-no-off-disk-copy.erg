@@ -7,7 +7,7 @@ Label: needs-human
 --- log ---
 2026-09-30T13:10Z HDMX-coding-agent created — found by the operation spec draft (ticket 1708), verified
 2026-09-30T19:10Z HDMX-coding-agent note author decision (spec review wave 1, W1-22): padme's nightly restic backup to a Hetzner Storage Box exists, was found failing and repaired the same day; Zotero is the off-site copy of snapshots now; docs/jetp-operation.md section 9 states both; restore test pending
-
+2026-09-30T20:27Z HDMX-coding-agent note machine backup restored 2026-09-30: after the author repointed /etc/restic/excludes.txt, restic saved snapshot b6e9a723 to the Hetzner Storage Box (2h24, 25.7 GiB added); exit status 3 because files vanished mid-run (RePEc being rehomed under /data/mirrors), which systemd reports as failed. Open: the M2 test restore of one snapshot, and the Zotero off-site copy
 --- body ---
 ## Context
 
