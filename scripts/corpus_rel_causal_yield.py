@@ -382,13 +382,17 @@ def run(args):
     mech = {q: m["mechanism"].strip() for q, m in {**fam_cfg["families"], **fam_cfg["themes"]}.items()}
     run_dirs = args.run_dir if isinstance(args.run_dir, list) else [args.run_dir]
     dirs = [d for d in run_dirs + [args.eds_dir] if d]
-    # a later run directory supersedes an earlier one for the ids it reran
+    # a later run directory supersedes an earlier one for the ids it reran,
+    # unless it is worse: an unfinished rerun that received fewer records
+    def rank(r):
+        return (r["completed"] == "True", int(r["n_received"] or 0))
+
     winner, econlit_rows = {}, []
     for d in dirs:
         for r in read_registry(os.path.join(d, "registry.csv"), with_econlit=True):
             if r["platform"] == "econlit":
                 econlit_rows.append(r)
-            else:
+            elif r["search_id"] not in winner or rank(r) >= rank(winner[r["search_id"]][1]):
                 winner[r["search_id"]] = (d, r)
     registry = [r for _, r in winner.values()]
     registry_all = registry + econlit_rows

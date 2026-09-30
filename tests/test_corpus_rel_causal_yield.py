@@ -178,6 +178,23 @@ def test_a_later_run_directory_supersedes_the_ids_it_reran(lane):
     assert "RC-grid-IO-en" in by_search and len(rows) == 6
 
 
+def test_an_unfinished_rerun_with_fewer_records_does_not_supersede(lane):
+    _run_dir(lane / "oa2", "openalex", [("RC-grid-IM-en", "grid", "IM", 1)],
+             [{"search_id": "RC-grid-IM-en", "openalex_id": "W7", "doi": "10.7/new",
+               "title": "A rerun record", "year": 2024}])
+    reg = _csv(lane / "oa2" / "registry.csv")
+    reg[0]["completed"], reg[0]["stop_reason"] = "False", "error: RuntimeError"
+    with open(lane / "oa2" / "registry.csv", "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, REG)
+        w.writeheader()
+        w.writerows(reg)
+    args = _args(lane)
+    args.run_dir = [str(lane / "oa"), str(lane / "oa2")]
+    assert cy.run(args) == 0
+    im = [r for r in _csv(lane / "out" / "delivery.csv") if r["search_id"] == "RC-grid-IM-en"]
+    assert sorted(r["openalex_id"] for r in im) == ["W1", "W2"]
+
+
 def test_judge_batches_one_mechanism_and_parses_labels(tmp_path):
     recs = [{"pair_id": f"{q}::{i}", "question": q, "mechanism": f"M {q}", "title": f"t{i}"}
             for q in ("b", "a") for i in range(3)]
