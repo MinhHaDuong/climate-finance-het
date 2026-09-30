@@ -5,7 +5,7 @@ scientific cycle (`~/CNRS/projets/actifs/ODUM/conception/`, note and technical
 appendix v2.0 of 22 September 2026) and against what the repository contains.
 Inputs:
 
-- `origin/main` at `d1f60f00`: backend design, revision 5 (`docs/jetp-backend-design.md`, deleted 2026-09-30 by ticket 1701, readable at commit d1f60f00) and its [implementation plan](jetp-backend-implementation-plan.md);
+- `origin/main` at `d1f60f00`: backend design, revision 5 (`docs/jetp-backend-design.md`, deleted 2026-09-30 by ticket 1701, readable at commit d1f60f00) and its implementation plan (`docs/jetp-backend-implementation-plan.md`, likewise deleted);
 - PR #1449, not yet merged: `docs/jetp-ontology.md` (ontology v2, ten author decisions of 22 September), the revised backend design, and the migration train 0870–0879.
 
 Ontology v2 supersedes sections 2–4 and 9 of the backend design, so this review
