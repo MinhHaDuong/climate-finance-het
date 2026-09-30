@@ -157,19 +157,43 @@ PAGES = [
 ]
 
 
-def test_cyberleninka_plan_states_set_and_local_selection():
-    (spec,) = cyberleninka.plan({"lexicon": LEXICON})
-    assert spec["query_id"] == "S-cyberleninka-repec"
-    qs = spec["query_string"]
-    assert "set=repec" in qs and "ru, en" in qs and "titles only" in qs
-    assert "климатическое финансирование" in spec["terms"]
-    assert "climate finance" in spec["terms"]
+LISTSETS = """<?xml version="1.0"?><OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/">
+<ListSets>
+<set><setSpec>repec</setSpec><setName>Research Papers in Economics</setName></set>
+<set><setSpec>journal_1</setSpec><setName>Экология человека</setName></set>
+<set><setSpec>journal_2</setSpec><setName>Клиническая офтальмология</setName></set>
+<set><setSpec>journal_3</setSpec><setName>Экономическое развитие России</setName></set>
+<set><setSpec>journal_4</setSpec><setName>Финансы и кредит</setName></set>
+</ListSets></OAI-PMH>""".encode()
+
+CAPTCHA = "<!DOCTYPE html><html><title>Вы точно человек?</title>captcha</html>".encode()
+
+
+def _plan(monkeypatch, pages=(), calls=None, budget=None):
+    monkeypatch.setattr(cyberleninka, "get", fake_get([LISTSETS, *pages], calls))
+    cfg = {"lexicon": LEXICON}
+    if budget is not None:
+        cfg["cyberleninka_page_budget"] = budget
+    return cyberleninka.plan(cfg)
+
+
+def test_cyberleninka_plan_selects_journal_sets_by_tier(monkeypatch):
+    specs = _plan(monkeypatch)
+    # finance first (tier 1), economics (2), ecology (3); index sets and
+    # unrelated journals left out
+    assert [s["set"] for s in specs] == ["journal_4", "journal_3", "journal_1"]
+    assert specs[0]["query_id"] == "S-cyberleninka-journal_4"
+    qs = specs[0]["query_string"]
+    assert "set=journal_4" in qs and "Финансы и кредит" in qs and "tier 1" in qs
+    assert "ru, en" in qs and "titles only" in qs
+    assert "климатическое финансирование" in specs[0]["terms"]
+    assert "climate finance" in specs[0]["terms"]
+    assert specs[0]["budget"] is specs[2]["budget"]  # one budget for the run
 
 
 def test_cyberleninka_harvest_matches_titles_and_completes(monkeypatch):
     calls = []
-    monkeypatch.setattr(cyberleninka, "get", fake_get(PAGES, calls))
-    (spec,) = cyberleninka.plan({"lexicon": LEXICON})
+    spec = _plan(monkeypatch, PAGES, calls)[0]
     events = list(cyberleninka.fetch(spec, 0))
     assert events[0] == ("meta", "")
     works = [v for k, v in events if k == "work"]
@@ -178,14 +202,37 @@ def test_cyberleninka_harvest_matches_titles_and_completes(monkeypatch):
     assert works[0]["url"] == "https://cyberleninka.ru/article/n/a"
     assert works[0]["year"] is None  # CyberLeninka oai_dc carries no date
     assert events[-1] == ("end", "")
-    assert calls[0]["set"] == "repec" and calls[1] == {"verb": "ListRecords",
-                                                       "resumptionToken": "tok1"}
+    assert calls[1]["set"] == "journal_4" and calls[2] == {"verb": "ListRecords",
+                                                           "resumptionToken": "tok1"}
 
 
-def test_cyberleninka_page_budget_leaves_query_incomplete(monkeypatch):
-    monkeypatch.setattr(cyberleninka, "get", fake_get(PAGES))
-    (spec,) = cyberleninka.plan({"lexicon": LEXICON})
-    spec["page_budget"] = 1
+def test_cyberleninka_shared_page_budget_leaves_queries_incomplete(monkeypatch):
+    specs = _plan(monkeypatch, PAGES, budget=1)
+    events = list(cyberleninka.fetch(specs[0], 0))
+    assert len([e for e in events if e[0] == "work"]) == 2
+    assert events[-1] == ("end", "page budget reached")
+    # the next journal gets nothing and says so
+    assert list(cyberleninka.fetch(specs[1], 0)) == [("end", "page budget reached")]
+
+
+def test_cyberleninka_captcha_page_is_a_block_not_bad_xml(monkeypatch):
+    spec = _plan(monkeypatch, [PAGES[0], CAPTCHA])[0]
     events = list(cyberleninka.fetch(spec, 0))
     assert len([e for e in events if e[0] == "work"]) == 2
-    assert events[-1] == ("end", "page budget 1 reached")
+    assert events[-1] == ("end", "blocked: captcha page (not solved)")
+
+
+def test_cyberleninka_blocked_listsets_is_one_blocked_row(monkeypatch):
+    monkeypatch.setattr(cyberleninka, "get", fake_get([CAPTCHA]))
+    (spec,) = cyberleninka.plan({"lexicon": LEXICON})
+    assert spec["query_id"] == "S-cyberleninka-listsets"
+    assert list(cyberleninka.fetch(spec, 0)) == [("end", "blocked: captcha page (not solved)")]
+
+
+def test_cyberleninka_strips_xml_invalid_control_characters(monkeypatch):
+    bad = _oai([("a", "Климатическое\x0b финансирование")], "")  # raw 0x0B byte
+    assert b"\x0b" in bad
+    spec = _plan(monkeypatch, [bad])[0]
+    events = list(cyberleninka.fetch(spec, 0))
+    assert events[-1] == ("end", "")
+    assert [v["title"] for k, v in events if k == "work"] == ["Климатическое финансирование"]
