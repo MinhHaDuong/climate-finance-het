@@ -73,19 +73,31 @@ and in the delivery registry.
 | bibCNRS EDS, EconLit strings on RePEc and ECONIS, cap 500 | 308 | 11,352 | 304 | 4 record cap |
 
 A row searched in several runs keeps the **union** of its retrievals (one record
-per raw platform id), and it counts as complete only if some run reached the end
-of the cursor with the count OpenAlex announced. The first version of the
-fetcher recorded a cursor that OpenAlex ended early as complete (run c:
+per raw platform id). The table above counts rows as each run received them;
+the delivered registry (`n_received`) counts distinct platform ids, because
+OpenAlex repeats some works across cursor pages. A row is complete when its runs
+together received every announced id, or when some run reached the end of the
+cursor with every announced id. A cursor that ended after serving the announced
+number of rows, but fewer distinct ids, is **cursor exhausted**: the search
+cannot return more, so the row counts as complete, and the registry names the
+state (`cursor_state`, `cursor_note`). One row is in that state:
+construction_emissions-SY (run d: 1,946 rows, 1,940 distinct ids of 1,944
+announced; 1,941 with run a). A cursor that ended with fewer rows than
+announced is a **short cursor**, and the row stays incomplete. The first version of the
+fetcher recorded a short cursor as complete (run c:
 construction_emissions-SY, 193 of 1,944; run a: fiscal_substitution-IO, 658 of
 659); run d finished the first, and the merged registry marks the second
 incomplete.
 
 In the delivered registry, **20 of the 132 OpenAlex rows are incomplete**: 19
-stopped by the 800-record cap (broad synonym, country/sector, IO and theme
-strings whose announced counts run to thousands; carbon_credits-SY announced
-66,426) and 1 short cursor (fiscal_substitution-IO, 658 of 659). Every row that
-hit HTTP 500 in run a or c was recovered by a rerun, up to the cap. The cap is a
-budget choice, not saturation. 4 of the 308 EDS rows are capped at 500
+stopped by the 800-record cap (broad synonym, country/sector, IM, IO and theme
+strings whose announced counts run to thousands: two IM strings,
+carbon_credits-IM and implementation_capacity-IM; carbon_credits-SY announced
+66,426) and 1 short cursor (fiscal_substitution-IO, 658 of 659). The rows that
+hit HTTP 500 in run a were rerun in run b, up to the cap; of the two that hit
+it in run c, construction_emissions-IM was finished by run d, but
+implementation_capacity-IM (run c stopped at 400 of 2,631) was not rerun and
+keeps the 800 records of run a. The cap is a budget choice, not saturation. 4 of the 308 EDS rows are capped at 500
 (allocation-IO and private_finance-TH, on both providers).
 
 **OpenAlex spend** (sum of `x-ratelimit-cost-usd`, measured): pre-run budget and
@@ -99,8 +111,22 @@ page 0.0001.
 Works are joined by DOI, then OpenAlex id, then normalised title and year. EDS
 returns DOIs cut short (for 528 of the 552 title-and-year twins of an OpenAlex
 work, the EDS DOI is a strict prefix of the OpenAlex one), so an EDS DOI joins
-only when another record carries the same DOI; otherwise it is kept as a hint in
-`lane_note`. "Absent" is tested against the refined corpus
+only when another record carries the same DOI; otherwise it is kept as a hint
+(`doi_eds_hint` and `lane_note`). The title-and-year join never fuses two
+records whose DOIs disagree, an EDS DOI agreeing with a DOI only when equal or
+a strict prefix. An EDS DOI can split a title group only if it is no strict
+prefix of any DOI or EDS DOI of the lane and resolves at doi.org: of the 93
+EDS DOIs that would have split a group, 88 resolved and 5 did not (cut at a
+field boundary, such as `..._v1` or `...2019.06`; the answers are in
+`analysis_1755/doi_checks.csv`). 85 EDS records whose DOI passed both tests and
+disagrees with a same-title, same-year record (a working paper and its
+article, two IMF country reports) are works of their own, and carry that DOI
+in `doi`. Passing both tests does not prove an EDS DOI complete; it only rules
+out the truncations the lane can see. The first delivery fused these works
+(ticket 1755). Titles are normalised as the pool normalises them. The yield
+tables below are those of the first delivery. The corrected keys move the lane
+totals by under 1% (OpenAlex 30,161 unique works, 21,626 absent from all
+three; EDS 7,681 and 6,191), archived in `analysis_1755/`. "Absent" is tested against the refined corpus
 (`refined_works.csv`), the raw merged pool (`unified_works.csv`) and the Sud
 search results (runs f and g of 1530). The conservation check of the yield
 script confirms that all 38,567 distinct raw ids retrieved reach the delivery.
@@ -138,8 +164,12 @@ treatment. This is a family-relevance judgment for lane yield, **not** the ICF
 inclusion screen. Model: Claude Haiku 4.5 (the first 575 pairs through
 OpenRouter, then `claude-haiku-4-5` through the Anthropic API after OpenRouter
 refused with HTTP 402); prompt `config/rel_causal_judge.yaml` (SHA-256 in
-`judge/judge_runs.jsonl`). The final pass has **46,121 (work, family) pairs, all
-labelled: 11,920 relevant, 25,350 not, 8,851 unsure**. `judge/labels.jsonl` holds
+`judge/judge_runs.jsonl`). The final pass of the first delivery has **46,121
+(work, family) pairs, all labelled: 11,920 relevant, 25,350 not, 8,851
+unsure**. The replacement delivery has 46,183 pairs: 11,896 relevant, 25,310
+not, 8,821 unsure, and 156 unlabelled: works the judge never saw under any
+key their records could have had, mostly works split from a DOI twin. No new
+judge call was made. `judge/labels.jsonl` holds
 50,895 labels because the pair id carries the work key, and the join fixes of
 round 2 changed some keys; labels of superseded keys stay in the file unused.
 Tokens through the Anthropic API: 6.50 M in, 0.49 M out, about 9 USD at list
@@ -261,6 +291,20 @@ to "unsure".
 
 ## Delivery to the pool (1655)
 
+**Replacement delivery (ticket 1755):**
+`data/rel_intake/t1652-causal-econlit/2026-09-30b/`, whose manifest supersedes
+`2026-09-30`. It is regenerated from the same archived runs and judge labels,
+with no new retrieval: **34,788 records**, 18,638 `duplicate_in_lane`, 16
+`not_retrievable` (still 53,442 retrievals). The 63 more works come from the
+split title groups above. 133 records have a family without relevance label:
+the judge ran on the fused keys, and no new judge call was made. Labels given
+under an earlier key of the same record are carried over; a work split from a
+DOI twin never inherits the twin's. Every EDS DOI of every retrieval survives, in
+`doi_eds_hint` of the kept record and in the exclusion note of each duplicate;
+the manifest `notes` say how to read them. `registry.csv` adds `cursor_state`
+and `cursor_note`. The pool reads only the replacement. The paragraphs below
+describe the first delivery.
+
 In the intake-contract format of `docs/rel-intake-contract.md` (ticket 1730,
 PR #1604): `data/rel_intake/t1652-causal-econlit/2026-09-30/` (`records.csv`,
 `registry.csv`, `excluded.csv`, `manifest.json`), tracked by DVC
@@ -291,4 +335,6 @@ platform and with distinct identifiers (versions, repeated generic titles);
 - French and Spanish strings were written by the assistant and not read by a
   native speaker; they return few works outside Spanish-language repositories.
 - The EDS substitute covers RePEc and ECONIS, not EconLit's journal coverage.
-  EDS DOIs are often truncated and are delivered as hints only.
+  EDS DOIs are often truncated and are delivered as hints, except the 85 that
+  disagree with a same-title, same-year record's DOI, are no prefix of a lane
+  DOI and resolve at doi.org.

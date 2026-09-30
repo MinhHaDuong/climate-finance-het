@@ -2,10 +2,12 @@
 Title: REL — livraison 1652 de remplacement : DOI, jointures et complétude
 Created: 2026-09-30
 Author: HDMX-coding-agent
+Closed: replacement delivery t1652-causal-econlit/2026-09-30b (supersedes 2026-09-30), qa_rel_intake OK
 
 --- log ---
 2026-09-30T20:30Z HDMX-coding-agent created
 
+2026-09-30T20:36Z HDMX-coding-agent closed — replacement delivery t1652-causal-econlit/2026-09-30b (supersedes 2026-09-30), qa_rel_intake OK
 --- body ---
 ## Contexte
 
@@ -47,9 +49,9 @@ l'archive `~/data/projets/climate-finance-het/rel_causal/2026-09-30/`) :
   ne teste que la présence de `records.csv` et n'a pas de test.
 
 ## Exit criteria
-- [ ] La jointure titre + année ne fusionne plus deux notices portant chacune un DOI complet différent ; test rouge sur une des paires ci-dessus
-- [ ] Les DOI EDS valides sont portés dans une vraie colonne DOI, ou, s'ils restent des indices, 1655/1731 sont informés (contrat d'injection ou `notes` du manifeste) de la façon de les lire ; les ~88 DOI restés dans l'archive sont rétablis dans `lane_note` ou la note d'exclusion
-- [ ] La complétude est jugée sur les identifiants distincts, avec un état explicite « curseur épuisé » distinct de « plafond » et de « curseur court » ; test rejouant le run d (1 946 lignes, 1 940 distincts, 1 944 annoncés)
-- [ ] Phrases corrigées dans `docs/rel-causal-map-search-2026-09-30.md` ~84-87 (implementation_capacity-IM-en non repris ; lignes IM parmi les plafonnées)
-- [ ] Test de la garde `--force-intake` (refus sans l'option, écrasement avec)
-- [ ] Livraison de remplacement régénérée sur padme (`supersedes` = 2026-09-30, hash DVC `fb4bb39e…`), `scripts/qa_rel_intake.py` passe, `dvc push`, pointeur `.dvc` mis à jour dans la PR
+- [x] La jointure titre + année ne fusionne plus deux notices portant chacune un DOI complet différent ; test rouge sur une des paires ci-dessus
+- [x] Les DOI EDS valides sont portés dans une vraie colonne DOI, ou, s'ils restent des indices, 1655/1731 sont informés (contrat d'injection ou `notes` du manifeste) de la façon de les lire ; les ~88 DOI restés dans l'archive sont rétablis dans `lane_note` ou la note d'exclusion
+- [x] La complétude est jugée sur les identifiants distincts, avec un état explicite « curseur épuisé » distinct de « plafond » et de « curseur court » ; test rejouant le run d (1 946 lignes, 1 940 distincts, 1 944 annoncés)
+- [x] Phrases corrigées dans `docs/rel-causal-map-search-2026-09-30.md` ~84-87 (implementation_capacity-IM-en non repris ; lignes IM parmi les plafonnées)
+- [x] Test de la garde `--force-intake` (refus sans l'option, écrasement avec)
+- [x] Livraison de remplacement régénérée sur padme (`supersedes` = 2026-09-30, la livraison remplacée dont le hash DVC était `fb4bb39e…` ; nouveau pointeur du répertoire de voie, qui contient les deux livraisons : `98207e39…`), `scripts/qa_rel_intake.py` passe, `dvc push`, pointeur `.dvc` mis à jour dans la PR
