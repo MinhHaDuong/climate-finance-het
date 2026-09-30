@@ -7,6 +7,7 @@ Label: needs-human
 --- log ---
 2026-09-30T16:30Z HDMX-coding-agent created
 
+2026-09-30T20:26Z HDMX-coding-agent note readers (author decision 2026-09-30): 24 zh/ru/hi/bn/id/ar strings reviewed by Opus 5.5 and google/gemini-3.1-pro-preview (USD 0.10); 19 ok, 1 fixed (zh T3 森林融资 -> 林业融资), 4 disputed unchanged (ru T2 T3 T4, bn T1). zh T3 rerun on OpenAlex: 651 works, 6 new vs 1530, delivered as t1790-reader-reruns/2026-09-30. No human reader yet.
 --- body ---
 ## Contexte
 

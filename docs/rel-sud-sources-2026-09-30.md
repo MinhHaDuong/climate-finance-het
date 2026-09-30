@@ -159,10 +159,31 @@ languages, eleven units in all, each with its reason.
 
 ## Translation status
 
-The zh, ru, hi, bn, id and ar query strings were machine-drafted in 1530 and
-no competent reader has reviewed them: status **non résolu** (exit criterion
-3). The es, pt, fr and en strings were read by the assistant only, not by a
-human reader. Ticket 1790 asks for readers.
+The zh, ru, hi, bn, id and ar query strings were machine-drafted in 1530. On
+2026-09-30 (ticket 1790, author decision) two decorrelated strong models
+reviewed each of the 24 strings for fluency and search effectiveness: Claude
+Opus 5.5, whose verdict was written first, and
+`google/gemini-3.1-pro-preview` through OpenRouter. A string changed only
+where both objected. No human reader has reviewed them. The es, pt, fr and en
+strings were read by the assistant only. Per-string status:
+`config/rel_sud_sources_status.yaml` (`translation_review`); prompts, both
+answers and checksums:
+`~/data/projets/climate-finance-het/rel_sud/2026-09-30/t1790-reader-review/`.
+
+| Language | ok | fixed | disputed (unchanged) |
+| --- | --- | --- | --- |
+| zh | T1, T2, T4 | T3: 森林融资 → 林业融资 | |
+| ru | T1 | | T2, T4 (Opus: nominative forms only); T3 (Gemini: финансирование лесов a calque) |
+| hi | T1-T4 | | |
+| bn | T2-T4 | | T1 (Opus: genitive জলবায়ু অর্থায়নের missing) |
+| id | T1-T4 | | |
+| ar | T1-T4 | | |
+
+The fixed zh T3 string was rerun on OpenAlex only, since no zh source outside
+OpenAlex is reachable and no 1653 source used zh: 651 works (1530 run of record:
+646), 6 absent from the 1530 delivery (4 carrying 林业融资, 2 indexed after
+2026-09-29). They go to the pool as `data/rel_intake/t1790-reader-reruns/2026-09-30/`.
+The old string stays under `revisions` in `config/rel_sud_search.yaml`.
 
 ## Class-b sentinels
 
