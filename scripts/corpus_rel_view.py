@@ -41,12 +41,16 @@ label that sets the status; institutional documents are counted apart from
 research and kept.
 
 Counting unit (author decision of 2026-09-30): the work family. Works linked
-by ``version_hint`` (a DOI or a lane record id of another version, e.g. a
-working paper and its article) form one family (``_rel_view.version_families``,
-union-find; DOI-equal records are already one pool work). ``family_id`` is the
-representative's ``work_key``: the published article first, else the earliest
-year; ``family_first_year`` keeps the year of first dissemination. Rows stay
-one per pool work; REL counts are given in works and in families.
+by ``version_hint`` (a DOI, an OpenAlex id or a same-lane record id of another
+version, e.g. a working paper and its article) form one family
+(``_rel_view.version_families``, union-find; DOI-equal records are already one
+pool work). ``family_id`` is the representative's ``work_key``: an included
+member first, then a published article, then the earliest year, then the
+smallest ``work_key``; ``family_first_year`` keeps the year of first
+dissemination over all members. Rows stay one per pool work; REL counts are
+given in works and in families, and ``families`` counts the multi-work
+families whose members differ in ``rel_included`` and the unresolved hints by
+cause.
 
 Outputs (``--output-dir``, default ``data/rel_pool``): ``rel_view.csv`` (one row
 per pool work) and ``rel_counts.json``, which records the exit rule it applied
@@ -149,8 +153,8 @@ def make_counts(rows: list[dict], summary: dict, window_cfg: dict, inputs: dict,
                   "included: final icf, plus unsure_unresolved flagged when "
                   "rule.stage2_unsure_in_rel. *_in_window: rel_disposition include, "
                   "complete year, per work. The partial year is counted apart by document "
-                  "type. *_families: distinct family_id (version_hint links, published "
-                  "article as representative) among the works counted."),
+                  "type. *_families: distinct family_id (version_hint links; representative: "
+                  "an included member, then a published article) among the works counted."),
     }
 
 

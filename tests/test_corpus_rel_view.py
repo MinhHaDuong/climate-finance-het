@@ -144,7 +144,75 @@ def test_version_families_prefer_the_published_article():
     assert [f["family_id"] for f in fams] == ["openalex:W72", "openalex:W72", "openalex:W9"]
     assert fams[0]["family_first_year"] == "2021" and fams[0]["family_size"] == 2
     assert summary == {"families": 2, "multi_work_families": 1,
-                       "works_in_multi_work_families": 2, "version_hints_unresolved": 0}
+                       "works_in_multi_work_families": 2, "families_with_mixed_final_labels": 0,
+                       "version_hints_unresolved": 0, "version_hints_unresolved_by_cause": {}}
+
+
+def test_representative_is_an_included_member():
+    # ICF working paper + article judged aux at stage 2: the family stands for
+    # the included working paper, and the family is counted as mixed.
+    pool = _gs_pair()
+    labels = [_lab("openalex:W31", "2", "icf"), _lab("openalex:W72", "2", "aux")]
+    rows, summary = rv.build_view(pool, labels, WINDOW, RULE)
+    assert {r["family_id"] for r in rows} == {"openalex:W31"}
+    assert summary["families"]["families_with_mixed_final_labels"] == 1
+
+
+def test_two_articles_tie_break_on_year_then_work_key():
+    a = _work("openalex:W2", oas="W2", year="2020", version_hint="W1")
+    b = _work("openalex:W1", oas="W1", year="2020")
+    c = _work("openalex:W3", oas="W3", year="2019", version_hint="W1")
+    for w in (a, b, c):
+        w["doc_type"] = "journal-article"
+    fams, _ = rv.version_families([a, b])
+    assert fams[0]["family_id"] == "openalex:W1"          # same year: smallest work_key
+    fams, _ = rv.version_families([a, b, c])
+    assert fams[0]["family_id"] == "openalex:W3"          # earliest year first
+
+
+def test_hint_forms_resolve():
+    target = _work("doi:10.5/art", dois="10.5/art;10.5/alias", oas="W40")
+    hints = ["10.5/ART", "https://doi.org/10.5/art", "doi:10.5/alias",
+             "W40", "https://openalex.org/W40", "10.9/none 10.5/alias"]
+    pool = [target] + [_work(f"openalex:W{i}", oas=f"W{i}", version_hint=h)
+                       for i, h in enumerate(hints, 1)]
+    fams, summary = rv.version_families(pool)
+    assert {f["family_id"] for f in fams} == {"doi:10.5/art"}
+    assert summary["version_hints_unresolved_by_cause"] == {"doi_not_in_pool": 1}
+
+
+def test_sici_dois_keep_their_semicolon():
+    # The 1650 pattern: a SICI DOI holds ";2-8"; its tail must not become a bare
+    # record id that links two unrelated works of the same lane.
+    a = _work("openalex:W1", oas="W1", version_hint="10.1002/(sici)a>3.3.co;2-8")
+    a["member_record_ids"] = "t1650-sommaires/2026-09-30:2-8"
+    b = _work("openalex:W2", oas="W2", dois="10.1002/(sici)b>3.0.co;2-8")
+    b["member_record_ids"] = "t1650-sommaires/2026-09-30:x"
+    c = _work("openalex:W3", oas="W3", dois="10.1002/(sici)a>3.3.co;2-8;10.9/c")
+    assert rv.split_hints("10.1/a;2-8;10.2/b 10.3/c") == ["10.1/a;2-8", "10.2/b", "10.3/c"]
+    fams, summary = rv.version_families([a, b, c])
+    assert fams[0]["family_id"] == fams[2]["family_id"] != fams[1]["family_id"]
+    assert summary["version_hints_unresolved"] == 0
+
+
+def test_bare_record_ids_are_namespaced_by_lane():
+    hinting = _work("openalex:W1", oas="W1", version_hint="R1")
+    hinting["member_record_ids"] = "tA/2026-09-30:R0"
+    same_lane = _work("openalex:W2", oas="W2")
+    same_lane["member_record_ids"] = "tA/2026-09-30:R1"
+    other_lane = _work("openalex:W3", oas="W3")
+    other_lane["member_record_ids"] = "tB/2026-09-30:R1"
+    fams, _ = rv.version_families([other_lane, hinting, same_lane])
+    assert fams[1]["family_id"] == fams[2]["family_id"] != fams[0]["family_id"]
+    both = _work("openalex:W4", oas="W4", version_hint="R1")
+    both["member_record_ids"] = "tA/2026-09-30:R4;tB/2026-09-30:R4"
+    fams, summary = rv.version_families([other_lane, both, same_lane])
+    assert summary["version_hints_unresolved_by_cause"] == {"ambiguous": 1}
+    assert fams[1]["family_size"] == 1
+    lost = _work("openalex:W5", oas="W5", version_hint="R9")
+    lost["member_record_ids"] = "tA/2026-09-30:R5"
+    assert rv.version_families([lost, other_lane])[1]["version_hints_unresolved_by_cause"] == {
+        "record_not_in_lane": 1}
 
 
 def test_version_hint_by_doi_and_unresolved_hint():

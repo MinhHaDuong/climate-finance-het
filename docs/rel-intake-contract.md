@@ -102,7 +102,7 @@ empty.
 | `abstract_provenance` | | where the abstract came from when not `platform` |
 | `url` | | the most persistent http(s) identifier available: a Handle URL (`https://hdl.handle.net/…` or the repository's `<host>/handle/…`), a DOI resolver URL; else the landing page |
 | `affiliation_countries` | | `; `-separated ISO 3166-1 alpha-2 codes of author affiliations |
-| `version_hint` | | the lane's pointer to another version of the same work (DOI or `record_id`), e.g. working paper → article |
+| `version_hint` | | `;`-separated pointers to other versions of the same work (DOI, OpenAlex id, or a `record_id` of the same lane), e.g. working paper → article |
 | `lane_status` | | the lane's own disposition, information only (`candidate`, `already_in_pool`, `unresolved`, …) |
 | `lane_note` | | free text |
 
@@ -203,4 +203,8 @@ writing (`make rel-pool-data`); the writers refuse to start a new table where
 `make rel-screen-import-1530` appends the ticket 1530 labels (idempotent), and
 `make rel-view` regenerates `data/rel_pool/rel_view.csv` and `rel_counts.json`
 from the pool and the table. Paths, the 1530 archive, the stage-2 chunking and
-the audit sample are set in `config/rel_screen.yaml`.
+the audit sample are set in `config/rel_screen.yaml`, with the screen rule
+(which stage-1 labels leave, whether works still unsure after stage 2 stay in
+REL flagged) that the view applies and records in `rel_counts.json`. The view
+counts REL in works and in work families: works linked by `version_hint` count
+once, represented by an included member, a published article first.

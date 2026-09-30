@@ -7,6 +7,7 @@ writes the outputs.
 
 import csv
 import hashlib
+import re
 from collections import Counter, defaultdict
 
 import _icf_screen as ics
@@ -40,25 +41,112 @@ def _is_article(doc_type: str) -> bool:
     return d in ARTICLE_TYPES or "semantics/article" in d
 
 
-def version_families(pool: list[dict]) -> tuple[list[dict], dict]:
-    """Work families from ``version_hint`` links (union-find), one entry per work.
+_SICI_TAIL = re.compile(r"\d+-[0-9a-z]?", re.IGNORECASE)
 
-    A hint names another version by DOI or by a lane ``record_id``; it is
-    resolved against every work's ``all_dois`` and ``member_record_ids``
-    (``<lane>/<delivery>:<record_id>``). DOI-equal records are already one
-    pool work. Representative: a published article (``ARTICLE_TYPES``) before
-    any other type, then the earliest year, then ``work_key``. Returns
-    ``[{"family_id", "family_first_year", "family_size"}]`` and a summary.
+
+def split_hints(value: str) -> list[str]:
+    """Identifiers of one ``;``/whitespace-separated cell (``version_hint``, ``all_dois``).
+
+    A SICI DOI contains ``;`` itself (``…>3.0.co;2-h``): a fragment that is only
+    its check tail (``2-h``) is joined back to the identifier before it.
     """
-    ref: dict = {}
+    out: list[str] = []
+    for part in re.split(r"\s+", value.strip()):
+        for i, frag in enumerate(part.split(";")):
+            if i and out and _SICI_TAIL.fullmatch(frag):
+                out[-1] += ";" + frag
+            elif frag:
+                out.append(frag)
+    return out
+
+
+def _hint_key(hint: str) -> tuple[str, str]:
+    """``("doi", doi)``, ``("openalex", Wn)`` or ``("record", id)`` for one hint."""
+    low = hint.lower()
+    for prefix in ("https://doi.org/", "http://doi.org/", "https://dx.doi.org/",
+                   "http://dx.doi.org/", "doi:"):
+        if low.startswith(prefix):
+            return "doi", low[len(prefix):]
+    if low.startswith("10."):
+        return "doi", low
+    oa = re.fullmatch(r"(?:https?://openalex\.org/|openalex:)?(w\d+)", low)
+    if oa:
+        return "openalex", oa.group(1).upper()
+    return "record", hint
+
+
+def _lanes(member_record_ids: str) -> set[str]:
+    """Lanes of a work's lane members (``<lane>/<delivery>:<record_id>``)."""
+    out = set()
+    for rid in filter(None, member_record_ids.split(";")):
+        prefix = rid.partition(":")[0]
+        if "/" in prefix:
+            out.add(prefix.split("/", 1)[0])
+    return out
+
+
+def _hint_index(pool: list[dict]) -> dict:
+    """``{"doi"|"openalex"|"record": {key: pool index}}``; records as ``<lane>:<id>``."""
+    index: dict = {"doi": {}, "openalex": {}, "record": {}}
     for i, p in enumerate(pool):
-        for doi in filter(None, p["all_dois"].split(";")):
-            ref.setdefault(doi.strip().lower(), i)
+        for doi in split_hints(p["all_dois"]):
+            index["doi"].setdefault(doi.lower(), i)
+        for oa in split_hints(p["all_openalex_ids"]):
+            index["openalex"].setdefault(oa.upper(), i)
         for rid in filter(None, p.get("member_record_ids", "").split(";")):
             prefix, _, bare = rid.partition(":")
-            ref.setdefault(rid, i)
             if "/" in prefix and bare:
-                ref.setdefault(bare, i)
+                index["record"].setdefault(f"{prefix.split('/', 1)[0]}:{bare}", i)
+    return index
+
+
+_UNRESOLVED = {"doi": "doi_not_in_pool", "openalex": "openalex_not_in_pool",
+               "record": "record_not_in_lane"}
+
+
+def _resolve_hint(hint: str, p: dict, index: dict) -> tuple[int | None, str]:
+    """Pool index the hint of work ``p`` names, or ``None`` and the cause."""
+    kind, key = _hint_key(hint)
+    if kind != "record":
+        j = index[kind].get(key)
+    else:
+        rec = index["record"]
+        hits = {rec[k] for lane in sorted(_lanes(p.get("member_record_ids", "")))
+                if (k := f"{lane}:{key}") in rec}
+        if len(hits) > 1:
+            return None, "ambiguous"
+        j = hits.pop() if hits else None
+    return j, "" if j is not None else _UNRESOLVED[kind]
+
+
+def version_families(pool: list[dict], included: list[bool] | None = None
+                     ) -> tuple[list[dict], dict]:
+    """Work families from ``version_hint`` links (union-find), one entry per work.
+
+    A hint names another version of the same work: a DOI (bare, ``doi:`` or a
+    ``doi.org`` URL), an OpenAlex id (bare or URL), or a lane ``record_id``.
+    Hints are separated by ``;`` or whitespace. DOIs resolve against
+    ``all_dois``, OpenAlex ids against ``all_openalex_ids``; a record id is
+    namespaced by the hinting work's own lanes (``<lane>:<record_id>`` against
+    ``member_record_ids`` = ``<lane>/<delivery>:<record_id>``), so equal bare
+    ids of two lanes never meet. DOI-equal records are already one pool work.
+
+    Representative (``family_id`` is its ``work_key``): an included member
+    (``included``, the REL view's ``rel_included``) before any other, then a
+    published article (``ARTICLE_TYPES``) before any other type, then the
+    earliest year, then the smallest ``work_key`` (the tie-break between two
+    articles). ``family_first_year`` is the earliest year over all members,
+    included or not: the year of first dissemination of the work.
+
+    Returns ``[{"family_id", "family_first_year", "family_size"}]`` and a
+    summary. ``families_with_mixed_final_labels``: multi-work families whose
+    members differ in ``included``. Unresolved hints are split by cause:
+    ``doi_not_in_pool``, ``openalex_not_in_pool``, ``record_not_in_lane`` (no
+    member of the hinting work's lanes has that id), ``ambiguous`` (two lanes
+    resolve it to different works; not linked).
+    """
+    included = included or [False] * len(pool)
+    index = _hint_index(pool)
     parent = list(range(len(pool)))
 
     def find(i):
@@ -67,12 +155,12 @@ def version_families(pool: list[dict]) -> tuple[list[dict], dict]:
             i = parent[i]
         return i
 
-    unresolved = 0
+    unresolved: Counter = Counter()
     for i, p in enumerate(pool):
-        for hint in filter(None, (h.strip() for h in p["version_hint"].split(";"))):
-            j = ref.get(hint, ref.get(hint.lower()))
+        for hint in split_hints(p["version_hint"]):
+            j, why = _resolve_hint(hint, p, index)
             if j is None:
-                unresolved += 1
+                unresolved[why] += 1
             else:
                 parent[find(i)] = find(j)
     members = defaultdict(list)
@@ -80,17 +168,21 @@ def version_families(pool: list[dict]) -> tuple[list[dict], dict]:
         members[find(i)].append(i)
     out: list = [None] * len(pool)
     for group in members.values():
-        rep = min(group, key=lambda i: (not _is_article(pool[i]["doc_type"]),
+        rep = min(group, key=lambda i: (not included[i], not _is_article(pool[i]["doc_type"]),
                                         pool[i]["year"] or "9999", pool[i]["work_key"]))
         years = [pool[i]["year"] for i in group if pool[i]["year"]]
         fam = {"family_id": pool[rep]["work_key"], "family_first_year": min(years, default=""),
                "family_size": len(group)}
         for i in group:
             out[i] = fam
+    multi = [g for g in members.values() if len(g) > 1]
     summary = {"families": len(members),
-               "multi_work_families": sum(len(g) > 1 for g in members.values()),
-               "works_in_multi_work_families": sum(len(g) for g in members.values() if len(g) > 1),
-               "version_hints_unresolved": unresolved}
+               "multi_work_families": len(multi),
+               "works_in_multi_work_families": sum(len(g) for g in multi),
+               "families_with_mixed_final_labels": sum(
+                   len({included[i] for i in g}) > 1 for g in multi),
+               "version_hints_unresolved": sum(unresolved.values()),
+               "version_hints_unresolved_by_cause": dict(sorted(unresolved.items()))}
     return out, summary
 
 
@@ -177,7 +269,6 @@ def build_view(pool: list[dict], labels: list[dict], window_cfg: dict,
     ``rule``: ``screen_rule``.
     """
     matched, unmatched, how = match_labels(pool, labels)
-    fams, fam_summary = version_families(pool)
     win = classify_rel_review_works(
         pd.DataFrame({"title": [p["title"] for p in pool],
                       "year": [p["year"] for p in pool]}), config=window_cfg)
@@ -186,10 +277,12 @@ def build_view(pool: list[dict], labels: list[dict], window_cfg: dict,
         row = {k: p[k] for k in ("work_key", "openalex_id", "doi", "title", "year",
                                  "in_catalogue", "sources", "version_hint")}
         row.update(work_status(matched.get(i, []), rule))
-        row.update(fams[i])
         row["rel_disposition"] = win["rel_disposition"].iat[i]
         row["rel_year_status"] = win["rel_year_status"].iat[i]
         rows.append(row)
+    fams, fam_summary = version_families(pool, [r["rel_included"] == "true" for r in rows])
+    for row, fam in zip(rows, fams):
+        row.update(fam)
     unmatched_works: dict = defaultdict(set)
     for lab in unmatched:
         unmatched_works["no_title" if not lab["title_norm_year"] else "not_in_pool"].add(

@@ -251,7 +251,7 @@ def merge_toc(cr_recs, oa_recs):
             if hits:
                 hit = hits[0]
                 if o["doi"]:
-                    hit["alias_dois"] = " ".join(filter(None, [hit["alias_dois"], o["doi"]]))
+                    hit["alias_dois"] = ";".join(filter(None, [hit["alias_dois"], o["doi"]]))
         if hit is not None:
             hit["openalex_id"] = hit["openalex_id"] or o["openalex_id"]
             hit["in_openalex"] = True
