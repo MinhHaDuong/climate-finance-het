@@ -22,8 +22,12 @@ Status per work (latest label wins within a stage, table order):
 - ``pending_stage2``: stage-1 label in ``stage2_labels`` (``icf``, ``unsure``,
   ``aux``), no stage-2 label yet;
 - ``icf`` / ``aux`` / ``out``: the stage-2 label, final;
-- ``unsure_unresolved``: stage-2 ``unsure``. The exit rule for these works is
-  an open author decision (ticket 1655); they are counted apart, never folded.
+- ``unsure_unresolved``: stage-2 ``unsure``. Author decision of 2026-09-30
+  (recall first): they stay in REL, flagged (``stage2_unsure_in_rel``).
+
+REL membership: ``rel_included`` is ``true`` for a final ``icf`` and, under
+that decision, for ``unsure_unresolved`` with ``rel_flag`` = ``unsure``; the
+counts report the flagged works separately within REL.
 
 A stage-2 label is final whatever the stage-1 label was (the 1530 Opus pilot
 judged 160 works that stage 1 had excluded). ``audit`` labels never set a
@@ -34,9 +38,15 @@ Window: ``pipeline_loaders.classify_rel_review_works`` (``config/rel_review.yaml
 on title and year; the pool carries no publication date, so a 2026 work is
 quarantined as partial year and counted apart. Document type: that of the
 label that sets the status; institutional documents are counted apart from
-research and kept. Version linking (working paper → article) is an open author
-decision: works are counted as pool works, and the REL works carrying a
-``version_hint`` are counted, not merged.
+research and kept.
+
+Counting unit (author decision of 2026-09-30): the work family. Works linked
+by ``version_hint`` (a DOI or a lane record id of another version, e.g. a
+working paper and its article) form one family (``_rel_view.version_families``,
+union-find; DOI-equal records are already one pool work). ``family_id`` is the
+representative's ``work_key``: the published article first, else the earliest
+year; ``family_first_year`` keeps the year of first dissemination. Rows stay
+one per pool work; REL counts are given in works and in families.
 
 Outputs (``--output-dir``, default ``data/rel_pool``): ``rel_view.csv`` (one row
 per pool work) and ``rel_counts.json``, which records the exit rule it applied
@@ -68,7 +78,8 @@ VIEW_COLUMNS = ["work_key", "openalex_id", "doi", "title", "year", "in_catalogue
                 "version_hint", "status", "doc_type", "studied_country",
                 "stage1_label", "stage1_doc", "stage1_model", "stage1_run_id",
                 "stage2_label", "stage2_doc", "stage2_model", "stage2_run_id",
-                "n_audit", "n_labels", "conflict", "rel_disposition", "rel_year_status"]
+                "n_audit", "n_labels", "conflict", "rel_disposition", "rel_year_status",
+                "rel_included", "rel_flag", "family_id", "family_first_year", "family_size"]
 STATUSES = ["unscreened", "stage1_out", "stage1_aux", "pending_stage2",
             "icf", "aux", "out", "unsure_unresolved"]
 
@@ -86,12 +97,29 @@ def make_counts(rows: list[dict], summary: dict, window_cfg: dict, inputs: dict,
     def n(pred):
         return sum(1 for r in rows if pred(r))
 
+    def window(rs):
+        return [r for r in rs if r["rel_disposition"] == "include"
+                and r["rel_year_status"] == "complete"]
+
+    def families(rs):
+        return len({r["family_id"] for r in rs})
+
     icf = [r for r in rows if r["status"] == "icf"]
-    in_window = [r for r in icf if r["rel_disposition"] == "include"
-                 and r["rel_year_status"] == "complete"]
+    in_window = window(icf)
+    included = [r for r in rows if r["rel_included"] == "true"]
+    inc_research = [r for r in window(included) if r["doc_type"] == "research"]
     rel = {
         "icf_total": len(icf),
         "icf_research_in_window": sum(r["doc_type"] == "research" for r in in_window),
+        "icf_research_in_window_families": families(
+            [r for r in in_window if r["doc_type"] == "research"]),
+        "included_works": len(included),
+        "included_families": families(included),
+        "included_unsure_flagged_works": sum(r["rel_flag"] == "unsure" for r in included),
+        "included_research_in_window_works": len(inc_research),
+        "included_research_in_window_families": families(inc_research),
+        "included_research_in_window_unsure_flagged": sum(
+            r["rel_flag"] == "unsure" for r in inc_research),
         "icf_institutional_in_window": sum(r["doc_type"] == "institutional" for r in in_window),
         "icf_other_in_window": sum(r["doc_type"] not in ("research", "institutional")
                                    for r in in_window),
@@ -113,15 +141,16 @@ def make_counts(rows: list[dict], summary: dict, window_cfg: dict, inputs: dict,
         "status": {s: status[s] for s in statuses},
         "status_by_window": {s: dict(sorted(by_window[s].items())) for s in statuses},
         "rel": rel,
-        "labels": summary,
+        "labels": {k: v for k, v in summary.items() if k != "families"},
+        "families": summary["families"],
         "conflicts": {"stage1": n(lambda r: "stage1" in r["conflict"]),
                       "stage2": n(lambda r: "stage2" in r["conflict"])},
         "notes": ("status: latest label within a stage wins; stage 2 is final. "
-                  "unsure_unresolved awaits the author's exit rule (1655). "
-                  "icf_research_in_window: final icf, research, rel_disposition include, "
-                  "complete year. The partial year is counted apart by document type. "
-                  "Works are pool works; version_hint is counted, not merged (open "
-                  "decision, 1655)."),
+                  "included: final icf, plus unsure_unresolved flagged when "
+                  "rule.stage2_unsure_in_rel. *_in_window: rel_disposition include, "
+                  "complete year, per work. The partial year is counted apart by document "
+                  "type. *_families: distinct family_id (version_hint links, published "
+                  "article as representative) among the works counted."),
     }
 
 

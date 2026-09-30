@@ -30,6 +30,11 @@ stage1:
 stage1_exit_labels: [out]
 stage2_labels: [icf, unsure, aux]
 
+# Exit rule for works still "unsure" after stage 2 (author decision of
+# 2026-09-30, recall first): true keeps them in REL, flagged (rel_flag unsure)
+# and counted apart within REL; false leaves them out of REL.
+stage2_unsure_in_rel: true
+
 # Stage 2: works in stage2_labels at stage 1 with no stage-2 label yet, in
 # chunks of the 1530 format (prompt: stage2.prompt).
 stage2:

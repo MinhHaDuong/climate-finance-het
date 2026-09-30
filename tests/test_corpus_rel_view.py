@@ -36,8 +36,8 @@ def _lab(wk, stage, label, model="m", run_id="r", doc="research", title="t|2020"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 with open(os.path.join(ROOT, "config", "rel_screen.yaml"), encoding="utf-8") as _fh:
     RULE = rv.screen_rule(yaml.safe_load(_fh))  # the rule in force (config)
-OLD_RULE = rv.screen_rule({"stage1_exit_labels": ["out", "aux"],
-                           "stage2_labels": ["icf", "unsure"]})  # before 2026-09-30
+OLD_RULE = rv.screen_rule({"stage1_exit_labels": ["out", "aux"], "stage2_labels": ["icf", "unsure"],
+                           "stage2_unsure_in_rel": True})  # stage 1 before 2026-09-30
 
 POOL = [
     _work("openalex:W1", oas="W1"),                     # stage-2 icf, research
@@ -84,7 +84,8 @@ def test_statuses_matching_and_latest_label():
 
 def test_config_rule_sends_stage1_aux_to_stage2_and_out_leaves():
     # Author decision 2026-09-30: only "out" leaves at stage 1.
-    assert RULE == {"stage1_exit_labels": ["out"], "stage2_labels": ["aux", "icf", "unsure"]}
+    assert RULE == {"stage1_exit_labels": ["out"], "stage2_labels": ["aux", "icf", "unsure"],
+                    "stage2_unsure_in_rel": True}
     aux = rv.work_status([_lab("openalex:W3", "1", "aux")], RULE)
     out = rv.work_status([_lab("openalex:W2", "1", "out")], RULE)
     assert aux["status"] == "pending_stage2" and aux["stage1_label"] == "aux"
@@ -105,6 +106,71 @@ def test_old_rule_differs_by_exactly_the_stage1_aux_works():
 def test_rule_must_partition_the_labels(cfg):
     with pytest.raises(ics.IcfScreenError, match="partition"):
         rv.screen_rule(cfg)
+
+
+def test_rule_requires_the_unsure_exit():
+    with pytest.raises(ics.IcfScreenError, match="stage2_unsure_in_rel"):
+        rv.screen_rule({"stage1_exit_labels": ["out"], "stage2_labels": ["icf", "unsure", "aux"]})
+
+
+def test_stage2_unsure_stays_in_rel_flagged():
+    # Author decision 2026-09-30 (recall first): unsure after stage 2 stays, flagged.
+    labs = [_lab("openalex:W5", "1", "icf"), _lab("openalex:W5", "2", "unsure")]
+    kept = rv.work_status(labs, RULE)
+    assert (kept["status"], kept["rel_included"], kept["rel_flag"]) == (
+        "unsure_unresolved", "true", "unsure")
+    dropped = rv.work_status(labs, {**RULE, "stage2_unsure_in_rel": False})
+    assert (dropped["rel_included"], dropped["rel_flag"]) == ("false", "")
+    icf = rv.work_status([_lab("openalex:W1", "2", "icf")], RULE)
+    assert (icf["rel_included"], icf["rel_flag"]) == ("true", "")
+
+
+def _gs_pair():
+    # The 1651 pattern: Gavard-Schoch working paper (SSRN 2021) -> article (2026),
+    # each record pointing at the other by lane record id.
+    wp = _work("openalex:W31", oas="W31", year="2021", dois="10.2139/ssrn.3799872",
+               version_hint="1651-GS02")
+    wp.update(doc_type="report", journal="SSRN Electronic Journal",
+              member_record_ids="openalex:W31;t1651-gavard-schoch/2026-09-30:1651-GS01")
+    art = _work("openalex:W72", oas="W72", year="2026", dois="10.1017/s1355770x26100679",
+                version_hint="1651-GS01")
+    art.update(doc_type="journalArticle",
+               member_record_ids="t1651-gavard-schoch/2026-09-30:1651-GS02")
+    return [wp, art]
+
+
+def test_version_families_prefer_the_published_article():
+    fams, summary = rv.version_families(_gs_pair() + [_work("openalex:W9", oas="W9")])
+    assert [f["family_id"] for f in fams] == ["openalex:W72", "openalex:W72", "openalex:W9"]
+    assert fams[0]["family_first_year"] == "2021" and fams[0]["family_size"] == 2
+    assert summary == {"families": 2, "multi_work_families": 1,
+                       "works_in_multi_work_families": 2, "version_hints_unresolved": 0}
+
+
+def test_version_hint_by_doi_and_unresolved_hint():
+    a = _work("openalex:W1", oas="W1", year="2019", version_hint="10.5/ART")
+    a["doc_type"] = "preprint"
+    b = _work("doi:10.5/art", dois="10.5/art", year="2020")
+    b["doc_type"] = "journal-article"
+    c = _work("openalex:W3", oas="W3", version_hint="1999-NOPE")
+    fams, summary = rv.version_families([a, b, c])
+    assert fams[0]["family_id"] == fams[1]["family_id"] == "doi:10.5/art"
+    assert summary["version_hints_unresolved"] == 1
+
+
+def test_rel_counts_in_works_and_families():
+    pool = _gs_pair()
+    labels = [_lab("openalex:W31", "2", "icf"), _lab("openalex:W72", "2", "unsure")]
+    rows, summary = rv.build_view(pool, labels, WINDOW, RULE)
+    counts = crv.make_counts(rows, summary, WINDOW, {}, RULE)
+    rel = counts["rel"]
+    assert rel["included_works"] == 2 and rel["included_families"] == 1
+    assert rel["included_unsure_flagged_works"] == 1
+    # W72 (2026) is partial year: in window only the working paper counts.
+    assert rel["included_research_in_window_works"] == 1
+    assert rel["included_research_in_window_families"] == 1
+    assert counts["families"]["multi_work_families"] == 1
+    assert "families" not in counts["labels"]
 
 
 def test_counts_window_doc_type_and_version_hint():
