@@ -368,8 +368,8 @@ def manifest(records, registry, excluded, stats, status, producer, delivery, not
     disputed = disputed_strings(status)
     if disputed:
         incomplete.append({"unit": f"query strings {', '.join(disputed)}",
-                           "reason": "reviewed-disputed: one of two reviewers objected, "
-                                     "string kept as run"})
+                           "reason": "reviewed-disputed: one of two model reviewers "
+                                     "objected, string kept as run; no human reader"})
     if langs:
         incomplete.append({"unit": f"query strings in {langs}",
                            "reason": "machine-drafted, no competent reader reviewed them "
