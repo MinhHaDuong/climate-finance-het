@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
+2026-09-30T13:24Z HDMX-coding-agent note docs/jetp-operation.md drafted: machines, data flow, repository as control plane, checking rule, secrets, budgets (proposed defaults, derived from the held text layer and AEDIST prices), logging, backups (DVC remote shares padme's disk), failure handling, M4 changes, checks table; draft PR for author review
 
 --- body ---
 ## Context
@@ -30,5 +31,5 @@ built before it.
 
 ## Exit criteria
 
-- [ ] `docs/jetp-operation.md` covers which machine runs what, supervision from doudou, schedules, budgets (API, OpenAlex, LLM readers, GPU), secrets, failure and deferral, the one-direction data flow, and the author's attention as a resource
-- [ ] Every rule carries its milestone; M4 items are named as such and not required before
+- [x] `docs/jetp-operation.md` covers which machine runs what, supervision from doudou, schedules, budgets (API, OpenAlex, LLM readers, GPU), secrets, failure and deferral, the one-direction data flow, and the author's attention as a resource
+- [x] Every rule carries its milestone; M4 items are named as such and not required before
