@@ -1,7 +1,6 @@
 # JETP system: purpose and requirements
 
-Status: draft for author review, 2026-09-30. Requirements marked
-*inferred* were not found stated and await the author's confirmation.
+Status: draft for review, revised with the author's decisions of 2026-09-30.
 
 This document says what the JETP system is for, who uses what it produces,
 and what it must deliver to them. Every other document of the specification
@@ -299,14 +298,15 @@ commissioned during the partnership.
 **F21. Excerpts for qualitative work.** For any operation, party or country,
 the system returns the statements with their verbatim text, language,
 publisher, date and locator, so that a codebook-based coding done outside
-the ledger can cite them. *M3b. Inferred*, from the long paper's
-excerpt-level justification. Test: for one country, a list of excerpts about
+the ledger can cite them. Codebooks and codings stay outside the ledger;
+the ledger holds only the statements they cite. *M3b.* Test: for one country, a list of excerpts about
 negotiation or ownership can be produced, each resolving to its snapshot.
 
 **F22. Change between releases is attributed.** When a later release changes
 a figure, the change is attributed to one of: a development in the world, a
 late report, a publisher's correction, a changed interpretation, a ledger
-error, a changed method. *M4.* Test: for each figure that differs between
+error, a changed method. M3b delivers a single release; attribution between
+editions begins with the second one. *M4.* Test: for each figure that differs between
 two consecutive releases, one attribution is recorded.
 
 **F23. What the observatory serves.** Every table of the ledger is served to
@@ -381,18 +381,18 @@ held as comparator records beside the documentary statements, never merged
 into them. *M3b.* Test: every CRS or IATI record used in a result is
 identified by its channel identifier and retrieval date.
 
-**D11. Expected volume.** *Inferred.* After M3a and three years of
+**D11. Expected volume.** After M3a and three years of
 refresh, the system handles about ten times the documents held today and a
 weekly snapshot of each living document, with no change of design. *Later*
 (stated so that M2 does not preclude it). Test: the design documents name no
 limit that the current volume already approaches.
 
-**D12. Reference operations outside the partnerships.** *Inferred*, from the
-short paper's history dimension and the non-JETP energy operations the
-observatory shows today. Operations of partner lenders in the four countries
-that carry no JETP attribution may be held, in a counting scope of their
-own, as the pre-existing history of JETP operations and as a reference pool.
-*M3b.* Test: no such operation enters a strict JETP figure (F13).
+**D12. Reference operations outside the partnerships.** Milestones of JETP
+operations dated before the partnership, and operations of partner lenders
+in the four countries that carry no JETP attribution, are held in a counting
+scope of their own: the pre-existing history of JETP operations and a
+reference pool. They never enter a strict JETP figure (F13). *M3b.* Test: a
+strict-scope figure recomputed without this scope is unchanged.
 
 ## 6. Quality requirements
 
@@ -415,14 +415,17 @@ the deterministic readers and the writer, not a fresh read. *M2.* Test: every
 statement read by a language model names its model and version; re-running
 does not replace a recorded reading.
 
-**Q5. The author is not the checker.** Judgements (matching, preference,
-classification) are made by independent readers from different vendors,
-blind to each other, with positive controls run first; the author examines
-results sorted by likelihood and confidence and decides only what readers
-decline or contradict each other on. *M3b* for judgements; *M2* for
-extraction, where one-off readings get row-by-row review. Test: no judgement
-in a release rests on a single reader without its confidence recorded; the
-author's queue is sorted by confidence.
+**Q5. The author is not the checker.** Every item read or judged by a
+language model (a statement read, a match, a preference, a classification)
+is read by one reader and checked by a second reader from another vendor,
+blind to the first, with its likelihood and confidence recorded. The author
+sees only the items where the two disagree and a random sample of those
+where they agree, sorted by likelihood and confidence. The full panel of
+independent readers with positive controls (Fusion § 3) is M4. *M2* for
+statements read, *M3a* for discovery and admission judgements, *M3b* for
+identity and preference judgements. Test: every language-model item in a
+release carries two readings from two vendors; the author's queue holds only
+disagreements and the sample, in that order.
 
 **Q6. Released figures trace both ways.** Every published number, status and
 substantive narrative claim resolves to the statements and the named
@@ -481,19 +484,19 @@ run that finds nothing says so. *M3a* for discovery rounds, *M4* for
 scheduled passes. Test: kill a run midway; the failure is reported, and no
 report reads as an all-clear.
 
-**Q15. Cost and effort are measured.** *Inferred*, from the AEDIST pilot's
-measures. Each run records its model spend and the human minutes spent on
+**Q15. Cost and effort are measured.** Each run records its model spend and the human minutes spent on
 its review, so that the cost of an accepted change can be computed. *M3b.*
 Test: the M3b release states spend and review time per document class.
 
 ## 7. Constraints
 
 **C1. One researcher's attention.** The author is the only person; the
-author's time is the scarcest resource. Decisions are batched; machine
-judgements are routed to other machines before the author; weekends are off.
-*M2.* Test: no design rule requires the author to review every item of a
-class that readers could judge; each queue for the author states its
-expected size.
+author's time is the scarcest resource. Decisions are batched; weekends are
+off. Before M4, the author's review of machine readings is bounded by Q5:
+disagreements between the two readers and a random sample of agreements,
+nothing else. *M2.* Test: no design rule requires the author to review every
+item of a class; each queue for the author states its expected size and is
+sorted by likelihood and confidence.
 
 **C2. Two machines, one direction.** padme, a personal workstation with GPUs
 and the document bytes, runs every job that reads bytes or models; doudou, a
@@ -510,20 +513,24 @@ interfaces. *M2.* Test: each reading method names where it runs.
 **C4. Budgets.** Paid interfaces (language-model readers, search, bibliographic
 APIs) run under a budget stated before the run, per document and per run; a
 run that reaches its budget stops and reports. *M2.* Test: every paid call
-belongs to a run with a stated budget. The amounts are not stated anywhere
-yet: *inferred*, to be set by the author in Operation.
+belongs to a run with a stated budget. The amounts are set in Operation.
 
 **C5. Open access.** The released dataset and the papers are open access, the
 papers in diamond open access without article processing charges; each
 release carries its reuse terms and its citation. *M3b.* Test: the release
 states reuse terms, citation and deposit identifier.
 
-**C6. Terms of use of sources.** Document bytes are redistributed only where
-the source's terms allow; otherwise a release carries the address, hash and
-locator. A change of a site's terms or robots rules is signalled, never
-silently obeyed or ignored. Access checks and logins are passed by the author
-in person, never by automation. *M3a.* Test: the release lists which bytes are
-redistributed and on what terms; no automated run passes a login.
+**C6. Terms of use of sources.** Automated link-following obeys each
+site's robots rules. A single fetch of a known document that the author
+could open in a browser goes ahead, and the site's stated position (robots
+rules, terms of use) is recorded with the retrieval. A change of a site's
+terms or robots rules is signalled, never silent. Access checks and logins
+are passed by the author in person, never by automation. Document bytes are
+redistributed only where the source's terms allow; otherwise a release
+carries the address, hash and locator. *M3a.* Test: no automated crawl
+fetches a path the site's robots rules exclude; every single fetch records
+the site's stated position; the release lists which bytes are redistributed
+and on what terms.
 
 **C7. Static publication.** The observatory is published as static pages and
 frozen data, with no server application required to read it. *M3b.* Test: the
@@ -567,7 +574,7 @@ completeness is never claimed.
 weekly at most (a working assumption the author may change), from M4;
 publication is always a reviewed act.
 
-**N7. No countries beyond the four** before M4. *Later, inferred:* adding a
+**N7. No countries beyond the four** before M4. *Later:* adding a
 country requires a discovery frame and data, not a change of design.
 
 **N8. No translations or summaries as requirements.** Machine translations of
@@ -588,7 +595,8 @@ reproducible results; manuscripts and journal submission are outside it.
 ## 9. Requirements and the documents expected to meet them
 
 A requirement may be met by more than one document; the first named carries
-it.
+it. "Extraction § observations" is the M3b section of the extraction
+document that reads statements into observations.
 
 | Requirement | Milestone | Expected to be met by |
 |---|---|---|
@@ -605,14 +613,14 @@ it.
 | F11 Identities by judgement, counted at a cutoff | M3b | Fusion § 3 |
 | F12 Organisations under authority control | M3b | Fusion § 3; Ontology |
 | F13 Counts name unit and population | M3b | Fusion § 6–7; Results and releases |
-| F14 Financial states selected, not added | M3b | Fusion § 7; Ontology § 4 |
-| F15 Money in publisher's currency | M3b | Fusion § 7 |
-| F16 Operation timelines with honest dates | M3b | Ontology; Fusion § 4 |
-| F17 Funding roles kept apart | M3b | Ontology; Fusion § 7 |
-| F18 Transition functions | M3b | Ontology |
+| F14 Financial states selected, not added | M3b | Extraction § observations; Fusion § 7; Ontology § 4 |
+| F15 Money in publisher's currency | M3b | Extraction § observations; Fusion § 7 |
+| F16 Operation timelines with honest dates | M3b | Extraction § observations; Ontology; Fusion § 4 |
+| F17 Funding roles kept apart | M3b | Extraction § observations; Ontology; Fusion § 7 |
+| F18 Transition functions | M3b | Extraction § observations; Ontology |
 | F19 Reconciliation with CRS and IATI | M3b | Fusion § 5; Results and releases |
 | F20 Finance joined to assets | M3b | Fusion § 3; Ontology |
-| F21 Excerpts for qualitative work (inferred) | M3b | Results and releases |
+| F21 Excerpts for qualitative work | M3b | Results and releases |
 | F22 Change between releases attributed | M4 | Fusion § 8; Results and releases |
 | F23 What the observatory serves | M3b | Storage § 2; Presentation |
 | F24 Principal reference per country | M3b | Presentation |
@@ -626,27 +634,27 @@ it.
 | D8 Known-item list | M3a | Collection |
 | D9 Unreachable sources are data | M3a | Collection; Results and releases |
 | D10 Structured channels | M3b | Collection; Ontology |
-| D11 Expected volume (inferred) | later | Storage; Operation |
-| D12 Reference operations outside the partnerships (inferred) | M3b | Collection; Fusion § 6 |
+| D11 Expected volume | later | Storage; Operation |
+| D12 Reference operations outside the partnerships | M3b | Collection; Fusion § 6 |
 | Q1 Replay | M2 | Extraction |
 | Q2 Idempotence | M2 | Extraction; Storage |
 | Q3 Readers red-tested | M2 | Extraction |
 | Q4 Language-model readings recorded | M2 | Extraction |
-| Q5 The author is not the checker | M2, M3b | Fusion § 3; Extraction |
+| Q5 The author is not the checker | M2, M3a, M3b | Extraction; Collection; Fusion § 3 |
 | Q6 Released figures trace both ways | M3b | Results and releases; Presentation |
 | Q7 Corrections propagate | M3b | Results and releases |
 | Q8 Releases frozen and reproducible | M3b | Results and releases |
-| Q9 Every method has a version | M2, M3b | Fusion § 1; Extraction |
+| Q9 Every method has a version | M2, M3b | Extraction; Extraction § observations; Fusion § 1 |
 | Q10 Recall stated | M3a | Collection |
-| Q11 Uncertainty never hidden | M2, M3b | Fusion § 1; Results and releases |
+| Q11 Uncertainty never hidden | M2, M3b | Extraction § observations; Fusion § 1; Results and releases |
 | Q12 Computed and published numbers apart | M3b | Presentation; Results and releases |
 | Q13 Observation apart from inference | M3b | Language; Presentation |
 | Q14 No silent run | M3a, M4 | Operation; Collection |
-| Q15 Cost and effort measured (inferred) | M3b | Operation |
+| Q15 Cost and effort measured | M3b | Operation |
 | C1 One researcher's attention | M2 | Operation |
 | C2 Two machines, one direction | M2, M4 | Operation |
 | C3 Local compute first | M2 | Operation; Extraction |
-| C4 Budgets (amounts inferred) | M2 | Operation |
+| C4 Budgets, amounts set in Operation | M2 | Operation |
 | C5 Open access | M3b | Results and releases |
 | C6 Terms of use of sources | M3a | Collection; Results and releases |
 | C7 Static publication | M3b | Presentation; Storage § 3 |
