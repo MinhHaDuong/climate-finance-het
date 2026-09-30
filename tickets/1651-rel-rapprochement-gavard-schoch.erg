@@ -6,6 +6,7 @@ Author: haduong
 --- log ---
 2026-09-29T15:00Z haduong created
 2026-09-30T13:42Z HDMX-coding-agent note rapprochement fait: 29 references, 14 doublon, 3 inclus, 11 hors theme, 1 non resolu (Wang & Tang, needs-human); 12 absences livrees data/rel/gavard_schoch/delivery_1655.csv
+2026-09-30T13:58Z HDMX-coding-agent livraison refaite au contrat d'intake 1730 (PR #1604): data/rel_intake/t1651-gavard-schoch/2026-09-30, 29 notices, 1 exclusion front_matter, qa_rel_intake OK
 --- body ---
 ## Contexte
 
@@ -24,7 +25,7 @@ des émissions, en staging Zotero (0704).
 - [x] Liste de décisions par référence (inclus / doublon / hors période / hors thème / non résolu)
   — `data/rel/gavard_schoch/decisions.csv`, 29 lignes, une décision chacune, preuve citée (registre `references.csv`)
 - [x] Absences pertinentes livrées à 1655 avec provenance ; l'absence d'un DOI correspondant n'est pas traitée comme absence du pool
-  — `data/rel/gavard_schoch/delivery_1655.csv` (12 lignes) ; la règle titre/auteur/année tourne pour toute référence sans DOI trouvé, et retrouve, DOI effacé, les 12 références pertinentes trouvées par DOI dans `unified_works.csv` (contrôle positif)
+  — livraison au contrat 1730 (PR #1604), `data/rel_intake/t1651-gavard-schoch/2026-09-30/` (DVC) : 29 notices, dont les 12 absences (3 inclus, 9 hors thème) et les 17 présences marquées `already_in_pool`, 1 exclusion `front_matter` ; `qa_rel_intake.py` : OK ; la règle titre/auteur/année tourne pour toute référence sans DOI trouvé, et retrouve, DOI effacé, les 12 références pertinentes trouvées par DOI dans `unified_works.csv` (contrôle positif)
 - [x] Références non résolues listées, jamais comptées comme traitées
   — 1 : Wang & Tang (2026), `treated=no`, `needs_human=yes`
 
@@ -52,8 +53,11 @@ Schoch 2021 (ZEW DP, au catalogue) et 2026 (EDE, seulement chez les candidats
 catalogue, est signalé comme version chinoise possible de Wu–Pan–She 2021.
 L'unité de compte reste à 1655.
 
-Livraison : aucun contrat 1730 n'était sur `main` au 2026-09-30. Faute de
-contrat, `delivery_1655.csv` livre toutes les absences, hors thème compris et
-marquées (aucune mise à l'écart de pertinence avant livraison, comme le prévoit
-1730), avec voie, clé Zotero, fichier source, date de collecte, révision du
-pool et preuve.
+Livraison : au contrat d'intake de 1730 (`docs/rel-intake-contract.md`, PR
+#1604), dans `data/rel_intake/t1651-gavard-schoch/2026-09-30/`, suivi par DVC
+(`data/rel_intake/t1651-gavard-schoch.dvc`, poussé sur padme). Le contrat
+interdit d'écarter une notice pour pertinence ou présence au corpus : les 29
+références sont livrées, décision et correspondance au pool portées par
+`lane_status` et `lane_note` à titre d'information. Seule la notice web d'état
+de la collection (`missing-papers.html`) est exclue, comme `front_matter`.
+Vérificateur `scripts/qa_rel_intake.py` (sur `main` depuis #1604) : OK.
