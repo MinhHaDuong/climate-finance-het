@@ -2,12 +2,14 @@
 Title: Spec: index, milestone tags, triage of dated docs
 Created: 2026-09-30
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1607
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
 2026-09-30T16:00Z HDMX-coding-agent note Index docs/jetp-spec.md and triage done (17 keep, 20 attic, 4 delete); milestone tags deferred until the vocabulary alignment pass, per the author's plan of 2026-09-30
 2026-09-30T18:30Z HDMX-coding-agent note milestone tags added to language, ontology, fusion, storage and presentation after the vocabulary pass (ticket 1703); a rule already in force carries the earliest milestone that relies on it
 
+2026-09-30T13:54Z HDMX-coding-agent closed — autoclosed — PR #1607
 --- body ---
 ## Context
 
