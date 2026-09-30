@@ -1,0 +1,33 @@
+%erg 0.1
+Title: REL — export EconLit à la main (hors bibCNRS)
+Created: 2026-09-30
+Author: haduong
+Label: needs-human
+
+--- log ---
+2026-09-30T16:00Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Enfant de 0700, suite de 1652 (PR #1609). Le 30 septembre 2026, la connexion
+Janus automatisée à bib.cnrs.fr fonctionne, mais EconLit n'est pas sous licence
+pour les domaines du compte (INSHS, INEE) : codes de base ecn/eoh sans
+résultat, fournisseur EconLit refusé par EDS (« Invalid Content Provider »),
+EBSCOhost via le proxy en erreur d'authentification 108, EconLit ProQuest non
+souscrit ; Ovid non essayé.
+
+Les chaînes EconLit adaptées (syntaxe EBSCOhost : TI/AB/SU/CC JEL, PT Working
+Paper, DT) sont dans `config/rel_causal_search.yaml` et le rapport
+`docs/rel-causal-map-search-2026-09-30.md` ; elles ont été rejouées sur RePEc et
+ECONIS via bibCNRS EDS en substitut pour les working papers.
+
+Options : accès EconLit par une autre institution (bibliothèque d'un
+établissement partenaire, AEA), ou accepter RePEc+ECONIS comme substitut et
+consigner EconLit comme couverture incomplète.
+
+## Exit criteria
+
+- [ ] L'auteur choisit : export EconLit à la main (institution et plateforme notées) ou couverture incomplète consignée avec sa portée
+- [ ] Si export : requêtes du registre exécutées telles quelles, exports RIS archivés avec date et chaîne, livrés à 1655 selon le contrat d'intake
+- [ ] Si couverture incomplète : décision de l'auteur inscrite dans le protocole (`conception/rel-audit-finalisation-corpus.md`) et le flux PRISMA
