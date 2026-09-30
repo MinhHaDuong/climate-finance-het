@@ -2,6 +2,7 @@
 Title: Migration du ledger JETP vers l'ontologie v2 (suiveur)
 Created: 2026-09-22
 Author: HDMX-coding-agent
+Closed: Ontology v2 migration integrated; final counts, served-table inventory, confidence review and ZAF/VNM acceptance are green
 
 --- log ---
 2026-09-22T17:30Z HDMX-coding-agent created
@@ -12,6 +13,11 @@ Author: HDMX-coding-agent
 2026-09-23T15:31Z HDMX-coding-agent note scission monstre exécutée (raid, tickets-migration-prep, 2026-09-23) : 0876 scindé en 0876 (observations, timings) plus [[0887]] (status-crosswalk) et [[0888]] (sector-crosswalk), tous deux Blocked-by [[0873]] pas 0876 (lisent des lignes et les tables de 0880, jamais une observation) ; 0877 scindé en 0877 (périmètres et observations de périmètre) plus [[0889]] (adjudications, Blocked-by 0877) et [[0890]] (comptes dérivés et service overview.json, Blocked-by 0889) ; dix-neuf enfants au lieu de quinze. Blocked-by de [[0878]] mis à jour : [[0887]], [[0888]], [[0890]], 0879, 0884 (pointes de chaque branche)
 2026-09-24T15:09Z Codex note décision de l'auteur : les anciens IDs de l'aperçu non publié n'ont pas de routes à préserver ; [[0875]] garde leurs dispositions, sans 404 nouvelles lignes de routes ni redirections navigateur (suite de PR #1492).
 2026-09-29T13:36Z HDMX-coding-agent note enfant ajouté (2026-09-29) : [[1620]] donne un propriétaire ou une disposition à chaque ligne des trois registres de migration (0876-pending, 1160-citation-decisions, 0884-coverage-dispositions), 145 lignes distinctes
+2026-09-29T13:40Z HDMX-coding-agent decision décisions de l'auteur (revue d'intégration) : les 304 anciens liens de découverte restent candidats pour [[1500]], jamais acceptés en masse ; trois familles de `line_id` sont reconnues sans renommage ; la navigation sépare le fil Documents — Document rows — Statements des projets et organisations ; l'ensemble documents, snapshots, retrievals, lines, line-referents, observations et coverage est servi ; les jugements sont présentés avec stance et confiance ; les invariants des registres sont vérifiés une fois à la clôture de 0870, pas transformés en garde-fou récurrent.
+2026-09-30T03:50Z Codex note revue finale : les dix-neuf enfants et les réparations [[1590]], [[1610]], [[1620]] et [[0833]] sont fermés ; le recensement réel des 27 tables est figé à `dd98e868` dans `docs/jetp-ledger-migration.md`. L'inventaire Methods nomme 31 tables et annexes et 86 artefacts servis, tous sous 512 000 octets ; les 152 jugements de 1620 sont servis avec stance, lecteurs, preuve et confiance. La descente Viet Nam conserve séparément 7 propositions initiales et 17 nouvellement examinées, puis leurs observations terminales acceptées, lignes citées, couverture et trois documents, sans identité inventée ni total 24.
+2026-09-30T03:51Z Codex note audit unique des registres : les 53 lignes restantes de `0876-pending.csv` ont chacune propriétaire et disposition ; les 31 IDs de timing cités par les décisions `resolved` de 1620 existent tous dans `timings.d`. Conformément à la décision du 29 septembre, ce constat de clôture n'est pas un garde-fou récurrent à comptes figés.
+2026-09-30T03:52Z Codex note portes de clôture sur padme, checkout hydraté : Astra APPROVE, Luna APPROVE ; `make check-domain-jetp` 621 passés, 5 ignorés ; `make check` 3 076 passés, 52 ignorés, plus 25 tests de bibliothèque ; `make check-fast` 2 090 passés, 9 ignorés, plus 25 tests de bibliothèque ; `make lint` 351 passés, 8 ignorés ; recette navigateur complète verte avec 278 copies archivées servies, 12 liens Web Archive vérifiés, un lien éditeur mort attendu et 97 opérations historiques. Les routes publiées et dispositions sans redirection restent couvertes par les portes fusionnées de 0875/0878 et la recette finale.
+2026-09-30T03:52Z HDMX-coding-agent closed — Ontology v2 migration integrated; final counts, served-table inventory, confidence review and ZAF/VNM acceptance are green
 --- body ---
 ## Context
 
@@ -82,9 +88,9 @@ PR #1449 fusionnée le 2026-09-23 (0ddf30e2) : le train peut partir. `line-trans
 
 ## Exit criteria
 
-- [ ] Les dix-neuf enfants sont fermés
-- [ ] Revue d'intégration : diffs des enfants relus, `make check` complet, recettes ZAF et VNM vertes
-- [ ] `docs/jetp-ledger-migration.md` mis à jour avec les comptes réels de la migration
-- [ ] Aucune route publiée cassée ; les IDs de l'aperçu non publié ont chacun une disposition, sans redirection
-- [ ] Repris de [[0860]] : toute table du contrat de stockage § 1 est servie, une table par fichier, ou nommée comme non servie avec sa raison sur la page How we did this ; aucun compte affiché n'additionne deux tables
-- [ ] Repris de [[0860]] : depuis le compte des places non publiées du Viet Nam, le lecteur descend dans le navigateur à l'observation de périmètre, à sa ligne, à ses lignes de couverture et à leurs documents
+- [x] Les dix-neuf enfants sont fermés
+- [x] Revue d'intégration : diffs des enfants relus, `make check` complet, recettes ZAF et VNM vertes
+- [x] `docs/jetp-ledger-migration.md` mis à jour avec les comptes réels de la migration
+- [x] Aucune route publiée cassée ; les IDs de l'aperçu non publié ont chacun une disposition, sans redirection
+- [x] Repris de [[0860]] : toute table du contrat de stockage § 1 est servie, une table par fichier, ou nommée comme non servie avec sa raison sur la page How we did this ; aucun compte affiché n'additionne deux tables
+- [x] Repris de [[0860]] : depuis le compte des places non publiées du Viet Nam, le lecteur descend dans le navigateur à l'observation de périmètre, à sa ligne, à ses lignes de couverture et à leurs documents

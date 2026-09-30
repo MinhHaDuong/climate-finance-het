@@ -1091,9 +1091,8 @@ header nav.section-tabs .sections > .section > a.active {
     display: block;
   }
 }
-/* The sub-bar: one component for all three sections — plain sibling tabs,
- * no separators, the current page underlined — and, on the paper trail, the
- * country chip at its right. Breadcrumbs, on detail pages, stay small muted
+/* The sub-bar marks the current page, with a separate referent side group
+ * on the paper trail and the country chip at its right. Breadcrumbs stay small muted
  * text with arrows, so the two never look alike (sixth batch). */
 .step-bar {
   display: flex;
@@ -1115,6 +1114,11 @@ header nav.section-tabs .sections > .section > a.active {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+.referent-tabs {
+  margin-left: auto;
+  border-left: 1px solid var(--line);
+  padding-left: 12px;
 }
 .sub-tabs a {
   display: block;
