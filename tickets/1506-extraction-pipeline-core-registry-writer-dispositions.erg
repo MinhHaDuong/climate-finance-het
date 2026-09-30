@@ -2,10 +2,12 @@
 Title: Extraction pipeline core: registry interface, writer, dispositions, idempotence
 Created: 2026-09-29
 Author: HDMX-coding-agent
+Blocked-by: 1711
 
 --- log ---
 2026-09-29T09:14Z HDMX-coding-agent created — code child of [[1500]] (M2)
 2026-09-30T08:09Z HDMX-coding-agent decision author (2026-09-30, interactive): a new snapshot appends dated lines; content restated unchanged is kept as weak confirmation; pending list added. Work and exit criteria amended
+2026-09-30T11:48Z HDMX-coding-agent note blocked by the specification gate (author, 2026-09-30): no M2 code before spec v1 is accepted, tracker [[1703]]
 --- body ---
 ## Context
 
