@@ -37,6 +37,10 @@ directory), the Qwen runs on padme.
 DOI and title). Refused while the run has not finished (``run.log`` has no
 closing ``labelled N, unlabelled M`` line) and when its invocations disagree
 on model or prompt hash. ``labelled_at`` is the first invocation's start.
+``--skip-ids`` leaves out labels whose input id is not a real OpenAlex id: the
+throwaway builder of the 2026-09-30 catalogue run took the first "W + digits"
+inside any ``source_id``, so 7 EconBiz ids (``EDSZBW…``) and 3 SciSpace URLs came in
+as false W-ids; a label keyed on one would sit forever on the wrong work.
 
 Usage:
     python scripts/corpus_icf_import.py t1530 [--archive DIR] [--table PATH]
@@ -186,7 +190,7 @@ def t1530_rows(archive: str, stage2_prompt_md: str) -> list[dict]:
 
 
 def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
-                    source: str) -> list[dict]:
+                    source: str, skip_ids: frozenset = frozenset()) -> list[dict]:
     log_path = os.path.join(run_dir, "run.log")
     text = open(log_path, encoding="utf-8").read() if os.path.exists(log_path) else ""
     _require(bool(FINISHED.search(text)),
@@ -205,7 +209,8 @@ def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
     _require(not missing, f"{len(missing)} labels outside the run input, e.g. {missing[:3]}")
     (model,), (prompt,) = models, prompts
     return [_stage1_row(work_meta(inputs[lab["openalex_id"]]), lab, run_id, model, prompt,
-                        machine, started, source) for lab in labels]
+                        machine, started, source) for lab in labels
+            if lab["openalex_id"] not in skip_ids]
 
 
 def main(argv=None):
@@ -222,6 +227,9 @@ def main(argv=None):
     p2.add_argument("--machine", required=True)
     p2.add_argument("--input", default=None, help="default: RUN_DIR/screen_input.jsonl")
     p2.add_argument("--run-id", default=None, help="default: the run directory name")
+    p2.add_argument("--skip-ids", default=None,
+                    help="file of input ids (one per line) whose labels are not imported, "
+                         "e.g. ids that are not real OpenAlex ids")
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
@@ -234,8 +242,13 @@ def main(argv=None):
         else:
             run_dir = args.run_dir.rstrip("/")
             run_id = args.run_id or os.path.basename(run_dir)
+            skip = frozenset()
+            if args.skip_ids:
+                with open(args.skip_ids, encoding="utf-8") as fh:
+                    skip = frozenset(line.strip() for line in fh if line.strip())
             rows = stage1_run_rows(run_dir, args.input or os.path.join(run_dir, "screen_input.jsonl"),
-                                   args.machine, run_id, f"{run_id}/screen.jsonl")
+                                   args.machine, run_id, f"{run_id}/screen.jsonl", skip)
+            log.info("skipped %d ids listed in --skip-ids", len(skip))
             note = f"import stage-1 run {run_id}"
         added, skipped = ics.append_new(table, rows, note)
     except (ImportRefused, ics.IcfScreenError) as exc:

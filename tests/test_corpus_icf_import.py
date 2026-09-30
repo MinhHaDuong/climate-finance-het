@@ -112,6 +112,12 @@ def test_stage1_run_import(tmp_path):
         "openalex:W7", "2026-09-30-catalogue-stage1", "qwen", "10.2/x", "2026-09-30T10:00:00+00:00")
 
 
+def test_stage1_run_skip_ids(tmp_path):
+    d = _run_dir(tmp_path)
+    assert ci.stage1_run_rows(str(d), str(d / "screen_input.jsonl"), "padme", "r", "s",
+                              frozenset({"W7"})) == []
+
+
 def test_stage1_run_refused_while_running_or_mixed(tmp_path):
     with pytest.raises(ci.ImportRefused, match="not finished"):
         ci.stage1_run_rows(str(_run_dir(tmp_path, finished=False)), "", "padme", "r", "s")
