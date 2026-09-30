@@ -222,12 +222,13 @@ def yields(records, registry, labels, group_key):
         hits[group_key(s)] += int(s["n_received"] or 0)
     # marginal uniqueness: works no other group of the same lane retrieved
     lane_groups = defaultdict(list)
-    for g in works_by_group:
-        lane_groups[g[0]].append(g)
+    for g in works_by_group:  # lane-level rows compare the lanes with each other
+        lane_groups[g[0] if len(g) > 1 else "*"].append(g)
     rows = []
     for g in sorted(set(hits) | set(works_by_group)):
         ws = works_by_group.get(g, set())
-        others = set().union(*(works_by_group[o] for o in lane_groups[g[0]] if o != g))
+        others = set().union(*(works_by_group[o] for o in lane_groups[g[0] if len(g) > 1 else "*"]
+                               if o != g))
         rel = {w for w, q in pairs_by_group.get(g, ()) if labels.get((w, q)) == "relevant"}
         row = {"lane": g[0], "group": "|".join(str(x) for x in g[1:]), "raw_hits": hits[g],
                "unique_works": len(ws),
@@ -376,14 +377,11 @@ def pair_id(work_key, question):
     return f"{question}::{work_key}"
 
 
-def run(args):
-    with open(args.families, encoding="utf-8") as fh:
-        fam_cfg = yaml.safe_load(fh)
-    mech = {q: m["mechanism"].strip() for q, m in {**fam_cfg["families"], **fam_cfg["themes"]}.items()}
-    run_dirs = args.run_dir if isinstance(args.run_dir, list) else [args.run_dir]
-    dirs = [d for d in run_dirs + [args.eds_dir] if d]
-    # a later run directory supersedes an earlier one for the ids it reran,
-    # unless it is worse: an unfinished rerun that received fewer records
+def load_runs(dirs):
+    """(registry, registry with the EconLit rows, records) of the run directories.
+
+    A later run directory supersedes an earlier one for the ids it reran,
+    unless it is worse: an unfinished rerun that received fewer records."""
     def rank(r):
         return (r["completed"] == "True", int(r["n_received"] or 0))
 
@@ -395,7 +393,6 @@ def run(args):
             elif r["search_id"] not in winner or rank(r) >= rank(winner[r["search_id"]][1]):
                 winner[r["search_id"]] = (d, r)
     registry = [r for _, r in winner.values()]
-    registry_all = registry + econlit_rows
     records = []
     for d in dirs:
         for rec in read_jsonl_gz(os.path.join(d, "results.jsonl.gz")):
@@ -408,6 +405,58 @@ def run(args):
             rec.update(question=s["question"], formulation=s["formulation"],
                        platform=s["platform"], language_q=s["language"])
             records.append(rec)
+    return registry, registry + econlit_rows, records
+
+
+def sentinel_recall(sentinels, records, refined, unified):
+    rows = []
+    for s in sentinels:
+        doi, oid = normalize_doi(s["doi"]), s["openalex_id"]
+        tk = title_key(s["title"], s["year"])
+        keys = {k for k in (doi and "doi:" + doi, oid and "oa:" + oid, tk and "ty:" + tk) if k}
+        # a record joined to the sentinel's work by title carries the work's key
+        hits = [r for r in records if r["work_key"] in keys
+                or (oid and r.get("openalex_id") == oid) or (doi and r["doi"] == doi)
+                or (tk and title_key(r.get("title"), r.get("year")) == tk)]
+        own = [r for r in hits if r["question"] == s["family"]]
+        probe = {"doi": doi, "openalex_id": oid, "title": s["title"],
+                 "year": int(s["year"]) if s["year"].isdigit() else None}
+        rows.append({**{k: s[k] for k in ("sentinel", "family", "set", "source")},
+                     "in_refined": probe in refined, "in_unified": probe in unified,
+                     "found_any_search": bool(hits), "found_own_family": bool(own),
+                     "found_openalex": any(r["platform"] == "openalex" for r in hits),
+                     "found_eds": any(r["platform"] != "openalex" for r in hits),
+                     "searches": "|".join(sorted({r["search_id"] for r in hits}))})
+    return rows
+
+
+def write_delivery(path, records, registry, labels, archive_path, manifest_sha256):
+    """Every retrieval, one row each, with its provenance."""
+    reg = {r["search_id"]: r for r in registry}
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, DELIVERY_FIELDS)
+        w.writeheader()
+        for r in records:
+            s = reg[r["search_id"]]
+            w.writerow({
+                "lane": "1652", "search_id": r["search_id"], "platform": s["platform"],
+                "query_string": s["query_string"], "filter": s["filter"], "run_datetime": s["run_at"],
+                "archive_path": archive_path, "manifest_sha256": manifest_sha256,
+                "work_key": r["work_key"], "openalex_id": r.get("openalex_id", ""),
+                "eds_an": r.get("eds_an", ""), "doi": r["doi"], "title": r.get("title", ""),
+                "year": r.get("year") or "", "language": r.get("language") or "",
+                "type": r.get("type") or "", "has_abstract": bool(r.get("abstract")),
+                "family": r["question"], "formulation": r["formulation"],
+                "family_relevance": labels.get((r["work_key"], r["question"]), ""),
+                "in_refined": r["in_refined"], "in_unified": r["in_unified"], "in_sud": r["in_sud"]})
+
+
+def run(args):
+    with open(args.families, encoding="utf-8") as fh:
+        fam_cfg = yaml.safe_load(fh)
+    mech = {q: m["mechanism"].strip() for q, m in {**fam_cfg["families"], **fam_cfg["themes"]}.items()}
+    run_dirs = args.run_dir if isinstance(args.run_dir, list) else [args.run_dir]
+    registry, registry_all, records = load_runs([d for d in run_dirs + [args.eds_dir] if d])
     assign_work_keys(records)
     refined, unified, sud = load_catalog(args.refined), load_catalog(args.unified), load_sud(args.sud_results)
     for r in records:
@@ -448,47 +497,12 @@ def run(args):
         write_csv(os.path.join(args.output_dir, "family_outcome_inputs.csv"),
                   outcome_inputs(records, labels, probes, counts, fam_cfg))
 
-    # sentinel recall
     with open(args.sentinels, encoding="utf-8", newline="") as fh:
         sentinels = list(csv.DictReader(fh))
-    rows = []
-    for s in sentinels:
-        doi, oid = normalize_doi(s["doi"]), s["openalex_id"]
-        tk = title_key(s["title"], s["year"])
-        keys = {k for k in (doi and "doi:" + doi, oid and "oa:" + oid, tk and "ty:" + tk) if k}
-        # a record joined to the sentinel's work by title carries the work's key
-        hits = [r for r in records if r["work_key"] in keys
-                or (oid and r.get("openalex_id") == oid) or (doi and r["doi"] == doi)
-                or (tk and title_key(r.get("title"), r.get("year")) == tk)]
-        own = [r for r in hits if r["question"] == s["family"]]
-        probe = {"doi": doi, "openalex_id": oid, "title": s["title"],
-                 "year": int(s["year"]) if s["year"].isdigit() else None}
-        rows.append({**{k: s[k] for k in ("sentinel", "family", "set", "source")},
-                     "in_refined": probe in refined, "in_unified": probe in unified,
-                     "found_any_search": bool(hits), "found_own_family": bool(own),
-                     "found_openalex": any(r["platform"] == "openalex" for r in hits),
-                     "found_eds": any(r["platform"] != "openalex" for r in hits),
-                     "searches": "|".join(sorted({r["search_id"] for r in hits}))})
-    write_csv(os.path.join(args.output_dir, "sentinel_recall.csv"), rows)
-
-    # delivery: every retrieval, with provenance
-    reg = {r["search_id"]: r for r in registry}
-    with open(os.path.join(args.output_dir, "delivery.csv"), "w", encoding="utf-8", newline="") as fh:
-        w = csv.DictWriter(fh, DELIVERY_FIELDS)
-        w.writeheader()
-        for r in records:
-            s = reg[r["search_id"]]
-            w.writerow({
-                "lane": "1652", "search_id": r["search_id"], "platform": s["platform"],
-                "query_string": s["query_string"], "filter": s["filter"], "run_datetime": s["run_at"],
-                "archive_path": args.archive_path, "manifest_sha256": args.manifest_sha256,
-                "work_key": r["work_key"], "openalex_id": r.get("openalex_id", ""),
-                "eds_an": r.get("eds_an", ""), "doi": r["doi"], "title": r.get("title", ""),
-                "year": r.get("year") or "", "language": r.get("language") or "",
-                "type": r.get("type") or "", "has_abstract": bool(r.get("abstract")),
-                "family": r["question"], "formulation": r["formulation"],
-                "family_relevance": labels.get((r["work_key"], r["question"]), ""),
-                "in_refined": r["in_refined"], "in_unified": r["in_unified"], "in_sud": r["in_sud"]})
+    write_csv(os.path.join(args.output_dir, "sentinel_recall.csv"),
+              sentinel_recall(sentinels, records, refined, unified))
+    write_delivery(os.path.join(args.output_dir, "delivery.csv"), records, registry, labels,
+                   args.archive_path, args.manifest_sha256)
     log.info("wrote yields, sentinel recall, %d judge pairs and %d delivery rows",
              len(seen), len(records))
     if getattr(args, "intake_dir", None):

@@ -105,6 +105,8 @@ def test_yields_reference_sets_uniqueness_and_delivery(lane):
     assert by_lane["openalex"]["absent_refined"] == "1" and by_lane["openalex"]["absent_sud"] == "1"
     assert by_lane["openalex"]["absent_all_three"] == "0"
     assert by_lane["eds"]["unique_works"] == "2" and by_lane["eds"]["absent_all_three"] == "1"
+    # lane-level uniqueness compares the lanes: the working paper only EDS found
+    assert by_lane["eds"]["only_this_group"] == "1" and by_lane["openalex"]["only_this_group"] == "1"
     forms = {(r["lane"], r["group"]): r for r in _csv(out / "yield_by_formulation.csv")}
     assert forms[("openalex", "IM|en")]["only_this_group"] == "1"   # W2 only by IM
     assert forms[("openalex", "IO|en")]["only_this_group"] == "0"

@@ -29,7 +29,13 @@ import sys
 from datetime import datetime, timezone
 
 import yaml
-from catalog_rel_sud_search import OA_API, OA_SELECT, build_filter, load_corpus_keys, slim
+from catalog_rel_sud_search import (
+    OA_API,
+    OA_SELECT,
+    build_filter,
+    load_corpus_keys,
+    slim,
+)
 from pipeline_keystore import read_credential
 from utils import MAILTO, get_logger, polite_get
 
