@@ -252,8 +252,8 @@ is how the first principle ("no rule below selects a value or merges two
 things on its own") and the proposers above hold together. [M2]
 
 **Who decides what.** Every decision of the Observer falls under one row
-of this table, which is the one statement of decision authority; the
-requirements (N4, F7, Q5) and the other documents cite it.
+of this table, which is the one statement of decision authority;
+requirement N4 cites it.
 
 | Decision | Decided by | In force when | What downstream accepts | Reversed by |
 |---|---|---|---|---|
