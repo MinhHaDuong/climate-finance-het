@@ -1,0 +1,107 @@
+"""CEEW (Council on Energy, Environment and Water, India) publications.
+
+CEEW offers no API or feed for its catalogue, and robots.txt (2026-09-30)
+disallows its search (``/search/``) and paged listings (``/*/page/``,
+``/*?page=``). It does publish ``/sitemap.xml``, which lists every
+publication page (``/publications/...``, ``/hindi-publications/...`` and the
+centre sub-sites). Each page is read for its title (``og:title``), date and
+"Overview" paragraph, and matched locally. robots.txt asks ``Crawl-delay: 10``
+and signals ``search=yes, ai-input=yes``: requests are spaced 10 s at least.
+"""
+
+import re
+
+from pipeline_io import polite_get
+
+from rel_sud_sources._common import empty_record, find_year
+from rel_sud_sources._listing import html_text, listing_query, matcher, script_language
+
+SITEMAP = "https://www.ceew.in/sitemap.xml"
+LANGUAGES = ["en", "hi"]
+CRAWL_DELAY = 10.0
+PUB_PATH = re.compile(r"^https://www\.ceew\.in/(?:[a-z0-9-]+/)?(?:hindi-)?publications/[^/]+$")
+
+SOURCE = {
+    "name": "ceew",
+    "region": "South Asia (India)",
+    "languages": LANGUAGES,
+    "route": "listing",
+    "endpoint": SITEMAP,
+    "terms": "https://www.ceew.in/robots.txt",
+}
+
+LOC_RE = re.compile(r"<loc>([^<]+)</loc>")
+META_RE = re.compile(r'<meta (?:property|name)="([^"]+)" content="([^"]*)"', re.I)
+DROP_RE = re.compile(r"<(script|style|noscript)\b.*?</\1>", re.I | re.S)
+MONTH_YEAR_RE = re.compile(r"\b(?:January|February|March|April|May|June|July|August|"
+                           r"September|October|November|December) ((?:19|20)\d{2})\b")
+
+
+def plan(cfg):
+    return [{"query_id": "S-ceew-sitemap",
+             "query_string": listing_query(
+                 f"GET {SITEMAP}, then every publication page it lists "
+                 "(/publications/, /hindi-publications/, /<centre>/publications/)",
+                 LANGUAGES, "matched on title and Overview"),
+             "match": matcher(cfg, LANGUAGES)}]
+
+
+def publication_urls(sitemap_xml):
+    urls = [u.strip() for u in LOC_RE.findall(sitemap_xml)]
+    return list(dict.fromkeys(u for u in urls if PUB_PATH.match(u)))
+
+
+def parse_page(text):
+    """``(title, meta dict, plain text)`` of one publication page."""
+    meta = {}
+    for k, v in META_RE.findall(text):
+        meta.setdefault(k.lower(), html_text(v))
+    return meta.get("og:title", ""), meta, html_text(DROP_RE.sub(" ", text))
+
+
+def overview(title, text):
+    """The Overview paragraph, else the page text from the title heading on."""
+    m = re.search(r"\bOverview\b(.*?)(?:\bKey Highlights\b|\bDownload\b|$)", text, re.S)
+    if m and m.group(1).strip():
+        return m.group(1).strip()[:3000]
+    i = text.rfind(title) if title else -1
+    return text[i:i + 3000] if i >= 0 else ""
+
+
+def to_record(url, title, meta, text, match):
+    abstract = overview(title, text)
+    head = text[text.rfind(title):][:600] if title and title in text else ""
+    year = MONTH_YEAR_RE.search(head)
+    return empty_record(
+        record_id=url, url=url, title=title,
+        year=int(year.group(1)) if year else find_year([meta.get("article:published_time", "")]),
+        language=script_language(title), venue="CEEW",
+        doc_type="report", abstract=abstract,
+        matched_terms="; ".join(match(title + " " + abstract)))
+
+
+def fetch(spec, delay, get=polite_get):
+    delay = max(delay, CRAWL_DELAY)
+    try:
+        resp = get(SITEMAP, delay=delay)
+    except Exception as exc:  # network failure after retries
+        yield ("end", f"error: {type(exc).__name__} on sitemap")
+        return
+    if resp.status_code != 200:
+        yield ("end", f"http {resp.status_code} on sitemap")
+        return
+    urls = publication_urls(resp.text)
+    yield ("meta", len(urls))
+    failed = 0
+    for url in urls:
+        try:
+            page = get(url, delay=delay)
+        except Exception:  # one page lost; counted below
+            failed += 1
+            continue
+        if page.status_code != 200:
+            failed += 1
+            continue
+        title, meta, text = parse_page(page.text)
+        yield ("work", to_record(url, title, meta, text, spec["match"]))
+    yield ("end", f"{failed} of {len(urls)} pages failed" if failed else "")
