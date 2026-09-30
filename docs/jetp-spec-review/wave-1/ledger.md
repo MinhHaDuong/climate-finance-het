@@ -94,7 +94,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Where do readings and run records live? (a) ledger CSV tables served or named not-served under F23, with a `runs` table; (b) DVC-tracked JSONL per run with only a run_id column on `lines` and the run report as the record; (c) tables for readings, no `runs` table (operation §8's committed report suffices). Recommended: (a); Q17 serves readings and AED-2/3 need them joinable, and a `runs` row is cheap.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: option (a): `readings` and `runs` as append-only journals in the storage contract's target schema, `run_id` plus method and version on lines, observations and decision tables, raw model responses stored under their hash beside the document bytes; exit criteria added to ticket 1702; applied in "docs(jetp): storage contract gains readings and runs journals and the ontology tables" and "docs(jetp): no ticket numbers or dates in normative text; History lines and index states" (language).
 
 ### W1-02 (blocker, M2)
 
@@ -188,7 +188,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Two scope calls: should the classification list grow now with `target`, `event`, `decision` (the spike's uncovered cases) or only after the author sees cases in the first sittings; and are typed value spans excluded from M2 prose extraction (typing deferred to M3b reading)? Recommended: grow by decision after cases are seen; no typed spans at M2.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: field lists fixed per document class or series by the method, never by the reader; prose label the shortest verbatim span carrying the assertion, fields verbatim; the line classification list gains `target`, `event` and `decision` now (terms in force), and a reader may answer "cannot classify", the panel proposing new classes that only the author adopts; amounts and dates as printed at M2, typed at M3b; applied in "docs(jetp): prose statement shape, comparator replay, scan transcription and M3b scope".
 
 ### W1-13 (major, M2)
 
@@ -214,7 +214,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Scope: is replay of the 10,452 comparator lines part of M2 acceptance? Options: (a) yes, by the ingestion run with the count control; (b) no, retag them M3b and exclude from Q1. Recommended: (a); they are held bytes and the replay is mechanical.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: option (a): M2 replays the 10,452 comparator lines by the bulk-ingestion method with a count control per snapshot; applied in "docs(jetp): prose statement shape, comparator replay, scan transcription and M3b scope".
 
 ### W1-16 (major, M2)
 
@@ -224,7 +224,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Transcribe Decision 458 at M2 (one author sitting over 23 pages, recogniser as method) or defer it to M3b with the deferral named in the M2 acceptance? Recommended: transcribe at M2; OBS-1 for Viet Nam depends on it and the cost is one sitting.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: Decision 458 transcribed at M2 without an author sitting (recogniser, two vision-capable readers, arbiter on escalation, locator page and region, likelihood and confidence recorded); general collection rule: search for a born-digital copy before transcribing any scan, and record the search; applied in "docs(jetp): prose statement shape, comparator replay, scan transcription and M3b scope".
 
 ### W1-17 (major, M2)
 
@@ -258,7 +258,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Accept a lighter gate for run-output PRs (validator, controls, report and a sampled trail instead of full cross-family row review)? Options: (a) yes as proposed; (b) keep the full loop but batch one PR per run; (c) keep full loop per document. Recommended: (a); the real row check is the §6.3 queue.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: option (a) with one PR per run: lighter gate for run-output PRs (validator, planted-item and fabricated-locator controls, replay and idempotence, run report), the cross-family reviewer reading the report and a sample of traceability chains; code PRs keep the full loop; ledger tables CSV in git, bulky raw material under DVC by hash, table-aware run summary; Dolt recorded as the M4 option; applied in "docs(jetp): run-output gate and two off-disk copies of the document bytes".
 
 ### W1-21 (major, M2)
 
@@ -276,7 +276,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Where does the retained second copy live? Options: (a) an external disk kept off-site or at the institution; (b) institutional storage (CNRS or lab NAS); (c) the laptop, upgraded to a retained and verified copy. Recommended: (b) if available, else (a), with the laptop as a third copy.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: Zotero is the off-site copy now (one-way upload, sha256 in the item metadata), DVC the working store until the M4 move; padme's nightly restic backup to a Hetzner Storage Box stated, with its failure and repair of 2026-09-30; M2 test restore of one snapshot from each copy; ticket 1712 updated; applied in "docs(jetp): run-output gate and two off-disk copies of the document bytes".
 
 ### W1-23 (major, M3a)
 
@@ -310,7 +310,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Adopt the proposed admission scope (statements about a partnership's projects, money, perimeters, parties or states, plus the DA12 reference pool)? Options: (a) as proposed; (b) strict JETP attribution only, DA12 pool as context-only; (c) broader (any energy-transition finance in the four countries). Recommended: (a).
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: option (a): admission scope is statements about a partnership's projects, money, perimeters, parties or states, plus the DA12 reference pool in its own counting scope; a context-only candidate is registered with the disposition `out_of_scope`; applied in "docs(jetp): admission scope and point-estimate recall gate for discovery".
 
 ### W1-27 (major, M3a)
 
@@ -320,7 +320,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Is the 90% recall stopping condition a point-estimate gate or a lower-bound gate? Options: (a) point estimate at n=40 (36 of 40), with the biases reported beside it; (b) Wilson lower bound at 90%, which needs about 38 of 40 or a larger list. Recommended: (a) with the two-frame reporting; (b) only if the list grows past about 80 items.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: option (a): point-estimate gate (36 of 40) with the Wilson interval and known biases published; items found only after the frame was widened because of them count as missed; recall reported under the declared and the widened frame; applied in "docs(jetp): admission scope and point-estimate recall gate for discovery".
 
 ### W1-28 (major, M3a)
 
@@ -338,7 +338,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Commission a one-page legal note under Q21 on the basis for holding and redistributing copies (TDM exception, quotation, public-sector re-use, per jurisdiction)? Options: (a) yes, before M3a, from the institution's legal service; (b) proceed on the stated attribution-as-quotation basis and note the risk. Recommended: (a); it is not a build gate but it precedes go-live.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: the legal note is written on another branch; only the author-independent parts applied: terms, robots, registration and access-route columns as target columns, CC BY for the Observer's own contributions, publisher text reproduced under attribution as quoted data, jurisdiction France, DA9 listing documents reachable only through robots-excluded paths; applied in "docs(jetp): storage contract gains readings and runs journals and the ontology tables" and "docs(jetp): release licence position, report tickets, named formats and M3b accounts".
 
 ### W1-30 (major, M3b)
 
@@ -348,7 +348,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Set the confidence floor of the default inclusive threshold. Options: (a) 'any confidence' as drafted, which admits know-nothing judgements; (b) 'low or more', which excludes them; (c) 'medium or more', close to the cautious end. Recommended: (b).
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: option (b): the inclusive threshold requires low confidence or more; the cautious threshold stays likely, medium confidence or more; calibration [M2] makes the terms meaningful; the fix's one judged likelihood and abstention for `undetermined` applied with it; applied in "docs(jetp): one judged likelihood, calibrated terms and a confidence floor on the inclusive threshold".
 
 ### W1-31 (major, M3b)
 
@@ -406,7 +406,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Report record: (a) a ticket per report, the ticket number as identifier, cited from the supersession row (lighter, no personal data in the ledger); (b) a served `reports` table without reporter identity, with a report_id, target, claim, adjudication and outcome. Recommended: (a); a table can be derived from tickets at M4 if the volume warrants it.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: option (a): one ticket per reported error, its number the identifier cited from the correction row; no personal data in the ledger; "reported, awaiting a public source" is a valid outcome; a table may be derived at M4; applied in "docs(jetp): release licence position, report tickets, named formats and M3b accounts".
 
 ### W1-38 (major, M3b)
 
@@ -424,7 +424,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Accept the M3b scoping (read only measure-bearing statements in a declared counting scope; match only lines feeding a declared result, top-k per line; the rest listed, not counted)? Options: (a) as proposed; (b) read everything, match everything, accept a longer M3b. Recommended: (a); it is what F11's 'listed, not counted' already allows.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: option (a): M3b reads only measure-bearing statements in a declared counting scope and matches only lines feeding a declared result, top-k candidates per line, the rest listed, not counted; reading and matching on the local models, OpenRouter only as arbiter on escalation; applied in "docs(jetp): prose statement shape, comparator replay, scan transcription and M3b scope".
 
 ### W1-40 (minor, M2)
 
@@ -442,7 +442,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Keep the ontology tables in the ontology with a stated exception to the ground rule, or move the table rows to storage §1? Recommended: the stated exception; it is one sentence and keeps the ontology self-contained.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: moved: the five ontology tables' keys, columns, paths and DDL test go to storage section 1, the ontology keeping their meaning and a pointer; the alignment test reads table rows from both documents and passes unchanged; applied in "docs(jetp): storage contract gains readings and runs journals and the ontology tables".
 
 ### W1-42 (minor, M2)
 
@@ -460,7 +460,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Adopt a no-dates, no-ticket-numbers rule in normative text (provenance pointers moved to an attic section) or keep pointers where they explain provenance? Recommended: keep provenance pointers, fix the State column, no attic move.
 
-**Outcome.** partly fixed in 954d6e84 (State column); rest pending author.
+**Outcome.** decided by the author 2026-09-30: strict: no ticket numbers or dates in normative text, provenance in a History line at the end of the section it concerns; the index's State column fixed (no ticket or PR numbers; documents 0, 3, 4, 5, 7 and 9 reviewed); applied in "docs(jetp): no ticket numbers or dates in normative text; History lines and index states".
 
 ### W1-44 (minor, M2)
 
@@ -640,7 +640,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Adopt Frictionless Data Package plus DataCite via Zenodo as the named formats, or RO-Crate (JSON-LD, can carry the run record), or leave the format private? Recommended: Frictionless plus DataCite; both are lightweight, generated from the DDL, and need no heavy dependency.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: Frictionless Data Package for files and data dictionary and DataCite metadata through Zenodo, both generated from the DDL, at M3b; RO-Crate with W3C PROV recorded as the M4 option; applied in "docs(jetp): release licence position, report tickets, named formats and M3b accounts".
 
 ### W1-66 (minor, M3b)
 
@@ -682,7 +682,7 @@ Specification at commit 7f3368b5 (main, 2026-09-30). Seven lenses (within-file, 
 
 **Author decision.** Scope: are accounts (opening, movements, closing, residual) an M3b result, and does the F19 comparison use CRS climate-marked amounts (which would keep the Markers machinery at M3b)? Recommended: accounts at M3b under OBS-1 and F19 with `deflators` deferred; Markers to M4 unless F19 needs marked amounts.
 
-**Outcome.** open, needs author.
+**Outcome.** decided by the author 2026-09-30: accounts (opening, movements, closing, residual) are an M3b result serving OBS-1 and F19, deflators deferred; the Markers machinery moves to M4 unless F19 needs climate-marked amounts, stated as a condition; applied in "docs(jetp): release licence position, report tickets, named formats and M3b accounts".
 
 ### W1-71 (minor, M3b)
 
