@@ -40,8 +40,14 @@ Or : 59 yes, 61 no, 21 na, 1 unsure.
 | Coût OpenRouter | 0,65 USD (solde 16,54 → 15,89 USD) ; Opus, Fable, Sonnet sans coût OpenRouter |
 
 Lecture. L'écart ICF entre l'ancien prompt et la v2 est du même ordre que le bruit d'un
-rejeu du prompt v1 : le libellé ICF reste comparable, et la classe `icf`, celle qui
-entre dans la REL, ne bouge pas. Un effet de direction est visible à la frontière
+rejeu du prompt v1 : le libellé ICF reste comparable. Pour la classe `icf`, celle qui
+entre dans la REL, la v2 ne perd aucune des 21 œuvres pilotes que le v1 rejoué étiquette
+`icf` (0 sur 21), ni aucune des 48 sentinelles (0 sur 48). C'est une borne unilatérale :
+au seuil de 95 %, le taux de perte par la v2 est inférieur à 1 − 0,05^(1/21) ≈ 13 % sur
+les pilotes, 1 − 0,05^(1/48) ≈ 6 % sur les sentinelles, 1 − 0,05^(1/69) ≈ 4 % sur les
+deux réunies. Cela exclut une perte systématique de la classe `icf` ; cela n'exclut pas
+une perte de quelques pour cent, et ne dit rien des gains (1 `aux` et la sentinelle S30
+passent `icf` en v2, 2 `aux` passent `unsure`). Un effet de direction est visible à la frontière
 `aux`/`out` : le même jour, 14 des 75 `aux` du v1 passent `out` en v2, aucun dans l'autre
 sens. Il ne touche pas l'inclusion REL (`aux` n'y entre pas) mais la carte
 bibliométrique ; sa cause est examinée ci-dessous. Les erreurs de décision portent surtout sur
