@@ -1,77 +1,77 @@
 %erg 0.1
-Title: REL — audit de reproductibilité des études d'efficacité émissions, au-delà de Gavard & Schoch
+Title: REL — reproducibility audit of emissions-effectiveness studies, beyond Gavard & Schoch
 Created: 2026-09-23
 Author: haduong
 Label: needs-human
 
 --- log ---
 2026-09-23T06:41Z haduong created
-
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
 ## Context
 
-L'audit de Gavard & Schoch (2026) a trouvé, dans les données mêmes des
-auteurs, des défauts de mesure qui changent le résultat :
+The audit of Gavard & Schoch (2026) found, in the authors' own data,
+measurement defects that change the result:
 
-- pondération 40 % annoncée pour le marqueur « significatif », mais non
-  appliquée (vérifié sur deux prêts JICA) ;
-- rupture de 2013 : entrée des BMD, dont IBRD, IDA et IFC, et du FEM dans les
-  déclarations ;
-- prêts comptés en valeur faciale (76 % de l'atténuation) ;
-- chevauchement atténuation/adaptation compté deux fois ;
-- permutation des deux Congo ;
-- tableau A2 mal étiqueté.
+- 40% weighting announced for the "significant" marker, but not applied
+  (checked on two JICA loans);
+- 2013 break: entry of the MDBs, including IBRD, IDA and IFC, and of the GEF
+  into the reporting;
+- loans counted at face value (76% of mitigation);
+- mitigation/adaptation overlap counted twice;
+- swap of the two Congos;
+- mislabelled table A2.
 
-Sur un ensemble de fournisseurs constant, l'effet cumulé d'atténuation perd
-sa significativité (z = 1,7, et 0,4 en modèle joint). L'effet d'adaptation résiste.
+On a constant provider set, the cumulative mitigation effect loses its
+significance (z = 1.7, and 0.4 in the joint model). The adaptation effect holds.
 
-Un seul papier fait une anecdote. La question pour la controverse 2 (0704) est
-de savoir si c'est un schéma : les études d'efficacité prennent-elles les
-marqueurs de Rio au pied de la lettre, et leurs résultats en dépendent-ils ?
+One paper makes an anecdote. The question for controversy 2 (0704) is whether
+this is a pattern: do effectiveness studies take the Rio markers at face value,
+and do their results depend on it?
 
-## Périmètre : deux niveaux, le second est à arbitrer
+## Scope: two levels, the second to be arbitrated
 
-1. **Codage des mesures (dans le périmètre agréé).** Pour chaque étude du lot,
-   relever depuis la section données :
-   - la pondération Rio annoncée et appliquée ;
-   - les fournisseurs couverts et le traitement de la rupture de 2013 ;
-   - engagements ou décaissements ;
-   - valeur faciale ou équivalent-don ;
-   - le traitement du chevauchement ;
-   - le millésime ;
-   - la disponibilité des données et du code.
-   Le résultat est un tableau comparatif, sans nouvelle estimation.
-2. **Réplication (hors périmètre agréé : décision de l'auteur, peut-être de
-   l'éditeur).** Réestimer les études dont les données sont disponibles sous
-   mesure cohérente, comme pour Gavard & Schoch. Ce travail relève plutôt d'un
-   papier séparé ou d'un complément au commentaire que de la revue : 0700 dit
-   « ne pas élargir sans en reparler à l'éditeur ».
+1. **Coding of measures (within the agreed scope).** For each study in the
+   batch, extract from the data section:
+   - the Rio weighting announced and applied;
+   - the providers covered and the treatment of the 2013 break;
+   - commitments or disbursements;
+   - face value or grant equivalent;
+   - the treatment of the overlap;
+   - the vintage;
+   - the availability of data and code.
+   The result is a comparative table, with no new estimation.
+2. **Replication (outside the agreed scope: author's decision, perhaps the
+   editor's).** Re-estimate the studies whose data are available under a
+   consistent measure, as for Gavard & Schoch. This work belongs rather to a
+   separate paper or to a complement of the comment than to the review: 0700
+   says "do not widen without talking to the editor again".
 
 ## Relevant files
 
-- `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance counterproductive/`, hors dépôt :
-  - `ReproductibilityNotes.md` (RN-011) : les constats et leurs preuves ;
-  - `audit/provider-check-2026-09-23/`, `audit/provider-sensitivity-2026-09-23/` : méthode et script réutilisables ;
-  - `audit/climate-finance-composition-2026-09-23/REPORT.md` : composition et bibliographie de la critique ;
-  - `audit/research-note-international-climate-finance-causality-2026.md` : revue des 15 études ;
-  - `docs/` : les textes du lot.
+- `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance counterproductive/`, outside the repo:
+  - `ReproductibilityNotes.md` (RN-011): the findings and their evidence;
+  - `audit/provider-check-2026-09-23/`, `audit/provider-sensitivity-2026-09-23/`: reusable method and script;
+  - `audit/climate-finance-composition-2026-09-23/REPORT.md`: composition and bibliography of the critique;
+  - `audit/research-note-international-climate-finance-causality-2026.md`: review of the 15 studies;
+  - `docs/`: the texts of the batch.
 
 ## Actions
 
-1. Coder les 15 études sur la grille du niveau 1 (Gavard & Schoch servent de ligne de référence).
-2. Inventorier les paquets de réplication publics (Zenodo, Dataverse, suppléments).
-3. Soumettre à l'auteur le choix du niveau 2, étude par étude, avec coût estimé.
+1. Code the 15 studies on the level 1 grid (Gavard & Schoch serve as the reference row).
+2. Inventory the public replication packages (Zenodo, Dataverse, supplements).
+3. Submit to the author the choice of level 2, study by study, with estimated cost.
 
 ## Invariants
 
-- Symétrie : les résultats favorables passent la même grille que les défavorables.
-- Un constat de mesure publié sur un tiers passe d'abord par les auteurs,
-  comme les questions envoyées à Schoch.
-- Ce lot est un échantillon de lecture, pas une mesure sur le corpus
-  (invariant de 0704).
+- Symmetry: favourable results go through the same grid as unfavourable ones.
+- A measurement finding published about a third party goes first through the
+  authors, like the questions sent to Schoch.
+- This batch is a reading sample, not a measurement on the corpus
+  (invariant of 0704).
 
 ## Exit criteria
 
-- [ ] Tableau de codage des 15 études, sources citées par page
-- [ ] Inventaire des paquets de réplication
-- [ ] Décision de l'auteur sur le niveau 2 consignée dans ce ticket
+- [ ] Coding table of the 15 studies, sources cited by page
+- [ ] Inventory of replication packages
+- [ ] Author's decision on level 2 recorded in this ticket

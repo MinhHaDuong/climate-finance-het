@@ -1,18 +1,18 @@
 %erg 0.1
-Title: REL — prompt étape 2 étendu : discipline, champ, type de contribution (avant lancement)
+Title: REL — extended stage-2 prompt: discipline, field, contribution type (before launch)
 Created: 2026-10-01
 Author: HDMX-coding-agent
 
 --- log ---
 2026-10-01T10:00Z HDMX-coding-agent created
-
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
-## Contexte
-Enfant de 1830 (décisions de l'auteur du 2026-10-01, voir 1830). Priorité : doit fusionner avant le lancement de l'étape 2 Opus (en attente de l'expérience routeur). Les nouvelles questions sont des champs de sortie séparés ; le libellé ICF et le prompt historique (hash des 4 752 libellés t1530) restent intacts : nouveau fichier de prompt, table de dimensions append-only à part.
+## Context
+Child of 1830 (author decisions of 2026-10-01, see 1830). Priority: must merge before the launch of the Opus stage 2 (waiting for the router experiment). The new questions are separate output fields; the ICF wording and the historical prompt (hash of the 4,752 t1530 labels) stay intact: new prompt file, separate append-only dimensions table.
 
 ## Exit criteria
-- [ ] Nouveau wrapper étape 2 (fichier versionné distinct), sortie avec discipline (test de contribution), champ, type de contribution ; le hash historique du prompt t1530 n'est pas modifié
-- [ ] Parseur accepte l'ancien et le nouveau format ; table de dimensions append-only avec le même garde-fou que `icf_screen`
-- [ ] Ensemble or discipline (100–150 œuvres, stratifié ML/science des données, finance pure, gestion), deux juges décorrélés + arbitrage en panel, sans l'auteur
-- [ ] Test sur l'ensemble de contrôle (200) et les sentinelles : accord ICF avec l'ancien prompt, accord discipline avec l'or, coût rapporté
-- [ ] `make check-fast` et `make lint` passent
+- [ ] New stage-2 wrapper (distinct versioned file), output with discipline (contribution test), field, contribution type; the historical hash of the t1530 prompt is not modified
+- [ ] Parser accepts the old and the new format; append-only dimensions table with the same guard as `icf_screen`
+- [ ] Gold discipline set (100-150 works, stratified ML/data science, pure finance, management), two decorrelated judges + panel arbitration, without the author
+- [ ] Test on the control set (200) and the sentinels: ICF agreement with the old prompt, discipline agreement with the gold set, cost reported
+- [ ] `make check-fast` and `make lint` pass

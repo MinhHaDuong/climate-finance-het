@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Recenser le JETP Sénégal projet par projet
+Title: List the Senegal JETP project by project
 Created: 2026-09-11
 Author: Minh
 
@@ -32,31 +32,32 @@ Author: Minh
 2026-09-13T20:26Z Codex note Author requests document-led follow-up: target named contracts, village schedules, original ANER fiches and institutional study records; verify contact routes and prepare precise requests after public-repository checks
 2026-09-13T20:46Z Codex note Document-led follow-up independently confirms Annex23 from final ANER PSD;21 collected /19 central_only /3 blocked,22 unresolved;301 sources /307 observations /257 archived objects verified;103 JETP tests and fast25+1535/10skip plus lint332/10skip pass; six reviewed institutional requests prepared but not sent
 2026-09-17T08:51Z HDMX-coding-agent note blocker 0716 closed — Blocked-by removed.
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
 
 ## Context
 
-Appliquer le contrat 0716 au JETP sénégalais depuis la déclaration de juin
-2023 jusqu'à la date de collecte. Le Plan d'investissement et ses annexes,
-publiés après le lancement, rendent obsolète toute photographie arrêtée à
-2024. Couvrir ministère, IPG, bailleurs, Senelec, projets de renouvelables,
-réseau, accès et articulation avec les nouveaux hydrocarbures.
+Apply the 0716 contract to the Senegalese JETP from the June 2023 declaration
+up to the collection date. The Investment Plan and its annexes, published after
+the launch, make any snapshot frozen at 2024 obsolete. Cover ministry, IPG,
+funders, Senelec, renewable projects, grid, access and the link with the new
+hydrocarbons.
 
 ## Test
 
-Le contrôle de couverture échoue sans verdict pour le ministère, IPG, AFD,
-KfW, UE, Royaume-Uni, Canada, banques multilatérales et Senelec. Chaque projet
-du Plan d'investissement et de ses annexes doit avoir une identité stable,
-une source et un statut ; le chiffre AFD-Senelec de 670 M€ reste exclu tant
-qu'une source primaire ne le confirme.
+The coverage check fails without a verdict for the ministry, IPG, AFD, KfW, EU,
+United Kingdom, Canada, multilateral banks and Senelec. Every project of the
+Investment Plan and its annexes must have a stable identity, a source and a
+status; the AFD-Senelec figure of EUR 670m stays excluded until a primary source
+confirms it.
 
 ## Exit criteria
 
-- [x] Déclaration, Plan d'investissement et annexes collectés
-- [ ] Chaque projet du plan est relié à ses pages bailleur/opérateur
-- [x] Financement, état physique et dépendance hydrocarbures restent distincts
-- [x] L'absence de publication annuelle est enregistrée comme donnée
-- [x] Contrôle de couverture Sénégal passe
+- [x] Declaration, Investment Plan and annexes collected
+- [ ] Each project of the plan is linked to its funder/operator pages
+- [x] Financing, physical status and hydrocarbon dependence stay distinct
+- [x] The absence of an annual publication is recorded as data
+- [x] Senegal coverage check passes
 
 
 ## Recovery and review evidence (13 September 2026)

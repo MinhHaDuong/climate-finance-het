@@ -1,61 +1,60 @@
 %erg 0.1
-Title: REL — données de la finance climat : combler l'avant-2013 et prolonger après 2017
+Title: REL — climate finance data: fill pre-2013 and extend after 2017
 Created: 2026-09-23
 Author: haduong
 
 --- log ---
 2026-09-23T08:01Z haduong created
-
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
 ## Context
 
-Enfant de 0700, alimente 0704 (controverses 1 et 2). Le jeu Rio / CRDF de
-l'OCDE, point de vue bénéficiaire, sur lequel reposent la plupart des études
-d'efficacité, n'est pas une série homogène :
+Child of 0700, feeds 0704 (controversies 1 and 2). The OECD Rio / CRDF set,
+recipient point of view, on which most effectiveness studies rest, is not a
+homogeneous series:
 
-- avant 2013, les BMD (IBRD, IDA, IFC, BAfD, BEI…) et le FEM n'y figurent pas ;
-  les CIF entrent en 2012, le FVC en 2015, le marqueur d'adaptation en 2010 ;
-- deux règles de comptage coexistent : marqueurs de Rio en valeur faciale,
-  composantes climat des BMD.
+- before 2013, the MDBs (IBRD, IDA, IFC, AfDB, EIB…) and the GEF do not appear
+  in it; the CIFs enter in 2012, the GCF in 2015, the adaptation marker in 2010;
+- two counting rules coexist: Rio markers at face value, MDB climate
+  components.
 
-Les études qui s'arrêtent vers 2017 (Gavard & Schoch, 2000–2017) mesurent donc
-surtout un changement de déclaration autour de 2013. Pour la revue REL, on
-présente les données, les éléments de preuve et les modèles sur une série
-reconstruite de façon cohérente. **Ce travail relève de REL, pas du commentaire
-Gavard & Schoch**, qui s'en tient au papier publié.
+Studies that stop around 2017 (Gavard & Schoch, 2000–2017) therefore mainly
+measure a change of reporting around 2013. For the REL review, we present the
+data, the evidence and the models on a consistently reconstructed series.
+**This work belongs to REL, not to the Gavard & Schoch comment**, which sticks
+to the published paper.
 
 ## Relevant files
 
 - `~/CNRS/papiers/actif/Gavard Scotch 2026 Climate finance counterproductive/audit/`,
-  hors dépôt : `provider-check-2026-09-23/` (constat), `provider-sensitivity-2026-09-23/run.py`
-  (méthode de reconstruction par fournisseur),
-  `climate-finance-composition-2026-09-23/` (millésime OCDE 2026, 2000–2017, dans `raw/`).
-- 0828 (faisabilité d'un entrepôt CRS par agence) : ne pas dupliquer l'ingestion CRS.
+  outside the repo: `provider-check-2026-09-23/` (finding), `provider-sensitivity-2026-09-23/run.py`
+  (provider-by-provider reconstruction method),
+  `climate-finance-composition-2026-09-23/` (OECD vintage 2026, 2000–2017, in `raw/`).
+- 0828 (feasibility of a CRS warehouse by agency): do not duplicate the CRS ingestion.
 
 ## Actions
 
-1. **Combler l'avant-2013** : co-bénéfices climat Banque mondiale par projet
-   (à partir de l'exercice 2011 environ, à vérifier) ; base projets du FEM ;
-   Climate Funds Update pour les fonds dédiés ; rapports conjoints BMD (agrégats
-   seulement). Documenter ce qui reste impossible à combler.
-2. **Prolonger après 2017** : millésime CRDF le plus récent ; noter les
-   changements de règles comptables OCDE et la montée des flux post-Paris.
-3. Construire une série à couverture de fournisseurs constante et une série
-   complète, avec les deux règles de comptage séparées.
-4. Présenter dans REL : données, éléments de preuve (ruptures, composition),
-   et modèles (qu'est-ce qui change dans les résultats d'efficacité quand la
-   mesure est cohérente).
+1. **Fill the pre-2013 gap**: World Bank climate co-benefits by project
+   (from about fiscal year 2011, to be checked); GEF project database;
+   Climate Funds Update for dedicated funds; joint MDB reports (aggregates
+   only). Document what remains impossible to fill.
+2. **Extend after 2017**: most recent CRDF vintage; note the changes in OECD
+   accounting rules and the rise of post-Paris flows.
+3. Build a constant-provider-coverage series and a complete series, with the
+   two counting rules kept separate.
+4. Present in REL: data, evidence (breaks, composition), and models (what
+   changes in the effectiveness results when the measure is consistent).
 
 ## Invariants
 
-- Le périmètre agréé avec l'éditeur (0700) : la partie modèles s'en tient à
-  montrer la sensibilité des conclusions publiées à la mesure ; pas d'étude
-  empirique nouvelle sans en reparler à l'éditeur.
-- Discipline EDM et séparation des workpackages : données et scripts côté
-  analyse, le manuscrit consomme des artefacts.
+- The scope agreed with the editor (0700): the models part sticks to showing
+  the sensitivity of the published conclusions to the measure; no new
+  empirical study without talking to the editor again.
+- EDM discipline and workpackage separation: data and scripts on the analysis
+  side, the manuscript consumes artifacts.
 
 ## Exit criteria
 
-- [ ] Sources de comblement inventoriées, couverture par année documentée
-- [ ] Série cohérente et série complète construites, reproductibles
-- [ ] Section REL (données, preuves, modèles) rédigée
+- [ ] Gap-filling sources inventoried, coverage by year documented
+- [ ] Consistent series and complete series built, reproducible
+- [ ] REL section (data, evidence, models) written

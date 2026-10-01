@@ -1,43 +1,44 @@
 %erg 0.1
-Title: REL — consignes aux auteurs et plan détaillé validé
+Title: REL — author guidelines and validated detailed outline
 Created: 2026-08-21
 Author: haduong
 
 --- log ---
 2026-08-21T12:00Z haduong created
 2026-09-28T16:47Z Codex note L'auteur a approuvé le plan de recherche REL distinct du plan de l'article ; la validation du plan détaillé de l'article reste ouverte
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 --- body ---
-## Contexte
+## Context
 
-Premier enfant de 0700. Rien ne se rédige avant que la forme attendue soit
-connue et que le plan soit arbitré : une revue de littérature de quatre mois
-qui découvre ses contraintes de format à la fin se refait.
+First child of 0700. Nothing gets drafted until the expected form is known and
+the outline is settled: a four-month literature review that discovers its
+format constraints at the end has to be redone.
 
 ## Actions
 
-1. Récupérer les consignes aux auteurs de *Reviews of Economic Literature* :
-   longueur, format et style des références, politique de preprint, licence,
-   figures et tableaux, structure attendue d'une revue. Les déposer dans
+1. Retrieve the author guidelines of *Reviews of Economic Literature*:
+   length, reference format and style, preprint policy, licence, figures and
+   tables, expected structure of a review. Store them in
    `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/instructions to authors/`,
-   comme le fait *Oeconomia — Joint production*.
-2. Créer le workpackage `deliverables/literature-review/` sur le modèle des
-   voisins (`_quarto.yml`, `<nom>-vars.yml`, `<nom>.mk`, `<nom>.qmd`), branché
-   sur `deliverables/_shared/`.
-3. Écrire le plan détaillé : les deux mouvements de la proposition
-   (bibliométrie, puis synthèse narrative), la place de la section des quatre
-   controverses comptables, et la répartition des mots.
-4. Faire valider le plan par l'auteur avant toute rédaction.
+   as done for *Oeconomia — Joint production*.
+2. Create the workpackage `deliverables/literature-review/` modelled on its
+   neighbours (`_quarto.yml`, `<name>-vars.yml`, `<name>.mk`, `<name>.qmd`),
+   wired to `deliverables/_shared/`.
+3. Write the detailed outline: the two moves of the proposal (bibliometrics,
+   then narrative synthesis), the place of the section on the four accounting
+   controversies, and the word allocation.
+4. Have the author validate the outline before any drafting.
 
 ## Invariants
 
-- Le périmètre est un accord avec un éditeur : le plan l'instancie, il ne
-  l'élargit pas. Tout écart se rediscute avec la rédaction.
-- Le workpackage se construit depuis les artefacts du dépôt, sans accès données
-  à la rédaction (discipline de séparation des workpackages).
+- The scope is an agreement with an editor: the outline instantiates it, it
+  does not widen it. Any deviation is rediscussed with the editorial side.
+- The workpackage is built from the repository's artifacts, with no data access
+  at drafting time (workpackage separation discipline).
 
-## Critères de sortie
+## Exit criteria
 
-- [ ] Consignes aux auteurs récupérées et archivées
-- [ ] `deliverables/literature-review/` construit et rendant un PDF vide mais valide
-- [ ] Plan détaillé écrit et validé par l'auteur
+- [ ] Author guidelines retrieved and archived
+- [ ] `deliverables/literature-review/` built and rendering an empty but valid PDF
+- [ ] Detailed outline written and validated by the author

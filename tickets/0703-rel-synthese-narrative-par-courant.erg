@@ -1,40 +1,40 @@
 %erg 0.1
-Title: REL — synthèse narrative : ce que chaque courant établit et laisse ouvert
+Title: REL — narrative synthesis: what each stream establishes and what remains unsettled
 Created: 2026-08-21
 Author: haduong
 Blocked-by: 0702
 
 --- log ---
 2026-08-21T12:00Z haduong created
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 --- body ---
-## Contexte
+## Context
 
-Enfant de 0700, second mouvement promis à l'éditeur. Pour chaque courant
-identifié en 0702 : ce qu'il établit, et ce qu'il laisse ouvert.
+Child of 0700, second movement promised to the editor. For each stream
+identified in 0702: what it establishes, and what it leaves open.
 
-C'est là que la revue cesse d'être bibliométrique. Un compte de citations ne
-dit pas ce qu'un courant a montré ; il faut lire.
+This is where the review stops being bibliometric. A citation count does not
+say what a stream has shown; one has to read.
 
 ## Actions
 
-1. Par courant, lire les œuvres du noyau (≥ 50 citations) et les jalons des
-   lignées.
-2. Rédiger la synthèse : acquis, désaccords vivants, questions ouvertes.
-3. Restituer les désaccords plutôt que les arbitrer d'autorité — la revue
-   cartographie, elle ne tranche pas.
+1. Per stream, read the core works (≥ 50 citations) and the lineage milestones.
+2. Write the synthesis: findings, live disagreements, open questions.
+3. Report the disagreements rather than settle them by authority — the review
+   maps, it does not decide.
 
 ## Invariants
 
-- **Citer ce qu'on détient** : chaque œuvre citée résout vers un plein texte
-  local (`test_cited_works_available.py`), allowlist des inatteignables tenue
-  et purgée quand un texte arrive. Une revue de littérature est le genre où
-  cette discipline se relâche.
-- Une page citée se lit sur la page, jamais interpolée depuis une extraction.
-- Aucun texte repris du manuscrit Œconomia — voir 0705.
+- **Cite what we hold**: every cited work resolves to a local full text
+  (`test_cited_works_available.py`), allowlist of unreachable ones maintained
+  and purged when a text arrives. A literature review is the genre where this
+  discipline slackens.
+- A cited page is read on the page, never interpolated from an extraction.
+- No text taken from the Œconomia manuscript — see 0705.
 
-## Critères de sortie
+## Exit criteria
 
-- [ ] Un développement par courant, acquis et questions ouvertes distingués
-- [ ] Garde des pleins textes vert sur la bibliographie ajoutée
-- [ ] Passe d'édition d'auteur
+- [ ] One section per stream, findings and open questions distinguished
+- [ ] Full-text guard green on the added bibliography
+- [ ] Author editing pass

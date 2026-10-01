@@ -1,60 +1,61 @@
 %erg 0.1
-Title: REL — garde de non-recouvrement avec le manuscrit Œconomia
+Title: REL — non-overlap guard with the Œconomia manuscript
 Created: 2026-08-21
 Author: haduong
 
 --- log ---
 2026-08-21T12:00Z haduong created
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 --- body ---
-## Contexte
+## Context
 
-Enfant de 0700. **À construire tôt**, avant que la rédaction commence : un
-garde qui ne court qu'à la soumission signale un recouvrement quand il est
-coûteux à défaire, au lieu de l'empêcher quand il naît.
+Child of 0700. **Build early**, before drafting starts: a guard that only runs
+at submission flags an overlap when it is expensive to undo, instead of
+preventing it when it arises.
 
-L'auteur a déclaré à l'éditeur, au titre de la transparence, que cette revue et
-le manuscrit Œconomia n'auraient **aucun texte ni analyse en commun** : les
-deux emploient le même corpus en sens opposés — le papier d'histoire demande
-comment l'objet a été assemblé et n'use du corpus que pour corroborer sa
-périodisation ; la revue cartographie et synthétise la littérature de recherche
-elle-même, ce que le papier d'histoire ne tente pas.
+The author declared to the editor, for transparency, that this review and the
+Œconomia manuscript would have **no text or analysis in common**: the two use
+the same corpus in opposite ways. The history paper asks how the object was
+assembled and uses the corpus only to corroborate its periodisation; the review
+maps and synthesises the research literature itself, which the history paper
+does not attempt.
 
-Une promesse qu'aucun test ne vérifie se dégrade au premier commit pressé. Ce
-ticket la rend mécanique.
+A promise that no test checks decays at the first rushed commit. This ticket
+makes it mechanical.
 
 ## Actions
 
-1. Comparer les deux textes **rendus** (pas les sources : le balisage masque
-   les reprises) par détection de n-grammes partagés, seuil déclaré.
-2. Déclarer, dans un fichier de configuration, quels scripts d'analyse chaque
-   manuscrit peut employer, et rougir sur un croisement.
-3. Brancher le garde sur la cible de construction de la revue, pas seulement
-   sur la suite de tests : il doit courir à chaque rendu.
+1. Compare the two **rendered** texts (not the sources: markup hides reuse) by
+   detecting shared n-grams, with a declared threshold.
+2. Declare, in a configuration file, which analysis scripts each manuscript may
+   use, and fail on any crossing.
+3. Wire the guard into the review's build target, not only into the test suite:
+   it must run at every render.
 
 ## Test
 
-**Le garde s'éprouve sur un cas positif connu** : recopier un paragraphe
-d'Œconomia dans le brouillon de la revue doit le faire rougir. Un garde dont le
-« rien trouvé » est indiscernable de « je n'ai pas su regarder » n'est pas un
-garde — la politique de nommage du bench a fourni le contre-exemple le
-2026-08-21, où le premier scan rendait « propre » avec la fuite sous les yeux.
+**The guard is proven on a known positive case**: copying a paragraph of
+Œconomia into the review draft must turn it red. A guard whose "found nothing"
+is indistinguishable from "I could not look" is not a guard — the bench naming
+policy supplied the counter-example on 2026-08-21, when the first scan returned
+"clean" with the leak in plain view.
 
-Vérifier aussi le faux positif : les deux manuscrits partagent légitimement des
-noms d'institutions, des titres d'œuvres citées et la description du corpus. Le
-seuil doit les tolérer, et la citation formelle d'une même source n'est pas une
-reprise.
+Also check the false positive: the two manuscripts legitimately share
+institution names, titles of cited works and the description of the corpus. The
+threshold must tolerate them, and the formal citation of the same source is not
+reuse.
 
 ## Invariants
 
-- Le garde compare des textes, il n'arbitre pas : un recouvrement signalé se
-  lit et se tranche à la main.
-- Il ne doit pas exiger que les deux manuscrits soient construits ensemble
-  quand l'un ne bouge pas.
+- The guard compares texts, it does not arbitrate: a flagged overlap is read and
+  settled by hand.
+- It must not require both manuscripts to be built together when one does not
+  change.
 
-## Critères de sortie
+## Exit criteria
 
-- [ ] Garde écrit, seuil déclaré et justifié
-- [ ] Éprouvé sur un cas positif construit exprès, et sur les faux positifs légitimes
-- [ ] Branché sur le rendu de la revue
-- [ ] Vert sur l'état courant des deux manuscrits
+- [ ] Guard written, threshold declared and justified
+- [ ] Proven on a purpose-built positive case, and on the legitimate false positives
+- [ ] Wired into the review's render
+- [ ] Green on the current state of both manuscripts

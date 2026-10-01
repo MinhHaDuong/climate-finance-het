@@ -1,61 +1,61 @@
 %erg 0.1
-Title: REL — deux dimensions de tri oubliées : discipline (test de contribution) et sérieux (rangs A+B, registres durs)
+Title: REL — two forgotten screening dimensions: discipline (contribution test) and seriousness (ranks A+B, hard registries)
 Created: 2026-10-01
 Author: haduong
 
 --- log ---
 2026-10-01T09:00Z HDMX-coding-agent created
 2026-10-01T10:00Z HDMX-coding-agent note tracker: enfants 1840 (prompt étape 2), 1841 (rangs et signalements), 1842 (rattrapage discipline), 1843 (vue REL, PRISMA, protocole)
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 --- body ---
-## Contexte
+## Context
 
-Enfant de 0700. Décisions de l'auteur du 2026-10-01 : la règle ICF seule ne
-suffit pas pour une revue de littérature *économique*. Deux dimensions
-s'ajoutent, enregistrées comme champs séparés (le libellé ICF reste comparable),
-appliquées dans la vue REL et comptées par motif dans le PRISMA. Rien n'est
-supprimé ; les œuvres écartées restent disponibles pour la carte bibliométrique.
+Child of 0700. Author decisions of 2026-10-01: the ICF rule alone is not enough
+for an *economic* literature review. Two dimensions are added, recorded as
+separate fields (the ICF label stays comparable), applied in the REL view and
+counted by reason in the PRISMA. Nothing is deleted; excluded works remain
+available for the bibliometric map.
 
-**Discipline — test de contribution.** Inclus seulement si la contribution porte
-sur l'économie, la politique ou la gouvernance de la finance climat. Exclus :
-apprentissage automatique / science des données (prévision de prix CER, etc.),
-finance pure (pricing sans question économique ou de politique), sciences de
-gestion de l'entreprise, qui ne font qu'exploiter des données de finance climat.
-On enregistre aussi le champ et le type de contribution. Jamais par étiquette de
-revue seule.
+**Discipline — contribution test.** Included only if the contribution bears on
+the economics, policy or governance of climate finance. Excluded: machine
+learning / data science (CER price forecasting, etc.), pure finance (pricing
+without an economic or policy question), business management sciences, which
+merely exploit climate finance data. The field and the type of contribution are
+also recorded. Never by journal label alone.
 
-**Sérieux — rangs.** A : revue à comité de lecture ; B : séries de working papers
-reconnues et rapports institutionnels (NBER, CEPR, FMI, Banque mondiale, BMD,
-grands think tanks, y compris du Sud) ; C : le reste. **A et B inclus**, C exclu.
-La famille WP/article compte une fois, l'article préféré.
+**Seriousness — ranks.** A: peer-reviewed journal; B: recognised working-paper
+series and institutional reports (NBER, CEPR, IMF, World Bank, MDBs, major
+think tanks, including from the South); C: the rest. **A and B included**, C
+excluded. The WP/article family counts once, the preferred article.
 
-**Éditeurs douteux — registres durs seulement**, cités par revue : registre
-norvégien niveau X, Scopus « discontinued » pour motif de publication, retraits
-DOAJ, revues détournées connues. Pas la liste de Beall (biais contre les revues
-du Sud). **MDPI, Frontiers, Hindawi : gardés**, éditeur enregistré pour une
-analyse de sensibilité, sauf titre individuellement signalé.
+**Dubious publishers — hard registries only**, cited by journal: Norwegian
+register level X, Scopus "discontinued" for publication reasons, DOAJ
+withdrawals, known hijacked journals. Not Beall's list (bias against journals
+of the South). **MDPI, Frontiers, Hindawi: kept**, publisher recorded for a
+sensitivity analysis, unless an individual title is flagged.
 
 ## Actions
-1. Protocole (`conception/rel-audit-finalisation-corpus.md`) et PRISMA : les deux
-   dimensions, leurs définitions opérationnelles, motifs d'exclusion.
-2. Rang de sérieux et signalement d'éditeur **par revue/source** (OpenAlex source,
-   ISSN), déterministe, avec la provenance de chaque signalement ; liste des
-   séries B reconnues, versionnée.
-3. Discipline et type de contribution : questions ajoutées au prompt de l'étape 2
-   (Opus) **avant** son lancement (en attente, 1655/1733) ; passe de rattrapage
-   pour les ~4 952 œuvres déjà relues par Opus.
-4. Vue REL : exclusions par motif, comptes reproductibles, analyse de sensibilité
-   par éditeur (MDPI/Frontiers/Hindawi) et par rang.
+1. Protocol (`conception/rel-audit-finalisation-corpus.md`) and PRISMA: the two
+   dimensions, their operational definitions, exclusion reasons.
+2. Seriousness rank and publisher flag **per journal/source** (OpenAlex source,
+   ISSN), deterministic, with the provenance of each flag; list of recognised B
+   series, versioned.
+3. Discipline and contribution type: questions added to the step 2 prompt (Opus)
+   **before** its launch (pending, 1655/1733); catch-up pass for the ~4 952
+   works already re-read by Opus.
+4. REL view: exclusions by reason, reproducible counts, sensitivity analysis by
+   publisher (MDPI/Frontiers/Hindawi) and by rank.
 
-## Enfants
-- 1840 : prompt étape 2 étendu (discipline, champ, type de contribution), avant lancement
-- 1841 : rangs de sérieux et signalements par source
-- 1842 : rattrapage discipline des œuvres déjà relues par Opus
-- 1843 : vue REL, PRISMA, protocole (bloqué par 1840, 1841, 1842)
+## Children
+- 1840: extended step 2 prompt (discipline, field, contribution type), before launch
+- 1841: seriousness ranks and per-source flags
+- 1842: discipline catch-up for works already re-read by Opus
+- 1843: REL view, PRISMA, protocol (blocked by 1840, 1841, 1842)
 
 ## Exit criteria
-- [ ] Protocole et PRISMA décrivent les deux dimensions et leurs motifs
-- [ ] Table de rangs par source avec provenance ; registres consultés datés ; liste B versionnée
-- [ ] Prompt étape 2 étendu (discipline, type de contribution) et testé sur l'ensemble de contrôle avant lancement
-- [ ] Rattrapage discipline sur les œuvres déjà relues par Opus
-- [ ] Vue REL : comptes par motif (ICF, discipline, sérieux) et sensibilité éditeur
+- [ ] Protocol and PRISMA describe the two dimensions and their reasons
+- [ ] Rank table per source with provenance; registries consulted are dated; B list versioned
+- [ ] Step 2 prompt extended (discipline, contribution type) and tested on the control set before launch
+- [ ] Discipline catch-up on works already re-read by Opus
+- [ ] REL view: counts by reason (ICF, discipline, seriousness) and publisher sensitivity

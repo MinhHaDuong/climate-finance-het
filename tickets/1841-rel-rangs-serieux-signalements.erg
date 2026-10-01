@@ -1,18 +1,18 @@
 %erg 0.1
-Title: REL — rangs de sérieux et signalements par source (registres durs datés, liste B versionnée)
+Title: REL — seriousness ranks and flags per source (dated hard registers, versioned list B)
 Created: 2026-10-01
 Author: HDMX-coding-agent
 
 --- log ---
 2026-10-01T10:00Z HDMX-coding-agent created
-
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
-## Contexte
-Enfant de 1830. Par source (OpenAlex source id, ISSN), déterministe, provenance de chaque signalement. Rang A (comité de lecture), B (séries WP reconnues et rapports institutionnels, y compris think tanks du Sud ; liste versionnée), C (le reste). Registres durs seulement : registre norvégien (Kanalregisteret) niveau X par son API ouverte, Scopus « discontinued » pour motif de publication, retraits DOAJ, revues détournées connues ; chaque extraction datée. Signalement éditeur MDPI, Frontiers, Hindawi (gardés). Pas la liste de Beall.
+## Context
+Child of 1830. Per source (OpenAlex source id, ISSN), deterministic, provenance of each flag. Rank A (peer-reviewed), B (recognised WP series and institutional reports, including Southern think tanks; versioned list), C (the rest). Hard registers only: Norwegian register (Kanalregisteret) level X via its open API, Scopus "discontinued" for publication reasons, DOAJ removals, known hijacked journals; each extraction dated. Publisher flag for MDPI, Frontiers, Hindawi (kept). Not Beall's list.
 
 ## Exit criteria
-- [ ] Liste B versionnée dans `config/`
-- [ ] Extractions de registres datées et archivées, avec provenance
-- [ ] Table de rangs et signalements par source, reproductible, avec tests
-- [ ] Comptes par rang et par signalement rapportés
-- [ ] Gates AGENTS.md passent
+- [ ] Versioned list B in `config/`
+- [ ] Dated, archived register extractions, with provenance
+- [ ] Reproducible table of ranks and flags per source, with tests
+- [ ] Counts by rank and by flag reported
+- [ ] AGENTS.md gates pass

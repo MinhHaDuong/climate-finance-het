@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Suivi périodique sur padme : documents vivants et séries
+Title: Periodic monitoring on padme: living documents and series
 Created: 2026-09-25
 Author: HDMX-coding-agent
 Label: deferred
@@ -13,70 +13,66 @@ Blocked-by: 1141
 2026-09-25T09:10Z HDMX-coding-agent note Reporté à la semaine prochaine par l'auteur ; priorité du jour : finir la migration de l'ontologie (0870), main vert, republier le MVP.
 2026-09-25T10:30Z HDMX-coding-agent note le lanceur part de celui de [[1141]] (passe « figés ») ; [[1140]] est la passe « découverte » sur le même lanceur ; voir [[1180]] § Passes voisines
 2026-09-29T13:00Z HDMX-coding-agent note Fonction de dépôt unique exigée (action 4) : le stockage des documents passe à Zotero au jalon M4 ([[1510]]), décision de l'auteur
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 --- body ---
 ## Context
 
-Trois classes de documents (décision de l'auteur, 2026-09-25) :
+Three classes of documents (author decision, 2026-09-25):
 
-- **figés** (accords signés, RRP, rapports) : collectés une fois, puis
-  seulement vérifiés (existence, contrôle des liens de [[0925]], changement) ;
-- **vivants** (fiche projet ADB, portfolio.jetp.id, tableau de bord du
-  ministère vietnamien) : recollectés à la fréquence que déclare leur fichier
-  de site ; chaque version est gardée sous son empreinte, ce qui fait une
-  série datée — la fiche ADB 56140-001 donne par instrument les
-  engagements et décaissements cumulés, datés ;
-- **séries** (rapports annuels, trimestriels, rapports d'avancement) : chaque
-  numéro publié est figé ; la série a une date attendue pour son prochain
-  numéro.
+- **frozen** (signed agreements, RRPs, reports): collected once, then only
+  verified (existence, link check of [[0925]], change);
+- **living** (ADB project fact sheet, portfolio.jetp.id, the Vietnamese
+  ministry dashboard): recollected at the frequency declared by their site
+  file; each version is kept under its fingerprint, which makes a dated series
+  — the ADB 56140-001 fact sheet gives, per instrument, dated cumulative
+  commitments and disbursements;
+- **series** (annual and quarterly reports, progress reports): each published
+  issue is frozen; the series has an expected date for its next issue.
 
-Un module de veille existe : `scripts/jetp/_source_watch.py`,
+A watch module exists: `scripts/jetp/_source_watch.py`,
 `scripts/jetp/build_source_sweep.py` (`new_candidate`, `changed`,
-`checked_no_change`) ; il n'admet jamais de preuve lui-même. Le suivi s'y
-branche, il ne le duplique pas.
+`checked_no_change`); it never admits evidence itself. Monitoring plugs into
+it, it does not duplicate it.
 
 ## Actions
 
-1. Les passes tournent sur padme. Doudou supervise : il lance, vérifie le
-   rapport, et quand SSH ne répond pas il diffère la passe et le signale.
-2. Un lien nouveau qui correspond à un motif de site, ou un numéro de série
-   paru, devient une candidature à examiner, jamais une source admise
-   d'office. Un chiffre relevé dans une fiche reste un instantané tant qu'il
-   n'est pas transformé en observation par la voie habituelle.
-3. Chaque passe écrit un rapport qui signale sans bloquer : document témoin
-   introuvable, numéro de série en retard, changement de robots.txt ou de
-   conditions d'usage, échec d'échelon. `/lair` et `/healthcheck` le
-   remontent.
-4. Les objets sont capturés par DVC sur padme à chaque passe qui en ajoute.
-   Toute écriture d'un document ou d'une nouvelle version passe par une seule
-   fonction de dépôt (octets, empreinte, métadonnées de collecte), appelée par
-   toutes les passes. Le jalon M4 ([[1510]]) remplacera ce qu'il y a derrière
-   (bibliothèque de groupe Zotero) sans toucher aux passes ; ne pas écrire dans
-   `data/jetp/documents/objects/` ni dans `snapshots.csv` ailleurs que dans
-   cette fonction.
-5. Le lanceur reprend celui de [[1141]] (checkout persistant, cron, refus
-   d'écraser un résultat non relu) et le généralise ; la vérification des
-   documents figés est la passe de [[1141]], non une seconde. La découverte
-   hors des sites connus est la passe de [[1140]] ; ses candidatures entrent
-   dans la même file.
+1. Passes run on padme. Doudou supervises: it launches, checks the report, and
+   when SSH does not answer it defers the pass and says so.
+2. A new link matching a site pattern, or a published series issue, becomes a
+   candidate to examine, never a source admitted automatically. A figure read
+   from a fact sheet remains a snapshot until it is turned into an observation
+   by the usual route.
+3. Each pass writes a report that flags without blocking: witness document not
+   found, series issue overdue, change in robots.txt or terms of use, rung
+   failure. `/lair` and `/healthcheck` surface it.
+4. Objects are captured by DVC on padme at each pass that adds some. Every write
+   of a document or a new version goes through a single deposit function (bytes,
+   fingerprint, collection metadata), called by all passes. Milestone M4
+   ([[1510]]) will replace what sits behind it (Zotero group library) without
+   touching the passes; do not write to `data/jetp/documents/objects/` or to
+   `snapshots.csv` anywhere but in this function.
+5. The launcher builds on that of [[1141]] (persistent checkout, cron, refusal
+   to overwrite an unreviewed result) and generalises it; verification of frozen
+   documents is the pass of [[1141]], not a second one. Discovery beyond known
+   sites is the pass of [[1140]]; its candidates enter the same queue.
 
-## Cas repris de la conception backend supprimée (ticket 1701)
+## Cases carried over from the deleted backend design (ticket 1701)
 
-Tests d'acceptation de la gestion des sources (section 10 du document du
-2026-09-14) : une vérification bloquée enregistre la tentative sans avancer la
-dernière couverture réussie ; une vérification complète sans changement avance
-le calendrier sans créer d'observation ; chaque cible d'une passe gelée a un
-résultat ou un report explicite ; une découverte répétée garde une seule
-identité de document ; une révision d'éditeur, de cadence ou de classement
-laisse inchangées une passe ancienne et une requête à date de connaissance
-antérieure ; un rapport copié ne crée ni confirmation indépendante ni
-paiement en double.
+Acceptance tests for source management (section 10 of the 2026-09-14
+document): a blocked check records the attempt without advancing the last
+successful coverage; a complete check with no change advances the schedule
+without creating an observation; each target of a frozen pass has a result or an
+explicit deferral; a repeated discovery keeps a single document identity; a
+revision of publisher, cadence or ranking leaves unchanged an old pass and a
+query dated to an earlier knowledge date; a copied report creates neither an
+independent confirmation nor a duplicate payment.
 
 ## Exit criteria
 
-- [ ] Une fiche ADB est recollectée par deux passes datées ; une nouvelle version produit un nouvel instantané, une version inchangée n'en produit pas
-- [ ] Une série réelle est suivie : son prochain numéro attendu est daté, et un retard est signalé
-- [ ] SSH coupé, la supervision depuis doudou diffère la passe et le dit ; aucune passe ne disparaît en silence
-- [ ] Les signalements d'un rapport de passe apparaissent dans `/lair`
-- [ ] Aucune passe n'écrit un objet ou une ligne de `snapshots.csv` hors de la fonction de dépôt unique (action 4)
-- [ ] `make check-fast` et `make lint` verts
+- [ ] An ADB fact sheet is recollected by two dated passes; a new version produces a new snapshot, an unchanged version produces none
+- [ ] A real series is tracked: its next expected issue is dated, and a delay is flagged
+- [ ] With SSH down, supervision from doudou defers the pass and says so; no pass disappears silently
+- [ ] The flags of a pass report appear in `/lair`
+- [ ] No pass writes an object or a `snapshots.csv` row outside the single deposit function (action 4)
+- [ ] `make check-fast` and `make lint` green

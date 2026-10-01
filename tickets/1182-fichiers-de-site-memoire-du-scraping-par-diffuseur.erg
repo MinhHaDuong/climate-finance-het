@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Fichiers de site : mémoire du scraping par diffuseur
+Title: Site files: scraping memory per distributor
 Created: 2026-09-25
 Author: HDMX-coding-agent
 Label: deferred
@@ -8,43 +8,45 @@ Blocked-by: 1181
 --- log ---
 2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
 2026-09-25T09:10Z HDMX-coding-agent note Reporté à la semaine prochaine par l'auteur ; priorité du jour : finir la migration de l'ontologie (0870), main vert, republier le MVP.
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 --- body ---
 ## Context
 
 « Le système a besoin d'une mémoire dédiée au scraping. Chaque bailleur a ses
-pratiques et sa façon de le présenter sur son site » (l'auteur, 2026-09-25).
-Au 2026-09-25 : 301 sources sur 100 hôtes, dont 64 à source unique ; en tête
-portfolio.jetp.id (48), justenergytransition.co.za (34), jetp.moit.gov.vn
+pratiques et sa façon de le présenter sur son site » (the author, 2026-09-25)
+[the system needs a memory dedicated to scraping; each donor has its own
+practices and its own way of presenting them on its site].
+As of 2026-09-25: 301 sources on 100 hosts, 64 of them single-source; leading
+are portfolio.jetp.id (48), justenergytransition.co.za (34), jetp.moit.gov.vn
 (20), aner.sn (15), adb.org (9).
 
 ## Actions
 
-1. Un fichier par diffuseur, `config/jetp-sites/<site>.md`, créé **dès trois
-   documents** ou au premier fait à retenir (blocage, certificat, liens à
-   suivre, document vivant). En-tête YAML lu par le collecteur : hôtes,
-   échelon de collecte de départ, délai, politique TLS, motifs de liens à
-   suivre, classe et fréquence de recollecte, document témoin, position du
-   site (robots.txt, conditions d'usage, politique d'accès). Corps en prose :
-   anatomie du site, ce qui vaut preuve et ce qu'on ignore, pièges, journal
-   daté en ajout seulement.
-2. Un test valide les en-têtes (champs connus, valeurs admises) : ces
-   fichiers ne doivent pas s'accréter comme les noms de méthodes l'ont fait.
-3. L'index est généré (`make jetp-sites`) : par hôte, nombre de documents,
-   dernier résultat ; il signale sans bloquer les hôtes en échec répété sans
-   fichier et les fichiers sans source active.
-4. Premier fichier : `adb.org`, à partir des constats de 2026-09-25 (onglets
-   Overview / Project Data Sheet / Documents ; accords sous
-   `/projects/documents/*-lna*`, `*-ga*`, `*-grj*` ; RRP `*-rrp` ; fiche
-   exportable en PDF, datée « Last PDS Update » ; variante `/id/` en
-   indonésien à dédoublonner ; Cloudflare).
-5. Le skill `jetp-research` renvoie au fichier du site avant toute collecte
-   chez un hôte, et demande de le compléter après.
+1. One file per distributor, `config/jetp-sites/<site>.md`, created **from three
+   documents on** or at the first fact worth keeping (blocking, certificate,
+   links to follow, living document). YAML header read by the collector: hosts,
+   starting collection tier, delay, TLS policy, link patterns to follow,
+   recollection class and frequency, witness document, the site's position
+   (robots.txt, terms of use, access policy). Prose body: anatomy of the site,
+   what counts as evidence and what is ignored, pitfalls, dated log, append-only.
+2. A test validates the headers (known fields, allowed values): these files must
+   not accrete the way the method names did.
+3. The index is generated (`make jetp-sites`): per host, number of documents,
+   last result; it flags without blocking hosts with repeated failures and no
+   file, and files with no active source.
+4. First file: `adb.org`, from the findings of 2026-09-25 (tabs
+   Overview / Project Data Sheet / Documents; agreements under
+   `/projects/documents/*-lna*`, `*-ga*`, `*-grj*`; RRP `*-rrp`; sheet
+   exportable as PDF, dated "Last PDS Update"; `/id/` variant in Indonesian to
+   deduplicate; Cloudflare).
+5. The `jetp-research` skill points to the site file before any collection at a
+   host, and asks to complete it afterwards.
 
 ## Exit criteria
 
-- [ ] Le collecteur lit l'en-tête du site de chaque source ; une source sans fichier suit le profil par défaut
-- [ ] Contrôle positif : pour `adb.org`, le document témoin est retrouvé par les motifs ; motifs volontairement cassés, le run le signale au lieu de conclure « rien de nouveau »
-- [ ] Un changement de robots.txt ou des conditions d'usage est signalé dans le rapport de run, jamais passé sous silence
-- [ ] Tout diffuseur ayant au moins trois documents a son fichier
-- [ ] `make check-fast` et `make lint` verts
+- [ ] The collector reads the site header of each source; a source without a file follows the default profile
+- [ ] Positive control: for `adb.org`, the witness document is found by the patterns; with the patterns deliberately broken, the run flags it instead of concluding "nothing new"
+- [ ] A change in robots.txt or terms of use is flagged in the run report, never passed over silently
+- [ ] Every distributor with at least three documents has its file
+- [ ] `make check-fast` and `make lint` green

@@ -1,5 +1,5 @@
 %erg 0.1
-Title: REL — revue de littérature finance climat : périmètre agréé, livrable début décembre 2026
+Title: REL — climate finance literature review: agreed scope, deliverable early December 2026
 Created: 2026-08-21
 Author: haduong
 
@@ -8,136 +8,134 @@ Author: haduong
 2026-08-21T11:40Z haduong note Réponse de l'éditeur reçue ; périmètre et calendrier agréés, étiquette needs-human levée
 2026-09-11T16:01Z haduong note 0704 documente un materiau amont reuni hors depot (audit Gavard & Schoch) : note de source + 14 articles sur l'efficacite emissions, en staging Zotero, hors mesure corpus
 2026-09-25T09:01Z Codex note Le data paper est publie et son v2 reste archive ; le corpus de travail est degele pour v3 (STATE.md). Les references de l'audit Gavard & Schoch entrent dans la revue de couverture du corpus courant avant la mesure REL ; 0702 et 0704 mis a jour.
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 --- body ---
-## Contexte
+## Context
 
-**Revue sollicitée.** L'éditeur de *Reviews of Economic Literature* (Stanford
-University Press, accès ouvert) a invité l'auteur à proposer une contribution.
-Proposition envoyée le 2026-08-06, **acceptée le 2026-08-21** : la rédaction
-confirme que le sujet et la structure conviennent à la revue et que le
-calendrier proposé lui va.
+**Review requested.** The editor of *Reviews of Economic Literature* (Stanford
+University Press, open access) invited the author to propose a contribution.
+Proposal sent on 2026-08-06, **accepted on 2026-08-21**: the editorial office
+confirms that the subject and structure suit the journal and that the proposed
+schedule works for it.
 
-Deux réserves à retenir : l'acceptation d'une proposition **n'est pas une
-promesse de publication** — le manuscrit passera les contrôles de qualité
-habituels — et l'accord ne porte donc que sur le périmètre, pas sur l'issue.
+Two reservations to keep in mind: acceptance of a proposal **is not a promise of
+publication** — the manuscript will go through the usual quality controls — and
+the agreement therefore covers only the scope, not the outcome.
 
-*(La correspondance elle-même n'est pas versionnée : ce dépôt est public et
-l'échange est privé. Elle vit dans `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/`,
-sous un répertoire d'événement daté — `2026-08-21 proposal accepted/` — selon
-la convention relevée sur les papiers en cours et publiés : un répertoire par
-événement, la correspondance en `.txt` datés, et `releases/` pour les kits.
-Ce ticket porte la substance de l'accord, qui est ce dont le travail dépend.)*
+*(The correspondence itself is not versioned: this repository is public and
+the exchange is private. It lives in `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/`,
+under a dated event directory — `2026-08-21 proposal accepted/` — following the
+convention observed on ongoing and published papers: one directory per event,
+the correspondence as dated `.txt` files, and `releases/` for kits.
+This ticket carries the substance of the agreement, which is what the work
+depends on.)*
 
-L'accès ouvert du modèle Stanford UP a motivé l'acceptation de l'invitation,
-en cohérence avec l'engagement science ouverte du CNRS.
+The open access of the Stanford UP model motivated accepting the invitation,
+consistent with the CNRS open science commitment.
 
-## Échéance
+## Deadline
 
-Quatre mois annoncés dans la proposition du 06/08, calendrier validé par
-l'éditeur. Lecture conservatrice : **2026-12-06**. La lecture généreuse
-(quatre mois depuis la confirmation) donnerait le 21/12 ; ne pas s'y fier sans
-l'écrire à l'éditeur. Il reste environ quinze semaines à la reprise de
-septembre.
+Four months announced in the 08/06 proposal, schedule validated by the editor.
+Conservative reading: **2026-12-06**. The generous reading (four months from the
+confirmation) would give 12/21; do not rely on it without writing to the editor.
+About fifteen weeks remain at the September restart.
 
-## Périmètre agréé — ne pas l'élargir sans en reparler à l'éditeur
+## Agreed scope — do not widen it without discussing with the editor
 
-Cartographier et synthétiser la littérature de la finance climat, sur la base
-du corpus curé de plus de 33 000 œuvres (1990–2024), multilingue, déposé
-ouvertement avec son réseau de citations et ses plongements
+Map and synthesise the climate finance literature, on the basis of the curated
+corpus of more than 33,000 works (1990–2024), multilingual, openly deposited
+with its citation network and embeddings
 (`https://doi.org/10.5281/zenodo.19236129`).
 
-L'argument de nouveauté tel qu'il a été vendu : le champ est passé de la
-quasi-inexistence avant 2007 à un domaine vaste et dispersé entre économie,
-politique climatique, énergie et gouvernance — **cartographié jusqu'ici sur des
-corpus de quelques centaines à quelques milliers de documents seulement**.
-L'échelle du corpus est donc la contribution, et le manuscrit doit la faire
-valoir.
+The novelty argument as it was sold: the field has gone from near non-existence
+before 2007 to a vast domain scattered across economics, climate policy, energy
+and governance — **mapped so far only on corpora of a few hundred to a few
+thousand documents**. The scale of the corpus is therefore the contribution, and
+the manuscript must make the most of it.
 
-Deux mouvements, dans cet ordre :
+Two movements, in this order:
 
-1. **Analyse bibliométrique** — identifier les principaux courants de
-   recherche, leurs lieux de publication, et leurs lignées de citation.
-2. **Synthèse narrative** — pour chaque courant, ce qu'il établit et ce qu'il
-   laisse ouvert.
+1. **Bibliometric analysis** — identify the main research streams, their
+   publication venues, and their citation lineages.
+2. **Narrative synthesis** — for each stream, what it establishes and what it
+   leaves open.
 
-**Attention particulière promise à l'éditeur** : dans quelle mesure la
-littérature de recherche s'empare des controverses comptables qui dominent le
-débat de politique publique — **valorisation des prêts, crédibilité des
-marqueurs, attribution de la finance privée, additionnalité** — et où elle
-développe ses propres questions. C'est la partie qui distingue la proposition
-d'une revue bibliométrique ordinaire ; ne pas la laisser se réduire à un
-paragraphe.
+**Particular attention promised to the editor**: to what extent the research
+literature takes up the accounting controversies that dominate the public policy
+debate — **loan valuation, credibility of markers, attribution of private
+finance, additionality** — and where it develops its own questions. This is the
+part that distinguishes the proposal from an ordinary bibliometric review; do not
+let it shrink to a paragraph.
 
-## Actifs disponibles
+## Available assets
 
-Le v2 publié du corpus reste archivé au tag `rdj26561-revision1` : 8 sources,
-43 179 références unifiées → 33 344 raffinées, 38 736 × 1024 plongements,
-1 087 209 citations raffinées, noyau (≥ 50 citations) de 2 644 œuvres,
-couverture de citation 40/47/69 % par période. Ces chiffres décrivent v2,
-pas nécessairement la version que REL analysera. Le corpus de travail est
-dégelé pour v3 ; ses références, dont celles réunies dans l'audit Gavard &
-Schoch, peuvent être intégrées après rapprochement et décision de périmètre.
-La passe REL fixe et cite sa propre révision du corpus avant les calculs.
+The published v2 of the corpus remains archived at tag `rdj26561-revision1`: 8
+sources, 43,179 unified references → 33,344 refined, 38,736 × 1024 embeddings,
+1,087,209 refined citations, core (≥ 50 citations) of 2,644 works, citation
+coverage 40/47/69 % by period. These figures describe v2, not necessarily the
+version that REL will analyse. The working corpus is unfrozen for v3; its
+references, including those gathered in the Gavard & Schoch audit, can be
+integrated after reconciliation and a scope decision. The REL pass fixes and
+cites its own revision of the corpus before computing.
 
-Le *data paper* du corpus (RDJ-26561), annoncé à l'éditeur comme « to appear »,
-est publié ; citer sa version publiée et distinguer son v2 de la révision v3
-utilisée par REL.
+The corpus *data paper* (RDJ-26561), announced to the editor as "to appear",
+is published; cite its published version and distinguish its v2 from the v3
+revision used by REL.
 
 ## Invariants
 
-- **Aucun texte ni analyse partagés avec le manuscrit Œconomia.** L'auteur l'a
-  déclaré à l'éditeur pour la transparence : les deux travaux utilisent le même
-  corpus en sens opposés — le papier d'histoire demande comment l'objet a été
-  assemblé et n'utilise le corpus que pour corroborer sa périodisation ; la
-  revue cartographie et synthétise la littérature de recherche elle-même, ce
-  que le papier d'histoire ne tente délibérément pas. Cet engagement est une
-  contrainte dure, pas une intention : à la relecture, chasser toute reprise de
-  texte ou d'analyse.
-- **Citer ce qu'on détient.** Une revue de littérature cite massivement et
-  c'est le genre où la discipline se relâche : chaque œuvre citée doit résoudre
-  vers un plein texte local, garde `test_cited_works_available.py`, allowlist
-  des inatteignables tenue à jour et purgée quand un texte arrive.
-- **Périmètre explicite.** Le projet v3 peut accueillir des références récentes,
-  mais la fenêtre bibliométrique annoncée à l'éditeur (1990–2024) reste une
-  décision distincte. Relever les années réellement présentes, fixer et
-  documenter la fenêtre de la mesure REL avant de produire ses chiffres.
-- Orthographe cohérente, variété fixée par les consignes de la revue.
-- Prose éditée en place avec l'auteur, pas derrière un worktree.
+- **No text or analysis shared with the Œconomia manuscript.** The author
+  declared this to the editor for transparency: the two works use the same
+  corpus in opposite ways — the history paper asks how the object was assembled
+  and uses the corpus only to corroborate its periodisation; the review maps and
+  synthesises the research literature itself, which the history paper
+  deliberately does not attempt. This commitment is a hard constraint, not an
+  intention: on rereading, hunt for any reuse of text or analysis.
+- **Cite what we hold.** A literature review cites massively and it is the
+  genre where discipline slackens: each cited work must resolve to a local full
+  text, guarded by `test_cited_works_available.py`, with the allowlist of
+  unreachable works kept up to date and purged when a text arrives.
+- **Explicit scope.** The v3 project may take in recent references, but the
+  bibliometric window announced to the editor (1990–2024) remains a separate
+  decision. Record the years actually present, fix and document the window of
+  the REL measurement before producing its figures.
+- Consistent spelling, variety set by the journal's guidelines.
+- Prose edited in place with the author, not behind a worktree.
 
-## Où vivent les choses
+## Where things live
 
-| Quoi | Où |
+| What | Where |
 |---|---|
-| Manuscrit, analyses, figures | `deliverables/literature-review/` de ce dépôt |
-| Correspondance, kits de soumission | `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/` |
-| Corpus | v3 de travail, révision et fenêtre à fixer pour REL ; v2 publié conservé au tag `rdj26561-revision1` et au DOI de concept `10.5281/zenodo.19236129` |
-| Découpe du travail | enfants 0701–0705 |
+| Manuscript, analyses, figures | `deliverables/literature-review/` of this repository |
+| Correspondence, submission kits | `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/` |
+| Corpus | working v3, revision and window to be fixed for REL; published v2 kept at tag `rdj26561-revision1` and at the concept DOI `10.5281/zenodo.19236129` |
+| Work breakdown | children 0701–0705 |
 
 ## Actions
 
-1. Récupérer les consignes aux auteurs de *Reviews of Economic Literature*
-   (longueur, format des références, politique de preprint, licence) — les
-   déposer dans `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/`, dans un
-   `instructions to authors/` comme le fait *Oeconomia — Joint production*.
-2. Plan détaillé des deux mouvements, validé par l'auteur avant rédaction.
-3. Rapprocher les références Zotero et les PDF de l'audit Gavard & Schoch du
-   corpus courant (DOI puis titre), décider leur inclusion dans v3 et tracer
-   les absences, doublons et exclusions avant la passe bibliométrique.
-4. Fixer la révision et la fenêtre du corpus REL, puis analyser courants,
-   lieux et lignées de citation sur cette révision.
-5. Synthèse narrative par courant.
-6. Section sur les quatre controverses comptables.
-7. Passe d'édition d'auteur, puis lecteurs.
+1. Retrieve the author guidelines of *Reviews of Economic Literature* (length,
+   reference format, preprint policy, licence) — file them in
+   `~/CNRS/papiers/actif/REL_Climate_Finance_Literature_Review/`, in an
+   `instructions to authors/` as done for *Oeconomia — Joint production*.
+2. Detailed plan of the two movements, validated by the author before drafting.
+3. Reconcile the Zotero references and PDFs of the Gavard & Schoch audit with
+   the current corpus (DOI then title), decide their inclusion in v3 and trace
+   absences, duplicates and exclusions before the bibliometric pass.
+4. Fix the REL corpus revision and window, then analyse streams, venues and
+   citation lineages on that revision.
+5. Narrative synthesis by stream.
+6. Section on the four accounting controversies.
+7. Author editing pass, then readers.
 
-## Critères de sortie
+## Exit criteria
 
-- [ ] Consignes aux auteurs récupérées et respectées
-- [ ] Plan validé par l'auteur
-- [ ] Zéro texte ou analyse partagés avec le manuscrit Œconomia, vérifié
-- [ ] Garde des pleins textes vert sur la bibliographie de la revue
-- [ ] Concordance Zotero/PDF/corpus auditée ; décisions d'inclusion et
-      d'exclusion tracées, version et fenêtre REL citées dans les résultats
-- [ ] Manuscrit soumis à REL au plus tard le 2026-12-06
-- [ ] Registres externes propagés : page perso `Ha-Duong.bib` **et** feuille de
-      route CNRS — c'est un manuscrit, donc il y a une ligne
+- [ ] Author guidelines retrieved and respected
+- [ ] Plan validated by the author
+- [ ] Zero text or analysis shared with the Œconomia manuscript, verified
+- [ ] Full-text guard green on the review's bibliography
+- [ ] Zotero/PDF/corpus concordance audited; inclusion and exclusion decisions
+      traced, REL version and window cited in the results
+- [ ] Manuscript submitted to REL by 2026-12-06 at the latest
+- [ ] External registers propagated: personal page `Ha-Duong.bib` **and** CNRS
+      roadmap — this is a manuscript, so there is a line

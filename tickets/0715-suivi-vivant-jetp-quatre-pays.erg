@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Constituer la base JETP quatre pays avant le suivi vivant
+Title: Build the four-country JETP base before live monitoring
 Created: 2026-09-11
 Author: Minh
 
@@ -14,94 +14,91 @@ Author: Minh
 2026-09-22T11:05Z HDMX-coding-agent note M1a cochée par l'auteur le 2026-09-22 après la revue d'intégration finale de [[0834]] ; les quatre pays descendent jusqu'au document, la page PDF n'est ancrée qu'au Viet Nam ([[0861]]).
 2026-09-25T08:30Z HDMX-coding-agent note M2 gains two children at the author's request (2026-09-25): [[1140]] periodic source refresh by a local agent, [[1141]] monthly link-rot check on padme
 2026-09-29T09:13Z HDMX-coding-agent decision milestone renaming (2026-09-29, author, see [[0725]]): the former M2 train splits. Scientific parts move to M3a (discover, freeze: 1140 as one campaign, 1182, 1183, 1185, 0920) and M3b (extract, reconcile, join, release: 0721, 0723). Operational parts move to M4 (1141, 1184, weekly cadence, shared code for AEDIST). 0722 (skill and update rules) serves M3a and M4. A new M2 (extraction pipeline, tracker [[1500]]) precedes them. Earlier log entries keep the old labels.
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
 
 ## Context
 
-Le pipeline OECD CRS prévu par 0713 s'arrête à 2024. Il est nécessaire pour
-comparer les profils d'exécution, mais insuffisant pour suivre les JETP en
-2026. Le programme doit aussi observer le passage annonce -> projet ->
-approbation -> signature -> décaissement -> réalisation physique à partir des
-rapports, registres et pages projet publiés après 2024.
+The OECD CRS pipeline planned by 0713 stops at 2024. It is needed to compare
+execution profiles, but insufficient to track the JETPs in 2026. The programme
+must also observe the passage announcement -> project -> approval -> signature
+-> disbursement -> physical delivery from reports, registers and project pages
+published after 2024.
 
-L'auteur demande une couverture exhaustive des quatre JETP : Afrique du Sud,
-Indonésie, Viêt Nam et Sénégal. « Exhaustif » est défini sur un univers de
-sources explicite : portail JETP national, ministères responsables, co-leads
-IPG, bailleurs nommés dans le paquet, banques multilatérales, opérateur
-électrique et pages officielles de chaque projet identifié. Toute source
-attendue absente, bloquée ou non publiée est enregistrée comme telle ; elle
-n'est ni remplacée silencieusement ni devinée.
+The author asks for exhaustive coverage of the four JETPs: South Africa,
+Indonesia, Viet Nam and Senegal. "Exhaustive" is defined over an explicit
+universe of sources: national JETP portal, responsible ministries, IPG
+co-leads, donors named in the package, multilateral banks, the power utility
+and the official pages of each identified project. Any expected source that is
+absent, blocked or unpublished is recorded as such; it is neither silently
+replaced nor guessed.
 
-Le dispositif est un workpackage autonome dans `climate-finance-het`. Il ne
-grossit pas la PR #1322, qui reste une passation éditoriale. Le pilote Viêt Nam
-de `conception/jetp/papier-3-ledger/` fournit les conventions initiales, mais
-les quatre pays doivent être traités avec le même contrat de preuve.
+The device is a standalone workpackage in `climate-finance-het`. It does not
+grow PR #1322, which remains an editorial handover. The Viet Nam pilot in
+`conception/jetp/papier-3-ledger/` provides the initial conventions, but the
+four countries must be treated with the same evidence contract.
 
 ## Actions
 
-### M1 — base saine et figée
+### M1 — healthy, frozen base
 
-1. **0716** — fournir le contrat minimal du corpus, le stockage DVC et
-   l'ingestion reproductible des sources déjà bornées.
-2. **0717–0720** — fournir les inventaires et preuves pays existants, sans faire
-   de leur actualisation ou de la résolution de toutes les identités un verrou.
-3. **0832** — publier quatre inventaires gelés par sous-couche, sans fusion
-   (livré). **0834 (M1a)** — le MVP explore les données en trois étages :
-   documents bruts, extraction structurée, faits réconciliés ; recette
-   Afrique du Sud et Vietnam ; enfants 0835–0839.
-4. **0833 (M1b)** — ajouter identifiants canoniques, taxonomie commune et
-   relations certaines ; compter séparément les `possible_match` non résolus.
+1. **0716** — provide the minimal corpus contract, DVC storage and
+   reproducible ingestion of the already bounded sources.
+2. **0717–0720** — provide the existing country inventories and evidence,
+   without making their refresh or the resolution of all identities a blocker.
+3. **0832** — publish four frozen inventories by sublayer, without merging
+   (delivered). **0834 (M1a)** — the MVP explores the data in three tiers: raw
+   documents, structured extraction, reconciled facts; South Africa and Vietnam
+   recipe; children 0835–0839.
+4. **0833 (M1b)** — add canonical identifiers, common taxonomy and certain
+   relations; count unresolved `possible_match` separately.
 
-### Ancien M2 — suivi vivant, après acceptation de M1
+### Former M2 — live monitoring, after acceptance of M1
 
-Renommé le 2026-09-29 (décision de l'auteur, voir [[0725]]) : le nouveau M2 est
-un pipeline d'extraction ; ce train se répartit en M3a (découvrir et geler),
-M3b (extraire, réconcilier, publier) et M4 (exploitation).
+Renamed on 2026-09-29 (author's decision, see [[0725]]): the new M2 is an
+extraction pipeline; this train is split into M3a (discover and freeze), M3b
+(extract, reconcile, publish) and M4 (operations).
 
-5. **0721** (M3b) — réconcilier les quatre ledgers avec CRS/IATI et produire
-   les contrôles transversaux.
-6. **0722** (M3a et M4) — installer la skill, la veille et les règles de mise
-   à jour.
-7. **0723** (M3b) — joindre événements financiers, actifs et réalisations
-   physiques.
-8. **1140** (M3a : une campagne ; M4 : cadence hebdomadaire) — veille
-   périodique des nouvelles sources, conduite par un agent local sur padme ;
-   tout candidat reste non admis jusqu'au tri de l'auteur.
-9. **1141** (M4) — contrôle mensuel de la pourriture des liens et relance des
-   captures Web Archive, planifié sur padme.
+5. **0721** (M3b) — reconcile the four ledgers with CRS/IATI and produce the
+   cross-cutting checks.
+6. **0722** (M3a and M4) — install the skill, the watch and the update rules.
+7. **0723** (M3b) — join financial events, assets and physical deliveries.
+8. **1140** (M3a: one campaign; M4: weekly cadence) — periodic watch for new
+   sources, run by a local agent on padme; any candidate remains unadmitted
+   until the author's triage.
+9. **1141** (M4) — monthly link-rot check and relaunch of Web Archive
+   captures, scheduled on padme.
 
 ## Invariants
 
-- Le CRS 2022-2024 est une couche rétrospective ; aucun texte ne le présente
-  comme l'état courant d'un JETP.
-- Une ligne de ledger représente un événement financier daté, pas un projet
-  entier. Les couches annonce, MoU, approbation, signature et décaissement ne
-  sont jamais additionnées entre elles.
-- La devise de la source primaire est canonique. Une conversion tierce reste
-  une observation de recoupement exclue des agrégats.
-- Deux périmètres coexistent : `jetp_strict` lorsque la source rattache
-  explicitement l'opération au JETP ; `ipg_energy_extended` pour le contexte.
-- Les documents bruts sont content-addressed, horodatés et suivis par DVC ;
-  les registres, règles et sidecars de provenance restent lisibles dans git.
-- Aucun push de données DVC depuis cette machine : padme reste l'autorité des
-  données selon 0713.
-- Une actualité de presse sert de piste. Une valeur comptable n'entre dans le
-  ledger qu'avec une source primaire ou un verdict explicite `secondary_only`.
+- CRS 2022-2024 is a retrospective layer; no text presents it as the current
+  state of a JETP.
+- A ledger line represents a dated financial event, not a whole project. The
+  announcement, MoU, approval, signature and disbursement layers are never
+  added together.
+- The primary source's currency is canonical. A third-party conversion remains
+  a cross-check observation excluded from aggregates.
+- Two scopes coexist: `jetp_strict` when the source explicitly attaches the
+  operation to the JETP; `ipg_energy_extended` for context.
+- Raw documents are content-addressed, timestamped and tracked by DVC;
+  registers, rules and provenance sidecars stay readable in git.
+- No DVC data push from this machine: padme remains the data authority per 0713.
+- A press item serves as a lead. An accounting value enters the ledger only
+  with a primary source or an explicit `secondary_only` verdict.
 
 ## Exit criteria
 
-- [x] M1a / 0834 : le MVP explore documents, extractions et faits de bout en bout sur les recettes SA et VN ; les tables gelées de 0832 en sont l'entrée
-- [ ] M1b / 0833 publie le catalogue borné et compte les correspondances non résolues
-- [ ] Le jalon M1 de 0725 accepte la base avant tout démarrage de la veille (M3a et M4 depuis le 2026-09-29)
-- [ ] Les quatre pays ont un registre de sources borné, un manifeste de
-      collecte, un ledger financier et une carte documentée des absences
-- [ ] Chaque montant agrégé est reconstructible depuis des événements sourcés
-- [ ] La couverture et les limites sont publiables comme résultats de méthode
+- [x] M1a / 0834: the MVP explores documents, extractions and facts end to end on the SA and VN recipes; the frozen tables of 0832 are its input
+- [ ] M1b / 0833 publishes the bounded catalogue and counts unresolved matches
+- [ ] The M1 milestone of 0725 accepts the base before any start of the watch (M3a and M4 since 2026-09-29)
+- [ ] The four countries have a bounded source register, a collection
+      manifest, a financial ledger and a documented map of absences
+- [ ] Every aggregated amount is reconstructible from sourced events
+- [ ] Coverage and limits are publishable as method results
 
-Le rafraîchissement périodique, la résolution de `possible_match`, l'extension
-des sources et les jointures finance-actifs sont des critères ultérieurs
-(M3 et M4 depuis le 2026-09-29) ;
-ils ne bloquent pas l'acceptation de M1.
+Periodic refresh, resolution of `possible_match`, source extension and
+finance-asset joins are later criteria (M3 and M4 since 2026-09-29);
+they do not block the acceptance of M1.
 
 ## Publication programme (13 September 2026)
 
