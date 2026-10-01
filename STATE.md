@@ -22,6 +22,7 @@ with #1574 (register dispositions) merged, and the bounded M1b catalogue is publ
 The JETP Observer system specification v1 is accepted (tag `jetp-spec-v1`, index `docs/jetp-spec.md`, reviews in `docs/jetp-spec-review/`); M2 code is no longer gated.
 **Next:** M2 extraction (tracker 1500, from 1506), with storage and code catching up to the spec (1702) and reader selection and calibration on OpenRouter; spec follow-ups in 1703; Zotero off-site copy of document bytes (1712).
 `make all` still awaits the figure handoff (1491).
+**M2.3 reading lane (2026-10-01):** panel reference set v1 merged but inconclusive (1895, `data/jetp/reference/panel-v1/README.md`); v2 is 1940, Blocked-by 1960 (ontology amendments), and blocks 1890 (pilot). Grants register goes to a series parser (1950, in flight). Author rules: no paid API call without the author's go; zero retention dropped for research runs; reader schema generated from the ontology. Next steps are listed in 1940 § Handoff.
 
 ## Status
 <!-- generated 2026-09-30T20:43Z · as of f8a0119b -->

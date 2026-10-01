@@ -72,6 +72,41 @@ No paid call, hosted or Mistral OCR, before the author's explicit go on a
 priced step (author, 2026-10-01). Local runs on padme need no budget but
 are coordinated with any session holding the GPUs.
 
+## Handoff (2026-10-01, session out of budget)
+
+Measured, no spend:
+- Converters on four held documents (register 2023-q3, VNM newsletter 12,
+  SEN BOAD 2024, IDN small-scale renewables): Docling default (TableFormer)
+  is the converter: register 29 tables, 118 rows with a US dollar amount,
+  147 of the 157 amounts kept, 78 s on GPU; newsletter in reading order.
+  Granite-Docling (VLM pipeline) is ruled out: register 17 one-row tables,
+  1 amount, 1229 s; BOAD 9 one-row tables. PaddleOCR-VL 1.6 is untested:
+  the run hung with the model loaded and the GPU idle (stopped after about
+  40 min).
+- llguidance build at `~/llama.cpp-new/build-llg` works (see the log entry
+  on prerequisites).
+- Test scripts were scratch; to reproduce, Docling goes in a project
+  dependency group sharing the project venv's torch (cu130 extra), never a
+  second torch.
+
+Next, in order (all free until step 6):
+1. [[1960]]: read the Open Energy Ontology, propose capacity quantity kinds,
+   units and basis with OEO URIs; propose the owner role and IATI role
+   alignment; import the OECD CRS / IATI finance type. Author decisions.
+2. Add Docling as a dependency group; build the element layer for the v1
+   documents; locator = Docling element reference.
+3. Generate the reader schema from the ontology in force (closed lists as
+   enums, element IDs as an enum, the publisher's wording beside each typed
+   slot); write the statement unit per shape and prompt v4 (several
+   statements per span, assertion index; extraction 4).
+4. Draft the spec amendments: zero retention dropped (operation 5 and 7,
+   legal note), extraction 3 and 11 merged into one ontology-bound pass.
+5. Free agreement check: two documents through a local reader with the new
+   schema (padme GPUs, coordinate with other sessions).
+6. Price a 2-document hosted pilot (non-ZDR endpoints, batch where
+   available) and ask the author's go; also checks that hosted structured
+   output accepts long element-ID enums.
+
 ## Exit criteria
 
 - [ ] Docling layer for the v1 documents, its version pinned; the elements
