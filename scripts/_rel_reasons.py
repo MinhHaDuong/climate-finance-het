@@ -40,8 +40,10 @@ answer, given beside the ICF label); otherwise the last ``catchup`` row in
 table order (ticket 1842; the table is append-only). Stage-2 rows of a
 superseded run and ``audit`` rows are not used, and counted.
 
-**Families** (version_hint links, ``family_id`` of the view): a family is the
-union of its versions, so its membership is the maximum over its members.
+**Families** (version_hint links, ``family_id`` of the view; decided by the
+author on 2026-10-01): a family is the union of its versions, so its
+membership is the maximum over its members, and a working paper later
+published in a tier-A journal counts as A.
 This is how the decided rule "a family counts once, the article preferred" is
 realised: the representative (``rel_family_id``) is the member attaining that
 maximum, the published article first, then the earliest year, then the
@@ -113,7 +115,8 @@ def membership_rule(cfg: dict, screen_rule: dict, alpha: float) -> dict:
     """ICF and discipline values of ``config/rel_screen.yaml`` ``membership``, checked.
 
     Every value lies in [0, 1]; the alpha-cut must reproduce the crisp ICF exit
-    rule: unsure is in REL iff ``stage2_unsure_in_rel``.
+    rule: unsure is in REL iff ``stage2_unsure_in_rel``. ``family`` records the
+    decided family rule, ``max`` (``assign_families``).
     """
     m = cfg.get("membership") or {}
     out = {"status": m.get("status", ""),
@@ -125,6 +128,9 @@ def membership_rule(cfg: dict, screen_rule: dict, alpha: float) -> dict:
             raise ValueError(f"membership.{facet} must give {sorted(keys)} values in [0, 1]")
     if (out["icf"]["unsure"] >= alpha) != screen_rule["stage2_unsure_in_rel"]:
         raise ValueError("membership.icf.unsure and alpha contradict stage2_unsure_in_rel")
+    out["family"] = (m.get("family") or {}).get("value", "")
+    if out["family"] != "max":
+        raise ValueError("membership.family.value must be max (decided 2026-10-01)")
     return out
 
 
