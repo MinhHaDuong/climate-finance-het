@@ -43,24 +43,8 @@ DOC_VARS_FILE = {
     ),
 }
 
-# Plain-LaTeX JETP papers use the same document-keyed registry as Quarto
-# deliverables, but their live skeleton values do not depend on Phase-2 corpus
-# computation.  The generated macro files are committed handoffs for the
-# render-only workpackages.  New paper variables belong here, not in a .tex
-# source file, so their provenance remains inspectable in one place.
-LATEX_DOC_VARS_FILE = {
-    "jetp-mesure": os.path.join(
-        BASE_DIR, "deliverables", "jetp-mesure", "jetp-mesure-vars.tex"
-    ),
-    "jetp-econpol": os.path.join(
-        BASE_DIR, "deliverables", "jetp-econpol", "jetp-econpol-vars.tex"
-    ),
-}
-
-LATEX_DOC_VARS = {
-    "jetp-mesure": {"jetp_data_status": "Documentary evidence under review"},
-    "jetp-econpol": {"jetp_data_status": "Documentary evidence under review"},
-}
+LATEX_DOC_VARS_FILE: dict[str, str] = {}
+LATEX_DOC_VARS: dict[str, dict[str, str]] = {}
 
 _LATEX_ESCAPE = {
     "\\": r"\textbackslash{}",

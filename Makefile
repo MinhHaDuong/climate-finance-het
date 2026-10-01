@@ -110,7 +110,6 @@ endif
 # calls them via `$(MAKE) -f deliverables/<x>/<x>.mk` so the render process never
 # parses these Phase-2 rules (ticket 0237).
 -include scripts/analysis/divergence.mk
--include scripts/analysis/jetp_observatory.mk
 -include scripts/analysis/multilayer-detection.mk
 -include scripts/analysis/zoo-figures.mk
 -include scripts/analysis/venues.mk
@@ -135,70 +134,11 @@ ALL_FIGS := $(MANUSCRIPT_FIGS) $(DATAPAPER_FIGS) $(CORPUS_REPORT_FIGS) \
             $(MULTILAYER_FIGS) $(SLIDES_FIGS) $(ORPHANED_FIGS) $(NCC_FIGS)
 
 # ── Default target ────────────────────────────────────────
-.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo jetp-mesure jetp-econpol jetp-vars jetp-crs jetp-crs-data figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize full-gate-preflight smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate jetp-harvest jetp-harvest-blocked jetp-collect-downloads jetp-documents-track
+.PHONY: all setup manuscript papers corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo figures figures-manuscript figures-datapaper figures-corpusreport figures-companion figures-techrep figures-ncc stats check check-package check-fast lint test-durations venv-canonicalize full-gate-preflight smoke benchmark determinism-check regression regression-update audit-pdf-content check-corpus check-manuscript-data data corpus corpus-sync corpus-discover corpus-enrich corpus-extend corpus-filter corpus-align corpus-filter-all corpus-tables corpus-validate deploy-corpus clean rebuild archive-analysis archive-manuscript archive-datapaper analysis-figures analysis-tables analysis-stats manuscript-render manuscript-figures datapaper-render datapaper-figures corpus-handoff deposit-descriptors deposit-validate
 
 .DEFAULT_GOAL := manuscript
 
-# ── Papier court JETP — courbe de référence du décaissement (ticket 0713) ──
-# Chaîne CRS portée sous scripts/jetp/, quatre étapes dans dvc.yaml. Les sorties
-# atterrissent sous data/jetp/derived/ ; le livrable que consomme le papier est
-# data/jetp/derived/courbe-reference-decaissement.csv.
-#
-# `jetp-crs-data` récupère le tirage OCDE archivé depuis le remote DVC — l'étape
-# jetp_pull est frozen à dessein (API à débit limité, millésimes révisés par
-# l'OCDE), donc le tirage ne se rejoue jamais tout seul.
-jetp-crs-data:
-	$(UV_RUN) dvc pull data/jetp/crs
-
-# Test gates that exercise the archived CRS replay must be self-sufficient in a
-# fresh worktree. Avoid contacting DVC when all 80 pinned snapshots are already
-# materialized, but repair a missing or incomplete checkout before pytest runs.
-.PHONY: jetp-test-data
-jetp-test-data: | venv-canonicalize
-	@count="$$(find data/jetp/crs -maxdepth 1 -name '*_micro.csv.gz' -type f 2>/dev/null | wc -l)"; \
-	  if [ "$$count" -ne 80 ]; then \
-	    echo "Materializing 80 pinned JETP CRS test fixtures (found $$count)"; \
-	    $(MAKE) jetp-crs-data; \
-	  fi
-
-jetp-crs: jetp-crs-data
-	dvc repro jetp_cohortes jetp_livrable jetp_synthese
-
 all: manuscript papers
-
-# JETP documentary layer — current official evidence, distinct from the lagged
-# OECD CRS comparison pipeline. The manifest is kept in git; binary snapshots
-# are content-addressed locally and captured by DVC only on padme.
-JETP_DOCUMENT_REGISTRY := data/jetp/documents.csv
-JETP_RETRIEVALS := data/jetp/retrievals.csv
-JETP_SNAPSHOTS := data/jetp/snapshots.csv
-JETP_DOCUMENTS := data/jetp/documents
-JETP_SOURCE_ID_ARG := $(if $(JETP_SOURCE_ID),--source-id $(JETP_SOURCE_ID),)
-JETP_DOCUMENT_ID_ARG := $(if $(JETP_SOURCE_ID),--document-id $(JETP_SOURCE_ID),)
-
-# After collecting, ask for a public Web Archive copy while the page still
-# exists (ticket 0925); a failed capture is recorded in its own table and
-# never fails the harvest.
-jetp-harvest: $(JETP_DOCUMENT_REGISTRY) $(JETP_RETRIEVALS) $(JETP_SNAPSHOTS) scripts/jetp/corpus_harvest_ledger.py
-	$(PYTHON) scripts/jetp/corpus_harvest_ledger.py --storage-root $(JETP_DOCUMENTS) $(JETP_DOCUMENT_ID_ARG)
-	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
-
-# Ticket 0926: sources that refuse the collector but open in the author's
-# browser. The first rung replays the author's Firefox session; the second
-# picks up files the author saved by hand. Both then ask for a Web Archive
-# copy, as jetp-harvest does (ticket 0925). See data/jetp/README.md § Collection.
-
-jetp-harvest-blocked: $(JETP_DOCUMENT_REGISTRY) $(JETP_RETRIEVALS) $(JETP_SNAPSHOTS) scripts/jetp/corpus_harvest_ledger.py scripts/jetp/_firefox.py
-	$(PYTHON) scripts/jetp/corpus_harvest_ledger.py --storage-root $(JETP_DOCUMENTS) --browser-session --only-status blocked $(JETP_DOCUMENT_ID_ARG)
-	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
-
-jetp-collect-downloads: $(JETP_DOCUMENT_REGISTRY) $(JETP_RETRIEVALS) $(JETP_SNAPSHOTS) scripts/jetp/corpus_collect_downloads.py scripts/jetp/_firefox.py
-	$(PYTHON) scripts/jetp/corpus_collect_downloads.py --storage-root $(JETP_DOCUMENTS)
-	$(PYTHON) scripts/jetp/corpus_web_archive_capture.py --output $(JETP_WEB_ARCHIVE) $(JETP_SOURCE_ID_ARG)
-
-jetp-documents-track:
-	@test "$$(hostname)" = padme || { echo "JETP DVC capture must run on padme" >&2; exit 1; }
-	$(UV_RUN) dvc add $(JETP_DOCUMENTS)
 
 # ═══════════════════════════════════════════════════════════
 # PHASE 1 — Corpus Building (slow, API-dependent, run rarely)
@@ -251,13 +191,6 @@ corpus-sync:
 # corpus-sync instead to also fetch from the padme remote.
 data:
 	$(UV_RUN) dvc checkout
-
-# Materialize only the pinned JETP snapshots from the shared local DVC cache.
-# The checkout hook tries a reflink first; this also works without reflink support.
-.PHONY: jetp-data
-jetp-data:
-	$(UV_RUN) dvc checkout data/jetp/documents.dvc \
-		data/jetp/releases/vnm-migration-0764.json.dvc
 
 # Individual stage aliases.
 corpus-discover:
@@ -838,7 +771,7 @@ analysis-stats: stats
 manuscript:
 	$(MAKE) -f deliverables/manuscript/manuscript.mk deliverables/manuscript/manuscript.pdf deliverables/manuscript/manuscript.docx
 
-papers: corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo jetp-mesure jetp-econpol
+papers: corpus-report technical-report data-paper multilayer-detection multilayer-techrep zoo
 
 corpus-report:
 	$(MAKE) -f deliverables/corpus-report/corpus-report.mk deliverables/corpus-report/corpus-report.pdf
@@ -857,18 +790,6 @@ multilayer-techrep:
 
 zoo:
 	$(MAKE) -f deliverables/zoo/zoo.mk deliverables/zoo/breakpoint-detect-method-zoo.pdf
-
-# The JETP papers are plain LaTeX live documents. Their macro handoffs are
-# generated from the same document registry as the Quarto vars, but their
-# render workpackages remain TeX Live + latexmk only.
-jetp-vars: scripts/analysis/build_latex_vars.py scripts/analysis/_vars_registry.py
-	$(PYTHON) scripts/analysis/build_latex_vars.py --output deliverables
-
-jetp-mesure:
-	$(MAKE) -f deliverables/jetp-mesure/jetp-mesure.mk deliverables/jetp-mesure/jetp-mesure.pdf
-
-jetp-econpol:
-	$(MAKE) -f deliverables/jetp-econpol/jetp-econpol.mk deliverables/jetp-econpol/jetp-econpol.pdf
 
 # ── Namespaced aliases (Phase 3) ────────────────────────
 manuscript-render: manuscript
@@ -950,14 +871,14 @@ venv-canonicalize:
 	fi
 
 # ── All checks (tests) ───────────────────────────────────
-.PHONY: check-domain-literature check-domain-corpus check-domain-finance check-domain-jetp check-domain-writing check-domain-infrastructure
+.PHONY: check-domain-literature check-domain-corpus check-domain-finance check-domain-writing check-domain-infrastructure
 # The libs/openalex-corpus path package ships its own 25-test suite that root
 # `pytest tests/` never collects (norecursedirs=["libs"]). Run it explicitly so
 # host CI gates it. Pure-logic / mocked-HTTP — belongs in the fast tier too.
 check-package: | venv-canonicalize
 	$(PYTHON) -m pytest libs/openalex-corpus/tests -q --tb=short
 
-full-gate-preflight: jetp-test-data
+full-gate-preflight:
 	@# Use host Python: uv itself cannot start while its configured cache is read-only.
 	python3 scripts/qa_full_gate_preflight.py
 
@@ -991,11 +912,8 @@ check-domain-corpus: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m domain_corpus -n $(PYTEST_WORKERS)
 	$(PYTHON) -m pytest libs/openalex-corpus/tests/ -q --tb=short -m domain_corpus -n $(PYTEST_WORKERS)
 
-check-domain-finance: jetp-test-data numba-prewarm | venv-canonicalize
+check-domain-finance: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m domain_finance -n $(PYTEST_WORKERS)
-
-check-domain-jetp: jetp-test-data numba-prewarm | venv-canonicalize
-	$(PYTHON) -m pytest tests/ -q --tb=short -m domain_jetp -n $(PYTEST_WORKERS)
 
 check-domain-writing: numba-prewarm | venv-canonicalize
 	$(PYTHON) -m pytest tests/ -q --tb=short -m domain_writing -n $(PYTEST_WORKERS)

@@ -74,7 +74,6 @@ class TestLintTargetRunsAdherenceTier:
         ("check-domain-literature", "domain_literature"),
         ("check-domain-corpus", "domain_corpus"),
         ("check-domain-finance", "domain_finance"),
-        ("check-domain-jetp", "domain_jetp"),
         ("check-domain-writing", "domain_writing"),
         ("check-domain-infrastructure", "domain_infrastructure"),
     ],

@@ -1,4 +1,0 @@
-line_id,provider,period_start,period_end,marker,principal_pct,significant_pct,measurement_basis,source_locator
-oecd-rio-coefficients-survey-2020-projection-eu-adaptation,EU,2017,2018,adaptation,100,40,commitment,"DCD/DAC/STAT(2020)41, Table 1, EU row, printed p. 4"
-oecd-rio-coefficients-survey-2020-projection-eu-mitigation,EU,2017,2018,mitigation,100,40,commitment,"DCD/DAC/STAT(2020)41, Table 1, EU row, printed p. 4"
-oecd-rio-coefficients-survey-2020-projection-eu-biodiversity,EU,2017,2018,biodiversity,100,40,commitment,"DCD/DAC/STAT(2020)41, Table 1, EU row, printed p. 4"

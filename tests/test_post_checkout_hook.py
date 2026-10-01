@@ -3,8 +3,7 @@
 .worktreeinclude auto-copies .env and .dvc/config.local into worktrees
 created by EnterWorktree. The post-checkout hook wires up the two shared,
 off-tree resources — the uv environment and the DVC cache — by symlink. DVC
-*data* is populated on demand via `make data`, except JETP snapshots, which are
-initialized only when a cheap private reflink is available.
+*data* is populated on demand via `make data`.
 """
 
 import os
@@ -25,8 +24,6 @@ MAKEFILE = REPO / "Makefile"
 # A fresh worktree checks out tracked source and symlinks .venv;
 # the two historical regressions copied ~1.7-1.8 GB. 200 MB sits far above the
 # real tree yet far below any GB-scale eager copy, so it catches the whole class.
-# The bounded JETP snapshot store is excluded: reflinks count their logical
-# size here too. test_jetp_worktree_snapshots exercises its no-copy fallback.
 MAX_WORKTREE_MB = 200
 MAX_CHECKOUT_SECONDS = 15
 
@@ -196,8 +193,6 @@ def _tree_size_mb(root: Path) -> float:
     for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
         if ".git" in dirnames:
             dirnames.remove(".git")
-        if Path(dirpath) == root / "data/jetp" and "documents" in dirnames:
-            dirnames.remove("documents")
         for name in filenames:
             fp = Path(dirpath) / name
             try:
@@ -436,7 +431,7 @@ def test_hook_leaves_the_primary_checkouts_venv_alone(tmp_path):
     once chose that checkout's own .venv as the shared env and relinked .venv
     to itself: every session's Python broke until the next checkout flipped it
     back (observed 2026-09-24). Environment wiring is a linked worktree's
-    business, like the machine configuration and JETP snapshots."""
+    business, like the machine configuration."""
     primary, env = _scratch_repo_with_env(tmp_path)
     hook = subprocess.run(["sh", str(HOOK)], cwd=primary, capture_output=True, text=True)
     assert hook.returncode == 0, hook.stderr

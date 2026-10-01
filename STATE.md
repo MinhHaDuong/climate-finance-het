@@ -15,12 +15,11 @@ annual series stop at 2025, while 2026 is partial.
 Next: sweep; Gavard/Schoch; DAG and independent EconLit/OpenAlex searches;
 61-journal contents pilot, South/languages (including BRICS), versions and PRISMA; then map and synthesis.
 
-## JETP checkpoint
+## JETP migration
 
-No causal model (0729 DEFER). The MVP is live on GitHub Pages (`gh-pages`, republished 2026-09-30 from `df1d9436`) but shared only by private mail, so it counts as unpublished. Ontology v2 (0870), M1b catalogue (0833) and spec v1 (tag `jetp-spec-v1`, `docs/jetp-spec.md`) are done; M2 code is no longer gated.
-**Next:** M2 extraction (tracker 1500, from 1506), with storage and code catching up to the spec (1702) and reader selection and calibration on OpenRouter; spec follow-ups in 1703; Zotero off-site copy of document bytes (1712).
-`make all` still awaits the figure handoff (1491).
-**M2.3 reading lane (2026-10-01):** panel v1 inconclusive (1895); grants register parsed (1950); ontology gains finance type, owner/accountable roles and OEO capacity terms (1960, open for the instrument crosswalk); register IDs are renumbered across editions, never a stable key (1980). **This week, the author out of Claude tokens:** Codex takes the 1960 instrument crosswalk, Mistral Vibe takes 1970; 1940 and 1975 are held for the author. No paid API call without the author's go.
+The JETP ledger, observatory and research outputs moved to
+[MinhHaDuong/JETP-observer](https://github.com/MinhHaDuong/JETP-observer).
+The legacy DVC store is retained for historical recovery.
 
 ## Status
 <!-- generated 2026-10-01T10:46Z · as of de6f8e6f -->
