@@ -206,10 +206,20 @@ def make_counts(rows: list[dict], summary: dict, window_cfg: dict, inputs: dict,
 
 
 def _input(path: str | None) -> dict:
-    """Basename and sha256 of an input; ``sha256`` null for an absent optional one."""
+    """Basename and sha256 of an input; ``sha256`` null for an absent optional one.
+
+    For a file under a ``.dvc`` pointer (``data/rel_screen.dvc``), also the
+    pointer's ``md5``: the DVC version the file was fetched at.
+    """
     present = bool(path) and os.path.exists(path)
-    return {"path": os.path.basename(path or ""),
-            "sha256": rv.sha256_file(path) if present else None}
+    out = {"path": os.path.basename(path or ""),
+           "sha256": rv.sha256_file(path) if present else None}
+    pointer = ics.dvc_pointer(path) if path else None
+    if pointer:
+        with open(pointer, encoding="utf-8") as fh:
+            outs = (yaml.safe_load(fh) or {}).get("outs") or [{}]
+        out["dvc_md5"] = outs[0].get("md5", "")
+    return out
 
 
 def read_dimensions(dims_path: str | None) -> list[dict]:

@@ -21,7 +21,7 @@ SRULE = {"exclude": ["hijacked"], "ngo_research_in_b": True, "no_venue": "keep_f
          "tier_mu": {"A": 1.0, "B": 1.0, "C": 0.0, "unknown": 0.5},
          "tiers": ["A", "B"], "drop_publishers": []}
 MRULE = {"status": "proposed", "icf": {"icf": 1.0, "unsure": 0.5, "aux": 0.0, "out": 0.0},
-         "discipline": {"yes": 1.0, "unsure": 0.5, "no": 0.0}}
+         "discipline": {"yes": 1.0, "unsure": 0.5, "no": 0.0}, "family": "max"}
 
 
 def _dim(wk, contrib, stage="2", model="m", run_id="r", field="economics"):
@@ -268,13 +268,17 @@ def test_seriousness_rule_reads_the_decided_configs():
 
 def test_membership_rule_checks_values_and_the_unsure_exit():
     cfg = {"membership": {"status": "proposed", "icf": dict(MRULE["icf"]),
-                          "discipline": dict(MRULE["discipline"])}}
+                          "discipline": dict(MRULE["discipline"]),
+                          "family": {"value": "max"}}}
     assert rr.membership_rule(cfg, RULE, 0.5) == MRULE
     with pytest.raises(ValueError, match="stage2_unsure_in_rel"):
         rr.membership_rule(cfg, dict(RULE, stage2_unsure_in_rel=False), 0.5)
     bad = {"membership": dict(cfg["membership"], discipline={"yes": 1, "no": 0})}
     with pytest.raises(ValueError, match="discipline"):
         rr.membership_rule(bad, RULE, 0.5)
+    with pytest.raises(ValueError, match="family"):
+        rr.membership_rule({"membership": dict(cfg["membership"], family={"value": "min"})},
+                           RULE, 0.5)
 
 
 def test_config_membership_block_parses_with_quoted_yes_no():
@@ -436,3 +440,12 @@ def test_run_without_a_dimension_table_records_it_absent(tmp_path):
     assert counts["inputs"]["dimensions"]["sha256"] is None
     assert counts["reasons"]["works"]["included"] == 0
     assert counts["reasons"]["works"]["discipline_pending"] == 3
+
+
+def test_run_records_the_dvc_version_of_the_append_only_tables(tmp_path):
+    pool, table, dims, venues = _files(tmp_path)
+    (tmp_path / "rs.dvc").write_text("outs:\n- md5: abc123.dir\n  path: rs\n")
+    counts = _run(tmp_path, "a", dims, venues, pool, table)
+    assert counts["inputs"]["table"]["dvc_md5"] == "abc123.dir"
+    assert counts["inputs"]["dimensions"]["dvc_md5"] == "abc123.dir"
+    assert "dvc_md5" not in counts["inputs"]["pool"]
