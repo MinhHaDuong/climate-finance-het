@@ -10,9 +10,9 @@ Four steps, each its own subcommand, all writing under one output directory
   member before any drawn document is read (``control.csv``).
 - ``read``: each member reads each drawn document blind, part by part; raw
   answers are kept, never overwritten, and every proposed row is resolved by
-  code or dropped with its reason (``raw/``, ``rows.csv``).
+  code or dropped with its reason (``raw/``, ``rows.csv.gz``).
 - ``build``: panel-rule-v1 alignment and stance, the seeded split, the sealed
-  held-out part and the counts (``reference-lines.csv``, ``tuning.csv``,
+  held-out part and the counts (``tuning.csv``,
   ``heldout.csv.gz``, ``heldout.sha256``, ``counts.csv``).
 
 The panel is calibration's yardstick: agreement with a cross-vendor panel,
@@ -453,8 +453,13 @@ def cmd_read(cfg, out, only=None):
 
     with ThreadPoolExecutor(max_workers=6) as pool:
         futures = [pool.submit(run, job) for job in jobs]
-        for future in as_completed(futures):
-            log.info('kept %s (spent USD %.2f)', future.result().name, ledger.spent)
+        try:
+            for future in as_completed(futures):
+                log.info('kept %s (spent USD %.2f)', future.result().name, ledger.spent)
+        except BaseException:
+            # A closed fail sends no further document: queued calls are cancelled.
+            pool.shutdown(wait=True, cancel_futures=True)
+            raise
     collect(cfg, out, selection, layers)
 
 
@@ -512,6 +517,9 @@ def cmd_build(cfg, out):
                 'quote': kept['quote'], 'classification': kept['classification'],
                 **{name: kept['fields'][name] or '' for name in names},
                 'stance': 'admitted', 'confidence': confidence,
+                # medium: did the third member read the item otherwise, or not at all?
+                'third_member': ('' if confidence == 'high'
+                                 else 'dissent' if len(item) > len(agreeing) else 'absent'),
                 'members': ' '.join(agreeing), 'proposed_by': ' '.join(sorted(r['member'] for r in item)),
                 'rule': RULE, 'panel': cfg['version'],
                 'layer_sha256': sel['layer_sha256'], 'adapter': sel['adapter'],
@@ -519,7 +527,7 @@ def cmd_build(cfg, out):
     part = split(lines, cfg['split_seed'], cfg['heldout_share'])
     columns = ['line_id', 'document_id', 'sha256', 'country', 'language', 'shape', 'locator',
                'page', 'start', 'end', 'label', 'quote', 'classification', *names, 'stance',
-               'confidence', 'members', 'proposed_by', 'rule', 'panel', 'layer_sha256', 'adapter']
+               'confidence', 'third_member', 'members', 'proposed_by', 'rule', 'panel', 'layer_sha256', 'adapter']
     _write(out / 'tuning.csv', [r for r in lines if part[r['line_id']] == 'tuning'], columns)
     heldout = [r for r in lines if part[r['line_id']] == 'heldout']
     _write_gz(out / 'heldout.csv.gz', heldout, columns)

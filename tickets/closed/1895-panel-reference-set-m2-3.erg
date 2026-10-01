@@ -14,6 +14,17 @@ Closed: delivered: panel reference set v1, data/jetp/reference/panel-v1/
 2026-10-01T08:18Z HDMX-coding-agent note delivered: data/jetp/reference/panel-v1/ (README is the set's record). Panel A openai/gpt-5.6-sol via Azure, B x-ai/grok-4.7 via xAI, D z-ai/glm-5.3 via Parasail, all pinned zero-retention; C moonshotai/kimi-k3 failed the positive control (composed labels) and was replaced, not weighted. Prompt v3 after two control rounds; text layer v2 (pdftotext -raw) after layer v1 (-layout) interleaved the Vietnamese newsletter columns, every PDF re-read. 299 lines (152 tuning, 147 held out, 66 high, 233 medium), target ~450; only ZAF en prose span (50) and ZAF en table row (35) reach 30 held-out items, all other strata named uncalibrated. Pool reconciled: 115 pending = 109 readable + 2 JSON + 2 JavaScript + 2 spreadsheets (the draft's 111 removed bulk data first). Spend USD 8.87 of the accepted 10-48; ZDR routes priced above the estimate (OpenAI only via Azure at 4/20), the runner capped spend at USD 48.
 2026-10-01T08:19Z HDMX-coding-agent closed — delivered: panel reference set v1, data/jetp/reference/panel-v1/
 --- body ---
+## Outcome (2026-10-01)
+
+Delivered as `data/jetp/reference/panel-v1/`, whose README is the record
+and supersedes the draft below where they differ: the panel (Kimi K3
+replaced by GLM-5.3 after failing the control; OpenAI served only via
+Azure at USD 4/20 under zero retention), the final draw (seed 1891 under
+the cell rules of `config/jetp_panel_v1.yaml`, not the draft list), the
+reconciliation of 111 versus 115 (closed: 115 pending, 109 readable),
+the text layer (`pdftotext -raw`, not `-layout`) and the counts (299
+lines, USD 8.87). The sections below are the plan as accepted.
+
 ## Context
 
 Requirement Q17 (`docs/jetp-requirements.md`) and extraction § 6.3

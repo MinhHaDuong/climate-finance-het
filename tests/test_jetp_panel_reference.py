@@ -7,7 +7,9 @@ else excluded); every hosted call is pinned to a zero-retention provider and
 fails closed otherwise; the held-out part is sealed by a committed hash.
 """
 
+import csv
 import gzip
+import urllib.error
 from pathlib import Path
 
 import pytest
@@ -242,6 +244,21 @@ def test_an_error_answer_is_recorded_and_retried_not_taken(tmp_path, monkeypatch
     assert len(rows) == 3 and 'error: ' in rows[1]
 
 
+def test_a_permanent_client_error_is_not_retried(tmp_path, monkeypatch):
+    calls = []
+
+    def refuse(path, body):
+        calls.append(1)
+        raise urllib.error.HTTPError('u', 400, 'bad request', {}, None)
+
+    monkeypatch.setattr(client, '_request', refuse)
+    monkeypatch.setattr(client.time, 'sleep', lambda s: None)
+    ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
+    with pytest.raises(client.ClosedFail):
+        client.call(MEMBER, [{'role': 'user', 'content': 'x'}], {}, CALL_CFG, ledger, 'd', 1)
+    assert len(calls) == 1
+
+
 def test_a_misserved_answer_is_recorded_then_stops_the_run(tmp_path, monkeypatch):
     monkeypatch.setattr(client, '_request', lambda path, body: {**ANSWER, 'provider': 'OpenAI'})
     ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
@@ -263,9 +280,12 @@ def test_the_budget_counts_calls_in_flight(tmp_path):
 
 # --- the sealed held-out part -----------------------------------------------
 
-@pytest.mark.skipif(not (REFERENCE / 'heldout.sha256').exists(), reason='set not built')
-def test_the_held_out_part_matches_its_committed_hash():
+def test_the_held_out_part_matches_its_committed_hash_and_shares_no_line():
+    # The seal detects an edit; it does not hide the lines (README).
     digest = (REFERENCE / 'heldout.sha256').read_text().split()[0]
     assert sha256_file(REFERENCE / 'heldout.csv.gz') == digest
-    with gzip.open(REFERENCE / 'heldout.csv.gz', 'rt') as fh:
-        assert fh.readline().startswith('line_id,')
+    with gzip.open(REFERENCE / 'heldout.csv.gz', 'rt', encoding='utf-8') as fh:
+        heldout = {r['line_id'] for r in csv.DictReader(fh)}
+    with open(REFERENCE / 'tuning.csv', encoding='utf-8') as fh:
+        tuning = {r['line_id'] for r in csv.DictReader(fh)}
+    assert heldout and tuning and not heldout & tuning

@@ -29,7 +29,7 @@ was replaced by D, not weighted (below). Z.ai is not among the candidates
 the ticket names; the survey lists GLM only as a model zero-retention
 routing covers. Should ticket 1890 or 1873 retain a GLM reader, this panel
 loses its independence from that reader and a new reference set version is
-due.
+due. The `D-via-z-ai` call sent only the synthetic control document.
 
 Serving: OpenRouter, each member pinned to one provider listed on
 `/api/v1/endpoints/zdr` (2026-10-01, `zdr-endpoints.csv`), with
@@ -77,14 +77,20 @@ included, over USD 48 (`budget_usd`). Spend per call: `calls.csv`.
   normalised page (NFKC, whitespace runs joined) and derives the locator
   (page, character span, occurrence). The label and every field value must
   lie inside the quote. A row that does not resolve is dropped and counted
-  (`rows.csv`, `counts.csv`); there is no repair call.
+  (`rows.csv.gz`, `counts.csv`); there is no repair call. A quote found
+  more than once takes its first occurrence and the locator says so
+  (6 of the 299 lines).
 - **panel-rule-v1** (`scripts/jetp/_panel_rule.py`). Rows of different
   members align as one item when their spans overlap on the same page and
-  their classifications match, joined by decreasing overlap, at most one row
-  per member. Rows agree when their fields are equal after whitespace and
+  their classifications match (any shared character counts), joined by
+  decreasing overlap, at most one row per member. Rows agree when their fields are equal after whitespace and
   Unicode normalisation (empty equals absent); a difference of span only is
   agreement, and the shortest span is kept. 3 of 3 agree: confidence high;
-  2 of 3: medium; otherwise excluded from the reference and counted. Rows
+  2 of 3: medium; otherwise excluded from the reference and counted. A
+  medium line says whether the third member read the item otherwise
+  (`third_member` = `dissent`) or did not read it at all (`absent`).
+  Over the set: 66 high, 51 medium with a dissent, 182 medium with the
+  third member absent. Rows
   classed `cannot_classify` are counted, never kept. A change of rule is a
   new rule version and a new reference set version.
 - **Positive control first** (extraction § 12), before any drawn document:
@@ -109,13 +115,25 @@ included, over USD 48 (`budget_usd`). Spend per call: `calls.csv`.
     of the quote; never compose one): A, B and D passed. Kimi failed v2 for
     the defect v3 addresses; it was not re-run, the replacement standing.
   Control spend: under USD 0.25 (`calls.csv`).
+- **Error answers.** During the first reading, eleven GPT-5.6 calls on Azure
+  came back within two seconds with no provider and no choice; the client
+  failed closed (`calls.csv`, blank provider, zero cost). It now records
+  such an answer and retries it with backoff; a permanent client error is
+  not retried, and a call served by another provider still stops the run,
+  queued calls cancelled. One diagnostic call (`probe-not-kept`) is in
+  `calls.csv`; its answer was not kept.
 - **Selection.** Pending documents (a snapshot, no line), drawn by
   `random.Random(1891)` per cell over the sorted pool, then one reserve per
   cell (`selection.csv`). Shape is set by document type (`shape_of_type`).
 - **Split.** `random.Random(1895)`, stratified by country, language and
-  shape, half held out. The held-out part is `heldout.csv.gz`, sealed by
-  `heldout.sha256`; a test checks the hash. Prompt writing and model
-  selection read `tuning.csv` only.
+  shape, half held out, by line: tuning and held-out lines come from the
+  same documents (14 of 15), so the held-out part measures agreement on
+  unseen lines of seen documents, not on unseen documents. The held-out
+  part is `heldout.csv.gz`, sealed by `heldout.sha256`; a test checks the
+  hash and that no line is in both parts. The seal detects an edit; it
+  does not hide the lines, whose quotes are also in `rows.csv.gz` and
+  `raw/`. Prompt writing and model selection read `tuning.csv` only, by
+  rule (extraction § 6.3), not by access control.
 
 ## Result (2026-10-01)
 
@@ -142,7 +160,13 @@ Counts of the layer v2 reading, from `counts.csv`; rows classed
 fallback of extraction § 6.3 (pooled mapping of the language, every item to
 the arbiter, named uncalibrated): IDN en prose span, SEN fr prose span, VNM
 vi prose span, VNM vi record page, VNM vi table row, ZAF en record page.
-Only ZAF en prose span (50) and ZAF en table row (35) reach 30. Not drawn
+ZAF en prose span (50, from three documents) reaches 30. ZAF en table
+row reaches 35 by count but is **treated as uninformative**: 32 of its 35
+held-out lines come from one document, the grants register, and 31 of them
+are medium lines that A and B agree on with D absent (D lost the
+register's rows, below), so the stratum rests on one document and two
+effective members. It becomes informative only with a second table
+document read by all three members. Not drawn
 at all, hence also uncalibrated: every Indonesian-language document, SEN
 table rows and record pages, IDN table rows and record pages, VNM
 documents in English or without a recorded language, and transcription

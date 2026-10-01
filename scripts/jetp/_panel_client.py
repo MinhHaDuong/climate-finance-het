@@ -167,14 +167,19 @@ def call(member, messages, schema, cfg, ledger, document_id, part, retries=4):
     try:
         for attempt in range(retries):
             started = time.time()
+            permanent = False
             try:
                 response = _request('/chat/completions', body)
-            except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode('utf-8', 'replace')[:300]
+                response = {'error': f'HTTP {exc.code}: {detail}'}
+                permanent = 400 <= exc.code < 500 and exc.code not in (408, 429)
+            except (urllib.error.URLError, TimeoutError) as exc:
                 response = {'error': f'{type(exc).__name__}: {exc}'}
             ledger.record(_ledger_row(member, cfg, document_id, part, response, started))
             if response.get('choices') and not response.get('error'):
                 break
-            if attempt == retries - 1:
+            if permanent or attempt == retries - 1:
                 raise ClosedFail(f"{member['key']} {document_id} part {part}: "
                                  f"no answer after {retries} attempts: {response.get('error')}")
             time.sleep(60 * (attempt + 1))
