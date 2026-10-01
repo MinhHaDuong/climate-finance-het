@@ -29,8 +29,8 @@ furniture (folios).
 
 Usage::
 
-    python scripts/jetp/build_zaf_grants_register.py --dry-run
-    python scripts/jetp/build_zaf_grants_register.py --recorded-at 2026-10-01 \\
+    python scripts/jetp/build_zaf_grants_register.py check
+    python scripts/jetp/build_zaf_grants_register.py admit --recorded-at 2026-10-01 \\
         --output docs/jetp-study/1950-zaf-grants-register-run.json
 """
 
@@ -48,6 +48,8 @@ from jetp import _xlsx_cells as xlsx
 from jetp import _zaf_grants_layouts as layouts
 from jetp._ledger_headers import LEDGER_DIR, load_schema, read_table, write_table
 from jetp._zaf_grants_layouts import RegisterError
+from jetp.build_comparators import _add, _fields, _rows
+from jetp.build_iati_comparators import _append_lines
 
 ROOT = Path(__file__).resolve().parents[2]
 METHOD = 'zaf-grants-register-parser'
@@ -194,16 +196,17 @@ def _replay(extraction, held, ledger_dir, new_lines, field_rows):
 
 
 def admit(extractions, ledger_dir=LEDGER_DIR, *, recorded_at):
-    """Append the lines of every extraction not yet admitted; replay the others."""
-    from jetp.build_comparators import _add, _fields, _rows
-    from jetp.build_iati_comparators import _append_lines
+    """Append the lines of every extraction not yet admitted; replay the others.
 
+    All or nothing across the batch: every replay and identifier check runs
+    before the first byte is written, so a failure leaves the ledger as it was.
+    """
     ledger_dir = Path(ledger_dir)
     schema = load_schema()
     lines = _rows(ledger_dir, 'lines', schema)
     specs = _rows(ledger_dir, 'line_field_specs', schema)
     existing = {row['line_id'] for row in lines}
-    admitted = {}
+    admitted, pending = {}, []
     for extraction in extractions:
         new_lines, field_rows = to_rows(extraction, recorded_at)
         held = [row for row in lines if row['sha256'] == extraction.sha256]
@@ -214,15 +217,18 @@ def admit(extractions, ledger_dir=LEDGER_DIR, *, recorded_at):
         minted = [row['line_id'] for row in new_lines if row['line_id'] in existing]
         if minted:
             raise RegisterError(f'{minted[0]}: identifier already minted')
+        pending.append((extraction, new_lines, field_rows))
+        admitted[extraction.document_id] = len(new_lines)
+    for extraction, new_lines, field_rows in pending:
         lines.extend(new_lines)
         columns = field_columns(extraction)
         _add(specs, {'document_id': extraction.document_id,
                      'columns': json.dumps(columns, ensure_ascii=False)}, ('document_id',))
         _fields(ledger_dir / 'line-fields' / f'{extraction.document_id}.csv', columns,
                 field_rows)
-        admitted[extraction.document_id] = len(new_lines)
-    _append_lines(ledger_dir, schema, lines, existing, recorded_at)
-    write_table(ledger_dir, 'line_field_specs', specs, schema=schema)
+    if pending:
+        _append_lines(ledger_dir, schema, lines, existing, recorded_at)
+        write_table(ledger_dir, 'line_field_specs', specs, schema=schema)
     return admitted
 
 
@@ -270,32 +276,37 @@ def _write_reconciliation(rows, path):
         writer.writerows(rows)
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
-    parser.add_argument('--recorded-at')
-    parser.add_argument('--ledger-dir', type=Path, default=LEDGER_DIR)
-    parser.add_argument('--output', type=Path,
-                        help=f'run report (JSON), e.g. {REPORT.relative_to(ROOT)}; the 2023 Q3 '
-                             'dollar reconciliation is written beside it')
-    parser.add_argument('--dry-run', action='store_true',
-                        help='extract and check every edition; admit nothing')
-    args = parser.parse_args()
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+def _extract_all(ledger_dir):
     extractions = []
     for document_id, edition in EDITIONS.items():
-        extraction = extract(document_id, snapshot_path(edition.sha256, args.ledger_dir))
+        extraction = extract(document_id, snapshot_path(edition.sha256, ledger_dir))
         log.info('%s: %s grant rows, %d statements', document_id, extraction.counts,
                  len(extraction.items))
         extractions.append(extraction)
     first = EDITIONS['zaf-jet-grants-register-2023-q3']
     reconciliation = layouts.usd_reconciliation(
-        ruled.read_pdf(snapshot_path(first.sha256, args.ledger_dir)),
+        ruled.read_pdf(snapshot_path(first.sha256, ledger_dir)),
         next(e for e in extractions if e.sha256 == first.sha256).items)
-    if args.dry_run:
-        log.info('dry run: %s', json.dumps(run_report(extractions, reconciliation)['usd_reconciliation_2023_q3']))
+    return extractions, reconciliation
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
+    parser.add_argument('--ledger-dir', type=Path, default=LEDGER_DIR)
+    commands = parser.add_subparsers(dest='command', required=True)
+    commands.add_parser('check', help='extract and control every edition; admit nothing')
+    admitting = commands.add_parser('admit', help='admit the lines of every edition')
+    admitting.add_argument('--recorded-at', required=True)
+    admitting.add_argument('--output', type=Path, required=True,
+                           help=f'run report (JSON), e.g. {REPORT.relative_to(ROOT)}; the '
+                                '2023 Q3 dollar reconciliation is written beside it')
+    args = parser.parse_args()
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    extractions, reconciliation = _extract_all(args.ledger_dir)
+    report = run_report(extractions, reconciliation)
+    if args.command == 'check':
+        log.info('2023 Q3 dollar signs: %s', report['usd_reconciliation_2023_q3'])
         return
-    if not args.recorded_at or not args.output:
-        parser.error('--recorded-at and --output are required to admit lines')
     log.info('admitted: %s', admit(extractions, args.ledger_dir, recorded_at=args.recorded_at))
     output = args.output.resolve()
     beside = output.with_name(output.stem.removesuffix('-run') + '-2023-q3-usd.csv')

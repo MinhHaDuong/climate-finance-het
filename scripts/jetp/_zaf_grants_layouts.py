@@ -85,8 +85,12 @@ HEADERS_2024 = {
 # overall table, which lists them all, is their control. A total too wide for
 # its column prints as '#' signs: there is no figure to compare.
 TRUNCATED_2024 = {
-    'uk-register': 'the printed UK register stops at UK015 (page 19): the rows after it '
-                   'and its total are not printed; the overall table lists them',
+    'uk-register': {
+        'reason': 'the printed UK register stops at UK015 (page 19): the rows after it '
+                  'and its total are not printed; the overall table lists them',
+        'not_printed': {f'UK{n:03d}' for n in (*range(16, 32), 33, 34, 35, 37, 39,
+                                               *range(42, 52))},
+    },
 }
 ILLEGIBLE_2024 = {('nl-register', 'Total ZAR')}
 
@@ -114,8 +118,20 @@ def join(text):
     return ' '.join(str(text).split())
 
 
+PRINTED_AMOUNT = re.compile(
+    r'(?P<sign>-)?\s*(?:\$|R|€|£|CHF|CAD|US\$)?\s*'
+    r'(?P<number>\d{1,3}(?:[ ,]\d{3})+|\d+)(?P<decimals>\.\d+)?\s*(?:kr\.?)?')
+
+
 def amount(text):
-    """The number in a printed or stored amount, or None when it prints none."""
+    """The one number of a printed or stored amount; None when it prints no digit.
+
+    A stored value is a plain or scientific number. A printed value is one
+    number with an optional sign and currency mark (before it, or kr. after it),
+    grouped by commas or
+    spaces. Anything else with a digit in it (two numbers, a word between
+    digits) is refused: a control must not sum what it cannot read.
+    """
     if text is None:
         return None
     text = str(text).strip()
@@ -123,10 +139,11 @@ def amount(text):
         return None
     if re.fullmatch(r'-?\d+(\.\d+)?([eE][-+]?\d+)?', text):
         return float(text)
-    digits = re.sub(r'[^\d.]', '', text)
-    if digits.count('.') > 1:
-        raise RegisterError(f'amount {text!r} is not a number')
-    return float(digits)
+    match = PRINTED_AMOUNT.fullmatch(text)
+    if match is None:
+        raise RegisterError(f'amount {text!r} is not one number')
+    value = float(re.sub(r'[ ,]', '', match['number']) + (match['decimals'] or ''))
+    return -value if match['sign'] else value
 
 
 # ---------------------------------------------------------------------------
@@ -141,17 +158,22 @@ def check_total(table, column, rows, printed, controls, rounded=False):
     from the printed total by at most half a unit per row: beyond that bound
     the total disagrees.
     """
-    values = [v for v in (amount(row.get(column)) for row in rows) if v is not None]
+    printed_cells = [row.get(column) for row in rows if row.get(column)]
+    values = [v for v in (amount(cell) for cell in printed_cells) if v is not None]
     total = sum(values)
     if printed is None:
         raise RegisterError(f'{table}: no printed total for {column!r}')
+    # Half a unit per rounded value is the exact bound; a small row lost under
+    # it is caught by the reviewed row count of the edition, not by the sum.
     tolerance = 0.5 * (len(values) + 1) if rounded else 0.5
     gap = total - printed
     if abs(gap) > tolerance:
         raise RegisterError(f'{table}: {column!r} rows sum to {total:,.2f}, '
                             f'the printed total is {printed:,.2f}')
+    blank = len(printed_cells) - len(values)
     controls.append(f'{table}: {column} sum of {len(values)} rows {total:,.2f}, '
-                    f'printed total {printed:,.2f} (gap {gap:+,.2f}, bound {tolerance:,.1f})')
+                    f'printed total {printed:,.2f} (gap {gap:+,.2f}, bound {tolerance:,.1f})'
+                    + (f'; {blank} cells print no number' if blank else ''))
 
 
 def check_ids(table, rows, controls):
@@ -162,25 +184,24 @@ def check_ids(table, rows, controls):
     controls.append(f'{table}: {len(ids)} distinct Unique IDs')
 
 
-def _prefix(unique):
-    return re.match(r'[A-Z]+', unique).group()
-
-
-def check_overall_union(ids_by_table, controls, truncated=(), declared=None):
+def check_overall_union(ids_by_table, controls, truncated=None, declared=None):
     """The overall table lists exactly the grants of the donor registers.
 
-    A register declared truncated in print may lack rows of the overall
-    table, and only rows with its own prefix. A difference the publisher made
-    between its overall table and its registers is recorded as the
-    publisher's own (extraction section 15) once reviewed: the difference
-    found must then be exactly the one declared.
+    A register declared truncated in print lacks exactly the rows declared as
+    not printed. A difference the publisher made between its overall table
+    and its registers is recorded as the publisher's own (extraction section
+    15) once reviewed: the difference found must then be exactly the one
+    declared.
     """
     if 'overall' not in ids_by_table:
         return
     registers = set().union(*(ids for table, ids in ids_by_table.items() if table != 'overall'))
     overall = ids_by_table['overall']
-    prefixes = {_prefix(i) for t in truncated for i in ids_by_table[t]}
-    only_overall = {i for i in overall - registers if _prefix(i) not in prefixes}
+    not_printed = set().union(*(d['not_printed'] for d in (truncated or {}).values()))
+    if not not_printed <= overall - registers:
+        raise RegisterError('rows declared not printed are printed or absent from the '
+                            f'overall table: {sorted(not_printed - (overall - registers))}')
+    only_overall = overall - registers - not_printed
     only_registers = registers - overall
     expected = declared or {'only_overall': set(), 'only_registers': set()}
     if (only_overall, only_registers) != (set(expected['only_overall']),
@@ -188,7 +209,7 @@ def check_overall_union(ids_by_table, controls, truncated=(), declared=None):
         raise RegisterError('overall table and donor registers list different grants: '
                             f'only overall {sorted(only_overall)}, '
                             f'only registers {sorted(only_registers)}')
-    missing = sorted(overall - registers - only_overall)
+    missing = sorted(not_printed)
     text = f'overall: {len(overall)} Unique IDs, donor registers {len(registers)}'
     if missing:
         text += (f'; {len(missing)} not printed in a truncated register '
@@ -248,7 +269,12 @@ def _xlsx_header(rows, table):
     for needed in ('Unique ID', 'Total US$', 'Total ZAR', 'Status'):
         if needed not in headers.values():
             raise RegisterError(f'{table}: landmark absent: header {needed!r}')
-    return at, headers
+    undeclared = [h for h in headers.values()
+                  if re.search(r'(?i)amount|total|us\$|zar', h) and h not in AMOUNT_COLUMNS]
+    if undeclared:
+        raise RegisterError(f'{table}: amount header(s) {undeclared} not declared for a '
+                            'total control')
+    return at, dict(sorted(headers.items(), key=lambda kv: xlsx.column_index(kv[0])))
 
 
 def _xlsx_note_above(sheet, table, above):
@@ -258,6 +284,16 @@ def _xlsx_note_above(sheet, table, above):
     locator = _locator_xlsx(sheet, f'A{above[0].number}:{last}{above[-1].number}')
     return Item(table, locator, ' '.join(texts), 'heading',
                 note='exchange-rate note and title above the table')
+
+
+def _hidden_note(sheet, row, headers):
+    marks = ['hidden sheet'] if sheet.hidden else []
+    if row.hidden:
+        marks.append('hidden row')
+    columns = [headers[c] for c in row.cells if c in sheet.hidden_columns]
+    if columns:
+        marks.append(f'hidden column(s): {", ".join(columns)}')
+    return '; '.join(marks)
 
 
 def _xlsx_table(sheet, table, controls):
@@ -270,19 +306,19 @@ def _xlsx_table(sheet, table, controls):
         unique = join(row.cells.get('A', ''))
         stray = [c for c in row.cells if c not in headers]
         if total is None and ID_PATTERN.match(unique) and not stray:
-            fields = {headers[c]: v for c, v in row.cells.items()}
+            fields = {headers[c]: row.cells[c] for c in headers if c in row.cells}
             fields['Unique ID'] = unique
             items.append(Item(table, _locator_xlsx(sheet, f'row {row.number}'),
                               join(fields.get('Description', '')) or unique,
                               'register_allocation', fields,
                               own_status=join(fields.get('Status', '')),
                               own_sector=join(fields.get('Portfolios', '')), heading=heading,
-                              note='hidden row' if row.hidden else ''))
+                              note=_hidden_note(sheet, row, headers)))
             grants.append(fields)
         elif total is None and not unique and not stray and \
                 any(headers[c] == 'Total US$' for c in row.cells):
             total = {headers[c]: v for c, v in row.cells.items()}
-        elif total is not None and set(row.cells) == {'A'}:
+        elif total is not None and set(row.cells) == {'A'} and not ID_PATTERN.match(unique):
             notes.append(Item(table, _locator_xlsx(sheet, f'A{row.number}'),
                               join(row.cells['A']), 'heading', heading=heading,
                               note='footnote under the table'))
@@ -360,11 +396,22 @@ def _headings_2023(first):
     return [title, rate]
 
 
+def _outside_bands_2023(page, first):
+    """Only page furniture lies outside the ruled table: the folio, and on page
+    1 the title and exchange-rate note above it."""
+    for word in page.words:
+        if word.middle > page.rules[-1] and not word.text.isdigit():
+            raise RegisterError(f'page {page.number}: text {word.text!r} under the table')
+        if word.middle < page.rules[0] and page is not first:
+            raise RegisterError(f'page {page.number}: text {word.text!r} above the table')
+
+
 def _records_2023(pages):
     records, total = [], None
     for page in pages:
         if not page.rules:
             raise RegisterError(f'page {page.number}: no ruled table')
+        _outside_bands_2023(page, pages[0])
         bands = page.bands()[1:] if page is pages[0] else page.bands()
         for position, (top, bottom) in enumerate(bands, 1):
             cells = _band_cells(page, top, bottom)
@@ -394,7 +441,8 @@ def parse_pdf_2023(pages):
     records, total = _records_2023(pages)
     grants, controls = [], []
     for record in records:
-        cells = {name: join(text) for name, text in record['cells'].items()}
+        cells = {name: join(record['cells'][name]) for name in HEADERS_2023
+                 if name in record['cells']}
         label = cells.get('Activities - Descriptions') or cells.get('Detailed Descriptions', '')
         items.append(Item('register', _record_locator(record, 1), label, 'register_allocation',
                           cells, own_status=cells.get('Status - Dynamic', ''),
@@ -438,12 +486,15 @@ def usd_reconciliation(pages, items):
             place = {'page': page.number, 'x': round(x0), 'y': round(top), 'column': column,
                      'text': word, 'locator': ''}
             item = None if index is None else by_place.get((page.number, index + 1 - offset))
+            closing = page is pages[-1] and index == len(bands) - 1
             if index is None:
                 disposition = 'outside the table'
             elif page.number == 1 and index == 0:
                 disposition = 'printed header'
-            elif item is None:
+            elif item is None and closing:
                 disposition = 'printed total (control)'
+            elif item is None:
+                disposition = 'unattributed'
             elif column == 'Total US$':
                 disposition = 'grant row: Total US$ cell'
             else:
@@ -603,10 +654,13 @@ def parse_pdf_2024(pages, titles=TITLES_2024, truncated=None, illegible=None):
         if slug in truncated:
             if total is not None or any(w.middle > last.rules[-1] for w in last.words):
                 raise RegisterError(f'{slug}: declared truncated, yet prints a total or notes')
-            controls.append(f'{slug}: no printed total; {truncated[slug]}')
+            controls.append(f"{slug}: no printed total; {truncated[slug]['reason']}")
             footnotes = []
         else:
             total, footnotes = _below_2024(last, labels, number, slug, heading, total)
+        for record in records:
+            record['cells'] = {name: record['cells'][name] for name in labels
+                               if name in record['cells']}
         grants = [record['cells'] for record in records]
         items.extend(Item(slug, _record_locator(record, number),
                           record['cells'].get('Description') or record['cells']['Unique ID'],
@@ -620,5 +674,5 @@ def parse_pdf_2024(pages, titles=TITLES_2024, truncated=None, illegible=None):
             _totals_2024(slug, labels, grants, total, illegible, controls)
         counts[slug] = len(grants)
         ids_by_table[slug] = {g['Unique ID'] for g in grants}
-    check_overall_union(ids_by_table, controls, tuple(truncated))
+    check_overall_union(ids_by_table, controls, truncated)
     return items, controls, counts, {'page furniture': 'none printed'}
