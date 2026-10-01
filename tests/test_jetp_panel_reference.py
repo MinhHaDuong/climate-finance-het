@@ -236,8 +236,8 @@ def test_an_error_answer_is_recorded_and_retried_not_taken(tmp_path, monkeypatch
     # GPT-5.6 on Azure, 2026-10-01: eleven answers with no provider and no choice.
     answers = iter([{'error': {'message': 'upstream'}}, ANSWER])
     monkeypatch.setattr(client, '_request', lambda path, body: next(answers))
-    monkeypatch.setattr(client.time, 'sleep', lambda s: None)
     ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
+    monkeypatch.setattr(ledger.halt, 'wait', lambda timeout: False)
     content, _ = client.call(MEMBER, [{'role': 'user', 'content': 'x'}], {}, CALL_CFG, ledger, 'd', 1)
     assert content == '{}'
     rows = (tmp_path / 'calls.csv').read_text().splitlines()
@@ -252,7 +252,6 @@ def test_a_permanent_client_error_is_not_retried(tmp_path, monkeypatch):
         raise urllib.error.HTTPError('u', 400, 'bad request', {}, None)
 
     monkeypatch.setattr(client, '_request', refuse)
-    monkeypatch.setattr(client.time, 'sleep', lambda s: None)
     ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
     with pytest.raises(client.ClosedFail):
         client.call(MEMBER, [{'role': 'user', 'content': 'x'}], {}, CALL_CFG, ledger, 'd', 1)
@@ -265,6 +264,27 @@ def test_a_misserved_answer_is_recorded_then_stops_the_run(tmp_path, monkeypatch
     with pytest.raises(client.ClosedFail):
         client.call(MEMBER, [{'role': 'user', 'content': 'x'}], {}, CALL_CFG, ledger, 'd', 1)
     assert ledger.spent == pytest.approx(0.01)
+
+
+def test_a_stop_during_the_retry_wait_sends_no_further_request(tmp_path, monkeypatch):
+    calls = []
+    ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
+
+    def failing(path, body):
+        calls.append(1)
+        ledger.stop()  # another worker's closed fail lands meanwhile
+        return {'error': {'message': 'upstream'}}
+
+    monkeypatch.setattr(client, '_request', failing)
+    with pytest.raises(client.ClosedFail):
+        client.call(MEMBER, [{'role': 'user', 'content': 'x'}], {}, CALL_CFG, ledger, 'd', 1)
+    assert len(calls) == 1
+
+
+def test_the_retry_wait_returns_at_once_when_the_run_stops(tmp_path):
+    ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
+    ledger.stop()
+    assert ledger.halt.wait(180) is True  # immediate, not after 180 s
 
 
 def test_after_a_closed_fail_no_call_starts(tmp_path):

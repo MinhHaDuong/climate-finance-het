@@ -79,7 +79,7 @@ class Ledger:
         self.lock = threading.Lock()
         self.spent = 0.0
         self.pending = 0.0
-        self.stopped = False
+        self.halt = threading.Event()
         if os.path.exists(path):
             with open(path, newline='') as fh:
                 self.spent = sum(float(r['cost_usd'] or 0) for r in csv.DictReader(fh))
@@ -95,8 +95,12 @@ class Ledger:
             self.pending += estimate
 
     def stop(self):
-        """After a closed fail: no new call, no further attempt."""
-        self.stopped = True
+        """After a closed fail: no new call, no further attempt, no sleep out."""
+        self.halt.set()
+
+    @property
+    def stopped(self):
+        return self.halt.is_set()
 
     def release(self, estimate):
         with self.lock:
@@ -191,8 +195,10 @@ def call(member, messages, schema, cfg, ledger, document_id, part, retries=4):
                 break
             if permanent or ledger.stopped or attempt == retries - 1:
                 raise ClosedFail(f"{member['key']} {document_id} part {part}: "
-                                 f"no answer after {retries} attempts: {response.get('error')}")
-            time.sleep(60 * (attempt + 1))
+                                 f"no answer after {attempt + 1} attempts: {response.get('error')}")
+            if ledger.halt.wait(60 * (attempt + 1)):
+                raise ClosedFail(f"{member['key']} {document_id} part {part}: "
+                                 'run stopped while waiting to retry')
     finally:
         ledger.release(estimate)
     check_served(member, response)
