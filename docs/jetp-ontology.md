@@ -255,24 +255,23 @@ One dated statement about one subject, cited to one line: a flow on an
 agreement, a state of an asset, a stage of a project, a capacity, an estimate
 on a plan line, a count on a perimeter, an envelope on a partnership. The
 subject is typed, `(subject_kind, subject_id)`, and may be a line itself when
-no identity has been minted. An observation has one or more timings, each
-with a role from one closed list of nine (`event`, `approval`,
-`reporting_cutoff`, `register_date`, `report_date`, `planned`, `target`,
-`period_start`, `period_end`; the last two bound a flow over an interval,
-section 4), a precision (`day`, `month`, `quarter`, `year`, `unknown`) and
-bounds. Values are the publisher's, in the publisher's unit and currency;
-conversion is a derivation through the sourced `rates` table. An
-observation names its `measure` from the closed list of section 4, its
-`basis` (`gross`, `net`, `unknown`) where money is involved, and its
-`flow_type` from the IATI list when the measure is a flow. It carries
-`recorded_at`, the date the ledger wrote it, and the same `status` and
-`supersedes` as a decision row. Supersession corrects the ledger's own
-errors, never a publisher: a later statement that prints a different value
-is a new observation beside the old one, and one that prints the same value
-again is a dated restatement ([fusion](jetp-fusion.md), section 2).
-Subjects also include `country`, for macro-fiscal indicators (GDP, external
-debt; a utility's debt ratio is on a `party`), each with its indicator code
-from the publisher's own list. [M3b]
+no identity has been minted. An observation has one or more timings, each with
+a role from one closed list of nine (`event`, `approval`, `reporting_cutoff`,
+`register_date`, `report_date`, `planned`, `target`, `period_start`,
+`period_end`; the last two bound a flow over an interval, section 4), a
+precision (`day`, `month`, `quarter`, `year`, `unknown`) and bounds. Values
+are the publisher's, in the publisher's unit and currency; conversion is a
+derivation through the sourced `rates` table. An observation names its
+`measure` from the closed list of section 4, its `basis` (`gross`, `net`,
+`unknown`) where money or a physical quantity is involved, and its `flow_type`
+from the IATI list when the measure is a flow. It carries `recorded_at`, the
+date the ledger wrote it, and the same `status` and `supersedes` as a decision
+row. Supersession corrects the ledger's own errors, never a publisher: a later
+statement that prints a different value is a new observation beside the old
+one, and one that prints the same value again is a dated restatement
+([fusion](jetp-fusion.md), section 2). Subjects also include `country`, for
+macro-fiscal indicators (GDP, external debt; a utility's debt ratio is on a
+`party`), each with its indicator code from the publisher's own list. [M3b]
 
 ### Crosswalk
 
@@ -348,10 +347,33 @@ The `measure` of an observation is from a closed list, extended by decision:
 | Axis | Measures |
 |---|---|
 | money | `amount` (a state's amount, with `own_status`), `flow` (with `flow_type`: `pledge`, `commitment`, `disbursement`, `expenditure`, `loan_repayment`, `credit_guarantee`, from IATI), `estimate` (a plan cost, no funder), `envelope` (a partnership or portfolio total), `interest_rate`, `maturity_years`, `grace_years`, `grant_element`, `condition` |
-| physical | `capacity` (with unit), `length`, `state`, `target` (a physical or social objective with a `target` timing, such as a renewable share by 2030) |
+| physical | `capacity` (with quantity kind, unit and basis, below), `length`, `state`, `target` (a physical or social objective with a `target` timing, such as a renewable share by 2030) |
 | counting | `count` (with the publisher's unit named: rows, locomotives, officials trained, households), `absence` |
 | macro | `indicator` (with the publisher's indicator code) |
 | marker | `marker` (the publisher's policy-marker score: Rio `mitigation`, `adaptation`, `biodiversity`, `desertification`, and non-Rio markers such as `gender`; value `0`, `1` or `2`, or `not_screened` when the field is blank, which is not 0) |
+
+A `capacity` or an energy amount carries a quantity kind, a unit and a
+basis, so that no two numbers of different kinds are ever added. The
+quantity kinds are `electric_power`, `peak_electric_power` (a module's
+rated output under standard test conditions, printed Wp or Wc, never mixed
+with grid output), `thermal_power`, `apparent_power`, `energy`,
+`energy_storage_capacity` and `electric_charge`; the units are `W`, `VA`,
+`Wh`, `J` and `Ah`, with SI prefixes as a rule on the unit, not as terms.
+They follow the Open Energy Ontology (v2.13.0) and the Units of Measurement
+Ontology where those name the concept, and are marked local where they do
+not (thermal and apparent power, peak power, VA, Ah). The basis is
+`gross`, `net` or `unknown` for a physical quantity as for money, and a
+value whose line states none is `unknown`, never read as gross or net. A
+bound, a change or a rate printed with a value ("below 10 MW", "+0.7 GW
+year-on-year", "88 MWh par jour") is not a quantity kind; it stays verbatim
+on the line. An annual energy output is not observed. The `observations`
+table carries the unit today; the quantity kind becomes a column with the
+reader schema of the M2.3 reading lane. [M3b]
+
+History: quantity kinds and units added, and the basis extended to physical
+quantities, by the author's sign-off of 2026-10-01 (ticket 1960), after a
+check on the 60 capacity values of panel v1
+(`docs/jetp-study/1960-capacity-terms-proposal.md`).
 
 A marker is the donor's own scoring of an activity, at a reporting year,
 under the marker definition of that year. The "climate finance" that a
@@ -364,11 +386,11 @@ the comparison of requirement F19 uses climate-marked amounts. A value may
 be a range: `value_low` and `value_high` bound it, as the timing bounds
 bound a date, and a scalar has both equal. [M3b]
 
-Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow
-carries its interval through two of the timing roles of section 2,
-`period_start` and `period_end`, so the account of the [fusion
-rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
-`event` timing. [M3b]
+An observation of money or of a physical quantity carries a `basis`, `gross`,
+`net` or `unknown`, and a flow carries its interval through two of the timing
+roles of section 2, `period_start` and `period_end`, so the account of the
+[fusion rules](jetp-fusion.md) (section 7) can test coverage. A point flow has
+one `event` timing. [M3b]
 
 Four shared status axes, each sourced from an external list and extended only
 where the four publishers' practice requires it:

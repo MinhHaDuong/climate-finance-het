@@ -482,3 +482,33 @@ def test_owner_is_a_role_and_channel_carries_no_iati_code(terms):
     assert 'on-lending' in roles['channel']['definition']
     assert roles['accountable']['external_uri'] == 'OrganisationRole:2'
     assert 'extending' not in roles
+
+
+# The capacity terms signed off on 2026-10-01: OEO or UO IRI where one names
+# the concept, local otherwise (to be mapped later).
+SIGNED_OFF_CAPACITY = {
+    ('quantity_kind', 'electric_power'): 'OEO_00010257',
+    ('quantity_kind', 'peak_electric_power'): '',
+    ('quantity_kind', 'thermal_power'): '',
+    ('quantity_kind', 'apparent_power'): '',
+    ('quantity_kind', 'energy'): 'OEO_00000150',
+    ('quantity_kind', 'energy_storage_capacity'): 'OEO_00230000',
+    ('quantity_kind', 'electric_charge'): 'UO_0000219',
+    ('unit', 'W'): 'UO_0000114', ('unit', 'VA'): '', ('unit', 'Wh'): 'UO_0000223',
+    ('unit', 'J'): 'UO_0000112', ('unit', 'Ah'): '',
+}
+
+
+def test_capacity_terms_are_the_signed_off_list(terms):
+    found = {(t['list'], t['term_id']): t for t in terms
+             if t['list'] in ('quantity_kind', 'unit')}
+    assert {k: t['external_uri'] or '' for k, t in found.items()} == SIGNED_OFF_CAPACITY
+    assert all((t['mapping_relation'] == 'local') == (not t['external_uri'])
+               for t in found.values())
+
+
+def test_the_basis_covers_physical_quantities_and_keeps_unknown(terms):
+    basis = {t['term_id']: t for t in terms if t['list'] == 'basis'}
+    assert set(basis) == {'gross', 'net', 'unknown'}
+    assert all('physical quantity' in t['definition'] for t in basis.values())
+    assert 'never read as gross or net' in basis['unknown']['definition']
