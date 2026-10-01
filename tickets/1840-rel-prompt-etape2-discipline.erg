@@ -1,0 +1,18 @@
+%erg 0.1
+Title: REL — prompt étape 2 étendu : discipline, champ, type de contribution (avant lancement)
+Created: 2026-10-01
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-01T10:00Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+Enfant de 1830 (décisions de l'auteur du 2026-10-01, voir 1830). Priorité : doit fusionner avant le lancement de l'étape 2 Opus (en attente de l'expérience routeur). Les nouvelles questions sont des champs de sortie séparés ; le libellé ICF et le prompt historique (hash des 4 752 libellés t1530) restent intacts : nouveau fichier de prompt, table de dimensions append-only à part.
+
+## Exit criteria
+- [ ] Nouveau wrapper étape 2 (fichier versionné distinct), sortie avec discipline (test de contribution), champ, type de contribution ; le hash historique du prompt t1530 n'est pas modifié
+- [ ] Parseur accepte l'ancien et le nouveau format ; table de dimensions append-only avec le même garde-fou que `icf_screen`
+- [ ] Ensemble or discipline (100–150 œuvres, stratifié ML/science des données, finance pure, gestion), deux juges décorrélés + arbitrage en panel, sans l'auteur
+- [ ] Test sur l'ensemble de contrôle (200) et les sentinelles : accord ICF avec l'ancien prompt, accord discipline avec l'or, coût rapporté
+- [ ] `make check-fast` et `make lint` passent

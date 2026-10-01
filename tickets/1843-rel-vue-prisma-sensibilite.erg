@@ -1,0 +1,20 @@
+%erg 0.1
+Title: REL — vue REL et PRISMA : exclusions par motif, sensibilité éditeur et rang
+Created: 2026-10-01
+Author: HDMX-coding-agent
+Blocked-by: 1840
+Blocked-by: 1841
+Blocked-by: 1842
+
+--- log ---
+2026-10-01T10:00Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+Enfant de 1830. Ferme 1830 avec la revue d'intégration.
+
+## Exit criteria
+- [ ] Vue REL : exclusions par motif (ICF, discipline, sérieux), un compte par motif, reproductible
+- [ ] Table de sensibilité par signalement éditeur et par rang
+- [ ] PRISMA (`conception/rel-prisma-flux-provisoire.md`) et protocole (`conception/rel-audit-finalisation-corpus.md`) décrivent les deux dimensions, leurs définitions opérationnelles et motifs
+- [ ] Gates AGENTS.md passent
