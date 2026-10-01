@@ -473,9 +473,14 @@ def test_a_hijacked_hit_stays_on_the_work_not_the_venue(tmp_path, registries):
     (_v(name="Academe", source_type="other"), ("C", "other", "")),
     (_v(name="Infectious Diseases Reports", source_type="other"), ("C", "other", "")),
     (_v(name="Banca d'Italia Occasional Papers", source_type="other"), ("B", "b_institution", "banca_italia")),
+    # French elision: fold() strips the apostrophe, so "l'OFCE" folds to "lofce".
+    (_v(name="Revue de l'OFCE", source_type="journal"), ("B", "b_series", "pse_ofce")),
+    (_v(name="Les rapports de l'ADEME", source_type="other"), ("B", "b_institution", "public_agencies")),
+    (_v(name="Études de l'IDDRI", source_type="other"), ("B", "b_institution", "iddri")),
 ])
 def test_b_patterns_match_whole_words_of_the_folded_name(venue, expected):
-    """Red test: bare 'diw', 'ademe', 'iseas' matched inside Diwan, Academe, Diseases."""
+    """Red test: bare 'diw', 'ademe', 'iseas' matched inside Diwan, Academe, Diseases;
+    word-bounded 'ofce' then missed "l'OFCE" (round 3)."""
     assert rv.assign_tier(venue, TIERS) == expected
 
 

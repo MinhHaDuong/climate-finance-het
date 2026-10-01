@@ -60,7 +60,8 @@ registries:
 
 # Switch (a): which registry hits exclude a venue, which only flag it.
 # PENDING author decision (ticket 1841). Every flag stays in the tables
-# whatever the setting; the build derives `excluded` from this list, so the
+# whatever the setting; the build derives `excluded` from this list (ISSN and
+# domain matches only: a title match never excludes), so the
 # REL sensitivity table (ticket 1843) can recompute any other setting from the
 # `flags` column. Default (MOE recommendation): exclude on Kanalregisteret
 # level X and on hijacked-journal clones only; Scopus discontinuation and DOAJ

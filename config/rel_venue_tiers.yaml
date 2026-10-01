@@ -15,7 +15,7 @@
 version: 2
 changelog:
   - "1 (2026-10-01, ticket 1841): first list."
-  - "2 (2026-10-01, ticket 1841): switch ngo_research_in_b; RePEc keys that match no pool venue pruned (pruned_repec below); bare name and series tokens word-bounded (diw matched Diwan, ademe Academe, iseas Diseases) and three patterns with commas or apostrophes, which fold() strips, rewritten."
+  - "2 (2026-10-01, ticket 1841): switch ngo_research_in_b; RePEc keys that match no pool venue pruned (pruned_repec below); bare name and series tokens word-bounded (diw matched Diwan, ademe Academe, iseas Diseases) and three patterns with commas or apostrophes, which fold() strips, rewritten; French tokens allow an elided l or d (fold() turns \"l'OFCE\" into \"lofce\")."
 
 # Switch (b): whether the NGO research series (B entries of category
 # ngo_research: Oxfam, Germanwatch) are tier B. PENDING author decision
@@ -136,7 +136,7 @@ b_list:
   - {id: public_agencies, name: Public economic-policy agencies, category: public, region: north,
      repec: [cbo, cpb, ssb], names: ['congressional budget office', 'cpb netherlands bureau', 'statistics norway',
                                        'office of scientific and technical information', 'national renewable energy laboratory', '\bnrel\b',
-                                       '\bumweltbundesamt\b', 'agence francaise de developpement', '\bafd\b.*(papers|research)', '\bademe\b', 'france strategie',
+                                       '\bumweltbundesamt\b', 'agence francaise de developpement', '\b[ld]?afd\b.*(papers|research)', '\b[ld]?ademe\b', 'france strategie',
                                        '\bkfw\b', '\bgiz\b', 'deutsche gesellschaft fur internationale zusammenarbeit']}
   # ── Research networks and institutes ──
   - {id: nber, name: National Bureau of Economic Research, category: network, region: north,
@@ -173,7 +173,7 @@ b_list:
   - {id: cerge, name: CERGE-EI, category: network, region: north, repec: [cer], series: ['\bcerge-ei\b']}
   - {id: core_lidam, name: CORE / LIDAM (UCLouvain), category: network, region: north, repec: [cor, ctl], series: ['lidam discussion']}
   - {id: pse_ofce, name: Paris School of Economics, OFCE and CEPII, category: network, region: north,
-     repec: [fce, cii], series: ['\bofce\b', '\bcepii\b'], names: ['\bcepii\b', 'observatoire francais des conjonctures']}
+     repec: [fce, cii], series: ['\b[ld]?ofce\b', '\bcepii\b'], names: ['\bcepii\b', 'observatoire francais des conjonctures']}
   - {id: wider, name: UNU-WIDER and UNU-MERIT, category: igo, region: global, repec: [unm, unu], series: ['merit working', 'wider working']}
   # ── Think tanks, North ──
   - {id: brookings, name: Brookings Institution, category: think_tank, region: north, names: ['\bbrookings\b']}
@@ -196,7 +196,7 @@ b_list:
   - {id: ids_sussex, name: Institute of Development Studies, category: think_tank, region: north,
      names: ['institute of development studies']}
   - {id: sei, name: Stockholm Environment Institute, category: think_tank, region: global, names: ['stockholm environment institute']}
-  - {id: iddri, name: IDDRI, category: think_tank, region: north, names: ['\biddri\b', 'institut du developpement durable et des relations internationales']}
+  - {id: iddri, name: IDDRI, category: think_tank, region: north, names: ['\b[ld]?iddri\b', 'institut du developpement durable et des relations internationales']}
   - {id: i4ce, name: I4CE Institute for Climate Economics, category: think_tank, region: north, names: ['\bi4ce\b', 'institute for climate economics']}
   - {id: bruegel, name: Bruegel, category: think_tank, region: north, repec: [bre], names: ['\bbruegel\b']}
   - {id: ceps, name: Centre for European Policy Studies, category: think_tank, region: north, repec: [eps], names: ['centre for european policy studies']}

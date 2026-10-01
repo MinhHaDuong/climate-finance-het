@@ -257,7 +257,8 @@ def load_work_venues(path):
     ``flagged`` and ``excluded`` become bools; ``tier_included`` is tier A or B
     and ``included`` is ``tier_included and not excluded``, both under the
     switches the table was built with. Any other setting is recomputed from
-    ``flags`` (registry names) and ``tier_ngo_in_b`` / ``tier_ngo_not_b``.
+    ``flags`` (``registry:entry_id[match]``; skip ``[title]`` matches, which never
+    exclude) and ``tier_ngo_in_b`` / ``tier_ngo_not_b``.
     """
     out = {}
     with open(path, encoding="utf-8", newline="") as fh:
