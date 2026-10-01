@@ -41,6 +41,47 @@ Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 
 | dont documents institutionnels (hors décompte des œuvres) | 409 | mesuré (408 + 1) |
 | dont autres types | 131 | mesuré (130 + 1) |
 
+## Exclusions par motif : ICF, discipline, sérieux (vue REL du 1er octobre 2026)
+
+*Provisoire.* Chiffres mesurés dans `data/rel_pool/rel_counts.json` (bloc `reasons`), produit par `make rel-view` le 1er octobre 2026 sur padme (ticket 1843) ; même entrée, mêmes octets. Empreintes sha256 des entrées, relevées dans le bloc `inputs` du fichier :
+
+```text
+pool.csv             3e07852be556a58e0006c6a76770c64432fae39c63d3359c861867c5b2627353
+icf_screen.csv       483b93a021086893356edba659bb5cc1aa6db5179eeb2a247904a0397ef0ce77
+rel_dimensions.csv   absente (aucune passe de discipline encore écrite)
+rel_work_venues.csv  a465f5989e09949858122bb095dfc59fcf8d7f6da324053c67cacb79de2fd139
+rel_counts.json      b9d74a4ae76d9492e43ed6fbcdf55470040e71ab78b67b0bc2bc2d27bd2e259e
+```
+
+Chaque œuvre du pool n'est comptée qu'une fois, au premier motif qui s'applique dans l'ordre ICF → discipline → sérieux. La table de discipline n'existe pas encore : le rattrapage (ticket 1842) n'a pas tourné et aucun lot d'étape 2 en version 2 n'est écrit. Toutes les œuvres retenues par l'ICF sont donc « en attente de discipline », et les cases discipline et sérieux restent à zéro par construction, non par mesure. Le sérieux de ces œuvres est déjà calculé et donné à titre indicatif.
+
+| Case | Œuvres | Familles | Source du chiffre |
+|---|---:|---:|---|
+| **Pool** | 389 291 | 389 261 | mesuré, `pool_works`, `families.families` |
+| exclues par l'ICF | 31 997 | 31 997 | mesuré, `reasons.works.icf_excluded` : hors sujet à l'étape 1 29 725, proches à l'étape 2 1 799, hors sujet à l'étape 2 473 |
+| en attente de l'ICF | 354 679 | 354 649 | mesuré : non triées 318 598, en attente d'étape 2 36 081 |
+| **exclues pour la discipline** | 0 | 0 | provisoire : aucune réponse de discipline encore écrite |
+| **en attente de discipline** | **2 615** | **2 615** | mesuré, dont 145 « incertaines » ICF signalées ; à titre indicatif, sérieux : passent 1 379, rang C 1 207, Kanalregisteret niveau X 29 |
+| **exclues pour le sérieux** | 0 | 0 | provisoire : le sérieux n'est compté qu'après la discipline |
+| **retenues** | 0 | 0 | provisoire |
+
+Parmi les 2 615, les œuvres de recherche de la fenêtre (années complètes, disposition « include ») sont 1 902 : 1 050 passent le sérieux, 825 sont de rang C, 27 relèvent du niveau X (`reasons.included_research_in_window`). Le rang C tient surtout aux dépôts et serveurs de prépublications (674 œuvres sur les 1 207, toutes catégories) et aux œuvres sans revue identifiée (429) : c'est l'effet du critère de sérieux le plus lourd à ce jour, à relire avant le gel.
+
+**Sens du biais de la discipline.** Sur l'ensemble de contrôle de 1840, Opus en version 2 exclut 4 des 59 œuvres que la lecture humaine retient, dont 3 en finance appliquée posant une question de politique (certification des obligations vertes W3122424672, spéculation sur le SEQE-UE W4399863925, W7212372846), contre 3 inclusions en trop. Le compte des exclusions pour la discipline penchera donc vers la sur-exclusion de la finance appliquée ; il se lit comme une borne haute (note recopiée dans `reasons.discipline_note`).
+
+**Sensibilité du sérieux** (`data/rel_pool/rel_sensitivity.csv`, même passe). Faute de réponses de discipline, l'ensemble retenu est vide ; la table donne donc aussi les œuvres en attente de discipline qui passeraient le sérieux selon chaque réglage, borne haute provisoire de l'ensemble retenu. ICF et discipline fixés ; une ligne par réglage, les autres à leur valeur par défaut.
+
+| Réglage | Retenues | En attente de discipline, sérieux passé |
+|---|---:|---:|
+| par défaut : rangs A et B, exclusion Kanalregisteret X et revues détournées, MDPI, Frontiers et Hindawi gardés, ONG au rang B | 0 | 1 379 |
+| MDPI, Frontiers et Hindawi écartés | 0 | 1 356 |
+| MDPI seul écarté | 0 | 1 370 |
+| Frontiers seul écarté | 0 | 1 371 |
+| Hindawi seul écarté | 0 | 1 373 |
+| rang A seul | 0 | 1 191 |
+| interrupteur (a) élargi : Scopus « discontinued » et retraits du DOAJ excluent aussi | 0 | 1 332 |
+| interrupteur (b) inversé : recherche des ONG hors du rang B | 0 | 1 379 |
+
 ## Retenues
 
 | Case | Effectif | Statut |
