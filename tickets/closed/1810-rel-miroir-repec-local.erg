@@ -2,10 +2,13 @@
 Title: REL — recherche dans le miroir RePEc local (ReDIF) et livraison au pool
 Created: 2026-09-30
 Author: haduong
+Closed: delivered; open items in docs/rel-repec-local-2026-10-01.md
 
 --- log ---
 2026-09-30T19:30Z HDMX-coding-agent created
 
+2026-10-01T00:45Z HDMX-coding-agent HDMX-coding-agent note delivered 2026-10-01: 79,543 records (+915 no_dedup_key, 2 not_retrievable), qa exit 0; pre-filter run on a 10k sample (CPU budget), not registered in icf_screen (schema); see docs/rel-repec-local-2026-10-01.md
+2026-10-01T00:45Z HDMX-coding-agent closed — delivered; open items in docs/rel-repec-local-2026-10-01.md
 --- body ---
 ## Contexte
 
@@ -49,10 +52,10 @@ DOI (3 700 notices non résolues).
    sur 489 ; le paragraphe de méthode doit dire en quoi ce pré-filtre diffère.
 
 ## Exit criteria
-- [ ] Table ReDIF reproductible depuis le miroir (script dans le dépôt, testé), comptes par type et date du miroir
-- [ ] Requêtes exécutées et registrées ; rappel sur sentinelles mesuré
-- [ ] Livraison `data/rel_intake/t1810-repec-local/` conforme (`qa_rel_intake` exit 0)
-- [ ] Pré-filtre : seuil, œuvres ICF et sentinelles perdues (0 exigé sur la réserve), part écartée, échantillon Opus RePEc ; script et modèle figé dans le dépôt ou archivés avec empreintes
-- [ ] Note : ce que la voie ajoute à 1652 (RePEc via bibCNRS) et à 1650 (AER 1990–1998)
+- [x] Table ReDIF reproductible depuis le miroir (script dans le dépôt, testé), comptes par type et date du miroir
+- [x] Requêtes exécutées et registrées ; rappel sur sentinelles mesuré
+- [x] Livraison `data/rel_intake/t1810-repec-local/` conforme (`qa_rel_intake` exit 0)
+- [x] Pré-filtre : seuil, œuvres ICF et sentinelles perdues (0 exigé sur la réserve), part écartée, échantillon Opus RePEc ; script et modèle figé dans le dépôt ou archivés avec empreintes
+- [x] Note : ce que la voie ajoute à 1652 (RePEc via bibCNRS) et à 1650 (AER 1990–1998)
 
 Hors périmètre : CitEc (citations RePEc, module `CitEc-AMF`) relève de 1654.

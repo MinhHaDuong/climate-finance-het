@@ -169,7 +169,107 @@ confirms 1650's items but resolves none of them to a DOI.
 
 ## Recall pre-filter (step 5)
 
-PREFILTER
+`scripts/corpus_rel_repec_prefilter.py` is the classifier the author asked for
+on 2026-09-30: bge-m3 embeddings (`title + ". " + abstract[:2000]`, 256 tokens,
+CPU) fed to a logistic regression that predicts the Opus label "out" (*hors
+sujet*). It only ever drops records: everything it keeps goes through stage 1
+and then stage 2 under the protocol's rule. Opus stage 2 is on hold, pending
+the router results.
+
+**Training.** 5,278 works: 4,631 Opus stage-2 labels from `icf_screen`
+(1530), plus the Jev-pilot labels exported to `config/rel_prefilter_labels.csv`
+by `scripts/corpus_rel_prefilter_labels.py`. Those are 399 Opus labels from
+the stratified random sample and the 248 `tune` rows of the adjudicated
+reference set. Label counts: icf 2,557, aux 2,058, out 482, unsure 181. No
+work used for validation is trained on.
+
+**Threshold.** A record is dropped when `p_out > 0.96728`. That value is the
+largest out-of-fold score of any ICF-labelled training work (5-fold) or tuning
+sentinel. Nothing scoring at or below a known ICF work is dropped. One work
+sets it: a French title-only CDM paper, "Le Polycentrisme : un concept
+heuristique pour l'analyse d'instruments de marché tel que le Mécanisme de
+Développement Propre". The next highest ICF score is 0.92. Reserve sentinels
+and the validation sets were measured after the threshold was fixed and never
+moved it.
+
+| validation set | n | dropped | ICF lost | share of "out" dropped |
+|---|---:|---:|---:|---:|
+| training, out of fold | 5,278 | 42 (34 out, 5 aux, 3 unsure) | 0 | 7 % |
+| Jev-pilot control (Opus, 200; 197 in pool) | 197 | 15 (14 out, 1 aux) | 0 | 13 % |
+| Jev-pilot reference, held out (adjudicated) | 244 | 5 (5 out) | 0 | 10 %; weighted share dropped 3.4 % |
+| sentinels, pool text: tuning / reserve / other | 24 / 45 / 35 | 0 / **0** / 0 | 0 | max `p_out` 0.957 / 0.840 / 0.836 |
+| sentinels, the lane's RePEc record: non-reserve / reserve | 22 / 21 | 0 / **0** | 0 | max `p_out` 0.952 / 0.735 |
+
+**On this lane.** The CPU embedding throughput, measured on padme while other
+jobs ran (load 15 to 18), was 4.3 to 5.6 texts a second at 16 to 20 threads,
+and 5.4 a second with four processes of five threads. At that rate the
+80,458 delivered rows (records and `no_dedup_key`) would take 4.0 to 5.2
+hours, over the three-hour CPU budget. The pre-filter was therefore applied to
+a simple random sample of 10,000 delivered rows (seed 1810, 39 min). It drops
+402 of them, **4.0 %**. Extrapolated (derived, not run), that is about 3,200
+of the 80,458 rows. The sweep shows the cost of the zero-loss rule:
+
+| threshold | training ICF lost (OOF) | reserve sentinels lost (pool / lane record) | share of the RePEc sample dropped |
+|---|---:|---:|---:|
+| 0.80 | 7 | 1 / 0 | 45.6 % |
+| 0.90 | 2 | 0 / 0 | 23.6 % |
+| 0.95 | 1 | 0 / 0 | 8.8 % |
+| **0.967 (rule)** | **0** | **0 / 0** | **4.0 %** |
+| 0.98 | 0 | 0 / 0 | 1.5 % |
+
+**Fresh Opus sample against distribution shift.** 200 records of the 10,000
+sample, stratified by the decision: 120 of the 402 dropped and 80 of the
+9,598 kept. Opus 5.5 through OpenRouter used the stage-1 rule of
+`config/rel_sud_screen.yaml` with the strict stage-2 wording of the Jev
+pilot, in chunks of 40.
+
+| stratum | n | out | aux | icf | ICF rate, 95 % upper bound |
+|---|---:|---:|---:|---:|---:|
+| dropped | 120 | 119 | 1 | **0** | 2.5 % (rule of three) |
+| kept | 80 | 47 | 30 | 3 | 10.6 % (Clopper–Pearson) |
+
+The pre-filter's errors on RePEc records point the safe way: what it drops is
+almost all *hors sujet*. The kept stratum still holds ICF works at about 4 %
+(3 of 80). If that rate held across the delivery it would mean roughly 2,900
+ICF works among the kept rows, with a wide interval; this is a derived figure,
+not a count. Spend: USD 0.32, summed from the per-call `usage.cost`
+(`opus_sample.jsonl.calls.jsonl`). Before the run the OpenRouter account
+showed USD 120.80 used of USD 140. A reading taken one minute after the run
+had not yet moved, so it cannot confirm the spend.
+
+**How this differs from the v2 filter.** The refined-corpus v2 filter scored
+every work against a fixed query ("climate policy and financial mechanisms")
+with a reranker. It cut at a threshold chosen for the corpus as a whole, and
+122 of the 489 works it had dropped (and the Sud search found again) were ICF
+on rereading. This pre-filter is fitted to the review's own ICF labels and
+predicts "out" rather than relevance. Its threshold is the largest one that
+loses no known ICF work, so it gives up volume (4 % dropped here) to keep
+recall. It is a pre-filter only: it never admits a record, and stage 1 and
+stage 2 still read everything it keeps.
+
+**Frozen.** The script is `scripts/corpus_rel_repec_prefilter.py` and the label
+register is `config/rel_prefilter_labels.csv`. The model is `prefilter/fit/model.npz`,
+sha256 `3aae84dbd31b62adad12934447f93acdb1954b51ffeaef635ce47cde39556385`,
+with its threshold inside. It sits with `report.json`, `scores.csv`, the
+texts, the embeddings and the Opus sample under
+`~/data/projets/climate-finance-het/rel_repec/2026-10-01/` on padme,
+fingerprinted in `MANIFEST.sha256` there. The ReDIF table is `redif.parquet`,
+sha256 `95dedff34c2f4e4c9404a6e0dc29e647eaaf441e9af17b55ef6a28a7200e1bfa`.
+
+**Not done (open).**
+
+- The pre-filter is not registered as a labeller in `icf_screen`. That
+  table's schema accepts labellers `llm` or `human` and stages `1`, `2` or
+  `audit`. A classifier score and threshold fit none of them cleanly, and the
+  author asked for no extra labels.
+- The pre-filter has run on a 10,000-row sample, not on all 80,458 rows. A
+  full pass needs about 4–5 h of CPU or a GPU slot.
+- Full-mirror semantic pass: the mirror has 5.6 M rows, not the 2 M first
+  assumed. At the measured CPU rate that is about 280–360 h (derived). The GPU
+  rate was not measured, because the GPU was busy (no GPU job was run). A
+  bge-m3 rate of 100–200 texts/s on the A4000 is an unmeasured assumption, and
+  it would give 8–16 h for 5.6 M or 3–6 h for 2 M. The experiment that
+  settles it: time 5,000 RePEc texts on the GPU once it is free.
 
 ## Reproduce (padme)
 
@@ -184,7 +284,25 @@ uv run python scripts/catalog_rel_repec_search.py search --table $W/redif.parque
 uv run python scripts/catalog_rel_repec_search.py recall --table $W/redif.parquet \
     --delivery data/rel_intake/t1810-repec-local/2026-10-01 \
     --toc-1650 data/rel_intake/t1650-sommaires/2026-09-30 --output $W/recall.json
+P=$W/prefilter   # pool from `make rel-pool` WITHOUT this delivery, icf_screen from `make rel-pool-data`
+uv run python scripts/corpus_rel_repec_prefilter.py texts --pool data/rel_pool/pool.csv \
+    --screen data/rel_screen/icf_screen.csv --delivery data/rel_intake/t1810-repec-local/2026-10-01 \
+    --recall-sentinels $W/recall.sentinels.csv --output $P/texts.jsonl
+uv run python scripts/corpus_rel_repec_prefilter.py embed --texts $P/texts.jsonl \
+    --roles train,heldout,control,sentinel --threads 16 --output-dir $P/emb_train
+uv run python scripts/corpus_rel_repec_prefilter.py embed --texts $P/texts.jsonl \
+    --roles sentinel_repec --output-dir $P/emb_sentinel_repec
+uv run python scripts/corpus_rel_repec_prefilter.py embed --texts $P/texts.jsonl \
+    --roles repec --limit 10000 --threads 20 --output-dir $P/emb_repec_sample10k
+uv run python scripts/corpus_rel_repec_prefilter.py fit --texts $P/texts.jsonl --output-dir $P/fit \
+    --embeddings $P/emb_train/embeddings.npz $P/emb_sentinel_repec/embeddings.npz \
+    $P/emb_repec_sample10k/embeddings.npz
+uv run python scripts/corpus_rel_repec_prefilter.py opus-sample --scores $P/fit/scores.csv \
+    --texts $P/texts.jsonl --n-drop 120 --n-keep 80 --output $P/opus_sample.jsonl   # API spend
 ```
+
+The training embeddings of record were computed from a texts file without the
+delivery (`texts_train.jsonl`, same rows for these roles).
 
 `PYTHONPATH=scripts:libs/openalex-corpus/src`; the pre-filter needs
 `uv run --group corpus --extra cpu` and `CUDA_VISIBLE_DEVICES=""`.
