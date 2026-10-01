@@ -1,7 +1,8 @@
 # REL ICF screen (tickets 1732, 1733): the append-only label table, the REL
 # view, the stage-1 input and the stage-2 / audit tables. Read by
 # scripts/corpus_icf_import.py, scripts/corpus_rel_view.py,
-# scripts/corpus_icf_stage1_input.py and scripts/corpus_icf_stage2.py.
+# scripts/corpus_icf_stage1_input.py, scripts/corpus_icf_stage2.py and
+# scripts/corpus_rel_discipline_catchup.py.
 
 # Append-only; tracked with `dvc add data/rel_screen` (never a dvc.yaml out).
 table: data/rel_screen/icf_screen.csv
@@ -78,6 +79,15 @@ stage2:
   chunk_size: 150
   title_max_chars: 220
   abstract_max_chars: 650
+
+# Discipline catch-up (ticket 1842): works whose final stage-2 label is in
+# final_labels and that have no rel_dimensions row yet get the discipline
+# questions of the version-2 wrapper alone (prompt), in stage-2 chunks. The
+# answers go to rel_dimensions only, under stage "catchup", never to
+# icf_screen. Run with scripts/corpus_rel_discipline_catchup.py.
+catchup:
+  prompt: config/rel_discipline_catchup_prompt.md
+  final_labels: [icf, unsure]
 
 # Second-model audit of stage 2: a random sample stratified by the stage-2
 # label, the same chunk format. Sizes are per stratum (fewer when a stratum
