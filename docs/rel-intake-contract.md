@@ -208,7 +208,21 @@ second append-only table with its own manifest, same key and same DVC pointer.
 from the pool and the table. Paths, the 1530 archive, the stage-2 chunking and
 the audit sample are set in `config/rel_screen.yaml`, with the screen rule
 (which stage-1 labels leave, whether works still unsure after stage 2 stay in
-REL flagged) that the view applies and records in `rel_counts.json`. The view
+REL flagged) that the view applies and records in `rel_counts.json`. Works no
+local Qwen run takes get stage 1 by design B (author decision of 2026-10-01,
+`scripts/corpus_icf_stage1_designb.py`, imported with `corpus_icf_import.py
+stage1-designb`): two stage-1 rows per work, Gemma 4 and the Jev D1
+classifier, and the work leaves only when both say `out` with Jev's P(out) at
+least 0.95 (`stage1_joint` in `config/rel_screen.yaml`). Both rows carry
+`labeller=llm`, the served model id, `machine=openrouter/<provider>` and the
+same `run_id`; the Jev row's `why` starts with `p_out=<P(out)>` at full
+precision. The view shows such a decision in its `stage1_joint` column
+(`llm=…;classifier=…;p_out=…`) and tallies the design-B works, their
+`stage1_out` and their `pending_stage2` under `stage1_joint` in
+`rel_counts.json`. Precedence, recall first: a work carrying several stage-1
+verdicts (Qwen rows, design-B pairs, in any order) leaves at stage 1 only
+when every verdict is `out`; one verdict that sends it to stage 2 is enough.
+The view
 counts REL in works and in work families: works linked by `version_hint` count
 once, represented by an included member, a published article first.
 
@@ -226,23 +240,47 @@ like the screen table (a paid, dated API snapshot, fetched by
 `rel_work_venues.csv` (per work) and `rel_venue_counts.{json,md}` into
 `data/rel_pool/`, deterministically, from the pool, the cache, the configured
 pull and `config/rel_venue_tiers.yaml` (the versioned B list). Ticket 1843
-joins the work table through `_rel_venues.load_work_venues`. Two author
-decisions are pending switches: which registries exclude
-(`exclusion` in `config/rel_venue_registries.yaml`) and whether the NGO
-research series are tier B (`ngo_research_in_b`). Every flag and both NGO
-tiers are written whatever the setting, so a sensitivity table can recompute
-any other.
+joins the work table through `_rel_venues.load_work_venues`; the per-work
+`flags` cell (`registry:entry_id[match]`) already applies the per-work rules
+below, so the venue table is for explanation only.
+
+- Tiers: A, B, C and `unknown`. `unknown` is a work with no resolvable venue;
+  it is never folded into C (C means a venue known and not serious). A work
+  in `unknown` or C whose own URL is on a B institution's site
+  (`b_domains`) is B with rule `b_domain`.
+- Kanalregisteret level X is per year and provisional (in the 2026-10-01 pull
+  every X is in `Nivå 2026`). A work is flagged only when the journal's level
+  for the work's publication year is X; a year with no level takes the
+  journal's nearest year with one (the earlier on a tie); an undated work is
+  not flagged. The venue row keeps every yearly level in `flag_details`.
+- The hijacked check reads every URL of a work: the landing page of each of
+  its OpenAlex rows (with or without a source) and the URL of each intake
+  record. Only 32% of pool works have a URL on a host other than doi.org, so
+  a zero hijacked count is a lower bound, not an absence.
+- The Scopus flag is broader than "discontinued for publication concerns":
+  Elsevier's list gives no per-title cause, so it also holds titles dropped
+  for low metrics. DOAJ withdrawals are mostly the 2014-2016 "best practice"
+  purge. Both are flags, not evidence of malpractice.
+
+Three author decisions are pending switches: (a) which registries exclude
+(`exclusion` in `config/rel_venue_registries.yaml`; a title match never
+excludes), (b) whether the NGO research series are tier B
+(`ngo_research_in_b`), (c) whether `unknown` works are kept, flagged, or
+excluded (`no_venue` in `config/rel_venue_tiers.yaml`, applied by the loader's
+`no_venue` argument). Every flag, both NGO tiers and the `unknown` state are
+written whatever the settings, so a sensitivity table can recompute any other.
 
 `make rel-view` (ticket 1843) then gives every work one exclusion reason, the
 first that applies in the fixed order ICF (`icf_excluded`, `icf_pending`),
 discipline (`discipline_excluded` when the contribution test says no,
 `discipline_pending` while no dimension row exists), seriousness
-(`seriousness_excluded`: a registry exclusion under switch (a), then tier C),
+(`seriousness_excluded`: a registry exclusion under switch (a), then tier C;
+`unknown` under switch (c)),
 else `included` (`rel_reason`, `rel_final` in `rel_view.csv`). It needs
 `rel_work_venues.csv` (`make rel-venues` first), counts reasons in works and
 in families under `reasons` in `rel_counts.json`, records the sha256 of the
 pool, both append-only tables and the venue table under `inputs`, and writes
 `rel_sensitivity.csv`, the included set under each seriousness setting
 (publishers dropped, tier A only, Scopus and DOAJ also excluding, NGO switch
-flipped). The rules (which dimension row wins, the family rule) are in the
+flipped, switch (c) flipped). The rules (which dimension row wins, the family rule) are in the
 `scripts/_rel_reasons.py` docstring.

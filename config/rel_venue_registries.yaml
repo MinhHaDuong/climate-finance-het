@@ -19,10 +19,16 @@ registries:
     doc: "https://dbh.hkdir.no/static/files/dokumenter/api/api_dokumentasjon.pdf (table 851 = journals)"
     file: kanalregisteret_851.csv
     entry_url: "https://kanalregister.hkdir.no/tidsskrift?id={id}"
-    # Flag a journal whose most recent non-blank yearly level ("Nivå YYYY",
-    # latest year first) is X ("doubt whether the channel should be approved").
-    # Level 0 (not approved) is not a flag: the decision names level X only.
-    filter: "latest non-blank 'Nivå YYYY' column == X"
+    # Level X ("doubt whether the channel should be approved") is a per-year,
+    # provisional status: in the 2026-10-01 pull every X sits in "Nivå 2026"
+    # and one journal (Journal of Cleaner Production) is already back to 1 in
+    # 2027. A journal is listed when any year is X; a work is flagged only
+    # when the level of its own publication year is X. A year the journal
+    # has no level for (blank, or outside 2004-2027) takes its nearest year
+    # with a level, the earlier on a tie; an undated work is not flagged.
+    # The venue table keeps every yearly level in flag_details. Level 0 (not
+    # approved) is not a flag: the decision names level X only.
+    filter: "any 'Nivå YYYY' == X; a work is flagged when the level of its year (nearest year with a level) is X"
   scopus_discontinued:
     name: "Scopus source title list, sheet 'Discontinued Titles' (Elsevier)"
     page: "https://www.elsevier.com/products/scopus/content/content-policy-and-selection"
@@ -33,7 +39,10 @@ registries:
     # after re-evaluation (raised for publication concerns, outlier
     # performance or underperforming metrics; Elsevier's list gives no
     # per-title cause). 'Journal change policy' rows (publisher-side changes)
-    # are not flags.
+    # are not flags. The flag is therefore BROADER than "discontinued for
+    # publication concerns": it cannot be narrowed with this source, and
+    # includes titles dropped for low metrics. Read it as a flag, not as
+    # evidence of malpractice (default switch: flag only).
     filter: "column 'Indexation Change' == Discontinuation"
   doaj_withdrawn:
     name: "DOAJ change log, journals withdrawn (2014-01-2024 log and current log)"

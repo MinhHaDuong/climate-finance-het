@@ -17,12 +17,15 @@ Child of 1830. Closes 1830 with the integration review.
 Input from 1841: `data/rel_pool/rel_work_venues.csv` (`make rel-venues`),
 joined with `_rel_venues.load_work_venues` (columns `tier`, `flags`,
 `excluded`, `excluded_by`, `tier_ngo_in_b`, `tier_ngo_not_b`,
-`publisher_flag`). Two author decisions were left pending by 1841 and must be
-taken here or shown as sensitivity rows: (a) which registries exclude
-(`exclusion` in `config/rel_venue_registries.yaml`; default Kanalregisteret X
-and hijacked only, which excludes Scientific Reports, Forests and Energy
-Strategy Reviews among others), (b) whether Oxfam and Germanwatch are tier B
-(`ngo_research_in_b`, default true; moves no work in the 2026-10-01 pool).
+`publisher_flag`, and `unknown`/`included` from the loader). Three author
+decisions were left pending by 1841 and must be taken here or shown as
+sensitivity rows: (a) which registries exclude (`exclusion` in
+`config/rel_venue_registries.yaml`; default Kanalregisteret X, per work year,
+and hijacked clones; 74 works on the 2026-10-01 pool), (b) whether Oxfam and
+Germanwatch are tier B (`ngo_research_in_b`, default true; 11 works move),
+(c) works with no resolvable venue, tier `unknown` (`no_venue`, value
+`keep_flagged` by default or `exclude`; 10,394 works, 400 of them
+ICF-included).
 
 ## Exit criteria
 - [ ] REL view: exclusions by reason (ICF, discipline, seriousness), one count per reason, reproducible

@@ -364,7 +364,7 @@ rel-view:
 # ── REL venue seriousness tiers and registry flags (ticket 1841) ──
 # rel-venue-registries: dated pulls of the four hard registries into
 #   $(REL_VENUE_REGISTRIES)/<today>/ (read-only, MANIFEST.sha256), recorded in
-#   config/rel_venue_registries.yaml. Re-runnable; network.
+#   config/rel_venue_registry_pulls.csv. Re-runnable; network.
 # rel-venue-enrich: incremental OpenAlex venue cache, data/rel_venues/, tracked
 #   with `dvc add data/rel_venues` like data/rel_screen (a paid, dated API
 #   snapshot, not rebuildable as is); fetched by rel-pool-data. Only ids the
