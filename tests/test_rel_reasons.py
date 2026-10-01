@@ -17,7 +17,8 @@ pytestmark = pytest.mark.domain_corpus
 # The decided seriousness facet (2026-10-01): hijacked journals exclude, Kanal X
 # and Scopus/DOAJ only flag; NGO research in B; unknown venue kept at 0.5.
 SRULE = {"exclude": ["hijacked"], "ngo_research_in_b": True, "no_venue": "keep_flagged",
-         "tier_mu": {"A": 1.0, "B": 1.0, "C": 0.0, "unknown": 0.5}, "alpha": 0.5,
+         "nonresearch": "to_c", "alpha": 0.5,
+         "tier_mu": {"A": 1.0, "B": 1.0, "C": 0.0, "unknown": 0.5},
          "tiers": ["A", "B"], "drop_publishers": []}
 MRULE = {"status": "proposed", "icf": {"icf": 1.0, "unsure": 0.5, "aux": 0.0, "out": 0.0},
          "discipline": {"yes": 1.0, "unsure": 0.5, "no": 0.0}}
@@ -243,6 +244,26 @@ def test_unknown_tier_is_half_member_kept_flagged_never_tier_c():
     assert (table["default"]["included_works"], table["default"]["included_mu_weighted"]) == (
         1, "0.5")
     assert table["no_venue_flipped"]["included_works"] == 0
+
+
+def test_nonresearch_switch_reads_the_tier_without_it():
+    v = dict(_ven("x", tier="C"), tier_without_nonresearch="B")
+    assert rr.seriousness_of(v, SRULE) == (0.0, "tier_c")
+    assert rr.seriousness_of(v, dict(SRULE, nonresearch="off")) == (1.0, "")
+    venues = dict(VENUES, **{"openalex:W6": dict(_ven("openalex:W6", tier="C"),
+                                                 tier_without_nonresearch="B")})
+    rows, _ = _rows(venues=venues)
+    table = {r["scenario"]: r for r in rr.sensitivity(rows, venues, SRULE, MRULE)}
+    assert table["default"]["included_works"] == 1
+    assert table["nonresearch_flipped"]["included_works"] == 2
+
+
+def test_seriousness_rule_reads_the_decided_configs():
+    def load(name):
+        with open(f"{ROOT}/config/{name}", encoding="utf-8") as fh:
+            return yaml.safe_load(fh)
+    srule = rr.seriousness_rule(load("rel_venue_registries.yaml"), load("rel_venue_tiers.yaml"))
+    assert srule == SRULE
 
 
 def test_membership_rule_checks_values_and_the_unsure_exit():

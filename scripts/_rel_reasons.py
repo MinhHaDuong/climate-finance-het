@@ -11,9 +11,10 @@ facet values. Facets are evaluated in ``FACETS`` order, cheapest first:
 
 1. ``seriousness`` (deterministic, free: the venue table). Values per tier
    from ``_rel_venues.tier_membership`` (decided: A 1, B 1, unknown 0.5, C 0);
-   0 for a registry exclusion (switch (a), never on a title match) and, in the
-   sensitivity rows, for a dropped publisher; tier ``unknown`` is 0 under switch
-   (c) ``exclude``, never C;
+   0 for a registry exclusion (switches (a) and (a'), never on a title match)
+   and, in the sensitivity rows, for a dropped publisher; tier ``unknown`` is 0
+   under switch (c) ``exclude``, never C; non-research pages of B sites are C
+   under switch (d) ``to_c``;
 2. ``icf`` (stage-1 model, then Opus): by the work's ICF status, values in
    ``config/rel_screen.yaml`` ``membership.icf`` (proposed: icf 1, unsure 0.5,
    aux and out 0); ``unscreened`` and ``pending_stage2`` are not graded yet.
@@ -97,10 +98,12 @@ def parse_flags(text: str) -> list[dict]:
 
 
 def seriousness_rule(registries_cfg: dict, tiers_cfg: dict) -> dict:
-    """The seriousness facet as configured: switches (a), (b), (c), tier values, alpha."""
+    """The seriousness facet as configured: switches (a, a'), (b), (c), (d), tier
+    values and alpha (all decided by the author on 2026-10-01)."""
     return {"exclude": rvn.exclusion_registries(registries_cfg),
             "ngo_research_in_b": rvn.ngo_switch(tiers_cfg),
             "no_venue": rvn.unknown_switch(tiers_cfg),
+            "nonresearch": rvn.nonresearch_switch(tiers_cfg),
             "tier_mu": dict(sorted(rvn.tier_membership(tiers_cfg).items())),
             "alpha": rvn.alpha(tiers_cfg),
             "tiers": ["A", "B"], "drop_publishers": []}
@@ -136,7 +139,7 @@ def seriousness_of(venue: dict, srule: dict) -> tuple[float, str]:
                   & set(srule["exclude"]))
     if excl:
         return 0.0, "registry:" + excl[0]
-    tier = venue["tier_ngo_in_b"] if srule["ngo_research_in_b"] else venue["tier_ngo_not_b"]
+    tier = _tier(venue, srule)
     if tier == "unknown" and srule["no_venue"] == "exclude":
         return 0.0, "tier_unknown"
     if tier != "unknown" and tier not in srule["tiers"]:
@@ -145,6 +148,19 @@ def seriousness_of(venue: dict, srule: dict) -> tuple[float, str]:
         return 0.0, "publisher:" + venue["publisher_flag"]
     value = float(srule["tier_mu"][tier])
     return value, "tier_c" if tier == "C" and not value else ""
+
+
+def _tier(venue: dict, srule: dict) -> str:
+    """The work's tier under switches (b) and (d).
+
+    The venue table is built under the configured switch (d): its NGO tier
+    columns already send non-research pages to C when it is ``to_c``, and
+    ``tier_without_nonresearch`` gives the tier with (d) ``off`` (under the
+    configured switch (b)).
+    """
+    if srule.get("nonresearch") == "off" and venue.get("tier_without_nonresearch"):
+        return venue["tier_without_nonresearch"]
+    return venue["tier_ngo_in_b"] if srule["ngo_research_in_b"] else venue["tier_ngo_not_b"]
 
 
 def icf_of(row: dict, mrule: dict) -> tuple[float | None, str]:
@@ -247,7 +263,7 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
             "discipline_run_id": win["run_id"] if win else "",
             "discipline_flag": contrib if contrib in ("unsure", "na", "unknown") else "",
             "venue_key": venue.get("venue_key", ""),
-            "tier": venue["tier_ngo_in_b"] if srule["ngo_research_in_b"] else venue["tier_ngo_not_b"],
+            "tier": _tier(venue, srule),
             "publisher_flag": venue.get("publisher_flag", ""),
         })
         values = _facet_values(row, venue, srule, mrule)
@@ -366,6 +382,8 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
             ("ngo_research_flipped", dict(base, ngo_research_in_b=not base["ngo_research_in_b"])),
             ("no_venue_flipped", dict(base, no_venue="keep_flagged"
                                       if base["no_venue"] == "exclude" else "exclude"))]
+    if base.get("nonresearch") == "to_c":  # the table cannot show "to_c" if built "off"
+        out.append(("nonresearch_flipped", dict(base, nonresearch="off")))
     return out
 
 
@@ -396,6 +414,7 @@ def sensitivity(rows: list[dict], venues: dict, base: dict, mrule: dict) -> list
             "ngo_research_in_b": str(srule["ngo_research_in_b"]).lower(),
             "drop_publishers": ";".join(srule["drop_publishers"]),
             "no_venue": srule["no_venue"],
+            "nonresearch": srule.get("nonresearch", ""),
             "included_works": len(inc),
             "included_families": len({r["family_id"] for r, _ in inc}),
             "included_mu_weighted": _fmt(sum(mu for _, mu in inc)),
