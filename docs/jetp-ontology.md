@@ -263,7 +263,7 @@ section 4), a precision (`day`, `month`, `quarter`, `year`, `unknown`) and
 bounds. Values are the publisher's, in the publisher's unit and currency;
 conversion is a derivation through the sourced `rates` table. An
 observation names its `measure` from the closed list of section 4, its
-`basis` (`gross`, `net`, `unknown`) where money is involved, and its
+`basis` (`gross`, `net`, `unknown`) where money or a physical quantity is involved, and its
 `flow_type` from the IATI list when the measure is a flow. It carries
 `recorded_at`, the date the ledger wrote it, and the same `status` and
 `supersedes` as a decision row. Supersession corrects the ledger's own
@@ -348,7 +348,7 @@ The `measure` of an observation is from a closed list, extended by decision:
 | Axis | Measures |
 |---|---|
 | money | `amount` (a state's amount, with `own_status`), `flow` (with `flow_type`: `pledge`, `commitment`, `disbursement`, `expenditure`, `loan_repayment`, `credit_guarantee`, from IATI), `estimate` (a plan cost, no funder), `envelope` (a partnership or portfolio total), `interest_rate`, `maturity_years`, `grace_years`, `grant_element`, `condition` |
-| physical | `capacity` (with unit), `length`, `state`, `target` (a physical or social objective with a `target` timing, such as a renewable share by 2030) |
+| physical | `capacity` (with quantity kind, unit and basis, below), `length`, `state`, `target` (a physical or social objective with a `target` timing, such as a renewable share by 2030) |
 | counting | `count` (with the publisher's unit named: rows, locomotives, officials trained, households), `absence` |
 | macro | `indicator` (with the publisher's indicator code) |
 | marker | `marker` (the publisher's policy-marker score: Rio `mitigation`, `adaptation`, `biodiversity`, `desertification`, and non-Rio markers such as `gender`; value `0`, `1` or `2`, or `not_screened` when the field is blank, which is not 0) |
@@ -367,7 +367,9 @@ not (thermal and apparent power, peak power, VA, Ah). The basis is
 value whose line states none is `unknown`, never read as gross or net. A
 bound, a change or a rate printed with a value ("below 10 MW", "+0.7 GW
 year-on-year", "88 MWh par jour") is not a quantity kind; it stays verbatim
-on the line. An annual energy output is not observed. [M3b]
+on the line. An annual energy output is not observed. The `observations`
+table carries the unit today; the quantity kind becomes a column with the
+reader schema of the M2.3 reading lane. [M3b]
 
 History: quantity kinds and units added, and the basis extended to physical
 quantities, by the author's sign-off of 2026-10-01 (ticket 1960), after a
@@ -385,7 +387,7 @@ the comparison of requirement F19 uses climate-marked amounts. A value may
 be a range: `value_low` and `value_high` bound it, as the timing bounds
 bound a date, and a scalar has both equal. [M3b]
 
-Money observations carry a `basis`, `gross`, `net` or `unknown`, and a flow
+Money and physical observations carry a `basis`, `gross`, `net` or `unknown`, and a flow
 carries its interval through two of the timing roles of section 2,
 `period_start` and `period_end`, so the account of the [fusion
 rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
