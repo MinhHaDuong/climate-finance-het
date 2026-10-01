@@ -114,8 +114,9 @@ def seriousness_rule(registries_cfg: dict, tiers_cfg: dict) -> dict:
 def membership_rule(cfg: dict, screen_rule: dict, alpha: float) -> dict:
     """ICF and discipline values of ``config/rel_screen.yaml`` ``membership``, checked.
 
-    Every value lies in [0, 1]; the alpha-cut must reproduce the crisp ICF exit
-    rule: unsure is in REL iff ``stage2_unsure_in_rel``. ``family`` records the
+    Every value lies in [0, 1], and the alpha-cut must reproduce the crisp
+    rules: ICF icf in, aux and out out, unsure in iff ``stage2_unsure_in_rel``;
+    contrib yes and unsure in, no out. ``family`` records the
     decided family rule, ``max`` (``assign_families``).
     """
     m = cfg.get("membership") or {}
@@ -126,8 +127,14 @@ def membership_rule(cfg: dict, screen_rule: dict, alpha: float) -> dict:
                         ("discipline", {"yes", "unsure", "no"})):
         if set(out[facet]) != keys or not all(0 <= v <= 1 for v in out[facet].values()):
             raise ValueError(f"membership.{facet} must give {sorted(keys)} values in [0, 1]")
-    if (out["icf"]["unsure"] >= alpha) != screen_rule["stage2_unsure_in_rel"]:
+    icf, dis = out["icf"], out["discipline"]
+    if (icf["unsure"] >= alpha) != screen_rule["stage2_unsure_in_rel"]:
         raise ValueError("membership.icf.unsure and alpha contradict stage2_unsure_in_rel")
+    if not (icf["icf"] >= alpha > max(icf["aux"], icf["out"])):
+        raise ValueError("membership.icf: icf must be >= alpha, aux and out below it")
+    if not (dis["yes"] >= alpha and dis["unsure"] >= alpha > dis["no"]):
+        raise ValueError("membership.discipline: yes and unsure must be >= alpha, no below it "
+                         "(contrib unsure is kept, recall first)")
     out["family"] = (m.get("family") or {}).get("value", "")
     if out["family"] != "max":
         raise ValueError("membership.family.value must be max (decided 2026-10-01)")
@@ -199,9 +206,11 @@ def evaluate(values: list[tuple[str, float | None, str]], alpha: float) -> dict:
         reason, detail = f"{pending}_pending", ""
     else:
         reason, detail = "included", ""
-    return {"mu": mu, "mu_facet": first[0], "mu_complete": not pending or reason.endswith(
-        "_excluded"), "rel_reason": reason, "rel_reason_detail": detail,
-        "graded": {n for n, _, _ in graded}}
+    # Final when no facet is left to grade, or when mu is already below alpha
+    # (the minimum can only fall).
+    complete = not pending or (mu is not None and mu < alpha)
+    return {"mu": mu, "mu_facet": first[0], "mu_complete": complete, "rel_reason": reason,
+            "rel_reason_detail": detail, "graded": {n for n, _, _ in graded}}
 
 
 # ── Discipline rows ──────────────────────────────────────
@@ -290,7 +299,7 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
 
 
 def _fmt(value: float | None) -> str:
-    return "" if value is None else f"{value:g}"
+    return "" if value is None else format(value, ".15g")
 
 
 def _rank(r: dict) -> tuple:
@@ -390,6 +399,8 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
                                       if base["no_venue"] == "exclude" else "exclude"))]
     if base.get("nonresearch") == "to_c":  # the table cannot show "to_c" if built "off"
         out.append(("nonresearch_flipped", dict(base, nonresearch="off")))
+    else:  # tier_without_nonresearch exists for the configured switch (b) only
+        out = [o for o in out if o[0] != "ngo_research_flipped"]
     return out
 
 

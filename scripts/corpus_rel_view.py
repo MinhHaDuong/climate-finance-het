@@ -1,5 +1,6 @@
 """The REL view: pool × icf_screen labels → status per work and counts (ticket 1732),
-then exclusions by reason, ICF → discipline → seriousness (ticket 1843).
+then fuzzy membership and exclusions by reason, seriousness → ICF → discipline
+(ticket 1843).
 
 Joins the REL pool (``data/rel_pool/pool.csv``, ticket 1731) with the
 append-only label table (``data/rel_screen/icf_screen.csv``), the append-only
@@ -84,8 +85,10 @@ discipline) and the tier values and alpha of ``config/rel_venue_tiers.yaml``.
 
 Outputs (``--output-dir``, default ``data/rel_pool``): ``rel_view.csv`` (one row
 per pool work), ``rel_counts.json``, which records the exit rule it applied
-(``rule``), and ``rel_sensitivity.csv``, the REL included set under each
-seriousness setting (publisher flag, tier A only, registry switch, NGO switch).
+(``rule``), and ``rel_sensitivity.csv``, one row per seriousness setting (column ``scenario``:
+the decided setting, then each switch flipped and the publisher and tier-A
+variants), with the included works, families and mu-weighted count and the
+works missing only the discipline facet (``discipline_pending_*``).
 
 Usage:
     python scripts/corpus_rel_view.py [--pool PATH] [--table PATH] [--output-dir DIR]

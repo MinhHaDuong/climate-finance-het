@@ -160,6 +160,19 @@ def test_crisp_rules_are_the_alpha_cut():
             status, contrib, tier, flag)
 
 
+@pytest.mark.parametrize("values,alpha,expect", [
+    # (facet values in order), alpha -> (mu, mu_facet, complete, reason)
+    ([("s", 1.0, ""), ("i", None, ""), ("d", None, "")], 0.5, (1.0, "s", False, "i_pending")),
+    ([("s", 0.5, ""), ("i", 1.0, ""), ("d", None, "")], 0.5, (0.5, "s", False, "d_pending")),
+    ([("s", 0.5, ""), ("i", None, ""), ("d", None, "")], 0.8, (0.5, "s", True, "s_excluded")),
+    ([("s", 1.0, ""), ("i", 0.5, ""), ("d", 0.5, "")], 0.5, (0.5, "i", True, "included")),
+    ([("s", 1.0, ""), ("i", 0.0, "out"), ("d", 1.0, "")], 0.5, (0.0, "i", True, "i_excluded")),
+])
+def test_evaluate_mu_is_the_min_of_the_graded_facets(values, alpha, expect):
+    ev = rr.evaluate(values, alpha)
+    assert (ev["mu"], ev["mu_facet"], ev["mu_complete"], ev["rel_reason"]) == expect
+
+
 def test_forward_row_joining_the_deciding_label_wins():
     labels = [_lab("openalex:W1", "2", "icf", run_id="r1"),
               _lab("openalex:W1", "2", "icf", run_id="r2")]
@@ -258,6 +271,12 @@ def test_nonresearch_switch_reads_the_tier_without_it():
     assert table["nonresearch_flipped"]["included_works"] == 2
 
 
+def test_ngo_row_dropped_when_the_table_was_built_without_nonresearch():
+    names = [n for n, _ in rr._scenarios(dict(SRULE, nonresearch="off"))]
+    assert "ngo_research_flipped" not in names and "nonresearch_flipped" not in names
+    assert {"ngo_research_flipped", "nonresearch_flipped"} <= {n for n, _ in rr._scenarios(SRULE)}
+
+
 def test_seriousness_rule_reads_the_decided_configs():
     def load(name):
         with open(f"{ROOT}/config/{name}", encoding="utf-8") as fh:
@@ -276,6 +295,11 @@ def test_membership_rule_checks_values_and_the_unsure_exit():
     bad = {"membership": dict(cfg["membership"], discipline={"yes": 1, "no": 0})}
     with pytest.raises(ValueError, match="discipline"):
         rr.membership_rule(bad, RULE, 0.5)
+    for facet, key, value in (("icf", "aux", 0.6), ("icf", "icf", 0.4),
+                              ("discipline", "no", 0.5), ("discipline", "unsure", 0.4)):
+        m = dict(cfg["membership"], **{facet: dict(cfg["membership"][facet], **{key: value})})
+        with pytest.raises(ValueError, match=f"membership.{facet}"):
+            rr.membership_rule({"membership": m}, RULE, 0.5)
     with pytest.raises(ValueError, match="family"):
         rr.membership_rule({"membership": dict(cfg["membership"], family={"value": "min"})},
                            RULE, 0.5)
