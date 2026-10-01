@@ -1,0 +1,66 @@
+%erg 0.1
+Title: Grants register: admit the "Financing Status" pledge matrix as envelope statements
+Created: 2026-10-01
+Author: HDMX-coding-agent
+Blocked-by: 1950
+Blocked-by: 1960
+
+--- log ---
+2026-10-01T13:00Z HDMX-coding-agent created — follow-up of [[1950]] (PR #1675); author decision 2026-10-01, relayed from session haduong: file a separate ticket, Blocked-by [[1960]] (the finance-type list it needs).
+
+--- body ---
+## Context
+
+The XLSX editions 2024-q3 and 2025-q1 of the South African JET Grants
+Register carry a "Financing Status" sheet, declared out of scope in parser
+v1 ([[1950]], `XLSX_SCOPE_OUT` in `scripts/jetp/_zaf_grants_layouts.py`).
+It is a hand-keyed pledge matrix in US$ millions:
+
+- rows: sovereign partners (Canada, Denmark, EU/EIB, France/AFD,
+  Germany/KfW, Netherlands, Spain, Switzerland, UK, US), then a
+  multilateral block (AfDB, the CIF-led Accelerated Coal Transition line,
+  World Bank), subtotals and "Total pledges";
+- columns: Grants, Highly-concessional loans, Concessional loans,
+  Commercial debt and equity, Export Credits, total; 2025-q1 adds Policy
+  Loans, Guarantees and a ZAR column at 17.64 R/US$;
+- total pledges 13,806 (2024-q3) and 12,832 (2025-q1); in 2025-q1 the US
+  row is zeroed ("withdrawn"), Canada gains a 91 policy loan, Germany's
+  concessional loans are re-split (1,548 into 748 plus 800 policy);
+- 2024-q3 rows 18 and 19 carry unlabelled numbers (300, 30) belonging to
+  the coal-transition line.
+
+No Unique IDs and no grant rows: these are pledges, not allocations.
+
+## Costing (assessment of 2026-10-01, not measured)
+
+- Code: about 80 to 120 lines of a matrix reader in
+  `_zaf_grants_layouts.py`, the sheet-to-ledger mapping in
+  `build_zaf_grants_register.py`, a parser method version bump; the
+  scope-out test (the out-of-scope set) changes.
+- Tests: about 100 to 150 lines, with red tests of the new controls.
+- Agent effort 4 to 6 h; author 2 to 3 h of decisions (below); USD 0.
+- Controls: subtotals and "Total pledges" checked against the cells, an
+  internal sum control. No cross-control with the grant rows: pledged
+  grants (836m in 2024-q3, 764m in 2025-q1) legitimately exceed the
+  allocated grant rows (about 630m, 583m); a cross-control would fail by
+  design and a weakened one would mislead.
+- Instruments map onto the finance-type list of [[1960]] through the
+  reviewed crosswalk, hence the block.
+
+## Author decisions needed (before any code)
+
+1. What an envelope statement is here: one per partner × instrument cell,
+   or one per partner total with the instruments as fields.
+2. Sub-lines (the unlabelled 2024-q3 rows of the coal-transition line,
+   footnotes): statements of their own, fields of their parent, or out of
+   scope.
+3. Whether the zeroed US row of 2025-q1 is read as a withdrawal statement
+   (`absence` or an `event`) or only as a zero envelope.
+
+## Exit criteria
+
+- [ ] Author decisions 1 to 3 logged here
+- [ ] Matrix read for both XLSX editions under a new parser method version;
+  internal sum controls pass or the publisher's inconsistency is declared
+- [ ] Instruments mapped through the [[1960]] crosswalk, never by the reader
+- [ ] Red tests; `make check-fast` and `make lint` pass
