@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-09-30T11:00Z HDMX-coding-agent created
 2026-09-30T12:12Z HDMX-coding-agent note draft docs/jetp-collection.md written (13 sections, milestone tag per rule, checks table); stopping rule kept at 2 % / two rounds / 90 %, now judged per country with a one-document floor and a frame-coverage precondition; scattered sources not yet repointed, left for after review
 
+2026-10-01T05:42Z HDMX-coding-agent note partly met (author decision 2026-10-01, interactive: D4 hygiene): [[0725]] now points at docs/jetp-collection.md for the M3a stopping rule and authority frame instead of restating them; the other scattered sources (1180, 1184, 1140, 1141, data/jetp/README.md, docs/jetp-country-source-policy.md, docs/jetp-scout-brief.md, the jetp-research skill) are not repointed, so the ticket stays open
 --- body ---
 ## Context
 
