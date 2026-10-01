@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-10-01T12:30Z HDMX-coding-agent created — follow-up of [[1950]] (PR #1675); author decision 2026-10-01, relayed from session haduong: "Cell highlight colours: approved as a follow-up".
 
 2026-10-01T12:03Z HDMX-coding-agent note blocker 1950 closed — Blocked-by removed.
+2026-10-01T17:42Z HDMX-coding-agent Fix review round 1: default cell style 0 read for fills, applyFill honoured, legend wired to the rows that carry a fill (field 'fill legend') and to its footnote line, fills restricted to printed headers, non-integer style refused; ledger of record re-admitted under method v2 / adapter v2 (counts unchanged, replay green).
 --- body ---
 ## Context
 
@@ -30,9 +31,9 @@ admitted as a heading statement, but the highlighted rows are not marked.
 
 ## Exit criteria
 
-- [ ] Fill read per cell and recorded per row as a verbatim field, with
+- [x] Fill read per cell and recorded per row as a verbatim field, with
   the legend text where printed
-- [ ] Red test: a fixture row with and without the legend fill
-- [ ] New method version; the 2025-q1 lines superseded by replay, counts
+- [x] Red test: a fixture row with and without the legend fill
+- [x] New method version; the 2025-q1 lines superseded by replay, counts
   unchanged
-- [ ] `make check-fast` and `make lint` pass
+- [x] `make check-fast` and `make lint` pass

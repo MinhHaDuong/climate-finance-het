@@ -11,7 +11,9 @@ A number keeps its stored text. A cell whose number format is a date format
 is rendered as an ISO date (``YYYY-MM-DD``, with ``THH:MM`` when the stored
 serial carries a time of day), the form the publisher displays; the stored
 serial is what the adapter version converts, so the conversion is part of the
-adapter, named by ``ADAPTER`` and ``VERSION``.
+adapter, named by ``ADAPTER`` and ``VERSION``. At v2 each cell's fill colour
+is read from the styles part and kept verbatim: the pattern type and the
+stored colour of a solid fill, as the publisher stored it.
 
 Why not openpyxl: it is not a dependency of the project, and this reader needs
 exactly the stored values, the hidden flags and nothing else (ticket 1950).
@@ -162,17 +164,17 @@ def _cell_text(cell, shared, dates, epoch):
 
 
 def _cell_fill(cell, xf_fills):
-    """Extract the fill description for a cell, or empty string if no fill."""
-    style_index = cell.get('s')
-    if style_index is None:
-        return ''
+    """The fill description of a cell's style, '' when the style has none.
+
+    A cell without an ``s`` attribute is styled by cellXf 0 (ECMA-376 18.3.1.4),
+    like ``_cell_text`` reads its number format.
+    """
+    style = cell.get('s', '0')
     try:
-        xf_index = int(style_index)
-        fill = xf_fills.get(xf_index, '')
-        # Only return non-empty fill if it's not 'none' or empty
-        return fill if fill and fill != 'none' else ''
-    except (ValueError, TypeError):
-        return ''
+        fill = xf_fills.get(int(style), '')
+    except ValueError as exc:
+        raise XlsxError(f'cell style index {style!r} is not an integer') from exc
+    return fill if fill and fill != 'none' else ''
 
 
 def _hidden_columns(root):
@@ -184,37 +186,34 @@ def _hidden_columns(root):
 
 
 def _fill_styles(archive):
-    """A mapping from cellXf index to fill colour string as stored.
-    
+    """A mapping from cellXf index to the fill colour string as stored.
+
     Returns a dict: {xf_index: fill_description} where fill_description is:
     - The pattern type for built-in patterns (e.g., 'solid', 'gray125')
-    - For solid fills with colours: the pattern type plus the hex colour (e.g., 'solid FF00FF00')
-    - For other patterns: just the pattern type
-    - 'none' for no fill
+    - For solid fills with colours: the pattern type plus the hex colour
+      (e.g., 'solid FF00FF00'), or the indexed/theme/tint parts of the colour
+    - 'gradient' for a gradient fill, 'other' for any fill that is neither
+    - 'none' for no fill, and the same for a style that does not apply its
+      fill (``applyFill="0"``, ECMA-376 18.8.10)
     """
     try:
         root = ET.fromstring(archive.read('xl/styles.xml'))
     except KeyError:
         return {}
-    
-    # Parse fills: list of fill elements
-    fills_elem = root.find('m:fills', NS)
     fills = {}
-    if fills_elem is not None:
-        for fill in fills_elem.findall('m:fill', NS):
-            pattern = fill.find('m:patternFill', NS)
-            if pattern is not None:
-                fills[len(fills)] = _describe_pattern_fill(pattern)
-            else:
-                # Gradient or other fill types - store as 'other'
-                fills[len(fills)] = 'other'
-    
-    # Map cellXfs to fill indices
+    for fill in root.findall('m:fills/m:fill', NS):
+        pattern = fill.find('m:patternFill', NS)
+        if pattern is not None:
+            fills[len(fills)] = _describe_pattern_fill(pattern)
+        elif fill.find('m:gradientFill', NS) is not None:
+            fills[len(fills)] = 'gradient'
+        else:
+            fills[len(fills)] = 'other'
     xf_fills = {}
     for index, xf in enumerate(root.findall('m:cellXfs/m:xf', NS)):
         fill_id = int(xf.get('fillId', '0'))
-        xf_fills[index] = fills.get(fill_id, 'none')
-    
+        applies = xf.get('applyFill', '1') not in ('0', 'false')
+        xf_fills[index] = fills.get(fill_id, 'none') if applies else 'none'
     return xf_fills
 
 
@@ -223,22 +222,13 @@ def _describe_pattern_fill(pattern):
     pattern_type = pattern.get('patternType', 'none')
     fg_color = pattern.find('m:fgColor', NS)
     bg_color = pattern.find('m:bgColor', NS)
-    
     if fg_color is not None and pattern_type == 'solid':
         rgb = fg_color.get('rgb', '')
         if rgb:
             return f'{pattern_type} {rgb}'
         # Indexed or theme colour
-        index = fg_color.get('indexed', '')
-        theme = fg_color.get('theme', '')
-        tint = fg_color.get('tint', '')
-        parts = []
-        if index:
-            parts.append(f'indexed:{index}')
-        if theme:
-            parts.append(f'theme:{theme}')
-        if tint:
-            parts.append(f'tint:{tint}')
+        parts = [f'{kind}:{fg_color.get(kind)}' for kind in ('indexed', 'theme', 'tint')
+                 if fg_color.get(kind)]
         if parts:
             return f'{pattern_type} fg:{",".join(parts)}'
     if bg_color is not None:
@@ -281,7 +271,6 @@ def read_workbook(path):
                     text = _cell_text(cell, shared, dates, epoch)
                     if text != '':
                         record.cells[ref.group(1)] = text
-                    # Record fill colour as verbatim field
                     fill = _cell_fill(cell, xf_fills)
                     if fill:
                         record.fills[ref.group(1)] = fill
