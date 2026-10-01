@@ -71,7 +71,7 @@ class BrowserGet:
         status, headers, body = self._request(full)
         if challenged(status, headers):
             self.challenges += 1
-            log.info("JavaScript challenge on %s: loading it in the page", full)
+            log.info("JavaScript challenge on %s: loading it in the page", url)  # no query
             self._page.goto(full, timeout=self.timeout_ms)
             self._page.wait_for_timeout(SETTLE_MS)
             self._wait(delay)

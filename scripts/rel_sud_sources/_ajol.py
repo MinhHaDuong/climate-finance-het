@@ -97,6 +97,7 @@ def plan(cfg, get=None):
     get = get or GET
     match = matcher(cfg, LANGUAGES)
     deadline = cfg.get("deadline")
+    past(deadline)  # a malformed deadline fails here, before any request
     journals, failed = {}, []
     for slug in CATEGORIES:
         paths, error = category_journals(slug, patient(get), MIN_DELAY)

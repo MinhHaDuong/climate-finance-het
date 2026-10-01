@@ -466,6 +466,8 @@ def test_ajol_journal_not_started_by_the_deadline_is_skipped_not_absent():
 def test_ajol_deadline_without_offset_is_read_as_utc():
     assert ajol.past("2000-01-01T00:00:00") and not ajol.past("2999-01-01T00:00:00")
     assert not ajol.past(None)
+    with pytest.raises(ValueError):  # refused at plan time, before any request
+        ajol.plan({**CFG, "deadline": "tomorrow"}, get=FakeGet({}))
 
 
 def test_browser_getter_runs_a_waf_challenge_once_in_the_page(monkeypatch):
