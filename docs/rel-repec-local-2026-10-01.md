@@ -242,8 +242,9 @@ almost all *hors sujet*. The kept stratum still holds ICF works at about 4 %
 ICF works among the kept rows, with a wide interval; this is a derived figure,
 not a count. Spend: USD 0.32, summed from the per-call `usage.cost`
 (`opus_sample.jsonl.calls.jsonl`). Before the run the OpenRouter account
-showed USD 120.80 used of USD 140. A reading taken one minute after the run
-had not yet moved, so it cannot confirm the spend.
+showed USD 120.7997 used of USD 140. A reading taken one minute after the run
+had not yet moved. Seven minutes later it showed USD 121.1231, a difference of
+USD 0.3235, which equals the per-call sum.
 
 **How this differs from the v2 filter.** The refined-corpus v2 filter scored
 every work against a fixed query ("climate policy and financial mechanisms")
