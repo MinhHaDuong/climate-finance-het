@@ -285,6 +285,8 @@ def to_record(r: dict, qids: list[str], retrieved_at: str) -> dict:
     cd = r.get("creation_date") or ""
     lang = (r.get("language") or "").strip().lower()
     note = []
+    if r.get("handle_valid") == "0":
+        note.append("RePEc handle malformed at source")
     if doi and not DOI_SHAPE.match(doi):
         note.append("malformed DOI in ReDIF: " + doi)
         doi = ""

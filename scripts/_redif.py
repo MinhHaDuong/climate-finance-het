@@ -85,22 +85,33 @@ def decode(raw: bytes) -> tuple[str, str]:
 _HANDLE = re.compile(r"^RePEc:[A-Za-z0-9_-]{3}:[^:\s]+:\S+$")
 
 
-def norm_handle(value: str) -> str:
-    """The RePEc handle in a ``Handle`` value, or empty when none is valid.
+def clean_handle(value: str) -> str:
+    """The handle token of a ``Handle`` value, cleaned but not validated.
 
     Archives write inline comments (``RePEc:zbw:hwware:26096 #END 46``), spaces
     around colons (``RePEc: rsp: wpaper: wp48``), a swallowed continuation
     line, stray control characters, and the prefix in any case. The comment
     is cut, spaces next to a colon are closed, the first whitespace-free token
     is kept, non-printable characters are dropped and the prefix is written
-    ``RePEc``; the result must have the form ``RePEc:aaa:series:item``."""
+    ``RePEc``."""
     v = (value or "").split("#", 1)[0]
-    v = "".join(c for c in v if c.isprintable() and c != "�")
+    v = "".join(c for c in v if c.isprintable() and c != "\ufffd")
     v = re.sub(r"\s*:\s*", ":", v.strip())
     v = v.split()[0] if v.split() else ""
     if v[:6].lower() == "repec:":
         v = "RePEc:" + v[6:]
-    return v if _HANDLE.match(v) else ""
+    return v
+
+
+def is_valid_handle(handle: str) -> bool:
+    """Whether a cleaned handle has the form ``RePEc:aaa:series:item``."""
+    return bool(_HANDLE.match(handle or ""))
+
+
+def norm_handle(value: str) -> str:
+    """The cleaned handle when it is a valid RePEc handle, else empty."""
+    v = clean_handle(value)
+    return v if is_valid_handle(v) else ""
 
 
 def iter_templates(text: str) -> Iterator[dict[str, list[str]]]:
@@ -204,7 +215,9 @@ def series_handle(handle: str) -> str:
 def to_row(tpl: dict[str, list[str]], series_names: dict[str, str] | None = None) -> dict[str, str]:
     """The table row of one work template (paper, article, book, chapter)."""
     raw_handle = first(tpl, "handle")
-    handle = norm_handle(raw_handle)
+    # malformed at source (empty series, missing item, other prefix) but kept:
+    # the item is real and the lane does not screen; handle_valid says so
+    handle = clean_handle(raw_handle)
     ttype = template_type(tpl)
     sh = series_handle(handle)
     jel: list[str] = []
@@ -217,6 +230,7 @@ def to_row(tpl: dict[str, list[str]], series_names: dict[str, str] | None = None
     return {
         "handle": handle,
         "handle_raw": raw_handle if raw_handle != handle else "",
+        "handle_valid": "1" if is_valid_handle(handle) else "0",
         "template_type": ttype,
         "title": first(tpl, "title"),
         "abstract": first(tpl, "abstract"),

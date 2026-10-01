@@ -198,6 +198,10 @@ def test_to_row_keeps_the_raw_handle_when_normalised():
     assert r["handle"] == "RePEc:zbw:hwware:26096"
     assert r["handle_raw"] == "RePEc:zbw:hwware:26096 #END 46"
     assert _redif.to_row({"handle": ["RePEc:aaa:bbb:1"]})["handle_raw"] == ""
+    assert r["handle_valid"] == "1"
+    # malformed at source (empty series code): kept, flagged
+    bad = _redif.to_row({"handle": ["RePEc:bre::node_10366"]})
+    assert (bad["handle"], bad["handle_valid"]) == ("RePEc:bre::node_10366", "0")
 
 
 def test_mixed_encoding_file_keeps_its_utf8_lines():

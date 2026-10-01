@@ -455,10 +455,10 @@ def _upper95(k: int, n: int) -> float:
 
 def remap_embeddings(old_npz: str, old_texts: str, new_texts: str, out_npz: str) -> dict:
     """Carry delivered-record embeddings over to a re-delivery: an old key
-    (raw RePEc handle) maps to ``norm_handle`` of it, and a vector is kept only
+    (raw RePEc handle) maps to ``clean_handle`` of it, and a vector is kept only
     when the new delivery holds that record with a byte-identical text."""
     import numpy as np
-    from _redif import norm_handle
+    from _redif import clean_handle
 
     def texts(path: str) -> dict[str, str]:
         return {r["key"]: r["text"] for r in map(json.loads, open(path, encoding="utf-8"))
@@ -471,7 +471,7 @@ def remap_embeddings(old_npz: str, old_texts: str, new_texts: str, out_npz: str)
         if role != "repec":
             c["other_role"] += 1
             continue
-        nk = norm_handle(key) or key
+        nk = clean_handle(key) or key
         if nk not in new:
             c["absent_from_new_delivery"] += 1
         elif new[nk] != old.get(key):
@@ -491,13 +491,13 @@ def opus_rescore(results: list[dict], scores_csv: str) -> dict:
     old keep regions. Each record is re-classed by the new decision; the part
     of an old stratum that falls in a new region is a simple random sample of
     that intersection, so the ICF bound is reported per intersection."""
-    from _redif import norm_handle
+    from _redif import clean_handle
     dec = {r["key"]: r["drop"] for r in csv.DictReader(open(scores_csv, encoding="utf-8"))
            if r["role"] == "repec"}
     cells: dict[str, list[dict]] = defaultdict(list)
     missing = 0
     for r in results:
-        k = norm_handle(r["key"]) or r["key"]
+        k = clean_handle(r["key"]) or r["key"]
         if k not in dec:
             missing += 1
             continue

@@ -96,8 +96,10 @@ def parse_file(path: str, root: str) -> tuple[list[dict], list[tuple[str, str]],
         if row["handle_raw"]:
             c["handles_normalised"] += 1
         if not row["handle"]:
-            c["works_without_handle" if not row["handle_raw"] else "works_with_invalid_handle"] += 1
+            c["works_without_handle"] += 1
             continue
+        if row["handle_valid"] != "1":
+            c["works_with_malformed_handle_kept"] += 1
         row["source_file"] = rel
         row["encoding"] = enc
         rows.append({k: clean(v) for k, v in row.items()})
