@@ -29,7 +29,9 @@ GRID_TOLERANCE = 1.5
 PRINTED_AMOUNT = re.compile(
     r'(?P<sign>-)?\s*(?:\$|R|€|£|CHF|CAD|US\$)?\s*'
     r'(?P<number>\d{1,3}(?:[ ,]\d{3})+|\d+)(?P<decimals>\.\d+)?\s*(?:kr\.?)?')
-# A header naming money: it must be one of AMOUNT_COLUMNS, which get a total control.
+# A header naming money must be one of AMOUNT_COLUMNS, which get a total control.
+# The word list is a net, not a proof: headers are also pinned per edition by the
+# landmarks and the reviewed counts, so a new money column needs a new version.
 MONEY_HEADER = re.compile(r'(?i)\b(amounts?|totals?|sum|usd|eur|euro|gbp|chf|cad|dkk|zar)\b'
                           r'|[$€£]')
 AMOUNT_COLUMNS = ('Total US$', 'Total ZAR', 'Euro - Amount', 'Euro - Amounts', 'Euro: Amount',

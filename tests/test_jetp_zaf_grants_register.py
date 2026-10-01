@@ -222,14 +222,27 @@ def test_workbook_red_undeclared_amount_header(tmp_path):
         layouts.parse_xlsx(write_xlsx(model, tmp_path / 'w.xlsx'))
 
 
-@pytest.mark.parametrize('header', ['Yen', 'Funding USD', 'Sum', 'EUR'])
+@pytest.mark.parametrize('header', ['Yen - Amount', 'Funding USD', 'Sum', 'EUR'])
 def test_workbook_red_money_headers_without_a_total_control(tmp_path, header):
     model = _model('xlsx-2025-q1.json')
     row = next(r for r in _sheet(model, 'EU-Register')['rows']
                if r['cells'].get('A') == 'Unique ID')
-    row['cells']['E'] = f'{header} - Amount' if header == 'Yen' else header
+    row['cells']['E'] = header
     with pytest.raises(grants.RegisterError, match='not declared for a total control'):
         layouts.parse_xlsx(write_xlsx(model, tmp_path / 'w.xlsx'))
+
+
+def test_admission_rerun_restores_a_spec_row_a_crash_lost(tmp_path):
+    ledger = tmp_path / 'ledger'
+    ledger.mkdir()
+    extraction = _fixture_extraction(tmp_path)
+    grants.admit([extraction], ledger, recorded_at='2026-10-01')
+    specs = ledger / 'line-field-specs.csv'
+    complete = specs.read_bytes()
+    specs.write_text(specs.read_text().splitlines()[0] + '\n')   # header only
+    assert grants.admit([extraction], ledger, recorded_at='2026-10-02') == {
+        extraction.document_id: 0}
+    assert specs.read_bytes() == complete
 
 
 def test_admission_renders_every_file_before_writing_any(tmp_path, monkeypatch):

@@ -203,6 +203,11 @@ def _replay(extraction, held, ledger_dir, new_lines, field_rows):
         raise RegisterError(f'{extraction.document_id}: replay differs from the lines of record')
 
 
+def _spec(extraction):
+    return {'document_id': extraction.document_id,
+            'columns': json.dumps(field_columns(extraction), ensure_ascii=False)}
+
+
 def _render_fields(columns, rows):
     """A field file's text, refused when over the per-file ceiling."""
     output = io.StringIO()
@@ -220,9 +225,10 @@ def admit(extractions, ledger_dir=LEDGER_DIR, *, recorded_at):
 
     All or nothing across the batch: every replay, identifier check and file
     rendering (with its size ceiling) runs before the first byte is written,
-    so a failed check leaves the ledger as it was. An input/output error in
-    the middle of the writes themselves is repaired by running again: the
-    replay finds what was written and the rest is appended.
+    so a failed check leaves the ledger as it was. Writes go field files,
+    then lines, then specs; a process that dies between them is repaired by
+    running again: an edition with lines is replayed and its spec row
+    restored, one without lines is appended whole, its field file rewritten.
     """
     ledger_dir = Path(ledger_dir)
     schema = load_schema()
@@ -235,6 +241,7 @@ def admit(extractions, ledger_dir=LEDGER_DIR, *, recorded_at):
         held = [row for row in lines if row['sha256'] == extraction.sha256]
         if held:
             _replay(extraction, held, ledger_dir, new_lines, field_rows)
+            _add(specs, _spec(extraction), ('document_id',))   # restores one a crash lost
             admitted[extraction.document_id] = 0
             continue
         minted = [row['line_id'] for row in new_lines if row['line_id'] in existing]
@@ -245,17 +252,15 @@ def admit(extractions, ledger_dir=LEDGER_DIR, *, recorded_at):
     rendered = []
     for extraction, new_lines, field_rows in pending:
         lines.extend(new_lines)
-        columns = field_columns(extraction)
-        _add(specs, {'document_id': extraction.document_id,
-                     'columns': json.dumps(columns, ensure_ascii=False)}, ('document_id',))
+        _add(specs, _spec(extraction), ('document_id',))
         rendered.append((ledger_dir / 'line-fields' / f'{extraction.document_id}.csv',
-                         _render_fields(columns, field_rows)))
+                         _render_fields(field_columns(extraction), field_rows)))
     for path, text in rendered:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding='utf-8')
     if pending:
         _append_lines(ledger_dir, schema, lines, existing, recorded_at)
-        write_table(ledger_dir, 'line_field_specs', specs, schema=schema)
+    write_table(ledger_dir, 'line_field_specs', specs, schema=schema)
     return admitted
 
 
