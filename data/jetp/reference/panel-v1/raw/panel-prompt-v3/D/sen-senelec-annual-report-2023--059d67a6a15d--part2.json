@@ -1,0 +1,54 @@
+{
+ "id": "gen-1790841664-8R3te4z4awg8oTVxjb6t",
+ "object": "chat.completion",
+ "created": 1790841664,
+ "model": "z-ai/glm-5.3",
+ "provider": "Parasail",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\n  \"scope_note\": \"J'ai couvert les pages 36 à 62 du rapport annuel Senelec 2023 (délestages et incidents réseau, activité commerciale, résultats comptables, bilan, bilan social, annexes). Aucune ligne ne porte sur des projets, financements, enveloppes ou parties d'un partenariat de transition énergétique : ce sont des statistiques d'exploitation, financières et sociales de l'outil Senelec, hors périmètre. Les pages 51 à 62 (annexes vides et coordonnées) sont également hors champ.\",\n  \"statements\": []\n}",
+    "refusal": null,
+    "reasoning": "This is a Senelec annual report, pages 36–62, mostly operational/financial statistics, not JETP partnership projects. Scope: statements about partnerships' projects, money, perimeters, parties, states. Almost none of this fits — it's utility operations. The instructions say if no classification fits, \"cannot_classify\". Should I extract operational statistics? Scope limits to partnership-related statements. There are no partnership/funder/project lines here — no JETP content. Perhaps report scope note only. But the task requires extracting statements in scope; here none. Best answer: state no in-scope statements, with scope note.\n\nMaybe some statements could qualify? \"Délestages\", incidents, financials — not partnership projects/money. Could argue named items like centrales de l'OMVS? Not partnership money. Safest: return nothing with a scope note.",
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "text": "This is a Senelec annual report, pages 36–62, mostly operational/financial statistics, not JETP partnership projects. Scope: statements about partnerships' projects, money, perimeters, parties, states. Almost none of this fits — it's utility operations. The instructions say if no classification fits, \"cannot_classify\". Should I extract operational statistics? Scope limits to partnership-related statements. There are no partnership/funder/project lines here — no JETP content. Perhaps report scope note only. But the task requires extracting statements in scope; here none. Best answer: state no in-scope statements, with scope note.\n\nMaybe some statements could qualify? \"Délestages\", incidents, financials — not partnership projects/money. Could argue named items like centrales de l'OMVS? Not partnership money. Safest: return nothing with a scope note.",
+      "format": "unknown",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 11857,
+  "completion_tokens": 315,
+  "total_tokens": 12172,
+  "cost": 0.01740212,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 512,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.01740212,
+   "upstream_inference_prompt_cost": 0.01601612,
+   "upstream_inference_completions_cost": 0.001386
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 219,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

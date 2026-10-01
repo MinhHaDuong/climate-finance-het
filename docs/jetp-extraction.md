@@ -480,7 +480,7 @@ record, and no item waits for the author.
   stratified by language. The coverage report states which method version
   read each document type. [M2]
 
-History: reference answers made by a blind cross-vendor panel instead of by hand, decided by the author on 2026-10-01 (interactive), after retracting the human gold set in front of its cost; ticket 1895.
+History: reference answers made by a blind cross-vendor panel instead of by hand, decided by the author on 2026-10-01 (interactive), after retracting the human gold set in front of its cost; ticket 1895. The first set is `data/jetp/reference/panel-v1/` (its README records the panel, the rule, the counts and the strata under 30 held-out items).
 
 ### 6.4 Transcription
 

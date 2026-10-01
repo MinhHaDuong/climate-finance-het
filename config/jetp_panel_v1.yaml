@@ -1,0 +1,84 @@
+# Panel reference set v1 for M2.3 calibration (ticket 1895).
+#
+# Fixed before the first paid call. A change of members, prompt, field list
+# or agreement rule is a new reference set version, never an edit of this one.
+version: panel-v1
+rule: panel-rule-v1          # docs: data/jetp/reference/panel-v1/README.md
+fields_version: panel-fields-v1
+prompt_version: panel-prompt-v3   # v1, v2 failed the control (stitched quotes, composed labels); README
+
+# Budget accepted by the author on 2026-10-01 (ticket 1895 log): USD 10 to 48.
+# The runner stops before a call that would take the spend over the cap.
+budget_usd: 48.0
+
+# Three makers, none among the reader and arbiter candidates of 1890 and 1873
+# (Alibaba Qwen, Google Gemma and Gemini, Mistral, DeepSeek, Anthropic Claude).
+# Each member is pinned to one zero-retention provider listed by
+# https://openrouter.ai/api/v1/endpoints/zdr on 2026-10-01; a response served
+# by any other provider fails the run closed.
+members:
+  - key: A
+    maker: OpenAI
+    model: openai/gpt-5.6-sol
+    provider: azure
+    provider_name: Azure
+    price_in_per_m: 4.0      # ZDR endpoint price; the 2.00/10.00 of the
+    price_out_per_m: 20.0    # ticket's estimate is not served under ZDR
+  - key: B
+    maker: xAI
+    model: x-ai/grok-4.7
+    provider: xai
+    provider_name: xAI
+    price_in_per_m: 2.0
+    price_out_per_m: 6.0
+  # C, Moonshot AI moonshotai/kimi-k3 via Moonshot AI, failed the positive
+  # control under panel-prompt-v2 (composed labels, not verbatim) and is
+  # replaced, not weighted (README, control.csv). Its answers are kept.
+  - key: D
+    maker: Z.ai
+    model: z-ai/glm-5.3
+    provider: parasail       # fp8; Z.AI's own endpoint ignores the JSON
+    provider_name: Parasail  # schema (structured outputs unsupported)
+    price_in_per_m: 1.4
+    price_out_per_m: 4.4
+reasoning_effort: low
+max_output_tokens: 64000
+part_max_chars: 120000
+
+# Selection: pending documents (a snapshot, no line), stratified cells, a
+# seeded draw per cell and one reserve document per cell.
+selection_seed: 1891
+split_seed: 1895
+heldout_share: 0.5
+shape_of_type:
+  project_list: table row
+  investment_plan: table row
+  implementation_plan: table row
+  project_page: record page
+  data_portal: record page
+  progress_update: prose span
+  annual_report: prose span
+  operator_report: prose span
+  official_news: prose span
+  secondary_news: prose span
+  approval_document: prose span
+  political_declaration: prose span
+cells:
+  - {country: VNM, language: vi, shape: prose span, draw: 3}
+  - {country: VNM, language: vi, shape: table row, draw: 2}
+  - {country: VNM, language: vi, shape: record page, draw: 1}
+  - {country: ZAF, language: en, shape: table row, draw: 2}
+  - {country: ZAF, language: en, shape: prose span, draw: 3}
+  - {country: ZAF, language: en, shape: record page, draw: 1}
+  - {country: SEN, language: fr, shape: prose span, draw: 2}
+  - {country: IDN, language: en, shape: prose span, draw: 1}
+
+# Verbatim fields asked of every member, beside label, quote and
+# classification. Each value is copied as printed and must lie inside the
+# quote. The publisher's status word is never asked of an LLM (extraction § 3).
+fields:
+  - {name: amount, help: "the amount with its currency, unit and scale words as printed"}
+  - {name: date, help: "the date or period the statement gives, as printed"}
+  - {name: funder, help: "the funder, lender or donor named for the item, as printed"}
+  - {name: implementer, help: "the recipient, borrower, owner or implementing body named for the item, as printed"}
+  - {name: speaker, help: "for prose, the office or institution the publisher quotes as speaking, as printed"}

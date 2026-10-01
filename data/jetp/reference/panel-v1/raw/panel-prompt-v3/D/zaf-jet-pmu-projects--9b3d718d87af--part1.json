@@ -1,0 +1,54 @@
+{
+ "id": "gen-1790841196-ujHAuItYwFzEFYBfW68w",
+ "object": "chat.completion",
+ "created": 1790841196,
+ "model": "z-ai/glm-5.3",
+ "provider": "Parasail",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\"scope_note\": \"I covered the six project cards in the Projects section ('Explore our collection of projects'), each naming a project and its category. All navigation menus, page furniture, contact details, footer and repeated menu text were left out as out of scope.\", \"statements\": [\n{\"page\": 1, \"quote\": \"Sustainable local development in Nomzamo Agri Village, Ermelo, Mpumalanga\", \"label\": \"Sustainable local development in Nomzamo Agri Village, Ermelo, Mpumalanga\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": [{\"name\": \"Category\", \"value\": \"Category 1\"}]},\n{\"page\": 1, \"quote\": \"Implementation of the Just Transitions Framework (France)\", \"label\": \"Implementation of the Just Transitions Framework (France)\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": [{\"name\": \"Category\", \"value\": \"Category 2\"}]},\n{\"page\": 1, \"quote\": \"Revitalization of Mining Ghost Towns (France)\", \"label\": \"Revitalization of Mining Ghost Towns (France)\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": [{\"name\": \"Category\", \"value\": \"Category 1\"}]},\n{\"page\": 1, \"quote\": \"The Role of Social Policies in the Framework for Just Transition (France)\", \"label\": \"The Role of Social Policies in the Framework for Just Transition (France)\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": [{\"name\": \"Category\", \"value\": \"Category 2\"}]},\n{\"page\": 1, \"quote\": \"Distilling the Just Energy Transition in South Africa – Lessons Learned and Best Practices (UK)\", \"label\": \"Distilling the Just Energy Transition in South Africa – Lessons Learned and Best Practices (UK)\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": [{\"name\": \"Category\", \"value\": \"Category 1\"}]},\n{\"page\": 1, \"quote\": \"Mapping Mitigation and Adaptation Pathways for Mpumalanga (UK)\", \"label\": \"Mapping Mitigation and Adaptation Pathways for Mpumalanga (UK)\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": [{\"name\": \"Category\", \"value\": \"Category 2\"}]}\n]}",
+    "refusal": null,
+    "reasoning": "Only project items: six cards with Category labels. Classification: named_item.",
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "text": "Only project items: six cards with Category labels. Classification: named_item.",
+      "format": "unknown",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 1711,
+  "completion_tokens": 669,
+  "total_tokens": 2380,
+  "cost": 0.00475532,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 512,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00475532,
+   "upstream_inference_prompt_cost": 0.00181172,
+   "upstream_inference_completions_cost": 0.0029436
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 20,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

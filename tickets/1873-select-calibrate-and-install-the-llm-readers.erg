@@ -4,7 +4,6 @@ Created: 2026-10-01
 Author: HDMX-coding-agent
 Blocked-by: 1509
 Blocked-by: 1890
-Blocked-by: 1895
 
 --- log ---
 2026-10-01T05:50Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane); spec rules with no ticket found by the 2026-10-01 audit (author decision 2026-10-01, interactive: D4 hygiene)
@@ -13,6 +12,9 @@ Blocked-by: 1895
 
 2026-10-01T06:43Z HDMX-coding-agent note [[1895]] retracted its human gold set (author decision 2026-10-01) and now builds a cross-vendor panel reference set; still Blocked-by [[1895]]. "Calibration needs the human gold set" above is superseded: calibration runs on the panel reference set and every record names it agreement with a cross-vendor panel, not truth. The exit criterion on reference answers "made by hand" awaits the spec amendment proposed in 1895.
 2026-10-01T06:49Z HDMX-coding-agent note exit criterion on reference answers amended: "made by hand" replaced by the cross-vendor panel reference set of [[1895]], named as panel agreement, following the Q17 amendment (PR #1654, author decision 2026-10-01).
+2026-10-01T08:18Z HDMX-coding-agent note [[1895]] delivered the panel reference set (data/jetp/reference/panel-v1/): split once by seed 1895, stratified by country, language and shape, held-out part sealed by a committed hash. 147 held-out lines; strata under 30 held-out items are named in its README and run under the fallback. Panel makers OpenAI, xAI, Z.ai: no GLM model may be selected as reader or arbiter without a new set version.
+2026-10-01T08:19Z HDMX-coding-agent note blocker 1895 closed — Blocked-by removed.
+2026-10-01T08:33Z HDMX-coding-agent note correction: of the panel strata, only ZAF en prose span is informative; ZAF en table row (35 held-out lines) rests on one document read by two members and is treated as uninformative (data/jetp/reference/panel-v1/README.md).
 --- body ---
 ## Context
 

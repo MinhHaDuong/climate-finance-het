@@ -1,0 +1,54 @@
+{
+ "id": "gen-1790842532-8ae0ASEZo2ileeBFx4pw",
+ "object": "chat.completion",
+ "created": 1790842532,
+ "model": "z-ai/glm-5.3",
+ "provider": "Parasail",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\n  \"scope_note\": \"I extracted the substantive case-study statements on pages 40-43 (Case study 7 on African PAYGO solar and Case study 8 on Bangladesh RERED) covering projects, money, parties and states. Pages 44-46 are a references list and are excluded as boilerplate; general narrative commentary without a specific project, money or party assertion was left out.\",\n  \"statements\": [\n    {\n      \"page\": 40,\n      \"quote\": \"A notable case study is M-KOPA, one of Africa’s leading PAYGO solar providers. Operating in countries like Kenya, Uganda, and Tanzania, M-KOPA has connected over 3 million households to affordable solar energy.\",\n      \"label\": \"M-KOPA\",\n      \"classification\": \"named_item\",\n      \"fields\": {\n        \"amount\": \"over 3 million households\",\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": \"M-KOPA\",\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"countries\", \"value\": \"Kenya, Uganda, and Tanzania\"}\n      ]\n    },\n    {\n      \"page\": 41,\n      \"quote\": \"Today, over 420 million people rely on solar products for their energy and lighting needs. This growth has been matched by a surge in investment, with USD 1.9 billion\",\n      \"label\": \"USD 1.9 billion\",\n      \"classification\": \"envelope\",\n      \"fields\": {\n        \"amount\": \"USD 1.9 billion\",\n        \"date\": \"since 2012\",\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 41,\n      \"quote\": \"injected into the sector since 2012, including USD 1 billion in the last three years alone. During this period, 61% of investments were in debt, while equity accounted for 34%.\",\n      \"label\": \"USD 1 billion in the last three years alone\",\n      \"classification\": \"envelope\",\n      \"fields\": {\n        \"amount\": \"USD 1 billion\",\n        \"date\": \"in the last three years alone\",\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"split\", \"value\": \"61% of investments were in debt, while equity accounted for 34%\"}\n      ]\n    },\n    {\n      \"page\": 40,\n      \"quote\": \"Access to electricity in Africa’s remote regions remains a significant challenge, with over 600 million people across the continent still lacking reliable power.\",\n      \"label\": \"over 600 million people across the continent still lacking reliable power\",\n      \"classification\": \"target\",\n      \"fields\": {\n        \"amount\": \"over 600 million people\",\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 42,\n      \"quote\": \"Launched in 2003 with support from the World Bank and other international development partners, the Rural Electrification and Renewable Energy Development (RERED) programme aimed to provide decentralised, off-grid solar energy access to rural Bangladesh through Solar Home Systems (SHS).\",\n      \"label\": \"Rural Electrification and Renewable Energy Development (RERED) programme\",\n      \"classification\": \"named_item\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": \"2003\",\n        \"funder\": \"the World Bank and other international development partners\",\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 42,\n      \"quote\": \"By 2018, more than 4.1 million SHS units had been installed, benefiting approximately 20 million people, or 12% of the national population (IDCOL, 2019[39]).\",\n      \"label\": \"more than 4.1 million SHS units had been installed\",\n      \"classification\": \"target\",\n      \"fields\": {\n        \"amount\": \"more than 4.1 million SHS units\",\n        \"date\": \"By 2018\",\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"beneficiaries\", \"value\": \"approximately 20 million people, or 12% of the national population\"}\n      ]\n    },\n    {\n      \"page\": 42,\n      \"quote\": \"The Government of Bangladesh established the Infrastructure Development Company Limited (IDCOL) as the central implementing agency to channel funding from development partners − including the World Bank, GIZ, KfW, ADB, and KOICA − to local financial intermediaries and service providers (World Bank, 2024[38]).\",\n      \"label\": \"Infrastructure Development Company Limited (IDCOL)\",\n      \"classification\": \"named_item\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": null,\n        \"funder\": \"the World Bank, GIZ, KfW, ADB, and KOICA\",\n        \"implementer\": \"Infrastructure Development Company Limited (IDCOL)\",\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"established by\", \"value\": \"the Government of Bangladesh\"}\n      ]\n    },\n    {\n      \"page\": 42,\n      \"quote\": \"long-term concessional loans - often with maturities exceeding 30 years, enabled service providers to scale operations sustainably\",\n      \"label\": \"long-term concessional loans - often with maturities exceeding 30 years\",\n      \"classification\": \"envelope\",\n      \"fields\": {\n        \"amount\": \"maturities exceeding 30 years\",\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": \"service providers\",\n        \"speaker\": null\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 42,\n      \"quote\": \"Customers paid for their systems in small monthly instalments over 2-3 years. Grants helped lower the upfront cost\",\n      \"label\": \"small monthly instalments over 2-3 years\",\n      \"classification\": \"envelope\",\n      \"fields\": {\n        \"amount\": \"small monthly instalments over 2-3 years\",\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": \"Customers\",\n        \"speaker\": null\n      },\n      \"other\": []\n    }\n  ]\n}",
+    "refusal": null,
+    "reasoning": "Case studies 7, 8 and references. Scope: partnerships' projects, money, parties. References out of scope. Extract statements from case studies.\n\nCandidate statements:\n\n1. M-KOPA connected over 3 million households — named_item with amount \"over 3 million households\".\n2. USD 1.9 billion injected since 2012, incl. USD 1 billion in last three years; 61% debt, 34% equity — amounts. Could be one statement: quote the sentences.\n3. Over 420 million people rely on solar products.\n4. Over 600 million people lack electricity.\n5. RERED launched 2003 with World Bank support — event/named_item.\n6. By 2018 more than 4.1 million SHS installed, ~20 million people, 12% population.\n7. IDCOL established by Government of Bangladesh, funding partners World Bank, GIZ, KfW, ADB, KOICA.\n8. Concessional loans maturities exceeding 30 years; payments 2-3 years.\n\nKeep it focused on the partnership-scope statements. I'll produce a reasonable set.",
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "text": "Case studies 7, 8 and references. Scope: partnerships' projects, money, parties. References out of scope. Extract statements from case studies.\n\nCandidate statements:\n\n1. M-KOPA connected over 3 million households — named_item with amount \"over 3 million households\".\n2. USD 1.9 billion injected since 2012, incl. USD 1 billion in last three years; 61% debt, 34% equity — amounts. Could be one statement: quote the sentences.\n3. Over 420 million people rely on solar products.\n4. Over 600 million people lack electricity.\n5. RERED launched 2003 with World Bank support — event/named_item.\n6. By 2018 more than 4.1 million SHS installed, ~20 million people, 12% population.\n7. IDCOL established by Government of Bangladesh, funding partners World Bank, GIZ, KfW, ADB, KOICA.\n8. Concessional loans maturities exceeding 30 years; payments 2-3 years.\n\nKeep it focused on the partnership-scope statements. I'll produce a reasonable set.",
+      "format": "unknown",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 5134,
+  "completion_tokens": 1657,
+  "total_tokens": 6791,
+  "cost": 0.0144784,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0144784,
+   "upstream_inference_prompt_cost": 0.0071876,
+   "upstream_inference_completions_cost": 0.0072908
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 239,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

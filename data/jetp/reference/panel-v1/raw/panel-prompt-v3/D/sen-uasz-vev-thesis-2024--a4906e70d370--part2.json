@@ -1,0 +1,54 @@
+{
+ "id": "gen-1790841650-np6m1fV1uDlvNYTiJDGV",
+ "object": "chat.completion",
+ "created": 1790841650,
+ "model": "z-ai/glm-5.3",
+ "provider": "Parasail",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\n  \"scope_note\": \"I covered the conclusion text on page 60 containing the project cost and financing figures. The bibliographical references on pages 60-62 and the blank page 63 are boilerplate/reference material outside scope.\",\n  \"statements\": [\n    {\n      \"page\": 60,\n      \"quote\": \"Effectivement, le troisième chapitre met l'accent sur l'estimation des coûts indispensables à la réalisation du projet, à savoir 66 101 530 FCFA pour la construction des infrastructures requises, et 10 894 784 FCFA pour les dépenses d'entretien et autres.\",\n      \"label\": \"estimation des coûts indispensables à la réalisation du projet\",\n      \"classification\": \"envelope\",\n      \"fields\": {\n        \"amount\": \"66 101 530 FCFA\",\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"coût des dépenses d'entretien et autres\", \"value\": \"10 894 784 FCFA\"}\n      ]\n    },\n    {\n      \"page\": 60,\n      \"quote\": \"L'évaluation de la rentabilité d'un tel financement de 76 996 314 FCFA est effectuée en tenant compte d'un coût de l'énergie à 200 FCFA/kWh.\",\n      \"label\": \"l'évaluation de la rentabilité d'un tel financement de 76 996 314 FCFA\",\n      \"classification\": \"envelope\",\n      \"fields\": {\n        \"amount\": \"76 996 314 FCFA\",\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"coût de l'énergie\", \"value\": \"200 FCFA/kWh\"}\n      ]\n    }\n  ]\n}",
+    "refusal": null,
+    "reasoning": "Bibliography pages mostly out of scope (references, boilerplate). Page 60 has a cost statement about the project — that's a project cost/envelope? It's a thesis about a cold room; the scope is JETP partnerships projects/money. The cost figures: \"66 101 530 FCFA pour la construction des infrastructures requises, et 10 894 784 FCFA pour les dépenses d'entretien\". Classify as envelope? These are totals for the project. I'll include them as envelope statements.",
+    "reasoning_details": [
+     {
+      "type": "reasoning.text",
+      "text": "Bibliography pages mostly out of scope (references, boilerplate). Page 60 has a cost statement about the project — that's a project cost/envelope? It's a thesis about a cold room; the scope is JETP partnerships projects/money. The cost figures: \"66 101 530 FCFA pour la construction des infrastructures requises, et 10 894 784 FCFA pour les dépenses d'entretien\". Classify as envelope? These are totals for the project. I'll include them as envelope statements.",
+      "format": "unknown",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 3099,
+  "completion_tokens": 545,
+  "total_tokens": 3644,
+  "cost": 0.00615292,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 512,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00615292,
+   "upstream_inference_prompt_cost": 0.00375492,
+   "upstream_inference_completions_cost": 0.002398
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 117,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

@@ -1,0 +1,61 @@
+{
+ "id": "gen-1790842365-PYDA6EFvkFKBoBX4xQZu",
+ "object": "chat.completion",
+ "created": 1790842365,
+ "model": "openai/gpt-5.6-sol",
+ "provider": "Azure",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "completed",
+   "message": {
+    "role": "assistant",
+    "content": "{\"scope_note\":\"J’ai couvert les 63 pages à la recherche d’assertions concernant le JETP du Sénégal, ses projets, financements, périmètres, parties ou états. Aucun passage ne rattache la chambre froide photovoltaïque, les activités de la SENELEC ou les autres éléments techniques au partenariat ; le contenu académique, les références et les pages liminaires ont donc été laissés hors périmètre.\",\"statements\":[]}",
+    "refusal": null,
+    "reasoning": "**Clarifying project scope**\n\nI need to extract the scope of the JETP partnership projects, including details about financial parameters and involved parties. The document seems mostly unrelated, but it mentions things like Senelec targets, cold room projects, solar costs, and Malicounda. My scope indicates it should include partnership projects, but it doesn't explicitly mention JETP. I wonder if the absence of those statements will affect our documentation. I need to ensure the thesis is properly noted in JSON format, even if it's not directly related.",
+    "reasoning_details": [
+     {
+      "type": "reasoning.summary",
+      "summary": "**Clarifying project scope**\n\nI need to extract the scope of the JETP partnership projects, including details about financial parameters and involved parties. The document seems mostly unrelated, but it mentions things like Senelec targets, cold room projects, solar costs, and Malicounda. My scope indicates it should include partnership projects, but it doesn't explicitly mention JETP. I wonder if the absence of those statements will affect our documentation. I need to ensure the thesis is properly noted in JSON format, even if it's not directly related.",
+      "format": "azure-openai-responses-v1",
+      "index": 0
+     },
+     {
+      "type": "reasoning.encrypted",
+      "data": "gAAAAABqvhYBFxS5TNMhcZ8muFyvsvpU_Ybj63SvkjLR75o0HXulMDmiJLMf7a4TucrBrqkBzC8Bxf49YK6ys2zin1oVd7TFNtKDy-K2qmqdU1DyXuQlzbKu3_44Q4qKeiTxtWVhgK-3VKgbE1aykn8H1b30tvFUzxzHpQLHC_lftFVafmnnPTaZxLsZ0NuUL22DTEgCtLcJ3y180OGLEWmmiuEfdVNO9I02vJEqRBOx7znc0kYuzct_MZWRzedCHtRF6YAcPX5Lo7D9jRZfnGKN1jS0E-5of53L4P525CralazSiKbPTCDcVyDeddbQ0G43suznDFCUb1YMNmG7EQ5DtrQPBCBiZW0GzHfzdSuMBQqkc_iG9VjemkvxkefTeC3SExB3_sABts8Y0mYZRgq7-GCid8HVLDLMDr-FyRBpSFN6gOlCJIJceAwIhgXCg8ysqwC2Tt3XBFtL-aXv-Wza1OcEoMXYbEfnZ6FVeSlnEK7hXx9tL3OXSYivDg1QpZQYfBWQzCSrhfKovjYTMoxKWLUObLdDts8aTa5QRhineaHBWKbafgt7OPdquhOT2hoN7vpnHSggd3NS06b7-p1_HTzW_ys3aU4sEWoWYXLMo08enFRj67kRSP2_afM3K3JoGptSyMrG1EJRpH2i7WX7NA7X-At8BAquCSKFAFq_i4Sfb_3SYqI9ndBJlB5J3gruZW0QxFTxvU2D2dXuiw0LQJBZj6iVuANyqOjmgaFAmp96ohb_K7-s1l_A5VOvBNxiEJSGbfQBEGCHoQwKxl69YLhyI49CbVRPqIKqVbzYYDVZpkMnIylQfyNjtQZsXDyWUwYF-P0NCA2el40N5HKdaL_ko1th5rGf_Q_OTgvCvCUkQM7wVdblarNNsXBKfEDD6L3qEtaHTl2DBTSxJa0LebNWO_vRJK-H_2RqcJSDaZAe-HkSGdl9jyrnvdTU09UutRit0f9Y1XBDoAhJvHbO3SvhHyGi6EYMYYB04PFNDy0jmxcvqdEl77ILzEXjy4x9DeT0OQ0q9NBHGod29xpknQPscty2pc3t5oDq9N_FPMBjbzNZD5g6ByIwKqJXf7mEFNEhCbUhtrPkSx04Owao8mBU9wOsTWEBCMlmSzerGpdwRS0gnq9JNaBsE4RrXhGZnQg8dfdUroTuhM3K2urGGLfkelW_Cojdr402WUcFTucJopyC-Hi4gfp3y_fpXDjbWRTjF1P9Om0XpWn7fcfSjRDJwjDum5o4OOwf06SMiPPw5oL2xclWh9kdy7M4FAe6ux6GhO4cWYuY8Bg-3z4w2U5XpmwyhylyMXWfWaq8YgTZDVI2D1CEY0uu3_LCHPYOqJvS3T2cwnL-p_aLNAn2gg5WZ--ii1nieaCueOKrJGtRtjrLTdhuqRU3fX39cGR1glbCALleWT_pd4npmEUmWTF6EIj1Tlezq3LZD5vOICQ4OiJsMslixW2s-0KtDcPHtZaHWRTrWLYrHC_XRtjXfc3m9KxFeqvXb_GGYzAvjUD9epCXHrftO4hR16srz6atGn96go99kSAgpnEn-5k-DgO91AFPoGs_dyWLd3Jv3cWUaFDsaX8UNTEGkpra54u8HVP26S-BerTrtdOrQlYTVyX805ccWBG6C3vtlUTOZ6nQ8r3QT8kccjIfnZQdBGzAFSxH9M5VziROljeiGk7f_PdQ9Avva-erpz0SxNDBO8l1ivsbMxfiebYrDNAYMrz_7B-Gk7fsUw3R2_J3ivWx7K8dwfJ0VcF0zXWoaR9st2-xH8K9rvBU2eA_RpQYjdYRFmH553UtdshBS4A5Laj_HaRv7Wlbf9YFCfaKqjfIWVN4s9mP4zLZS-Lx0yBiH3ZGCNhSYOI0f-p294qRZHEVDLVusvD9r2RTcAOiugQqd8MDdep76zE0rwG6luhhQYYKyk7TBDUTTm3QKZwlDqC4dHIjJz9G2w==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtc29sLTIwMjYwNzA5fGF6dXJlIn0",
+      "format": "azure-openai-responses-v1",
+      "id": "rs_08036bd0a41a6bb4016abe15fe87cc8194b455d2cf8912185d",
+      "index": 1
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 28577,
+  "completion_tokens": 230,
+  "total_tokens": 28807,
+  "cost": 0.147482,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 28574,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.147482,
+   "upstream_inference_prompt_cost": 0.142882,
+   "upstream_inference_completions_cost": 0.0046
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 126,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

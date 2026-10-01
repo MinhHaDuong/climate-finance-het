@@ -2,7 +2,6 @@
 Title: M2.3-0: Choose the M2.3 reading design by a pre-registered pilot
 Created: 2026-10-01
 Author: HDMX-coding-agent
-Blocked-by: 1895
 
 --- log ---
 2026-10-01T05:55Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane), first of the phase; [[1873]] is now Blocked-by this ticket
@@ -13,6 +12,9 @@ Blocked-by: 1895
 2026-10-01T10:00Z HDMX-coding-agent decision author decisions 2026-10-01, interactive: (1) "Yes test": add Google Gemini 3.8 Flash (google/gemini-3.8-flash on OpenRouter; checked 2026-10-01 at USD 0.75 in / 3.75 out per M tokens, 1M context, :batch variant at half price; zero-retention endpoints via Vertex listed) to the pilot candidates, as a candidate arbiter and a candidate transcription reader (operation § 5), not as a main reader (readers are open-weight; making it one needs a spec amendment). (2) "We have a batch-friendly workload": latency is not a constraint for M2.3 runs; price every hosted candidate at batch rates where a batch endpoint exists, and verify that batch endpoints honour zero retention (operation § 5), else the batch price does not apply. Details in the body section "Gemini 3.8 Flash and batch pricing (2026-10-01)"
 2026-10-01T10:01Z HDMX-coding-agent note the survey conception/jetp-m2-3-reading-design-survey-2026-10-01.md prices every hosted candidate at non-batch rates (Gemini 3.8 Flash USD 8.5 per full pass = 5.8M x 0.75 + 1.1M x 3.75; no mention of batch); left unedited, the pilot protocol reprices at batch rates where a batch endpoint exists and honours zero retention
 2026-10-01T07:11Z HDMX-coding-agent note padme facts from the REL corpus harvesting session (2026-10-01): the llama.cpp build in ~/llama.cpp-new (upstream 2026-10-01, CUDA sm86) supports GBNF grammars and JSON-schema constraints (--json-schema, per-request response_format), which compile to GBNF; llguidance is not compiled in (LLAMA_LLGUIDANCE=OFF, rebuild with -DLLAMA_LLGUIDANCE=ON to add it). Consequence for the designs: with readers that point to numbered spans (survey design 1), a JSON schema whose span field is an enum of span IDs and whose classification fields are enums from terms_in_force needs only GBNF, so the llguidance substring-constraint spike is needed only if readers keep retyping quotes. Reader-candidate lead: a multilingual OpenRouter benchmark of 15 small models is archived at ~/data/projets/climate-finance-het/rel_small_models/2026-10-01/ (REL screen); Gemma 4 26B-A4B runs on padme's llama-server for that screen, notes to follow from that session. GPUs are held by REL until about Saturday; coordinate with that session before any padme GPU use.
+2026-10-01T08:18Z HDMX-coding-agent note [[1895]] delivered the panel reference set: data/jetp/reference/panel-v1/ (tuning.csv for the pilot; heldout.csv.gz sealed by heldout.sha256, never read by the pilot). Name it agreement with a cross-vendor panel, not truth. Panel makers are OpenAI, xAI and Z.ai: a GLM reader or arbiter candidate would break the panel's independence and needs a new set version. Only ZAF en prose span and ZAF en table row reach 30 held-out items.
+2026-10-01T08:19Z HDMX-coding-agent note blocker 1895 closed — Blocked-by removed.
+2026-10-01T08:33Z HDMX-coding-agent note correction: of the panel strata, only ZAF en prose span is informative; ZAF en table row (35 held-out lines) rests on one document read by two members and is treated as uninformative (data/jetp/reference/panel-v1/README.md).
 --- body ---
 ## Context
 

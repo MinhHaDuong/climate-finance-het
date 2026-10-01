@@ -1,0 +1,46 @@
+{
+ "id": "gen-1790841515-dzH2F95blq4ptAwBkJS3",
+ "object": "chat.completion",
+ "created": 1790841515,
+ "model": "z-ai/glm-5.3",
+ "provider": "Parasail",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\n  \"scope_note\": \"The document is a catalogue page for an EU publication on the Zandkopsdrift rare earths and battery grade manganese project. I extracted the substantive statements about the publication's subject and metadata (title, publication year, corporate author, themes, subject descriptors, identifiers, release date), and left out navigation, boilerplate, legal notices, contact details and repeated page furniture as out of scope.\",\n  \"statements\": [\n    {\n      \"page\": 1,\n      \"quote\": \"Strategic project Zandkopsdrift rare earths and battery grade manganese project\",\n      \"label\": \"Zandkopsdrift rare earths and battery grade manganese project\",\n      \"classification\": \"named_item\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 1,\n      \"quote\": \"Published: 2025\",\n      \"label\": \"Published\",\n      \"classification\": \"event\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": \"2025\",\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 1,\n      \"quote\": \"Corporate author(s): Directorate-General for Internal Market, Industry, Entrepreneurship and SMEs ( European Commission )\",\n      \"label\": \"Corporate author(s)\",\n      \"classification\": \"heading\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": \"Directorate-General for Internal Market, Industry, Entrepreneurship and SMEs ( European Commission )\"\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 1,\n      \"quote\": \"Themes: Industry — Enterprise — Services , Industrial research and development\",\n      \"label\": \"Themes\",\n      \"classification\": \"heading\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 1,\n      \"quote\": \"Subject: electricity storage device , EU industrial policy , industrial project , manganese , rare earth , raw material , South Africa , sustainable development\",\n      \"label\": \"Subject\",\n      \"classification\": \"heading\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": null,\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    },\n    {\n      \"page\": 1,\n      \"quote\": \"Released on EU publications website: 2025-07-17\",\n      \"label\": \"Released on EU publications website\",\n      \"classification\": \"event\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": \"2025-07-17\",\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    }\n  ]\n}",
+    "refusal": null,
+    "reasoning": null
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 1786,
+  "completion_tokens": 687,
+  "total_tokens": 2473,
+  "cost": 0.00493952,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 512,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00493952,
+   "upstream_inference_prompt_cost": 0.00191672,
+   "upstream_inference_completions_cost": 0.0030228
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}
