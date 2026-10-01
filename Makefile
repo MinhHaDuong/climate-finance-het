@@ -289,6 +289,8 @@ rel-intake-1530:
 rel-screen-import-1530:
 	$(PYTHON) scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv t1530
 
+# rel-view also joins data/rel_pool/rel_work_venues.csv (make rel-venues) and
+# data/rel_screen/rel_dimensions.csv for the exclusions by reason (ticket 1843).
 rel-view:
 	$(PYTHON) scripts/corpus_rel_view.py --output-dir data/rel_pool
 
