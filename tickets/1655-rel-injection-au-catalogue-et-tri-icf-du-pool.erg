@@ -1,5 +1,5 @@
 %erg 0.1
-Title: REL — injection des recherches au catalogue et tri ICF de tout le pool
+Title: REL — catalogue injection and ICF screen of the whole pool
 Created: 2026-09-29
 Author: haduong
 
@@ -9,30 +9,30 @@ Author: haduong
 2026-09-30T13:31Z HDMX-coding-agent tracker: children 1730 (intake contract), 1731 (pool merge), 1732 (icf_screen table + REL view), 1733 (two-stage screen run)
 2026-09-30T21:56Z HDMX-coding-agent note author decisions 2026-09-30: exit rule for incertaine (stay in REL, flagged) and counting unit (work family, published version) ticked; applied in the REL view, PR 1638
 2026-10-01T02:31Z HDMX-coding-agent CEEW year check: 'Role of Financial Players in the Indian Carbon Market' is 2024 (CEEW publication page and PDF); the 2023 in t1653 2026-09-30 came from the Aug 2023 stakeholder discussion in the brief, not an upload date. Correction in t1653 2026-10-01 (#1644) confirmed; no human check needed.
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
-## Contexte
+## Context
 
-Enfant de 0700. Décision de conception du 29 septembre : mettre en commun le pool
-brut et les résultats des recherches, puis appliquer une seule fois la règle ICF à
-tout, au lieu d'ajouter des œuvres triées à un corpus v2 filtré autrement. Les
-six drapeaux du filtre v2 restent comme information, non comme filtre : sur 489
-œuvres que la recherche du Sud a retrouvées et que le filtre v2 avait écartées,
-122 sont ICF après relecture.
+Child of 0700. Design decision of 29 September: pool the raw pool and the search
+results, then apply the ICF rule once to everything, instead of adding screened
+works to a v2 corpus filtered otherwise. The six v2 filter flags stay as
+information, not as a filter: of 489 works that the Southern search retrieved and
+that the v2 filter had dropped, 122 are ICF after re-reading.
 
-Travail déjà fait (ticket 1530, archive `~/data/projets/climate-finance-het/rel_sud/2026-09-29/`) :
-recherche OpenAlex du Sud, tri de 25 693 œuvres absentes du corpus raffiné, relecture
-Opus de 4 792 œuvres, 55 sentinelles. Ce travail reste valable : même règle.
+Work already done (ticket 1530, archive `~/data/projets/climate-finance-het/rel_sud/2026-09-29/`):
+OpenAlex Southern search, screen of 25,693 works absent from the refined corpus,
+Opus re-reading of 4,792 works, 55 sentinels. This work stays valid: same rule.
 
-Forme retenue :
-- table `icf_screen` en ajout seul (œuvre, étape, étiqueteur et modèle, étiquette, type de document, pays étudié, motif, date), jamais dans un fichier régénérable ;
-- vue REL dérivée par jointure ; `refined_works` reste épinglé pour les autres livrables ;
-- injection des recherches comme source du catalogue fusionné, avec provenance et rapport de fusion par source (Phase 1, PR propre).
+Chosen shape:
+- append-only `icf_screen` table (work, stage, labeller and model, label, document type, country studied, reason, date), never in a regenerable file;
+- REL view derived by join; `refined_works` stays pinned for the other deliverables;
+- searches injected as a source of the merged catalogue, with provenance and a merge report per source (Phase 1, own PR).
 
 ## Exit criteria
-- [ ] Les recherches (1530, 1650 à 1653) entrent au catalogue comme sources, avec provenance ; rapport de fusion par source avant dédoublonnage
-- [ ] Tri ICF de tout le pool en deux étapes, même règle et mêmes prompts, étiqueteur et modèle enregistrés pour chaque étiquette
-- [ ] Audit par échantillon de l'étape 2 par un second modèle (Fable), accord mesuré
-- [x] Règle de sortie fixée pour les œuvres restées « incertaines » (177 à ce jour) : restent dans REL, signalées (décision du 30 septembre 2026)
-- [ ] Vue REL construite ; comptes reproductibles depuis la table
-- [ ] Les scripts qui construisent l'entree du tri (dedoublonnage, mise a l'ecart du corpus) et les tableaux de l'etape 2, aujourd'hui ponctuels (archive `adhoc-scripts/` du 2026-09-29), sont dans le depot, testes
-- [x] Unité de compte des versions (working paper / article) fixée avant la vue finale : la famille d'œuvres, version publiée en représentante (décision du 30 septembre 2026)
+- [ ] The searches (1530, 1650 to 1653) enter the catalogue as sources, with provenance; merge report per source before deduplication
+- [ ] ICF screen of the whole pool in two stages, same rule and same prompts, labeller and model recorded for each label
+- [ ] Sample audit of stage 2 by a second model (Fable), agreement measured
+- [x] Exit rule fixed for works left "uncertain" (177 to date): they stay in REL, flagged (decision of 30 September 2026)
+- [ ] REL view built; counts reproducible from the table
+- [ ] The scripts that build the screen input (deduplication, exclusion of the corpus) and the stage-2 tables, today one-off (archive `adhoc-scripts/` of 2026-09-29), are in the repository, tested
+- [x] Counting unit for versions (working paper / article) fixed before the final view: the work family, published version as representative (decision of 30 September 2026)

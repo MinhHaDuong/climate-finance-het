@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Recenser le JETP Indonésie projet par projet
+Title: Inventory the Indonesia JETP project by project
 Created: 2026-09-11
 Author: Minh
 
@@ -8,41 +8,42 @@ Author: Minh
 2026-09-12T04:36Z Codex closed the 74-project review matrix and passed the Indonesia coverage gate
 
 2026-09-17T08:51Z HDMX-coding-agent note blocker 0716 closed — Blocked-by removed.
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
 
 ## Context
 
-Appliquer le contrat 0716 au JETP indonésien depuis la déclaration de 2022
-jusqu'à la date de collecte. Couvrir le CIPP et ses mises à jour, le
-secrétariat/JETP Delivery Unit, PLN, le pipeline officiel, les 54 projets
-signalés en 2025, les bailleurs et le devenir des retraites charbon.
+Apply the 0716 contract to the Indonesian JETP from the 2022 declaration to the
+collection date. Cover the CIPP and its updates, the secretariat/JETP Delivery
+Unit, PLN, the official pipeline, the 54 projects reported in 2025, the donors
+and the fate of the coal retirements.
 
 ## Test
 
-Le contrôle de couverture échoue tant que la matrice n'a pas de verdict pour
-JETP Indonesia/JETP Delivery Unit, MEMR, PLN, IPG, GFANZ et chaque bailleur
-public nommé. Les totaux de projet ne peuvent additionner besoin, annonce,
-MoU, approbation, signature et décaissement.
+The coverage check fails as long as the matrix has no verdict for
+JETP Indonesia/JETP Delivery Unit, MEMR, PLN, IPG, GFANZ and each named public
+donor. Project totals may not add up need, announcement, MoU, approval,
+signature and disbursement.
 
 ## Exit criteria
 
-- [x] CIPP 2023 et mises à jour ultérieures collectés ou absence prouvée
-- [x] Les projets du pipeline sont identifiés et sourcés individuellement
-- [x] Les 54 projets/1,1 Md$ annoncés en mars 2025 sont réconciliés avec la photographie ultérieure de 53 projets au 30 novembre 2025
-- [x] Retraits charbon et financement ETM ont un statut physique distinct
-- [x] Contrôle de couverture Indonésie passe
+- [x] CIPP 2023 and later updates collected or absence proven
+- [x] The pipeline projects are identified and sourced individually
+- [x] The 54 projects/USD 1.1 bn announced in March 2025 are reconciled with the later snapshot of 53 projects at 30 November 2025
+- [x] Coal retirements and ETM financing have a distinct physical status
+- [x] Indonesia coverage check passes
 
-## Résultat
+## Result
 
-La matrice contient 74 projets indonésiens, tous dotés d'un verdict terminal :
-66 `collected`, 6 `central_only` et 2 `blocked`. Les 44 programmes de subvention
-et les 9 projets de prêt ou de fonds propres approuvés ont été revus. Les 19
-projets du pipeline financier, le programme AICET et les 14 entrées de suivi
-CMEA sont reliés à des sources et à des recherches sèches explicites. Le CIPP
-2023 contient 437 lignes de plan et l'annexe 1 de 2025 en contient 1 142.
+The matrix contains 74 Indonesian projects, all with a terminal verdict:
+66 `collected`, 6 `central_only` and 2 `blocked`. The 44 grant programmes and
+the 9 approved loan or equity projects were reviewed. The 19 financial-pipeline
+projects, the AICET programme and the 14 CMEA tracking entries are linked to
+sources and to explicit dry searches. The 2023 CIPP contains 437 plan lines and
+annex 1 of 2025 contains 1,142.
 
-Le jalon de mars 2025 (54 projets, 1,1 Md USD) et celui du 30 novembre 2025
-(53 projets) restent deux observations datées distinctes. Les états financiers
-et physiques ne sont pas fusionnés : notamment, Cirebon reste sans preuve de
-retraite, tandis que les annonces ultérieures de SEG, Sutami et Legok sont
-enregistrées comme événements physiques séparés.
+The March 2025 milestone (54 projects, USD 1.1 bn) and that of 30 November 2025
+(53 projects) remain two distinct dated observations. Financial and physical
+states are not merged: notably, Cirebon remains without evidence of retirement,
+while the later announcements for SEG, Sutami and Legok are recorded as
+separate physical events.

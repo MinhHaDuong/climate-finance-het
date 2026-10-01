@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Collecte JETP par site et suivi en quasi temps réel (suivi)
+Title: Per-site JETP collection and near-real-time tracking (tracker)
 Created: 2026-09-25
 Author: HDMX-coding-agent
 Label: deferred
@@ -11,72 +11,72 @@ Label: deferred
 
 2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
 2026-09-30T12:40Z HDMX-coding-agent note décision de l'auteur (2026-09-30) : la fusion prévaut ; « la source primaire la plus proche prime » réécrit en première considération d'un jugement, jamais un rang automatique (docs/jetp-fusion.md § 5), PR #1598
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
 ## Context
 
-[[0926]] a montré que chaque bailleur publie à sa façon : ADB derrière
-Cloudflare, avec des fiches projet (Project Data Sheet) mises à jour au fil
-des décaissements et des accords publiés sous des pages intermédiaires ;
-itie.sn et aser.sn en échec de certificat ; dgMarket derrière une connexion.
-Le système a besoin d'une mémoire du scraping par site, et d'un suivi
-périodique des documents qui évoluent. L'enjeu (numérotation d'avant le 2026-09-29 : M2, M3, AEDIST) est de suivre
-en quasi temps réel : les canaux structurés (CRS, IATI) arrivent avec un à
-trois ans de retard.
+[[0926]] showed that each donor publishes in its own way: ADB behind
+Cloudflare, with project sheets (Project Data Sheet) updated as disbursements
+proceed and agreements published under intermediate pages; itie.sn and aser.sn
+failing on certificates; dgMarket behind a login. The system needs a
+per-site scraping memory, and periodic tracking of documents that evolve. The
+stake (numbering from before 2026-09-29: M2, M3, AEDIST) is to track in near
+real time: structured channels (CRS, IATI) arrive with a one-to-three-year lag.
 
-## Décisions de l'auteur (2026-09-25)
+## Author decisions (2026-09-25)
 
-- Une mémoire par site, versionnée dans le dépôt, lue par les agents et par
-  le collecteur ; pas de règle `.claude/rules` (le scoping par `paths:` ne
-  distingue pas les sites) ni de mémoire Claude (locale à une machine).
-- L'ontologie distingue responsable, éditeur et diffuseur : « on reste dans
-  les considérants de gestion documentaire de base ».
-- Un fichier de site dès trois documents.
-- Trois classes de documents : figés, vivants, séries (rapports annuels,
-  trimestriels…).
-- La collecte tourne sur padme ; doudou supervise, vérifie, et diffère quand
-  SSH ne répond pas. L'auteur lève les vérifications ou connexions par un écran
-  de padme déporté sur doudou.
-- Conditions d'usage des sites : sujet délicat ; toujours signaler, ne jamais
-  échouer en silence.
-- Méthodes de collecte : `script`, `script-cookies`, `browser-automated`,
+- One memory per site, versioned in the repository, read by the agents and by
+  the collector; no `.claude/rules` rule (`paths:` scoping does not
+  distinguish sites) and no Claude memory (local to one machine).
+- The ontology distinguishes responsible party, publisher and distributor: "on
+  reste dans les considérants de gestion documentaire de base" [we stay within
+  basic document-management considerations].
+- A site file from three documents on.
+- Three document classes: frozen, living, series (annual reports,
+  quarterly reports…).
+- Collection runs on padme; doudou supervises, checks, and defers when SSH does
+  not answer. The author lifts checks or logins through a padme screen
+  forwarded to doudou.
+- Sites' terms of use: delicate subject; always flag, never fail silently.
+- Collection methods: `script`, `script-cookies`, `browser-automated`,
   `browser-manual`, `archive-record`, `local-record`.
-- La proximité de l'événement est la première considération d'un jugement,
-  jamais un rang automatique (`docs/jetp-fusion.md` § 5) ; le retard des
-  canaux structurés est à mesurer, pas à supposer.
+- Proximity to the event is the first consideration of a judgment, never an
+  automatic rank (`docs/jetp-fusion.md` § 5); the lag of structured channels is
+  to be measured, not assumed.
 
-## Enfants
+## Children
 
-- [[1181]] Ontologie documentaire : responsable, éditeur, diffuseur ; séries et numéros
-- [[1182]] Fichiers de site : mémoire du scraping par diffuseur
-- [[1183]] Navigateur piloté sur padme, méthodes de collecte renommées, pilote ADB
-- [[1184]] Suivi périodique sur padme : documents vivants et séries
-- [[1185]] Mesurer le retard des canaux structurés sur la source primaire
+- [[1181]] Document ontology: responsible party, publisher, distributor; series and issues
+- [[1182]] Site files: scraping memory per distributor
+- [[1183]] Browser driven on padme, collection methods renamed, ADB pilot
+- [[1184]] Periodic tracking on padme: living documents and series
+- [[1185]] Measure the lag of structured channels against the primary source
 
-## Passes voisines (ancien train M2, devenu M3a et M4 le 2026-09-29, suivi [[0715]])
+## Neighbouring passes (former M2 train, now M3a and M4 since 2026-09-29, tracker [[0715]])
 
-Le **lanceur de passes sur padme** appartient à [[1184]] : checkout persistant
-hors de la copie de l'auteur, planification, rapport de passe qui signale sans
-bloquer, supervision depuis doudou, remontée dans `/lair`. Trois tickets s'y
-branchent au lieu d'en bâtir chacun un :
+The **pass launcher on padme** belongs to [[1184]]: persistent checkout outside
+the author's copy, scheduling, a pass report that flags without blocking,
+supervision from doudou, surfacing in `/lair`. Three tickets plug into it
+instead of each building their own:
 
-- [[1141]] contrôle mensuel des liens et relance des captures Web Archive :
-  c'est la passe « documents figés » de [[1184]]. Sa machine existe
-  ([[0925]]) ; elle pose la version minimale du lanceur, que [[1184]]
-  reprend et généralise.
-- [[1140]] veille par agent local : passe « découverte », hors des sites déjà
-  connus. Elle lit les fichiers de site de [[1182]] et dépose ses candidatures
-  dans la même file que [[1184]] (`_source_watch`), jamais admises d'office.
-- [[1060]] suite complète des tests après chaque fusion : même motif de
-  lanceur et même remontée dans `/lair`, mais dans son propre checkout, pour
-  que les diffs de collecte ne se mêlent jamais aux tests.
+- [[1141]] monthly link check and relaunch of Web Archive captures:
+  this is the "frozen documents" pass of [[1184]]. Its machinery exists
+  ([[0925]]); it lays down the minimal version of the launcher, which [[1184]]
+  takes over and generalises.
+- [[1140]] local agent watch: a "discovery" pass, outside the already known
+  sites. It reads the site files of [[1182]] and deposits its candidates in the
+  same queue as [[1184]] (`_source_watch`), never admitted automatically.
+- [[1060]] full test suite after every merge: same launcher pattern and same
+  surfacing in `/lair`, but in its own checkout, so that collection diffs never
+  mix with tests.
 
-**Couture de stockage** (auteur, 2026-09-29) : au jalon M4, le stockage des
-documents passe à une bibliothèque de groupe Zotero ([[1510]]). Les passes de
-l'ancien M2 (M3a, M4) écrivent donc tout document ou toute version par la fonction de dépôt unique
-de [[1184]] (action 4), pour que M4 change ce qu'il y a derrière sans les
-réécrire.
+**Storage seam** (author, 2026-09-29): at milestone M4, document storage moves
+to a Zotero group library ([[1510]]). The passes of the former M2 (M3a, M4)
+therefore write every document or version through the single deposit function
+of [[1184]] (action 4), so that M4 changes what is behind it without rewriting
+them.
 
 ## Exit criteria
 
-- [ ] Les cinq enfants sont fermés
-- [ ] Revue d'intégration faite (`/roar` étape 8) : un document vivant ADB est recollecté par le suivi périodique sur padme, son site décrit par son fichier, sa méthode affichée sur le site public
+- [ ] The five children are closed
+- [ ] Integration review done (`/roar` step 8): an ADB living document is recollected by the periodic tracking on padme, its site described by its file, its method displayed on the public site

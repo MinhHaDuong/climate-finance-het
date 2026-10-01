@@ -1,16 +1,16 @@
 %erg 0.1
-Title: REL — rattrapage discipline des œuvres déjà relues par Opus (~4 952)
+Title: REL — discipline catch-up for the works already reread by Opus (~4,952)
 Created: 2026-10-01
 Author: HDMX-coding-agent
 
 --- log ---
 2026-10-01T10:00Z HDMX-coding-agent created
-
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
-## Contexte
-Enfant de 1830. Les œuvres relues à l'étape 2 avant 1840 n'ont pas les champs discipline. Méthode et coût proposés avant toute dépense ; plafond USD 2 sans accord. Candidats : passe Jev à questions décomposées (design de l'archive pilote Jev 2026-09-30), ou les questions discipline du prompt 1840 seules.
+## Context
+Child of 1830. The works reread at stage 2 before 1840 lack the discipline fields. Method and cost proposed before any spend; USD 2 ceiling without agreement. Candidates: Jev pass with decomposed questions (design of the Jev pilot archive 2026-09-30), or the discipline questions of the 1840 prompt alone.
 
 ## Exit criteria
-- [ ] Méthode et coût proposés et acceptés
-- [ ] Champs discipline enregistrés dans la table de dimensions pour toutes les œuvres concernées, comptes rapportés
-- [ ] Validation sur l'ensemble or de 1840
+- [ ] Method and cost proposed and accepted
+- [ ] Discipline fields recorded in the dimensions table for all works concerned, counts reported
+- [ ] Validation on the 1840 gold set

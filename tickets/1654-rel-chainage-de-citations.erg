@@ -1,22 +1,22 @@
 %erg 0.1
-Title: REL — chaînage de citations, deux tours
+Title: REL — citation chaining, two rounds
 Created: 2026-09-29
 Author: haduong
 Blocked-by: 1655
 
 --- log ---
 2026-09-29T15:00Z haduong created
-
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
-## Contexte
 
-Enfant de 0700. Recherche rétrospective et prospective de citations à partir des
-œuvres ICF retenues par 1655. Décision de la consultation du 29 septembre : deux
-tours ; un troisième seulement si le second apporte des œuvres admissibles.
-Conditions de relance : requête interrompue, sentinelle manquée, référence
-externe sans décision, sommaire incomplet.
+## Context
+
+Child of 0700. Backward and forward citation search from the ICF works retained
+by 1655. Decision of the 29 September consultation: two rounds; a third only if
+the second brings admissible works. Rerun conditions: interrupted query, missed
+sentinel, external reference without decision, incomplete summary.
 
 ## Exit criteria
-- [ ] Deux tours exécutés, effectifs par tour (références et citations, doublons, nouvelles œuvres)
-- [ ] Troisième tour déclenché ou écarté, avec la mesure qui le décide
-- [ ] Nouvelles œuvres livrées à 1655 pour tri, avec provenance
+- [ ] Two rounds run, counts per round (references and citations, duplicates, new works)
+- [ ] Third round triggered or dropped, with the measurement that decides it
+- [ ] New works delivered to 1655 for screening, with provenance

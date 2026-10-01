@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Mesurer le retard des canaux structurés sur la source primaire
+Title: Measure the lag of structured channels against the primary source
 Created: 2026-09-25
 Author: HDMX-coding-agent
 Label: deferred
@@ -9,29 +9,31 @@ Label: deferred
 2026-09-25T09:10Z HDMX-coding-agent note Reporté à la semaine prochaine par l'auteur ; priorité du jour : finir la migration de l'ontologie (0870), main vert, republier le MVP.
 
 2026-09-29T10:13Z HDMX-coding-agent note milestone labels updated in the body (2026-09-29 renaming, author decision, see [[0725]]): the former M2 train is M3a, M3b and M4; earlier log entries keep the old labels
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
 ## Context
 
-L'auteur : « les canaux structurés laggent 1-3 ans et l'enjeu en M2 M3 AEDIST [numérotation d'avant le 2026-09-29 ; 1185 relève de M3a]
-est justement de mieux suivre en quasi temps réel ». La source à privilégier
-est la publication primaire la plus proche de l'événement, datée par sa
-propre collecte (par exemple la fiche projet ADB, « Last PDS Update »). CRS
-et IATI servent au rapprochement et au rattrapage. Le retard d'IATI dépend du
-publieur et n'est pas connu pour ADB : il se mesure, il ne se suppose pas.
+The author: « les canaux structurés laggent 1-3 ans et l'enjeu en M2 M3 AEDIST [numbering from before 2026-09-29; 1185 belongs to M3a]
+est justement de mieux suivre en quasi temps réel » [structured channels lag
+1-3 years and the stake in M2 M3 AEDIST is precisely to track more closely in
+near real time]. The source to prefer is the primary publication closest to
+the event, dated by its own collection (for example the ADB project sheet,
+"Last PDS Update"). CRS and IATI serve for reconciliation and catch-up. The
+IATI lag depends on the publisher and is not known for ADB: it is measured, not
+assumed.
 
 ## Actions
 
-1. Sur les projets ADB du pilote de [[1183]] (56140-001, 56368-001), relever
-   pour quelques faits datés (approbation, signature, entrée en vigueur,
-   premiers décaissements) la date où chacun paraît dans la source primaire,
-   dans IATI et dans CRS.
-2. Étendre à un ou deux autres bailleurs présents dans le registre si
-   l'accès le permet.
-3. Rédiger la mesure en note de méthode, chiffres rattachés à des sorties
-   archivées.
+1. On the ADB projects of the [[1183]] pilot (56140-001, 56368-001), record,
+   for a few dated facts (approval, signing, entry into force, first
+   disbursements), the date at which each appears in the primary source, in
+   IATI and in CRS.
+2. Extend to one or two other donors present in the register if access allows.
+3. Write the measurement up as a methods note, with figures tied to archived
+   outputs.
 
 ## Exit criteria
 
-- [ ] Pour chaque fait relevé, les trois dates (ou « absent au jour J ») sont tracées jusqu'à un fichier archivé
-- [ ] Le retard est rapporté par canal et par bailleur, avec son incertitude, sans extrapolation au-delà des cas mesurés
-- [ ] La note dit quelle source primaire privilégier pour chaque type de fait
+- [ ] For each recorded fact, the three dates (or "absent on day D") are traced to an archived file
+- [ ] The lag is reported by channel and by donor, with its uncertainty, without extrapolation beyond the measured cases
+- [ ] The note says which primary source to prefer for each type of fact

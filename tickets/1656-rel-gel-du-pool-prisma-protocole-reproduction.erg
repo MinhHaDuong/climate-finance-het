@@ -1,5 +1,5 @@
 %erg 0.1
-Title: REL — gel du pool : PRISMA, protocole, paragraphe de méthode, paquet de reproduction
+Title: REL — pool freeze: PRISMA, protocol, method paragraph, reproduction package
 Created: 2026-09-29
 Author: haduong
 Blocked-by: 1654
@@ -14,26 +14,27 @@ Blocked-by: 1655
 2026-09-30T19:30Z HDMX-coding-agent note blocker 1653 closed — Blocked-by removed.
 2026-09-30T19:48Z HDMX-coding-agent note blocker 1653 closed; its unlock requests (CNKI, Wanfang, eLIBRARY, CyberLeninka, AJOL, USP, Shodhganga, SciELO, readers) moved to 1790 (needs-human). Whether the freeze waits on 1790 is the author's call; not added as a blocker.
 2026-09-30T20:49Z HDMX-coding-agent note author decision 2026-09-30: the freeze does not wait on 1790 (blocked sources are tried once by automated browser, else declared dead in config/rel_sud_sources_status.yaml); 1790 is not and will not be a blocker.
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 --- body ---
-## Contexte
+## Context
 
-Enfant de 0700. Clôture de la collecte : le pool est gelé quand toutes les voies
-du protocole sont exécutées ou déclarées impossibles, et que tout le pool est
-trié. Ce ticket porte les livrables du gel.
+Child of 0700. Closing the collection: the pool is frozen when all routes of the
+protocol are executed or declared impossible, and the whole pool is screened.
+This ticket carries the freeze deliverables.
 
-Gel intermédiaire possible avant la clôture : la table `icf_screen` (1655) est en
-ajout seul ; le tri de l'existant reste valable, seuls les ajouts sont triés.
-Les comptes du diagramme ne se fixent qu'au gel final.
+Interim freeze possible before closing: the `icf_screen` table (1655) is
+append-only; the screen of the existing stock stays valid, only additions are
+screened. The diagram counts are fixed only at the final freeze.
 
-Pièces déjà en brouillon (branche du ticket 1530) : structure et chiffres
-provisoires du diagramme dans `conception/rel-prisma-flux-provisoire.md`, annexe
-`conception/rel-sud-et-langues-annexe-brouillon.md`, note de revue d'Astra.
+Pieces already in draft (branch of ticket 1530): provisional structure and
+figures of the diagram in `conception/rel-prisma-flux-provisoire.md`, annex
+`conception/rel-sud-et-langues-annexe-brouillon.md`, Astra's review note.
 
 ## Exit criteria
-- [ ] Protocole mis à jour et réconcilié avec la version de `origin/main` : tri à trois étages, sentinelles fixées, deux tours de chaînage, sources hors OpenAlex, réserves, règle BRICS
-- [ ] Diagramme PRISMA : effectifs reconstruits par script depuis les registres et la table `icf_screen`, identification par source et par date (PRISMA-S)
-- [ ] Automatisation déclarée : modèles, versions, prompts, accords mesurés avec le juge de référence
-- [ ] Paragraphe de méthode rédigé avec les comptes finaux
-- [ ] Manifeste de gel : empreintes des fichiers, SHA du code, verrou DVC, versions de modèles et de prompts
-- [ ] Paquet de reproduction : configurations, code, registres et sorties de chaque passe, prompts (dont l'étape 2), sentinelles, sorties des conseillers
-- [ ] Sentinelles de réserve rapportées à part de celles de réglage
+- [ ] Protocol updated and reconciled with the `origin/main` version: three-stage screen, sentinels fixed, two chaining rounds, non-OpenAlex sources, reserves, BRICS rule
+- [ ] PRISMA diagram: counts rebuilt by script from the registries and the `icf_screen` table, identification by source and by date (PRISMA-S)
+- [ ] Automation declared: models, versions, prompts, agreements measured with the reference judge
+- [ ] Method paragraph written with the final counts
+- [ ] Freeze manifest: file hashes, code SHA, DVC lock, model and prompt versions
+- [ ] Reproduction package: configurations, code, registries and outputs of each pass, prompts (including stage 2), sentinels, advisor outputs
+- [ ] Reserve sentinels reported apart from tuning ones

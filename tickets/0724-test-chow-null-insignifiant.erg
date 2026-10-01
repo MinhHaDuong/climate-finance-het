@@ -1,43 +1,43 @@
 %erg 0.1
-Title: Corriger le test de rupture de Chow sous le nul
+Title: Fix the Chow break test under the null
 Created: 2026-09-11
 Author: Minh
 
 --- log ---
 2026-09-11T20:56Z Codex created — échec déterministe observé sur main et deux branches sans rapport avec le suivi JETP
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 --- body ---
 
 ## Context
 
-`make check-fast` échoue dans
-`tests/test_lit_confirmations.py::test_chow_break_null_is_insignificant` avec
-`p_value = 0.0007353910609657328`, alors que le test exige `p_value > 0.5`.
-L'échec est déterministe, reproduit sur `origin/main` et sur les branches 1322
-et 0716. Il n'est pas causé par le corpus documentaire JETP mais bloque sa
-porte de sortie globale.
+`make check-fast` fails in
+`tests/test_lit_confirmations.py::test_chow_break_null_is_insignificant` with
+`p_value = 0.0007353910609657328`, whereas the test requires `p_value > 0.5`.
+The failure is deterministic, reproduced on `origin/main` and on branches 1322
+and 0716. It is not caused by the JETP document corpus but blocks its global
+exit gate.
 
 ## Relevant files
 
 - `tests/test_lit_confirmations.py`
-- le module qui calcule la rupture de Chow appelé par ce test
+- the module that computes the Chow break called by this test
 
 ## Test
 
-Construire un nul déterministe qui ne soit pas un ajustement quasi parfait
-numériquement dégénéré. Vérifier d'abord que la statistique et la probabilité
-sont stables sur plusieurs exécutions et plateformes, puis conserver un cas
-alternatif avec rupture réelle.
+Build a deterministic null that is not a numerically degenerate near-perfect
+fit. First check that the statistic and the probability are stable across
+several runs and platforms, then keep an alternative case with a real break.
 
 ## Actions
 
-1. Isoler si l'échec vient de la fixture, des degrés de liberté ou du calcul.
-2. Corriger le plus petit contrat faux sans diminuer arbitrairement le seuil.
-3. Exécuter le test ciblé puis `make check-fast`.
+1. Isolate whether the failure comes from the fixture, the degrees of freedom or the computation.
+2. Fix the smallest wrong contract without arbitrarily lowering the threshold.
+3. Run the targeted test, then `make check-fast`.
 
 ## Exit criteria
 
-- [ ] Le nul ne rejette pas de rupture sur une fixture non dégénérée
-- [ ] Le cas avec rupture reste significatif
-- [ ] Le résultat est déterministe sur trois exécutions
-- [ ] `make check-fast` passe
+- [ ] The null does not reject a break on a non-degenerate fixture
+- [ ] The case with a break stays significant
+- [ ] The result is deterministic over three runs
+- [ ] `make check-fast` passes
