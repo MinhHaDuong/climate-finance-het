@@ -18,6 +18,7 @@ Pure parsing, no network. Matching entries to venues is in ``_rel_venues``.
 """
 
 import csv
+import hashlib
 import re
 from datetime import date, datetime, timedelta
 from urllib.parse import urlsplit
@@ -25,6 +26,15 @@ from urllib.parse import urlsplit
 from _xlsx_rows import read_sheet, sheet_names
 
 _ISSN_RE = re.compile(r"\b(\d{4})-?(\d{3}[\dXx])\b")
+
+
+def sha256_file(path):
+    """Hex sha256 of a file, read in 1 MiB chunks (archive manifests)."""
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def norm_issn(value):
@@ -72,17 +82,18 @@ def levels_text(levels):
     return "Nivå " + ", ".join((f"{a}" if a == b else f"{a}-{b}") + f" {lv}" for a, b, lv in runs)
 
 
-def level_at(levels, year):
+def level_at(levels, year, last_year=None):
     """A journal's level for a work of ``year``.
 
     The register's yearly level is a per-year status (X is provisional and is
     resolved in a later cycle), so a work takes the level of its own
     publication year. A year the journal has no level for (blank cell, or
-    outside the register's columns) takes the journal's nearest year with a
-    level, the earlier one on a tie. An undated work (``year`` None) gets
-    ``None``: no level can be dated to it.
+    before the register's first column) takes the journal's nearest year with
+    a level, the earlier one on a tie. A year after the register's last
+    column (``last_year``) gets ``None``: a provisional X is never projected
+    forward. An undated work (``year`` None) gets ``None`` too.
     """
-    if year is None or not levels:
+    if year is None or not levels or (last_year is not None and year > last_year):
         return None
     if year in levels:
         return levels[year]
@@ -107,6 +118,7 @@ def parse_kanalregisteret(path, entry_url="{id}"):
                 "kanalregisteret", jid, r.get("Original tittel") or r.get("Internasjonal tittel") or "",
                 issns_in(f"{r.get('Print ISSN', '')} {r.get('Online ISSN', '')}"),
                 reason=levels_text(levels), entry_url=entry_url.format(id=jid), levels=levels))
+            entries[-1]["last_year"] = max(years)
     return rows, entries
 
 

@@ -142,6 +142,21 @@ def test_stage1_run_refused_while_running_or_mixed(tmp_path):
         ci.stage1_run_rows(str(d), str(d / "screen_input.jsonl"), "padme", "r", "s")
 
 
+def test_stage1_run_stopped_on_purpose_imports_with_a_reason(tmp_path):
+    d = _run_dir(tmp_path, finished=False)
+    with pytest.raises(ci.ImportRefused, match="--stopped"):
+        ci.stage1_run_rows(str(d), str(d / "screen_input.jsonl"), "padme", "r", "s",
+                           stopped="  ")
+    rows = ci.stage1_run_rows(str(d), str(d / "screen_input.jsonl"), "padme", "r", "s",
+                              stopped="stopped by MOE for a model swap")
+    assert rows and {r["run_id"] for r in rows} == {"r"}
+    table = str(tmp_path / "t.csv")
+    assert ci.main(["--output", table, "stage1-run", "--run-dir", str(d), "--machine", "padme",
+                    "--stopped", "model swap", "--run-id", "r"]) == 0
+    note = ics._manifest_entries(table)[-1]["note"]
+    assert "stopped before its end: model swap" in note
+
+
 def _pool_run_dir(tmp_path, header_field="work_key", labels=None):
     d = tmp_path / "2026-10-01-pool-stage1"
     _jsonl(d / "screen_input.jsonl", [

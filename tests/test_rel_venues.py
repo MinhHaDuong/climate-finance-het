@@ -142,7 +142,10 @@ def test_kanal_level_is_the_level_of_the_work_year():
     assert rvr.level_at(levels, 2019) == "1"
     assert rvr.level_at(levels, 2027) == "1"
     assert rvr.level_at(levels, 2010) == "1"   # before the register: nearest year, 2018
-    assert rvr.level_at(levels, 2030) == "1"   # after: nearest year, 2027
+    assert rvr.level_at(levels, 2030) == "1"   # no register bound given: nearest year, 2027
+    # After the register's last column a provisional X is never projected forward.
+    assert rvr.level_at({2025: "1", 2026: "X"}, 2027, last_year=2026) is None
+    assert rvr.level_at({2025: "1", 2026: "X"}, 2026, last_year=2027) == "X"
     assert rvr.level_at({2025: "1", 2027: "X"}, 2026) == "1"  # blank year, tie: the earlier
     assert rvr.level_at(levels, None) is None
 
@@ -386,7 +389,7 @@ def test_outputs_are_byte_identical_on_rerun(tmp_path, registries):
         assert (tmp_path / "a" / n).read_bytes() == (tmp_path / "b" / n).read_bytes(), n
 
 
-# ── Switches (pending author decisions) ──────────────────
+# ── Switches (author decisions 2026-10-01) ───────────────
 
 
 def _cfg_copy(tmp_path, name, change):
@@ -398,11 +401,13 @@ def _cfg_copy(tmp_path, name, change):
     return str(path)
 
 
-def test_switches_are_pending_with_the_recommended_defaults():
-    assert REG_CFG["exclusion"]["status"] == "pending"
-    assert sorted(REG_CFG["exclusion"]["exclude"]) == ["hijacked", "kanalregisteret"]
+def test_switches_hold_the_author_decisions():
+    assert REG_CFG["exclusion"]["status"] == "decided (author 2026-10-01)"
+    assert REG_CFG["exclusion"]["exclude"] == ["hijacked"]
+    assert REG_CFG["kanal_x"] == {"status": "decided (author 2026-10-01)", "value": "flag_only"}
+    assert TIERS_CFG["nonresearch"]["status"] == "decided (author 2026-10-01)" and rv.nonresearch_switch(TIERS_CFG) == "to_c"
     assert set(REG_CFG["exclusion"]["exclude"]) <= set(REG_CFG["registries"])
-    assert TIERS_CFG["ngo_research_in_b"] == {"status": "pending", "value": True}
+    assert TIERS_CFG["ngo_research_in_b"] == {"status": "decided (author 2026-10-01)", "value": True}
     assert {e["id"] for e in TIERS_CFG["b_list"] if e["category"] == "ngo_research"} == {"oxfam", "germanwatch"}
 
 
@@ -418,7 +423,7 @@ def test_default_exclusion_keeps_every_flag_and_excludes_only_hard_hits(tmp_path
     }
     counts = json.load(open(tmp_path / "out" / "rel_venue_counts.json", encoding="utf-8"))
     assert counts["works_by_lane"]["(all)"]["excluded"] == 1
-    assert counts["switches"]["exclude"] == ["hijacked", "kanalregisteret"]
+    assert counts["switches"]["exclude"] == ["hijacked"] and counts["switches"]["kanal_x"] == "flag_only"
 
 
 def test_exclusion_follows_the_switch_not_a_fixed_list(tmp_path, registries):
@@ -564,8 +569,13 @@ def test_kanal_x_flags_only_the_works_of_an_x_year(tmp_path, registries):
     # Journal 1 is level 1 in 2025 and X in 2026; an undated work gets no level.
     assert {w: works[f"openalex:{w}"]["flags"] for w in ("W71", "W72", "W73")} == {
         "W71": "", "W72": "kanalregisteret:1[issn]", "W73": ""}
-    assert [w for w in ("W71", "W72", "W73") if works[f"openalex:{w}"]["excluded"]] == ["W72"]
-    venues = {r["venue_key"]: r for r in csv.DictReader(open(tmp_path / "out" / "rel_venues.csv", encoding="utf-8"))}
+    # Switch (a') default flag_only: flagged, not excluded.
+    assert not any(works[f"openalex:{w}"]["excluded"] for w in ("W71", "W72", "W73"))
+    reg = _cfg_copy(tmp_path, "rel_venue_registries.yaml", lambda c: c["kanal_x"].update(value="exclude"))
+    _run(tmp_path, registries, tmp_path / "excl", ["--registries", reg], extra_oa=oa, extra_pool=pool)
+    excl = rv.load_work_venues(str(tmp_path / "excl" / "rel_work_venues.csv"))
+    assert [w for w in ("W71", "W72", "W73") if excl[f"openalex:{w}"]["excluded"]] == ["W72"]
+    venues = {r["venue_key"]: r for r in csv.DictReader(open(tmp_path / "excl" / "rel_venues.csv", encoding="utf-8"))}
     v = venues["openalex:S70"]
     assert v["flags"] == "kanalregisteret:1[issn]" and v["n_works_excluded"] == "1"
     assert "Nivå 2025 1, 2026 X" in v["flag_details"]
@@ -595,7 +605,7 @@ def test_no_venue_switch_keeps_or_drops_the_unknown_tier(tmp_path, registries):
     dropped = rv.load_work_venues(path, no_venue="exclude")
     assert not dropped["title:x|2020"]["included"]
     assert {k for k in kept if kept[k]["included"] != dropped[k]["included"]} == {"title:x|2020"}
-    assert TIERS_CFG["no_venue"] == {"status": "pending", "value": "keep_flagged"}
+    assert TIERS_CFG["no_venue"] == {"status": "decided (author 2026-10-01)", "value": "keep_flagged", "membership": 0.5}
     assert rv.unknown_switch(TIERS_CFG) == "keep_flagged"
     with pytest.raises(ValueError):
         rv.unknown_switch({"no_venue": {"value": "drop"}})
@@ -653,3 +663,55 @@ def test_bndes_repository_is_b():
 def test_b_domains_name_existing_entries():
     with pytest.raises(ValueError, match="not in b_list"):
         rv.compile_tiers(dict(TIERS_CFG, b_domains={"no_such_entry": ["x.org"]}))
+
+
+# ── Round-2 panel fixes (PR 1657) ────────────────────────
+
+
+def test_kanal_is_set_by_its_own_switch_not_the_exclusion_list(registries):
+    with pytest.raises(ValueError, match="kanal_x"):
+        rv.exclusion_registries({"exclusion": {"exclude": ["kanalregisteret"]}})
+    assert rv.exclusion_registries({"exclusion": {"exclude": ["hijacked"]}, "kanal_x": {"value": "exclude"}}) == [
+        "hijacked", "kanalregisteret"]
+    with pytest.raises(ValueError):
+        rv.kanal_x_switch({"kanal_x": {"value": "maybe"}})
+
+
+def test_fao_is_matched_on_its_own_hosts_not_agris():
+    assert rv.b_by_domain(["https://www.fao.org/3/a-i4314e.pdf"], TIERS) == "un_bodies"
+    assert rv.b_by_domain(["https://openknowledge.fao.org/handle/1"], TIERS) == "un_bodies"
+    assert rv.b_by_domain(["https://agris.fao.org/agris-search/search.do?recordID=PH2004001477"], TIERS) == ""
+
+
+def test_nonresearch_pages_of_b_sites_go_to_c(tmp_path, registries):
+    urls = {"W91": "https://www.wri.org/insights/new-blog-series-will-answer-your-questions-climate-finance",
+            "W92": "https://documents.worldbank.org/curated/en/467281468190444320/Speech-by-World-Bank-Group-President-J",
+            "W93": "https://www.thegef.org",
+            "W94": "https://files.wri.org/d8/s3fs-public/key-policy-issues-green-climate-fund.pdf"}
+    oa = [{"openalex_id": w, "status": "found", "landing_url": u} for w, u in urls.items()]
+    pool = [{"work_key": f"openalex:{w}", "openalex_id": w, "all_openalex_ids": w, "year": "2015",
+             "sources": "catalogue", "member_record_ids": f"openalex:{w}"} for w in urls]
+    _run(tmp_path, registries, tmp_path / "on", extra_oa=oa, extra_pool=pool)
+    on = rv.load_work_venues(str(tmp_path / "on" / "rel_work_venues.csv"))
+    got = {w: (on[f"openalex:{w}"]["tier"], on[f"openalex:{w}"]["tier_rule"],
+               on[f"openalex:{w}"]["tier_without_nonresearch"]) for w in urls}
+    assert got == {"W91": ("C", "nonresearch", "B"), "W92": ("C", "nonresearch", "B"),
+                   "W93": ("C", "nonresearch", "B"), "W94": ("B", "b_domain", "B")}
+    tiers = _cfg_copy(tmp_path, "rel_venue_tiers.yaml", lambda c: c["nonresearch"].update(value="off"))
+    _run(tmp_path, registries, tmp_path / "off", ["--tiers", tiers], extra_oa=oa, extra_pool=pool)
+    off = rv.load_work_venues(str(tmp_path / "off" / "rel_work_venues.csv"))
+    assert {w: off[f"openalex:{w}"]["tier"] for w in urls} == {w: "B" for w in urls}
+
+
+def test_tier_membership_and_alpha_cut():
+    assert rv.tier_membership(TIERS_CFG) == {"A": 1.0, "B": 1.0, "C": 0.0, "unknown": 0.5}
+    assert rv.alpha(TIERS_CFG) == 0.5
+    assert TIERS_CFG["tier_membership"]["status"] == TIERS_CFG["alpha"]["status"] == "decided (author 2026-10-01)"
+    # The alpha-cut agrees with the decided no_venue switch: unknown is in, C out.
+    mu, a = rv.tier_membership(TIERS_CFG), rv.alpha(TIERS_CFG)
+    assert {t for t, m in mu.items() if m >= a} == {"A", "B", "unknown"}
+    assert rv.unknown_switch(TIERS_CFG) == "keep_flagged"
+    with pytest.raises(ValueError, match="differs"):
+        rv.tier_membership(dict(TIERS_CFG, no_venue={"value": "keep_flagged", "membership": 0.3}))
+    with pytest.raises(ValueError, match="must give"):
+        rv.tier_membership({"tier_membership": {"values": {"A": 1}}})

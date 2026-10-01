@@ -35,7 +35,7 @@ folded name equals the entry's title when that title has two words or more and
 is unique in its registry (``match=title``). A hijacked-checker entry flags a
 work whose landing-page host is the clone's domain (``match=domain``).
 
-**Switches** (both pending author decisions, ticket 1841): a flag from a
+**Switches** (author decisions 2026-10-01, ticket 1841): a flag from a
 registry listed in ``exclusion.exclude`` (``rel_venue_registries.yaml``)
 sets ``excluded`` when it matched by ISSN or domain; the others, and title
 matches, only flag. ``ngo_research_in_b``
@@ -118,6 +118,7 @@ def compile_tiers(cfg):
         "repo_repec": [str(x).lower() for x in rep.get("repec") or []],
         "journal_types": set(cfg.get("journal_types") or ["journal"]),
         "journal_doc_types": {fold(x) for x in cfg.get("journal_doc_types") or []},
+        "nonresearch": _rx((cfg.get("nonresearch") or {}).get("url_patterns")),
         "publishers": [{"id": p["id"], "names": _rx(p.get("names")),
                         "repec": [str(x).lower() for x in p.get("repec") or []]}
                        for p in cfg.get("publisher_flags") or []],
@@ -130,15 +131,52 @@ def without_categories(tiers, categories):
 
 
 def ngo_switch(cfg):
-    """Value of the pending switch ``ngo_research_in_b`` (default ``True``)."""
+    """Value of the switch ``ngo_research_in_b`` (default ``True``)."""
     return bool((cfg.get("ngo_research_in_b") or {}).get("value", True))
 
 
 NO_VENUE_VALUES = ("keep_flagged", "exclude")
+NONRESEARCH_VALUES = ("to_c", "off")
+KANAL_X_VALUES = ("flag_only", "exclude")
+
+
+def nonresearch_switch(cfg):
+    """Value of the switch ``nonresearch`` (``to_c`` or ``off``)."""
+    value = (cfg.get("nonresearch") or {}).get("value", "to_c")
+    if value not in NONRESEARCH_VALUES:
+        raise ValueError(f"nonresearch.value must be one of {NONRESEARCH_VALUES}, not {value!r}")
+    return value
+
+
+def kanal_x_switch(reg_cfg):
+    """Value of the switch ``kanal_x`` (``flag_only`` or ``exclude``)."""
+    value = (reg_cfg.get("kanal_x") or {}).get("value", "flag_only")
+    if value not in KANAL_X_VALUES:
+        raise ValueError(f"kanal_x.value must be one of {KANAL_X_VALUES}, not {value!r}")
+    return value
+
+
+def tier_membership(cfg):
+    """``{tier: membership}`` in the set of serious venues (``tier_membership``).
+
+    ``no_venue.membership``, when given, must agree with the ``unknown`` value.
+    """
+    values = {str(k): float(v) for k, v in ((cfg.get("tier_membership") or {}).get("values") or {}).items()}
+    if set(values) != {"A", "B", "C", "unknown"}:
+        raise ValueError(f"tier_membership.values must give A, B, C and unknown, not {sorted(values)}")
+    nv = (cfg.get("no_venue") or {}).get("membership")
+    if nv is not None and float(nv) != values["unknown"]:
+        raise ValueError(f"no_venue.membership {nv} differs from tier_membership.unknown {values['unknown']}")
+    return values
+
+
+def alpha(cfg):
+    """The alpha-cut: a work is in the crisp REL set when its membership >= alpha."""
+    return float((cfg.get("alpha") or {})["value"])
 
 
 def unknown_switch(cfg):
-    """Value of the pending switch ``no_venue`` (``keep_flagged`` or ``exclude``)."""
+    """Value of the switch ``no_venue`` (``keep_flagged`` or ``exclude``)."""
     value = (cfg.get("no_venue") or {}).get("value", "keep_flagged")
     if value not in NO_VENUE_VALUES:
         raise ValueError(f"no_venue.value must be one of {NO_VENUE_VALUES}, not {value!r}")
@@ -146,8 +184,14 @@ def unknown_switch(cfg):
 
 
 def exclusion_registries(cfg):
-    """Registries whose hit excludes a venue (switch ``exclusion.exclude``)."""
-    return sorted((cfg.get("exclusion") or {}).get("exclude") or [])
+    """Registries whose hit excludes a work: ``exclusion.exclude`` (switch a),
+    plus ``kanalregisteret`` when ``kanal_x`` (switch a') is ``exclude``."""
+    listed = set((cfg.get("exclusion") or {}).get("exclude") or [])
+    if "kanalregisteret" in listed:
+        raise ValueError("set Kanalregisteret exclusion with the kanal_x switch, not exclusion.exclude")
+    if kanal_x_switch(cfg) == "exclude":
+        listed.add("kanalregisteret")
+    return sorted(listed)
 
 
 def exclusion_of(flags, exclude):
@@ -216,14 +260,32 @@ def b_by_domain(urls, tiers):
     """Id of the B entry whose domain hosts one of ``urls``, else ``""``.
 
     A host matches a domain it equals or sits under (``files.wri.org`` is
-    ``wri.org``); entries are tried in list order, so the first wins.
+    ``wri.org``); a domain written ``=host`` matches that host only
+    (``=fao.org`` keeps out ``agris.fao.org``, FAO's index of third-party
+    records). Entries are tried in list order, so the first wins.
     """
-    hosts = sorted({host_of(u) for u in urls} - {""})
+    return b_by_domain_url(urls, tiers)[0]
+
+
+def _host_match(host, domain):
+    if domain.startswith("="):
+        return host == domain[1:]
+    return host == domain or host.endswith("." + domain)
+
+
+def b_by_domain_url(urls, tiers):
+    """``(b_id, url)``: the B entry whose domain hosts one of ``urls`` and that URL."""
     for e in tiers["b"]:
         for d in e.get("domains") or []:
-            if any(h == d or h.endswith("." + d) for h in hosts):
-                return e["id"]
-    return ""
+            for u in sorted(urls):
+                if _host_match(host_of(u), d):
+                    return e["id"], u
+    return "", ""
+
+
+def is_nonresearch(url, tiers):
+    """True when ``url`` matches a pattern of the non-research list (switch d)."""
+    return any(rx.search(url) for rx in tiers["nonresearch"])
 
 
 def publisher_flag(v, tiers):
@@ -262,7 +324,7 @@ class RegistryIndex:
     def _flag(self, e, match):
         return {"registry": e["registry"], "entry_id": e["entry_id"], "match": match,
                 "pull_date": self.pull_date, "entry_url": e["entry_url"], "reason": e["reason"],
-                "levels": e.get("levels") or {}}
+                "levels": e.get("levels") or {}, "last_year": e.get("last_year")}
 
     def venue_flags(self, issns, name):
         """Flags of a venue, one per (registry, entry), sorted."""
@@ -294,7 +356,7 @@ def work_venue_flags(venue_flags, year):
     registries carry no year and apply to every work of the venue.
     """
     return [f for f in venue_flags
-            if f["registry"] != "kanalregisteret" or level_at(f["levels"], year) == "X"]
+            if f["registry"] != "kanalregisteret" or level_at(f["levels"], year, f["last_year"]) == "X"]
 
 
 def flags_text(flags):

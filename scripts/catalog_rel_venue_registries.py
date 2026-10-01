@@ -20,7 +20,6 @@ Usage:
 
 import argparse
 import csv
-import hashlib
 import os
 import re
 import stat
@@ -42,17 +41,15 @@ PULL_COLUMNS = ["registry", "pull_date", "file", "url", "sha256", "bytes", "rows
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) climate-finance-het REL venue registries"}
 
 
-def sha256(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+# One session for the few registry downloads: connection reuse and one
+# place for the headers; every call sets its own timeout.
+SESSION = requests.Session()
+SESSION.headers.update(UA)
 
 
 def scopus_xlsx_url(page_url):
     """The current source-title-list xlsx linked from Elsevier's content policy page."""
-    html = requests.get(page_url, headers=UA, timeout=120).text
+    html = SESSION.get(page_url, timeout=120).text
     links = sorted(set(re.findall(r'(?:https:)?//downloads\.ctfassets\.net/[^"\\\s]+\.xlsx', html)))
     if len(links) != 1:
         raise RuntimeError(f"expected one xlsx link on {page_url}, found {links}")
@@ -65,7 +62,7 @@ def download(url, dest):
         log.info("kept %s (already archived)", dest)
         return
     tmp = dest + ".part"
-    with requests.get(url, headers=UA, timeout=600, stream=True) as r:
+    with SESSION.get(url, timeout=600, stream=True) as r:
         r.raise_for_status()
         with open(tmp, "wb") as fh:
             for chunk in r.iter_content(1 << 20):
@@ -83,7 +80,7 @@ def write_manifest(day_dir):
         os.chmod(path, stat.S_IRUSR | stat.S_IWUSR)
     with open(path, "w", encoding="utf-8") as fh:
         for n in names:
-            fh.write(f"{sha256(os.path.join(day_dir, n))}  {n}\n")
+            fh.write(f"{rvr.sha256_file(os.path.join(day_dir, n))}  {n}\n")
     os.chmod(path, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
 
 
@@ -157,7 +154,7 @@ def main(argv=None):
         for i, (fname, url) in enumerate(pairs):
             path = os.path.join(day_dir, fname)
             pulls.append({"registry": name, "pull_date": args.date, "file": fname, "url": url,
-                          "sha256": sha256(path), "bytes": os.path.getsize(path),
+                          "sha256": rvr.sha256_file(path), "bytes": os.path.getsize(path),
                           # rows and flagged describe the registry, on its first file's line
                           "rows": rows if i == 0 else "", "flagged": len(entries) if i == 0 else "",
                           "filter": spec["filter"] if i == 0 else ""})

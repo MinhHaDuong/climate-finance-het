@@ -247,12 +247,16 @@ below, so the venue table is for explanation only.
 - Tiers: A, B, C and `unknown`. `unknown` is a work with no resolvable venue;
   it is never folded into C (C means a venue known and not serious). A work
   in `unknown` or C whose own URL is on a B institution's site
-  (`b_domains`) is B with rule `b_domain`.
+  (`b_domains`; `=host` for one host only) is B with rule `b_domain`, unless
+  that URL is a non-research page (blog post, speech, homepage, library
+  guide, news issue, media compilation: the `nonresearch` list), which makes
+  it C with rule `nonresearch`; `tier_without_nonresearch` keeps the tier
+  the list would not have changed.
 - Kanalregisteret level X is per year and provisional (in the 2026-10-01 pull
   every X is in `Nivå 2026`). A work is flagged only when the journal's level
   for the work's publication year is X; a year with no level takes the
-  journal's nearest year with one (the earlier on a tie); an undated work is
-  not flagged. The venue row keeps every yearly level in `flag_details`.
+  journal's nearest year with one (the earlier on a tie); a year after the
+  register's last column, or an undated work, is not flagged. The venue row keeps every yearly level in `flag_details`.
 - The hijacked check reads every URL of a work: the landing page of each of
   its OpenAlex rows (with or without a source) and the URL of each intake
   record. Only 32% of pool works have a URL on a host other than doi.org, so
@@ -262,13 +266,25 @@ below, so the venue table is for explanation only.
   for low metrics. DOAJ withdrawals are mostly the 2014-2016 "best practice"
   purge. Both are flags, not evidence of malpractice.
 
-Three author decisions are pending switches: (a) which registries exclude
-(`exclusion` in `config/rel_venue_registries.yaml`; a title match never
-excludes), (b) whether the NGO research series are tier B
-(`ngo_research_in_b`), (c) whether `unknown` works are kept, flagged, or
-excluded (`no_venue` in `config/rel_venue_tiers.yaml`, applied by the loader's
-`no_venue` argument). Every flag, both NGO tiers and the `unknown` state are
-written whatever the settings, so a sensitivity table can recompute any other.
+The author decided the five switches on 2026-10-01 (relayed by the MOE;
+`status: decided (author 2026-10-01)` in the configs):
+
+- (a) `exclusion.exclude` in `config/rel_venue_registries.yaml`: hijacked
+  clones only; Scopus and DOAJ are flags (a title match never excludes);
+- (a') `kanal_x`: `flag_only` (every X is a provisional 2026 level);
+- (b) `ngo_research_in_b` in `config/rel_venue_tiers.yaml`: true;
+- (c) `no_venue`: `keep_flagged` (applied by the loader's `no_venue`
+  argument, helper `unknown_switch`);
+- (d) `nonresearch`: `to_c` (helper `nonresearch_switch`).
+
+The tiers also read as memberships in the set of serious venues
+(`tier_membership`: A 1, B 1, unknown 0.5, C 0) cut at `alpha` 0.5, both
+decided by the author on 2026-10-01; 1843 reads them with
+`_rel_venues.tier_membership(cfg)` and `_rel_venues.alpha(cfg)`.
+
+Every flag, both NGO tiers, `tier_without_nonresearch` and the `unknown`
+state are written whatever the settings, so a sensitivity table can still
+show any other setting.
 
 `make rel-view` (ticket 1843) then grades every work as a member of a fuzzy
 set: its membership `mu` is the minimum over the facets seriousness, ICF and
@@ -287,5 +303,5 @@ records the sha256 of the pool, both append-only tables and the venue table
 under `inputs`, and writes `rel_sensitivity.csv`, the included set under each
 seriousness setting (publishers dropped, tier A only, Kanalregisteret
 flipped, Scopus and DOAJ also excluding, NGO switch flipped, switch (c)
-flipped). The rules (which dimension row wins, the family rule) are in the
-`scripts/_rel_reasons.py` docstring.
+flipped, switch (d) flipped). The rules (which dimension row wins, the
+family rule) are in the `scripts/_rel_reasons.py` docstring.

@@ -20,15 +20,14 @@ Child of 1830. Closes 1830 with the integration review.
 Input from 1841: `data/rel_pool/rel_work_venues.csv` (`make rel-venues`),
 joined with `_rel_venues.load_work_venues` (columns `tier`, `flags`,
 `excluded`, `excluded_by`, `tier_ngo_in_b`, `tier_ngo_not_b`,
-`publisher_flag`, and `unknown`/`included` from the loader). Three author
-decisions were left pending by 1841 and must be taken here or shown as
-sensitivity rows: (a) which registries exclude (`exclusion` in
-`config/rel_venue_registries.yaml`; default Kanalregisteret X, per work year,
-and hijacked clones; 74 works on the 2026-10-01 pool), (b) whether Oxfam and
-Germanwatch are tier B (`ngo_research_in_b`, default true; 11 works move),
-(c) works with no resolvable venue, tier `unknown` (`no_venue`, value
-`keep_flagged` by default or `exclude`; 10,394 works, 400 of them
-ICF-included).
+`publisher_flag`, `tier_without_nonresearch`, and `unknown`/`included` from
+the loader). The five 1841 switches were decided by the author on 2026-10-01
+(relayed by the MOE): (a) exclude hijacked clones only, Scopus and DOAJ are
+flags; (a') Kanalregisteret X flag only (all 72 X works are 2026, 29 in JCP,
+back at level 1 for 2027); (b) Oxfam and Germanwatch in B (11 works); (c)
+works with no resolvable venue kept, tier `unknown` (10,404 works); (d)
+non-research pages of B sites to C (70 works). Sensitivity rows remain
+computable from the work table.
 
 ## Exit criteria
 - [ ] REL view: exclusions by reason (ICF, discipline, seriousness), one count per reason, reproducible
