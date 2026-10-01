@@ -41,47 +41,52 @@ Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 
 | dont documents institutionnels (hors décompte des œuvres) | 409 | mesuré (408 + 1) |
 | dont autres types | 131 | mesuré (130 + 1) |
 
-## Exclusions par motif : ICF, discipline, sérieux (vue REL du 1er octobre 2026)
+## Exclusions par motif : sérieux, ICF, discipline (vue REL du 1er octobre 2026)
 
-*Provisoire.* Chiffres mesurés dans `data/rel_pool/rel_counts.json` (bloc `reasons`), produit par `make rel-view` le 1er octobre 2026 sur padme (ticket 1843) ; deux passes donnent les mêmes octets. Empreintes sha256 des entrées, relevées dans le bloc `inputs` du fichier, et du fichier lui-même :
+*Provisoire.* Chiffres mesurés dans `data/rel_pool/rel_counts.json` (bloc `reasons`), produit par `make rel-view` le 1er octobre 2026 sur padme (ticket 1843) ; deux passes donnent les mêmes octets. Les tableaux des sections précédentes datent du 29 septembre et d'une autre table d'étiquettes ; ceux-ci portent sur le pool et la table `icf_screen` que `main` épingle au 1er octobre, qui comprend les 92 845 étiquettes Qwen de l'étape 1 importées ce jour-là. Empreintes des entrées, relevées dans le bloc `inputs`, et du fichier lui-même :
 
 ```text
-pool.csv             3e07852be556a58e0006c6a76770c64432fae39c63d3359c861867c5b2627353
-icf_screen.csv       483b93a021086893356edba659bb5cc1aa6db5179eeb2a247904a0397ef0ce77
+pool.csv             sha256 3e07852be556a58e0006c6a76770c64432fae39c63d3359c861867c5b2627353
+icf_screen.csv       sha256 3550e6dfb062969cdaaf82860f1b86263cf5dc2c5b3e6c0c4e46cea7dc8433ef
+                     data/rel_screen.dvc md5 1eb9cfeded429aadd5c451dffea6b01d.dir
 rel_dimensions.csv   absente (aucune passe de discipline encore écrite)
-rel_work_venues.csv  ef12dc12466c918a00737503a25bb776552153ba2f039847c32ee9a4081bede3
-rel_counts.json      da7fd4d34c4c4d3a80f878461e7856ed91c46808d135f62426390e36b3ca12cc
+rel_work_venues.csv  sha256 34bffd3c14eae13e0e7ed3173f413d8d4f4792e8e0da8b281814d1c1e2b707d2
+rel_counts.json      sha256 c0aba081ff104962e743c9b97647237d158541f16c40968bda23d28d185dd5cc
 ```
 
-Chaque œuvre du pool n'est comptée qu'une fois, au premier motif qui s'applique dans l'ordre ICF → discipline → sérieux. La table de discipline n'existe pas encore : le rattrapage (ticket 1842) n'a pas tourné et aucun lot d'étape 2 en version 2 n'est écrit. Toutes les œuvres retenues par l'ICF sont donc « en attente de discipline », et les cases discipline et sérieux restent à zéro par construction, non par mesure. Le sérieux de ces œuvres est déjà calculé et donné à titre indicatif.
+Le modèle est celui du protocole (ensemble flou coupé à α = 0,5). Les facettes sont évaluées dans l'ordre sérieux → ICF → discipline, du moins coûteux au plus coûteux, et chaque œuvre n'est comptée qu'une fois, à la facette qui atteint son minimum. La table de discipline n'existe pas encore : le rattrapage (ticket 1842) n'a pas tourné et aucun lot d'étape 2 en version 2 n'est écrit. Toutes les œuvres qui passent le sérieux et l'ICF sont donc « en attente de discipline », et les cases « exclues pour la discipline » et « retenues » restent à zéro par construction, non par mesure.
 
 | Case | Œuvres | Familles | Source du chiffre |
 |---|---:|---:|---|
 | **Pool** | 389 291 | 389 261 | mesuré, `pool_works`, `families.families` |
-| exclues par l'ICF | 31 993 | 31 993 | mesuré, `reasons.works.icf_excluded` : hors sujet à l'étape 1 29 721, proches à l'étape 2 1 799, hors sujet à l'étape 2 473 |
-| en attente de l'ICF | 354 683 | 354 653 | mesuré : non triées 318 598, en attente d'étape 2 36 085 |
+| exclues pour le sérieux | 39 115 | 39 114 | mesuré, `reasons.works.seriousness_excluded` : rang C 39 113, revue détournée 2 |
+| exclues par l'ICF | 125 192 | 125 191 | mesuré : hors sujet à l'étape 1 123 604, proches à l'étape 2 1 214, hors sujet à l'étape 2 374 |
+| en attente de l'ICF | 222 992 | 222 964 | mesuré : non triées 160 780, en attente d'étape 2 62 212 |
 | **exclues pour la discipline** | 0 | 0 | provisoire : aucune réponse de discipline encore écrite |
-| **en attente de discipline** | **2 615** | **2 615** | mesuré, dont 145 « incertaines » ICF signalées ; à titre indicatif, sérieux : passent 1 991 (dont 400 sans lieu identifié, gardées et signalées), rang C 622, Kanalregisteret niveau X 2 |
-| **exclues pour le sérieux** | 0 | 0 | provisoire : le sérieux n'est compté qu'après la discipline |
+| **en attente de discipline** | **1 992** | **1 992** | mesuré ; rang A 1 220, B 370, lieu inconnu 402 ; μ provisoire 1 pour 1 543, 0,5 pour 449 (lieu inconnu ou ICF « incertaine ») |
 | **retenues** | 0 | 0 | provisoire |
 
-Parmi les 2 615, les œuvres de recherche de la fenêtre (années complètes, disposition « include ») sont 1 902 : 1 383 passent le sérieux, 519 sont de rang C (`reasons.included_research_in_window`). Le rang C tient surtout aux dépôts et serveurs de prépublications (518 des 622 œuvres de rang C, toutes catégories ; règle `repository` de `rel_work_venues.csv`).
+Des 2 615 œuvres que l'ICF retient, 623 tombent au sérieux, toutes de rang C : 518 par la règle des dépôts, 104 sans lieu reconnu comme sérieux, 1 page non scientifique d'un site institutionnel. Parmi les 1 992 en attente de discipline, les œuvres de recherche de la fenêtre (années complètes, disposition « include ») sont 1 382, dont 308 à μ = 0,5 (`reasons.included_research_in_window`).
 
-**Sens des biais.** *Discipline* : sur l'ensemble de contrôle de 1840, Opus en version 2 exclut 4 des 59 œuvres que la lecture humaine retient, dont 3 en finance appliquée posant une question de politique (certification des obligations vertes W3122424672, spéculation sur le SEQE-UE W4399863925, W7212372846), contre 3 inclusions en trop. Le compte des exclusions pour la discipline penchera donc vers la sur-exclusion de la finance appliquée ; il se lit comme une borne haute (note recopiée dans `reasons.discipline_note`). *Sérieux* : certains articles de revue que seuls des agrégateurs donnent à voir (DOAJ, Dialnet, ORBi) sont classés au rang C comme simples dépôts faute de résoudre la revue, environ 5 sur 20 dans un échantillon relu (ticket 1841). Le compte des exclusions pour le sérieux est donc surestimé, et l'ensemble retenu sous-estimé d'autant.
+**Ce que l'étape 2 peut sauter** (`stage2_skip`). Parmi les 83 681 œuvres en attente d'étape 2, 21 469 sont de rang C, de sérieux nul : l'étape 2 n'a pas à les relire, et 62 212 restent à trier (rang A 48 501, B 7 944, lieu inconnu 5 767). Parmi les 160 896 œuvres non triées, 116 sont de rang C.
 
-**Sensibilité du sérieux** (`data/rel_pool/rel_sensitivity.csv`, même passe, sha256 `3690e755753139104ef45387476bfdd9f082189c8fea3549d139ac00776bd0fb`). Faute de réponses de discipline, l'ensemble retenu est vide ; la table donne donc aussi les œuvres en attente de discipline qui passeraient le sérieux selon chaque réglage, borne haute provisoire de l'ensemble retenu. ICF et discipline fixés ; une ligne par réglage, les autres à leur valeur par défaut.
+**Sens des biais.** *Discipline* : sur l'ensemble de contrôle de 1840, Opus en version 2 exclut 4 des 59 œuvres que la lecture humaine retient, dont 3 en finance appliquée posant une question de politique (certification des obligations vertes W3122424672, spéculation sur le SEQE-UE W4399863925, W7212372846), contre 3 inclusions en trop. Le compte des exclusions pour la discipline penchera donc vers la sur-exclusion de la finance appliquée ; il se lit comme une borne haute (`reasons.discipline_note`). *Sérieux* : certains articles de revue que seuls des agrégateurs donnent à voir (DOAJ, Dialnet, ORBi) sont classés au rang C comme simples dépôts faute de résoudre la revue, environ 5 sur 20 dans un échantillon relu (ticket 1841). Le compte des exclusions pour le sérieux est donc surestimé, et l'ensemble retenu sous-estimé d'autant (`reasons.seriousness_note`).
 
-| Réglage | Retenues | En attente de discipline, sérieux passé |
+**Sensibilité du sérieux** (`data/rel_pool/rel_sensitivity.csv`, même passe, sha256 `ad8679c0e446b83fe78f67b24e408e1409a0f72ee401404dedca3737b5e921aa`). Chaque ligne réévalue toutes les œuvres sous un réglage, les autres à leur valeur décidée le 1er octobre. Faute de réponses de discipline, l'ensemble retenu est vide ; la dernière colonne donne les œuvres à qui ne manque que la discipline, borne haute provisoire de l'ensemble retenu.
+
+| Réglage | Retenues | En attente de discipline |
 |---|---:|---:|
-| par défaut : rangs A et B, exclusion Kanalregisteret X et revues détournées, MDPI, Frontiers et Hindawi gardés, ONG au rang B, œuvres sans lieu gardées et signalées | 0 | 1 991 |
+| décidé : rangs A et B (lieu inconnu à 0,5), exclusion des seules revues détournées, MDPI, Frontiers et Hindawi gardés, ONG au rang B, contenus non scientifiques au rang C | 0 | 1 992 |
 | MDPI, Frontiers et Hindawi écartés | 0 | 1 941 |
 | MDPI seul écarté | 0 | 1 955 |
-| Frontiers seul écarté | 0 | 1 983 |
-| Hindawi seul écarté | 0 | 1 985 |
-| rang A seul | 0 | 1 618 |
-| interrupteur (a) élargi : Scopus « discontinued » et retraits du DOAJ excluent aussi | 0 | 1 917 |
-| interrupteur (b) inversé : recherche des ONG hors du rang B | 0 | 1 991 |
-| interrupteur (c) inversé : œuvres sans lieu identifié exclues | 0 | 1 591 |
+| Frontiers seul écarté | 0 | 1 984 |
+| Hindawi seul écarté | 0 | 1 986 |
+| rang A seul (le lieu inconnu reste à 0,5) | 0 | 1 622 |
+| (a') niveau X du Kanalregisteret exclusif | 0 | 1 990 |
+| (a) Scopus « discontinued » et retraits du DOAJ exclusifs aussi | 0 | 1 917 |
+| (b) recherche des ONG hors du rang B | 0 | 1 992 |
+| (c) œuvres sans lieu identifié exclues | 0 | 1 590 |
+| (d) contenus non scientifiques gardés à leur rang | 0 | 1 993 |
 
 ## Retenues
 
