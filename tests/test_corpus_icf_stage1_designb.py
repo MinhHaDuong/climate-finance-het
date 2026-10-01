@@ -260,6 +260,35 @@ def test_parse_classifier_rejects_malformed_answers():
     assert db.parse_classifier({}) is None
 
 
+@pytest.mark.parametrize("block", [None, {"llm_models": [GEMMA]},
+                                   {"llm_models": [GEMMA], "classifier_models": [JEV],
+                                    "classifier_p_out_min": 2}])
+def test_runner_refuses_a_missing_or_malformed_stage1_joint_block(tmp_path, block):
+    cfg, screen = _cfgs()
+    screen = {k: v for k, v in screen.items() if k != "stage1_joint"}
+    if block is not None:
+        screen["stage1_joint"] = block
+    router = FakeRouter(LLM5, CLF5)
+    assert db.run(cfg, screen, _args(tmp_path, _input(tmp_path, 2)), post=router,
+                  sleep=lambda s: None) == 2
+    assert router.calls == []
+
+
+def test_settled_balance_waits_until_key_usage_stops_moving():
+    readings = iter([1.0, 1.2, 1.5, 1.5, 1.5, 1.5, 1.5])
+    snap = db.settled_balance("k", wait_s=600, quiet_s=45, sleep=lambda s: None,
+                              read=lambda k: {"key": {"usage": next(readings)}})
+    assert snap["key"]["usage"] == 1.5 and snap["settled_after_s"] == 75
+    capped = db.settled_balance("k", wait_s=30, sleep=lambda s: None,
+                                read=lambda k, it=iter(range(100)): {"key": {"usage": next(it)}})
+    assert capped["settled_after_s"] == 30
+
+
+def test_key_usage_delta():
+    assert db.key_usage_delta({"key": {"usage": 124.4}}, {"key": {"usage": 129.8}}) == 5.4
+    assert db.key_usage_delta({}, {"key": {"usage": 1}}) is None
+
+
 def test_budget_reservations_never_cross_the_cap():
     b = db.Budget(0.001)
     assert b.reserve(0.0006) and not b.reserve(0.0006) and b.stopped

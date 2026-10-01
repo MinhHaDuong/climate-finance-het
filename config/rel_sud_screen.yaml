@@ -120,3 +120,6 @@ designb:
   # Rounds that re-send the works a call left unlabelled (partial or
   # unparsable answer, HTTP failure); a rerun of the command retries again.
   retry_rounds: 2
+  # OpenRouter books key usage with a lag: the before/after key snapshots of
+  # each invocation wait until it is still for 45 s, at most this long.
+  usage_settle_seconds: 180

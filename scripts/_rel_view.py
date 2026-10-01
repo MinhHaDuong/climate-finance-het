@@ -250,13 +250,24 @@ def joint_rule(block: dict | None) -> dict | None:
     return {"llm_models": llm, "classifier_models": clf, "classifier_p_out_min": float(thr)}
 
 
-_P_OUT = re.compile(r"^p_out=([0-9]*\.?[0-9]+)")
+_P_OUT = re.compile(r"^p_out=(\S+)")
 
 
 def p_out_of(lab: dict) -> float | None:
-    """P(out) a classifier row carries at the start of its ``why`` (``p_out=<p>``)."""
+    """P(out) a classifier row carries at the start of its ``why`` (``p_out=<p>``).
+
+    ``<p>`` is the float as Python writes it at full precision (``repr``), so
+    scientific notation (``1e-05``) is read too; anything that is not a number
+    in [0, 1] gives None, which never drops a work.
+    """
     m = _P_OUT.match(lab.get("why") or "")
-    return float(m.group(1)) if m else None
+    if not m:
+        return None
+    try:
+        p = float(m.group(1))
+    except ValueError:
+        return None
+    return p if 0 <= p <= 1 else None
 
 
 def joint_role(lab: dict, joint: dict | None) -> str | None:
@@ -271,7 +282,7 @@ def joint_role(lab: dict, joint: dict | None) -> str | None:
 
 
 def stage1_decisions(s1: list[dict], rule: dict) -> list[dict]:
-    """Stage-1 decisions of one work, in table order (the last one sets the status).
+    """Stage-1 decisions of one work, in table order (``work_status`` combines them).
 
     A single-labeller row (Qwen, Haiku) is one decision: it exits when its
     label is in ``stage1_exit_labels``. The design-B rows of one ``run_id``
@@ -311,14 +322,24 @@ def stage1_decisions(s1: list[dict], rule: dict) -> list[dict]:
 
 
 def work_status(labs: list[dict], rule: dict) -> dict:
-    """Status of one work from its labels (table order: the last decision wins)."""
+    """Status of one work from its labels.
+
+    Stage 1, recall first (2026-10-01): a work with several stage-1 decisions
+    (``stage1_decisions``: a Qwen or Haiku row, a design-B pair, in any order)
+    leaves at stage 1 only when every one of them exits; one decision that
+    sends it to stage 2 is enough, whichever came later. Stage 2: the latest
+    label wins and is final.
+    """
     by_stage = defaultdict(list)
     for lab in labs:
         by_stage[lab["stage"]].append(lab)
     decisions = stage1_decisions(by_stage["1"], rule)
-    s1 = decisions[-1] if decisions else None
+    # Recall first: the work leaves only if every stage-1 decision exits; else
+    # the latest decision that sends it on is the one shown.
+    passing = [d for d in decisions if not d["exits"]]
+    s1 = (passing or decisions)[-1] if decisions else None
     s2 = by_stage["2"][-1] if by_stage["2"] else None
-    conflict = [st for st, labels in (("1", {d["label"] for d in decisions}),
+    conflict = [st for st, labels in (("1", {(d["label"], d["exits"]) for d in decisions}),
                                       ("2", {lab["label"] for lab in by_stage["2"]}))
                 if len(labels) > 1]
     if s2:

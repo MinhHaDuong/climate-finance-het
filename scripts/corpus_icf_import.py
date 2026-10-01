@@ -281,8 +281,9 @@ def designb_rows(run_dir: str, input_path: str, run_id: str, joint: dict,
 
     Two stage-1 rows per work, one per labeller, both ``labeller=llm`` and
     ``run_id``: the LLM row (its label, doc, ``why``) and the classifier row,
-    whose ``why`` is ``p_out=<P(out)>`` (the view's drop rule reads it,
-    ``_rel_view.p_out_of``). ``model`` is the served model id, ``machine`` is
+    whose ``why`` is ``p_out=<P(out)>`` at full precision (``repr``: a value
+    just under the threshold is never rounded up onto it), which the view's
+    drop rule reads (``_rel_view.p_out_of``). ``model`` is the served model id, ``machine`` is
     ``openrouter/<provider>``. Only works labelled by both are imported, so the
     table never holds half a decision; the others stay unscreened for a rerun.
     Refused when the run has no closing line, when its invocations disagree on
@@ -317,7 +318,7 @@ def designb_rows(run_dir: str, input_path: str, run_id: str, joint: dict,
     for key in (k for k in inputs if k in llm and k in clf):  # input order
         meta = work_meta(inputs[key], "work_key")
         for lab, sha, why, src in ((llm[key], llm_sha, llm[key].get("why") or "", "llm.jsonl"),
-                                   (clf[key], clf_sha, f"p_out={clf[key]['p_out']:.4f}",
+                                   (clf[key], clf_sha, f"p_out={float(clf[key]['p_out'])!r}",
                                     "classifier.jsonl")):
             rows.append(_stage1_row(meta, {**lab, "why": why}, run_id, lab["model"], sha,
                                     f"openrouter/{lab.get('provider') or 'unknown'}",

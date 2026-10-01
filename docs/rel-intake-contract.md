@@ -213,6 +213,15 @@ local Qwen run takes get stage 1 by design B (author decision of 2026-10-01,
 `scripts/corpus_icf_stage1_designb.py`, imported with `corpus_icf_import.py
 stage1-designb`): two stage-1 rows per work, Gemma 4 and the Jev D1
 classifier, and the work leaves only when both say `out` with Jev's P(out) at
-least 0.95 (`stage1_joint` in `config/rel_screen.yaml`). The view
+least 0.95 (`stage1_joint` in `config/rel_screen.yaml`). Both rows carry
+`labeller=llm`, the served model id, `machine=openrouter/<provider>` and the
+same `run_id`; the Jev row's `why` starts with `p_out=<P(out)>` at full
+precision. The view shows such a decision in its `stage1_joint` column
+(`llm=…;classifier=…;p_out=…`) and tallies the design-B works, their
+`stage1_out` and their `pending_stage2` under `stage1_joint` in
+`rel_counts.json`. Precedence, recall first: a work carrying several stage-1
+verdicts (Qwen rows, design-B pairs, in any order) leaves at stage 1 only
+when every verdict is `out`; one verdict that sends it to stage 2 is enough.
+The view
 counts REL in works and in work families: works linked by `version_hint` count
 once, represented by an included member, a published article first.

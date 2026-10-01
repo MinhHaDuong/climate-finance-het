@@ -304,7 +304,7 @@ GEMMA, JEV = "google/gemma-4-26b-a4b-it", "typesafe/jev-1.13-20260917"
 def _pair(llm_label, clf_label, p_out, run_id="designB-1", wk="openalex:W1", why=None):
     return [_lab(wk, "1", llm_label, model=GEMMA, run_id=run_id),
             {**_lab(wk, "1", clf_label, model=JEV, run_id=run_id),
-             "why": why if why is not None else f"p_out={p_out:.4f}"}]
+             "why": why if why is not None else f"p_out={p_out!r}"}]
 
 
 def test_config_declares_the_design_b_rule():
@@ -342,24 +342,61 @@ def test_half_a_design_b_decision_never_drops(labs):
     assert rv.work_status(labs, RULE)["status"] == "pending_stage2"
 
 
-def test_without_the_rule_design_b_rows_fall_back_to_latest_label():
-    # What the rule prevents: read as single-labeller rows, the latest one wins
-    # and a lone "out" from either labeller drops the work.
-    labs = _pair("aux", "out", 0.99)
+def test_without_the_rule_design_b_rows_drop_below_the_threshold():
+    # What the rule prevents: read as two single-labeller rows, both "out",
+    # the pair drops the work although Jev's P(out) is only 0.5.
+    labs = _pair("out", "out", 0.5)
     assert rv.work_status(labs, {**RULE, "stage1_joint": None})["status"] == "stage1_out"
     assert rv.work_status(labs, RULE)["status"] == "pending_stage2"
 
 
-def test_qwen_rows_keep_the_single_labeller_rule_and_latest_decision_wins():
-    qwen_out = _lab("openalex:W1", "1", "out", model="qwen3.8-27b", run_id="pool-stage1")
-    qwen_aux = _lab("openalex:W1", "1", "aux", model="qwen3.8-27b", run_id="pool-stage1")
-    assert rv.work_status([qwen_out], RULE)["status"] == "stage1_out"
-    later_pass = rv.work_status([qwen_out] + _pair("out", "aux", 0.3), RULE)
-    assert later_pass["status"] == "pending_stage2" and later_pass["conflict"] == ""
-    later_qwen = rv.work_status(_pair("out", "aux", 0.3) + [qwen_out], RULE)
-    assert later_qwen["status"] == "stage1_out" and later_qwen["stage1_model"] == "qwen3.8-27b"
-    after_aux = rv.work_status([qwen_aux] + _pair("out", "out", 0.99), RULE)
-    assert after_aux["status"] == "stage1_out" and after_aux["conflict"] == "stage1"
+QWEN_OUT = _lab("openalex:W1", "1", "out", model="qwen3.8-27b", run_id="pool-stage1")
+QWEN_AUX = _lab("openalex:W1", "1", "aux", model="qwen3.8-27b", run_id="pool-stage1")
+
+
+def test_a_lone_qwen_out_keeps_the_single_labeller_rule():
+    assert rv.work_status([QWEN_OUT], RULE)["status"] == "stage1_out"
+
+
+@pytest.mark.parametrize("labs", [
+    [QWEN_OUT] + _pair("out", "aux", 0.3),     # design-B pass after a Qwen out
+    _pair("out", "aux", 0.3) + [QWEN_OUT],     # Qwen out after a design-B pass
+    [QWEN_AUX] + _pair("out", "out", 0.99),    # design-B drop after a Qwen pass
+    _pair("out", "out", 0.99) + [QWEN_AUX],    # Qwen pass after a design-B drop
+])
+def test_several_stage1_verdicts_leave_only_if_all_are_out(labs):
+    # Recall first (2026-10-01): one verdict that sends the work on is enough,
+    # whichever came later in the table.
+    s = rv.work_status(labs, RULE)
+    assert s["status"] == "pending_stage2"
+    assert s["conflict"] == "stage1"
+
+
+@pytest.mark.parametrize("labs", [
+    [QWEN_OUT] + _pair("out", "out", 0.99),
+    _pair("out", "out", 0.99) + [QWEN_OUT],
+])
+def test_every_verdict_out_leaves_at_stage1(labs):
+    s = rv.work_status(labs, RULE)
+    assert s["status"] == "stage1_out" and s["conflict"] == ""
+
+
+def test_the_shown_stage1_verdict_is_the_latest_that_passes():
+    s = rv.work_status(_pair("out", "aux", 0.3) + [QWEN_OUT], RULE)
+    assert (s["stage1_model"], s["stage1_run_id"]) == (f"{GEMMA}+{JEV}", "designB-1")
+
+
+def test_p_out_just_under_the_threshold_never_rounds_onto_it():
+    # 0.94995 rounded to 4 decimals would be 0.9500 and drop the work.
+    assert rv.work_status(_pair("out", "out", 0.94995), RULE)["status"] == "pending_stage2"
+    assert rv.work_status(_pair("out", "out", 0.95), RULE)["status"] == "stage1_out"
+
+
+@pytest.mark.parametrize("why, p", [("p_out=0.97", 0.97), ("p_out=9.5e-01", 0.95),
+                                    ("p_out=1e-05", 1e-05), ("p_out=9.5", None),
+                                    ("p_out=nan?", None), ("P=0.99", None)])
+def test_p_out_parsing(why, p):
+    assert rv.p_out_of({"why": why}) == p
 
 
 def test_stage2_stays_final_over_a_design_b_drop():

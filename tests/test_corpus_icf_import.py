@@ -287,9 +287,9 @@ def test_designb_import_writes_one_row_per_labeller(tmp_path):
     assert [(r["work_key"], r["model"], r["label"], r["why"], r["machine"], r["prompt_sha256"])
             for r in rows] == [
         ("title:a b|2020", GEMMA, "out", "", "openrouter/NextBit", "lp"),
-        ("title:a b|2020", JEV, "out", "p_out=0.9712", "openrouter/TypeSafe", "cp"),
+        ("title:a b|2020", JEV, "out", "p_out=0.971234", "openrouter/TypeSafe", "cp"),
         ("doi:10.5/z", GEMMA, "icf", "GCF", "openrouter/Parasail", "lp"),
-        ("doi:10.5/z", JEV, "icf", "p_out=0.0000", "openrouter/TypeSafe", "cp")]
+        ("doi:10.5/z", JEV, "icf", "p_out=0.0", "openrouter/TypeSafe", "cp")]
     assert {(r["stage"], r["labeller"], r["run_id"]) for r in rows} == {("1", "llm", "designB")}
     assert rows[3]["doc_type"] == "unknown" and rows[2]["doc_type"] == "institutional"
     assert rows[0]["source"] == "designB/llm.jsonl"

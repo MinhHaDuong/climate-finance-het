@@ -23,8 +23,12 @@ Run directory (``--output-dir``), all append-only:
   reports it (``usage.cost``), the works sent and parsed, or the error;
 - ``screen_runs.jsonl``: one header per invocation (models, prompt hashes,
   input, budget, start);
-- ``balance_<start>.json`` / ``balance_<end>.json`` per invocation (account
-  credits, numeric fields only), and ``summary.json`` (last invocation).
+- ``balance_<start>_before.json`` / ``balance_<start>_after.json`` per
+  invocation: the API key's own usage (``/api/v1/key``) and the account
+  credits, numeric fields only, each read once the key's usage has stopped
+  moving (OpenRouter books with a lag; ``usage_settle_seconds``);
+  ``summary.json`` (last invocation) sets the key-usage delta beside the sum
+  of reported call costs, since the key delta is what was billed.
 
 Resumable: a work already labelled by a labeller is not sent to it again;
 works a call left unlabelled (partial or unparsable answer, HTTP failure,
@@ -33,7 +37,8 @@ rerun retries them again. Works go in input order, in chunks that both
 labellers finish before the next.
 
 Budget: ``--budget-usd`` caps the spend of the run directory, all invocations
-together (the sum of ``calls.jsonl`` costs). Before each call a reservation
+together (the sum of ``calls.jsonl`` costs, as each response reports it; the
+key-usage delta in ``summary.json`` is the check on that sum). Before each call a reservation
 (``est_cost_per_call``, or 1.5 times the dearest call seen if higher) is taken;
 a call whose reservation would cross the cap is not sent, and the run stops
 cleanly after the calls in flight. A call without a reported cost is counted
@@ -62,6 +67,8 @@ from collections.abc import Callable
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from datetime import datetime, timezone
 
+import _icf_screen as ics
+import _rel_view as rv
 import corpus_rel_sud_screen as sc
 import yaml
 from utils import get_logger
@@ -72,6 +79,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_sud_screen.yaml")
 KEY_PROVIDER, KEY_VAR = "openrouter", "OPENROUTER_API_KEY_CLIMATEFINANCE"
 CREDITS_URL = "https://openrouter.ai/api/v1/credits"
+KEY_URL = "https://openrouter.ai/api/v1/key"
 RETRY_STATUS = {408, 429, 500, 502, 503, 504, 524, 529}
 LLM, CLF = "llm", "classifier"
 
@@ -220,22 +228,55 @@ def make_post(key: str) -> Post:
 
 
 def balance(key: str) -> dict:
-    """Account credits (numeric fields only); ``{}`` fields when unreadable."""
+    """Key-scoped usage and account credits (numeric fields only).
+
+    ``key``: the usage of this API key (``/api/v1/key``: ``usage``,
+    ``usage_daily``, ``limit_remaining``), which only this project's calls
+    move; ``credits``: the whole account (``/api/v1/credits``), which other
+    keys move too. A field that cannot be read is absent.
+    """
     import requests
 
     out: dict = {"at": now()}
-    try:
-        r = requests.get(CREDITS_URL, headers={"Authorization": f"Bearer {key}"}, timeout=30)
-        body = (r.json() or {}).get("data", {}) if r.status_code == 200 else {}
-        out["status"] = r.status_code
-    except (requests.RequestException, ValueError) as exc:
-        body, out["status"] = {}, type(exc).__name__
-    for k in ("total_credits", "total_usage"):
-        if isinstance(body.get(k), (int, float)):
-            out[k] = body[k]
-    if "total_credits" in out and "total_usage" in out:
-        out["remaining"] = round(out["total_credits"] - out["total_usage"], 6)
+    for name, url, fields in (("key", KEY_URL, ("usage", "usage_daily", "limit",
+                                                "limit_remaining")),
+                              ("credits", CREDITS_URL, ("total_credits", "total_usage"))):
+        part: dict = {}
+        try:
+            r = requests.get(url, headers={"Authorization": f"Bearer {key}"}, timeout=30)
+            body = (r.json() or {}).get("data", {}) if r.status_code == 200 else {}
+            part["status"] = r.status_code
+        except (requests.RequestException, ValueError) as exc:
+            body, part["status"] = {}, type(exc).__name__
+        for k in fields:
+            if isinstance(body.get(k), (int, float)) and not isinstance(body.get(k), bool):
+                part[k] = body[k]
+        out[name] = part
     return out
+
+
+def settled_balance(key: str, wait_s: float, quiet_s: float = 45,
+                    sleep: Callable = time.sleep, read: Callable = balance) -> dict:
+    """``balance`` once the key's usage has stopped moving for ``quiet_s``
+    (OpenRouter books usage with a lag), or after ``wait_s`` at most."""
+    last = read(key)
+    waited = quiet = 0.0
+    while waited < wait_s and quiet < quiet_s:
+        sleep(15)
+        waited += 15
+        cur = read(key)
+        if cur.get("key", {}).get("usage") != last.get("key", {}).get("usage"):
+            quiet = 0.0
+        else:
+            quiet += 15
+        last = cur
+    last["settled_after_s"] = waited
+    return last
+
+
+def key_usage_delta(before: dict, after: dict) -> float | None:
+    a, b = after.get("key", {}).get("usage"), before.get("key", {}).get("usage")
+    return round(a - b, 6) if isinstance(a, (int, float)) and isinstance(b, (int, float)) else None
 
 
 def call_with_retries(post: Post, url: str, body: dict, timeout: float,
@@ -329,6 +370,7 @@ class Runner:
         rec = {"labeller": kind, "attempt": attempt, "n": len(recs), "n_parsed": len(lines),
                "work_keys": [r["work_key"] for r in recs] if kind == LLM else [recs[0]["work_key"]],
                "cost": charged, "cost_reported": actual is not None, "model": served,
+               "generation_id": (resp or {}).get("id"),
                "provider": (resp or {}).get("provider"), "latency_s": round(latency, 3),
                "err": err, "at": now()}
         return rec, lines
@@ -429,7 +471,15 @@ def summarize(out_dir: str, recs: list[dict], threshold: float) -> dict:
 def run(cfg: dict, screen_cfg: dict, args, post: Post | None = None,
         key: str | None = None, sleep: Callable = time.sleep) -> int:
     os.makedirs(args.output_dir, exist_ok=True)
-    joint = screen_cfg["stage1_joint"]
+    try:
+        joint = rv.joint_rule(screen_cfg.get("stage1_joint"))
+    except ics.IcfScreenError as exc:
+        log.error("%s", exc)
+        return 2
+    if joint is None:
+        log.error("the screen config has no stage1_joint block (config/rel_screen.yaml): "
+                  "no accepted models, no drop threshold")
+        return 2
     accepted = {LLM: set(joint["llm_models"]), CLF: set(joint["classifier_models"])}
     if post is None:
         from pipeline_keystore import read_credential
@@ -443,9 +493,11 @@ def run(cfg: dict, screen_cfg: dict, args, post: Post | None = None,
     budget = Budget(args.budget_usd, spent)
     started = now()
     stamp = started.replace(":", "").replace("+0000", "Z")
+    before: dict = {}
     if key:
+        before = settled_balance(key, cfg["designb"].get("usage_settle_seconds", 180), sleep=sleep)
         with open(os.path.join(args.output_dir, f"balance_{stamp}_before.json"), "w") as fh:
-            json.dump(balance(key), fh)
+            json.dump(before, fh)
             fh.write("\n")
     header = {"started": started, "id_field": "work_key", "input": args.input,
               "n_input": len(recs), "budget_usd": args.budget_usd, "spent_before_usd": spent,
@@ -465,9 +517,13 @@ def run(cfg: dict, screen_cfg: dict, args, post: Post | None = None,
     summary = summarize(args.output_dir, recs, joint["classifier_p_out_min"])
     summary.update({"stopped": runner.stop_reason, "finished": now()})
     if key:
+        after = settled_balance(key, cfg["designb"].get("usage_settle_seconds", 180), sleep=sleep)
         with open(os.path.join(args.output_dir, f"balance_{stamp}_after.json"), "w") as fh:
-            json.dump(balance(key), fh)
+            json.dump(after, fh)
             fh.write("\n")
+        # The key's own usage, not the sum of reported call costs, is what was billed.
+        summary["key_usage_delta_usd_this_invocation"] = key_usage_delta(before, after)
+        summary["reported_cost_usd_this_invocation"] = round(budget.spent - spent, 6)
     with open(os.path.join(args.output_dir, "summary.json"), "w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2)
         fh.write("\n")

@@ -12,7 +12,8 @@ Matching a label to a pool work: its ``work_key`` equals the work's
 A label that matches nothing is kept in the table and counted here as
 "labelled, not in pool", split by whether the screened record had a title.
 
-Status per work (latest label wins within a stage, table order):
+Status per work (stage 1: a work leaves only when every stage-1 verdict
+exits; stage 2: the latest label wins, table order):
 
 - ``unscreened``: no label;
 - ``stage1_<label>``: stage-1 label in ``stage1_exit_labels`` (config), no
@@ -21,8 +22,9 @@ Status per work (latest label wins within a stage, table order):
   config restores the older rule. Design B (author decision of 2026-10-01,
   ``stage1_joint``): the two rows of one design-B run are one decision, which
   exits only when both labellers say ``out`` and the classifier's P(out)
-  reaches the threshold (``_rel_view.stage1_decisions``, which also states the
-  precedence between Qwen rows and design-B runs: the latest decision wins).
+  reaches the threshold (``_rel_view.stage1_decisions``). Several stage-1
+  verdicts (Qwen rows, design-B runs, in any order): the work leaves only
+  when every one exits, recall first (``_rel_view.work_status``).
   ``stage1_joint`` in the view spells out such a decision
   (``llm=…;classifier=…;p_out=…``);
 - ``pending_stage2``: stage-1 label in ``stage2_labels`` (``icf``, ``unsure``,
@@ -161,7 +163,8 @@ def make_counts(rows: list[dict], summary: dict, window_cfg: dict, inputs: dict,
                                              and r["status"] == "pending_stage2")},
         "conflicts": {"stage1": n(lambda r: "stage1" in r["conflict"]),
                       "stage2": n(lambda r: "stage2" in r["conflict"])},
-        "notes": ("status: latest label within a stage wins; stage 2 is final. "
+        "notes": ("status: stage 1 exits only when every stage-1 verdict exits (a "
+                  "design-B pair is one verdict); stage 2: latest label wins, final. "
                   "included: final icf, plus unsure_unresolved flagged when "
                   "rule.stage2_unsure_in_rel. *_in_window: rel_disposition include, "
                   "complete year, per work. The partial year is counted apart by document "

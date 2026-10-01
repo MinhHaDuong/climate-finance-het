@@ -21,6 +21,22 @@ stage 2.
 Incremental: deliveries arriving after the first pass are screened by the same
 command.
 
+Stage 1 as of 2026-10-01 (author decision): local Qwen on padme for the pool
+input of 2026-10-01 (run `2026-10-01-pool-stage1`), then local Gemma 4 if the
+running benchmark passes; plus design B through OpenRouter for the leftovers
+no local run takes (t1810-repec-local, t1790-sud-playwright, works re-keyed by
+those merges; run `2026-10-01-designB-stage1`, PR 1659). Design B records two
+stage-1 rows per work (Gemma 4 26B-A4B and Jev D1) and drops a work only when
+both say "out" with Jev's P(out) >= 0.95 (`stage1_joint` in
+`config/rel_screen.yaml`).
+Precedence, recall first: a work carrying several stage-1 verdicts (a
+re-keyed work screened by Qwen under its old key and by design B, a
+re-screen) leaves at stage 1 only when every verdict is out; a design-B pair
+is one verdict. 616 t1652+t1810 works are in that case: Qwen screens them
+under their old `title:` keys, which the rebuilt pool no longer carries, so
+those Qwen labels will show as not-in-pool residue in the view; importing
+either Qwen run against the current pool needs `--allow-input-drift`.
+
 ## Exit criteria
 - [ ] Stage 1 on all unlabelled works of the pool, machine and run recorded
 - [ ] Stage 2 on the stage-1 "icf", "incertaine" and "proche"

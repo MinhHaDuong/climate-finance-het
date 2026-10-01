@@ -23,9 +23,10 @@ stage1:
   lane_priority: [catalogue, t1530, t1651, t1653, t1652, t1650, t1790, t1810]
 
 # Stage-1 exit rule, applied where the view and the stage-2 input are built
-# (labels are never rewritten). A work whose latest stage-1 label is in
+# (labels are never rewritten). A work whose stage-1 label is in
 # stage1_exit_labels leaves the pool (status stage1_<label>); one whose label
-# is in stage2_labels goes to stage 2 (pending_stage2). The two lists
+# is in stage2_labels goes to stage 2 (pending_stage2). A work with several
+# stage-1 verdicts leaves only when every one exits (precedence below). The two lists
 # partition the labels icf, aux, out, unsure. Author decision of 2026-09-30:
 # only "out" leaves; "aux" (proche) goes to stage 2, retroactively for every
 # stage-1 label (the Jev pilot found Opus-ICF works labelled aux by stage 1).
@@ -43,11 +44,13 @@ stage2_labels: [icf, unsure, aux]
 # one of the two rows, sends the work to stage 2 (pending_stage2).
 # A row counts as a design-B row by its exact served model id, listed here;
 # the import refuses a served model these lists do not name.
-# Precedence: each single-labeller stage-1 row (Qwen, Haiku) is one decision
-# under stage1_exit_labels, as before; each design-B run is one decision at
-# the position of its last row. The latest decision in table order wins, so a
-# Qwen-screened work keeps the single-labeller rule unless a design-B pair is
-# appended after it (and the reverse).
+# Precedence, recall first (2026-10-01): each single-labeller stage-1 row
+# (Qwen, Haiku, a local Gemma) is one verdict under stage1_exit_labels; each
+# design-B run is one verdict, "out" only as above. A work carrying several
+# verdicts (a re-keyed work screened twice, a re-screen) leaves at stage 1
+# only when EVERY verdict is out; one verdict that sends it on is enough, in
+# either order: a later single "out" does not override a design-B pass, nor
+# a later design-B drop a single-labeller pass (_rel_view.work_status).
 stage1_joint:
   llm_models: [google/gemma-4-26b-a4b-it]
   classifier_models: [typesafe/jev-1.13-20260917]
