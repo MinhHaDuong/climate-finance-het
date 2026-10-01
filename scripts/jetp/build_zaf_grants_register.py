@@ -13,7 +13,9 @@ For each edition the parser:
   the layout's landmarks (sheet names, header labels, column grid);
 - cuts each declared table into records, mends a record split by a page
   break (one statement whose locator spans both pages), and keeps every cell
-  as printed under its printed header (the verbatim fields);
+  as printed under its printed header (the verbatim fields); at v2 a
+  workbook cell's fill colour is kept the same way, under a ``<header> fill``
+  field, with the legend the edition prints for its colours (ticket 1970);
 - checks each table against its printed totals and the edition against its
   reviewed row counts; one failed control fails the whole document, and
   nothing of it is admitted;
@@ -60,7 +62,7 @@ from jetp.build_iati_comparators import _append_lines
 
 ROOT = Path(__file__).resolve().parents[2]
 METHOD = 'zaf-grants-register-parser'
-VERSION = '1'
+VERSION = '2'
 COUNTRY = 'ZAF'
 REPORT = ROOT / 'docs' / 'jetp-study' / '1950-zaf-grants-register-run.json'
 log = logging.getLogger(__name__)

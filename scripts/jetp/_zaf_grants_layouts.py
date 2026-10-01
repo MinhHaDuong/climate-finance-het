@@ -47,6 +47,11 @@ XLSX_SCOPE_OUT = {
 }
 OVERALL_SHEET = 'DataTable - Overall'
 
+# A footnote under a workbook table that opens with these words is the legend
+# the publisher prints for its highlight colours (2025 Q1: 'Green Highlight:
+# Indicates that all these projects were closed in the previous Q3, …').
+FILL_LEGEND = 'Green Highlight'
+
 # 2023 Q3 PDF: one table, twenty columns at fixed x (points, page 1 grid).
 GRID_2023 = (72, 129, 204, 262, 299, 362, 427, 469, 519, 582, 646, 682, 760, 816,
              901, 972, 1036, 1086, 1206, 1251, 1296)
@@ -317,12 +322,17 @@ def _xlsx_table(sheet, table, controls):
     items = [_xlsx_note_above(sheet, table, rows[:at])] if at else []
     heading = items[0].locator if items else ''
     grants, total, notes = [], None, []
+    legend = ''
     for row in rows[at + 1:]:
         unique = join(row.cells.get('A', ''))
         stray = [c for c in row.cells if c not in headers]
         if total is None and ID_PATTERN.match(unique) and not stray:
             fields = {headers[c]: row.cells[c] for c in headers if c in row.cells}
             fields['Unique ID'] = unique
+            # The fill colour of a cell under a printed header, as stored
+            for col, fill in row.fills.items():
+                if col in headers:
+                    fields[f'{headers[col]} fill'] = fill
             items.append(Item(table, _locator_xlsx(sheet, f'row {row.number}'),
                               join(fields.get('Description', '')) or unique,
                               'register_allocation', fields,
@@ -334,18 +344,35 @@ def _xlsx_table(sheet, table, controls):
                 any(headers[c] == 'Total US$' for c in row.cells):
             total = {headers[c]: v for c, v in row.cells.items()}
         elif total is not None and set(row.cells) == {'A'} and not ID_PATTERN.match(unique):
+            note = join(row.cells['A'])
+            is_legend = note.startswith(FILL_LEGEND)
+            if is_legend:
+                legend = note
             notes.append(Item(table, _locator_xlsx(sheet, f'A{row.number}'),
-                              join(row.cells['A']), 'heading', heading=heading,
-                              note='footnote under the table'))
+                              note, 'heading', heading=heading,
+                              note='footnote under the table' +
+                                   ('; legend of the cell fill colours' if is_legend else '')))
         else:
             raise RegisterError(f'{table}: row {row.number} is neither a grant, the total '
                                 'nor a footnote')
     if total is None:
         raise RegisterError(f'{table}: no printed total row')
+    # The legend the edition prints gives the fill colours their meaning
+    if legend:
+        for item in items:
+            if item.classification == 'register_allocation' and \
+                    any(name.endswith(' fill') for name in item.fields):
+                item.fields['fill legend'] = legend
     check_ids(table, grants, controls)
     for column in AMOUNT_COLUMNS:
         if column in headers.values():
             check_total(table, column, grants, amount(total.get(column)), controls)
+    filled = [g for g in grants if any(name.endswith(' fill') for name in g)]
+    if filled:
+        noun = 'grant row' if len(filled) == 1 else 'grant rows'
+        controls.append(f'{table}: cell fill on {len(filled)} {noun}'
+                        + ('; legend printed under the table' if legend
+                           else '; the edition prints no legend for them'))
     return items + notes, grants
 
 

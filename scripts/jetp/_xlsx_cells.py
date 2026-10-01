@@ -11,7 +11,9 @@ A number keeps its stored text. A cell whose number format is a date format
 is rendered as an ISO date (``YYYY-MM-DD``, with ``THH:MM`` when the stored
 serial carries a time of day), the form the publisher displays; the stored
 serial is what the adapter version converts, so the conversion is part of the
-adapter, named by ``ADAPTER`` and ``VERSION``.
+adapter, named by ``ADAPTER`` and ``VERSION``. At v2 each cell's fill colour
+is read from the styles part and kept verbatim: the pattern type and the
+stored colour of a solid fill, as the publisher stored it.
 
 Why not openpyxl: it is not a dependency of the project, and this reader needs
 exactly the stored values, the hidden flags and nothing else (ticket 1950).
@@ -25,7 +27,7 @@ from pathlib import PurePosixPath
 from xml.etree import ElementTree as ET
 
 ADAPTER = 'jetp-xlsx-cells'
-VERSION = '1'
+VERSION = '2'
 
 NS = {'m': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
       'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
@@ -44,6 +46,7 @@ class Row:
     number: int
     hidden: bool
     cells: dict = field(default_factory=dict)  # column letters -> text
+    fills: dict = field(default_factory=dict)  # column letters -> fill colour as stored
 
 
 @dataclass
@@ -160,6 +163,20 @@ def _cell_text(cell, shared, dates, epoch):
     return raw
 
 
+def _cell_fill(cell, xf_fills):
+    """The fill description of a cell's style, '' when the style has none.
+
+    A cell without an ``s`` attribute is styled by cellXf 0 (ECMA-376 18.3.1.4),
+    like ``_cell_text`` reads its number format.
+    """
+    style = cell.get('s', '0')
+    try:
+        fill = xf_fills.get(int(style), '')
+    except ValueError as exc:
+        raise XlsxError(f'cell style index {style!r} is not an integer') from exc
+    return fill if fill and fill != 'none' else ''
+
+
 def _hidden_columns(root):
     hidden = set()
     for col in root.findall('m:cols/m:col', NS):
@@ -168,8 +185,62 @@ def _hidden_columns(root):
     return hidden
 
 
+def _fill_styles(archive):
+    """A mapping from cellXf index to the fill colour string as stored.
+
+    Returns a dict: {xf_index: fill_description} where fill_description is:
+    - The pattern type for built-in patterns (e.g., 'solid', 'gray125')
+    - For solid fills with colours: the pattern type plus the hex colour
+      (e.g., 'solid FF00FF00'), or the indexed/theme/tint parts of the colour
+    - 'gradient' for a gradient fill, 'other' for any fill that is neither
+    - 'none' for no fill, and the same for a style that does not apply its
+      fill (``applyFill="0"``, ECMA-376 18.8.10)
+    """
+    try:
+        root = ET.fromstring(archive.read('xl/styles.xml'))
+    except KeyError:
+        return {}
+    fills = {}
+    for fill in root.findall('m:fills/m:fill', NS):
+        pattern = fill.find('m:patternFill', NS)
+        if pattern is not None:
+            fills[len(fills)] = _describe_pattern_fill(pattern)
+        elif fill.find('m:gradientFill', NS) is not None:
+            fills[len(fills)] = 'gradient'
+        else:
+            fills[len(fills)] = 'other'
+    xf_fills = {}
+    for index, xf in enumerate(root.findall('m:cellXfs/m:xf', NS)):
+        fill_id = int(xf.get('fillId', '0'))
+        applies = xf.get('applyFill', '1') not in ('0', 'false')
+        xf_fills[index] = fills.get(fill_id, 'none') if applies else 'none'
+    return xf_fills
+
+
+def _describe_pattern_fill(pattern):
+    """Describe a patternFill element as a string."""
+    pattern_type = pattern.get('patternType', 'none')
+    fg_color = pattern.find('m:fgColor', NS)
+    bg_color = pattern.find('m:bgColor', NS)
+    if fg_color is not None and pattern_type == 'solid':
+        rgb = fg_color.get('rgb', '')
+        if rgb:
+            return f'{pattern_type} {rgb}'
+        # Indexed or theme colour
+        parts = [f'{kind}:{fg_color.get(kind)}' for kind in ('indexed', 'theme', 'tint')
+                 if fg_color.get(kind)]
+        if parts:
+            return f'{pattern_type} fg:{",".join(parts)}'
+    if bg_color is not None:
+        rgb = bg_color.get('rgb', '')
+        if rgb:
+            return f'{pattern_type} bg:{rgb}'
+    return pattern_type
+
+
 def read_workbook(path):
-    """Every sheet of a workbook, with its rows' stored cell values as text."""
+    """Every sheet of a workbook, with its rows' stored cell values as text and
+    their fill colours as verbatim fields."""
     try:
         archive = zipfile.ZipFile(path)
     except (zipfile.BadZipFile, OSError) as exc:
@@ -183,6 +254,7 @@ def read_workbook(path):
             root = ET.fromstring(archive.read('xl/sharedStrings.xml'))
             shared = [_text(si) for si in root.findall('m:si', NS)]
         dates = _date_styles(archive)
+        xf_fills = _fill_styles(archive)
         parts, epoch = _workbook(archive)
         sheets = []
         for name, state, part in parts:
@@ -199,6 +271,9 @@ def read_workbook(path):
                     text = _cell_text(cell, shared, dates, epoch)
                     if text != '':
                         record.cells[ref.group(1)] = text
+                    fill = _cell_fill(cell, xf_fills)
+                    if fill:
+                        record.fills[ref.group(1)] = fill
                 rows.append(record)
             sheets.append(Sheet(name, state, rows, _hidden_columns(root)))
         return sheets
