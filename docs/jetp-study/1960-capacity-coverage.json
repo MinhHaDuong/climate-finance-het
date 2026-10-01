@@ -1,0 +1,485 @@
+{
+ "mapped": [
+  {
+   "document": "vnm-decision-1009-2023",
+   "printed": "không quá 30.127 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "vnm-moit-project-index-2026",
+   "printed": "1200MW",
+   "field": "capacity",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "vnm-moit-project-tri-an",
+   "printed": "400MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "vnm-moit-project-tri-an",
+   "printed": "200MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "vnm-moit-project-tri-an",
+   "printed": "1200MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "zaf-jetp-leaders-2022",
+   "printed": "2 600 MW",
+   "field": "previous quantity",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "zaf-jetp-leaders-2022",
+   "printed": "5 200 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "zaf-jetp-leaders-2022",
+   "printed": "1000MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-uasz-vev-thesis-2024",
+   "printed": "40 panneaux solaires (450W/24V)",
+   "field": "panneaux solaires",
+   "kind": "electric power",
+   "unit": "W",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-uasz-vev-thesis-2024",
+   "printed": "2,03 Kw",
+   "field": "puissance",
+   "kind": "electric power",
+   "unit": "Kw",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-uasz-vev-thesis-2024",
+   "printed": "500W",
+   "field": "puissance",
+   "kind": "electric power",
+   "unit": "W",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-uasz-vev-thesis-2024",
+   "printed": "Dans notre cas on a choisi un module polycristallin de 24V/4",
+   "field": "module choisi",
+   "kind": "electric power",
+   "unit": "W",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-uasz-vev-thesis-2024",
+   "printed": "On prend une batterie GEL de 12V /150Ah",
+   "field": "batterie choisie",
+   "kind": "electric charge",
+   "unit": "Ah",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-uasz-vev-thesis-2024",
+   "printed": "C=3000Ah",
+   "field": "capacité",
+   "kind": "electric charge",
+   "unit": "Ah",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-uasz-vev-thesis-2024",
+   "printed": "A=17448,4Wc",
+   "field": "taille du générateur",
+   "kind": "peak electric power",
+   "unit": "Wc",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "1960 MW",
+   "field": "puissance installée",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "gross"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "546,71 MW hydraulique inclus",
+   "field": "puissance installée",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "gross"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "366MW",
+   "field": "capacité",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "120 MW",
+   "field": "capacité",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "20 MW",
+   "field": "capacité",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "88 MWh par jour",
+   "field": "capacité de stockage",
+   "kind": "energy",
+   "unit": "MWh",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "160 MWh",
+   "field": "capacité de stockage",
+   "kind": "energy",
+   "unit": "MWh",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "366 MW",
+   "field": "capacité",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "120MW",
+   "field": "capacité des turbines à gaz",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "1 960,14 MW",
+   "field": "puissance",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "centrale solaire de 12 MWc pour le Port minéralier de Bargny",
+   "field": "centrale",
+   "kind": "peak electric power",
+   "unit": "MWc",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "l’augmentation de la capacité de la centrale de Karpowership",
+   "field": "avenant",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "158,7 MW",
+   "field": "puissance installée",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "gross"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "546,71 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "112,354 MW nette",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "net"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "115 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "de 220 à 335 MW à partir du 10 octobre 2023",
+   "field": "avenant Karpowership",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "12 MWc",
+   "field": "amount",
+   "kind": "peak electric power",
+   "unit": "MWc",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "85,9 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "335 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "900 GWh",
+   "field": "productible annuel",
+   "kind": "energy",
+   "unit": "GWh",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "299,098 GWh",
+   "field": "productible annuel",
+   "kind": "energy",
+   "unit": "GWh",
+   "basis": "unstated"
+  },
+  {
+   "document": "sen-senelec-annual-report-2023",
+   "printed": "612,88 GWh",
+   "field": "productible annuel",
+   "kind": "energy",
+   "unit": "GWh",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "community-based mini-grids, independent power producer (IPP)",
+   "field": "included systems",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "below 10 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "13.3 GW",
+   "field": "total grid-connected renewable",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "12.6 GW in 2022 (+0.7 GW year-on-year)",
+   "field": "comparison",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "+0.7 GW year-on-year",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "3.6 GW target by 2025",
+   "field": "target",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "~100 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "up to 10 MW",
+   "field": "sale limit",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "Around 700–800 MW of capacity",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "over 9 GW of rooftop solar",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "7.1 MW",
+   "field": "combined capacity",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "45 kWp in 2020",
+   "field": "later expansion",
+   "kind": "peak electric power",
+   "unit": "kWp",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "95 kWp of solar capacity",
+   "field": "amount",
+   "kind": "peak electric power",
+   "unit": "kWp",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "30-kW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "kW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "32.3 MWp",
+   "field": "amount",
+   "kind": "peak electric power",
+   "unit": "MWp",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "at least 31.5 GWh of clean electricity annually",
+   "field": "amount",
+   "kind": "energy",
+   "unit": "GWh",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "12.6 GW in 2022",
+   "field": "prior capacity",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "+0.7 GW",
+   "field": "year-on-year addition",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "700–800 MW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "MW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "35 kWp",
+   "field": "capacity",
+   "kind": "peak electric power",
+   "unit": "kWp",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "up from 12.6 GW in 2022 (+0.7 GW year-on-year)",
+   "field": "increase from 2022",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  },
+  {
+   "document": "idn-jetp-small-scale-renewables-finance-2025",
+   "printed": "over 9 GW",
+   "field": "amount",
+   "kind": "electric power",
+   "unit": "GW",
+   "basis": "unstated"
+  }
+ ],
+ "flagged": []
+}

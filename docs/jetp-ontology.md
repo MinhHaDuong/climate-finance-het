@@ -170,14 +170,42 @@ and another may contradict them. A conditionality is an observation on the
 agreement of measure `condition`, whose value is the condition as printed
 and whose `concerns` relation names the party it binds. [M3b]
 
+An agreement's instrument is to be read as a finance type, the OECD DAC CRS
+finance type as IATI publishes it (FinanceType, standard 2.03), imported whole
+as a closed list of its 56 instrument codes and cited by code: grants and
+subsidies `110`, `210`, `310`, `311`; debt `421`, `422`, `4221`, `4222`,
+`423`, `424`, `425`; mezzanine `431`, `432`, `433`, `434`; equity `510`,
+`520`, `530`; debt relief `610`, `611`, `612`, `613`, `614`, `615`, `616`,
+`617`, `618`, `620`, `621`, `622`, `623`, `624`, `625`, `626`, `627`, `630`,
+`631`, `632`, `633`, `634`, `635`, `636`, `637`, `638`, `639`; guarantees
+`1100`, `1101`, `1102`, `1103`, `1104`, `1105`, `1106`, `1107`, `1108`; direct
+provider spending `2100`; subsidies and similar transfers `3100`. The
+publisher's instrument word ("highly concessional", "grants/TA") stays
+verbatim on the line and maps onto a code through a reviewed crosswalk, never
+by a reader; until that crosswalk exists, `instrument` stays the publisher's
+free word. Concessionality is not an instrument: it is the `grant_element`
+observation. An imported external list keeps its own labels as published, so
+finance-type labels are IATI's names, not the ledger's short lowercase labels.
+[M3b]
+
+History: finance type imported and the `owner` and `accountable` roles added
+by the author's decisions of 2026-10-01 (ticket 1960), after the panel v1
+fitness check; `accountable` because a held IATI-style page names it.
+
 ### Party
 
 One organisation, whatever its roles: `funder`, `channel`, `promoter`,
-`implementing_entity`, `beneficiary`, `contractor`, `operator`, or publisher of
-a document. A funder and the channel its money passes through are two
-parties in two roles: "Canada via World Bank and ADB" names three. These
-roles attach to an agreement, a project or an asset through `party_in`; a
-mandate outside any of them (a lead agency, a guarantor, a signatory) goes
+`implementing_entity`, `beneficiary`, `contractor`, `operator`, `owner`,
+`accountable`, or publisher of a document. The `owner` owns a project or an
+asset and answers for it (a record page's project owner, chủ dự án); it is
+neither the `promoter` nor `accountable`, IATI's oversight role, which a held
+IATI-style page names. `funder`, `accountable` and `implementing_entity` carry
+IATI's organisation-role codes 1, 2 and 4; `channel` carries none, since
+IATI's Extending role (an agency managing the funder's money) is not the
+pass-through intermediary. A funder and the channel its money passes through
+are two parties in two roles: "Canada via World Bank and ADB" names three.
+These roles attach to an agreement, a project or an asset through `party_in`;
+a mandate outside any of them (a lead agency, a guarantor, a signatory) goes
 through `role_in` (section 3). [M2 for publishers; M3b for the other roles]
 
 Parties are under authority control. A party row holds no name; its names
@@ -270,7 +298,7 @@ decided it and when. [M2 for keeping the publisher's word; M3b for the crosswalk
 | `concerns` | project | asset | zero or more |
 | `finances` | agreement | project | many-to-many |
 | `tranche_of` | agreement | agreement | at most one active parent |
-| `party_in` | party | agreement, project, asset | one row per role, dated, from the Party roles of section 2: `funder` and `channel` attach to an agreement; `promoter`, `implementing_entity`, `beneficiary` and `contractor` to an agreement or a project; `operator` to an asset or a project; a party may fund one agreement and channel another |
+| `party_in` | party | agreement, project, asset | one row per role, dated, from the Party roles of section 2: `funder` and `channel` attach to an agreement; `promoter`, `implementing_entity`, `beneficiary` and `contractor` to an agreement or a project; `operator` and `owner` to an asset or a project; `accountable` to an agreement or a project; a party may fund one agreement and channel another |
 | `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement: `lead_agency`, `coordinating_agency`, `guarantor`, `endorser`, `signatory`, `host`, `standards_body`; one row per role |
 | `cites` | line | document, line | a document's reference to another document or to a line of it, held or not; an observation's citation of its one line is the observation's `line_id` column, not a relation |
 | `member_of` | line, project, asset, agreement | perimeter | dated, justified membership; a line may be a member before any identity is minted |
@@ -377,16 +405,16 @@ paths are defined in the [storage contract](jetp-ledger-storage.md)
 
 **Definition.** Every word the schema admits as a value is a `terms` row: the
 classes and relations of sections 2 and 3, the line classifications, measures,
-bases, flow types, modalities, date roles, roles, axes and axis values of
-section 4. `kind` says which (`class`, `relation`, `value`); `list` names the
-closed list a value belongs to. The definition is plain English, one or two
-sentences, written for a reader of the Observatory. A relation term also
-states its `domain` and `range`. The DDL's checks read the terms in force; no
-script or configuration file carries its own copy of a list. Sections 2 to 4
-write every value in code type, which is what the alignment test reads; an
-axis's `term_id` names the list of its values, and the OECD DAC purpose codes
-that `sector-crosswalk` maps onto are cited by their five digits, not copied
-as terms. [M2]
+bases, flow types, finance types, modalities, date roles, roles, axes and axis
+values of section 4. `kind` says which (`class`, `relation`, `value`); `list`
+names the closed list a value belongs to. The definition is plain English, one
+or two sentences, written for a reader of the Observatory. A relation term
+also states its `domain` and `range`. The DDL's checks read the terms in
+force; no script or configuration file carries its own copy of a list.
+Sections 2 to 4 write every value in code type, which is what the alignment
+test reads; an axis's `term_id` names the list of its values, and the OECD DAC
+purpose codes that `sector-crosswalk` maps onto are cited by their five
+digits, not copied as terms. [M2]
 
 **Traceability.** A term taken from an external vocabulary names its scheme
 (IATI, OC4IDS, GEM, OECD DAC, PROV-O, SKOS), the concept's URI or code, and a

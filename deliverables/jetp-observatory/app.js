@@ -1791,7 +1791,7 @@ const GLOSSARY_THEMES = [
       "line_classification", "mapping_relation", "retrieval_status", "term_kind"],
   }],
   ["Statuses", { lists: ["asset_state", "axis", "delivery", "money", "project_stage"] }],
-  ["Measures", { lists: ["basis", "flow_type", "marker", "marker_score", "measure", "modality"] }],
+  ["Measures", { lists: ["basis", "finance_type", "flow_type", "marker", "marker_score", "measure", "modality"] }],
   ["Relations", { lists: ["relation"] }],
 ];
 const themeOf = (t) =>

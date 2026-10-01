@@ -441,3 +441,43 @@ def test_the_ddl_uses_no_retired_word():
     schema = ledger_headers.load_schema()
     names = set(schema.tables) | {c for cols in schema.tables.values() for c in cols}
     assert sorted(n for n in names if RETIRED_WORD.search(n)) == []
+
+
+# --- Ticket 1960: amendments from the panel v1 fitness check ---------------------
+
+# The OECD DAC CRS finance types as IATI publishes them (FinanceType, standard
+# 2.03, retrieved 2026-10-01): the 56 active instrument codes. The four
+# statistical codes of category 0 (GNI, ODA % GNI, ...) are not instruments.
+IATI_INSTRUMENT_CODES = {
+    '110', '210', '310', '311', '421', '422', '4221', '4222', '423', '424',
+    '425', '431', '432', '433', '434', '510', '520', '530', '610', '611', '612',
+    '613', '614', '615', '616', '617', '618', '620', '621', '622', '623', '624',
+    '625', '626', '627', '630', '631', '632', '633', '634', '635', '636', '637',
+    '638', '639', '1100', '1101', '1102', '1103', '1104', '1105', '1106',
+    '1107', '1108', '2100', '3100'}
+
+
+def test_finance_types_are_the_iati_instrument_codes(terms):
+    rows = [t for t in terms if t['list'] == 'finance_type']
+    assert {t['term_id'] for t in rows} == IATI_INSTRUMENT_CODES
+    assert all(t['external_scheme'] == 'IATI'
+               and t['external_uri'] == f"FinanceType:{t['term_id']}"
+               and t['mapping_relation'] == 'exactMatch' for t in rows)
+
+
+def test_the_specification_lists_exactly_the_imported_finance_codes():
+    """The doc's inline code list cannot drift from the imported list."""
+    text = ONTOLOGY_DOC.read_text(encoding='utf-8')
+    start = text.index("instrument is to be read as a finance type")
+    paragraph = text[start:text.index('\n\n', start)]
+    assert set(re.findall(r'`(\d{3,4})`', paragraph)) == IATI_INSTRUMENT_CODES
+
+
+def test_owner_is_a_role_and_channel_carries_no_iati_code(terms):
+    roles = {t['term_id']: t for t in terms if t['list'] == 'role'}
+    assert 'owner' in roles and not roles['owner']['external_uri']
+    assert roles['funder']['external_uri'] == 'OrganisationRole:1'
+    assert roles['implementing_entity']['external_uri'] == 'OrganisationRole:4'
+    assert not roles['channel']['external_uri']
+    assert roles['accountable']['external_uri'] == 'OrganisationRole:2'
+    assert 'extending' not in roles
