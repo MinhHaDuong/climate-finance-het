@@ -93,7 +93,8 @@ Two fixes made during integration changed which run is authoritative:
   `t1653-africa-sasia/ceew/` stayed authoritative for 1653 (54 matches, 13
   pages failed, full listing not archived), and the partial rerun is kept as
   an archive only (`README-incomplete.txt`). Ticket 1790 superseded both
-  with a complete reread and a year fix (section Ticket 1790).
+  with a reread of every page the site serves (693 of 706; 13 stale
+  sitemap entries answer 404) and a year fix (section Ticket 1790).
 
 GARUDA's query form carries `from=1990&to=2026`. Whether the server's year
 filter drops records without a year was not probed. Such records may be
@@ -150,7 +151,7 @@ archive.
 | CPD | South Asia | run | WordPress REST listing of 705 publications; en/bn lexicon | |
 | South Centre | Global South | run | REST 401 except /search; category RSS feed, crawl-delay 10 s | |
 | ADB EWP | Asia-Pacific | run | adb.org Cloudflare 403 (robots.txt included); RePEc listing and paper pages on IDEAS | |
-| CEEW | South Asia | run | no API or feed; search and paged listings robots-disallowed; sitemap pages at crawl-delay 10 s | listing reread and archived: 693 of 706 pages; the 13 others are stale sitemap entries that redirect to a 404 page (list in `t1790-ceew/missing-pages.txt`) |
+| CEEW | South Asia | partial | no API or feed; search and paged listings robots-disallowed; sitemap pages at crawl-delay 10 s | listing reread and archived: 693 of 706 pages; the 13 others are stale sitemap entries that redirect to a 404 page (list in `t1790-ceew/missing-pages.txt`) |
 
 ## Strata left incomplete
 

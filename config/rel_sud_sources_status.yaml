@@ -226,7 +226,7 @@ sources:
     stratum: Asia-Pacific
     reason: "adb.org answers a Cloudflare 403, robots.txt included; RePEc listing and paper pages on IDEAS."
   ceew:
-    status: run
+    status: partial
     route: listing
     endpoint: "https://www.ceew.in/sitemap.xml"
     stratum: South Asia (India)
@@ -238,7 +238,7 @@ sources:
       The 13 others are stale sitemap entries: /publications/<slug>
       redirects to a /solutions-factory/ page that answers 404 (checked
       2026-10-01, list in t1790-ceew/missing-pages.txt); no title exists to
-      match. Status run because every page the site serves was read; the
+      match. Partial: every page the site serves was read, but the
       registry row stays incomplete ("13 of 706 pages failed") and the
       delivery manifest lists it. The 1653 run (ceew/, 54 matches, listing
       not archived) is
