@@ -267,6 +267,13 @@ def test_a_misserved_answer_is_recorded_then_stops_the_run(tmp_path, monkeypatch
     assert ledger.spent == pytest.approx(0.01)
 
 
+def test_after_a_closed_fail_no_call_starts(tmp_path):
+    ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
+    ledger.stop()
+    with pytest.raises(client.ClosedFail):
+        ledger.reserve(0.01)
+
+
 def test_the_budget_counts_calls_in_flight(tmp_path):
     ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
     ledger.reserve(6.0)
@@ -285,7 +292,17 @@ def test_the_held_out_part_matches_its_committed_hash_and_shares_no_line():
     digest = (REFERENCE / 'heldout.sha256').read_text().split()[0]
     assert sha256_file(REFERENCE / 'heldout.csv.gz') == digest
     with gzip.open(REFERENCE / 'heldout.csv.gz', 'rt', encoding='utf-8') as fh:
-        heldout = {r['line_id'] for r in csv.DictReader(fh)}
+        heldout = list(csv.DictReader(fh))
     with open(REFERENCE / 'tuning.csv', encoding='utf-8') as fh:
-        tuning = {r['line_id'] for r in csv.DictReader(fh)}
-    assert heldout and tuning and not heldout & tuning
+        tuning = list(csv.DictReader(fh))
+    assert (len(heldout), len(tuning)) == (147, 152)  # the counts the README reports
+
+    def ids(rows):
+        return {r['line_id'] for r in rows}
+
+    def spans(rows):
+        return {(r['document_id'], r['page'], r['start'], r['end']) for r in rows}
+
+    assert not ids(heldout) & ids(tuning)
+    assert not spans(heldout) & spans(tuning)
+    assert len(spans(heldout)) == len(heldout) and len(spans(tuning)) == len(tuning)

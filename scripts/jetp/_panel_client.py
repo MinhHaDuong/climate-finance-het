@@ -79,17 +79,24 @@ class Ledger:
         self.lock = threading.Lock()
         self.spent = 0.0
         self.pending = 0.0
+        self.stopped = False
         if os.path.exists(path):
             with open(path, newline='') as fh:
                 self.spent = sum(float(r['cost_usd'] or 0) for r in csv.DictReader(fh))
 
     def reserve(self, estimate):
         with self.lock:
+            if self.stopped:
+                raise ClosedFail('run stopped by an earlier closed fail')
             if self.spent + self.pending + estimate > self.budget:
                 raise ClosedFail(f'budget: spent {self.spent:.2f} + in flight '
                                  f'{self.pending:.2f} + estimate {estimate:.2f} '
                                  f'> cap {self.budget:.2f} USD')
             self.pending += estimate
+
+    def stop(self):
+        """After a closed fail: no new call, no further attempt."""
+        self.stopped = True
 
     def release(self, estimate):
         with self.lock:
@@ -171,7 +178,10 @@ def call(member, messages, schema, cfg, ledger, document_id, part, retries=4):
             try:
                 response = _request('/chat/completions', body)
             except urllib.error.HTTPError as exc:
-                detail = exc.read().decode('utf-8', 'replace')[:300]
+                try:
+                    detail = exc.read().decode('utf-8', 'replace')[:300]
+                except Exception:  # the body is evidence, not required
+                    detail = '(body unreadable)'
                 response = {'error': f'HTTP {exc.code}: {detail}'}
                 permanent = 400 <= exc.code < 500 and exc.code not in (408, 429)
             except (urllib.error.URLError, TimeoutError) as exc:
@@ -179,7 +189,7 @@ def call(member, messages, schema, cfg, ledger, document_id, part, retries=4):
             ledger.record(_ledger_row(member, cfg, document_id, part, response, started))
             if response.get('choices') and not response.get('error'):
                 break
-            if permanent or attempt == retries - 1:
+            if permanent or ledger.stopped or attempt == retries - 1:
                 raise ClosedFail(f"{member['key']} {document_id} part {part}: "
                                  f"no answer after {retries} attempts: {response.get('error')}")
             time.sleep(60 * (attempt + 1))

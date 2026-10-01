@@ -13,6 +13,7 @@ Closed: delivered: panel reference set v1, data/jetp/reference/panel-v1/
 2026-10-01T06:47Z HDMX-coding-agent unlabel needs-human
 2026-10-01T08:18Z HDMX-coding-agent note delivered: data/jetp/reference/panel-v1/ (README is the set's record). Panel A openai/gpt-5.6-sol via Azure, B x-ai/grok-4.7 via xAI, D z-ai/glm-5.3 via Parasail, all pinned zero-retention; C moonshotai/kimi-k3 failed the positive control (composed labels) and was replaced, not weighted. Prompt v3 after two control rounds; text layer v2 (pdftotext -raw) after layer v1 (-layout) interleaved the Vietnamese newsletter columns, every PDF re-read. 299 lines (152 tuning, 147 held out, 66 high, 233 medium), target ~450; only ZAF en prose span (50) and ZAF en table row (35) reach 30 held-out items, all other strata named uncalibrated. Pool reconciled: 115 pending = 109 readable + 2 JSON + 2 JavaScript + 2 spreadsheets (the draft's 111 removed bulk data first). Spend USD 8.87 of the accepted 10-48; ZDR routes priced above the estimate (OpenAI only via Azure at 4/20), the runner capped spend at USD 48.
 2026-10-01T08:19Z HDMX-coding-agent closed — delivered: panel reference set v1, data/jetp/reference/panel-v1/
+2026-10-01T08:33Z HDMX-coding-agent note correction (PR 1664 review): ZAF en table row reaches 35 held-out lines by count but is treated as uninformative, 32 of them from the grants register and 30 of those agreed by A and B with D absent; only ZAF en prose span (50, 35 from one document) is informative. The delivered note above overstated it.
 --- body ---
 ## Outcome (2026-10-01)
 

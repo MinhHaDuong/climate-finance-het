@@ -160,10 +160,12 @@ Counts of the layer v2 reading, from `counts.csv`; rows classed
 fallback of extraction § 6.3 (pooled mapping of the language, every item to
 the arbiter, named uncalibrated): IDN en prose span, SEN fr prose span, VNM
 vi prose span, VNM vi record page, VNM vi table row, ZAF en record page.
-ZAF en prose span (50, from three documents) reaches 30. ZAF en table
-row reaches 35 by count but is **treated as uninformative**: 32 of its 35
-held-out lines come from one document, the grants register, and 31 of them
-are medium lines that A and B agree on with D absent (D lost the
+ZAF en prose span (50) reaches 30, though concentrated: 35 of its 50
+held-out lines come from one document (`zaf-jet-grants-faq-2024`), 13 and 2
+from two others. ZAF en table row reaches 35 by count but is **treated as
+uninformative**: 32 of its 35 held-out lines come from one document, the
+grants register, and 30 of those 32 are medium lines that A and B agree on
+with D absent (D lost the
 register's rows, below), so the stratum rests on one document and two
 effective members. It becomes informative only with a second table
 document read by all three members. Not drawn
@@ -215,7 +217,7 @@ answers by rule (extraction § 6.4).
 | `rows.csv.gz` | every proposed row of the current layers, resolved or dropped with the reason |
 | `tuning.csv` | reference lines of the tuning part |
 | `heldout.csv.gz`, `heldout.sha256` | the sealed held-out part and its hash |
-| `counts.csv` | rows, items and lines per country, language and shape |
+| `counts.csv` | rows, items, lines and medium lines by third member per country, language and shape |
 
 Rebuild: `PYTHONPATH=scripts:libs/openalex-corpus/src uv run python
 scripts/jetp/build_panel_reference.py {select,control,read,build}`. Only

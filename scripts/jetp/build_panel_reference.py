@@ -457,7 +457,9 @@ def cmd_read(cfg, out, only=None):
             for future in as_completed(futures):
                 log.info('kept %s (spent USD %.2f)', future.result().name, ledger.spent)
         except BaseException:
-            # A closed fail sends no further document: queued calls are cancelled.
+            # A closed fail sends no further document: queued calls are
+            # cancelled and calls in flight make no further attempt.
+            ledger.stop()
             pool.shutdown(wait=True, cancel_futures=True)
             raise
     collect(cfg, out, selection, layers)
@@ -534,6 +536,8 @@ def cmd_build(cfg, out):
     (out / 'heldout.sha256').write_text(f"{sha256_file(out / 'heldout.csv.gz')}  heldout.csv.gz\n")
     for r in lines:
         counts[(r['country'], r['language'], r['shape'], f"line {part[r['line_id']]}")] += 1
+        if r['third_member']:
+            counts[(r['country'], r['language'], r['shape'], f"medium third {r['third_member']}")] += 1
     _write(out / 'counts.csv',
            [{'country': k[0], 'language': k[1], 'shape': k[2], 'measure': k[3], 'n': v}
             for k, v in sorted(counts.items())],

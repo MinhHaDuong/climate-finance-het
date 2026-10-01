@@ -14,6 +14,7 @@ Blocked-by: 1890
 2026-10-01T06:49Z HDMX-coding-agent note exit criterion on reference answers amended: "made by hand" replaced by the cross-vendor panel reference set of [[1895]], named as panel agreement, following the Q17 amendment (PR #1654, author decision 2026-10-01).
 2026-10-01T08:18Z HDMX-coding-agent note [[1895]] delivered the panel reference set (data/jetp/reference/panel-v1/): split once by seed 1895, stratified by country, language and shape, held-out part sealed by a committed hash. 147 held-out lines; strata under 30 held-out items are named in its README and run under the fallback. Panel makers OpenAI, xAI, Z.ai: no GLM model may be selected as reader or arbiter without a new set version.
 2026-10-01T08:19Z HDMX-coding-agent note blocker 1895 closed — Blocked-by removed.
+2026-10-01T08:33Z HDMX-coding-agent note correction: of the panel strata, only ZAF en prose span is informative; ZAF en table row (35 held-out lines) rests on one document read by two members and is treated as uninformative (data/jetp/reference/panel-v1/README.md).
 --- body ---
 ## Context
 
