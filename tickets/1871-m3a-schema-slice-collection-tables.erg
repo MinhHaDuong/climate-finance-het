@@ -1,0 +1,40 @@
+%erg 0.1
+Title: M3a schema slice: rounds, candidates, triage judgements, known items, tracker claims and retrieval columns
+Created: 2026-10-01
+Author: HDMX-coding-agent
+Blocked-by: 1870
+
+--- log ---
+2026-10-01T05:40Z HDMX-coding-agent created — M3a slice of [[1702]] (split by milestone, author decision 2026-10-01, interactive: D4 hygiene); criteria moved verbatim from 1702, tagged [M3a] there
+
+--- body ---
+## Context
+
+Split from [[1702]]. This child holds the storage targets that the M3a
+discovery campaign needs: the round log, candidates and their triage, the
+known-item list, the tracker claims of the secondary-to-primary pass, and
+the M3a columns of `retrievals` and `documents`. Normative text: the
+accepted specification v1 (tag `jetp-spec-v1`), `docs/jetp-collection.md`
+§§ 3 to 9 and 12, storage contract `docs/jetp-ledger-storage.md` § 1
+(target schema).
+
+Blocked by [[1870]]: the triage judgements live under the same in-force
+rule, the candidate fetches name a `run_id`, and both slices migrate the
+same DDL, so running them in parallel would collide.
+
+Where the `known-items` table physically lives before the freeze is an open
+point of the spec, recorded on [[1878]]: collection § 6 keeps the list
+outside the repository, sealed by its hash, until the freeze.
+
+## Exit criteria
+
+- [ ] The vocabulary pass's proposed schema changes (ticket 1703) are decided and, where accepted, migrated: the D1 `coverage` table, which records the search per listed referent, is renamed to say search (for example `referent-searches`), and the round log and unreachable list of `docs/jetp-collection.md` § 5 and § 8 get tables of their own; the authority category `secondary_source` is renamed so that the retired word *source* leaves the schema; the retrieval statuses `not_published` and `not_applicable`, which are verdicts rather than fetch outcomes, are related to collection's terminal verdicts
+- [ ] `retrievals.collection_method` takes the five rung names of collection § 8 (`script`, `browser-session`, `browser-automated`, `browser-manual`, `web-archive`) plus `local-record`, as terms in force (W1-23, W1-45)
+- [ ] `retrievals` carries `archive_url`, the public archive capture of the document's address (W1-28)
+- [ ] `retrievals` carries a nullable `candidate_id`, so a fetch made to triage a candidate is a retrieval (W2-15)
+- [ ] `documents` carries `class` (frozen, living, series) as a dated judgement (W1-23, W1-54)
+- [ ] The M3a collection tables exist with their columns and validator rules: `frame-entries` keyed by kind and `party_id` or `line_id`, `rounds`, `candidates`, `triage-judgements` under the in-force rule, `known-items`, `tracker-claims` (W1-23)
+- [ ] The validator requires `terms_position`, `robots_position` and `registration_used` non-empty on retrievals made from M3a on (W1-29, W2-10, W2-20; the columns are [[1870]])
+- [ ] `documents.hosted_reading` is set from the latest retrieval's `terms_position` by rule (X-07; the column and the no-hosted-call rule are [[1870]])
+- [ ] The storage contract § 1 describes what the code does for the tables of this slice
+- [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-domain-jetp` pass

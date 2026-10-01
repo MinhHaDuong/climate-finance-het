@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Matching judgements as calibrated stances with a cutoff per result; storage and code follow fusion
+Title: Storage targets of the accepted spec, by milestone (tracker; matching judgements in 1872)
 Created: 2026-09-30
 Author: HDMX-coding-agent
 
@@ -16,6 +16,7 @@ Author: HDMX-coding-agent
 2026-09-30T23:00Z HDMX-coding-agent note exit criteria added and amended from spec review wave 2 (ticket 1711): dispositions and restatements journals, line status columns, readings and runs corrections, journal terms, locator syntax, candidate_id, observation columns (W2-01 to W2-23, W2-56)
 
 2026-09-30T20:40Z HDMX-coding-agent note blocker 1711 closed — Blocked-by removed.
+2026-10-01T05:45Z HDMX-coding-agent decision split into milestone slices (author decision 2026-10-01, interactive: D4 hygiene; about 40 criteria across M2, M3a and M3b under a title about matching): [[1870]] M2, [[1871]] M3a, [[1872]] M3b (keeps the matching subject); criteria moved verbatim, the M4 target stays here; this ticket becomes their tracker
 --- body ---
 ## Context
 
@@ -41,49 +42,20 @@ Author decisions (2026-09-30, interactive):
 4. Analyst-defined counting scopes leave the ontology's `perimeters`: the
    World Bank reference pool in `data/jetp/ontology/perimeters.csv` is one.
 
+## Slices (split 2026-10-01)
+
+The exit criteria of this ticket were moved, verbatim, into one child per
+milestone, so each lands as one sign-off unit with the milestone that needs
+it (`docs/jetp-spec.md` § Milestones):
+
+| Child | Milestone | Scope |
+|---|---|---|
+| [[1870]] | M2 | in-force rule, judgement columns, `readings`, `runs`, `dispositions` and `restatements` journals, `run_id`, line status columns, locator syntax, journal `terms`, access-route and terms columns, `hosted_reading` |
+| [[1871]] | M3a | rounds, candidates, triage judgements, known items, tracker claims, frame entries, M3a retrieval and document columns |
+| [[1872]] | M3b | matching judgements with a cutoff per result, counting scopes, observations, assets, parties, crosswalks, correction overlay |
+
 ## Exit criteria
 
-- [ ] The in-force rule keeps an accepted decision in force while a later revision is only proposed; a red test replays a candidate superseding an accepted row
-- [ ] A matching judgement records a stance, an IPCC likelihood term and an IPCC confidence level; the `matching.panel` rule emits them; existing `confidence` values are mapped by a stated, reviewed rule
-- [ ] Every derived result declares its matching cutoff in its run record, and the observatory's counts are produced at that cutoff; figures at the current default are unchanged or each change is explained
-- [ ] Counting scopes are stored apart from publisher-stated perimeters, and nothing in the build reads the World Bank pool as a perimeter
+- [ ] [[1870]], [[1871]] and [[1872]] are closed
 - [ ] The storage contract § 1 and § 4 describe what the code does
-- [ ] A statement (line) records the method, method version and reviewer (checking reader, and the author where they decided) that read it, as `docs/jetp-extraction.md` § 3 requires
-- [ ] The statement identifier scheme says how ordinals continue across snapshots of one document, so a new snapshot's statements get new identifiers without collision (`docs/jetp-extraction.md` § 9)
-- [ ] Proposed schema changes from the vocabulary pass (ticket 1703) are decided and, where accepted, migrated: the D1 `coverage` table, which records the search per listed referent, is renamed to say search (for example `referent-searches`), and the round log and unreachable list of `docs/jetp-collection.md` § 5 and § 8 get tables of their own; the authority category `secondary_source` is renamed so that the retired word *source* leaves the schema; the retrieval statuses `not_published` and `not_applicable`, which are verdicts rather than fetch outcomes, are related to collection's terminal verdicts; the report's proposed rename of the row status `candidate` to `proposed` is decided (its verifier advised against it)
-- [ ] `line-referents` and `relations` carry `recorded_at` (ledger write time) beside `decided_at`, and a DDL test replays the as-of case of the storage contract § 1: A accepted, B superseding A recorded after K, the state at K returns A (review wave 1, W1-06)
-- [ ] `line-referents` and `relations` carry `basis` (the quoted basis) beside stance, likelihood and confidence, and `adjudications` carries `method`, `method_version`, stance, likelihood, confidence, basis and a justification (W1-08)
-- [ ] `line-referents.justification_line_ids` is replaced by rows of a relation table, one per decision row and justification line (W1-08)
-- [ ] `line-field-specs` is keyed by document and table segment and maps each printed header, with its unit and scale wording, to a field name under a versioned mapping, naming the document type or series the list was copied from (W1-13, W2-03)
-- [ ] `lines.classification` is NOT NULL in the DDL (W1-40)
-- [ ] `documents.edition_of` is dropped; the `relations` row is the one home of an edition relation (W1-44)
-- [ ] The writer splits an oversized `line-fields/<document_id>` into numbered `.d/NN.csv` shards, and a living document's fields table by year of `recorded_at` (W1-14, W1-53)
-- [ ] The validator checks prose locators as start and end anchors derived from the verbatim quote (extraction § 5) on lines admitted after the rule, and accepts `text` as the table segment of a prose line identifier (W1-02, W1-09)
-- [ ] A `document-addresses` table records a document's addresses with the date from which each holds, and the validator counts a retrieval of any recorded address as a retrieval of the document [M4] (W1-51)
-- [ ] `retrievals.collection_method` takes the five rung names of collection § 8 (`script`, `browser-session`, `browser-automated`, `browser-manual`, `web-archive`) plus `local-record`, as terms in force [M3a] (W1-23, W1-45)
-- [ ] `retrievals` carries `archive_url`, the public archive capture of the document's address [M3a] (W1-28)
-- [ ] `retrievals` carries a nullable `candidate_id`, so a fetch made to triage a candidate is a retrieval [M3a] (W2-15)
-- [ ] `documents` carries `class` (frozen, living, series) as a dated judgement [M3a] (W1-23, W1-54)
-- [ ] The M3a collection tables exist with their columns and validator rules: `frame-entries` keyed by kind and `party_id` or `line_id`, `rounds`, `candidates`, `triage-judgements` under the in-force rule, `known-items`, `tracker-claims` [M3a] (W1-23)
-- [ ] `assets.operator_party_id` is dropped, and the `party_in` term's range covers agreement, project and asset with the Party roles as its closed list [M3b] (W1-32)
-- [ ] `party-names` carries a `preferred` flag, the form type `preferred` is retired from the terms in force, and the validator keeps exactly one preferred form in force per party [M3b] (W1-33)
-- [ ] `adjudications.decision_type` accepts `revision` and `preference` as terms in force, with their member roles [M3b] (W1-38)
-- [ ] `status-crosswalk` and `sector-crosswalk` carry `mapping_relation`, required on accepted rows [M3b] (W1-64)
-- [ ] The validator refuses a `same_as` chain between referents deeper than one [M3b] (W1-31)
-- [ ] The as-of builder applies a named correction overlay (storage contract § 1) for a correction release [M3b] (W1-36)
-- [ ] `lines` carries `run_id`, `method` and `method_version`; `observations`, `line-referents`, `relations` and `adjudications` carry `run_id` beside their method columns; every `run_id` names a `runs` row (W1-01)
-- [ ] A `readings` table, append-only under the in-force rule, holds one row per reader proposal, arbitration and author decision (roles `reader`, `second_reader`, `arbiter`, `author`), rejected and undetermined proposals included, with the fields of the storage contract § 1 (target journals), tokens, cost and GPU seconds among them, sharded by run; the validator checks that every assisted-reading line has a row from each reader that proposed it, and an `arbiter` row unless the two readers agreed (W1-01, W2-12, W2-21, W2-23)
-- [ ] A `runs` table, append-only, holds one row per run, written at its start with the state `running` and superseded at its end by the final state; a `running` row whose session is gone is closed as `failed`; no list column (W1-01, W2-11)
-- [ ] `lines` carries `status`, `supersedes`, `hidden` and `adapter_version`; a DDL test shows a superseded line absent from the in-force view and present in the as-of state before its supersession; counts read in-force lines only (W1-01, W2-01)
-- [ ] A `dispositions` table, append-only under the in-force rule, holds one row per disposition with the fields of the storage contract § 1, its kind a `terms` row (the eight kinds of extraction § 7), and the validator checks the kind's grain against whether a snapshot is named (W1-01, W2-01)
-- [ ] A `restatements` table, append-only, holds line-to-origin and whole-snapshot restatements with the adapter version; the validator refuses a restatement whose origin is itself a restatement (W2-02)
-- [ ] The closed lists of the journals are `terms` rows: extraction method, reading role, stance, outcome, step at fault, run state, `hosted_reading` (W2-22)
-- [ ] The locator syntax covers a record with no publisher identifier (ordinal and hash of its canonical serialisation) and a transcribed region (page index and page-normalised rectangle) (W2-09, W2-14)
-- [ ] `observations` carries `own_status_axis` and `missing_reason` (a closed `terms` list) [M3b] (W2-56)
-- [ ] Full raw model responses are stored under their hash in the DVC document store, beside the document bytes, and each `readings` row points to its response by hash (W1-01)
-- [ ] `retrievals` carries `terms_position` (with the value processing reserved), `robots_position` and `registration_used`, and `documents` carries `access_route_kind` and `registration` [M2]; the validator requires a route kind on every held document [M2] and the rest non-empty [M3a] (W1-29, W2-10, W2-20)
-- [ ] The validator accepts an assertion index in a prose locator and checks (`sha256`, `locator`) uniqueness with it, so several statements on one span are distinct (X-03)
-- [ ] `lines` carries a nullable `attributed_party_id`, a foreign key into `parties`, empty meaning the document's publishers jointly (X-04)
-- [ ] A `line-groups` relation table (line_id, heading_line_id) replaces `lines.groups`, so a line can sit under several headings and method notes (X-22)
-- [ ] `projects.aliases` is dropped; a project's other names are read from the labels of its attached lines [M3b] (X-22)
-- [ ] `documents` carries `hosted_reading` (`allowed`, `local_only`), set from the latest retrieval's `terms_position` by rule [M3a], and no hosted call is made for a `local_only` document; each `runs` row records the endpoint and the data-collection and retention settings of its hosted calls (X-07, W2-20)
+- [ ] [M4, not built before M4] A `document-addresses` table records a document's addresses with the date from which each holds, and the validator counts a retrieval of any recorded address as a retrieval of the document (W1-51)
