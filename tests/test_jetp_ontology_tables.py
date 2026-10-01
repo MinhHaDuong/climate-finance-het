@@ -465,6 +465,14 @@ def test_finance_types_are_the_iati_instrument_codes(terms):
                and t['mapping_relation'] == 'exactMatch' for t in rows)
 
 
+def test_the_specification_lists_exactly_the_imported_finance_codes():
+    """The doc's inline code list cannot drift from the imported list."""
+    text = ONTOLOGY_DOC.read_text(encoding='utf-8')
+    start = text.index("instrument is to be read as a finance type")
+    paragraph = text[start:text.index('\n\n', start)]
+    assert set(re.findall(r'`(\d{3,4})`', paragraph)) == IATI_INSTRUMENT_CODES
+
+
 def test_owner_is_a_role_and_channel_carries_no_iati_code(terms):
     roles = {t['term_id']: t for t in terms if t['list'] == 'role'}
     assert 'owner' in roles and not roles['owner']['external_uri']
