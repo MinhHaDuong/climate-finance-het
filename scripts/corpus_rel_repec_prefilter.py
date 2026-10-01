@@ -26,7 +26,7 @@ Subcommands (padme for texts/embed/fit; the Opus sample anywhere with the key):
              blocks, throughput logged;
 - ``fit``    5-fold out-of-fold scores, threshold, validation measures, the frozen
              model (``model.npz`` + sha256) and ``scores.csv`` for the delivered records;
-- ``opus-sample`` / ``opus-report``: a fresh Opus sample of delivered records,
+- ``opus-sample``: a fresh Opus sample of delivered records,
              stratified by the drop decision, against distribution shift.
 
 Text of a work: ``title + ". " + abstract[:2000]`` (as the Jev-pilot router).
@@ -120,14 +120,19 @@ def build_texts(pool_csv: str, screen_csv: str, labels_csv: str, delivery: str |
                     "weight": "", "stratum": "", "text": text_of(p.title, p.abstract)})
     # a work used for validation is never trained on
     out = [o for o in out if not (o["role"] == "train" and o["key"] in held)]
+    sentinel_works = set()
     for path in sentinel_files:
         for s in csv.DictReader(open(path, encoding="utf-8")):
             p = by_oa.get(s.get("openalex_id", "")) or by_doi.get((s.get("doi") or "").lower())
+            if p is not None:
+                sentinel_works.add(p.work_key)
             text = text_of(p.title, p.abstract) if p is not None else text_of(s.get("title", ""), "")
             out.append({"key": f"sentinel:{os.path.basename(path)}:{s['sentinel']}", "role": "sentinel",
                         "label": "icf", "source": os.path.basename(path),
                         "weight": "", "stratum": s.get("set", ""), "text": text,
                         "has_abstract": bool(p is not None and p.abstract)})
+    # a sentinel work is validation, every sentinel set included: never a training row
+    out = [o for o in out if not (o["role"] == "train" and o["key"] in sentinel_works)]
     return out + (delivery_texts(delivery, recall_sentinels) if delivery else [])
 
 
@@ -448,6 +453,64 @@ def _upper95(k: int, n: int) -> float:
     return float(beta.ppf(0.975, k + 1, n - k)) if n else 1.0
 
 
+def remap_embeddings(old_npz: str, old_texts: str, new_texts: str, out_npz: str) -> dict:
+    """Carry delivered-record embeddings over to a re-delivery: an old key
+    (raw RePEc handle) maps to ``norm_handle`` of it, and a vector is kept only
+    when the new delivery holds that record with a byte-identical text."""
+    import numpy as np
+    from _redif import norm_handle
+
+    def texts(path: str) -> dict[str, str]:
+        return {r["key"]: r["text"] for r in map(json.loads, open(path, encoding="utf-8"))
+                if r["role"] == "repec"}
+    old, new = texts(old_texts), texts(new_texts)
+    z = np.load(old_npz, allow_pickle=True)
+    keys, vecs, c = [], [], Counter()
+    for k, v in zip(z["keys"], z["vectors"]):
+        key, role = k.split("\t")
+        if role != "repec":
+            c["other_role"] += 1
+            continue
+        nk = norm_handle(key) or key
+        if nk not in new:
+            c["absent_from_new_delivery"] += 1
+        elif new[nk] != old.get(key):
+            c["text_changed"] += 1
+        else:
+            c["kept"] += 1
+            keys.append(nk + "\trepec")
+            vecs.append(v)
+    np.savez(out_npz, vectors=np.array(vecs, dtype=np.float32), keys=np.array(keys, dtype=object))
+    return dict(c)
+
+
+def opus_rescore(results: list[dict], scores_csv: str) -> dict:
+    """The existing Opus sample read again at a new threshold, labels reused.
+
+    The sample was drawn as two simple random samples, from the old drop and
+    old keep regions. Each record is re-classed by the new decision; the part
+    of an old stratum that falls in a new region is a simple random sample of
+    that intersection, so the ICF bound is reported per intersection."""
+    from _redif import norm_handle
+    dec = {r["key"]: r["drop"] for r in csv.DictReader(open(scores_csv, encoding="utf-8"))
+           if r["role"] == "repec"}
+    cells: dict[str, list[dict]] = defaultdict(list)
+    missing = 0
+    for r in results:
+        k = norm_handle(r["key"]) or r["key"]
+        if k not in dec:
+            missing += 1
+            continue
+        cells[f"old_{r['stratum']}__new_{'drop' if dec[k] == '1' else 'keep'}"].append(r)
+    out: dict = {"not_scored": missing}
+    for cell, g in sorted(cells.items()):
+        k = sum(r["label"] == "icf" for r in g)
+        out[cell] = {"n": len(g), "labels": dict(Counter(r["label"] for r in g)), "icf": k,
+                     "icf_rate_upper95": round(3.0 / len(g) if k == 0 else _upper95(k, len(g)), 4),
+                     "icf_keys": [r["key"] for r in g if r["label"] == "icf"]}
+    return out
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -480,7 +543,26 @@ def main(argv: list[str] | None = None) -> int:
     o.add_argument("--keyfile", default="~/.config/keys/openrouter.env")
     o.add_argument("--key-var", default="OPENROUTER_API_KEY_CLIMATEFINANCE")
     o.add_argument("--output", required=True)
+    m = sub.add_parser("remap-embeddings")
+    m.add_argument("--embeddings", required=True)
+    m.add_argument("--old-texts", required=True)
+    m.add_argument("--texts", required=True)
+    m.add_argument("--output", required=True)
+    r = sub.add_parser("opus-rescore")
+    r.add_argument("--opus-sample", required=True)
+    r.add_argument("--scores", required=True)
+    r.add_argument("--output", required=True)
     a = ap.parse_args(argv)
+    if a.cmd == "remap-embeddings":
+        log.info(json.dumps(remap_embeddings(a.embeddings, a.old_texts, a.texts, a.output)))
+        return 0
+    if a.cmd == "opus-rescore":
+        res = [json.loads(line) for line in open(a.opus_sample, encoding="utf-8")]
+        summ = opus_rescore(res, a.scores)
+        with open(a.output, "w", encoding="utf-8") as fh:
+            json.dump(summ, fh, indent=1)
+        log.info(json.dumps(summ, indent=1))
+        return 0
     if a.cmd == "texts":
         rows = build_texts(a.pool, a.screen, a.labels, a.delivery, a.sentinels, a.recall_sentinels)
         with open(a.output, "w", encoding="utf-8") as fh:

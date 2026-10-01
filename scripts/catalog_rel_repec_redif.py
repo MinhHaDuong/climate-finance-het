@@ -83,7 +83,7 @@ def parse_file(path: str, root: str) -> tuple[list[dict], list[tuple[str, str]],
     c["files_redif"] += 1
     text, enc = _redif.decode(raw)
     if enc != "utf-8":
-        c["files_cp1252"] += 1
+        c["files_" + enc] += 1
     rel = os.path.relpath(path, root)
     for tpl in _redif.iter_templates(text):
         t = _redif.template_type(tpl) or "(none)"
@@ -93,8 +93,10 @@ def parse_file(path: str, root: str) -> tuple[list[dict], list[tuple[str, str]],
         if t not in _redif.WORK_TYPES:
             continue
         row = _redif.to_row(tpl)
+        if row["handle_raw"]:
+            c["handles_normalised"] += 1
         if not row["handle"]:
-            c["works_without_handle"] += 1
+            c["works_without_handle" if not row["handle_raw"] else "works_with_invalid_handle"] += 1
             continue
         row["source_file"] = rel
         row["encoding"] = enc

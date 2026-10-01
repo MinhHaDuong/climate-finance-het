@@ -106,7 +106,7 @@ def test_run_and_deliver_meets_the_contract(units, tmp_path):
     recs = list(csv.DictReader(open(out / "records.csv", encoding="utf-8")))
     assert [r["record_id"] for r in recs] == ["RePEc:aaa:wpaper:1", "RePEc:bbb:journl:4"]
     r0 = recs[0]
-    assert r0["query_id"] == r0["query_ids"].split("|")[0]
+    assert r0["query_id"] == r0["query_ids_all"].split(";")[0]
     assert r0["url"] == "https://econpapers.repec.org/RePEc:aaa:wpaper:1"
     assert r0["doc_type"] == "working-paper" and r0["first_author"] == "Doe, Jane"
     assert recs[1]["doi"] == "10.1000/abc" and recs[1]["url"] == "https://doi.org/10.1000/abc"
@@ -160,3 +160,18 @@ def test_plan_matches_the_1652_entry_point():
     theirs = [(s["search_id"], s["query_string"]) for s in cs.plan_queries(causal, fams, sens)]
     ours = [(s["search_id"], s["query_string"]) for s in rs.plan_queries(causal, fams, sens)]
     assert ours == theirs
+
+
+def test_no_phrase_match_across_fields():
+    rows = [row("RePEc:a:b:1", "Aid and the climate", abstract="Finance flows to Africa")]
+    texts = rs.folded_texts(rows)
+    assert not lq.matches(texts[0], "climate finance")
+    assert lq.matches(texts[0], "finance flow")
+
+
+def test_indic_words_keep_their_vowel_signs():
+    t = lq.fold("जलवायु वित्त और विकास")
+    assert t == " जलवायु वित्त और विकास "
+    assert lq.matches(t, "जलवायु वित्त")
+    assert not lq.matches(t, "जलव")
+    assert lq.fold("Financement climatique") == " financement climatique "

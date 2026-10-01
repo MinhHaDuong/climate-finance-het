@@ -8,7 +8,8 @@ and the declared JEL filter. It writes a delivery in the layout of
 
 - every record any unit retrieved, once, keyed by its RePEc handle
   (``record_id``); ``query_id`` is the first unit in registry order that
-  retrieved it, and the extra column ``query_ids`` lists them all;
+  retrieved it, and the extra column ``query_ids_all`` lists them all
+  (``;``-joined, the 1530 and 1653 spelling);
 - a record with neither DOI nor year has no deduplication key under the
   contract (a RePEc handle is not a CNRI Handle, and an EconPapers or IDEAS
   page is a landing page): it goes to ``excluded.csv`` as ``no_dedup_key``,
@@ -65,7 +66,7 @@ RECORD_FIELDS = [
     "abstract_provenance", "url", "affiliation_countries", "version_hint",
     "lane_status", "lane_note",
     # extra columns, carried by the pool
-    "query_ids", "jel", "keywords", "series_handle", "template_type",
+    "query_ids_all", "jel", "keywords", "series_handle", "template_type",
 ]
 REGISTRY_FIELDS = ["query_id", "platform", "query", "run_at", "n_received", "completed",
                    "filter", "n_expected", "stop_reason", "source", "question",
@@ -202,8 +203,10 @@ def unit_query_string(u: dict) -> str:
 # --- running them ---------------------------------------------------------------
 
 def folded_texts(rows: list[dict]) -> list[str]:
-    return [lq.fold(" . ".join((r.get("title") or "", r.get("abstract") or "", r.get("keywords") or "")))
-            for r in rows]
+    """Each field folded on its own and joined by ``|``, which ``fold`` never
+    emits and no phrase contains: a phrase cannot match across the end of the
+    title and the start of the abstract."""
+    return ["|".join(lq.fold(r.get(k) or "") for k in ("title", "abstract", "keywords")) for r in rows]
 
 
 def _chunk_hits(args: tuple[list[str], list[str], int]) -> dict[str, list[int]]:
@@ -301,7 +304,7 @@ def to_record(r: dict, qids: list[str], retrieved_at: str) -> dict:
         "url": ("https://doi.org/" + doi) if doi else econpapers_url(r["handle"]),
         "affiliation_countries": "", "version_hint": "",
         "lane_status": "candidate", "lane_note": "; ".join(note),
-        "query_ids": "|".join(qids), "jel": r.get("jel") or "",
+        "query_ids_all": ";".join(qids), "jel": r.get("jel") or "",
         "keywords": r.get("keywords") or "", "series_handle": r.get("series_handle") or "",
         "template_type": r.get("template_type") or "",
     }
@@ -444,7 +447,7 @@ def sentinel_recall(rows: list[dict], delivered: dict[str, str], paths: list[str
                         "set": s.get("set", ""), "class": s.get("class", ""),
                         "family": s.get("family", ""), "title": s.get("title", ""),
                         "in_mirror": bool(handles), "retrieved": bool(got),
-                        "handles": "|".join(handles), "query_ids": "|".join(delivered[h] for h in got)})
+                        "handles": "|".join(handles), "query_ids": ";".join(delivered[h] for h in got)})
     return out
 
 
@@ -500,7 +503,7 @@ def cmd_recall(a: argparse.Namespace) -> int:
     rows = load_rows(a.table)
     rec = pd.read_csv(os.path.join(a.delivery, "records.csv"), dtype=str).fillna("")
     exc = pd.read_csv(os.path.join(a.delivery, "excluded.csv"), dtype=str).fillna("")
-    delivered = dict(zip(rec.record_id, rec.query_ids))
+    delivered = dict(zip(rec.record_id, rec.query_ids_all))
     delivered.update(dict(zip(exc.record_id, exc.query_id)))
     res = sentinel_recall(rows, delivered, [_cfg_path(p) for p in a.sentinels])
     out = {"sentinels": summarize_sentinels(res), "aer_1990_1998": aer_recall(rows, a.toc_1650)}

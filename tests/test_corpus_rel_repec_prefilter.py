@@ -126,3 +126,56 @@ def test_label_register_prefers_adjudicated(tmp_path):
     rows = labels.build(str(a))
     assert [(r["openalex_id"], r["label"], r["split"]) for r in rows] == [
         ("W1", "aux", "heldout"), ("W2", "icf", "train")]
+
+
+def test_sentinel_works_never_train(tmp_path):
+    """Replays the PR 1640 defect: a reserve sentinel that is also a register
+    training row was scored in-sample."""
+    pool = tmp_path / "pool.csv"
+    pd.DataFrame([
+        {"work_key": "openalex:W1", "openalex_id": "W1", "doi": "", "title": "A", "abstract": "a"},
+        {"work_key": "openalex:W2", "openalex_id": "W2", "doi": "10.1000/s", "title": "B", "abstract": "b"},
+    ]).to_csv(pool, index=False)
+    screen = tmp_path / "screen.csv"
+    pd.DataFrame([{"work_key": "openalex:W2", "openalex_id": "W2", "stage": "2",
+                   "model": "claude-code-subagent:opus", "label": "icf", "labelled_at": "1",
+                   "source": "x/chunk01.opus.txt"}]).to_csv(screen, index=False)
+    lab = tmp_path / "labels.csv"
+    pd.DataFrame([{"openalex_id": "W1", "label": "icf", "label_source": "ref", "split": "train",
+                   "stratum": "topup:sentinel-a", "weight": ""}]).to_csv(lab, index=False)
+    sen = tmp_path / "sen.csv"
+    pd.DataFrame([{"sentinel": "S1", "set": "holdout", "openalex_id": "W1", "doi": "", "title": "A"},
+                  {"sentinel": "S2", "set": "tuning", "openalex_id": "", "doi": "10.1000/S",
+                   "title": "B"}]).to_csv(sen, index=False)
+    rows = pf.build_texts(str(pool), str(screen), str(lab), None, [str(sen)])
+    assert [r for r in rows if r["role"] == "train"] == []
+    assert sorted(r["stratum"] for r in rows if r["role"] == "sentinel") == ["holdout", "tuning"]
+
+
+def test_remap_and_rescore_reuse_the_old_sample(tmp_path):
+    old = tmp_path / "old.jsonl"
+    new = tmp_path / "new.jsonl"
+    old.write_text("".join(json.dumps(r) + "\n" for r in [
+        {"key": "RePEc:zbw:hwware:1 #END", "role": "repec", "text": "x"},
+        {"key": "RePEc:aaa:bbb:2", "role": "repec", "text": "old text"},
+        {"key": "RePEc:aaa:bbb:3", "role": "repec", "text": "y"}]))
+    new.write_text("".join(json.dumps(r) + "\n" for r in [
+        {"key": "RePEc:zbw:hwware:1", "role": "repec", "text": "x"},
+        {"key": "RePEc:aaa:bbb:2", "role": "repec", "text": "new text"}]))
+    npz = tmp_path / "e.npz"
+    np.savez(npz, vectors=np.ones((3, 2), dtype=np.float32),
+             keys=np.array(["RePEc:zbw:hwware:1 #END\trepec", "RePEc:aaa:bbb:2\trepec",
+                            "RePEc:aaa:bbb:3\trepec"], dtype=object))
+    c = pf.remap_embeddings(str(npz), str(old), str(new), str(tmp_path / "out.npz"))
+    assert c == {"kept": 1, "text_changed": 1, "absent_from_new_delivery": 1}
+    z = np.load(tmp_path / "out.npz", allow_pickle=True)
+    assert list(z["keys"]) == ["RePEc:zbw:hwware:1\trepec"]
+    sc = tmp_path / "scores.csv"
+    pd.DataFrame([{"key": "RePEc:zbw:hwware:1", "role": "repec", "drop": 0},
+                  {"key": "RePEc:aaa:bbb:4", "role": "repec", "drop": 1}]).to_csv(sc, index=False)
+    res = [{"key": "RePEc:zbw:hwware:1 #END", "stratum": "drop", "label": "out"},
+           {"key": "RePEc:aaa:bbb:4", "stratum": "drop", "label": "icf"},
+           {"key": "RePEc:aaa:bbb:9", "stratum": "keep", "label": "aux"}]
+    s = pf.opus_rescore(res, str(sc))
+    assert s["not_scored"] == 1
+    assert s["old_drop__new_keep"]["n"] == 1 and s["old_drop__new_drop"]["icf"] == 1

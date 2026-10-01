@@ -58,7 +58,11 @@ def looks_like_redif(head: bytes) -> bool:
 
 
 def decode(raw: bytes) -> tuple[str, str]:
-    """(text, encoding): UTF-8 when it decodes, else cp1252 with replacement."""
+    """(text, encoding). UTF-8 when the whole file decodes; otherwise line by
+    line, each line UTF-8 when it decodes and cp1252 when it does not, so the
+    UTF-8 templates of a file that also holds one cp1252 line stay intact.
+    The label is ``cp1252`` when every line needed the fallback, ``mixed``
+    when only some did."""
     if raw.startswith((b"\xff\xfe", b"\xfe\xff")):
         return raw.decode("utf-16", errors="replace"), "utf-16"
     if raw.startswith(b"\xef\xbb\xbf"):
@@ -66,7 +70,37 @@ def decode(raw: bytes) -> tuple[str, str]:
     try:
         return raw.decode("utf-8"), "utf-8"
     except UnicodeDecodeError:
-        return raw.decode("cp1252", errors="replace"), "cp1252"
+        pass
+    out, utf8, fallback = [], 0, 0
+    for line in raw.split(b"\n"):
+        try:
+            out.append(line.decode("utf-8"))
+            utf8 += 1 if any(b > 0x7F for b in line) else 0
+        except UnicodeDecodeError:
+            out.append(line.decode("cp1252", errors="replace"))
+            fallback += 1
+    return "\n".join(out), "mixed" if utf8 else "cp1252"
+
+
+_HANDLE = re.compile(r"^RePEc:[A-Za-z0-9_-]{3}:[^:\s]+:\S+$")
+
+
+def norm_handle(value: str) -> str:
+    """The RePEc handle in a ``Handle`` value, or empty when none is valid.
+
+    Archives write inline comments (``RePEc:zbw:hwware:26096 #END 46``), spaces
+    around colons (``RePEc: rsp: wpaper: wp48``), a swallowed continuation
+    line, stray control characters, and the prefix in any case. The comment
+    is cut, spaces next to a colon are closed, the first whitespace-free token
+    is kept, non-printable characters are dropped and the prefix is written
+    ``RePEc``; the result must have the form ``RePEc:aaa:series:item``."""
+    v = (value or "").split("#", 1)[0]
+    v = "".join(c for c in v if c.isprintable() and c != "�")
+    v = re.sub(r"\s*:\s*", ":", v.strip())
+    v = v.split()[0] if v.split() else ""
+    if v[:6].lower() == "repec:":
+        v = "RePEc:" + v[6:]
+    return v if _HANDLE.match(v) else ""
 
 
 def iter_templates(text: str) -> Iterator[dict[str, list[str]]]:
@@ -169,7 +203,8 @@ def series_handle(handle: str) -> str:
 
 def to_row(tpl: dict[str, list[str]], series_names: dict[str, str] | None = None) -> dict[str, str]:
     """The table row of one work template (paper, article, book, chapter)."""
-    handle = first(tpl, "handle")
+    raw_handle = first(tpl, "handle")
+    handle = norm_handle(raw_handle)
     ttype = template_type(tpl)
     sh = series_handle(handle)
     jel: list[str] = []
@@ -181,6 +216,7 @@ def to_row(tpl: dict[str, list[str]], series_names: dict[str, str] | None = None
     urls = tpl.get("file-url", [])
     return {
         "handle": handle,
+        "handle_raw": raw_handle if raw_handle != handle else "",
         "template_type": ttype,
         "title": first(tpl, "title"),
         "abstract": first(tpl, "abstract"),
@@ -204,4 +240,5 @@ def to_row(tpl: dict[str, list[str]], series_names: dict[str, str] | None = None
 
 def series_of(tpl: dict[str, list[str]]) -> tuple[str, str]:
     """(series handle lower-case, name) of a ReDIF-Series template."""
-    return first(tpl, "handle").lower(), first(tpl, "name")
+    v = re.sub(r"\s*:\s*", ":", first(tpl, "handle").split("#", 1)[0].strip())
+    return (v.split()[0].lower() if v.split() else ""), first(tpl, "name")

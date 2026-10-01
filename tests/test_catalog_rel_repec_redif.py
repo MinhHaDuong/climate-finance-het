@@ -175,3 +175,35 @@ def test_template_type_tolerates_suffix_typos():
     assert _redif.template_type({"template-type": ["ReDIF-Paper: 1.0"]}) == "redif-paper"
     assert _redif.template_type({"template-type": ["ReDIF-Article1.0"]}) == "redif-article"
     assert _redif.template_type({"template-type": ["ReDIF-Person 1.0"]}) == "redif-person"
+
+
+@pytest.mark.parametrize("raw,want", [
+    ("RePEc:zbw:hwware:26096 #END 46 #BEGIN 47", "RePEc:zbw:hwware:26096"),
+    ("RePEc: rsp: wpaper: wp48", "RePEc:rsp:wpaper:wp48"),
+    ("RePEC: srs: jaes: v:10:y:2015:i:1(31)_Spring2015:p:20-33 The article template",
+     "RePEc:srs:jaes:v:10:y:2015:i:1(31)_Spring2015:p:20-33"),
+    ("Repec:sos:sosjrn:170307਀", "RePEc:sos:sosjrn:170307"),
+    ("repec:aea:aecrev:v:100:y:2010:i:1:p:5-34", "RePEc:aea:aecrev:v:100:y:2010:i:1:p:5-34"),
+    ("not a handle", ""),
+    ("RePEc:aea:aecrev", ""),
+])
+def test_norm_handle(raw, want):
+    assert _redif.norm_handle(raw) == want
+
+
+def test_to_row_keeps_the_raw_handle_when_normalised():
+    tpl = {"template-type": ["ReDIF-Paper 1.0"], "title": ["T"],
+           "handle": ["RePEc:zbw:hwware:26096 #END 46"]}
+    r = _redif.to_row(tpl)
+    assert r["handle"] == "RePEc:zbw:hwware:26096"
+    assert r["handle_raw"] == "RePEc:zbw:hwware:26096 #END 46"
+    assert _redif.to_row({"handle": ["RePEc:aaa:bbb:1"]})["handle_raw"] == ""
+
+
+def test_mixed_encoding_file_keeps_its_utf8_lines():
+    raw = ("Title: Café “climate”\n".encode("utf-8") + "Abstract: café\n".encode("cp1252")
+           + "Title: Ünïcode\n".encode("utf-8"))
+    text, enc = _redif.decode(raw)
+    assert enc == "mixed"
+    assert text.splitlines() == ["Title: Café “climate”", "Abstract: café", "Title: Ünïcode"]
+    assert _redif.decode("Title: café".encode("cp1252"))[1] == "cp1252"

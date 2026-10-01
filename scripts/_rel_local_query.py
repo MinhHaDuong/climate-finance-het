@@ -26,11 +26,23 @@ _NOSPACE_SCRIPT = re.compile(r"[぀-ヿ㐀-鿿豈-﫿฀-๿가-힯]")
 
 
 def fold(text: str) -> str:
-    """Case- and accent-folded, punctuation to spaces, single-spaced, padded."""
+    """Case- and accent-folded, punctuation to spaces, single-spaced, padded.
+
+    Combining marks are dropped (accents) except after a base letter of the
+    Indic and South-East Asian blocks (U+0900-U+109F), where vowel signs and
+    viramas are part of the word: dropping them would split ``जलवायु`` into
+    fragments and lose its word boundaries."""
     t = unicodedata.normalize("NFKD", (text or "").casefold())
-    t = "".join(c for c in t if not unicodedata.combining(c))
-    t = "".join(c if c.isalnum() else " " for c in t)
-    return " " + " ".join(t.split()) + " "
+    out = []
+    base = " "
+    for c in t:
+        if unicodedata.category(c) in ("Mn", "Mc", "Me"):
+            if "ऀ" <= base <= "႟":
+                out.append(c)
+            continue
+        base = c
+        out.append(c if c.isalnum() else " ")
+    return " " + " ".join("".join(out).split()) + " "
 
 
 def phrase_needles(phrase: str) -> tuple[str, ...]:
