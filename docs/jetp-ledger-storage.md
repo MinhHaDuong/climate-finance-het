@@ -125,6 +125,7 @@ changes when the DDL does.
 | `document-addresses` | new table: a document's recorded addresses, each with the date from which it holds, so a relocation is a new address of the same document | relocation rule (below) | M4 |
 | `lines` | gains `run_id`, `method` and `method_version`: the run that admitted the line and the method version that extracted it | extraction section 3, method and version; requirement Q4 | M2 |
 | `observations` | gains `run_id` beside `method` and `method_version` | extraction section 11; requirement Q4 | M3b |
+| `observations` | gains `quantity_kind`, from the closed `terms` list of quantity kinds, beside `unit` and `basis`, for a capacity or an energy amount | ontology section 4, capacity | M3b |
 | `observations` | gains `own_status_axis` and `missing_reason`, the typed reason of an unknown value, from a closed `terms` list | extraction section 11; target conventions (below) | M3b |
 | `line-referents`, `relations`, `adjudications` | gain `run_id` beside `method` and `method_version` (which `adjudications` gains as above) | fusion section 3, traceable | M2 for `line-referents` and `relations`; M3b for `adjudications` |
 | `lines` | the locator syntax gains an assertion index for a prose span that carries several statements; the (`sha256`, `locator`) check reads it | extraction sections 4 and 5 | M2 |

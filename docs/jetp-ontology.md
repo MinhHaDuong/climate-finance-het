@@ -255,24 +255,23 @@ One dated statement about one subject, cited to one line: a flow on an
 agreement, a state of an asset, a stage of a project, a capacity, an estimate
 on a plan line, a count on a perimeter, an envelope on a partnership. The
 subject is typed, `(subject_kind, subject_id)`, and may be a line itself when
-no identity has been minted. An observation has one or more timings, each
-with a role from one closed list of nine (`event`, `approval`,
-`reporting_cutoff`, `register_date`, `report_date`, `planned`, `target`,
-`period_start`, `period_end`; the last two bound a flow over an interval,
-section 4), a precision (`day`, `month`, `quarter`, `year`, `unknown`) and
-bounds. Values are the publisher's, in the publisher's unit and currency;
-conversion is a derivation through the sourced `rates` table. An
-observation names its `measure` from the closed list of section 4, its
-`basis` (`gross`, `net`, `unknown`) where money or a physical quantity is involved, and its
-`flow_type` from the IATI list when the measure is a flow. It carries
-`recorded_at`, the date the ledger wrote it, and the same `status` and
-`supersedes` as a decision row. Supersession corrects the ledger's own
-errors, never a publisher: a later statement that prints a different value
-is a new observation beside the old one, and one that prints the same value
-again is a dated restatement ([fusion](jetp-fusion.md), section 2).
-Subjects also include `country`, for macro-fiscal indicators (GDP, external
-debt; a utility's debt ratio is on a `party`), each with its indicator code
-from the publisher's own list. [M3b]
+no identity has been minted. An observation has one or more timings, each with
+a role from one closed list of nine (`event`, `approval`, `reporting_cutoff`,
+`register_date`, `report_date`, `planned`, `target`, `period_start`,
+`period_end`; the last two bound a flow over an interval, section 4), a
+precision (`day`, `month`, `quarter`, `year`, `unknown`) and bounds. Values
+are the publisher's, in the publisher's unit and currency; conversion is a
+derivation through the sourced `rates` table. An observation names its
+`measure` from the closed list of section 4, its `basis` (`gross`, `net`,
+`unknown`) where money or a physical quantity is involved, and its `flow_type`
+from the IATI list when the measure is a flow. It carries `recorded_at`, the
+date the ledger wrote it, and the same `status` and `supersedes` as a decision
+row. Supersession corrects the ledger's own errors, never a publisher: a later
+statement that prints a different value is a new observation beside the old
+one, and one that prints the same value again is a dated restatement
+([fusion](jetp-fusion.md), section 2). Subjects also include `country`, for
+macro-fiscal indicators (GDP, external debt; a utility's debt ratio is on a
+`party`), each with its indicator code from the publisher's own list. [M3b]
 
 ### Crosswalk
 
@@ -387,11 +386,11 @@ the comparison of requirement F19 uses climate-marked amounts. A value may
 be a range: `value_low` and `value_high` bound it, as the timing bounds
 bound a date, and a scalar has both equal. [M3b]
 
-Money and physical observations carry a `basis`, `gross`, `net` or `unknown`, and a flow
-carries its interval through two of the timing roles of section 2,
-`period_start` and `period_end`, so the account of the [fusion
-rules](jetp-fusion.md) (section 7) can test coverage. A point flow has one
-`event` timing. [M3b]
+An observation of money or of a physical quantity carries a `basis`, `gross`,
+`net` or `unknown`, and a flow carries its interval through two of the timing
+roles of section 2, `period_start` and `period_end`, so the account of the
+[fusion rules](jetp-fusion.md) (section 7) can test coverage. A point flow has
+one `event` timing. [M3b]
 
 Four shared status axes, each sourced from an external list and extended only
 where the four publishers' practice requires it:

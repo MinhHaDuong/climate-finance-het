@@ -665,8 +665,8 @@ signed loan is an `amount` with the publisher's status word, never a `flow`
 unless money is said to have moved. A value outside the list stops the
 reading; the list grows only by decision.
 
-**Basis.** Money and a physical quantity (a capacity, an energy amount)
-carry a basis, `gross`, `net` or `unknown`; `unknown` unless the document
+**Basis.** Money or a physical quantity (a capacity, a storage capacity)
+carries a basis, `gross`, `net` or `unknown`; `unknown` unless the document
 states it or states a rule that settles it, never gross or net by default.
 
 **Value, unit and currency.** The value is the publisher's, in its unit and
