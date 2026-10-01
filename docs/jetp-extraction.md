@@ -438,10 +438,10 @@ record, and no item waits for the author.
   high when the two readers agree, medium when the arbiter confirms one
   reader, low when it decides alone or against both. A model that fails its
   positive controls is weighted out. [M2]
-- **Reference answers, the only human check.** No person reviews admitted
+- **Reference answers, the only check.** No person reviews admitted
   items one by one, high-impact items included. The reference answers are
-  the lines of the extracted documents made by hand blind to any machine
-  reading (requirement Q17); a decision the author makes on a served result
+  lines made by a blind cross-vendor panel, distinct from the readers and
+  the arbiter, and named as panel agreement (requirement Q17); a decision the author makes on a served result
   is reported apart. They are split once, by a recorded seed, into a tuning
   part, which prompt writing and model selection may read, and a held-out
   part, which they never read. The held-out part is stratified by language
@@ -479,6 +479,8 @@ record, and no item waits for the author.
   section 12 and its calibration on the held-out reference answers,
   stratified by language. The coverage report states which method version
   read each document type. [M2]
+
+History: reference answers made by a blind cross-vendor panel instead of by hand, decided by the author on 2026-10-01 (interactive), after retracting the human gold set in front of its cost; ticket 1895.
 
 ### 6.4 Transcription
 
