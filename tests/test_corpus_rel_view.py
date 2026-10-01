@@ -274,7 +274,7 @@ def _files(tmp_path):
 
 
 SRULE = {"exclude": ["hijacked", "kanalregisteret"], "ngo_research_in_b": True,
-         "tiers": ["A", "B"], "drop_publishers": []}
+         "unknown_venue": "keep", "tiers": ["A", "B"], "drop_publishers": []}
 
 
 def _run(tmp_path, pool, table, out):

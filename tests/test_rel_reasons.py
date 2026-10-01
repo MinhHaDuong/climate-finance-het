@@ -13,7 +13,7 @@ from test_corpus_rel_view import RULE, WINDOW, _lab, _work
 pytestmark = pytest.mark.domain_corpus
 
 SRULE = {"exclude": ["hijacked", "kanalregisteret"], "ngo_research_in_b": True,
-         "tiers": ["A", "B"], "drop_publishers": []}
+         "unknown_venue": "keep", "tiers": ["A", "B"], "drop_publishers": []}
 
 
 def _dim(wk, contrib, stage="2", model="m", run_id="r", field="economics"):
@@ -174,6 +174,26 @@ def test_ngo_switch_and_tier_and_publisher_settings():
     mdpi = _ven("x", publisher="mdpi")
     assert rr.seriousness_of(mdpi, SRULE) == ""
     assert rr.seriousness_of(mdpi, dict(SRULE, drop_publishers=["mdpi"])) == "publisher:mdpi"
+
+
+def test_unknown_tier_is_kept_flagged_by_default_never_tier_c():
+    v = _ven("x", tier="unknown")
+    assert rr.seriousness_of(v, SRULE) == ""
+    assert rr.seriousness_of(v, dict(SRULE, unknown_venue="exclude")) == "tier_unknown"
+    venues = dict(VENUES, **{"openalex:W1": _ven("openalex:W1", tier="unknown")})
+    rows, _ = _rows(venues=venues)
+    w1 = next(r for r in rows if r["work_key"] == "openalex:W1")
+    assert (w1["rel_reason"], w1["seriousness_flag"]) == ("included", "unknown_venue")
+    table = {r["scenario"]: r for r in rr.sensitivity(rows, venues, SRULE)}
+    assert table["default"]["included_works"] == 1
+    assert table["unknown_venue_flipped"]["included_works"] == 0
+
+
+def test_switch_c_value_is_checked(monkeypatch):
+    monkeypatch.setattr(rr.rvn, "unknown_switch", lambda cfg: cfg["c"], raising=False)
+    assert rr.seriousness_rule({}, {"c": "exclude"})["unknown_venue"] == "exclude"
+    with pytest.raises(ValueError, match="switch"):
+        rr.seriousness_rule({}, {"c": "drop"})
 
 
 def test_missing_venue_row_is_refused():
