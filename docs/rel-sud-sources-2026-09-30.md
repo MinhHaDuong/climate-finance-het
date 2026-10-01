@@ -90,9 +90,10 @@ Two fixes made during integration changed which run is authoritative:
   superseded; ADB now reads all 861 paper pages). The CEEW rerun
   (`series-c/ceew/`) was stopped by the agent harness's two-hour limit after
   619 of 706 pages, before its registry row was written: the lane's run
-  `t1653-africa-sasia/ceew/` stays authoritative (54 matches, 13 pages
-  failed, full listing not archived), and the partial rerun is kept as an
-  archive only (`README-incomplete.txt`).
+  `t1653-africa-sasia/ceew/` stayed authoritative for 1653 (54 matches, 13
+  pages failed, full listing not archived), and the partial rerun is kept as
+  an archive only (`README-incomplete.txt`). Ticket 1790 superseded both
+  with a complete reread and a year fix (section Ticket 1790).
 
 GARUDA's query form carries `from=1990&to=2026`. Whether the server's year
 filter drops records without a year was not probed. Such records may be
@@ -354,6 +355,10 @@ padme; `qa_rel_intake.py`: `OK`, exit 0. 219 records (AJOL 66, OpenAlex 67,
 CEEW 51, CORE 32, SciELO 3); 10 `duplicate_in_lane` and 2 `no_dedup_key`
 (the two undated CEEW pages of 1653). Two source DOIs shared by
 differently titled records are kept in `lane_note` only (an AJOL issue DOI;
-one article under two titles in CORE and OpenAlex). In the pool: 34 works in
-the catalogue, 95 in another lane only, 80 new. No class-b sentinel found.
+one article under two titles in CORE and OpenAlex). In the pool (merge
+report, by delivery): the 219 records and 2 title-only rows fall in 209 works,
+since several routes found the same work: 34 in the catalogue, 95 in another
+lane only, 80 new. The per-route pool columns above count a work once per
+route that found it, so they sum to more (37 / 102 / 80). No class-b sentinel
+found.
 
