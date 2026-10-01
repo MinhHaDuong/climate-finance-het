@@ -2,11 +2,11 @@
 Title: Grants register parser: record cell fill colour per row (adapter v2)
 Created: 2026-10-01
 Author: HDMX-coding-agent
-Blocked-by: 1950
 
 --- log ---
 2026-10-01T12:30Z HDMX-coding-agent created — follow-up of [[1950]] (PR #1675); author decision 2026-10-01, relayed from session haduong: "Cell highlight colours: approved as a follow-up".
 
+2026-10-01T12:03Z HDMX-coding-agent note blocker 1950 closed — Blocked-by removed.
 --- body ---
 ## Context
 
