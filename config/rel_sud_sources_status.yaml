@@ -268,7 +268,8 @@ aggregators_1790:
     reason: >-
       32 lexicon queries restricted to sources S4377209701 (Shodhganga),
       S4306401404 (CyberLeninka), S4306402186 (USP repository) and the
-      institution I44666525 (USP), run t1790-aggregators/openalex. Spend:
+      institution I44666525 (University of the South Pacific), run
+      t1790-aggregators/openalex. Spend:
       the daily remaining fell from 0.4639 to 0.4318 USD around the run
       (headers, 2026-09-30 20:47-21:03 UTC), so at most 0.032 USD, any other
       user of the shared key included.

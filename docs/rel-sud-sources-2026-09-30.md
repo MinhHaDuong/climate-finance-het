@@ -354,7 +354,9 @@ own so the t1653 pointer the pool merge reads is untouched; written by
 --ticket 1790` (invocation in `producer.runs`), DVC-tracked and pushed to
 padme; `qa_rel_intake.py`: `OK`, exit 0. `records.csv` holds 219 records (AJOL 66, OpenAlex 67,
 CEEW 51, CORE 32, SciELO 3); 10 `duplicate_in_lane` and 2 `no_dedup_key`
-(the two undated CEEW pages of 1653). Two source DOIs shared by
+in `excluded.csv` (the two undated CEEW pages of 1653: CEEW's 53
+matches are 51 rows of `records.csv` plus these 2 rows of `excluded.csv`).
+Two source DOIs shared by
 differently titled records are kept in `lane_note` only (an AJOL issue DOI;
 one article under two titles in CORE and OpenAlex). In the pool (merge
 report, by delivery): the 219 records plus the 2 title-only rows of `excluded.csv` fall in 209 works,
