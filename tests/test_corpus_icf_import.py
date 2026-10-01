@@ -248,6 +248,81 @@ def test_stage1_run_keyed_two_ways_is_refused(tmp_path):
             ci.stage1_run_rows(str(d), str(d / "screen_input.jsonl"), "padme", "r", "s")
 
 
+GEMMA, JEV = "google/gemma-4-26b-a4b-it", "typesafe/jev-1.13-20260917"
+JOINT = {"llm_models": [GEMMA], "classifier_models": [JEV], "classifier_p_out_min": 0.95}
+
+
+def _designb_dir(tmp_path, clf_model=JEV, finished=True):
+    d = tmp_path / "2026-10-01-designB-stage1"
+    _jsonl(d / "screen_input.jsonl", [
+        {"work_key": "title:a b|2020", "openalex_id": "", "doi": "", "title": "A b",
+         "year": "2020"},
+        {"work_key": "doi:10.5/z", "openalex_id": "", "doi": "10.5/z", "title": "Z",
+         "year": "2019"},
+        {"work_key": "openalex:W7", "openalex_id": "W7", "doi": "", "title": "S", "year": ""}])
+    _jsonl(d / "llm.jsonl", [
+        {"work_key": "title:a b|2020", "label": "out", "doc": "research", "why": "",
+         "model": GEMMA, "provider": "NextBit"},
+        {"work_key": "doi:10.5/z", "label": "icf", "doc": "institutional", "why": "GCF",
+         "model": GEMMA, "provider": "Parasail"},
+        {"work_key": "openalex:W7", "label": "out", "doc": "research", "why": "",
+         "model": GEMMA, "provider": "NextBit"}])
+    _jsonl(d / "classifier.jsonl", [
+        {"work_key": "title:a b|2020", "label": "out", "doc": "research", "p_out": 0.971234,
+         "model": clf_model, "provider": "TypeSafe"},
+        {"work_key": "doi:10.5/z", "label": "icf", "doc": "unknown", "p_out": 0.0,
+         "model": clf_model, "provider": "TypeSafe"}])          # W7: classifier missing
+    _jsonl(d / "screen_runs.jsonl", [
+        {"started": "2026-10-01T09:00:00+00:00", "id_field": "work_key",
+         "llm_prompt_sha256": "lp", "classifier_prompt_sha256": "cp"}])
+    (d / "run.log").write_text("INFO labelled 2, unlabelled 1 (rerun to retry)\n"
+                               if finished else "INFO round 1\n")
+    return d
+
+
+def test_designb_import_writes_one_row_per_labeller(tmp_path):
+    d = _designb_dir(tmp_path)
+    rows, half = ci.designb_rows(str(d), str(d / "screen_input.jsonl"), "designB", JOINT)
+    assert half == 1, "W7 has no classifier label: left unscreened"
+    assert [(r["work_key"], r["model"], r["label"], r["why"], r["machine"], r["prompt_sha256"])
+            for r in rows] == [
+        ("title:a b|2020", GEMMA, "out", "", "openrouter/NextBit", "lp"),
+        ("title:a b|2020", JEV, "out", "p_out=0.971234", "openrouter/TypeSafe", "cp"),
+        ("doi:10.5/z", GEMMA, "icf", "GCF", "openrouter/Parasail", "lp"),
+        ("doi:10.5/z", JEV, "icf", "p_out=0.0", "openrouter/TypeSafe", "cp")]
+    assert {(r["stage"], r["labeller"], r["run_id"]) for r in rows} == {("1", "llm", "designB")}
+    assert rows[3]["doc_type"] == "unknown" and rows[2]["doc_type"] == "institutional"
+    assert rows[0]["source"] == "designB/llm.jsonl"
+    assert rows[1]["source"] == "designB/classifier.jsonl"
+
+
+def test_designb_import_is_idempotent_and_reads_the_rule_from_config(tmp_path):
+    d = _designb_dir(tmp_path)
+    table = str(tmp_path / "icf_screen.csv")
+    args = ["--output", table, "stage1-designb", "--run-dir", str(d), "--allow-input-drift"]
+    assert ci.main(args) == 0 and ci.main(args) == 0
+    assert len(ics.read_table(table)) == 4
+
+
+@pytest.mark.parametrize("kw, match", [({"clf_model": "typesafe/jev-9"}, "not in stage1_joint"),
+                                       ({"finished": False}, "closing")])
+def test_designb_import_refusals(tmp_path, kw, match):
+    d = _designb_dir(tmp_path, **kw)
+    with pytest.raises(ci.ImportRefused, match=match):
+        ci.designb_rows(str(d), str(d / "screen_input.jsonl"), "designB", JOINT)
+
+
+def test_designb_import_refuses_disagreeing_invocations(tmp_path):
+    d = _designb_dir(tmp_path)
+    _jsonl(d / "screen_runs.jsonl", [
+        {"started": "a", "id_field": "work_key", "llm_prompt_sha256": "lp",
+         "classifier_prompt_sha256": "cp"},
+        {"started": "b", "id_field": "work_key", "llm_prompt_sha256": "lp2",
+         "classifier_prompt_sha256": "cp"}])
+    with pytest.raises(ci.ImportRefused, match="disagree"):
+        ci.designb_rows(str(d), str(d / "screen_input.jsonl"), "designB", JOINT)
+
+
 def test_import_refuses_to_fork_a_dvc_tracked_table(tmp_path):
     a, prompt = _archive(tmp_path)
     (tmp_path / "t.dvc").write_text("outs:\n- path: t\n")

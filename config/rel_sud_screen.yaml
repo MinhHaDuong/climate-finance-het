@@ -65,3 +65,61 @@ prompt_template: |
 
   Records:
   {records}
+
+# Design B stage 1 through OpenRouter (ticket 1733, author decision of
+# 2026-10-01; scripts/corpus_icf_stage1_designb.py). Two labellers per work;
+# the drop rule (both "out", the classifier with P(out) >= 0.95) lives in
+# config/rel_screen.yaml (stage1_joint).
+designb:
+  # The LLM gets the prompt above with the pipe answer format of `local`
+  # (the batch-size study of 2026-10-01 ran exactly this prompt), thinking off.
+  llm:
+    url: https://openrouter.ai/api/v1/chat/completions
+    model: google/gemma-4-26b-a4b-it
+    # Batch-size study 2026-10-01 (rel_small_models/2026-10-01/batchsize): 0 ICF
+    # and 0 sentinels lost by design B at 5, 10, 20, 30 and 50; 20 matches the
+    # stage-1 batch of 1530 and passes no more works to stage 2 than 10.
+    batch_size: 20
+    workers: 8
+    max_tokens: 2500
+    timeout: 300
+    # Budget reservation per call before its real cost is known (USD); the
+    # study measured about 0.0004 per 20-record call.
+    est_cost_per_call: 0.002
+  # Jev D1: OpenRouter's decisions endpoint, one record per call, the four
+  # stage-1 labels as one choice (Jev pilot 2026-09-30, scripts/designs.py,
+  # wording taken from the prompt above).
+  classifier:
+    url: https://openrouter.ai/api/alpha/decisions
+    model: typesafe/jev-1.13
+    workers: 16
+    timeout: 60
+    est_cost_per_call: 0.0002
+    questions:
+      label:
+        type: choice
+        instructions: |-
+          The state is one bibliographic record screened for a literature review on INTERNATIONAL CLIMATE FINANCE (ICF). The record may be in any language; judge it in its own language.
+          ICF = research on finance flows, instruments, allocation, accounting, mobilisation, effects or models that cross borders for an explicit climate purpose: climate funds (GCF, GEF, Adaptation Fund), development-finance and bilateral climate flows, the USD 100 billion goal and accounting rules (Rio markers, grant equivalent, additionality), loss and damage finance, adaptation and forest finance between countries (incl. REDD+ and results-based payments), international carbon markets and offsets (CDM, Article 6), international private-finance mobilisation for climate, climate justice or critical analyses of those flows.
+          Which label fits this record?
+        criteria:
+          icf: the main object is ICF as defined above.
+          aux: "related but not ICF itself: purely domestic climate policy or carbon market, general green/ESG finance without an international climate mechanism, climate impacts or mitigation technology without finance flows, development finance without a climate object."
+          out: unrelated (including domestic forestry, agriculture, energy engineering, other fields).
+          unsure: the record does not allow a decision (no abstract, ambiguous title).
+      doc:
+        type: choice
+        instructions: What kind of document is this record?
+        criteria:
+          research: scholarly work
+          institutional: reports, policy papers or statements by an institution or a think tank
+          other: the rest (editorial, book review, front matter)
+  # Records per unit of progress: both labellers finish a chunk before the
+  # next starts, so a budget stop leaves few works with one label only.
+  chunk_works: 2000
+  # Rounds that re-send the works a call left unlabelled (partial or
+  # unparsable answer, HTTP failure); a rerun of the command retries again.
+  retry_rounds: 2
+  # OpenRouter books key usage with a lag: the before/after key snapshots of
+  # each invocation wait until it is still for 45 s, at most this long.
+  usage_settle_seconds: 180

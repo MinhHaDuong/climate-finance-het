@@ -226,23 +226,127 @@ def screen_rule(cfg: dict) -> dict:
     if not isinstance(cfg.get("stage2_unsure_in_rel"), bool):
         raise ics.IcfScreenError("stage2_unsure_in_rel must be true or false")
     rule["stage2_unsure_in_rel"] = cfg["stage2_unsure_in_rel"]
+    rule["stage1_joint"] = joint_rule(cfg.get("stage1_joint"))
     return rule
 
 
+def joint_rule(block: dict | None) -> dict | None:
+    """The design-B block of ``config/rel_screen.yaml`` (``stage1_joint``), checked.
+
+    ``llm_models`` and ``classifier_models``: non-empty, disjoint lists of
+    exact model ids; ``classifier_p_out_min`` in (0, 1]. None when absent
+    (no design-B rows are recognised then).
+    """
+    if block is None:
+        return None
+    llm = sorted(block.get("llm_models") or [])
+    clf = sorted(block.get("classifier_models") or [])
+    thr = block.get("classifier_p_out_min")
+    if not llm or not clf or set(llm) & set(clf):
+        raise ics.IcfScreenError("stage1_joint: llm_models and classifier_models must be "
+                                 "non-empty and disjoint")
+    if isinstance(thr, bool) or not isinstance(thr, (int, float)) or not 0 < thr <= 1:
+        raise ics.IcfScreenError("stage1_joint: classifier_p_out_min must be in (0, 1]")
+    return {"llm_models": llm, "classifier_models": clf, "classifier_p_out_min": float(thr)}
+
+
+_P_OUT = re.compile(r"^p_out=(\S+)")
+
+
+def p_out_of(lab: dict) -> float | None:
+    """P(out) a classifier row carries at the start of its ``why`` (``p_out=<p>``).
+
+    ``<p>`` is the float as Python writes it at full precision (``repr``), so
+    scientific notation (``1e-05``) is read too; anything that is not a number
+    in [0, 1] gives None, which never drops a work.
+    """
+    m = _P_OUT.match(lab.get("why") or "")
+    if not m:
+        return None
+    try:
+        p = float(m.group(1))
+    except ValueError:
+        return None
+    return p if 0 <= p <= 1 else None
+
+
+def joint_role(lab: dict, joint: dict | None) -> str | None:
+    """``llm``, ``classifier`` or None: the design-B role of a stage-1 row, by model."""
+    if not joint:
+        return None
+    if lab["model"] in joint["llm_models"]:
+        return "llm"
+    if lab["model"] in joint["classifier_models"]:
+        return "classifier"
+    return None
+
+
+def stage1_decisions(s1: list[dict], rule: dict) -> list[dict]:
+    """Stage-1 decisions of one work, in table order (``work_status`` combines them).
+
+    A single-labeller row (Qwen, Haiku) is one decision: it exits when its
+    label is in ``stage1_exit_labels``. The design-B rows of one ``run_id``
+    (``rule["stage1_joint"]``) are one decision, placed at that run's last row:
+    it exits, as ``out``, only when the LLM row is ``out`` and the classifier
+    row is ``out`` with P(out) >= ``classifier_p_out_min``; otherwise
+    (including a run holding one of the two rows) it sends the work to
+    stage 2. Its ``label`` is then the LLM's label (the classifier's when the
+    LLM row is missing), so a ``stage1_label`` of ``out`` with status
+    ``pending_stage2`` is a design-B disagreement; ``joint`` spells it out.
+    """
+    joint = rule.get("stage1_joint")
+    decisions, runs = [], defaultdict(dict)
+    for pos, lab in enumerate(s1):
+        role = joint_role(lab, joint)
+        if role:
+            runs[lab["run_id"]][role] = (pos, lab)
+            continue
+        decisions.append({"pos": pos, "label": lab["label"], "doc_type": lab["doc_type"],
+                          "exits": lab["label"] in rule["stage1_exit_labels"],
+                          "model": lab["model"], "run_id": lab["run_id"], "joint": ""})
+    for run_id, roles in runs.items():
+        llm, clf = roles.get("llm"), roles.get("classifier")
+        p = p_out_of(clf[1]) if clf else None
+        exits = bool(llm and clf and llm[1]["label"] == "out" and clf[1]["label"] == "out"
+                      and p is not None and p >= joint["classifier_p_out_min"])
+        shown = (llm or clf)[1]
+        decisions.append({
+            "pos": max(pos for pos, _ in roles.values()),
+            "label": "out" if exits else shown["label"], "doc_type": shown["doc_type"],
+            "exits": exits, "model": "+".join(r[1]["model"] for r in (llm, clf) if r),
+            "run_id": run_id,
+            "joint": ";".join([f"llm={llm[1]['label'] if llm else ''}",
+                               f"classifier={clf[1]['label'] if clf else ''}",
+                               f"p_out={'' if p is None else p}"])})
+    return sorted(decisions, key=lambda d: d["pos"])
+
+
 def work_status(labs: list[dict], rule: dict) -> dict:
-    """Status of one work from its labels (table order: the last one wins)."""
+    """Status of one work from its labels.
+
+    Stage 1, recall first (2026-10-01): a work with several stage-1 decisions
+    (``stage1_decisions``: a Qwen or Haiku row, a design-B pair, in any order)
+    leaves at stage 1 only when every one of them exits; one decision that
+    sends it to stage 2 is enough, whichever came later. Stage 2: the latest
+    label wins and is final.
+    """
     by_stage = defaultdict(list)
     for lab in labs:
         by_stage[lab["stage"]].append(lab)
-    s1 = by_stage["1"][-1] if by_stage["1"] else None
+    decisions = stage1_decisions(by_stage["1"], rule)
+    # Recall first: the work leaves only if every stage-1 decision exits; else
+    # the latest decision that sends it on is the one shown.
+    passing = [d for d in decisions if not d["exits"]]
+    s1 = (passing or decisions)[-1] if decisions else None
     s2 = by_stage["2"][-1] if by_stage["2"] else None
-    conflict = [st for st in ("1", "2") if len({lab["label"] for lab in by_stage[st]}) > 1]
+    conflict = [st for st, labels in (("1", {(d["label"], d["exits"]) for d in decisions}),
+                                      ("2", {lab["label"] for lab in by_stage["2"]}))
+                if len(labels) > 1]
     if s2:
         status = "unsure_unresolved" if s2["label"] == "unsure" else s2["label"]
         final = s2
     elif s1:
-        status = (f"stage1_{s1['label']}" if s1["label"] in rule["stage1_exit_labels"]
-                  else "pending_stage2")
+        status = f"stage1_{s1['label']}" if s1["exits"] else "pending_stage2"
         final = s1
     else:
         status, final = "unscreened", None
@@ -255,6 +359,7 @@ def work_status(labs: list[dict], rule: dict) -> dict:
         "studied_country": s2["studied_country"] if s2 else "",
         "stage1_label": s1["label"] if s1 else "", "stage1_doc": s1["doc_type"] if s1 else "",
         "stage1_model": s1["model"] if s1 else "", "stage1_run_id": s1["run_id"] if s1 else "",
+        "stage1_joint": s1["joint"] if s1 else "",
         "stage2_label": s2["label"] if s2 else "", "stage2_doc": s2["doc_type"] if s2 else "",
         "stage2_model": s2["model"] if s2 else "", "stage2_run_id": s2["run_id"] if s2 else "",
         "n_audit": len(by_stage["audit"]), "n_labels": len(labs),

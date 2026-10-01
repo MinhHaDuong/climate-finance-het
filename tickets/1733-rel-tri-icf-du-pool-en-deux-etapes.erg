@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-09-30T19:21Z HDMX-coding-agent note blocker 1732 closed — Blocked-by removed.
 2026-09-30T21:56Z HDMX-coding-agent note author decision 2026-09-30: stage 2 also rereads stage-1 aux (proche); only out leaves at stage 1 (PR 1638)
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
+2026-10-01T06:46Z HDMX-coding-agent note design B (author decision 2026-10-01): leftovers (t1810, t1790, re-keyed works) screened via OpenRouter, drop only when Gemma 4 and Jev D1 P(out)>=0.95 both say out; rule in config/rel_screen.yaml stage1_joint; run ~/rel_pool_runs/2026-10-01-designB-stage1, import after merge
 --- body ---
 ## Context
 
@@ -19,6 +20,22 @@ sujet" leaves at stage 1; `config/rel_screen.yaml`), Fable audit of a sample of
 stage 2.
 Incremental: deliveries arriving after the first pass are screened by the same
 command.
+
+Stage 1 as of 2026-10-01 (author decision): local Qwen on padme for the pool
+input of 2026-10-01 (run `2026-10-01-pool-stage1`), then local Gemma 4 if the
+running benchmark passes; plus design B through OpenRouter for the leftovers
+no local run takes (t1810-repec-local, t1790-sud-playwright, works re-keyed by
+those merges; run `2026-10-01-designB-stage1`, PR 1659). Design B records two
+stage-1 rows per work (Gemma 4 26B-A4B and Jev D1) and drops a work only when
+both say "out" with Jev's P(out) >= 0.95 (`stage1_joint` in
+`config/rel_screen.yaml`).
+Precedence, recall first: a work carrying several stage-1 verdicts (a
+re-keyed work screened by Qwen under its old key and by design B, a
+re-screen) leaves at stage 1 only when every verdict is out; a design-B pair
+is one verdict. 616 t1652+t1810 works are in that case: Qwen screens them
+under their old `title:` keys, which the rebuilt pool no longer carries, so
+those Qwen labels will show as not-in-pool residue in the view; importing
+either Qwen run against the current pool needs `--allow-input-drift`.
 
 ## Exit criteria
 - [ ] Stage 1 on all unlabelled works of the pool, machine and run recorded
