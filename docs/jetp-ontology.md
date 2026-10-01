@@ -183,10 +183,13 @@ direct provider spending `2100`; subsidies and similar transfers `3100`.
 The publisher's instrument word ("highly concessional", "grants/TA")
 stays verbatim on the line and maps onto a code through a reviewed
 crosswalk, never by a reader. Concessionality is not an instrument: it is
-the `grant_element` observation. [M3b]
+the `grant_element` observation. An imported external list keeps its own
+labels as published, so finance-type labels are IATI's names, not the
+ledger's short lowercase labels. [M3b]
 
-History: finance type imported and the `owner` role added by the author's
-decisions of 2026-10-01 (ticket 1960), after the panel v1 fitness check.
+History: finance type imported and the `owner` and `accountable` roles added
+by the author's decisions of 2026-10-01 (ticket 1960), after the panel v1
+fitness check; `accountable` because a held IATI-style page names it.
 
 ### Party
 
@@ -294,7 +297,7 @@ decided it and when. [M2 for keeping the publisher's word; M3b for the crosswalk
 | `concerns` | project | asset | zero or more |
 | `finances` | agreement | project | many-to-many |
 | `tranche_of` | agreement | agreement | at most one active parent |
-| `party_in` | party | agreement, project, asset | one row per role, dated, from the Party roles of section 2: `funder` and `channel` attach to an agreement; `promoter`, `implementing_entity`, `beneficiary` and `contractor` to an agreement or a project; `operator` and `owner` to an asset or a project; a party may fund one agreement and channel another |
+| `party_in` | party | agreement, project, asset | one row per role, dated, from the Party roles of section 2: `funder` and `channel` attach to an agreement; `promoter`, `implementing_entity`, `beneficiary` and `contractor` to an agreement or a project; `operator` and `owner` to an asset or a project; `accountable` to an agreement or a project; a party may fund one agreement and channel another |
 | `role_in` | party | project, asset, perimeter, document, line | a mandate outside any agreement: `lead_agency`, `coordinating_agency`, `guarantor`, `endorser`, `signatory`, `host`, `standards_body`; one row per role |
 | `cites` | line | document, line | a document's reference to another document or to a line of it, held or not; an observation's citation of its one line is the observation's `line_id` column, not a relation |
 | `member_of` | line, project, asset, agreement | perimeter | dated, justified membership; a line may be a member before any identity is minted |
@@ -401,8 +404,8 @@ paths are defined in the [storage contract](jetp-ledger-storage.md)
 
 **Definition.** Every word the schema admits as a value is a `terms` row: the
 classes and relations of sections 2 and 3, the line classifications, measures,
-bases, flow types, modalities, date roles, roles, axes and axis values of
-section 4. `kind` says which (`class`, `relation`, `value`); `list` names the
+bases, flow types, finance types, modalities, date roles, roles, axes and
+axis values of section 4. `kind` says which (`class`, `relation`, `value`); `list` names the
 closed list a value belongs to. The definition is plain English, one or two
 sentences, written for a reader of the Observatory. A relation term also
 states its `domain` and `range`. The DDL's checks read the terms in force; no
