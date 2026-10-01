@@ -203,6 +203,9 @@ writing (`make rel-pool-data`); the writers refuse to start a new table where
 Stage-2 answers in the version-2 wrapper (ticket 1840) also append their discipline
 fields (`contrib`, `field`, `contrib_type`) to `data/rel_screen/rel_dimensions.csv`, a
 second append-only table with its own manifest, same key and same DVC pointer.
+The discipline catch-up (ticket 1842, `scripts/corpus_rel_discipline_catchup.py`)
+writes the same fields there for works stage 2 labelled before version 2, under
+stage `catchup`, which `icf_screen` refuses.
 `make rel-screen-import-1530` appends the ticket 1530 labels (idempotent), and
 `make rel-view` regenerates `data/rel_pool/rel_view.csv` and `rel_counts.json`
 from the pool and the table. Paths, the 1530 archive, the stage-2 chunking and

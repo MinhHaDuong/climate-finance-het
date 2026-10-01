@@ -34,7 +34,7 @@ def _icf_row(i, stage="2", label="icf"):
 def chunks(tmp_path):
     out = tmp_path / "cu"
     ch.write_chunks(str(out), [_work(1), _work(2), _work(3)], S2CFG, {})
-    cc.render(str(out), ics.catchup_prompt_template(CATCHUP_PROMPT))
+    cc.render(str(out), CATCHUP_PROMPT)
     return out
 
 
@@ -83,12 +83,51 @@ def test_parse_writes_dimensions_only_under_stage_catchup(tmp_path, chunks):
         (tmp_path / "icf_screen.manifest.jsonl").read_bytes()
     assert after == before, "icf_screen untouched"
     assert cc.main(args) == 0 and len(ics.read_table(dims, ics.DIMENSIONS)) == 2, "idempotent"
+    # Red team, PR 1660: a second run id must not give a work a second catch-up answer.
+    (chunks / "chunk02.or.txt").write_text("1|yes|politics|policy|\n")
+    assert cc.main(args[:-7] + ["--run-id", "t1842-again", "--machine", "padme",
+                                "--suffix", "or"]) == 0
+    rows = ics.read_table(dims, ics.DIMENSIONS)
+    assert [(r["work_key"], r["run_id"]) for r in rows][2:] == [("openalex:W3", "t1842-again")]
+
+
+def test_parse_stamps_the_hash_of_the_rendered_wrapper(tmp_path, chunks):
+    """Red team, PR 1660: rows carry the wrapper the model saw, not the one at parse time."""
+    edited = tmp_path / "edited.md"
+    edited.write_text(open(CATCHUP_PROMPT, encoding="utf-8").read().replace(
+        "Read-only labelling task.", "Read-only labelling task, edited."))
+    (chunks / "chunk01.or.txt").write_text("1|yes|economics|policy|\n")
+    dims = str(tmp_path / "rel_dimensions.csv")
+    assert cc.main(["--prompt", str(edited), "--dimensions-table", dims, "parse",
+                    "--chunk-dir", str(chunks), "--model", "m", "--run-id", "r",
+                    "--machine", "d", "--suffix", "or", "--new-table"]) == 0
+    assert ics.read_table(dims, ics.DIMENSIONS)[0]["prompt_sha256"] == \
+        ics.stage2_prompt_sha256(CATCHUP_PROMPT)
+    with pytest.raises(cc.CatchupError, match="rendered with wrapper"):
+        cc.render(str(chunks), str(edited))
+    (chunks / "render.json").unlink()
+    with pytest.raises(cc.CatchupError, match="render.json missing"):
+        cc.rendered_sha(str(chunks))
+
+
+def test_build_refuses_a_lost_dimensions_table(tmp_path):
+    """Red team, PR 1660: a missing rel_dimensions beside v2 stage-2 rows is lost, not empty."""
+    table = str(tmp_path / "icf_screen.csv")
+    v2_sha = ics.stage2_prompt_sha256(V2_PROMPT)
+    ics.append_rows(table, [_icf_row(1)], new_table=True)
+    assert cc.dimension_rows(table, str(tmp_path / "dims.csv"), V2_PROMPT) == []
+    ics.append_rows(table, [dict(_icf_row(2), prompt_sha256=v2_sha)])
+    with pytest.raises(cc.CatchupError, match="missing"):
+        cc.dimension_rows(table, str(tmp_path / "dims.csv"), V2_PROMPT)
 
 
 @pytest.mark.parametrize("answers", [
     "1|icf|research|SN|yes|economics|policy|x\n2|out|other|?|na|na|na|\n",  # a v2 file
+    "1|unsure|research|SN|unsure|other|other|x\n",                        # v2 line, unsure
     "1|yes|economics|policy|\n1|no|finance|empirical|x\n",                 # answered twice
     "the records are about climate finance\n",                              # prose
+    "²|yes|economics|policy|\n",                                            # non-ASCII digit
+    "9" * 5000 + "|yes|economics|policy|\n",                                # huge number
 ])
 def test_parse_refuses_a_malformed_chunk_and_writes_nothing(tmp_path, chunks, answers):
     (chunks / "chunk01.or.txt").write_text(answers)
@@ -137,30 +176,49 @@ def test_usage_log_reports_or_derives_cost():
     assert cc.usage_log("chunk01", body, 3, 2, price, {})["cost_source"] == "reported"
 
 
-def test_submit_refuses_above_the_cap_before_any_request(chunks, monkeypatch):
-    monkeypatch.setattr(cc, "model_pricing", lambda m: {"prompt": 1e-3, "completion": 1e-3})
+def _boom(*a, **k):
+    raise AssertionError("no request may be sent")
 
-    def boom(*a, **k):
-        raise AssertionError("no request may be sent")
+
+def test_spend_guard_is_a_bound_on_max_tokens(chunks, monkeypatch):
+    monkeypatch.setattr(cc, "model_pricing", lambda m: {"prompt": 1e-6, "completion": 1e-5})
+    # input is tiny; two chunks x 1000 output tokens x 1e-5 = 0.02 USD
     with pytest.raises(cc.CatchupError, match="exceeds"):
-        cc.submit(str(chunks), "m", "or", 0.01, 1000, None, 400, post=boom)
+        cc.submit(str(chunks), "m", "or", 0.019, 1000, None, post=_boom)
+    for cap in (float("nan"), -1.0, 0.0):
+        with pytest.raises(cc.CatchupError, match="must be positive"):
+            cc.call(str(chunks), "m", "or", cap, 1000, None, post=_boom)
     assert not (chunks / "or.batch.json").exists()
+
+
+@pytest.mark.parametrize("price", ["-1", "0", "nan"])
+def test_spend_guard_refuses_a_model_without_a_positive_price(price):
+    """Red team, PR 1660: a router model listed at -1 gave a negative estimate."""
+    class Resp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"data": [{"id": "openrouter/auto",
+                              "pricing": {"prompt": price, "completion": "1e-5"}}]}
+    with pytest.raises(cc.CatchupError, match="no spend bound"):
+        cc.model_pricing("openrouter/auto", get=lambda *a, **k: Resp())
 
 
 def test_collect_writes_answers_and_the_token_log(chunks, monkeypatch):
     monkeypatch.setattr(cc, "_headers", lambda: {})
     (chunks / "or.batch.json").write_text(json.dumps(
         {"batch_id": "b1", "model": "m:batch", "route": "openrouter-batch",
-         "pricing": {"prompt": 2e-6, "completion": 1e-5}}))
+         "chunks": ["chunk01", "chunk02"], "pricing": {"prompt": 2e-6, "completion": 1e-5}}))
 
     def body(text, cost):
         return {"model": "m", "choices": [{"message": {"content": text}, "finish_reason": "stop"}],
                 "usage": {"prompt_tokens": 100, "completion_tokens": 50, "cost": cost}}
+    reply = "Here are the answers:\n1|yes|economics|policy|\n2|no|data_science|method|CER\n"
     batch = {"id": "b1", "status": "completed", "usage": {"cost": 0.3},
-             "results": [{"custom_id": "chunk01", "response": {"body": body(
-                 "1|yes|economics|policy|\n2|no|data_science|method|CER forecast\n", 0.2)}},
-                         {"custom_id": "chunk02", "response": {"body": body(
-                             "1|unsure|other|other|no abstract\n", 0.1)}}]}
+             "results": [{"custom_id": "chunk01", "response": {"body": body(reply, 0.2)}},
+                         {"custom_id": "chunk02", "response": None,
+                          "error": {"message": "overloaded"}}]}
 
     class Resp:
         def raise_for_status(self):
@@ -169,7 +227,12 @@ def test_collect_writes_answers_and_the_token_log(chunks, monkeypatch):
         def json(self):
             return batch
     res = cc.collect(str(chunks), "or", wait=False, get=lambda *a, **k: Resp())
-    assert res["answered"] == 3 and res["cost_usd"] == 0.3
-    assert (chunks / "chunk02.or.txt").read_text() == "1|unsure|other|other|no abstract\n"
+    assert res["answered"] == 2 and res["cost_usd"] == 0.2
+    # the preamble stays in the raw reply, out of the answer file
+    assert (chunks / "chunk01.or.raw.txt").read_text() == reply
+    assert (chunks / "chunk01.or.txt").read_text() == "\n".join(reply.splitlines()[1:]) + "\n"
+    assert not (chunks / "chunk02.or.txt").exists(), "an errored request leaves it pending"
+    cc.collect(str(chunks), "or", wait=False, get=lambda *a, **k: Resp())
     calls = [json.loads(x) for x in (chunks / "or.calls.jsonl").read_text().splitlines()]
-    assert [c["cost_per_answered_usd"] for c in calls] == [0.1, 0.1]
+    assert [c["cost_per_answered_usd"] for c in calls] == [0.1, None], "rewritten, not doubled"
+    assert calls[1]["error"] == {"message": "overloaded"}
