@@ -8,6 +8,9 @@
 table: data/rel_screen/icf_screen.csv
 pool: data/rel_pool/pool.csv
 view_dir: data/rel_pool
+# Per-work venue table of ticket 1841 (make rel-venues), joined by the REL view
+# for the seriousness dimension (ticket 1843).
+venues_table: data/rel_pool/rel_work_venues.csv
 
 # Read-only archive of ticket 1530 (doudou). The import never writes into it.
 t1530_archive: ~/data/projets/climate-finance-het/rel_sud/2026-09-29

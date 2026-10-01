@@ -288,3 +288,17 @@ decided by the author on 2026-10-01; 1843 reads them with
 Every flag, both NGO tiers, `tier_without_nonresearch` and the `unknown`
 state are written whatever the settings, so a sensitivity table can still
 show any other setting.
+
+`make rel-view` (ticket 1843) then gives every work one exclusion reason, the
+first that applies in the fixed order ICF (`icf_excluded`, `icf_pending`),
+discipline (`discipline_excluded` when the contribution test says no,
+`discipline_pending` while no dimension row exists), seriousness
+(`seriousness_excluded`: a registry exclusion under switch (a), then tier C),
+else `included` (`rel_reason`, `rel_final` in `rel_view.csv`). It needs
+`rel_work_venues.csv` (`make rel-venues` first), counts reasons in works and
+in families under `reasons` in `rel_counts.json`, records the sha256 of the
+pool, both append-only tables and the venue table under `inputs`, and writes
+`rel_sensitivity.csv`, the included set under each seriousness setting
+(publishers dropped, tier A only, Scopus and DOAJ also excluding, NGO switch
+flipped). The rules (which dimension row wins, the family rule) are in the
+`scripts/_rel_reasons.py` docstring.
