@@ -31,7 +31,7 @@ non-research pages of B sites to C (70 works). Sensitivity rows remain
 computable from the work table.
 
 ## Exit criteria
-- [ ] REL view: exclusions by reason (ICF, discipline, seriousness), one count per reason, reproducible
-- [ ] Sensitivity table by publisher flag and by rank
-- [ ] PRISMA (`conception/rel-prisma-flux-provisoire.md`) and protocol (`conception/rel-audit-finalisation-corpus.md`) describe the two dimensions, their operational definitions and reasons
-- [ ] AGENTS.md gates pass
+- [x] REL view: exclusions by reason (ICF, discipline, seriousness), one count per reason, reproducible (machinery; the discipline counts are 0 by construction until 1842 writes rel_dimensions)
+- [x] Sensitivity table by publisher flag and by rank
+- [x] PRISMA (`conception/rel-prisma-flux-provisoire.md`) and protocol (`conception/rel-audit-finalisation-corpus.md`) describe the two dimensions, their operational definitions and reasons
+- [x] AGENTS.md gates pass

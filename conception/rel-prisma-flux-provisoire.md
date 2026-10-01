@@ -66,7 +66,7 @@ Le modèle est celui du protocole (ensemble flou coupé à α = 0,5). Les facett
 | **en attente de discipline** | **1 992** | **1 992** | mesuré ; rang A 1 220, B 370, lieu inconnu 402 ; μ provisoire 1 pour 1 543, 0,5 pour 449 (lieu inconnu ou ICF « incertaine ») |
 | **retenues** | 0 | 0 | provisoire |
 
-Des 2 615 œuvres que l'ICF retient, 623 tombent au sérieux, toutes de rang C : 518 par la règle des dépôts, 104 sans lieu reconnu comme sérieux, 1 page non scientifique d'un site institutionnel. Parmi les 1 992 en attente de discipline, les œuvres de recherche de la fenêtre (années complètes, disposition « include ») sont 1 382, dont 308 à μ = 0,5 (`reasons.included_research_in_window`).
+Des 2 615 œuvres que l'ICF retient, 623 tombent au sérieux, toutes de rang C : 518 par la règle des dépôts, 104 par la règle résiduelle « autre », 1 page non scientifique d'un site institutionnel. Parmi les 1 992 en attente de discipline, les œuvres de recherche de la fenêtre (années complètes, disposition « include ») sont 1 382, dont 308 à μ = 0,5 (`reasons.included_research_in_window`).
 
 **Ce que l'étape 2 peut sauter** (`stage2_skip`). Parmi les 83 681 œuvres en attente d'étape 2, 21 469 sont de rang C, de sérieux nul : l'étape 2 n'a pas à les relire, et 62 212 restent à trier (rang A 48 501, B 7 944, lieu inconnu 5 767). Parmi les 160 896 œuvres non triées, 116 sont de rang C.
 
