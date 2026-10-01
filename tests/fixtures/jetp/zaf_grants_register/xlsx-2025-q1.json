@@ -1,0 +1,540 @@
+{
+"source": {
+"sha256": "6eae2fffc800f6c82c2d03b21af150ba633bf60992bd8e37a98515808e44d9c0",
+"note": "sheets of the 2025 Q1 workbook: EU-Register whole; DataTable - Overall cut to its title block, its EU rows and its footnotes, with the total row re-summed over those rows; Dropdowns (hidden) and Financing Status cut to their first rows; text folded to Latin-1"
+},
+"sheets": [
+{
+"name": "DataTable - Overall ",
+"state": "visible",
+"rows": [
+{
+"r": 1,
+"hidden": false,
+"cells": {
+"A": "JET Grants Register 2025 (Q1) ",
+"E": "1USD = ZAR:"
+}
+},
+{
+"r": 2,
+"hidden": false,
+"cells": {
+"E": "17.64"
+}
+},
+{
+"r": 4,
+"hidden": false,
+"cells": {
+"A": "Unique ID",
+"B": "Portfolios",
+"C": "Priority Areas ",
+"D": "Total US$ ",
+"E": "Total ZAR",
+"F": "Source",
+"G": "Implementing Entity",
+"H": "Institutional / South African Partner",
+"I": "Beneficiary",
+"J": "Status ",
+"K": "Description",
+"L": "Date of Financing Agreement Signed*",
+"M": "End Date"
+}
+},
+{
+"r": 5,
+"hidden": false,
+"cells": {
+"A": "EU001",
+"B": "Electricity",
+"C": "Transmission",
+"D": "162000",
+"E": "2852820",
+"F": "European Union",
+"G": "Presidential Climate Commission ",
+"J": "D. Completed",
+"K": "Presidential Climate Commission (PCC) Energy Modelling: The funding is to facilitate the PCC work on granular net-zero pathways for the economy and to support South African policy makers to access South African climate related socio-economic modelling focusing on key sectors (transport and energy) and key provinces (Mpumalanga and Eastern Cape). ",
+"L": "2022-01-01",
+"M": "2023-12-29"
+}
+},
+{
+"r": 6,
+"hidden": false,
+"cells": {
+"A": "EU002",
+"B": "Electricity",
+"C": "Manufacturing and localising clean energy value chain",
+"D": "2160000",
+"E": "38102400",
+"F": "European Union",
+"G": "WWF SA, Green Cape, Democracy Works Foundation, Association for Rural Advancement, Social Change Assistance Trust",
+"J": "C. Implementation Phase",
+"K": "The Climate Change Champions: The Climate Change Champions, funded under the thematic programme \"Civil Society Organisations (CSOs) and Local Authorities (LAs) 2014-2020\", resulted in the allocation of 5 grants. The specific objective of the call is to increase the participation of South African CSOs in tackling climate change, mitigating greenhouse gases emissions and adapting to its adverse effects. The aim is to tackle climate change while enhancing gender equality and participation of the youth.",
+"L": "2021-11-01",
+"M": "2024-12-31"
+}
+},
+{
+"r": 7,
+"hidden": false,
+"cells": {
+"A": "EU003",
+"B": "JT-Mpumalanga",
+"C": "Manufacturing and localising clean energy value chain",
+"D": "86400",
+"E": "1524096",
+"F": "European Union",
+"G": "Presidential Climate Commission ",
+"J": "C. Implementation Phase",
+"K": "PCC Stakeholder and community engagement: The  funding is to facilitate PCC stakeholder and community engagements in Mpumalanga and Eastern Cape with knowledge products, workshops, dialogues and exchanges of experiences. The PCC will decide on the proposed focus on investment opportunities arising from just transition.",
+"L": "2023-01-02",
+"M": "2024-12-31"
+}
+},
+{
+"r": 8,
+"hidden": false,
+"cells": {
+"A": "EU004",
+"B": "Electricity",
+"C": "Manufacturing and localising clean energy value chain",
+"D": "21600",
+"E": "21600",
+"F": "European Union",
+"G": "Presidential Climate Commission ",
+"J": "D. Completed",
+"K": "PCC Communication: Translation into Venda, Zulu, and isiXhosa of the Just Transition Framework to enhance information accessibility. Additionally, funding will be used to create communication materials and infographics to bolster the PCC stakeholder engagement process.",
+"L": "2023-01-01",
+"M": "2023-12-31"
+}
+},
+{
+"r": 9,
+"hidden": false,
+"cells": {
+"A": "EU005",
+"B": "Municipalities",
+"C": "Capability and capacity",
+"D": "16200000.000000002",
+"E": "285768000.00000006",
+"F": "European Union",
+"G": "National Treasury: COGTA, SALGA, selected municipalities",
+"J": "C. Implementation Phase",
+"K": "Bridging Inequalities through Greening of Municipal Services: The action will support selected South African cities to address some of these key service delivery challenges while focusing on smart and green solutions, enabled by digitalisation and the use of technologies. It will help build adaptive capacity and capabilities in the face of climate change, resource depletion, financial shocks, growing inequality and poverty, in particular inequality in sustainable access to (greener) water, energy or waste management services.",
+"L": "2023-04-01",
+"M": "2027-12-31"
+}
+},
+{
+"r": 10,
+"hidden": false,
+"cells": {
+"A": "EU006",
+"B": "Skills",
+"C": "Mobilise PSET funding for JET",
+"D": "172800",
+"E": "3048192",
+"F": "European Union",
+"G": "University of Cape Town",
+"J": "C. Implementation Phase",
+"K": "Response of the Earth System to overshoot, Climate neutrality and negative Emissions under Horizon Europe: The RESCUE project will improve knowledge and understanding in area of this call: \"Climate and Earth System responses to climate neutrality and net negative emissions\", by pursuing two overall objectives: 1) Quantify the climate and Earth system responses to pathways achieving climate neutrality by Carbon Dioxide Removal (CDR) deployment with and without temperature overshoot, and 2) Assess the potential role of CDR in reducing net GHG emissions, as well as its potential environmental risks and co-benefits.",
+"L": "2022-01-01",
+"M": "2026-12-31"
+}
+},
+{
+"r": 11,
+"hidden": false,
+"cells": {
+"A": "EU007",
+"B": "Skills",
+"C": "Mobilise PSET funding for JET",
+"D": "270000",
+"E": "4762800",
+"F": "European Union",
+"G": "University of Johannesburg",
+"J": "C. Implementation Phase",
+"K": "Circular economy industrial symbiosis under Horizon Europe: Circular economy industrial symbiosis ",
+"L": "2022-01-01",
+"M": "2026-12-31"
+}
+},
+{
+"r": 12,
+"hidden": false,
+"cells": {
+"A": "EU008",
+"B": "Electricity",
+"C": "IIPSA Infrastructure Investment Programme for SA",
+"D": "37800000",
+"E": "666792000",
+"F": "European Union",
+"G": "DFIs (DBSA, AFD and EIB) and municpalities.",
+"J": "C. Implementation Phase",
+"K": "Grant to facilitate infrastructure investment of municipalities: Infrastructure Investment Programme for SA (IIPSA) was launched in 2014. It focuses on blending of the EU grants with loans from DFIs in support of infrastructure projects. Sustainable energy, transport, green hyrdogen, water are among the focal sectors of the programme. Approx. ?35M will be programmed with focus on electricity generation, battery storage, transport, green hydrogen and water.",
+"L": "2021-11-01",
+"M": "2025-12-30"
+}
+},
+{
+"r": 13,
+"hidden": false,
+"cells": {
+"D": "56872800.000000002",
+"E": "1002871908.00000006"
+}
+},
+{
+"r": 15,
+"hidden": false,
+"cells": {
+"A": "Footnote 1 (Total US$): US$ to ZAR is 17,64 (Exchange Rate). The average exchange rate from October 2022 to December 2024 using Oanda has been applied. Grants (with some exceptions) are managed in home currencies - the exchange rate applied is from the home currency to US$, using an average rate from October 2022 to December 2024. This exchange rate will be regularly updated (Quarterly) to account for fluctuations from GBP/Euro/CHF/CAD to USD. "
+}
+},
+{
+"r": 17,
+"hidden": false,
+"cells": {
+"A": "Footnote 2 (Start Date): All figures are pro-rated from November 2021 and reflect the support provided from COP26 onwards. "
+}
+},
+{
+"r": 19,
+"hidden": false,
+"cells": {
+"A": "*Subject to the availability of budget funds"
+}
+},
+{
+"r": 21,
+"hidden": false,
+"cells": {
+"A": "Green Highlight: Indicates that all these project were closed in the previous Q3, so the current exchange rate does not apply."
+}
+}
+]
+},
+{
+"name": "EU-Register",
+"state": "visible",
+"rows": [
+{
+"r": 1,
+"hidden": false,
+"cells": {
+"D": "EUR to USD",
+"F": "17.64"
+}
+},
+{
+"r": 2,
+"hidden": false,
+"cells": {
+"D": "1.08"
+}
+},
+{
+"r": 3,
+"hidden": false,
+"cells": {
+"A": "Unique ID",
+"B": "Portfolios",
+"C": "Priority Areas ",
+"D": "Total US$ ",
+"E": "Euro - Amount",
+"F": "Total ZAR",
+"G": "Source",
+"H": "Implementing Entity",
+"I": "Institutional / South African Partner",
+"J": "Beneficiary",
+"K": "Status ",
+"L": "Description",
+"M": "Date of Financing Agreement Signed*",
+"N": "End Date"
+}
+},
+{
+"r": 4,
+"hidden": false,
+"cells": {
+"A": "EU001",
+"B": "Electricity",
+"C": "Transmission",
+"D": "162000",
+"E": "150000",
+"F": "2852820",
+"G": "European Union",
+"H": "Presidential Climate Commission ",
+"K": "D. Completed",
+"L": "Presidential Climate Commission (PCC) Energy Modelling: The funding is to facilitate the PCC work on granular net-zero pathways for the economy and to support South African policy makers to access South African climate related socio-economic modelling focusing on key sectors (transport and energy) and key provinces (Mpumalanga and Eastern Cape). ",
+"M": "2022-01-01",
+"N": "2023-12-31"
+}
+},
+{
+"r": 5,
+"hidden": false,
+"cells": {
+"A": "EU002",
+"B": "Electricity",
+"C": "Manufacturing and localising clean energy value chain",
+"D": "2160000",
+"E": "2000000",
+"F": "38102400",
+"G": "European Union",
+"H": "WWF SA, Green Cape, Democracy Works Foundation, Association for Rural Advancement, Social Change Assistance Trust",
+"K": "C. Implementation Phase",
+"L": "The Climate Change Champions: The Climate Change Champions, funded under the thematic programme \"Civil Society Organisations (CSOs) and Local Authorities (LAs) 2014-2020\", resulted in the allocation of 5 grants. The specific objective of the call is to increase the participation of South African CSOs in tackling climate change, mitigating greenhouse gases emissions and adapting to its adverse effects. The aim is to tackle climate change while enhancing gender equality and participation of the youth.",
+"M": "2021-11-01",
+"N": "2025-12-31"
+}
+},
+{
+"r": 6,
+"hidden": false,
+"cells": {
+"A": "EU003",
+"B": "JT-Mpumalanga",
+"C": "Manufacturing and localising clean energy value chain",
+"D": "86400",
+"E": "80000",
+"F": "1524096",
+"G": "European Union",
+"H": "Presidential Climate Commission ",
+"K": "C. Implementation Phase",
+"L": "PCC Stakeholder and community engagement: The  funding is to facilitate PCC stakeholder and community engagements in Mpumalanga and Eastern Cape with knowledge products, workshops, dialogues and exchanges of experiences. The PCC will decide on the proposed focus on investment opportunities arising from just transition.",
+"M": "2024-01-01",
+"N": "2024-12-31"
+}
+},
+{
+"r": 7,
+"hidden": false,
+"cells": {
+"A": "EU004",
+"B": "Electricity",
+"C": "Manufacturing and localising clean energy value chain",
+"D": "21600",
+"E": "20000",
+"F": "380376",
+"G": "European Union",
+"H": "Presidential Climate Commission ",
+"K": "D. Completed",
+"L": "PCC Communication: Translation into Venda, Zulu, and isiXhosa of the Just Transition Framework to enhance information accessibility. Additionally, funding will be used to create communication materials and infographics to bolster the PCC stakeholder engagement process.",
+"M": "2023-01-01",
+"N": "2023-12-31"
+}
+},
+{
+"r": 8,
+"hidden": false,
+"cells": {
+"A": "EU005",
+"B": "Municipalities",
+"C": "Capability and capacity",
+"D": "16200000.000000002",
+"E": "15000000",
+"F": "285768000.00000006",
+"G": "European Union",
+"H": "National Treasury: COGTA, SALGA, selected municipalities",
+"K": "C. Implementation Phase",
+"L": "Bridging Inequalities through Greening of Municipal Services: The action will support selected South African cities to address some of these key service delivery challenges while focusing on smart and green solutions, enabled by digitalisation and the use of technologies. It will help build adaptive capacity and capabilities in the face of climate change, resource depletion, financial shocks, growing inequality and poverty, in particular inequality in sustainable access to (greener) water, energy or waste management services.",
+"M": "2023-04-01",
+"N": "2027-12-31"
+}
+},
+{
+"r": 9,
+"hidden": false,
+"cells": {
+"A": "EU006",
+"B": "Skills",
+"C": "Mobilise PSET funding for JET",
+"D": "172800",
+"E": "160000",
+"F": "3048192",
+"G": "European Union",
+"H": "University of Cape Town",
+"K": "C. Implementation Phase",
+"L": "Response of the Earth System to overshoot, Climate neutrality and negative Emissions under Horizon Europe: The RESCUE project will improve knowledge and understanding in area of this call: \"Climate and Earth System responses to climate neutrality and net negative emissions\", by pursuing two overall objectives: 1) Quantify the climate and Earth system responses to pathways achieving climate neutrality by Carbon Dioxide Removal (CDR) deployment with and without temperature overshoot, and 2) Assess the potential role of CDR in reducing net GHG emissions, as well as its potential environmental risks and co-benefits.",
+"M": "2022-01-01",
+"N": "2026-12-31"
+}
+},
+{
+"r": 10,
+"hidden": false,
+"cells": {
+"A": "EU007",
+"B": "Skills",
+"C": "Mobilise PSET funding for JET",
+"D": "270000",
+"E": "250000",
+"F": "4762800",
+"G": "European Union",
+"H": "University of Johannesburg",
+"K": "C. Implementation Phase",
+"L": "Circular economy industrial symbiosis under Horizon Europe: Circular economy industrial symbiosis ",
+"M": "2022-01-01",
+"N": "2026-12-31"
+}
+},
+{
+"r": 11,
+"hidden": false,
+"cells": {
+"A": "EU008",
+"B": "Electricity",
+"C": "IIPSA Infrastructure Investment Programme for SA",
+"D": "37800000",
+"E": "35000000",
+"F": "666792000",
+"G": "European Union",
+"H": "DFIs (DBSA, AFD and EIB) and municpalities.",
+"K": "C. Implementation Phase",
+"L": "Grant to facilitate infrastructure investment of municipalities: Infrastructure Investment Programme for SA (IIPSA) was launched in 2014. It focuses on blending of the EU grants with loans from DFIs in support of infrastructure projects. Sustainable energy, transport, green hyrdogen, water are among the focal sectors of the programme. Approx. ?35M will be programmed with focus on electricity generation, battery storage, transport, green hydrogen and water.",
+"M": "2024-01-01",
+"N": "2025-12-30"
+}
+},
+{
+"r": 12,
+"hidden": false,
+"cells": {
+"D": "56872800",
+"E": "52660000",
+"F": "1003230684"
+}
+},
+{
+"r": 14,
+"hidden": false,
+"cells": {
+"A": "Footnote 1 (Total US$): US$ to ZAR is 17,64 (Exchange Rate). The average exchange rate from October 2022 to December 2024 using Oanda has been applied. Grants (with some exceptions) are managed in home currencies - the exchange rate applied is from the home currency to US$, using an average rate from October 2022 to December 2024. This exchange rate will be regularly updated (Quarterly) to account for fluctuations from GBP/Euro/CHF/CAD to USD. "
+}
+},
+{
+"r": 16,
+"hidden": false,
+"cells": {
+"A": "Footnote 2 (Start Date): All figures are pro-rated from November 2021 and reflect the support provided from COP26 onwards. "
+}
+},
+{
+"r": 18,
+"hidden": false,
+"cells": {
+"A": "*Subject to the availability of budget funds"
+}
+},
+{
+"r": 20,
+"hidden": false,
+"cells": {
+"A": "Green Highlight: Indicates that all these projects were closed in the previous Q3, so the current exchange rate does not apply."
+}
+}
+]
+},
+{
+"name": "Dropdowns",
+"state": "hidden",
+"rows": [
+{
+"r": 1,
+"hidden": false,
+"cells": {
+"A": "Priority Areas",
+"C": "Priority Areas",
+"E": "Purpose",
+"G": "Source Group",
+"I": "Source",
+"K": "Status (Dynamic)"
+}
+},
+{
+"r": 2,
+"hidden": false,
+"cells": {
+"A": "Decommissioning",
+"C": "Electricity",
+"E": "Capacity development / training",
+"G": "Original IPG",
+"I": "United Kingdom",
+"K": "A. Planned "
+}
+},
+{
+"r": 3,
+"hidden": false,
+"cells": {
+"A": "Generation",
+"C": "Green hydrogen",
+"E": "Technical Assistance",
+"G": "IPG",
+"I": "United States",
+"K": "B. Approved"
+}
+},
+{
+"r": 4,
+"hidden": false,
+"cells": {
+"A": "Generation-embedded social ownership",
+"C": "Municipalities",
+"E": "Studies/research",
+"G": "Non-IPG",
+"I": "France",
+"K": "C. Implementation Phase"
+}
+}
+]
+},
+{
+"name": "Financing Status",
+"state": "visible",
+"rows": [
+{
+"r": 2,
+"hidden": false,
+"cells": {
+"B": "Sovereign bilateral partners",
+"L": "17.64"
+}
+},
+{
+"r": 3,
+"hidden": false,
+"cells": {
+"B": "US$ millions",
+"D": "Grants",
+"E": "Highly-concessional loans",
+"F": "Concessional loans",
+"G": "Policy Loans",
+"H": "Commercial debt and equity",
+"I": "Guarantees",
+"J": "Export Credits",
+"K": "Total bilateral contributions in USD millions",
+"L": "ZAR millions"
+}
+},
+{
+"r": 4,
+"hidden": false,
+"cells": {
+"B": "Canada",
+"D": "1",
+"E": "-",
+"G": "91",
+"H": "-",
+"J": "-",
+"K": "92",
+"L": "1622.88"
+}
+}
+]
+}
+]
+}
