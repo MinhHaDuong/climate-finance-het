@@ -264,18 +264,35 @@ def _files(tmp_path):
         w.writerows(POOL)
     table = str(tmp_path / "icf_screen.csv")
     ics.append_rows(table, LABELS)
+    venues = tmp_path / "rel_work_venues.csv"
+    with open(venues, "w", encoding="utf-8", newline="") as fh:
+        w = csv.writer(fh, lineterminator="\n")
+        w.writerow(["work_key", "tier", "tier_ngo_in_b", "tier_ngo_not_b", "flags",
+                    "flagged", "excluded", "publisher_flag"])
+        w.writerows([p["work_key"], "A", "A", "A", "", "false", "false", ""] for p in POOL)
     return str(pool), table
+
+
+SRULE = {"exclude": ["hijacked", "kanalregisteret"], "ngo_research_in_b": True,
+         "tiers": ["A", "B"], "drop_publishers": []}
+
+
+def _run(tmp_path, pool, table, out):
+    """``corpus_rel_view.run`` with no dimension table and an all-A venue table."""
+    return crv.run(pool, table, str(tmp_path / out), WINDOW, RULE,
+                   dims_path=str(tmp_path / "rel_dimensions.csv"),
+                   venues_path=str(tmp_path / "rel_work_venues.csv"), seriousness_rule=SRULE)
 
 
 def test_same_inputs_give_byte_identical_outputs(tmp_path):
     pool, table = _files(tmp_path)
-    crv.run(pool, table, str(tmp_path / "a"), WINDOW, RULE)
-    crv.run(pool, table, str(tmp_path / "b"), WINDOW, RULE)
-    for name in ("rel_view.csv", "rel_counts.json"):
+    _run(tmp_path, pool, table, "a")
+    _run(tmp_path, pool, table, "b")
+    for name in ("rel_view.csv", "rel_counts.json", "rel_sensitivity.csv"):
         assert (tmp_path / "a" / name).read_bytes() == (tmp_path / "b" / name).read_bytes()
     counts = json.loads((tmp_path / "a" / "rel_counts.json").read_text())
     assert counts["labels"]["rows"] == len(LABELS)
-    assert counts["rule"] == RULE
+    assert counts["rule"] == dict(RULE, seriousness=SRULE)
 
 
 def test_view_refuses_a_tampered_table(tmp_path):
@@ -283,13 +300,13 @@ def test_view_refuses_a_tampered_table(tmp_path):
     data = open(table, "rb").read()
     open(table, "wb").write(data[:-5])
     with pytest.raises(ics.IcfScreenError):
-        crv.run(pool, table, str(tmp_path / "a"), WINDOW, RULE)
+        _run(tmp_path, pool, table, "a")
 
 
 def test_view_reports_a_missing_table_cleanly(tmp_path):
     pool, _ = _files(tmp_path)
     missing = str(tmp_path / "none" / "icf_screen.csv")
     with pytest.raises(ics.IcfScreenError, match="missing"):
-        crv.run(pool, missing, str(tmp_path / "a"), WINDOW, RULE)
+        _run(tmp_path, pool, missing, "a")
     assert crv.main(["--pool", pool, "--table", missing,
                      "--output-dir", str(tmp_path / "a")]) == 1

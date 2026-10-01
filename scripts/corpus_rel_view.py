@@ -1,10 +1,18 @@
-"""The REL view: pool × icf_screen labels → status per work and counts (ticket 1732).
+"""The REL view: pool × icf_screen labels → status per work and counts (ticket 1732),
+then exclusions by reason, ICF → discipline → seriousness (ticket 1843).
 
 Joins the REL pool (``data/rel_pool/pool.csv``, ticket 1731) with the
-append-only label table (``data/rel_screen/icf_screen.csv``). Regenerable: the
-outputs are a function of those two files, ``config/rel_review.yaml`` and the
-stage-1 exit rule of ``config/rel_screen.yaml`` only (same inputs,
-byte-identical outputs; no timestamp is written).
+append-only label table (``data/rel_screen/icf_screen.csv``), the append-only
+discipline table (``data/rel_screen/rel_dimensions.csv``, tickets 1840 and
+1842; absent until a version-2 run or the catch-up writes it) and the per-work
+venue table (``data/rel_pool/rel_work_venues.csv``, ``make rel-venues``,
+ticket 1841). Regenerable: the outputs are a function of those files,
+``config/rel_review.yaml``, the stage-1 exit rule of ``config/rel_screen.yaml``
+and the two seriousness switches (``exclusion.exclude`` in
+``config/rel_venue_registries.yaml``, ``ngo_research_in_b`` in
+``config/rel_venue_tiers.yaml``) only: same inputs, byte-identical outputs; no
+timestamp is written; ``rel_counts.json`` records the sha256 of the four input
+files (``inputs``) and the rule with both switches (``rule``).
 
 Matching a label to a pool work: its ``work_key`` equals the work's
 ``work_key``; else its OpenAlex id is one of the work's member ids
@@ -52,9 +60,18 @@ given in works and in families, and ``families`` counts the multi-work
 families whose members differ in ``rel_included`` and the unresolved hints by
 cause.
 
+Exclusions by reason (``_rel_reasons``, whose docstring states the rules): one
+``rel_reason`` per work, the first that applies in the order ICF
+(``icf_excluded``, ``icf_pending``), discipline (``discipline_excluded``,
+``discipline_pending``), seriousness (``seriousness_excluded``), else
+``included`` (``rel_final``). Counted in works and in families
+(``rel_family_id``: a family takes its most favourable member) under
+``reasons`` in ``rel_counts.json``.
+
 Outputs (``--output-dir``, default ``data/rel_pool``): ``rel_view.csv`` (one row
-per pool work) and ``rel_counts.json``, which records the exit rule it applied
-(``rule``).
+per pool work), ``rel_counts.json``, which records the exit rule it applied
+(``rule``), and ``rel_sensitivity.csv``, the REL included set under each
+seriousness setting (publisher flag, tier A only, registry switch, NGO switch).
 
 Usage:
     python scripts/corpus_rel_view.py [--pool PATH] [--table PATH] [--output-dir DIR]
@@ -68,6 +85,8 @@ import sys
 from collections import Counter, defaultdict
 
 import _icf_screen as ics
+import _rel_reasons as rr
+import _rel_venues as rvn
 import _rel_view as rv
 import yaml
 from pipeline_loaders import load_rel_review_config
@@ -77,13 +96,19 @@ log = get_logger("corpus_rel_view")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_screen.yaml")
+VENUE_REGISTRIES = os.path.join(ROOT, "config", "rel_venue_registries.yaml")
+VENUE_TIERS = os.path.join(ROOT, "config", "rel_venue_tiers.yaml")
 
 VIEW_COLUMNS = ["work_key", "openalex_id", "doi", "title", "year", "in_catalogue", "sources",
                 "version_hint", "status", "doc_type", "studied_country",
                 "stage1_label", "stage1_doc", "stage1_model", "stage1_run_id",
                 "stage2_label", "stage2_doc", "stage2_model", "stage2_run_id",
                 "n_audit", "n_labels", "conflict", "rel_disposition", "rel_year_status",
-                "rel_included", "rel_flag", "family_id", "family_first_year", "family_size"]
+                "rel_included", "rel_flag", "family_id", "family_first_year", "family_size",
+                *rr.VIEW_COLUMNS]
+SENSITIVITY_COLUMNS = ["scenario", "exclude_registries", "tiers", "ngo_research_in_b",
+                       "drop_publishers", "included_works", "included_families",
+                       "discipline_pending_works", "discipline_pending_families"]
 STATUSES = ["unscreened", "stage1_out", "stage1_aux", "pending_stage2",
             "icf", "aux", "out", "unsure_unresolved"]
 
@@ -158,24 +183,83 @@ def make_counts(rows: list[dict], summary: dict, window_cfg: dict, inputs: dict,
     }
 
 
-def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: dict) -> dict:
+def _input(path: str | None) -> dict:
+    """Basename and sha256 of an input; ``sha256`` null for an absent optional one."""
+    present = bool(path) and os.path.exists(path)
+    return {"path": os.path.basename(path or ""),
+            "sha256": rv.sha256_file(path) if present else None}
+
+
+def read_dimensions(dims_path: str | None) -> list[dict]:
+    """``rel_dimensions`` rows, or none when the table does not exist yet.
+
+    The table lives in ``data/rel_screen`` with ``icf_screen``, under one DVC
+    pointer: once ``icf_screen`` is present (``require_table``), an absent
+    dimension table is a table no version-2 run or catch-up has started, not an
+    unfetched one. Its absence is recorded (``sha256`` null) and every
+    ICF-included work is then ``discipline_pending``.
+    """
+    if not dims_path or not os.path.exists(dims_path):
+        return []
+    return ics.read_table(dims_path, ics.DIMENSIONS)
+
+
+def _write_csv(path: str, columns: list[str], rows: list[dict]) -> None:
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=columns, lineterminator="\n")
+        w.writeheader()
+        for r in rows:
+            w.writerow({c: r[c] for c in columns})
+
+
+def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: dict, *,
+        dims_path: str | None, venues_path: str, seriousness_rule: dict) -> dict:
     ics.require_table(table_path)
     labels = ics.read_table(table_path)
+    dims = read_dimensions(dims_path)
+    if not os.path.exists(venues_path):
+        raise ics.IcfScreenError(f"{venues_path} is missing: build it with `make rel-venues`")
+    venues = rvn.load_work_venues(venues_path)
     pool = rv.read_pool(pool_path)
     rows, summary = rv.build_view(pool, labels, window_cfg, rule)
-    inputs = {"pool": {"path": os.path.basename(pool_path), "sha256": rv.sha256_file(pool_path)},
-              "table": {"path": os.path.basename(table_path), "sha256": rv.sha256_file(table_path)}}
-    counts = make_counts(rows, summary, window_cfg, inputs, rule)
+    try:
+        dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule)
+    except ValueError as exc:
+        raise ics.IcfScreenError(str(exc)) from exc
+    inputs = {"pool": _input(pool_path), "table": _input(table_path),
+              "dimensions": _input(dims_path), "venues": _input(venues_path)}
+    counts = make_counts(rows, summary, window_cfg, inputs,
+                         dict(rule, seriousness=seriousness_rule))
+    counts["reasons"] = dict(rr.reason_counts(rows), dimension_rows=dim_summary,
+                             included_research_in_window=_in_window(rows),
+                             discipline_note=rr.DISCIPLINE_NOTE)
     os.makedirs(out_dir, exist_ok=True)
-    with open(os.path.join(out_dir, "rel_view.csv"), "w", encoding="utf-8", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=VIEW_COLUMNS, lineterminator="\n")
-        w.writeheader()
-        for r in sorted(rows, key=lambda r: r["work_key"]):
-            w.writerow({c: r[c] for c in VIEW_COLUMNS})
+    _write_csv(os.path.join(out_dir, "rel_view.csv"), VIEW_COLUMNS,
+               sorted(rows, key=lambda r: r["work_key"]))
+    _write_csv(os.path.join(out_dir, "rel_sensitivity.csv"), SENSITIVITY_COLUMNS,
+               rr.sensitivity(rows, venues, seriousness_rule))
     with open(os.path.join(out_dir, "rel_counts.json"), "w", encoding="utf-8") as fh:
         json.dump(counts, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
     return counts
+
+
+def _in_window(rows: list[dict]) -> dict:
+    """Included and discipline-pending research works of the window, works and families."""
+    def win(reason):
+        return [r for r in rows if r["rel_reason"] == reason and r["doc_type"] == "research"
+                and r["rel_disposition"] == "include" and r["rel_year_status"] == "complete"]
+    out = {f"{reason}_{unit}": (len(rs) if unit == "works" else len({r["rel_family_id"] for r in rs}))
+           for reason in ("included", "discipline_pending")
+           for rs in [win(reason)] for unit in ("works", "families")}
+    out["discipline_pending_works_by_seriousness"] = dict(sorted(Counter(
+        r["seriousness"].split(":")[0] or "pass" for r in win("discipline_pending")).items()))
+    return out
+
+
+def _yaml(path: str) -> dict:
+    with open(path, encoding="utf-8") as fh:
+        return yaml.safe_load(fh)
 
 
 def main(argv=None):
@@ -184,20 +268,27 @@ def main(argv=None):
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--pool", default=None, help="default: config pool")
     parser.add_argument("--table", default=None, help="default: config table")
+    parser.add_argument("--dimensions", default=None, help="default: config dimensions_table")
+    parser.add_argument("--venues", default=None, help="default: config venues_table")
+    parser.add_argument("--venue-registries", default=VENUE_REGISTRIES)
+    parser.add_argument("--venue-tiers", default=VENUE_TIERS)
     # Multi-output: rel_view.csv and rel_counts.json in one directory.
     parser.add_argument("--output-dir", default=None, help="default: config view_dir")
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
+    srule = rr.seriousness_rule(_yaml(args.venue_registries), _yaml(args.venue_tiers))
     try:
         counts = run(args.pool or cfg["pool"], args.table or cfg["table"],
                      args.output_dir or cfg["view_dir"], load_rel_review_config(),
-                     rv.screen_rule(cfg))
+                     rv.screen_rule(cfg), dims_path=args.dimensions or cfg["dimensions_table"],
+                     venues_path=args.venues or cfg["venues_table"], seriousness_rule=srule)
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1
     log.info("pool %d works; status %s", counts["pool_works"], counts["status"])
     log.info("REL: %s", counts["rel"])
+    log.info("reasons (works): %s", counts["reasons"]["works"])
     return 0
 
 
