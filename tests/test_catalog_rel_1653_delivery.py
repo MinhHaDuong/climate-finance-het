@@ -154,10 +154,8 @@ def test_export_writes_a_delivery_the_checker_accepts(runs, tmp_path):
     status.write_text(
         "sources:\n"
         "  clacso: {status: run, reason: ok, stratum: LAC}\n"
-        "  scielo: {status: partial, reason: 'Brazil 404', stratum: LAC,\n"
-        "           needs_human: 'SciELO OAI access'}\n"
-        "  cnki: {status: impossible, reason: 'robots', stratum: China,\n"
-        "         needs_human: 'bibCNRS export'}\n"
+        "  scielo: {status: partial, reason: 'Brazil 404', stratum: LAC}\n"
+        "  cnki: {status: dead, reason: 'robots', stratum: China}\n"
         "unreviewed_languages: [zh, ru]\n", encoding="utf-8")
     sentinels = tmp_path / "sentinels.csv"
     write(str(sentinels), ["sentinel", "class", "title", "doi"],
@@ -176,7 +174,10 @@ def test_export_writes_a_delivery_the_checker_accepts(runs, tmp_path):
     units = [i["unit"] for i in man["incomplete"]]
     assert units[:2] == ["scielo: LAC", "cnki: China"]
     assert any("zh, ru" in u for u in units)
-    assert {n["item"] for n in man["needs_human"]} >= {"SciELO OAI access", "bibCNRS export"}
+    # Dead sources are coverage gaps, not human errands (ticket 1790); only the
+    # unreviewed languages still ask for a reader.
+    assert [n["item"] for n in man["needs_human"]] == [
+        "Competent readers for the zh, ru query strings"]
     with open(out / "sentinels.csv", encoding="utf-8") as fh:
         found = {r["sentinel"]: r["found"] for r in csv.DictReader(fh)}
     assert found == {"S01": "True", "S02": "False"}
@@ -307,3 +308,20 @@ def test_the_source_register_reviews_every_non_latin_query_string():
             if t["status"] == "reviewed-fixed":
                 assert f'"{t["new"]}"' in queries[lang][theme], (lang, theme)
                 assert f'"{t["old"]}"' not in queries[lang][theme], (lang, theme)
+
+
+def test_a_source_without_status_entry_is_judged_on_its_registry():
+    """Aggregator routes (core, openalex) have no status entry: a short query of
+    theirs is a coverage gap, and a dead source is one whatever its registry."""
+    registry = [{"source": "core", "completed": "false", "stop_reason": "http 500 at offset 200"},
+                {"source": "core", "completed": "true", "stop_reason": ""},
+                {"source": "openalex", "completed": "true", "stop_reason": ""}]
+    status = {"sources": {"cnki": {"status": "dead", "reason": "robots", "stratum": "China"}}}
+    stats = dict.fromkeys(("no_dedup_key", "url_key_only", "doi_from_url", "year_enriched",
+                           "doi_shared_blanked"), 0)
+    man = ex.manifest([], registry, [], stats, status, {}, "2026-09-30",
+                      lane="t1790-x", ticket="1790")
+    units = {i["unit"]: i["reason"] for i in man["incomplete"]}
+    assert units == {"cnki: China": "dead: robots",
+                     "core: 1 of 2 queries": "http 500 at offset 200 (1)"}
+    assert (man["lane"], man["ticket"], man["needs_human"]) == ("t1790-x", "1790", [])

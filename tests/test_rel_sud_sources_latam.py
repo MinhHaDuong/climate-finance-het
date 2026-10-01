@@ -211,6 +211,19 @@ SCIELO_OAI = """<?xml version="1.0" encoding="UTF-8"?>
 </ListRecords></OAI-PMH>""".encode("utf-8")
 
 
+def test_scielo_collection_option_selects_and_refuses_unknown_codes():
+    seen = []
+
+    def get(url, params=None, delay=0):
+        seen.append(params["collection"])
+        return types.SimpleNamespace(status_code=200, json=lambda: [],
+                                     raise_for_status=lambda: None)
+    scielo.plan({"lexicon": LEXICON, "scielo_collections": "arg"}, get=get)
+    assert seen == ["arg"]
+    with pytest.raises(ValueError, match="argg"):
+        scielo.plan({"lexicon": LEXICON, "scielo_collections": "argg"}, get=get)
+
+
 def test_scielo_selects_social_science_journals_one_spec_per_set():
     listing = [am_journal("0301-7036", "Problemas del desarrollo", area="Applied Social Sciences"),
                am_journal("1111-1111", "Revista de poesía", area="Linguistics, Letters and Arts"),

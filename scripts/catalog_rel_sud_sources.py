@@ -20,7 +20,7 @@ stop reason ``exception: <type>``) before the run stops.
 
 Usage:
     python scripts/catalog_rel_sud_sources.py --output-dir DIR [--source NAME ...]
-        [--list] [--dry-run] [--cap N]
+        [--list] [--dry-run] [--cap N] [--browser] [--set KEY=VALUE ...]
 """
 
 import argparse
@@ -102,6 +102,12 @@ def main(argv=None):
     ap.add_argument("--source", action="append", help="adapter name (repeatable)")
     ap.add_argument("--cap", type=int, default=0, help="max records per query (0 = none)")
     ap.add_argument("--delay", type=float, default=1.0, help="seconds between requests")
+    ap.add_argument("--browser", action="store_true",
+                    help="adapters with a GET attribute fetch through headless Chromium "
+                         "(rel_sud_sources._browser; ticket 1790)")
+    ap.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                    help="adapter option into cfg, e.g. scielo_collections=arg or "
+                         "deadline=2026-10-01T06:00:00+00:00 (repeatable)")
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args(argv)
@@ -116,13 +122,34 @@ def main(argv=None):
         log.error("unknown source(s): %s", ", ".join(unknown))
         return 2
     cfg = {"lexicon": load_lexicon(args.config)}
+    for kv in args.set:
+        key, sep, value = kv.partition("=")
+        if not sep:
+            ap.error(f"--set expects KEY=VALUE, got {kv!r}")
+        cfg[key] = value
+    browser = None
+    if args.browser:
+        from rel_sud_sources._browser import BrowserGet
+        browser = BrowserGet()
+        for name in chosen:  # opt-in: an adapter declares it can run in a browser
+            if getattr(adapters[name], "BROWSER_OK", False):
+                adapters[name].GET = browser
+    try:
+        return _run(args, adapters, chosen, cfg)
+    finally:
+        if browser is not None:
+            browser.close()
+
+
+def _run(args, adapters, chosen, cfg):
     if args.dry_run:
         for name in chosen:
             for spec in adapters[name].plan(cfg):
                 log.info("%s %s", spec["query_id"], spec["query_string"][:160])
         return 0
     if not args.output_dir:
-        ap.error("--output-dir is required")
+        log.error("--output-dir is required")
+        return 2
     reg_path = os.path.join(args.output_dir, "registry.csv")
     raw_dir = os.path.join(args.output_dir, "raw")
     if os.path.exists(reg_path) or (os.path.isdir(raw_dir) and os.listdir(raw_dir)):

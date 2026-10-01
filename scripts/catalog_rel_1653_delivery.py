@@ -311,7 +311,8 @@ def to_record(c, rid, qid, reg, label, enrich, stats):
     return {
         "record_id": rid, "query_id": qid, "platform": c["source"],
         "retrieved_at": reg["run_at"], "title": c["title"],
-        "platform_record_id": c["record_id"], "doi": doi, "openalex_id": "",
+        "platform_record_id": c["record_id"], "doi": doi,
+        "openalex_id": c["record_id"] if c["source"] == "openalex" else "",
         "title_original": "", "first_author": authors[0] if authors else "",
         "all_authors": "; ".join(authors), "year": year, "publication_date": "",
         "journal": c["venue"], "issn": "", "doc_type": c["doc_type"],
@@ -346,13 +347,24 @@ def disputed_strings(status):
             for theme, t in themes.items() if t["status"] == "reviewed-disputed"]
 
 
-def manifest(records, registry, excluded, stats, status, producer, delivery, notes=""):
+# Source statuses that leave a stratum uncovered (``dead``: author's rule of
+# 2026-09-30, ticket 1790: "If you can't Playwright it, it's dead").
+UNCOVERED = {"partial", "impossible", "dead"}
+
+
+def manifest(records, registry, excluded, stats, status, producer, delivery, notes="",
+             lane=LANE, ticket=TICKET):
     incomplete, needs_human = [], []
     by_source = {}
     for r in registry:
         by_source.setdefault(r["source"], []).append(r)
-    for name, s in status["sources"].items():
-        if s["status"] in {"partial", "impossible"}:
+    sources = status["sources"]
+    # A delivered source with no status entry (an aggregator route) is judged
+    # on its registry, like a source that ran.
+    names = list(sources) + [n for n in by_source if n not in sources]
+    for name in names:
+        s = sources.get(name, {"status": "run"})
+        if s["status"] in UNCOVERED:
             incomplete.append({"unit": f"{name}: {s.get('stratum', '')}",
                                "reason": f"{s['status']}: {' '.join(s['reason'].split())}"})
         elif s["status"] == "run":
@@ -362,7 +374,7 @@ def manifest(records, registry, excluded, stats, status, producer, delivery, not
                 incomplete.append({
                     "unit": f"{name}: {len(short)} of {len(by_source[name])} queries",
                     "reason": "; ".join(f"{w} ({n})" for w, n in why)})
-        if s.get("needs_human"):
+        if s.get("needs_human"):  # none left after ticket 1790; kept for older files
             needs_human.append({"item": s["needs_human"], "reason": f"{name}: {s['status']}"})
     langs = ", ".join(unreviewed_languages(status))
     disputed = disputed_strings(status)
@@ -377,7 +389,7 @@ def manifest(records, registry, excluded, stats, status, producer, delivery, not
         needs_human.append({"item": f"Competent readers for the {langs} query strings",
                             "reason": "exit criterion 3 of ticket 1653"})
     return {
-        "lane": LANE, "ticket": TICKET, "delivery": delivery,
+        "lane": lane, "ticket": ticket, "delivery": delivery,
         "delivered_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "producer": producer,
         "counts": {"records": len(records),
@@ -446,7 +458,7 @@ def cmd_export(args):
                   "differently titled records (issue-level DOIs); it is kept in lane_note, "
                   "not used as a key.")
     man = manifest(records, registry, excluded, stats, status, producer, delivery,
-                   notes.strip())
+                   notes.strip(), lane=args.lane, ticket=args.ticket)
     with open(os.path.join(args.output_dir, "manifest.json"), "w", encoding="utf-8") as fh:
         json.dump(man, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
@@ -495,6 +507,10 @@ def main(argv=None):
     ex.add_argument("--output-dir", required=True)
     ex.add_argument("--status", default="config/rel_sud_sources_status.yaml")
     ex.add_argument("--sentinels", default="config/rel_sud_sentinels.csv")
+    ex.add_argument("--lane", default=LANE,
+                    help="lane name in the manifest (a later delivery of the same "
+                         "sources, e.g. t1790-sud-playwright)")
+    ex.add_argument("--ticket", default=TICKET)
     ex.add_argument("--commit")
     ex.add_argument("--machine")
     ex.add_argument("--notes")

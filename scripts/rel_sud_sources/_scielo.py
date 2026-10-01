@@ -39,6 +39,8 @@ COLLECTIONS = {
     "bol": "https://www.scielo.org.bo/oai/scielo-oai.php",
     "cri": "https://www.scielo.sa.cr/oai/scielo-oai.php",
     "pry": "https://scielo.iics.una.py/oai/scielo-oai.php",
+    # Timed out on 2026-09-30 (ticket 1653), answered the same evening (1790).
+    "arg": "https://www.scielo.org.ar/oai/scielo-oai.php",
 }
 AREA = "Applied Social Sciences"
 SUBJECT_KEYS = ("ECONOM", "ENVIRON", "AMBIENT", "DEVELOPMENT", "DESARROLLO",
@@ -78,7 +80,13 @@ def journals(collection, get=polite_get, delay=1.0):
 def plan(cfg, get=polite_get):
     terms = lexicon_terms(cfg["lexicon"], LANGUAGES)
     specs = []
+    chosen = cfg.get("scielo_collections")  # comma-separated codes; default all
+    unknown = set(chosen.split(",")) - set(COLLECTIONS) if chosen else set()
+    if unknown:  # a typo must not select nothing silently
+        raise ValueError(f"unknown SciELO collection(s): {', '.join(sorted(unknown))}")
     for col, endpoint in COLLECTIONS.items():
+        if chosen and col not in chosen.split(","):
+            continue
         try:
             selected_journals = journals(col, get=get)
         except Exception as exc:  # one collection lost, recorded; the others run

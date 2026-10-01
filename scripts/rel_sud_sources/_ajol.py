@@ -28,6 +28,7 @@ before parsing; otherwise one of them loses the rest of a journal.
 
 import re
 import time
+from datetime import datetime, timezone
 
 from utils import get_logger
 
@@ -79,12 +80,24 @@ def category_journals(slug, get, delay):
     return list(dict.fromkeys(paths)), ""
 
 
-def plan(cfg, get=oai_get):
+# The getter used when none is passed. The runner's ``--browser`` swaps in a
+# headless-Chromium getter (``_browser.BrowserGet``) that passes the WAF's
+# JavaScript challenge (ticket 1790).
+GET = oai_get
+BROWSER_OK = True  # the runner's --browser applies to this adapter
+
+
+def plan(cfg, get=None):
     """One query per journal of the chosen categories (network: category pages).
 
     A category whose journal list cannot be read becomes one incomplete row
-    (``error``) and the other categories still run."""
+    (``error``) and the other categories still run. ``cfg['deadline']`` (ISO
+    datetime, optional) is carried in every spec: a journal not started by
+    then ends "skipped: time budget", never silently absent."""
+    get = get or GET
     match = matcher(cfg, LANGUAGES)
+    deadline = cfg.get("deadline")
+    past(deadline)  # a malformed deadline fails here, before any request
     journals, failed = {}, []
     for slug in CATEGORIES:
         paths, error = category_journals(slug, patient(get), MIN_DELAY)
@@ -102,7 +115,7 @@ def plan(cfg, get=oai_get):
                               f"restricted to categories {', '.join(CATEGORIES)}); candidates "
                               f"selected by the local 1530 lexicon ({'/'.join(LANGUAGES)}) "
                               f"on title+abstract (no year window: the pool applies it)"),
-             "match": match}
+             "match": match, "deadline": deadline}
             for path, cats in journals.items()]  # insertion order = category priority
 
 
@@ -128,9 +141,23 @@ def patient(get, sleep=time.sleep):
 _state = {"challenged_in_a_row": 0}
 
 
-def fetch(spec, delay, get=oai_get, sleep=time.sleep):
+def past(deadline):
+    """Whether an ISO deadline has passed; a deadline without offset is UTC."""
+    if not deadline:
+        return False
+    when = datetime.fromisoformat(deadline)
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) >= when
+
+
+def fetch(spec, delay, get=None, sleep=time.sleep):
+    get = get or GET
     if spec.get("error"):
         yield ("end", spec["error"])
+        return
+    if past(spec.get("deadline")):
+        yield ("end", "skipped: time budget reached before this journal")
         return
     # The skip state lives for the process: once the challenge has persisted,
     # no later journal of the run is requested.
