@@ -12,6 +12,7 @@ Blocked-by: 1895
 2026-10-01T09:00Z HDMX-coding-agent note Blocked-by [[1895]]: calibration needs the human gold set; agent-made lines are a secondary tuning set only
 
 2026-10-01T06:43Z HDMX-coding-agent note [[1895]] retracted its human gold set (author decision 2026-10-01) and now builds a cross-vendor panel reference set; still Blocked-by [[1895]]. "Calibration needs the human gold set" above is superseded: calibration runs on the panel reference set and every record names it agreement with a cross-vendor panel, not truth. The exit criterion on reference answers "made by hand" awaits the spec amendment proposed in 1895.
+2026-10-01T06:49Z HDMX-coding-agent note exit criterion on reference answers amended: "made by hand" replaced by the cross-vendor panel reference set of [[1895]], named as panel agreement, following the Q17 amendment (PR #1654, author decision 2026-10-01).
 --- body ---
 ## Context
 
@@ -35,7 +36,7 @@ The selection run is paid and runs under the budgets of [[1874]].
 
 ## Exit criteria
 
-- [ ] The reference answers (lines of the extracted documents made by hand, blind to any machine reading) are listed and split once, by a recorded seed, into a tuning part and a held-out part stratified by language and statement shape; the held-out part is frozen with the method version
+- [ ] The reference answers (the cross-vendor panel reference set of [[1895]], lines made by a blind panel distinct from the readers and the arbiter, named as panel agreement) are listed and split once, by a recorded seed, into a tuning part and a held-out part stratified by language and statement shape; the held-out part is frozen with the method version
 - [ ] Candidate open-weight models that fit each card are selected on OpenRouter on the tuning part only; a candidate that fails its positive controls is weighted out; the winning pair is of two makers (operation § 5, "Vendor means LLM family")
 - [ ] The pair is installed on padme (exact weights, quantisation, context, sampling, template and serving software recorded) and scored again on the held-out part, with the arbiter scored on the items the readers escalate
 - [ ] Each calibration record gives, per model and per stratum, the observed precision of each likelihood term with its Wilson interval, the calibration error, the recall, the end-to-end precision and the agree-but-wrong rate; strata under 30 held-out items are reported uninformative and run under the fallback of extraction § 6.3
