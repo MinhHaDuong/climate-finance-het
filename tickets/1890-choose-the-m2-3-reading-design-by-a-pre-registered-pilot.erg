@@ -2,6 +2,7 @@
 Title: M2.3-0: Choose the M2.3 reading design by a pre-registered pilot
 Created: 2026-10-01
 Author: HDMX-coding-agent
+Blocked-by: 1940
 
 --- log ---
 2026-10-01T05:55Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane), first of the phase; [[1873]] is now Blocked-by this ticket
@@ -15,6 +16,7 @@ Author: HDMX-coding-agent
 2026-10-01T08:18Z HDMX-coding-agent note [[1895]] delivered the panel reference set: data/jetp/reference/panel-v1/ (tuning.csv for the pilot; heldout.csv.gz sealed by heldout.sha256, never read by the pilot). Name it agreement with a cross-vendor panel, not truth. Panel makers are OpenAI, xAI and Z.ai: a GLM reader or arbiter candidate would break the panel's independence and needs a new set version. Only ZAF en prose span and ZAF en table row reach 30 held-out items.
 2026-10-01T08:19Z HDMX-coding-agent note blocker 1895 closed — Blocked-by removed.
 2026-10-01T08:33Z HDMX-coding-agent note correction: of the panel strata, only ZAF en prose span is informative; ZAF en table row (35 held-out lines) rests on one document read by two members and is treated as uninformative (data/jetp/reference/panel-v1/README.md).
+2026-10-01T09:04Z HDMX-coding-agent note Blocked-by [[1940]] (panel reference set v2), author decision 2026-10-01, interactive: "Yes to v2 shape. Prerequisite". Panel v1 ([[1895]]) is not conclusive: one informative stratum, 8 percent unanimity, ontology not given to the members. v2 uses a Docling layer, element-ID locators, the full ontology and a defined statement unit.
 --- body ---
 ## Context
 
