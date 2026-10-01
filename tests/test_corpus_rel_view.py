@@ -274,15 +274,19 @@ def _files(tmp_path):
     return str(pool), table
 
 
-SRULE = {"exclude": ["hijacked", "kanalregisteret"], "ngo_research_in_b": True,
-         "no_venue": "keep_flagged", "tiers": ["A", "B"], "drop_publishers": []}
+SRULE = {"exclude": ["hijacked"], "ngo_research_in_b": True, "no_venue": "keep_flagged",
+         "tier_mu": {"A": 1.0, "B": 1.0, "C": 0.0, "unknown": 0.5}, "alpha": 0.5,
+         "tiers": ["A", "B"], "drop_publishers": []}
+MRULE = {"status": "proposed", "icf": {"icf": 1.0, "unsure": 0.5, "aux": 0.0, "out": 0.0},
+         "discipline": {"yes": 1.0, "unsure": 0.5, "no": 0.0}}
 
 
 def _run(tmp_path, pool, table, out):
     """``corpus_rel_view.run`` with no dimension table and an all-A venue table."""
     return crv.run(pool, table, str(tmp_path / out), WINDOW, RULE,
                    dims_path=str(tmp_path / "rel_dimensions.csv"),
-                   venues_path=str(tmp_path / "rel_work_venues.csv"), seriousness_rule=SRULE)
+                   venues_path=str(tmp_path / "rel_work_venues.csv"), seriousness_rule=SRULE,
+                   membership=MRULE)
 
 
 def test_same_inputs_give_byte_identical_outputs(tmp_path):
@@ -293,7 +297,7 @@ def test_same_inputs_give_byte_identical_outputs(tmp_path):
         assert (tmp_path / "a" / name).read_bytes() == (tmp_path / "b" / name).read_bytes()
     counts = json.loads((tmp_path / "a" / "rel_counts.json").read_text())
     assert counts["labels"]["rows"] == len(LABELS)
-    assert counts["rule"] == dict(RULE, seriousness=SRULE)
+    assert counts["rule"] == dict(RULE, seriousness=SRULE, membership=MRULE)
 
 
 def test_view_refuses_a_tampered_table(tmp_path):

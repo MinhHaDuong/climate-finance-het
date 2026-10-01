@@ -270,18 +270,22 @@ excluded (`no_venue` in `config/rel_venue_tiers.yaml`, applied by the loader's
 `no_venue` argument). Every flag, both NGO tiers and the `unknown` state are
 written whatever the settings, so a sensitivity table can recompute any other.
 
-`make rel-view` (ticket 1843) then gives every work one exclusion reason, the
-first that applies in the fixed order ICF (`icf_excluded`, `icf_pending`),
-discipline (`discipline_excluded` when the contribution test says no,
-`discipline_pending` while no dimension row exists), seriousness
-(`seriousness_excluded`: a registry exclusion under switch (a), then tier C;
-`unknown` under switch (c)),
-else `included` (`rel_reason`, `rel_final` in `rel_view.csv`). It needs
+`make rel-view` (ticket 1843) then grades every work as a member of a fuzzy
+set: its membership `mu` is the minimum over the facets seriousness, ICF and
+discipline, evaluated in that order (cheapest first) and stopped at the first
+0 or the first facet not graded yet; the crisp REL set is `mu >= alpha`
+(`rel_final`). Each work gets one reason (`rel_reason`): `<facet>_excluded`
+for the first facet attaining `mu` below alpha, `<facet>_pending` for the
+first facet not graded (`icf_pending`, `discipline_pending` while no dimension
+row exists), else `included`. Membership values: seriousness per tier and
+alpha in `config/rel_venue_tiers.yaml` (decided), ICF and discipline under
+`membership` in `config/rel_screen.yaml` (proposed). The view needs
 `rel_work_venues.csv` (`make rel-venues` first), counts reasons in works and
-in families under `reasons` in `rel_counts.json`, records the sha256 of the
-pool, both append-only tables and the venue table under `inputs`, and writes
-`rel_sensitivity.csv`, the included set under each seriousness setting
-(publishers dropped, tier A only, Kanalregisteret flipped, Scopus and DOAJ
-also excluding, NGO switch flipped, switch (c) flipped). The rules (which
-dimension row wins, the family rule) are in the `scripts/_rel_reasons.py`
-docstring.
+in families under `reasons` in `rel_counts.json`, counts the ICF-pending works
+by tier under `stage2_skip` (those of seriousness 0 need no screening),
+records the sha256 of the pool, both append-only tables and the venue table
+under `inputs`, and writes `rel_sensitivity.csv`, the included set under each
+seriousness setting (publishers dropped, tier A only, Kanalregisteret
+flipped, Scopus and DOAJ also excluding, NGO switch flipped, switch (c)
+flipped). The rules (which dimension row wins, the family rule) are in the
+`scripts/_rel_reasons.py` docstring.

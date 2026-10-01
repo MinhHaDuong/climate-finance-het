@@ -69,6 +69,18 @@ stage2_unsure_in_rel: true
 # (work_key, stage, model, run_id); in data/rel_screen, so the same DVC pointer.
 dimensions_table: data/rel_screen/rel_dimensions.csv
 
+# Membership values of the ICF and discipline facets of the fuzzy REL model
+# (ticket 1843, scripts/_rel_reasons.py). PROPOSED, for the author to confirm.
+# A work's membership is the minimum over its facets; the crisp REL set is the
+# alpha-cut (alpha and the seriousness values per tier are in
+# config/rel_venue_tiers.yaml, decided 2026-10-01). The view checks that unsure
+# >= alpha agrees with stage2_unsure_in_rel. Discipline answers na and unknown
+# count as unsure. Keys are quoted: YAML 1.1 reads bare yes/no as booleans.
+membership:
+  status: proposed
+  icf: {"icf": 1, "unsure": 0.5, "aux": 0, "out": 0}
+  discipline: {"yes": 1, "unsure": 0.5, "no": 0}
+
 # The version-1 stage-2 wrapper (ticket 1530), frozen: its hash is stamped on the
 # 4,752 t1530 Opus rows, so the t1530 import reads it, never stage2.prompt.
 t1530_stage2_prompt: config/rel_sud_stage2_prompt.md

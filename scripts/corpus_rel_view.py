@@ -69,13 +69,18 @@ given in works and in families, and ``families`` counts the multi-work
 families whose members differ in ``rel_included`` and the unresolved hints by
 cause.
 
-Exclusions by reason (``_rel_reasons``, whose docstring states the rules): one
-``rel_reason`` per work, the first that applies in the order ICF
-(``icf_excluded``, ``icf_pending``), discipline (``discipline_excluded``,
-``discipline_pending``), seriousness (``seriousness_excluded``), else
-``included`` (``rel_final``). Counted in works and in families
-(``rel_family_id``: a family takes its most favourable member) under
-``reasons`` in ``rel_counts.json``.
+Membership and reasons (``_rel_reasons``, whose docstring states the model):
+REL is a fuzzy set; each work's membership ``mu`` is the minimum over the
+facets seriousness → ICF → discipline, evaluated in that order (cheapest
+first) and stopped at the first 0 or the first facet not graded yet. The crisp
+set is the alpha-cut (``rel_final``). ``rel_reason`` is ``<facet>_excluded``
+for the first facet attaining ``mu`` below alpha, ``<facet>_pending`` for the
+first facet not graded, else ``included``. Counted in works and in families
+(``rel_family_id``: a family's membership is the maximum over its members)
+under ``reasons`` in ``rel_counts.json``; ``stage2_skip`` counts the
+ICF-pending works by tier, those of seriousness 0 needing no screening. The
+membership values are ``membership`` in ``config/rel_screen.yaml`` (ICF,
+discipline) and the tier values and alpha of ``config/rel_venue_tiers.yaml``.
 
 Outputs (``--output-dir``, default ``data/rel_pool``): ``rel_view.csv`` (one row
 per pool work), ``rel_counts.json``, which records the exit rule it applied
@@ -117,7 +122,8 @@ VIEW_COLUMNS = ["work_key", "openalex_id", "doi", "title", "year", "in_catalogue
                 *rr.VIEW_COLUMNS]
 SENSITIVITY_COLUMNS = ["scenario", "exclude_registries", "tiers", "ngo_research_in_b",
                        "drop_publishers", "no_venue", "included_works", "included_families",
-                       "discipline_pending_works", "discipline_pending_families"]
+                       "included_mu_weighted", "discipline_pending_works",
+                       "discipline_pending_families"]
 STATUSES = ["unscreened", "stage1_out", "stage1_aux", "pending_stage2",
             "icf", "aux", "out", "unsure_unresolved"]
 
@@ -228,7 +234,8 @@ def _write_csv(path: str, columns: list[str], rows: list[dict]) -> None:
 
 
 def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: dict, *,
-        dims_path: str | None, venues_path: str, seriousness_rule: dict) -> dict:
+        dims_path: str | None, venues_path: str, seriousness_rule: dict,
+        membership: dict) -> dict:
     ics.require_table(table_path)
     labels = ics.read_table(table_path)
     dims = read_dimensions(dims_path)
@@ -238,21 +245,23 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
     pool = rv.read_pool(pool_path)
     rows, summary = rv.build_view(pool, labels, window_cfg, rule)
     try:
-        dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule)
+        dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule, membership)
     except ValueError as exc:
         raise ics.IcfScreenError(str(exc)) from exc
     inputs = {"pool": _input(pool_path), "table": _input(table_path),
               "dimensions": _input(dims_path), "venues": _input(venues_path)}
     counts = make_counts(rows, summary, window_cfg, inputs,
-                         dict(rule, seriousness=seriousness_rule))
+                         dict(rule, seriousness=seriousness_rule, membership=membership))
     counts["reasons"] = dict(rr.reason_counts(rows), dimension_rows=dim_summary,
                              included_research_in_window=_in_window(rows),
-                             discipline_note=rr.DISCIPLINE_NOTE)
+                             discipline_note=rr.DISCIPLINE_NOTE,
+                             seriousness_note=rr.SERIOUSNESS_NOTE)
+    counts["stage2_skip"] = rr.stage2_skip(rows)
     os.makedirs(out_dir, exist_ok=True)
     _write_csv(os.path.join(out_dir, "rel_view.csv"), VIEW_COLUMNS,
                sorted(rows, key=lambda r: r["work_key"]))
     _write_csv(os.path.join(out_dir, "rel_sensitivity.csv"), SENSITIVITY_COLUMNS,
-               rr.sensitivity(rows, venues, seriousness_rule))
+               rr.sensitivity(rows, venues, seriousness_rule, membership))
     with open(os.path.join(out_dir, "rel_counts.json"), "w", encoding="utf-8") as fh:
         json.dump(counts, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
@@ -267,8 +276,8 @@ def _in_window(rows: list[dict]) -> dict:
     out = {f"{reason}_{unit}": (len(rs) if unit == "works" else len({r["rel_family_id"] for r in rs}))
            for reason in ("included", "discipline_pending")
            for rs in [win(reason)] for unit in ("works", "families")}
-    out["discipline_pending_works_by_seriousness"] = dict(sorted(Counter(
-        r["seriousness"].split(":")[0] or "pass" for r in win("discipline_pending")).items()))
+    out["discipline_pending_works_by_mu"] = dict(sorted(Counter(
+        r["mu"] for r in win("discipline_pending")).items()))
     return out
 
 
@@ -294,10 +303,16 @@ def main(argv=None):
         cfg = yaml.safe_load(fh)
     srule = rr.seriousness_rule(_yaml(args.venue_registries), _yaml(args.venue_tiers))
     try:
+        screen = rv.screen_rule(cfg)
+        mrule = rr.membership_rule(cfg, screen, srule["alpha"])
+    except (ics.IcfScreenError, ValueError) as exc:
+        log.error("%s", exc)
+        return 1
+    try:
         counts = run(args.pool or cfg["pool"], args.table or cfg["table"],
                      args.output_dir or cfg["view_dir"], load_rel_review_config(),
-                     rv.screen_rule(cfg), dims_path=args.dimensions or cfg["dimensions_table"],
-                     venues_path=args.venues or cfg["venues_table"], seriousness_rule=srule)
+                     screen, dims_path=args.dimensions or cfg["dimensions_table"],
+                     venues_path=args.venues or cfg["venues_table"], seriousness_rule=srule, membership=mrule)
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1
