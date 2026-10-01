@@ -55,7 +55,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts", "analysis"))
 import compute_vars
 
-
 #: Documents that render `?meta:` placeholders today, pinned to the exact keys.
 #:
 #: An `xfail` would be the obvious way to record a known defect and it is the

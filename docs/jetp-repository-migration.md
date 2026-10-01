@@ -10,7 +10,7 @@ The destination manifest in `docs/migration/source-cleanup-manifest.json`
 records 1,295 identical source/extracted Git blob pairs. This cleanup removes
 only verified JETP-owned paths. Shared ticket tooling, the general OECD finance
 design ticket 0828, infrastructure tickets 1060/1700, and closed infrastructure
-tickets 0810/1200 stay here. Shared Python helpers and generic LaTeX utilities
+tickets 0810/1200 and the unrelated literature-test ticket 0724 stay here. Shared Python helpers and generic LaTeX utilities
 are retained. The omitted AFD pilot tests are preserved in the destination.
 
 JETP-only Make targets, DVC stages, configuration, test-domain declarations and

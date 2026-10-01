@@ -11,6 +11,7 @@ sys.path.insert(0, str(SCRIPTS / "analysis"))
 from _vars_registry import (
     LATEX_DOC_VARS,
     LATEX_DOC_VARS_FILE,
+    latex_macro_name,
     write_latex_vars,
 )
 from build_latex_vars import write_registered_latex_vars

@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Fix the Chow break test under the null
+Created: 2026-09-11
+Author: Minh
+
+--- log ---
+2026-09-11T20:56Z Codex created — échec déterministe observé sur main et deux branches sans rapport avec le suivi JETP
+2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
+
+--- body ---
+
+## Context
+
+`make check-fast` fails in
+`tests/test_lit_confirmations.py::test_chow_break_null_is_insignificant` with
+`p_value = 0.0007353910609657328`, whereas the test requires `p_value > 0.5`.
+The failure is deterministic, reproduced on `origin/main` and on branches 1322
+and 0716. It is not caused by the JETP document corpus but blocks its global
+exit gate.
+
+## Relevant files
+
+- `tests/test_lit_confirmations.py`
+- the module that computes the Chow break called by this test
+
+## Test
+
+Build a deterministic null that is not a numerically degenerate near-perfect
+fit. First check that the statistic and the probability are stable across
+several runs and platforms, then keep an alternative case with a real break.
+
+## Actions
+
+1. Isolate whether the failure comes from the fixture, the degrees of freedom or the computation.
+2. Fix the smallest wrong contract without arbitrarily lowering the threshold.
+3. Run the targeted test, then `make check-fast`.
+
+## Exit criteria
+
+- [ ] The null does not reject a break on a non-degenerate fixture
+- [ ] The case with a break stays significant
+- [ ] The result is deterministic over three runs
+- [ ] `make check-fast` passes
