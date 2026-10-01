@@ -25,6 +25,16 @@ lane_order:
   - t1651-gavard-schoch
   - t1530-sud-openalex
   - t1652-causal-econlit
+  # Lanes added without a placement decision, in the name order the merge
+  # already gave them, so that adding 1810 last does not outrank them.
+  - t1650-sommaires
+  - t1653-sud-hors-openalex
+  - t1790-reader-reruns
+  - t1790-sud-playwright
+  # RePEc ReDIF mirror (1810): last, provisional (placement is the author's
+  # call). Its metadata are publisher-supplied ReDIF, unchecked, and 80 % of
+  # its records come from uncalibrated JEL rows.
+  - t1810-repec-local
 
 # Lane 1530 conversion (scripts/catalog_rel_1530_delivery.py). The limits are
 # those ticket 1530 documented at closure; every query of runs f and g
