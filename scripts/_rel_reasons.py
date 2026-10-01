@@ -17,7 +17,9 @@ the I/O.
    first like the ICF ``unsure``;
 3. seriousness: ``seriousness_excluded``, by a registry exclusion (switch (a),
    ISSN or domain matches only, never a title match), then by tier C (tier
-   under switch (b); tiers kept: A and B);
+   under switch (b); tiers kept: A and B). Tier ``unknown`` (no resolvable
+   venue) follows switch (c): kept and flagged (``seriousness_flag``) by
+   default, ``tier_unknown`` exclusion otherwise, never tier C;
 4. ``included``.
 
 A later dimension is still recorded on the row (``contrib``, ``seriousness``)
@@ -53,9 +55,10 @@ FAMILY_RANK = {"included": 0, "discipline_pending": 1, "icf_pending": 2,
 ICF_PENDING = {"unscreened", "pending_stage2"}
 PUBLISHERS = ["mdpi", "frontiers", "hindawi"]
 WIDE_REGISTRIES = ["doaj_withdrawn", "scopus_discontinued"]
+UNKNOWN_SETTINGS = {"keep", "exclude"}
 VIEW_COLUMNS = ["contrib", "discipline_field", "contrib_type", "discipline_source",
                 "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag",
-                "seriousness", "rel_reason", "rel_reason_detail", "rel_final",
+                "seriousness", "seriousness_flag", "rel_reason", "rel_reason_detail", "rel_final",
                 "rel_family_id"]
 DISCIPLINE_NOTE = (
     "discipline_excluded leans toward over-excluding applied finance: on the 1840 gold "
@@ -78,21 +81,39 @@ def parse_flags(text: str) -> list[dict]:
     return out
 
 
+def _unknown_venue(tiers_cfg: dict) -> str:
+    """Switch (c): ``keep`` (flagged) or ``exclude`` the works of tier ``unknown``."""
+    helper = getattr(rvn, "unknown_switch", None)
+    value = helper(tiers_cfg) if helper else "keep"
+    if value not in UNKNOWN_SETTINGS:
+        raise ValueError(f"switch (c) value {value!r} not in {sorted(UNKNOWN_SETTINGS)}")
+    return value
+
+
 def seriousness_rule(registries_cfg: dict, tiers_cfg: dict) -> dict:
-    """Switch (a) and switch (b) as configured (both pending author decisions)."""
+    """Switches (a), (b) and (c) as configured (all pending author decisions)."""
     return {"exclude": rvn.exclusion_registries(registries_cfg),
             "ngo_research_in_b": rvn.ngo_switch(tiers_cfg),
+            "unknown_venue": _unknown_venue(tiers_cfg),
             "tiers": ["A", "B"], "drop_publishers": []}
 
 
 def seriousness_of(venue: dict, srule: dict) -> str:
-    """``""`` (passes), ``registry:<r>``, ``tier_c`` or ``publisher:<p>`` for one work."""
+    """``""`` (passes), ``registry:<r>``, ``tier_c``, ``tier_unknown`` or ``publisher:<p>``.
+
+    Tier ``unknown`` (no resolvable venue, ticket 1841) passes under switch (c)
+    ``keep`` and is flagged on the row (``seriousness_flag``); under
+    ``exclude`` it is a seriousness exclusion of its own, never tier C.
+    """
     excl = sorted({f["registry"] for f in parse_flags(venue["flags"]) if f["match"] != "title"}
                   & set(srule["exclude"]))
     if excl:
         return "registry:" + excl[0]
     tier = venue["tier_ngo_in_b"] if srule["ngo_research_in_b"] else venue["tier_ngo_not_b"]
-    if tier not in srule["tiers"]:
+    if tier == "unknown":
+        if srule.get("unknown_venue", "keep") == "exclude":
+            return "tier_unknown"
+    elif tier not in srule["tiers"]:
         return "tier_c"
     if venue.get("publisher_flag") in srule["drop_publishers"]:
         return "publisher:" + venue["publisher_flag"]
@@ -162,6 +183,7 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
             "publisher_flag": venue.get("publisher_flag", ""),
             "seriousness": seriousness_of(venue, srule),
         })
+        row["seriousness_flag"] = "unknown_venue" if row["tier"] == "unknown" else ""
         row["rel_reason"], row["rel_reason_detail"] = _reason(row)
         row["rel_final"] = "true" if row["rel_reason"] == "included" else "false"
     assign_families(rows)
@@ -213,6 +235,8 @@ def reason_counts(rows: list[dict]) -> dict:
         "included_discipline_flagged": _split(
             [r for r in included if r["discipline_flag"]], "discipline_flag"),
         "included_icf_unsure_flagged": sum(r["rel_flag"] == "unsure" for r in included),
+        "included_unknown_venue_flagged": sum(r["seriousness_flag"] == "unknown_venue"
+                                              for r in included),
     }
 
 
@@ -223,7 +247,10 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
     out += [("tier_a_only", dict(base, tiers=["A"])),
             ("registries_plus_scopus_doaj",
              dict(base, exclude=sorted(set(base["exclude"]) | set(WIDE_REGISTRIES)))),
-            ("ngo_research_flipped", dict(base, ngo_research_in_b=not base["ngo_research_in_b"]))]
+            ("ngo_research_flipped", dict(base, ngo_research_in_b=not base["ngo_research_in_b"])),
+            ("unknown_venue_flipped", dict(base, unknown_venue="keep"
+                                           if base.get("unknown_venue", "keep") == "exclude"
+                                           else "exclude"))]
     return out
 
 
@@ -250,6 +277,7 @@ def sensitivity(rows: list[dict], venues: dict, base: dict) -> list[dict]:
             "tiers": "+".join(srule["tiers"]),
             "ngo_research_in_b": str(srule["ngo_research_in_b"]).lower(),
             "drop_publishers": ";".join(srule["drop_publishers"]),
+            "unknown_venue": srule.get("unknown_venue", "keep"),
             "included_works": len(inc),
             "included_families": len({r["family_id"] for r in inc}),
             "discipline_pending_works": len(pend),

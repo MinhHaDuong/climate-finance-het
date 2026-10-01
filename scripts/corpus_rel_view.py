@@ -116,7 +116,7 @@ VIEW_COLUMNS = ["work_key", "openalex_id", "doi", "title", "year", "in_catalogue
                 "rel_included", "rel_flag", "family_id", "family_first_year", "family_size",
                 *rr.VIEW_COLUMNS]
 SENSITIVITY_COLUMNS = ["scenario", "exclude_registries", "tiers", "ngo_research_in_b",
-                       "drop_publishers", "included_works", "included_families",
+                       "drop_publishers", "unknown_venue", "included_works", "included_families",
                        "discipline_pending_works", "discipline_pending_families"]
 STATUSES = ["unscreened", "stage1_out", "stage1_aux", "pending_stage2",
             "icf", "aux", "out", "unsure_unresolved"]
