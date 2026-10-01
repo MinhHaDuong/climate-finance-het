@@ -200,7 +200,9 @@ def check_overall_union(ids_by_table, controls, truncated=None, declared=None):
     not printed. A difference the publisher made between its overall table
     and its registers is recorded as the publisher's own (extraction section
     15) once reviewed: the difference found must then be exactly the one
-    declared.
+    declared. A declaration may carry a ``reading``, the reviewed explanation
+    of the difference, which the control line prints; it never alters the
+    comparison.
     """
     if 'overall' not in ids_by_table:
         controls.append('no overall table: the registers are not compared to one')

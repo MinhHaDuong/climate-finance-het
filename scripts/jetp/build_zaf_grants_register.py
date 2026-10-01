@@ -74,7 +74,7 @@ class Edition:
     sha256: str
     layout: str          # 'pdf-2023', 'pdf-2024', 'xlsx'
     rows: dict           # table slug -> reviewed grant-row count
-    mismatch: dict = None  # reviewed overall/register difference (workbooks)
+    mismatch: dict = None  # reviewed overall/register difference (workbooks), optional 'reading'
 
 
 EDITIONS = {e.document_id: e for e in (
@@ -102,9 +102,9 @@ EDITIONS = {e.document_id: e for e in (
             # register FR012..FR022). Identifiers are not stable keys (1980).
             {'only_overall': {'FR021', 'FR024'},
              'only_registers': {'DK011', 'DK013', 'FR012', 'FR015'},
-             'reading': 'the FR identifiers are relabelled in the overall table '
-                        '(paired by position, 0 field differences); only DK011 '
-                        'and DK013, the two "A. Planned" rows, are left out'}),
+             'reading': 'the FR identifiers are relabelled in the overall table, '
+                        'with 0 field differences when paired by position; only '
+                        'DK011 and DK013, the two "A. Planned" rows, are left out'}),
     Edition('zaf-jet-grants-register-2025-q1',
             '6eae2fffc800f6c82c2d03b21af150ba633bf60992bd8e37a98515808e44d9c0',
             'xlsx', {'overall': 129, 'eu-register': 8, 'uk-register': 47,
