@@ -3,7 +3,6 @@ Title: REL — REL view and PRISMA: exclusions by reason, publisher and rank sen
 Created: 2026-10-01
 Author: HDMX-coding-agent
 Blocked-by: 1842
-Closed: done
 
 --- log ---
 2026-10-01T10:00Z HDMX-coding-agent created
@@ -13,6 +12,8 @@ Closed: done
 2026-10-01T07:01Z HDMX-coding-agent note on the 1840 gold set Opus v2 excludes 4 of 59 gold includes, 3 of them applied finance with a policy question (green-bond certification W3122424672, EU ETS speculation W4399863925, W7212372846), against 3 extra includes (gold no 1, na 1, unsure 1); the discipline exclusion count therefore leans toward over-excluding applied finance: report it with that direction stated (Agent C, PR 1652)
 2026-10-01T08:07Z HDMX-coding-agent closed — done
 2026-10-01T08:17Z HDMX-coding-agent note closed with the machinery in place: discipline and seriousness counts are 0 by construction (no rel_dimensions yet, every ICF-included work discipline_pending); when 1842 writes rel_dimensions, refill with make rel-view and the PRISMA section, no code change (PR 1662)
+2026-10-01T09:00Z HDMX-coding-agent reopened — author stop for 2026-10-01; close deferred
+2026-10-01T09:00Z HDMX-coding-agent panel pending; discipline counts provisional until 1842
 --- body ---
 ## Context
 Child of 1830. Closes 1830 with the integration review.
