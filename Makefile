@@ -375,7 +375,7 @@ rel-venue-registries:
 	$(PYTHON) scripts/catalog_rel_venue_registries.py --output-dir $(REL_VENUE_REGISTRIES)
 
 rel-venue-enrich:
-	$(PYTHON) scripts/enrich_rel_venues_openalex.py
+	$(PYTHON) scripts/enrich_rel_venues_openalex.py --output data/rel_venues/openalex_work_venues.csv
 
 rel-venues:
 	$(PYTHON) scripts/corpus_rel_venues.py --archive-root $(REL_VENUE_REGISTRIES) --output-dir data/rel_pool

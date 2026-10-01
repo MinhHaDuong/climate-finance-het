@@ -126,6 +126,11 @@ def load_registries(archive_root, reg_cfg):
         for line in fh:
             digest, name = line.rstrip("\n").split("  ", 1)
             manifest[name] = digest
+    regs = reg_cfg["registries"]
+    expected = sorted({f for r in regs.values() for f in ([r["file"]] if "file" in r else r["files"])})
+    missing = [f for f in expected if f not in manifest]
+    if missing:
+        raise RuntimeError(f"{day}/MANIFEST.sha256 does not cover {missing}")
     for name, digest in manifest.items():
         h = hashlib.sha256()
         with open(os.path.join(day, name), "rb") as fh:
@@ -133,7 +138,6 @@ def load_registries(archive_root, reg_cfg):
                 h.update(chunk)
         if h.hexdigest() != digest:
             raise RuntimeError(f"{day}/{name}: sha256 differs from MANIFEST.sha256")
-    regs = reg_cfg["registries"]
     entries = []
     entries += rvr.parse_kanalregisteret(os.path.join(day, regs["kanalregisteret"]["file"]),
                                          regs["kanalregisteret"]["entry_url"])[1]
@@ -314,11 +318,8 @@ def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
             "publisher_flag": ven["publisher_flag"],
             "_flags": flags,
         })
-    # Hijacked hits are per work; record them on their venue too.
-    for r in work_rows:
-        for f in r["_flags"]:
-            if f["match"] == "domain" and f not in venues[r["venue_key"]]["_flags"]:
-                venues[r["venue_key"]]["_flags"].append(f)
+    # Hijacked hits stay on their works: a clone's landing page does not make
+    # the legitimate venue it imitates disreputable.
     for ven in venues.values():
         ven["_flags"].sort(key=lambda f: (f["registry"], f["entry_id"], f["match"]))
         ven["flags"] = rv.flags_text(ven["_flags"])

@@ -33,7 +33,8 @@ work whose landing-page host is the clone's domain (``match=domain``).
 
 **Switches** (both pending author decisions, ticket 1841): a flag from a
 registry listed in ``exclusion.exclude`` (``rel_venue_registries.yaml``)
-sets ``excluded``; the others only flag. ``ngo_research_in_b``
+sets ``excluded`` when it matched by ISSN or domain; the others, and title
+matches, only flag. ``ngo_research_in_b``
 (``rel_venue_tiers.yaml``) selects which of the two computed tiers,
 ``tier_ngo_in_b`` or ``tier_ngo_not_b``, is the ``tier``.
 """
@@ -129,8 +130,12 @@ def exclusion_registries(cfg):
 
 
 def exclusion_of(flags, exclude):
-    """Registries among ``flags`` that exclude, sorted and joined by ``;``."""
-    return ";".join(sorted({f["registry"] for f in flags} & set(exclude)))
+    """Registries among ``flags`` that exclude, sorted and joined by ``;``.
+
+    A title match never excludes: two journals can share a title (Wiley's and
+    another "Sustainable Development"), so it stays a flag to read by hand.
+    """
+    return ";".join(sorted({f["registry"] for f in flags if f["match"] != "title"} & set(exclude)))
 
 
 def _repec_hit(codes, repec_key):

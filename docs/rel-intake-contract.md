@@ -208,3 +208,24 @@ the audit sample are set in `config/rel_screen.yaml`, with the screen rule
 REL flagged) that the view applies and records in `rel_counts.json`. The view
 counts REL in works and in work families: works linked by `version_hint` count
 once, represented by an included member, a published article first.
+
+Each pool work also gets a venue seriousness tier and registry flags (ticket
+1841). `make rel-venue-registries` pulls the four hard registries
+(Kanalregisteret level X, Scopus discontinued, DOAJ withdrawals, the hijacked
+journal checker) into a read-only dated directory under
+`~/data/projets/climate-finance-het/rel_venue_registries/` with
+`MANIFEST.sha256`, recorded in `config/rel_venue_registry_pulls.csv`.
+`make rel-venue-enrich` extends the OpenAlex venue cache
+`data/rel_venues/openalex_work_venues.csv`, tracked by `data/rel_venues.dvc`
+like the screen table (a paid, dated API snapshot, fetched by
+`make rel-pool-data`); it stops before the day's budget would fall below
+0.2 USD. `make rel-venues` writes `rel_venues.csv` (per venue),
+`rel_work_venues.csv` (per work) and `rel_venue_counts.{json,md}` into
+`data/rel_pool/`, deterministically, from the pool, the cache, the configured
+pull and `config/rel_venue_tiers.yaml` (the versioned B list). Ticket 1843
+joins the work table through `_rel_venues.load_work_venues`. Two author
+decisions are pending switches: which registries exclude
+(`exclusion` in `config/rel_venue_registries.yaml`) and whether the NGO
+research series are tier B (`ngo_research_in_b`). Every flag and both NGO
+tiers are written whatever the setting, so a sensitivity table can recompute
+any other.

@@ -10,11 +10,12 @@ A pool rebuild therefore costs only its new ids.
 
 Cost: one request per 100 ids; OpenAlex bills a filtered list request one
 credit (0.0001 USD, measured 2026-10-01 from the ``X-RateLimit-Cost-USD``
-before a wave would take the day's budget below ``--budget-floor`` (0.2 USD);
-rerun after the reset.
-before a wave would take the day's budget below `--budget-floor` (0.2 USD); rerun after the reset.
+header). ``--dry-run`` prints the number of requests and stops. A one-id
+probe reads the day's budget first; the run then stops before a wave would
+take it below ``--budget-floor`` (0.2 USD), and an unreadable budget header
+stops it too. Rerun after the reset.
 
-Cache (``--output``, default ``data/rel_venues/openalex_work_venues.csv``): one
+Cache (``--output``; the Makefile passes ``data/rel_venues/openalex_work_venues.csv``): one
 row per requested id, sorted by ``openalex_id`` on every write. An id
 OpenAlex no longer returns (merged or deleted) gets ``status=not_found`` so it
 is not requested again. The venue is the primary location's source; when the
@@ -23,7 +24,7 @@ then any source (``location`` says which).
 
 Usage:
     python scripts/enrich_rel_venues_openalex.py [--pool data/rel_pool/pool.csv]
-        [--output data/rel_venues/openalex_work_venues.csv] [--dry-run] [--max-requests N]
+        --output data/rel_venues/openalex_work_venues.csv [--dry-run] [--max-requests N]
 """
 
 import argparse
@@ -153,11 +154,21 @@ def _below_floor(remaining, cost, floor):
         return True
 
 
+def _lowest(values):
+    """Lowest budget a wave reported (replies land out of order); ``"?"`` if none parse."""
+    nums = []
+    for v in values:
+        try:
+            nums.append(float(v))
+        except (TypeError, ValueError):
+            pass
+    return f"{min(nums):.4f}" if nums else "?"
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     ap.add_argument("--pool", default=os.path.join(ROOT, "data", "rel_pool", "pool.csv"))
-    ap.add_argument("--output", default=os.path.join(ROOT, "data", "rel_venues",
-                                                    "openalex_work_venues.csv"))
+    ap.add_argument("--output", required=True, help="the cache, read and extended in place")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--max-requests", type=int, default=0, help="0 = no cap")
     ap.add_argument("--checkpoint-every", type=int, default=50)
@@ -191,9 +202,9 @@ def main(argv=None):
                 break
             results = list(pool.map(lambda b: fetch_batch(b, api_key),
                                     batches[w:w + args.checkpoint_every]))
-            remaining = "?"
-            for rows, remaining in results:
+            for rows, _ in results:
                 cache.update(rows)
+            remaining = _lowest([r for _, r in results])
             done += len(results)
             write_cache(args.output, cache)
             log.info("%d/%d requests; remaining daily budget %s USD", done, n_req, remaining)

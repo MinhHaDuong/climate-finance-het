@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 import os
+import re
 import zipfile
 from xml.sax.saxutils import escape
 
@@ -436,3 +437,86 @@ def test_enrich_stops_before_the_budget_floor():
     assert not enr._below_floor("0.8482", 0.005, 0.2)
     assert enr._below_floor("0.2040", 0.005, 0.2)
     assert enr._below_floor("?", 0.005, 0.2)  # unreadable header: never spend blind
+
+
+# ── Review fixes (PR 1657) ───────────────────────────────
+
+
+def test_manifest_must_cover_every_configured_registry_file(registries):
+    day = os.path.join(registries, str(REG_CFG["use"]))
+    path = os.path.join(day, "MANIFEST.sha256")
+    lines = open(path, encoding="utf-8").read().splitlines()
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write("\n".join(x for x in lines if "kanalregisteret" not in x) + "\n")
+    with pytest.raises(RuntimeError, match="does not cover"):
+        _index(registries)
+
+
+def test_a_title_match_never_excludes():
+    title = {"registry": "doaj_withdrawn", "entry_id": "x", "match": "title"}
+    issn = {"registry": "doaj_withdrawn", "entry_id": "y", "match": "issn"}
+    assert rv.exclusion_of([title], ["doaj_withdrawn"]) == ""
+    assert rv.exclusion_of([title, issn], ["doaj_withdrawn"]) == "doaj_withdrawn"
+
+
+def test_a_hijacked_hit_stays_on_the_work_not_the_venue(tmp_path, registries):
+    _run(tmp_path, registries, tmp_path / "out")
+    venues = {r["venue_key"]: r for r in csv.DictReader(open(tmp_path / "out" / "rel_venues.csv", encoding="utf-8"))}
+    assert (venues["openalex:S40"]["flags"], venues["openalex:S40"]["excluded"]) == ("", "false")
+    works = rv.load_work_venues(str(tmp_path / "out" / "rel_work_venues.csv"))
+    assert works["openalex:W4"]["excluded"]
+
+
+@pytest.mark.parametrize("venue, expected", [
+    (_v(name="Diwan: Jurnal Bahasa dan Sastra Arab", source_type="other"), ("C", "other", "")),
+    (_v(name="DIW Discussion Papers", source_type="other"), ("B", "b_series", "diw")),
+    (_v(name="Academe", source_type="other"), ("C", "other", "")),
+    (_v(name="Infectious Diseases Reports", source_type="other"), ("C", "other", "")),
+    (_v(name="Banca d'Italia Occasional Papers", source_type="other"), ("B", "b_institution", "banca_italia")),
+])
+def test_b_patterns_match_whole_words_of_the_folded_name(venue, expected):
+    """Red test: bare 'diw', 'ademe', 'iseas' matched inside Diwan, Academe, Diseases."""
+    assert rv.assign_tier(venue, TIERS) == expected
+
+
+def test_b_patterns_are_word_bounded_and_survive_folding():
+    for e in TIERS_CFG["b_list"]:
+        for p in (e.get("names") or []) + (e.get("series") or []):
+            assert not re.fullmatch(r"[a-z0-9-]+", p), (e["id"], p)  # bare token: substring hits
+            assert not re.search(r"[,'’]", p), (e["id"], p)  # fold() strips these: never matches
+
+
+def test_enrich_loop_stops_at_the_floor(tmp_path, monkeypatch):
+    import enrich_rel_venues_openalex as enr
+    pool = tmp_path / "pool.csv"
+    pool.write_text("work_key,all_openalex_ids\n" + "".join(f"w{i},W{i}\n" for i in range(1, 251)), encoding="utf-8")
+    budgets = iter(["0.2003", "0.2000", "0.1999", "0.1998"])
+
+    def fake_fetch(ids, api_key):
+        return {i: {"openalex_id": i, "status": "found"} for i in ids}, next(budgets)
+
+    monkeypatch.setattr(enr, "fetch_batch", fake_fetch)
+    monkeypatch.setattr(enr, "read_credential", lambda *a: "")
+    out = tmp_path / "cache.csv"
+    assert enr.main(["--pool", str(pool), "--output", str(out), "--checkpoint-every", "1", "--workers", "1"]) == 0
+    # probe 0.2003, wave 1 leaves 0.2000, wave 2 would go below 0.2: one wave of 100 ids.
+    assert len(enr.load_cache(str(out))) == 100
+
+
+@pytest.mark.integration
+def test_outputs_do_not_depend_on_the_hash_seed(tmp_path, registries):
+    import subprocess
+    import sys
+    intake = _inputs(tmp_path)
+    digests = []
+    for seed in ("0", "1"):
+        out = tmp_path / f"seed{seed}"
+        env = dict(os.environ, PYTHONHASHSEED=seed, PYTHONPATH=os.pathsep.join(
+            [os.path.join(ROOT, "scripts"), os.path.join(ROOT, "libs", "openalex-corpus", "src")]))
+        subprocess.run([sys.executable, os.path.join(ROOT, "scripts", "corpus_rel_venues.py"),
+                        "--pool", str(tmp_path / "pool.csv"), "--intake-dir", intake,
+                        "--oa-cache", str(tmp_path / "oa.csv"), "--toc-manifest", str(tmp_path / "toc.csv"),
+                        "--archive-root", registries, "--output-dir", str(out)], check=True, env=env)
+        digests.append({n: hashlib.sha256((out / n).read_bytes()).hexdigest()
+                        for n in sorted(os.listdir(out))})
+    assert digests[0] == digests[1] and len(digests[0]) == 4
