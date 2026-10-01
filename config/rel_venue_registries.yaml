@@ -1,0 +1,66 @@
+# REL venue registries (ticket 1841, child of 1830): the hard registries that
+# may flag a venue, how each is fetched and filtered, and the record of every
+# dated pull. Read by scripts/catalog_rel_venue_registries.py (fetch, appends
+# to `pulls`) and scripts/corpus_rel_venues.py (build, reads the pull named
+# by `use`).
+#
+# Author decision 2026-10-01 (ticket 1830): disreputable venues only from hard
+# registries, cited per journal. No Beall's list. MDPI, Frontiers, Hindawi are
+# a publisher flag (config/rel_venue_tiers.yaml), not a registry.
+#
+# Pulls are archived read-only under
+#   ~/data/projets/climate-finance-het/rel_venue_registries/<YYYY-MM-DD>/
+# with MANIFEST.sha256; the archive is the evidence, the pulls CSV its record.
+
+registries:
+  kanalregisteret:
+    name: "Norwegian register of scientific publication channels (HK-dir Kanalregisteret), level X"
+    url: "https://kanalregister.hkdir.no/api/krtabeller/bulk-csv?rptNr=851"
+    doc: "https://dbh.hkdir.no/static/files/dokumenter/api/api_dokumentasjon.pdf (table 851 = journals)"
+    file: kanalregisteret_851.csv
+    entry_url: "https://kanalregister.hkdir.no/tidsskrift?id={id}"
+    # Flag a journal whose most recent non-blank yearly level ("Nivå YYYY",
+    # latest year first) is X ("doubt whether the channel should be approved").
+    # Level 0 (not approved) is not a flag: the decision names level X only.
+    filter: "latest non-blank 'Nivå YYYY' column == X"
+  scopus_discontinued:
+    name: "Scopus source title list, sheet 'Discontinued Titles' (Elsevier)"
+    page: "https://www.elsevier.com/products/scopus/content/content-policy-and-selection"
+    # The xlsx link changes monthly; the fetch script reads it from `page`.
+    file: scopus_source_list.xlsx
+    entry_url: "https://www.scopus.com/sourceid/{id}"
+    # 'Discontinuation' rows are titles whose coverage the Scopus CSAB ended
+    # after re-evaluation (raised for publication concerns, outlier
+    # performance or underperforming metrics; Elsevier's list gives no
+    # per-title cause). 'Journal change policy' rows (publisher-side changes)
+    # are not flags.
+    filter: "column 'Indexation Change' == Discontinuation"
+  doaj_withdrawn:
+    name: "DOAJ change log, journals withdrawn (2014-01-2024 log and current log)"
+    urls:
+      - "https://docs.google.com/spreadsheets/d/183mRBRqs2jOyP0qZWXN8dUd02D4vL0Mov_kgYF8HORM/export?format=xlsx"
+      - "https://docs.google.com/spreadsheets/d/1Kv3MbgFSgtSDnEGkA2JacrSjunRu0umHeZCtcMeqO5E/export?format=xlsx"
+    files: [doaj_changelog_2014_2024.xlsx, doaj_changelog_current.xlsx]
+    entry_url: "https://doaj.org/toc/{id}"
+    # Publication-practice reasons only; ceased, inactive, URL, licence,
+    # no-longer-OA and publisher-change withdrawals are not flags. A journal
+    # re-added to DOAJ after its withdrawal (same ISSN, later date on an
+    # "Added" sheet) is not flagged.
+    reason_pattern: "best practice|adhere to best|peer review|misconduct|not a research journal|basic criteria"
+    filter: "reason matches reason_pattern, and no later re-admission of the ISSN"
+  hijacked:
+    name: "Retraction Watch Hijacked Journal Checker"
+    url: "https://docs.google.com/spreadsheets/d/1ak985WGOgGbJRJbZFanoktAN_UFeExpE/export?format=csv&gid=5255084"
+    page: "https://retractionwatch.com/the-retraction-watch-hijacked-journal-checker/"
+    file: hijacked_journal_checker.csv
+    # A hijacked journal is a clone website of a legitimate title and usually
+    # carries the legitimate ISSN, so matching by ISSN would flag the victim.
+    # A work is flagged when its landing-page host is a listed clone domain.
+    filter: "work landing-page host == host of 'URL (Hijacked)'"
+
+# The pull corpus_rel_venues.py reads (a date directory of the archive).
+use: "2026-10-01"
+
+# The record of every dated pull is config/rel_venue_registry_pulls.csv, one
+# row per archived file, rewritten (sorted) by the fetch script: URL, date,
+# sha256, bytes, data rows, entries kept by the filter, filter text.

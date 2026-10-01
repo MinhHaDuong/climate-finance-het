@@ -23,6 +23,9 @@ data/derived/
 # REL pool merge output (ticket 1731): regenerable by `make rel-pool`.
 data/rel_pool/
 data/rel_pool_without_1810/
+# OpenAlex venue cache (ticket 1841): incremental, archived under
+# ~/data/projets/climate-finance-het/rel_venues/<date>/.
+data/rel_venues/
 
 # Make sentinel files (dynamic-output targets)
 *.stamp
