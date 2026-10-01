@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-10-01T13:30Z HDMX-coding-agent created — child of [[1500]]; author decision 2026-10-01, interactive, relayed from session haduong, after the independent recount of PR #1675 ([[1950]]). The amended spec wording returns to the author for approval before it lands.
 
+2026-10-01T12:59Z HDMX-coding-agent note recount scripts and the 2024-q2 extraction archived verbatim in docs/jetp-study/1980-recount/ (author request 2026-10-01; the scratch directory is temporary); the document copies they read are the ledger snapshots, hashes in its README.
 --- body ---
 ## Context
 
@@ -18,10 +19,9 @@ The spec trusts a publisher's identifier as a pairing key:
   the pairing on the key and it is virtually certain."
 
 The South African JET Grants Register refutes this. Evidence, from the
-independent recount (Opus, own extraction, 2026-10-01; scripts in the
-scratch directory
-`/scratch/tmp/claude-1000/-home-haduong/436e8d97-6d5f-4931-b844-2e5f4f6b461b/scratchpad/recount/`,
-`run_xlsx.py`, `cmp_pdf.py`, `q2_extract.json`, not durable), confirmed
+independent recount (Opus, own extraction, 2026-10-01; scripts and the
+2024-q2 extraction archived in `docs/jetp-study/1980-recount/`, start with
+`run_xlsx.py`, `cmp_pdf.py`, `q2_extract.json`), confirmed
 against parser v1 of [[1950]]:
 
 - **Renumbered across editions.** 2024-q2 numbers the French grants the old
@@ -82,6 +82,6 @@ printed.
   the renumbering is proposed as a flagged pair
 - [ ] The (edition, table) scope of an identifier stated where identifiers
   are stored or compared
-- [ ] Recount evidence copied to a durable place (the scratch scripts and
+- [x] Recount evidence copied to a durable place (the scratch scripts and
   their output), or re-derived by a committed script, before the red test
   relies on it
