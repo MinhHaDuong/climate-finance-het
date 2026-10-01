@@ -1,0 +1,54 @@
+%erg 0.1
+Title: REL — deux dimensions de tri oubliées : discipline (test de contribution) et sérieux (rangs A+B, registres durs)
+Created: 2026-10-01
+Author: haduong
+
+--- log ---
+2026-10-01T09:00Z HDMX-coding-agent created
+
+--- body ---
+## Contexte
+
+Enfant de 0700. Décisions de l'auteur du 2026-10-01 : la règle ICF seule ne
+suffit pas pour une revue de littérature *économique*. Deux dimensions
+s'ajoutent, enregistrées comme champs séparés (le libellé ICF reste comparable),
+appliquées dans la vue REL et comptées par motif dans le PRISMA. Rien n'est
+supprimé ; les œuvres écartées restent disponibles pour la carte bibliométrique.
+
+**Discipline — test de contribution.** Inclus seulement si la contribution porte
+sur l'économie, la politique ou la gouvernance de la finance climat. Exclus :
+apprentissage automatique / science des données (prévision de prix CER, etc.),
+finance pure (pricing sans question économique ou de politique), sciences de
+gestion de l'entreprise, qui ne font qu'exploiter des données de finance climat.
+On enregistre aussi le champ et le type de contribution. Jamais par étiquette de
+revue seule.
+
+**Sérieux — rangs.** A : revue à comité de lecture ; B : séries de working papers
+reconnues et rapports institutionnels (NBER, CEPR, FMI, Banque mondiale, BMD,
+grands think tanks, y compris du Sud) ; C : le reste. **A et B inclus**, C exclu.
+La famille WP/article compte une fois, l'article préféré.
+
+**Éditeurs douteux — registres durs seulement**, cités par revue : registre
+norvégien niveau X, Scopus « discontinued » pour motif de publication, retraits
+DOAJ, revues détournées connues. Pas la liste de Beall (biais contre les revues
+du Sud). **MDPI, Frontiers, Hindawi : gardés**, éditeur enregistré pour une
+analyse de sensibilité, sauf titre individuellement signalé.
+
+## Actions
+1. Protocole (`conception/rel-audit-finalisation-corpus.md`) et PRISMA : les deux
+   dimensions, leurs définitions opérationnelles, motifs d'exclusion.
+2. Rang de sérieux et signalement d'éditeur **par revue/source** (OpenAlex source,
+   ISSN), déterministe, avec la provenance de chaque signalement ; liste des
+   séries B reconnues, versionnée.
+3. Discipline et type de contribution : questions ajoutées au prompt de l'étape 2
+   (Opus) **avant** son lancement (en attente, 1655/1733) ; passe de rattrapage
+   pour les ~4 952 œuvres déjà relues par Opus.
+4. Vue REL : exclusions par motif, comptes reproductibles, analyse de sensibilité
+   par éditeur (MDPI/Frontiers/Hindawi) et par rang.
+
+## Exit criteria
+- [ ] Protocole et PRISMA décrivent les deux dimensions et leurs motifs
+- [ ] Table de rangs par source avec provenance ; registres consultés datés ; liste B versionnée
+- [ ] Prompt étape 2 étendu (discipline, type de contribution) et testé sur l'ensemble de contrôle avant lancement
+- [ ] Rattrapage discipline sur les œuvres déjà relues par Opus
+- [ ] Vue REL : comptes par motif (ICF, discipline, sérieux) et sensibilité éditeur
