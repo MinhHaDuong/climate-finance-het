@@ -95,7 +95,7 @@ def to_record(x, venue, match):
 
 def fetch(spec, delay, get=None):
     get = get or GET
-    offset, total = 0, None
+    offset, total, untitled = 0, None, 0
     while total is None or offset < total:
         params = {"q": f"repositories.id:{spec['provider']}", "limit": PAGE, "offset": offset}
         try:
@@ -117,9 +117,15 @@ def fetch(spec, delay, get=None):
             yield ("meta", total)
         for x in results:
             if x.get("id") is None or not (x.get("title") or "").strip():
+                untitled += 1  # no title-level metadata: counted, never silent
                 continue
             yield ("work", to_record(x, spec["venue"], spec["match"]))
         if not results:
             break
         offset += len(results)
-    yield ("end", "" if offset >= (total or 0) else f"short: {offset} of {total}")
+    if offset < (total or 0):
+        yield ("end", f"short: {offset} of {total}")
+    elif untitled:
+        yield ("end", f"{untitled} of {total} outputs without id or title")
+    else:
+        yield ("end", "")

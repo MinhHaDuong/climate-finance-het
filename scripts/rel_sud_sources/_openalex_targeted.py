@@ -86,9 +86,14 @@ def to_record(work, match):
 
 def fetch(spec, delay, api_key=None):
     api_key = api_key or read_credential("openalex", "OPENALEX_API_KEY")
+    untitled = 0
     for kind, val in oa_fetch(spec, api_key, 0, delay):
         if kind == "work":
             if (val.get("display_name") or "").strip():
                 yield ("work", to_record(val, spec["match"]))
+            else:
+                untitled += 1  # no title: counted, never silent
+        elif kind == "end" and val == "" and untitled:
+            yield ("end", f"{untitled} works without title")
         else:
             yield (kind, val)

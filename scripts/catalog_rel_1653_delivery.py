@@ -374,6 +374,8 @@ def manifest(records, registry, excluded, stats, status, producer, delivery, not
                 incomplete.append({
                     "unit": f"{name}: {len(short)} of {len(by_source[name])} queries",
                     "reason": "; ".join(f"{w} ({n})" for w, n in why)})
+        if s.get("needs_human"):  # none left after ticket 1790; kept for older files
+            needs_human.append({"item": s["needs_human"], "reason": f"{name}: {s['status']}"})
     langs = ", ".join(unreviewed_languages(status))
     disputed = disputed_strings(status)
     if disputed:

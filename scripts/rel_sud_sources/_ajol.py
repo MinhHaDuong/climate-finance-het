@@ -84,6 +84,7 @@ def category_journals(slug, get, delay):
 # headless-Chromium getter (``_browser.BrowserGet``) that passes the WAF's
 # JavaScript challenge (ticket 1790).
 GET = oai_get
+BROWSER_OK = True  # the runner's --browser applies to this adapter
 
 
 def plan(cfg, get=None):

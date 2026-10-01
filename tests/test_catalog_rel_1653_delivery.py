@@ -308,3 +308,20 @@ def test_the_source_register_reviews_every_non_latin_query_string():
             if t["status"] == "reviewed-fixed":
                 assert f'"{t["new"]}"' in queries[lang][theme], (lang, theme)
                 assert f'"{t["old"]}"' not in queries[lang][theme], (lang, theme)
+
+
+def test_a_source_without_status_entry_is_judged_on_its_registry():
+    """Aggregator routes (core, openalex) have no status entry: a short query of
+    theirs is a coverage gap, and a dead source is one whatever its registry."""
+    registry = [{"source": "core", "completed": "false", "stop_reason": "http 500 at offset 200"},
+                {"source": "core", "completed": "true", "stop_reason": ""},
+                {"source": "openalex", "completed": "true", "stop_reason": ""}]
+    status = {"sources": {"cnki": {"status": "dead", "reason": "robots", "stratum": "China"}}}
+    stats = dict.fromkeys(("no_dedup_key", "url_key_only", "doi_from_url", "year_enriched",
+                           "doi_shared_blanked"), 0)
+    man = ex.manifest([], registry, [], stats, status, {}, "2026-09-30",
+                      lane="t1790-x", ticket="1790")
+    units = {i["unit"]: i["reason"] for i in man["incomplete"]}
+    assert units == {"cnki: China": "dead: robots",
+                     "core: 1 of 2 queries": "http 500 at offset 200 (1)"}
+    assert (man["lane"], man["ticket"], man["needs_human"]) == ("t1790-x", "1790", [])

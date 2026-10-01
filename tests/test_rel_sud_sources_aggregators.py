@@ -56,7 +56,7 @@ def test_core_reads_a_provider_whole_and_marks_lexicon_matches():
     assert [r["record_id"] for r in recs] == ["1", "2"]  # a titleless output is not a record
     assert recs[0]["matched_terms"] == "climate finance" and recs[1]["matched_terms"] == ""
     assert recs[0]["url"] == "https://repository.usp.ac.fj/id/eprint/1/" and recs[0]["year"] == 2018
-    assert evs[-1] == ("end", "")
+    assert evs[-1] == ("end", "1 of 3 outputs without id or title")  # counted
     assert calls[0]["q"] == "repositories.id:373"
 
 
@@ -104,3 +104,39 @@ def test_openalex_targeted_keeps_every_work_and_notes_the_match(monkeypatch):
     assert rec["record_id"] == "W1" and rec["doi"] == "10.1/x"
     assert rec["url"] == "https://openalex.org/W1" and rec["matched_terms"] == ""
     assert evs[-1] == ("end", "")
+
+
+def test_core_untitled_outputs_are_counted_not_silent():
+    page = {"totalHits": 2, "results": [output(1, "Climate finance"), output(2, "")]}
+    evs = list(core.fetch(core.plan(CFG)[0], 0, get=lambda u, params=None, delay=0: Resp(page)))
+    assert [v["record_id"] for k, v in evs if k == "work"] == ["1"]
+    assert evs[-1] == ("end", "1 of 2 outputs without id or title")
+
+
+def test_runner_set_needs_key_value_and_browser_is_opt_in(monkeypatch):
+    from rel_sud_sources import _ajol as ajol
+    from rel_sud_sources import _browser as browser
+
+    with pytest.raises(SystemExit):
+        runner.main(["--source", "core", "--set", "deadline", "--dry-run"])
+    closed = []
+
+    class FakeBrowser:
+        def close(self):
+            closed.append(True)
+
+    monkeypatch.setattr(browser, "BrowserGet", FakeBrowser)
+    monkeypatch.setattr(ajol, "GET", ajol.GET)  # restored after the test
+    monkeypatch.setattr(core, "GET", core.GET)
+    seen = {}
+
+    def fake_run(args, adapters, chosen, cfg):
+        seen.update(cfg=cfg, ajol=adapters["ajol"].GET, core=adapters["core"].GET)
+        return 0
+
+    monkeypatch.setattr(runner, "_run", fake_run)
+    assert runner.main(["--source", "ajol", "--source", "core", "--browser",
+                        "--set", "deadline=2026-10-01T07:00:00"]) == 0
+    assert isinstance(seen["ajol"], FakeBrowser)  # AJOL declares BROWSER_OK
+    assert seen["core"] is core.core_get  # CORE keeps its keyed getter
+    assert seen["cfg"]["deadline"] == "2026-10-01T07:00:00" and closed == [True]

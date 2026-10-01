@@ -33,7 +33,8 @@ SETTLE_MS = 15_000  # time given to a challenge script in the page
 
 
 def challenged(status, headers):
-    return status == 202 and headers.get("x-amzn-waf-action") == "challenge"
+    lower = {k.lower(): v for k, v in headers.items()}
+    return status == 202 and lower.get("x-amzn-waf-action") == "challenge"
 
 
 class BrowserGet:

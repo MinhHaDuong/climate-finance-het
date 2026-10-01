@@ -127,19 +127,29 @@ def main(argv=None):
         if not sep:
             ap.error(f"--set expects KEY=VALUE, got {kv!r}")
         cfg[key] = value
+    browser = None
     if args.browser:
         from rel_sud_sources._browser import BrowserGet
         browser = BrowserGet()
-        for name in chosen:
-            if hasattr(adapters[name], "GET"):
+        for name in chosen:  # opt-in: an adapter declares it can run in a browser
+            if getattr(adapters[name], "BROWSER_OK", False):
                 adapters[name].GET = browser
+    try:
+        return _run(args, adapters, chosen, cfg)
+    finally:
+        if browser is not None:
+            browser.close()
+
+
+def _run(args, adapters, chosen, cfg):
     if args.dry_run:
         for name in chosen:
             for spec in adapters[name].plan(cfg):
                 log.info("%s %s", spec["query_id"], spec["query_string"][:160])
         return 0
     if not args.output_dir:
-        ap.error("--output-dir is required")
+        log.error("--output-dir is required")
+        return 2
     reg_path = os.path.join(args.output_dir, "registry.csv")
     raw_dir = os.path.join(args.output_dir, "raw")
     if os.path.exists(reg_path) or (os.path.isdir(raw_dir) and os.listdir(raw_dir)):
