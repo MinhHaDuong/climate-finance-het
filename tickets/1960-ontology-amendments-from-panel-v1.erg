@@ -1,0 +1,74 @@
+%erg 0.1
+Title: Ontology amendments from the panel v1 fitness check: finance type, roles, capacity quantity kinds
+Created: 2026-10-01
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-01T10:30Z HDMX-coding-agent created — child of [[1500]]; prerequisite of [[1940]] (the v2 reader schema is generated from the ontology in force). Author decisions 2026-10-01, interactive: financing instrument "Yes, import existing typology"; share completed "No % needed"; roles and capacity raised by the author ("How about the implementation agency, project owner, and the pass-money-through roles?"; "Careful with energy accounting, net vs. gross, thermal vs electricity, VA vs. J ... a well known field, e.g. see Open Energy Ontology").
+
+--- body ---
+## Context
+
+Offline fitness check of the ontology against the 1,700 rows of panel v1
+([[1895]], logged in [[1940]] on 2026-10-01). Evidence is indirect: v1's
+members got the 13 line classifications and five ad hoc fields, so other
+needs show only in their free "other" slot.
+
+The ontology changes only by the author's decision (ontology § 4,
+extraction § 3); each item below is decided or proposed as marked, and
+lands as accepted rows of `data/jetp/ontology/` with `decided_by` and the
+date, superseding nothing silently.
+
+## Items
+
+1. **Financing instrument: import an existing typology (decided).** About
+   300 values had no slot (funding instrument, grants/TA, highly
+   concessional, concessional loans, commercial loans, guarantees, export
+   credits, commercial investments). The ontology names an instrument in
+   Agreement but keeps it a free word. Import the OECD CRS finance type,
+   reused unchanged by IATI as its FinanceType codelist, as a closed list
+   with `external_scheme` and `external_uri`. Publisher words map onto it
+   through a reviewed crosswalk, like status words, never by a reader.
+   Concessionality is not an instrument: it stays the `grant_element`
+   measure, and a plan category that mixes the two ("highly concessional")
+   maps to a finance type plus, where printed, a grant element.
+2. **Roles: align on IATI, add `owner` (proposed).** Present already:
+   `implementing_entity` (IATI), `channel` (pass-through), `promoter`
+   (developer), `funder` (IATI). Missing: an owner role, although Project's
+   definition names "an owner" (Vietnamese record pages: chủ dự án, chủ đầu
+   tư); IATI OrganisationRole also has Accountable and Extending. Proposal:
+   add `owner`; record the IATI codes (Funding, Accountable, Extending,
+   Implementing) as `external_uri` on the matching roles, `channel` mapped to
+   Extending if the definitions agree, Accountable added only if a held
+   document uses it.
+3. **Capacity: quantity kind and units from the Open Energy Ontology
+   (proposed, after reading OEO).** v1 members filed "C=3000Ah", "2,03 Kw",
+   "1200MW" and "1960 MW" under capacity; the ontology says only "with its
+   unit", has no quantity kind (power or energy, electrical or thermal) and
+   defines `basis` (gross, net) for money only. Read OEO's classes for
+   installed capacity, net and gross, electrical and thermal, power and
+   energy, and units; propose the terms to import with their OEO URIs, and
+   extend `basis` to physical quantities or add an equivalent. An annual
+   energy output measure is not added: 3 values in one operator report,
+   outside the ledger's purpose (projects, money, perimeters, parties,
+   states).
+4. **Share completed: none (decided, "No % needed").** A printed "%
+   Completed" stays the publisher's verbatim value on the line; no measure
+   is added. Qualitative progress keeps `project_stage` (OC4IDS) and
+   `asset_state` (Global Energy Monitor).
+5. **Not an ontology change, recorded for completeness:** one span carrying
+   several assertions is several statements told apart by an assertion
+   index (extraction § 4); v1's prompt never said so and its members chose
+   one class per span. Fixed in the v2 prompt ([[1940]]), not by
+   multi-label classification.
+
+## Exit criteria
+
+- [ ] Finance type list imported (OECD CRS / IATI FinanceType), with
+  scheme, URIs and the date of the code list version; a crosswalk table for
+  publisher instrument words, empty or seeded from the v1 "other" values
+- [ ] Author decision logged on item 2, then roles amended accordingly
+- [ ] OEO read and a proposal for capacity quantity kinds, units and basis
+  presented with OEO URIs; author decision logged, then terms imported
+- [ ] `docs/jetp-ontology.md` § 2 to § 4 updated to match, with History
+  notes; ontology views rebuilt; `make check-fast` and `make lint` pass
