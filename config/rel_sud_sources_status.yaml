@@ -122,7 +122,7 @@ sources:
       1790 (OAI ListSets, plain HTTP) answered the reCAPTCHA page
       ("Для продолжения работы вам необходимо ввести капчу"): stopped there,
       never solved. What 1653 received stands (0 records delivered).
-    tried_1790: "reCAPTCHA on the first request; archived in t1790-cyberleninka/"
+    tried_1790: "reCAPTCHA on the first request (plain HTTP, the route that had worked); the brief stops a source at a CAPTCHA, so no browser attempt followed; archived in t1790-cyberleninka/"
     aggregators:
       - route: "CORE v3 search/outputs q=repositories.id:1252, whole provider, local lexicon ru/en"
         date: 2026-09-30

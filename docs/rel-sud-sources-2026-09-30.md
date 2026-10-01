@@ -163,7 +163,9 @@ As of 2026-10-01:
 - **China**: CNKI and Wanfang dead, no aggregator copy. The zh stratum of
   the 1530 OpenAlex pass is the only route (0 records outside OpenAlex).
 - **Pacific**: USP repository dead; its CORE copy (9,889 outputs, 32
-  matches) and OpenAlex copy (repository source and institution) stand in.
+  matches) and OpenAlex repository source stand in; the OpenAlex institution
+  route (USP-affiliated works anywhere) is reported apart and is no repository
+  surrogate.
 - **Africa**: AJOL recovered for the five categories chosen in 1653; its
   other categories were never in the query.
 - **South Asia**: Shodhganga dead; its OpenAlex copy gave 8 hits. CPD and
@@ -333,7 +335,7 @@ records in `records.csv`. Pool columns from `make rel-pool` on 2026-10-01
 | SciELO Argentina | oai-pmh | `ListRecords oai_dc set=<ISSN>`, social-science journals, lexicon es/pt/en | 47 (41) | 13,473 | 3 | 3 | 0 / 2 / 1 | `t1790-scielo/run/` |
 | CEEW | listing | sitemap publication pages, lexicon en/hi | 1 (0: 13 stale pages) | 706 listed, 693 read | 53 | 51 + 2 `no_dedup_key` | 0 / 43 / 10 | `t1790-ceew/run-b/` |
 | USP repository via CORE | listing | `repositories.id:373`, lexicon en/fr | 1 (1) | 9,889 | 32 | 32 | 4 / 11 / 17 | `t1790-aggregators/core/` |
-| CyberLeninka via CORE | listing | `repositories.id:1252`, lexicon ru/en | 1 (1) | 400 | 0 | 0 | | `t1790-aggregators/core/` |
+| CyberLeninka via CORE | listing | `repositories.id:1252`, lexicon ru/en | 1 (1) | 400 | 0 | 0 | 0 / 0 / 0 | `t1790-aggregators/core/` |
 | Shodhganga via CORE | listing | `repositories.id:8818` | 1 (1) | 0 | 0 | 0 | | `t1790-aggregators/core/` |
 | Shodhganga via OpenAlex | api | `locations.source.id:S4377209701`, en/hi | 8 (8) | 8 | 8 | 8 | 6 / 0 / 2 | `t1790-aggregators/openalex/` |
 | CyberLeninka via OpenAlex | api | `locations.source.id:S4306401404`, ru/en | 8 (8) | 29 | 29 | 26 | 2 / 16 / 8 | `t1790-aggregators/openalex/` |
