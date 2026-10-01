@@ -118,6 +118,32 @@ def test_parse_v1_answers_write_no_dimension_rows(tmp_path):
     assert len(ics.read_table(table)) == 1 and not (tmp_path / "dims.csv").exists()
 
 
+@pytest.mark.parametrize("answers, fields", [
+    # a version-1 file whose why holds pipes, read as version 2 (red team, PR 1652)
+    ("1|icf|research|SN|because a|b|c|d\n2|aux|research|?|x|y|z|w\n", ics.V2_FIELDS),
+    # a version-2 file read as version 1
+    ("1|icf|research|SN|yes|economics|policy|GCF\n2|out|other|?|na|na|na|\n", ics.V1_FIELDS),
+])
+def test_parse_refuses_an_answer_file_in_the_other_format(tmp_path, answers, fields):
+    """Both tables are append-only: a wrong --prompt must refuse, not write."""
+    out = tmp_path / "s2"
+    cs.write_chunks(str(out), [_work(1), _work(2)], S2CFG, {})
+    (out / "chunk01.opus.txt").write_text(answers)
+    with pytest.raises(cs.Stage2Error, match="answer file"):
+        cs.parse_answers(str(out), "opus", "2", "m", "r", "d", "llm", "p", "d", "s", fields)
+
+
+def test_parse_counts_na_off_rule_without_refusing(tmp_path):
+    out = tmp_path / "s2"
+    cs.write_chunks(str(out), [_work(1), _work(2)], S2CFG, {})
+    (out / "chunk01.opus.txt").write_text(
+        "1|out|research|SN|yes|economics|policy|\n2|aux|other|?|BOGUS|na|na|\n")
+    rows, dims, report = cs.parse_answers(str(out), "opus", "2", "m", "r", "d", "llm", "p",
+                                          "d", "s", ics.V2_FIELDS)
+    assert len(rows) == len(dims) == 2
+    assert report["chunk01"]["na_off_rule"] == 1 and report["chunk01"]["unknown_dimension"] == 1
+
+
 def test_cohen_kappa_known_values():
     perfect = cs.cohen_kappa([("icf", "icf"), ("out", "out")])
     assert perfect["kappa"] == 1.0 and perfect["observed_agreement"] == 1.0

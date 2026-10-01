@@ -11,7 +11,8 @@ memory from the pool and the ``icf_screen`` table, so it is never stale):
     affiliations: CC, CC]``, ``Title:`` ≤ 220, ``Abstract:`` ≤ 650 characters),
     ``chunkNN.ids.json`` (the chunk's work keys, in order) and ``works.csv``
     (identifiers of every work, for the parser). The labeller gets the wrapper
-    of ``config/rel_sud_stage2_prompt.md``; the chunk never shows stage-1 labels.
+    of ``stage2.prompt`` (``config/rel_stage2_prompt_v2.md`` since ticket 1840);
+    the chunk never shows stage-1 labels.
 
 ``audit-sample``
     A random sample of works with a final stage-2 label, stratified by that
@@ -142,6 +143,26 @@ def audit_sample(view_rows: list[dict], per_label: dict, seed: int) -> list[str]
 
 
 _CHUNK = re.compile(r"^(chunk\d+)\.ids\.json$")
+_DIM_HEAD = re.compile(r"^(yes|no|unsure|na)\|")
+
+
+def _format_mismatch(answers: dict, fields: tuple) -> str:
+    """Why an answer file looks written for the other wrapper, or "".
+
+    Both tables are append-only, so an answer file parsed under the wrong
+    ``--prompt`` cannot be corrected once written. A version-1 file read as
+    version 2 leaves every discipline field ``unknown``; a version-2 file read
+    as version 1 leaves every ``why`` starting with a discipline value. Either
+    pattern over a whole chunk refuses it. One stray line stays an ``unknown``.
+    """
+    if not answers:
+        return ""
+    if fields == ics.V2_FIELDS:
+        if all(a["contrib"] == a["field"] == a["ctype"] == ics.UNKNOWN for a in answers.values()):
+            return "no record has a valid discipline field: a version-1 answer file?"
+    elif all(_DIM_HEAD.match(a["why"]) for a in answers.values()):
+        return "every why starts with a discipline value: a version-2 answer file?"
+    return ""
 
 
 def parse_answers(chunk_dir: str, suffix: str, stage: str, model: str, run_id: str,
@@ -169,11 +190,17 @@ def parse_answers(chunk_dir: str, suffix: str, stage: str, model: str, run_id: s
         hard = [f for f in faults if "unanswered" not in f]
         if hard:
             raise Stage2Error(f"{answer}: refused, {hard[:5]}")
+        mismatch = _format_mismatch(answers, fields)
+        if mismatch:
+            raise Stage2Error(f"{answer}: refused, {mismatch}")
         report[chunk] = {"ids": len(ids), "answered": len(answers),
                          "status": "complete" if len(answers) == len(ids) else "incomplete"}
         if fields == ics.V2_FIELDS:
             report[chunk]["unknown_dimension"] = sum(
                 ics.UNKNOWN in (a["contrib"], a["field"], a["ctype"]) for a in answers.values())
+            # The wrapper asks na exactly for out; stored as answered, counted here.
+            report[chunk]["na_off_rule"] = sum(
+                (a["label"] == "out") != (a["contrib"] == "na") for a in answers.values())
         for key in ids:
             if key not in answers:
                 continue
