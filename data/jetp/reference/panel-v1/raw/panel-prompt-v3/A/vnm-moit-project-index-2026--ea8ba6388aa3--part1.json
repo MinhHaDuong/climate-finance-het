@@ -1,0 +1,55 @@
+{
+ "id": "gen-1790841161-m839WEMCEgM40IueGqP5",
+ "object": "chat.completion",
+ "created": 1790841161,
+ "model": "openai/gpt-5.6-sol",
+ "provider": "Azure",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "completed",
+   "message": {
+    "role": "assistant",
+    "content": "{\"scope_note\":\"Bao quát tiêu đề trang danh mục và ba dự án được liệt kê. Loại bỏ các thành phần điều hướng, bộ lọc/tìm kiếm, thông tin liên hệ và chân trang vì không phải là tuyên bố về dự án hay quan hệ đối tác.\",\"statements\":[{\"page\":1,\"quote\":\"Dự án phù hợp JETP\",\"label\":\"Dự án phù hợp JETP\",\"classification\":\"heading\",\"fields\":{\"amount\":null,\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]},{\"page\":1,\"quote\":\"Dự án Nhà máy Thuỷ điện tích năng Bác Ái (1200MW)\",\"label\":\"Dự án Nhà máy Thuỷ điện tích năng Bác Ái (1200MW)\",\"classification\":\"named_item\",\"fields\":{\"amount\":null,\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[{\"name\":\"capacity\",\"value\":\"1200MW\"}]},{\"page\":1,\"quote\":\"Các trạm biến áp EVN NPT Bình Dương và Đồng Nai - Tăng cường lưới truyền tải điện\",\"label\":\"Các trạm biến áp EVN NPT Bình Dương và Đồng Nai - Tăng cường lưới truyền tải điện\",\"classification\":\"named_item\",\"fields\":{\"amount\":null,\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]},{\"page\":1,\"quote\":\"Mở rộng Nhà máy Thủy điện Trị An\",\"label\":\"Mở rộng Nhà máy Thủy điện Trị An\",\"classification\":\"named_item\",\"fields\":{\"amount\":null,\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]}]}",
+    "refusal": null,
+    "reasoning": null,
+    "reasoning_details": [
+     {
+      "type": "reasoning.encrypted",
+      "data": "gAAAAABqvhFPDQNdi_JrKMINFXjav-2UK0BT2gXXFKGvUeUACHOkmAjcIilEI5qNNUHJW0G9GkNpThmAGVhSxkDgYoeA-NbfGx1l4lZPOamCQNYyACaWxSF6KqXkedpfWtk1AO7Tb6GtGCm0dhk5qdIUi7_RRwSLqoJYFgoN7d1RfF8FkZvSQKr6pProvtvyBD_aEwPvAAa1QqOgqprvpNCStn3aklkpClTvG4AQWF-h42hkvorQIiIeR9qjCqAhtopaCOOcT71CwSTfO6tnVkSyi0DQujCTzQnbV8WxfYGyc1MsIGE_2_OUeffNAJiTyBU5tjyzD8icb5fqqQJRM9jsYfAX-83D0XCd8dNUF9rcnHainE7c1EiwIcyVWb6mxcYy6FU1A8zhiZKMxqSiA3nQa4mSKle2jqSU7mzak_nLog_bwh3vAweRizECTzcoTMvpmb8-VjsYXhIim-ee7_ZVBJ_sfCJSnGGFzqS5iNU86I93NQmWmaPOFPJmpPQKMt-_-zPAv315XepUew8eZGdbLc_LkFTr9POMFwgamPycDqyznDvTqqZDQBDeeVjnLSyyftDQW7LGOIh-Jf3heTGzT_A9_Nd7Tm7Tzz9D5UJejyL43sZX5GLRfo4ZJlCGacLVwKp-45CYs6Rn7gh9aXyYv6WQlnjk-psu5chjDrEeZOCdb77rR1GBlC6lPGB0VjVOBo99BqcHn8G2EhMc-qJxHL2BPUWyWRY-N9bjAr-JXQdPQm9VMIE2y9h2COnBcWqzCsQKxclqO53qCMw_tmgHDEPikevPMCq-ye8XN09_VJtJwIR5C2uadHKsMvHWhNBBYPkYQb0ueWEiiMII7e9iPdfdKBbr-B27uR1xmkj-wqgWMyYQxBcwkyZflLrgnc-0Qobni4Vyadzm7EXXjzV0gBmZaMk3OVFR1yM-iqQzUMLFYPUczio2FCBqr_FPg-FzQR59CUW-RBTNqgsimpQNB5ecCChbE_XZgnU3tfzQng6lVNVVcebtKCS-0Jzg-Y_yusfxbr16VApht-QoKAecmnlwhuv8fAF6yv4h4XByJjSusHRbg0jgkOcfjjCUpRZNzz1WTl3JCKUSb6gKmj__4HoMIGJj2CX9LA75j2zMMcQ0zU8k4I5dZLeUYDEFTusYjtMZQ6qpfBflR8l-M34Qp4PXw7x5uSWkwDLuspUnQeb1kQXPk4MJU5Rze-n-hEqrX7IzpSF8h44Q_xNZPTEe4zwiNRhQMZYV-C-lEAnDPRLsl4I8WA0vWyaQYO6uUDi4o02182cenKluxzlToY42qc8G2pw_v7GZaKuIv7K5TYBEQ0fnfn-mDvgyG3NfG6sU4CegaBUB3ss7pehZ3ZyF0763o787vEzny6Tp4khZFyLClq_xvY_71dB_f51bZo7yw32uroX75LWGlFmjAq_T9zR9zW6T7S1UQOzw1p-Crdjw-dTbYh8PCN3LV7SsHCkCivLduhDfmVbSYk37GwvU0VdIXATvexuVp-NDIJzjRZehS0wkNxiLhMiN6DdmPUxn4fAH64l9lyuONJbwhxus8ISqIyW2V6hCYWDRPxkJBuQKC3h7uSPk_78dMPmLS4VNzu1V55ikazucxfBf306MhKxxLw2p8SHHlU_SjwH3D0veAZk4-3V10oqsuuM0TmQhZqMVgCSUHzGw_9H5HKK_YrY7JFKKUPs64qgCn-A3lelhJO-O-IaS1Nr-_mnP9rVSTIVh5iV1uUuRew-lZDIXxynOGcTS47H0761E-_5FAA6odVDADu7rzpAFLoxBOCIU0iCDGyVHywuTjX1Q7Otqry52XJ0fQkhocLqTm2xL8mQmIERF7ozUT84SyX8icEZZmwmie1bCc2yuUnxaAJh8LSFF4p2sgtxRHICAN9awu-bebWQPfC4ir_fvLyV1mWjB9eVLiPIWGJoSEwlodc6Yux-DXAZ8yJGN4MwNry4gbmFXCsFHrhHNEZlHIfGnTZ9scbvon9qpkFvquSMi8UwHgpKW6f03jFd8aJvdsA5dtSKoQxZTQWpyjRj7SdKHziC1Tu06-3ve35BT6G4KnNfBDkMRdX5q1IEzKMpMSaMTNnK7110hzADCafo-FClRZCQ7yTio-Fm0XPZwCzwaRrDcbDYLj2ygrdKl-2nK5_oKA57QukWDSFn9L1zJEMDw1Y7XApM0JMWTmL5r0zJDjX0XeW8QUPY9dRxSuue4b2K7PlzjQp8p7PAYgtQf0BY2cmtkR8jSGOG6g4CHn1Sa_KRQYPYB26JwbGC5zwZUQ-an0HLbEsX76LqHaqOnB-zDKqoMrVD4Xc8A82VNNEQeLAujhc74BwIlVUX9k2NQfqNEPNj2TjULTQR3KbbgP5q9Zh7ScdA8qGdY_8Ajt3YtkQuhKttHtGMscvw6vnrwY0ux51p6DEZVN9jDHi__bJrPGqZsQIms-8UwgaC-ONryWQ9f6QLu6UVxZmTf67BIBco0tY1gpZXTR3hFKxquNAaTKtj9O_OF5rSsvn6Ddh_h7FJXOPKaHRNBM16ybkZWllo3Ji83hJrrlGopv4ErCBlCR142y1Ar9ZVMV50M3TBIPVL1VBS6JoC-OEhDUd1YjGsrehwQ12QJs6D5YAN7nbzYcaBe_pqyKNgYpVOWcnQL5lPUngrRCT0LTD2536yMBGQrvy38PRPkGEBEfx9jeq6t5sqmSWfrrNkKrg5JVzaWKYlCR4LhLXHqzyjspu__mu7dfzgFbbr4nb4tKJ5t-PJudFOatVsMHDh5mjGzdvzJtjr14rsU1LbRVWUAph8lQHcyq20v-_faNwu3ZeGDcOdY9UO9Fhrzxcy9b2i6tijSjrOfICL8_Xxixen5MUQU2dU_KY1nhIBb_2fxTx36AGMGfZ8Vu-iteqLFXNCyYHVf_rVNAQchBdT45r08VVqGHBP9KLsqDnVWtDQOJUMO8ztkoai9qp0j0LiBY17cNYvOR_16yTAHydFQFKT67WrYgGi0SbaTmQ_vM0N1IDcz7clgDLePFnMC_cGjyPtfS91iLJ5QfsxbNLghGo-cS8N2x04YzclE_XxiK33tzBMeDesGePGn0wNLHnqVp3VxR5Os2_Bxzkx3c9JqLzMF32TMJ81Onjo93loXENFeYq9MgJJGRKe-q4TacX_XptUG8t3EVTxXRHfy9e_nrTvOXerBTUwvuIUNRE5Hj18yxAwP1p5tBiHx8lgLNyYlM7LKXs6iyi_2AGq9AIx9xg9NVfTcod5Ne1a7fZnBvauecU3UglhcDmT2Gx_cM5EGao_7IA4jh12Fp262gtHhww==.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtc29sLTIwMjYwNzA5fGF6dXJlIn0",
+      "format": "azure-openai-responses-v1",
+      "id": "rs_027d98945803e47e016abe114b51a081978c649cd6c2cd83b2",
+      "index": 0
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 1660,
+  "completion_tokens": 715,
+  "total_tokens": 2375,
+  "cost": 0.022597,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 1657,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.022597,
+   "upstream_inference_prompt_cost": 0.008297,
+   "upstream_inference_completions_cost": 0.0143
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 333,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

@@ -2,6 +2,7 @@
 Title: Build the cross-vendor panel reference set for M2.3 calibration
 Created: 2026-10-01
 Author: HDMX-coding-agent
+Closed: delivered: panel reference set v1, data/jetp/reference/panel-v1/
 
 --- log ---
 2026-10-01T09:00Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane); author decision 2026-10-01, interactive: build a small human gold set. [[1890]] (pilot) and [[1873]] (calibration) are Blocked-by this ticket.
@@ -10,6 +11,8 @@ Author: HDMX-coding-agent
 2026-10-01T06:43Z HDMX-coding-agent note RETRACTION of the human gold set, author decision 2026-10-01, interactive: "I retract my decision in front of the costs. In France, a deal is not made until there is agreement on the price" and "I am NOT even considering a 30 hours annotation". No author hours, no paid annotator, no human annotation of any kind, not even an audit sample. The ticket is rewritten (title, Context, method, exit criteria) as a cross-vendor panel reference set; calibration then measures agreement with a panel, not truth. Label needs-human now covers only acceptance of the price and of the spec amendment. Priced in Context: USD 10 to 48 derived, central 18.
 2026-10-01T06:47Z HDMX-coding-agent note author decisions 2026-10-01, interactive: (a) the price of the panel reference set is accepted (USD 10 to 48, central about 18); (b) the spec amendment written here is accepted. Applied to Q17 and extraction § 6.3 by branch t1895-spec-amend-reference-answers, with the matching sentences of requirements Q5 and the legal note. Operation § 5 needed no change; the exit criterion of [[1873]] ("made by hand") remains for that ticket.
 2026-10-01T06:47Z HDMX-coding-agent unlabel needs-human
+2026-10-01T08:18Z HDMX-coding-agent note delivered: data/jetp/reference/panel-v1/ (README is the set's record). Panel A openai/gpt-5.6-sol via Azure, B x-ai/grok-4.7 via xAI, D z-ai/glm-5.3 via Parasail, all pinned zero-retention; C moonshotai/kimi-k3 failed the positive control (composed labels) and was replaced, not weighted. Prompt v3 after two control rounds; text layer v2 (pdftotext -raw) after layer v1 (-layout) interleaved the Vietnamese newsletter columns, every PDF re-read. 299 lines (152 tuning, 147 held out, 66 high, 233 medium), target ~450; only ZAF en prose span (50) and ZAF en table row (35) reach 30 held-out items, all other strata named uncalibrated. Pool reconciled: 115 pending = 109 readable + 2 JSON + 2 JavaScript + 2 spreadsheets (the draft's 111 removed bulk data first). Spend USD 8.87 of the accepted 10-48; ZDR routes priced above the estimate (OpenAI only via Azure at 4/20), the runner capped spend at USD 48.
+2026-10-01T08:19Z HDMX-coding-agent closed — delivered: panel reference set v1, data/jetp/reference/panel-v1/
 --- body ---
 ## Context
 
@@ -259,27 +262,27 @@ does not stand for any annotation.
   any paid call; the acceptance and the date are logged here
 - [x] The author accepts the spec amendment of Q17 and extraction § 6.3
   above (the spec is edited by its own PR after acceptance, not here)
-- [ ] The panel is fixed and logged (at least 3 makers, none among the
+- [x] The panel is fixed and logged (at least 3 makers, none among the
   readers and arbiter candidates), with versions, serving and the
   `panel-rule-v1` agreement rule committed before the first call
-- [ ] The positive control (planted items per extraction § 12) passes for
+- [x] The positive control (planted items per extraction § 12) passes for
   every member before any drawn document is read
-- [ ] Selection and seed are recorded: the final document list drawn from
+- [x] Selection and seed are recorded: the final document list drawn from
   the pending plus held documents, reconciled with the survey's 115 (the
   111 versus 115 discrepancy is an open item until then), with the seed and
   the reserve documents
-- [ ] The panel reads blind and each row's locator is derived by code and
+- [x] The panel reads blind and each row's locator is derived by code and
   resolves, or the row is dropped and counted
-- [ ] Each row carries a stance and a confidence from agreement (3 of 3
+- [x] Each row carries a stance and a confidence from agreement (3 of 3
   high, 2 of 3 medium, otherwise excluded and counted); counts per stratum
   are reported
-- [ ] The split is recorded by a seed, and the held-out part is sealed: its
+- [x] The split is recorded by a seed, and the held-out part is sealed: its
   hash is committed in the repo, and no prompt writing or model selection
   reads it
-- [ ] Stratum counts are reported per country x language x shape, naming
+- [x] Stratum counts are reported per country x language x shape, naming
   the strata under 30 held-out items
-- [ ] The limit is named in the set's record: agreement with a cross-vendor
+- [x] The limit is named in the set's record: agreement with a cross-vendor
   panel, not truth; the panel's agree-but-wrong rate is stated as
   unmeasurable without truth
-- [ ] The logs of [[1890]] and [[1873]] record that this ticket is
+- [x] The logs of [[1890]] and [[1873]] record that this ticket is
   delivered

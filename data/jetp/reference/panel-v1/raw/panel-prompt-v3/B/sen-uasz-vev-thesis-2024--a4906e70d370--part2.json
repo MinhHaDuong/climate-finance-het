@@ -1,0 +1,61 @@
+{
+ "id": "gen-1790841611-ARowKSVupzkteoDsrH5U",
+ "object": "chat.completion",
+ "created": 1790841611,
+ "model": "x-ai/grok-4.7",
+ "provider": "xAI",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "completed",
+   "message": {
+    "role": "assistant",
+    "content": "{\"scope_note\":\"I covered pages 60–63 and found no statements about the partnerships’ projects, money, perimeters, parties or states. I left out the thesis conclusion on a cold-room study, its cost figures, and the bibliographic entries as out of scope.\",\"statements\":[]}",
+    "refusal": null,
+    "reasoning": "The user wants me to extract statements from a document about JETP, but the actual document content is a thesis about cold rooms, not JETP partnerships. I need to follow the extraction instructions st...I need to extract statements from this document about JETP partnerships, but the content is a thesis on cold rooms with no mention of JETP or partnerships. The instructions require statements about partnerships' projects, money, etc., but this document doesn't contain any such content. I should not extract anything from memory or invent statements. The costs mentioned are for a refrigeration project, not a JETP partnership. Bibliography is out of scope. So, I should return empty statements and note that the document doesn't contain relevant statements.",
+    "reasoning_details": [
+     {
+      "type": "reasoning.summary",
+      "summary": "The user wants me to extract statements from a document about JETP, but the actual document content is a thesis about cold rooms, not JETP partnerships. I need to follow the extraction instructions st...I need to extract statements from this document about JETP partnerships, but the content is a thesis on cold rooms with no mention of JETP or partnerships. The instructions require statements about partnerships' projects, money, etc., but this document doesn't contain any such content. I should not extract anything from memory or invent statements. The costs mentioned are for a refrigeration project, not a JETP partnership. Bibliography is out of scope. So, I should return empty statements and note that the document doesn't contain relevant statements.",
+      "format": "xai-responses-v1",
+      "index": 0
+     },
+     {
+      "type": "reasoning.encrypted",
+      "data": "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.eyJlbmRwb2ludF9zbHVnIjoieC1haS9ncm9rLTQuNy0yMDI2MDkxNnx4YWkvemRyIn0",
+      "format": "xai-responses-v1",
+      "id": "rs_d1ced1be-2c57-9546-b561-d2ce9ff8bd6d",
+      "index": 1
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 4549,
+  "completion_tokens": 734,
+  "total_tokens": 5283,
+  "cost": 0.011774,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 1152,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.011774,
+   "upstream_inference_prompt_cost": 0.00737,
+   "upstream_inference_completions_cost": 0.004404
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 672,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

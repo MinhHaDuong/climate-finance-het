@@ -66,6 +66,21 @@ def _write(path, rows, columns):
         writer.writerows(rows)
 
 
+def _write_gz(path, rows, columns):
+    """A gzipped CSV with a fixed header time, so a rebuild is byte-identical."""
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, columns, extrasaction='ignore', lineterminator='\n')
+    writer.writeheader()
+    writer.writerows(rows)
+    with gzip.GzipFile(path, 'wb', mtime=0) as fh:
+        fh.write(buffer.getvalue().encode('utf-8'))
+
+
+def _csv_gz(path):
+    with gzip.open(path, 'rt', newline='', encoding='utf-8') as fh:
+        return list(csv.DictReader(fh))
+
+
 # --- select -----------------------------------------------------------------
 
 def pending_pool(ledger=LEDGER):
@@ -424,7 +439,8 @@ def cmd_read(cfg, out, only=None):
             messages = [{'role': 'system', 'content': SYSTEM},
                         {'role': 'user', 'content': user_prompt(meta, layer, pages, cfg, classes)}]
             for member in cfg['members']:
-                raw = out / 'raw' / cfg['prompt_version'] / member['key'] / f"{sel['document_id']}--part{k}.json"
+                raw = (out / 'raw' / cfg['prompt_version'] / member['key']
+                       / f"{sel['document_id']}--{layer.sha256[:12]}--part{k}.json")
                 if not raw.exists():
                     jobs.append((member, messages, sel['document_id'], k, raw))
     log.info('%d calls to make; spent so far USD %.2f', len(jobs), ledger.spent)
@@ -448,7 +464,7 @@ def collect(cfg, out, selection, layers):
         layer = layers[sel['document_id']]
         for member in cfg['members']:
             folder = out / 'raw' / cfg['prompt_version'] / member['key']
-            for raw in sorted(folder.glob(f"{sel['document_id']}--part*.json")):
+            for raw in sorted(folder.glob(f"{sel['document_id']}--{layer.sha256[:12]}--part*.json")):
                 k = int(raw.stem.rsplit('part', 1)[1])
                 data = parse(_content(raw))
                 if data is None:
@@ -458,7 +474,7 @@ def collect(cfg, out, selection, layers):
                                  'fields': {}, 'other': []})
                     continue
                 rows += resolve_rows(member['key'], sel['document_id'], k, data, layer, cfg)
-    _write(out / 'rows.csv', [_flat(r, cfg) for r in rows], _row_columns(cfg))
+    _write_gz(out / 'rows.csv.gz', [_flat(r, cfg) for r in rows], _row_columns(cfg))
 
 
 # --- build ------------------------------------------------------------------
@@ -471,7 +487,7 @@ def _unflat(row, cfg):
 def cmd_build(cfg, out):
     names = [f['name'] for f in cfg['fields']]
     selection = {s['document_id']: s for s in _csv(out / 'selection.csv')}
-    rows = _csv(out / 'rows.csv')
+    rows = _csv_gz(out / 'rows.csv.gz')
     lines, counts = [], Counter()
     for document_id in sorted({r['document_id'] for r in rows}):
         sel = selection[document_id]
@@ -506,12 +522,7 @@ def cmd_build(cfg, out):
                'confidence', 'members', 'proposed_by', 'rule', 'panel', 'layer_sha256', 'adapter']
     _write(out / 'tuning.csv', [r for r in lines if part[r['line_id']] == 'tuning'], columns)
     heldout = [r for r in lines if part[r['line_id']] == 'heldout']
-    buffer = io.StringIO()
-    writer = csv.DictWriter(buffer, columns, lineterminator='\n')
-    writer.writeheader()
-    writer.writerows(heldout)
-    with gzip.GzipFile(out / 'heldout.csv.gz', 'wb', mtime=0) as fh:
-        fh.write(buffer.getvalue().encode('utf-8'))
+    _write_gz(out / 'heldout.csv.gz', heldout, columns)
     (out / 'heldout.sha256').write_text(f"{sha256_file(out / 'heldout.csv.gz')}  heldout.csv.gz\n")
     for r in lines:
         counts[(r['country'], r['language'], r['shape'], f"line {part[r['line_id']]}")] += 1

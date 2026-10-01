@@ -1,7 +1,7 @@
 """Text layers and locators for the panel reference set (ticket 1895).
 
 The panel reads a document from its text layer only (extraction § 5): a PDF
-through ``pdftotext -layout``, one page per form feed; an HTML page through
+through ``pdftotext -raw`` (content-stream order), one page per form feed; an HTML page through
 the standard library parser, scripts and styles never run, as one page.
 Markup that the page itself hides (the ``hidden`` attribute, an inline
 ``display:none``) is left out of the panel's declared scope; the layer
@@ -23,7 +23,10 @@ import unicodedata
 from dataclasses import dataclass
 from html.parser import HTMLParser
 
-ADAPTER_PDF = 'pdftotext -layout'
+# -raw, not -layout: -layout interleaves the lines of side-by-side columns,
+# so a sentence read in order is not contiguous in it (panel layer v1 lost
+# most Vietnamese newsletter quotes that way; README).
+ADAPTER_PDF = 'pdftotext -raw'
 ADAPTER_HTML = 'html.parser (stdlib), scripts and hidden markup dropped'
 
 _WS = re.compile(r'\s+')
@@ -72,7 +75,7 @@ def pdftotext_version():
 
 
 def pdf_layer(path):
-    out = subprocess.run(['pdftotext', '-layout', '-enc', 'UTF-8', str(path), '-'],
+    out = subprocess.run(['pdftotext', '-raw', '-enc', 'UTF-8', str(path), '-'],
                          capture_output=True, check=True)
     pages = out.stdout.decode('utf-8', 'replace').split('\f')
     if pages and not pages[-1].strip():

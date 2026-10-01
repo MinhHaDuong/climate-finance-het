@@ -56,10 +56,17 @@ included, over USD 48 (`budget_usd`). Spend per call: `calls.csv`.
 - **Blind.** Each member reads the text layer alone: no other member's
   output, no reader output, no parser row, ledger line or agent note. The
   document is quoted data inside `<document>` tags.
-- **Text layer.** `pdftotext -layout` per page (version in
-  `selection.csv`), HTML through the standard library parser, scripts and
-  hidden markup dropped (out of the declared scope). Parts on page
-  boundaries of at most 120,000 characters, the same plan for every member.
+- **Text layer** (layer v2). `pdftotext -raw` per page, content-stream
+  order (version in `selection.csv`); HTML through the standard library
+  parser, scripts and hidden markup dropped (out of the declared scope).
+  Parts on page boundaries of at most 120,000 characters, the same plan for
+  every member. Layer v1 used `pdftotext -layout`, which interleaves the
+  lines of side-by-side columns: members quoted the Vietnamese newsletters
+  in reading order, which was right, and those quotes were not contiguous
+  in the layer (A resolved 7 of 69 rows on the three newsletters). Every
+  PDF document was read again under layer v2 by all three members; the HTML
+  layers did not change and their answers stand. Raw answers are keyed by
+  the hash of the layer they read, so both readings are kept.
 - **Ontology-bound.** The classification is a JSON-schema enum of the 13
   `line_classification` terms in force (`data/jetp/ontology/terms.csv`),
   plus `cannot_classify`; the verbatim fields are a fixed list
@@ -110,6 +117,55 @@ included, over USD 48 (`budget_usd`). Spend per call: `calls.csv`.
   `heldout.sha256`; a test checks the hash. Prompt writing and model
   selection read `tuning.csv` only.
 
+## Result (2026-10-01)
+
+299 reference lines from 15 documents: 152 in the tuning part, 147 held
+out; 66 at high confidence (3 of 3), 233 at medium (2 of 3). Target was
+about 450. Spend: USD 8.87 for the whole set, controls and the layer v1
+reading included (`calls.csv`), against the accepted USD 10 to 48.
+
+| Country, language, shape | Rows resolved | Rows dropped | Items high | Items medium | Items excluded | Tuning | Held out |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| IDN en prose span | 156 | 26 | 1 | 17 | 98 | 9 | 9 |
+| SEN fr prose span | 136 | 11 | 3 | 10 | 82 | 7 | 6 |
+| VNM vi prose span | 171 | 16 | 4 | 33 | 73 | 19 | 18 |
+| VNM vi record page | 62 | 1 | 2 | 15 | 16 | 9 | 8 |
+| VNM vi table row | 151 | 5 | 5 | 20 | 70 | 13 | 12 |
+| ZAF en prose span | 409 | 6 | 39 | 62 | 109 | 51 | 50 |
+| ZAF en record page | 74 | 1 | 4 | 14 | 21 | 9 | 9 |
+| ZAF en table row | 221 | 220 | 8 | 62 | 68 | 35 | 35 |
+
+Counts of the layer v2 reading, from `counts.csv`; rows classed
+`cannot_classify` (32) are counted there and never kept.
+
+**Strata under 30 held-out items**, uninformative and run under the
+fallback of extraction § 6.3 (pooled mapping of the language, every item to
+the arbiter, named uncalibrated): IDN en prose span, SEN fr prose span, VNM
+vi prose span, VNM vi record page, VNM vi table row, ZAF en record page.
+Only ZAF en prose span (50) and ZAF en table row (35) reach 30. Not drawn
+at all, hence also uncalibrated: every Indonesian-language document, SEN
+table rows and record pages, IDN table rows and record pages, VNM
+documents in English or without a recorded language, and transcription
+(no reference answers by rule, extraction § 6.4).
+
+**Why 299 and not 450.** Of 537 excluded items, 278 were proposed by one
+member with no other member at that place (the members differ in
+granularity and in what they hold in scope: B and A each judged the
+Senegal thesis out of scope in one of the two layers); 185 were proposed by
+one member and overlapped by another member's row of another
+classification (the classification is part of the alignment, so a
+disagreement on it is two lone items); 74 had two or three members
+disagreeing on a field (implementer 35, date 25, funder 24, amount 19,
+speaker 9). The rule was not changed after these counts: a rule that
+aligns across classifications is a new rule and set version.
+
+**The South African register** (`zaf-jet-grants-register-2023-q3`) is a
+wide table whose cells wrap. Under layer v2, GLM-5.3 rebuilt logical rows
+that are not contiguous in any pdftotext order and lost 138 of 140; A and B
+quoted the layer's runs and resolved 80 and 119. Its rows are table rows
+that a cell adapter (extraction § 5, page, table and row) would read; the
+panel has none in v1.
+
 ## The pending pool and the 115
 
 `pool.csv` rebuilds the pool from `documents.csv`, `retrievals.csv`,
@@ -131,8 +187,8 @@ answers by rule (extraction § 6.4).
 | `zdr-endpoints.csv` | zero-retention endpoints listed at run start |
 | `control.csv` | positive control verdict per member |
 | `calls.csv` | every paid call: provider served, tokens, cost |
-| `raw/<member>/` | raw answers, written once, never overwritten |
-| `rows.csv` | every proposed row, resolved or dropped with the reason |
+| `raw/<prompt version>/<member>/` | raw answers, `<document>--<layer hash>--part<k>.json`, written once, never overwritten |
+| `rows.csv.gz` | every proposed row of the current layers, resolved or dropped with the reason |
 | `tuning.csv` | reference lines of the tuning part |
 | `heldout.csv.gz`, `heldout.sha256` | the sealed held-out part and its hash |
 | `counts.csv` | rows, items and lines per country, language and shape |

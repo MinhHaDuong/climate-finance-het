@@ -129,28 +129,11 @@ def check_served(member, response):
                          f"pinned {member['provider_name']!r}; run stopped")
 
 
-def call(member, messages, schema, cfg, ledger, document_id, part, retries=3):
-    """One member call; returns ``(content_text, response)``."""
-    prompt_chars = sum(len(m['content']) for m in messages)
-    estimate = (prompt_chars / 3 * member['price_in_per_m']
-                + 20000 * member['price_out_per_m']) / 1e6
-    ledger.reserve(estimate)
-    body = request_body(member, messages, schema, cfg)
-    try:
-        for attempt in range(retries):
-            started = time.time()
-            try:
-                response = _request('/chat/completions', body)
-                break
-            except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError):
-                if attempt == retries - 1:
-                    raise
-                time.sleep(30 * (attempt + 1))
-    finally:
-        ledger.release(estimate)
+def _ledger_row(member, cfg, document_id, part, response, started):
     usage = response.get('usage') or {}
     choice = (response.get('choices') or [{}])[0]
-    ledger.record({
+    error = response.get('error')
+    return {
         'called_at': datetime.datetime.now(datetime.UTC).isoformat(timespec='seconds'),
         'prompt_version': cfg['prompt_version'],
         'member': member['key'], 'model': member['model'],
@@ -163,8 +146,40 @@ def call(member, messages, schema, cfg, ledger, document_id, part, retries=3):
         'cost_usd': usage.get('cost') if usage.get('cost') is not None else (
             (usage.get('prompt_tokens') or 0) * member['price_in_per_m']
             + (usage.get('completion_tokens') or 0) * member['price_out_per_m']) / 1e6,
-        'finish_reason': choice.get('finish_reason'),
+        'finish_reason': (f"error: {str(error)[:200]}" if error
+                          else choice.get('finish_reason')),
         'seconds': round(time.time() - started, 1),
-    })
+    }
+
+
+def call(member, messages, schema, cfg, ledger, document_id, part, retries=4):
+    """One member call; returns ``(content_text, response)``.
+
+    An answer that carries an error and no choice (a provider outage relayed
+    with HTTP 200) is recorded and retried with backoff; an answer served by
+    any provider but the pinned one stops the run.
+    """
+    prompt_chars = sum(len(m['content']) for m in messages)
+    estimate = (prompt_chars / 3 * member['price_in_per_m']
+                + 20000 * member['price_out_per_m']) / 1e6
+    ledger.reserve(estimate)
+    body = request_body(member, messages, schema, cfg)
+    try:
+        for attempt in range(retries):
+            started = time.time()
+            try:
+                response = _request('/chat/completions', body)
+            except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+                response = {'error': f'{type(exc).__name__}: {exc}'}
+            ledger.record(_ledger_row(member, cfg, document_id, part, response, started))
+            if response.get('choices') and not response.get('error'):
+                break
+            if attempt == retries - 1:
+                raise ClosedFail(f"{member['key']} {document_id} part {part}: "
+                                 f"no answer after {retries} attempts: {response.get('error')}")
+            time.sleep(60 * (attempt + 1))
+    finally:
+        ledger.release(estimate)
     check_served(member, response)
+    choice = response['choices'][0]
     return (choice.get('message') or {}).get('content') or '', response

@@ -1,0 +1,46 @@
+{
+ "id": "gen-1790841188-b6tuVG1kCaw3O1PhY7AH",
+ "object": "chat.completion",
+ "created": 1790841188,
+ "model": "z-ai/glm-5.3",
+ "provider": "Parasail",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\"scope_note\": \"I covered the project page body for Trị An hydropower plant expansion (name, location, category, developer, owner, cost, financing, progress, dates, description) and the related-project listings. Navigation menus, page furniture, footer and contact details were left out as out of scope. No chart-only values present.\", \"statements\": [{\"page\": 1, \"quote\": \"Mở rộng Nhà máy Thủy điện Trị An\", \"label\": \"Mở rộng Nhà máy Thủy điện Trị An\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"1. Tên dự án\\n\\nMở rộng Nhà máy Thủy điện Trị An\", \"label\": \"Tên dự án\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"2. Địa điểm dự án\\n\\nĐồng Nai\", \"label\": \"Địa điểm dự án\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"3. Hạng mục dự án\\n\\nCác dự án về phát triển ngành công nghiệp năng lượng tái tạo\", \"label\": \"Hạng mục dự án\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"4. Đơn vị phát triển dự án:\\n\\nTập đoàn Điện lực Việt Nam (EVN)\", \"label\": \"Đơn vị phát triển dự án\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": \"Tập đoàn Điện lực Việt Nam (EVN)\", \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"5. Chủ dự án\\n\\nTập đoàn Điện lực Việt Nam (EVN)\", \"label\": \"Chủ dự án\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": \"Tập đoàn Điện lực Việt Nam (EVN)\", \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"6. Tổng chi phí dự án\\n\\n134 triệu EUR (151 triệu USD)\", \"label\": \"Tổng chi phí dự án\", \"classification\": \"named_item\", \"fields\": {\"amount\": \"134 triệu EUR (151 triệu USD)\", \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"7. Nguồn tài chính\\n\\nThỏa thuận vay vốn 65 triệu EUR (79 triệu USD) giữa EVN và Kreditanstalt für Wiederaufbau (KfW) vào tháng 6 năm 2025\", \"label\": \"Nguồn tài chính\", \"classification\": \"named_item\", \"fields\": {\"amount\": \"65 triệu EUR (79 triệu USD)\", \"date\": \"tháng 6 năm 2025\", \"funder\": \"Kreditanstalt für Wiederaufbau (KfW)\", \"implementer\": \"EVN\", \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"8. Tiến độ dự án\\n\\nGiai đoạn khởi công xây dựng\", \"label\": \"Tiến độ dự án\", \"classification\": \"event\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"9. Ngày dự kiến khởi công\\n\\nThi công từ tháng 12 năm 2024\", \"label\": \"Ngày dự kiến khởi công\", \"classification\": \"target\", \"fields\": {\"amount\": null, \"date\": \"tháng 12 năm 2024\", \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"10. Ngày dự kiến hoàn thành (CoD)\\n\\nDự kiến hoàn thành vào đầu năm 2028\", \"label\": \"Ngày dự kiến hoàn thành (CoD)\", \"classification\": \"target\", \"fields\": {\"amount\": null, \"date\": \"đầu năm 2028\", \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"Nhà máy thủy điện Trị An hiện tại (400MW): bảo trì toàn bộ các hạng mục đập, hồ chứa, đường nước, nhà máy điện, hạ lưu nhà máy.\", \"label\": \"Nhà máy thủy điện Trị An hiện tại (400MW)\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"Trạm mở rộng nhà máy thủy điện Trị An (200MW): đầu tư xây dựng mới các hạng mục: đường nước, nhà máy điện, hạ lưu nhà máy và hệ thống đấu nối.\", \"label\": \"Trạm mở rộng nhà máy thủy điện Trị An (200MW)\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": []}, {\"page\": 1, \"quote\": \"Dự án Nhà máy Thuỷ điện tích năng Bác Ái (1200MW)\\n\\nĐang triển khai\", \"label\": \"Dự án Nhà máy Thuỷ điện tích năng Bác Ái (1200MW)\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": [{\"name\": \"status\", \"value\": \"Đang triển khai\"}]}, {\"page\": 1, \"quote\": \"Các trạm biến áp EVN NPT Bình Dương và Đồng Nai - Tăng cường lưới truyền tải điện\\n\\nĐang triển khai\", \"label\": \"Các trạm biến áp EVN NPT Bình Dương và Đồng Nai - Tăng cường lưới truyền tải điện\", \"classification\": \"named_item\", \"fields\": {\"amount\": null, \"date\": null, \"funder\": null, \"implementer\": null, \"speaker\": null}, \"other\": [{\"name\": \"status\", \"value\": \"Đang triển khai\"}]}]}",
+    "refusal": null,
+    "reasoning": null
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 2036,
+  "completion_tokens": 1549,
+  "total_tokens": 3585,
+  "cost": 0.00908232,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 512,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.00908232,
+   "upstream_inference_prompt_cost": 0.00226672,
+   "upstream_inference_completions_cost": 0.0068156
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

@@ -225,6 +225,31 @@ def test_a_member_whose_provider_is_not_listed_zero_retention_is_refused():
         client.check_members([{**MEMBER, 'provider_name': 'OpenAI'}], listed)
 
 
+CALL_CFG = {'reasoning_effort': 'low', 'max_output_tokens': 10, 'prompt_version': 'v'}
+ANSWER = {'provider': 'Azure', 'model': 'm', 'usage': {'cost': 0.01},
+          'choices': [{'finish_reason': 'stop', 'message': {'content': '{}'}}]}
+
+
+def test_an_error_answer_is_recorded_and_retried_not_taken(tmp_path, monkeypatch):
+    # GPT-5.6 on Azure, 2026-10-01: eleven answers with no provider and no choice.
+    answers = iter([{'error': {'message': 'upstream'}}, ANSWER])
+    monkeypatch.setattr(client, '_request', lambda path, body: next(answers))
+    monkeypatch.setattr(client.time, 'sleep', lambda s: None)
+    ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
+    content, _ = client.call(MEMBER, [{'role': 'user', 'content': 'x'}], {}, CALL_CFG, ledger, 'd', 1)
+    assert content == '{}'
+    rows = (tmp_path / 'calls.csv').read_text().splitlines()
+    assert len(rows) == 3 and 'error: ' in rows[1]
+
+
+def test_a_misserved_answer_is_recorded_then_stops_the_run(tmp_path, monkeypatch):
+    monkeypatch.setattr(client, '_request', lambda path, body: {**ANSWER, 'provider': 'OpenAI'})
+    ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
+    with pytest.raises(client.ClosedFail):
+        client.call(MEMBER, [{'role': 'user', 'content': 'x'}], {}, CALL_CFG, ledger, 'd', 1)
+    assert ledger.spent == pytest.approx(0.01)
+
+
 def test_the_budget_counts_calls_in_flight(tmp_path):
     ledger = client.Ledger(tmp_path / 'calls.csv', 10.0)
     ledger.reserve(6.0)
