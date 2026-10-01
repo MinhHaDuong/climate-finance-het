@@ -15,6 +15,12 @@ Run directories and raw exports sit on doudou under
 `MANIFEST.sha256` there. The delivery to the pool (ticket 1655) is
 `data/rel_intake/t1653-sud-hors-openalex/2026-09-30/`, tracked by DVC.
 
+Ticket 1790 (2026-09-30 and the night to 10-01) retried every blocked source
+under the author's rule "If you can't Playwright it, it's dead", read the dead
+sources' copies held by aggregators, and delivered what it recovered as
+`data/rel_intake/t1790-sud-playwright/2026-09-30/` (section
+[Ticket 1790](#ticket-1790-browser-attempts-aggregators-second-delivery)).
+
 ## Harvest and listing routes: the lexicon match is the query
 
 Three kinds of route ran. A **search** route (`api`) sends the lexicon to the
@@ -117,45 +123,55 @@ example, now judges completion on distinct record ids rather than on rows.
 
 ## Source status
 
-| Source | Stratum | Status | Reason | Human action |
+As of 2026-10-01, after ticket 1790. `dead`: the author's rule of 2026-09-30,
+"If you can't Playwright it, it's dead": one attempt in headless Chromium,
+within robots.txt and the terms, no CAPTCHA solved, no account; no attempt
+where robots.txt or the terms forbid robots. No human chases a closed
+archive.
+
+| Source | Stratum | Status | Reason | Ticket 1790 |
 | --- | --- | --- | --- | --- |
-| Redalyc | LAC | run | undocumented JSON service of the site's article finder, robots.txt allows; the documented OAI (775,205 records, no subject sets) would take about 5.5 h | |
+| Redalyc | LAC | run | undocumented JSON service of the site's article finder, robots.txt allows; the documented OAI (775,205 records, no subject sets) would take about 5.5 h | use of the undocumented service `www.redalyc.org/service/r2020/getArticles/` approved by the author (2026-09-30) |
 | CLACSO | LAC | run | DSpace 7 discovery, crawl-delay 10 s; old site HTTP 526 | |
 | Ipea | LAC | run | DSpace 7 discovery on the TD collection | |
 | UWI | LAC | run | DSpace 7 discovery | |
-| SciELO | LAC | partial | search.scielo.org robots Disallow: / and Bunny Shield 403; ArticleMeta has no text search; OAI on social-science journal sets of mex, ven, bol, cri, pry only; Brazil OAI 404/502, Argentina and Colombia time out, Cuba refused, Chile and Peru robots-disallowed | SciELO OAI access or dump for Brazil, Chile, Peru, Argentina, Colombia, Cuba |
-| USP repository | Pacific | impossible | robots Disallow /cgi/ (oai2, search, export); Cloudflare 403 on every path; CORE v3 HTTP 500; not in OpenAIRE | allowlist or OAI dump from the USP library |
+| SciELO | LAC | partial | search.scielo.org robots Disallow: / and Bunny Shield 403; ArticleMeta has no text search; OAI on social-science journal sets | Argentina recovered (plain HTTP answered again: 47 journals, 41 complete, 6 lost to HTTP 500). Dead: Brazil (OAI 404, `/oai` 502, the same in Chromium), Chile and Peru (robots.txt Disallow: / for all but named search engines, re-read 2026-09-30), Colombia (TCP timeout, in Chromium too), Cuba (scielo.sld.cu does not resolve) |
+| USP repository | Pacific | dead | robots Disallow /cgi/ (oai2, search, export); Cloudflare 403 on every path; not in OpenAIRE | no attempt (robots); CORE and OpenAlex copies read, see below |
 | GARUDA | SE Asia | run | HTML search, no OAI or JSON API, robots.txt 404 | |
 | SINTA | SE Asia | not needed | robots.txt 403; GARUDA covers it | |
-| CyberLeninka | Russia | partial (substitute for eLIBRARY) | /search and /api/ robots-disallowed; oai_dc titles only; set repec is not economics (9,830 received, 0 matched); captcha after about 980 pages blocked ListSets | permission, allowlist or dump from skynet@cyberleninka.ru |
-| eLIBRARY | Russia | impossible | agreement.asp forbids robots and automated search or download; no OAI; API by contract only | API contract (api@elibrary.ru) or manual export of the 4 ru queries |
-| CNKI | China | impossible | cnki.net redirects to oversea.cnki.net, robots Disallow: /; no OAI, no public API | bibCNRS institutional access, manual export of the 4 zh queries |
-| Wanfang | China | impossible | undocumented internal JavaScript API (not used); no OAI; open-platform API behind registration | registration or subscription, or manual export |
-| AJOL | Africa | impossible at scale | AWS WAF JavaScript challenge after 6-10 requests even at 4 s; site-level OAI empty; search and API robots-disallowed; no record received (logs `t1653-africa-sasia/ajol-*.log`) | allowlist or dump from support@ajol.info |
-| Shodhganga | South Asia | impossible | robots Disallow: / (Crawl-delay 600); OAI and REST 404 (DSpace 5.3) | INFLIBNET OAI access or export, or BASE API after IP registration |
+| CyberLeninka | Russia | dead | /search and /api/ robots-disallowed; oai_dc titles only; set repec is not economics (9,830 received, 0 matched); captcha after about 980 pages | reCAPTCHA on the first request of 1790 (OAI ListSets, about 20:30 UTC), not solved; CORE and OpenAlex copies read |
+| eLIBRARY | Russia | dead | agreement.asp forbids robots and automated search or download; no OAI; API by contract only | no attempt (terms); its open-access part overlaps CyberLeninka |
+| CNKI | China | dead | cnki.net redirects to oversea.cnki.net, robots Disallow: /; no OAI, no public API | no attempt (robots); no aggregator holds it |
+| Wanfang | China | dead | no OAI; open-platform API behind registration; no robots.txt | slider CAPTCHA on the first search page in Chromium, not solved |
+| AJOL | Africa | run | per-journal OAI, robots allows `/index.php/<journal>/oai`; AWS WAF JavaScript challenge after a few plain requests (1653: no record) | recovered through Chromium: 232 journals of the five 1653 categories, all complete, 36,207 records read, 66 matches |
+| Shodhganga | South Asia | dead | robots Disallow: / (Crawl-delay 600); OAI and REST 404 (DSpace 5.3) | no attempt (robots); OpenAlex copy read (CORE holds nothing) |
 | ERSA | Africa | run | WordPress REST listing of 973 working papers; not in RePEc | |
 | CPD | South Asia | run | WordPress REST listing of 705 publications; en/bn lexicon | |
 | South Centre | Global South | run | REST 401 except /search; category RSS feed, crawl-delay 10 s | |
 | ADB EWP | Asia-Pacific | run | adb.org Cloudflare 403 (robots.txt included); RePEc listing and paper pages on IDEAS | |
-| CEEW | South Asia | partial | no API or feed; search and paged listings robots-disallowed; sitemap pages at crawl-delay 10 s; 13 of 706 pages failed; full listing not archived (rerun cut short) | |
-
-The human actions are gathered in ticket 1790 (`Label: needs-human`).
+| CEEW | South Asia | run | no API or feed; search and paged listings robots-disallowed; sitemap pages at crawl-delay 10 s | listing reread and archived: 693 of 706 pages; the 13 others are stale sitemap entries that redirect to a 404 page (list in `t1790-ceew/missing-pages.txt`) |
 
 ## Strata left incomplete
 
-- **Russia**: eLIBRARY impossible, CyberLeninka blocked (0 records).
-- **China**: CNKI and Wanfang impossible (0 records).
-- **Pacific**: USP repository impossible and no automated Pacific source.
-- **Africa**: AJOL blocked; ERSA and South Centre are series, not a journal
-  platform.
-- **South Asia**: Shodhganga impossible; CPD and CEEW are institute
-  catalogues.
-- **LAC**: SciELO partial, Brazil, Argentina, Colombia, Cuba, Chile and Peru
-  not reached.
+As of 2026-10-01:
 
-The delivery's `manifest.json` declares `coverage: incomplete` and lists each
-blocked or partial source, GARUDA's capped queries and the unreviewed
-languages, eleven units in all, each with its reason.
+- **Russia**: eLIBRARY and CyberLeninka dead. Their OpenAlex copy (the
+  CyberLeninka source) gave 29 hits; CORE's 400 CyberLeninka outputs matched
+  nothing.
+- **China**: CNKI and Wanfang dead, no aggregator copy. The zh stratum of
+  the 1530 OpenAlex pass is the only route (0 records outside OpenAlex).
+- **Pacific**: USP repository dead; its CORE copy (9,889 outputs, 32
+  matches) and OpenAlex copy (repository source and institution) stand in.
+- **Africa**: AJOL recovered for the five categories chosen in 1653; its
+  other categories were never in the query.
+- **South Asia**: Shodhganga dead; its OpenAlex copy gave 8 hits. CPD and
+  CEEW are institute catalogues.
+- **LAC**: SciELO partial: Argentina, Mexico, Venezuela, Bolivia, Costa Rica
+  and Paraguay read; Brazil, Chile, Peru, Colombia and Cuba dead.
+
+Each delivery's `manifest.json` declares `coverage: incomplete` and lists the
+dead and partial sources, with their reasons. `needs_human` is empty in the
+1790 delivery: no human errand remains.
 
 ## Translation status
 
@@ -260,3 +276,84 @@ used as a key. It is blanked in `doi` and kept in `lane_note`. This affects
 
 The lane deduplicates by record id only. The same article under two GARUDA
 ids, or on two platforms, is left to the pool's DOI and title joins.
+
+## Ticket 1790: browser attempts, aggregators, second delivery
+
+The author decided on 2026-09-30 that no human will chase closed archives:
+each blocked source was tried once in an automated browser (Playwright,
+headless Chromium), and what still failed is declared dead in
+`config/rel_sud_sources_status.yaml` (`status: dead`, `tried_1790`).
+Limits kept: robots.txt re-read for every path on 2026-09-30, sources whose
+robots.txt or terms forbid robots (eLIBRARY, CNKI, Shodhganga, the USP OAI
+and search paths) not attempted, no CAPTCHA solved, no account created, the
+lane's User-Agent (`ClimateFinancePipeline/1.0`) on every request, crawl
+delay respected and 8 s between AJOL requests. Long runs ran detached on
+doudou, with logs and launch scripts in their run directories.
+
+Code: the runner takes `--browser` (adapters with a `GET` fetch through
+`rel_sud_sources/_browser.py`, which runs an AWS WAF JavaScript challenge in
+the page and retries once) and `--set KEY=VALUE` (AJOL `deadline`, SciELO
+`scielo_collections`). CEEW reads failed pages a second time and reads the
+display year after the page heading: the first 1790 rerun showed that the
+year was read after the `<head>` title, in the menu, and fell back to the
+upload timestamp. 7 of the 52 CEEW years delivered by 1653 differ from the
+reread, which gives the page's display date on the three checked ("Harnessing
+the Power Shift": 2010, delivered as 2021). The 1790 delivery carries the corrected CEEW records;
+the 7 old ones will not join them by title and year.
+
+Aggregators (scope added by the MOE with the author's approval,
+2026-09-30), for the dead sources:
+
+- **BASE**: dead. The API answers "Access denied for IP address" (access by
+  IP registration through a form), and robots.txt closes the web search.
+- **CORE** API v3 (registered key): `search/works` refuses a provider filter,
+  `search/outputs?q=repositories.id:<provider>` accepts one; phrase search
+  is loose, so each provider is read whole and the lexicon is matched
+  locally, as for a harvest.
+- **OpenAlex**, restricted to the source standing for a dead platform: 32
+  lexicon queries (4 targets x 2 languages x 4 themes), the 1530 year
+  window. Spend at most 0.032 USD of the shared daily dollar (budget headers
+  0.4639 then 0.4318 USD remaining, 20:47-21:03 UTC; another user of the key
+  may account for part of it). No source stands for CNKI or Wanfang, and
+  works cannot be filtered by the country of their source.
+
+### Query register (ticket 1790)
+
+Dates 2026-09-30 UTC (AJOL until 2026-10-01 01:13, CEEW until 01:22).
+n_expected: harvested or listed (harvest, listing) or announced (search);
+n_received: matches (harvest, listing) or hits (search); delivered: unique
+records in `records.csv`. Pool columns from `make rel-pool` on 2026-10-01
+(works in the catalogue / in another lane only / new to the pool).
+
+| Source | Route | Query | Queries (complete) | n_expected | n_received | delivered | Pool | Run directory |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| AJOL | oai-pmh, Chromium | `ListRecords oai_dc` per journal of five categories, lexicon en/fr/pt/ar | 232 (232) | 36,207 | 66 | 66 | 14 / 10 / 42 | `t1790-ajol/run/` |
+| SciELO Argentina | oai-pmh | `ListRecords oai_dc set=<ISSN>`, social-science journals, lexicon es/pt/en | 47 (41) | 13,473 | 3 | 3 | 0 / 2 / 1 | `t1790-scielo/run/` |
+| CEEW | listing | sitemap publication pages, lexicon en/hi | 1 (0: 13 stale pages) | 693 | 53 | 51 + 2 `no_dedup_key` | 0 / 43 / 10 | `t1790-ceew/run-b/` |
+| USP repository via CORE | listing | `repositories.id:373`, lexicon en/fr | 1 (1) | 9,889 | 32 | 32 | 4 / 11 / 17 | `t1790-aggregators/core/` |
+| CyberLeninka via CORE | listing | `repositories.id:1252`, lexicon ru/en | 1 (1) | 400 | 0 | 0 | | `t1790-aggregators/core/` |
+| Shodhganga via CORE | listing | `repositories.id:8818` | 1 (1) | 0 | 0 | 0 | | `t1790-aggregators/core/` |
+| Shodhganga via OpenAlex | api | `locations.source.id:S4377209701`, en/hi | 8 (8) | 8 | 8 | 8 | 6 / 0 / 2 | `t1790-aggregators/openalex/` |
+| CyberLeninka via OpenAlex | api | `locations.source.id:S4306401404`, ru/en | 8 (8) | 29 | 29 | 26 | 2 / 16 / 8 | `t1790-aggregators/openalex/` |
+| USP repository via OpenAlex | api | `locations.source.id:S4306402186`, en/fr | 8 (8) | 5 | 5 | 5 | 0 / 5 / 0 | `t1790-aggregators/openalex/` |
+| USP via OpenAlex institution | api | `authorships.institutions.id:I44666525`, en/fr | 8 (8) | 35 | 35 | 28 | 11 / 17 / 0 | `t1790-aggregators/openalex/` |
+
+Run directories are under `~/data/projets/climate-finance-het/rel_sud/2026-09-30/`
+on doudou, each fingerprinted by its `MANIFEST.sha256`; the probes (robots.txt
+readings, Chromium attempts, the CyberLeninka captcha page, the Wanfang
+screenshot, the BASE refusal) are in `t1790-probes/` and
+`t1790-cyberleninka/`.
+
+### Delivery
+
+`data/rel_intake/t1790-sud-playwright/2026-09-30/`, a lane directory of its
+own so the t1653 pointer the pool merge reads is untouched; written by
+`scripts/catalog_rel_1653_delivery.py export --lane t1790-sud-playwright
+--ticket 1790` (invocation in `producer.runs`), DVC-tracked and pushed to
+padme; `qa_rel_intake.py`: `OK`, exit 0. 219 records (AJOL 66, OpenAlex 67,
+CEEW 51, CORE 32, SciELO 3); 10 `duplicate_in_lane` and 2 `no_dedup_key`
+(the two undated CEEW pages of 1653). Two source DOIs shared by
+differently titled records are kept in `lane_note` only (an AJOL issue DOI;
+one article under two titles in CORE and OpenAlex). In the pool: 34 works in
+the catalogue, 95 in another lane only, 80 new. No class-b sentinel found.
+

@@ -1,0 +1,6 @@
+outs:
+- md5: 94a2b486aa4f98fdc5ef6d0544511430.dir
+  size: 687645
+  nfiles: 5
+  hash: md5
+  path: t1790-sud-playwright
