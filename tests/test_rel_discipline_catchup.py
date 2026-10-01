@@ -236,3 +236,26 @@ def test_collect_writes_answers_and_the_token_log(chunks, monkeypatch):
     calls = [json.loads(x) for x in (chunks / "or.calls.jsonl").read_text().splitlines()]
     assert [c["cost_per_answered_usd"] for c in calls] == [0.1, None], "rewritten, not doubled"
     assert calls[1]["error"] == {"message": "overloaded"}
+
+
+@pytest.mark.parametrize("reply", ["", "| n | contrib |\n|---|---|\n", "Sorry, I cannot."])
+def test_a_reply_without_answer_lines_leaves_the_chunk_pending(chunks, monkeypatch, reply):
+    """Review round 3, PR 1660: an empty answer file made call skip a chunk for good."""
+    monkeypatch.setattr(cc, "_headers", lambda: {})
+    monkeypatch.setattr(cc, "model_pricing", lambda m: {"prompt": 1e-6, "completion": 1e-6})
+    sent = []
+
+    class Resp:
+        status_code = 200
+
+        def json(self):
+            return {"choices": [{"message": {"content": reply}, "finish_reason": "length"}],
+                    "usage": {"prompt_tokens": 10, "completion_tokens": 0}}
+
+    def post(*a, **k):
+        sent.append(1)
+        return Resp()
+    cc.call(str(chunks), "m", "or", 1.0, 100, None, post=post)
+    assert not (chunks / "chunk01.or.txt").exists() and (chunks / "chunk01.or.raw.txt").exists()
+    cc.call(str(chunks), "m", "or", 1.0, 100, None, post=post)
+    assert len(sent) == 4, "both chunks retried"
