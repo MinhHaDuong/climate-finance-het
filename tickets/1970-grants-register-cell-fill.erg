@@ -1,0 +1,38 @@
+%erg 0.1
+Title: Grants register parser: record cell fill colour per row (adapter v2)
+Created: 2026-10-01
+Author: HDMX-coding-agent
+Blocked-by: 1950
+
+--- log ---
+2026-10-01T12:30Z HDMX-coding-agent created — follow-up of [[1950]] (PR #1675); author decision 2026-10-01, relayed from session haduong: "Cell highlight colours: approved as a follow-up".
+
+--- body ---
+## Context
+
+The 2025-q1 workbook of the South African JET Grants Register carries a
+footnote "Green Highlight: Indicates that…", so a cell fill carries
+meaning the publisher states. The v1 XLSX adapter of [[1950]]
+(`scripts/jetp/_xlsx_cells.py`) reads cell values only: the footnote is
+admitted as a heading statement, but the highlighted rows are not marked.
+
+## Method
+
+- Read the fill of each cell from the workbook styles (`xl/styles.xml`
+  fills, the cell's style index), standard library only, as the v1 adapter
+  does.
+- Record the fill on the row's line as a verbatim field (colour as stored,
+  plus the legend text that gives it meaning when the edition prints one),
+  under a new parser method version; editions re-read by replay
+  (extraction § 10).
+- Check the other workbook edition (2024-q3) for fills with or without a
+  legend, and report them.
+
+## Exit criteria
+
+- [ ] Fill read per cell and recorded per row as a verbatim field, with
+  the legend text where printed
+- [ ] Red test: a fixture row with and without the legend fill
+- [ ] New method version; the 2025-q1 lines superseded by replay, counts
+  unchanged
+- [ ] `make check-fast` and `make lint` pass
