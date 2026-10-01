@@ -2,7 +2,7 @@
 
 *Ticket 1840, enfant de 1830. Archive complète (entrées, ensemble or, sorties des juges,
 arbitrage, sorties Opus, rapport, soldes, `MANIFEST.sha256`) :
-`~/data/projets/climate-finance-het/rel_discipline_test/2026-10-01/` (doudou), rapport
+`~/data/projets/climate-finance-het/rel_discipline_test/2026-10-01/` (doudou et padme ; `drift/` sur padme seulement), rapport
 chiffré dans `report.txt` et `report.json`.*
 
 ## Ce qui est testé
@@ -44,7 +44,47 @@ rejeu du prompt v1 : le libellé ICF reste comparable, et la classe `icf`, celle
 entre dans la REL, ne bouge pas. Un effet de direction est visible à la frontière
 `aux`/`out` : le même jour, 14 des 75 `aux` du v1 passent `out` en v2, aucun dans l'autre
 sens. Il ne touche pas l'inclusion REL (`aux` n'y entre pas) mais la carte
-bibliométrique ; la cause n'est pas établie. Les erreurs de décision portent surtout sur
+bibliométrique ; sa cause est examinée ci-dessous. Les erreurs de décision portent surtout sur
 la finance appliquée à une question de politique (certification des obligations vertes,
 spéculation sur le marché européen du carbone : or yes, Opus no) ; en ML, un seul cas
 (prévision par forêt aléatoire de l'écart de performance des projets MDP, Opus yes).
+
+## La dérive `aux` → `out` : bruit de rejeu, pas effet du prompt
+
+Archive : `drift/` (`join.py`, `build_rerun.py`, `make_prompts.py`, `analyse_rerun.py`,
+sorties `rerun.*.opus.txt`).
+
+Sur les 14 œuvres, 8 étaient `out` dans l'étiquetage t1530 d'origine : c'est le rejeu v1
+qui les avait passées `aux`, et la v2 revient au libellé d'origine. Contre t1530, le
+rejeu v1 penche vers `aux` (13 `out`→`aux` contre 4, binomiale p = 0,05) et la v2 n'a
+pas de sens net (10 `aux`→`out` contre 5, p = 0,30). Le volume de bascules `aux`/`out`
+est le même dans les trois comparaisons (17, 15, 14 sur 200).
+
+Rejeu ciblé (Opus, sous-agents, un bloc de 49 : les 14, les 9 autres bascules, 13 `aux`
+et 13 `out` stables tirés au hasard ; trois enveloppes : v1, v2, et v2 sans la sortie
+`na` pour `out`) :
+
+| | v1 | v2 | v2 sans sortie `na` |
+|---|---|---|---|
+| les 14 (`out` / `aux`) | 8 / 6 | 9 / 5 | 7 / 7 |
+| les 9 autres bascules | 5 / 4 | 0 / 9 | 0 / 9 |
+| 13 `aux` stables, restés `aux` | 13 | 11 | 12 |
+| 13 `out` stables, restés `out` | 11 | 11 | 11 |
+| désaccords avec v1 (`out`→`aux` / `aux`→`out`) | | 6 / 4 | 7 / 2 |
+
+Le 14 contre 0 ne se reproduit pas : avec le même prompt v1, 17 des 23 œuvres sujettes
+aux bascules changent de libellé d'un jour à l'autre, et cette fois c'est la v2 qui
+penche vers `aux`. Les témoins stables restent stables (69 libellés sur 78, trois enveloppes réunies).
+Supprimer la sortie `na` déplace 3 œuvres de `out` à `aux` : un effet de « sortie bon
+marché » au plus faible, dans le bruit. L'effet de position (10 des 14 en seconde moitié
+d'un bloc de 150 ou 105, contre 24 des 58 `aux` stables, Fisher p = 0,07) n'est pas
+établi. Cause retenue : instabilité de la frontière `aux`/`out` sur un sous-ensemble
+identifiable (paiements pour services environnementaux domestiques, optimisation
+énergétique avec marché du carbone, économie circulaire nationale), que la règle
+place des deux côtés à la fois (« marché carbone domestique » en `aux`, « foresterie,
+agriculture, ingénierie énergétique domestiques » en `out`).
+
+Décision : pas de changement du prompt avant l'étape 2. La frontière `aux`/`out` ne
+touche pas l'inclusion REL, et le texte ICF reste figé pour rester comparable aux
+4 752 libellés t1530. Pour la carte bibliométrique, le libellé `aux`/`out` de ces
+œuvres est à traiter comme bruité (environ 15 bascules sur 200 entre deux passes).
