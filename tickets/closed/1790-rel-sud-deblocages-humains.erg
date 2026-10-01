@@ -2,12 +2,16 @@
 Title: REL Sud — demandes de déblocage des sources hors OpenAlex (accès, exports, relecteurs)
 Created: 2026-09-30
 Author: HDMX-coding-agent
-Label: needs-human
+Closed: every item recovered, fixed or declared dead with its reason (docs/rel-sud-sources-2026-09-30.md); readers item closed by PR #1633
 
 --- log ---
 2026-09-30T16:30Z HDMX-coding-agent created
 2026-09-30T20:26Z HDMX-coding-agent note readers (author decision 2026-09-30): 24 zh/ru/hi/bn/id/ar strings reviewed by Opus 5.5 and google/gemini-3.1-pro-preview (USD 0.10); 19 ok, 1 fixed (zh T3 森林融资 -> 林业融资), 4 disputed unchanged (ru T2 T3 T4, bn T1). zh T3 rerun on OpenAlex: 651 works, 6 new vs 1530, delivered as t1790-reader-reruns/2026-09-30. No human reader yet.
 
+2026-10-01T01:28Z HDMX-coding-agent note author decision 2026-09-30: no human chases closed archives; rule "If you can't Playwright it, it's dead"; the freeze (1656) does not wait on 1790; Redalyc's undocumented getArticles service approved.
+2026-10-01T01:28Z HDMX-coding-agent note recovered: AJOL via headless Chromium (232 journals complete, 36,207 read, 66 delivered); SciELO Argentina (47 journals, 41 complete, 3 delivered); CEEW listing reread (693/706, 13 stale sitemap 404s; years fixed). Dead with reason in config/rel_sud_sources_status.yaml: CNKI, eLIBRARY, Shodhganga, USP repository (robots/terms, no attempt), CyberLeninka (reCAPTCHA), Wanfang (slider CAPTCHA), SciELO BR/CL/PE/CO/CU. Aggregators: CORE (USP 32 of 9,889; CyberLeninka 0 of 400; Shodhganga 0), OpenAlex by source (77 hits, 67 records, <=0.032 USD), BASE dead (IP registration). Delivery data/rel_intake/t1790-sud-playwright/2026-09-30 (219 records).
+2026-10-01T01:28Z HDMX-coding-agent unlabel needs-human
+2026-10-01T01:28Z HDMX-coding-agent closed — every item recovered, fixed or declared dead with its reason (docs/rel-sud-sources-2026-09-30.md); readers item closed by PR #1633
 --- body ---
 ## Contexte
 
