@@ -29,8 +29,12 @@ memory from the pool and the ``icf_screen`` table, so it is never stale):
     ``rel_dimensions`` (``dimensions_table``), same key, same prompt hash
     (ticket 1840); both batches are validated before either is written.
     A chunk with a malformed or duplicated answer line is refused whole (the
-    numbering can no longer be trusted); unanswered records are reported and
-    stay pending. Idempotent: labels already in the table are skipped.
+    numbering can no longer be trusted), and so is an answer file written for
+    the other wrapper (``_format_mismatch``); unanswered records are reported and
+    stay pending. The per-chunk report also counts, for version 2, answers with
+    an ``unknown`` discipline value (``unknown_dimension``) and answers that break
+    the wrapper's rule of ``na`` exactly for ``out`` (``na_off_rule``); both are
+    stored as answered. Idempotent: labels already in the table are skipped.
 
 ``agreement``
     Cohen's kappa and the confusion matrix of the audit labels of one run
@@ -143,7 +147,7 @@ def audit_sample(view_rows: list[dict], per_label: dict, seed: int) -> list[str]
 
 
 _CHUNK = re.compile(r"^(chunk\d+)\.ids\.json$")
-_DIM_HEAD = re.compile(r"^(yes|no|unsure|na)\|")
+_DIM_HEAD = re.compile(r"^(yes|no|unsure|na)\|", re.IGNORECASE)
 
 
 def _format_mismatch(answers: dict, fields: tuple) -> str:
@@ -159,7 +163,8 @@ def _format_mismatch(answers: dict, fields: tuple) -> str:
         return ""
     if fields == ics.V2_FIELDS:
         if all(a["contrib"] == a["field"] == a["ctype"] == ics.UNKNOWN for a in answers.values()):
-            return "no record has a valid discipline field: a version-1 answer file?"
+            return ("no record has a valid discipline field: a version-1 answer file, "
+                    "or every discipline value out of vocabulary?")
     elif all(_DIM_HEAD.match(a["why"]) for a in answers.values()):
         return "every why starts with a discipline value: a version-2 answer file?"
     return ""
