@@ -81,6 +81,9 @@ def plan(cfg, get=polite_get):
     terms = lexicon_terms(cfg["lexicon"], LANGUAGES)
     specs = []
     chosen = cfg.get("scielo_collections")  # comma-separated codes; default all
+    unknown = set(chosen.split(",")) - set(COLLECTIONS) if chosen else set()
+    if unknown:  # a typo must not select nothing silently
+        raise ValueError(f"unknown SciELO collection(s): {', '.join(sorted(unknown))}")
     for col, endpoint in COLLECTIONS.items():
         if chosen and col not in chosen.split(","):
             continue

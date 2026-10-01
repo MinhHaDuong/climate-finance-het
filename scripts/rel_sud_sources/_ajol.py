@@ -140,7 +140,13 @@ _state = {"challenged_in_a_row": 0}
 
 
 def past(deadline):
-    return bool(deadline) and datetime.now(timezone.utc) >= datetime.fromisoformat(deadline)
+    """Whether an ISO deadline has passed; a deadline without offset is UTC."""
+    if not deadline:
+        return False
+    when = datetime.fromisoformat(deadline)
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) >= when
 
 
 def fetch(spec, delay, get=None, sleep=time.sleep):
