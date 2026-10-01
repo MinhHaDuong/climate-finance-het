@@ -71,7 +71,7 @@ JETP_OBSERVATIONS_INPUTS := $(wildcard data/jetp/*.csv data/jetp/*.d/*.csv) \
 # a term is revised.
 JETP_ONTOLOGY_VIEWS_DIR := $(JETP_OBSERVATORY)/data/ontology
 JETP_ONTOLOGY_VIEWS := $(addprefix $(JETP_ONTOLOGY_VIEWS_DIR)/,terms.json status-crosswalk.json \
-    sector-crosswalk.json perimeters.json marker-coefficients.json)
+    sector-crosswalk.json instrument-crosswalk.json perimeters.json marker-coefficients.json)
 JETP_ONTOLOGY_VIEWS_INPUTS := $(wildcard data/jetp/ontology/*.csv data/jetp/ontology/*/*.csv) \
     config/jetp-ledger.sql .githooks/pre-commit scripts/jetp/build_ontology_views.py \
     scripts/jetp/_ontology.py scripts/jetp/_ledger_headers.py

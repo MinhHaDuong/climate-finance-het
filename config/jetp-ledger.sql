@@ -35,18 +35,20 @@
 -- ---------------------------------------------------------------------------
 -- Ontology (docs/jetp-ontology.md section 5; ticket 0880)
 --
--- Five tables under data/jetp/ontology/, revised by supersession and never
+-- Six tables under data/jetp/ontology/, revised by supersession and never
 -- edited in place. Each row carries recorded_at, decided_by, status and
 -- supersedes; a row is in force when it is the accepted terminal row of its
 -- chain (views *_in_force). The chain key is the set of columns successive
 -- revisions of one entry share: (list, term_id) for terms, since a value's
 -- term_id is unique within its list only; (publisher_id, own_status) and
--- (publisher_id, own_sector) for the crosswalks, where publisher_id is the
--- party whose vocabulary the row maps; perimeter_id; and
+-- (publisher_id, own_sector) and (publisher_id, own_instrument) for the
+-- crosswalks, where publisher_id is the party whose vocabulary the row maps;
+-- perimeter_id; and
 -- (donor_party_id, marker, score, year) for marker coefficients. A change of
 -- meaning mints a new chain key and the old one stays in force.
--- Rows: `terms` in ticket 0880, the crosswalks in 0876, perimeters in 0877,
--- marker coefficients in 0885.
+-- Rows: `terms` in ticket 0880, status and sector crosswalks in 0876,
+-- instrument crosswalk in 1960, perimeters in 0877, marker coefficients in
+-- 0885.
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE terms (
@@ -94,6 +96,21 @@ CREATE TABLE sector_crosswalk (
     decided_by TEXT NOT NULL,
     status TEXT NOT NULL,
     supersedes TEXT UNIQUE REFERENCES sector_crosswalk (crosswalk_row_id),
+    notes TEXT
+);
+
+CREATE TABLE instrument_crosswalk (
+    crosswalk_row_id TEXT PRIMARY KEY,
+    publisher_id TEXT NOT NULL REFERENCES parties (party_id),
+    own_instrument TEXT NOT NULL,
+    -- One active IATI FinanceType code, imported as a term of finance_type.
+    -- Concessionality is an observation of grant_element, never a value here.
+    finance_type TEXT NOT NULL,
+    mapping_relation TEXT NOT NULL,
+    recorded_at TEXT NOT NULL,
+    decided_by TEXT NOT NULL,
+    status TEXT NOT NULL,
+    supersedes TEXT UNIQUE REFERENCES instrument_crosswalk (crosswalk_row_id),
     notes TEXT
 );
 
@@ -486,6 +503,13 @@ FROM sector_crosswalk AS c
 WHERE c.status = 'accepted'
   AND NOT EXISTS (SELECT 1 FROM sector_crosswalk AS s WHERE s.supersedes = c.crosswalk_row_id);
 
+CREATE VIEW instrument_crosswalk_in_force AS
+SELECT c.*
+FROM instrument_crosswalk AS c
+WHERE c.status = 'accepted'
+  AND NOT EXISTS (SELECT 1 FROM instrument_crosswalk AS s
+                  WHERE s.supersedes = c.crosswalk_row_id);
+
 CREATE VIEW perimeters_in_force AS
 SELECT p.*
 FROM perimeters AS p
@@ -508,6 +532,9 @@ UNION ALL SELECT 'status_crosswalk', crosswalk_row_id, publisher_id || '/' || ow
                  recorded_at, supersedes FROM status_crosswalk
 UNION ALL SELECT 'sector_crosswalk', crosswalk_row_id, publisher_id || '/' || own_sector,
                  recorded_at, supersedes FROM sector_crosswalk
+UNION ALL SELECT 'instrument_crosswalk', crosswalk_row_id,
+                 publisher_id || '/' || own_instrument,
+                 recorded_at, supersedes FROM instrument_crosswalk
 UNION ALL SELECT 'perimeters', perimeter_row_id, perimeter_id, recorded_at, supersedes
             FROM perimeters
 UNION ALL SELECT 'marker_coefficients', coefficient_row_id,
@@ -518,6 +545,7 @@ CREATE VIEW ontology_in_force AS
           SELECT 'terms' AS tbl, term_row_id AS row_id FROM terms_in_force
 UNION ALL SELECT 'status_crosswalk', crosswalk_row_id FROM status_crosswalk_in_force
 UNION ALL SELECT 'sector_crosswalk', crosswalk_row_id FROM sector_crosswalk_in_force
+UNION ALL SELECT 'instrument_crosswalk', crosswalk_row_id FROM instrument_crosswalk_in_force
 UNION ALL SELECT 'perimeters', perimeter_row_id FROM perimeters_in_force
 UNION ALL SELECT 'marker_coefficients', coefficient_row_id FROM marker_coefficients_in_force;
 
@@ -582,6 +610,9 @@ WITH ref (tbl, col, list, value) AS (
     UNION ALL SELECT 'status_crosswalk', 'axis', 'axis', axis FROM status_crosswalk
     UNION ALL SELECT 'status_crosswalk', 'status', 'decision_status', status FROM status_crosswalk
     UNION ALL SELECT 'sector_crosswalk', 'status', 'decision_status', status FROM sector_crosswalk
+    UNION ALL SELECT 'instrument_crosswalk', 'finance_type', 'finance_type', finance_type FROM instrument_crosswalk
+    UNION ALL SELECT 'instrument_crosswalk', 'mapping_relation', 'mapping_relation', mapping_relation FROM instrument_crosswalk
+    UNION ALL SELECT 'instrument_crosswalk', 'status', 'decision_status', status FROM instrument_crosswalk
     UNION ALL SELECT 'perimeters', 'status', 'decision_status', status FROM perimeters
     UNION ALL SELECT 'marker_coefficients', 'marker', 'marker', marker FROM marker_coefficients
     UNION ALL SELECT 'marker_coefficients', 'score', 'marker_score', score FROM marker_coefficients
