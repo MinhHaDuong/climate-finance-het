@@ -121,15 +121,19 @@ def _match_dimensions(pool: list[dict], dims: list[dict]) -> dict:
     return matched
 
 
-def discipline_of(row: dict, dims: list[dict]) -> tuple[dict | None, int]:
-    """The winning dimension row of one work (module docstring) and the unused rows."""
+def discipline_of(row: dict, dims: list[dict]) -> tuple[dict | None, int, bool]:
+    """The winning dimension row of one work (module docstring), the unused rows,
+    and whether the candidate rows of the winning kind disagree on ``contrib``
+    (two keys of one work answered in one run, or two catch-up runs): the last
+    one still wins, and the disagreement is counted, never hidden."""
     if not dims:
-        return None, 0
+        return None, 0, False
     forward = [d for d in dims if d["stage"] == "2" and row["stage2_run_id"]
                and (d["model"], d["run_id"]) == (row["stage2_model"], row["stage2_run_id"])]
     catchup = [d for d in dims if d["stage"] == "catchup"]
-    win = forward[-1] if forward else catchup[-1] if catchup else None
-    return win, len(dims) - (win is not None)
+    pool = forward or catchup
+    win = pool[-1] if pool else None
+    return win, len(dims) - (win is not None), len({d["contrib"] for d in pool}) > 1
 
 
 def _reason(row: dict) -> tuple[str, str]:
@@ -155,10 +159,11 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
         raise ValueError(f"{len(missing)} pool works have no row in the venue table "
                          f"(first: {missing[0]}): rebuild it with `make rel-venues`")
     by_work = _match_dimensions(pool, dims)
-    unused = 0
+    unused = conflicts = 0
     for i, row in enumerate(rows):
-        win, n_unused = discipline_of(row, by_work.get(i, []))
+        win, n_unused, disagree = discipline_of(row, by_work.get(i, []))
         unused += n_unused
+        conflicts += disagree
         contrib = win["contrib"] if win else ""
         venue = venues[row["work_key"]]
         row.update({
@@ -173,13 +178,16 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
             "publisher_flag": venue.get("publisher_flag", ""),
             "seriousness": seriousness_of(venue, srule),
         })
-        row["seriousness_flag"] = "no_venue" if row["tier"] == "unknown" else ""
+        # Flag only an unknown-venue work that switch (c) keeps.
+        row["seriousness_flag"] = ("no_venue" if row["tier"] == "unknown"
+                                   and not row["seriousness"] else "")
         row["rel_reason"], row["rel_reason_detail"] = _reason(row)
         row["rel_final"] = "true" if row["rel_reason"] == "included" else "false"
     assign_families(rows)
     return {"dimension_rows": len(dims),
             "dimension_rows_matched": sum(len(v) for v in by_work.values()),
-            "dimension_rows_unused": unused}
+            "dimension_rows_unused": unused,
+            "works_with_disagreeing_dimension_rows": conflicts}
 
 
 def assign_families(rows: list[dict]) -> None:
@@ -200,7 +208,12 @@ def _split(rows, key):
 
 
 def reason_counts(rows: list[dict]) -> dict:
-    """Counts by reason, in works and in families (one per ``rel_family_id``)."""
+    """Counts by reason, in works and in families (one per ``rel_family_id``).
+
+    Every other count is in works (``*_works``): ``rel_final`` is per work, so
+    a working paper and its article, both included, are two works and one
+    family.
+    """
     reps = {r["rel_family_id"] for r in rows}
     fam_rows = [r for r in rows if r["work_key"] in reps]
     by = defaultdict(list)
@@ -217,15 +230,17 @@ def reason_counts(rows: list[dict]) -> dict:
         "discipline_excluded_by_source": _split(by["discipline_excluded"], "discipline_source"),
         "discipline_pending_by_seriousness": dict(sorted(Counter(
             (r["seriousness"].split(":")[0] or "pass") for r in pending).items())),
+        "discipline_pending_no_venue_flagged_works": sum(
+            r["seriousness_flag"] == "no_venue" for r in pending),
         "seriousness_excluded_by_detail": _split(by["seriousness_excluded"],
                                                  "rel_reason_detail"),
-        "included_by_tier": _split(included, "tier"),
-        "included_by_publisher_flag": dict(sorted(Counter(
+        "included_by_tier_works": _split(included, "tier"),
+        "included_by_publisher_flag_works": dict(sorted(Counter(
             r["publisher_flag"] for r in included if r["publisher_flag"]).items())),
-        "included_discipline_flagged": _split(
+        "included_discipline_flagged_works": _split(
             [r for r in included if r["discipline_flag"]], "discipline_flag"),
-        "included_icf_unsure_flagged": sum(r["rel_flag"] == "unsure" for r in included),
-        "included_no_venue_flagged": sum(r["seriousness_flag"] == "no_venue"
+        "included_icf_unsure_flagged_works": sum(r["rel_flag"] == "unsure" for r in included),
+        "included_no_venue_flagged_works": sum(r["seriousness_flag"] == "no_venue"
                                               for r in included),
     }
 
@@ -234,7 +249,9 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
     out = [("default", base),
            ("publishers_dropped", dict(base, drop_publishers=PUBLISHERS))]
     out += [(f"drop_{p}", dict(base, drop_publishers=[p])) for p in PUBLISHERS]
+    kanal = set(base["exclude"]) ^ {"kanalregisteret"}
     out += [("tier_a_only", dict(base, tiers=["A"])),
+            ("kanalregisteret_flipped", dict(base, exclude=sorted(kanal))),
             ("registries_plus_scopus_doaj",
              dict(base, exclude=sorted(set(base["exclude"]) | set(WIDE_REGISTRIES)))),
             ("ngo_research_flipped", dict(base, ngo_research_in_b=not base["ngo_research_in_b"])),
@@ -247,7 +264,9 @@ def sensitivity(rows: list[dict], venues: dict, base: dict) -> list[dict]:
     """REL included set under each seriousness setting (ICF and discipline fixed).
 
     Works and families (family groups of the view: a family is in when any
-    member is). ``discipline_pending_*``: works still awaiting the discipline
+    member is). Under switch (c) ``keep_flagged``, ``tier_a_only`` still keeps
+    the works of tier ``unknown`` (their tier is not known to be B or C); the
+    ``no_venue_flipped`` row shows them excluded. ``discipline_pending_*``: works still awaiting the discipline
     test whose venue passes the setting, the provisional upper bound.
     """
     out = []
