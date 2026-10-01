@@ -126,8 +126,15 @@ def build_texts(pool_csv: str, screen_csv: str, labels_csv: str, delivery: str |
                         "label": "icf", "source": os.path.basename(path),
                         "weight": "", "stratum": s.get("set", ""), "text": text,
                         "has_abstract": bool(p is not None and p.abstract)})
-    if not delivery:
-        return out
+    return out + (delivery_texts(delivery, recall_sentinels) if delivery else [])
+
+
+def delivery_texts(delivery: str, recall_sentinels: str | None = None) -> list[dict]:
+    """The lane's delivered records (role ``repec``, ``no_dedup_key`` rows
+    included) and, with ``recall_sentinels``, its record of each retrieved
+    sentinel (role ``sentinel_repec``)."""
+    import pandas as pd
+    out: list[dict] = []
     rec = pd.read_csv(os.path.join(delivery, "records.csv"), dtype=str, low_memory=False).fillna("")
     for r in rec.itertuples():
         out.append({"key": r.record_id, "role": "repec", "label": "", "source": r.query_id,

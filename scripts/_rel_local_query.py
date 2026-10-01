@@ -56,8 +56,8 @@ class Node:
     kids: tuple[Node, ...] = ()
 
 
-def parse(query: str) -> Node:
-    """AST of a query; ``AND`` binds tighter than ``OR``, adjacency is ``AND``."""
+def tokenize(query: str) -> list[tuple[str, str]]:
+    """``(``, ``)``, ``AND``/``OR``/``NOT`` and ``("P", phrase)`` tokens."""
     toks: list[tuple[str, str]] = []
     pos = 0
     q = query.strip()
@@ -66,16 +66,19 @@ def parse(query: str) -> Node:
         if not m or m.end() == pos:
             raise ValueError(f"cannot parse query at {pos}: {q[pos:pos + 30]!r}")
         pos = m.end()
-        if m.group(1):
-            toks.append(("(", ""))
-        elif m.group(2):
-            toks.append((")", ""))
-        elif m.group(3) is not None:
-            toks.append(("P", m.group(3)))
-        elif m.group(4):
-            toks.append((m.group(4), ""))
-        elif m.group(5):
-            toks.append(("P", m.group(5)))
+        paren, close, quoted, op, word = m.groups()
+        if paren or close:
+            toks.append((paren or close, ""))
+        elif quoted is not None:
+            toks.append(("P", quoted))
+        else:
+            toks.append((op, "") if op else ("P", word))
+    return toks
+
+
+def parse(query: str) -> Node:
+    """AST of a query; ``AND`` binds tighter than ``OR``, adjacency is ``AND``."""
+    toks = tokenize(query)
     i = 0
 
     def peek() -> str:
