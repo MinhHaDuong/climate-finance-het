@@ -121,8 +121,10 @@ sources:
       journal-set run. On 2026-09-30 about 20:30 UTC the first request of
       1790 (OAI ListSets, plain HTTP) answered the reCAPTCHA page
       ("Для продолжения работы вам необходимо ввести капчу"): stopped there,
-      never solved. What 1653 received stands (0 records delivered).
-    tried_1790: "reCAPTCHA on the first request (plain HTTP, the route that had worked); the brief stops a source at a CAPTCHA, so no browser attempt followed; archived in t1790-cyberleninka/"
+      never solved; one headless-Chromium attempt on OAI Identify
+      (2026-10-01) met the same reCAPTCHA. What 1653 received stands (0
+      records delivered).
+    tried_1790: "plain HTTP: reCAPTCHA on the first request (OAI ListSets, 2026-09-30 about 20:30 UTC); headless Chromium, one attempt (OAI Identify, 2026-10-01 02:18 UTC, /oai allowed by robots.txt): the same reCAPTCHA page, not solved, stopped. Archived in t1790-cyberleninka/"
     aggregators:
       - route: "CORE v3 search/outputs q=repositories.id:1252, whole provider, local lexicon ru/en"
         date: 2026-09-30

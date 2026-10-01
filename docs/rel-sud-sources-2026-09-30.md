@@ -141,7 +141,7 @@ archive.
 | USP repository | Pacific | dead | robots Disallow /cgi/ (oai2, search, export); Cloudflare 403 on every path; not in OpenAIRE | no attempt (robots); CORE and OpenAlex copies read, see below |
 | GARUDA | SE Asia | run | HTML search, no OAI or JSON API, robots.txt 404 | |
 | SINTA | SE Asia | not needed | robots.txt 403; GARUDA covers it | |
-| CyberLeninka | Russia | dead | /search and /api/ robots-disallowed; oai_dc titles only; set repec is not economics (9,830 received, 0 matched); captcha after about 980 pages | reCAPTCHA on the first request of 1790 (OAI ListSets, about 20:30 UTC), not solved; CORE and OpenAlex copies read |
+| CyberLeninka | Russia | dead | /search and /api/ robots-disallowed; oai_dc titles only; set repec is not economics (9,830 received, 0 matched); captcha after about 980 pages | reCAPTCHA on the first plain request (OAI ListSets, 2026-09-30 about 20:30 UTC) and on the one headless-Chromium attempt (OAI Identify, 2026-10-01 02:18 UTC), not solved; CORE and OpenAlex copies read |
 | eLIBRARY | Russia | dead | agreement.asp forbids robots and automated search or download; no OAI; API by contract only | no attempt (terms); its open-access part overlaps CyberLeninka |
 | CNKI | China | dead | cnki.net redirects to oversea.cnki.net, robots Disallow: /; no OAI, no public API | no attempt (robots); no aggregator holds it |
 | Wanfang | China | dead | no OAI; open-platform API behind registration; no robots.txt | slider CAPTCHA on the first search page in Chromium, not solved |
