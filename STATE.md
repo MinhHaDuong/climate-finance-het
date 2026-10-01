@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-09-30T20:43Z
+Last updated: 2026-10-01T10:46Z
 
 ## Current goal
 
@@ -17,23 +17,21 @@ Next: sweep; Gavard/Schoch; DAG and independent EconLit/OpenAlex searches;
 
 ## JETP checkpoint
 
-No causal model (0729 DEFER). The MVP is live on GitHub Pages (`gh-pages`, republished 2026-09-30 from `df1d9436`) but shared only by private mail, so it counts as unpublished. The ontology-v2 migration closed (0870, #1587),
-with #1574 (register dispositions) merged, and the bounded M1b catalogue is published (0833, #1586).
-The JETP Observer system specification v1 is accepted (tag `jetp-spec-v1`, index `docs/jetp-spec.md`, reviews in `docs/jetp-spec-review/`); M2 code is no longer gated.
+No causal model (0729 DEFER). The MVP is live on GitHub Pages (`gh-pages`, republished 2026-09-30 from `df1d9436`) but shared only by private mail, so it counts as unpublished. Ontology v2 (0870), M1b catalogue (0833) and spec v1 (tag `jetp-spec-v1`, `docs/jetp-spec.md`) are done; M2 code is no longer gated.
 **Next:** M2 extraction (tracker 1500, from 1506), with storage and code catching up to the spec (1702) and reader selection and calibration on OpenRouter; spec follow-ups in 1703; Zotero off-site copy of document bytes (1712).
 `make all` still awaits the figure handoff (1491).
-**M2.3 reading lane (2026-10-01):** panel reference set v1 merged but inconclusive (1895, `data/jetp/reference/panel-v1/README.md`); v2 is 1940, Blocked-by 1960 (ontology amendments), and blocks 1890 (pilot). Grants register goes to a series parser (1950, in flight). Author rules: no paid API call without the author's go; zero retention dropped for research runs; reader schema generated from the ontology. Next steps are listed in 1940 § Handoff.
+**M2.3 reading lane (2026-10-01):** panel reference set v1 merged but inconclusive (1895, `data/jetp/reference/panel-v1/README.md`); v2 is 1940, Blocked-by 1960 (ontology amendments), and blocks 1890 (pilot). Grants register parser: PR #1675 (1950), reviewed, awaiting the author. Author rules: no paid API call without the author's go; zero retention dropped for research runs; reader schema generated from the ontology. Next steps are listed in 1940 § Handoff.
 
 ## Status
-<!-- generated 2026-09-30T20:43Z · as of f8a0119b -->
+<!-- generated 2026-10-01T10:46Z · as of de6f8e6f -->
 
-**Tickets:** 70 ready · 76 blocked · 15 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 73 ready · 86 blocked · 14 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
-**In flight:** no open PRs
+**In flight:** 3 open PRs, oldest #1660 0d
 **Recent (first-parent):**
-  f8a0119b Merge pull request #1635 from MinhHaDuong/t1711-accept-spec-v1
-  0217a024 Merge pull request #1634 from MinhHaDuong/t1711-accept-defaults-2
-  08efed96 Merge pull request #1627 from MinhHaDuong/t1733-stage1-pool-input
+  de6f8e6f Merge pull request #1674 from MinhHaDuong/t1940-handoff
+  18c29376 Merge pull request #1673 from MinhHaDuong/t1955-file-ontology-ticket
+  8757f33c Merge pull request #1672 from MinhHaDuong/t1940-ontology-bound
 
 ## Corpus and submissions
 
