@@ -182,15 +182,20 @@ subsidies `110`, `210`, `310`, `311`; debt `421`, `422`, `4221`, `4222`,
 provider spending `2100`; subsidies and similar transfers `3100`. The
 publisher's instrument word ("highly concessional", "grants/TA") stays
 verbatim on the line and maps onto a code through a reviewed crosswalk, never
-by a reader; until that crosswalk exists, `instrument` stays the publisher's
-free word. Concessionality is not an instrument: it is the `grant_element`
-observation. An imported external list keeps its own labels as published, so
-finance-type labels are IATI's names, not the ledger's short lowercase labels.
-[M3b]
+by a reader. `instrument-crosswalk` holds that publisher-specific mapping and
+its SKOS relation. The panel-v1 seed maps grants to `110`, loans to `421`,
+commercial investment to `510`, and guarantees to `1100`; broad words such as
+"Export Credits" retain a weaker mapping relation. Concessionality is not an
+instrument: it is the `grant_element` observation and is never inferred from
+"concessional" in the publisher's word. An imported external list keeps its
+own labels as published, so finance-type labels are IATI's names, not the
+ledger's short lowercase labels. [M3b]
 
 History: finance type imported and the `owner` and `accountable` roles added
 by the author's decisions of 2026-10-01 (ticket 1960), after the panel v1
-fitness check; `accountable` because a held IATI-style page names it.
+fitness check; `accountable` because a held IATI-style page names it. The
+publisher instrument crosswalk was added from the panel-v1 words on
+2026-10-01 (ticket 1960).
 
 ### Party
 
@@ -419,11 +424,12 @@ the others. [M2 for keeping the words; M3b for the crosswalk]
 ## 5. Ontology tables
 
 The ontology is data about the ledger's words, stored like the ledger itself,
-reviewed by diff, revised by supersession and never edited in place. Five
+reviewed by diff, revised by supersession and never edited in place. Six
 tables hold it: `terms`, `status-crosswalk`, `sector-crosswalk`,
-`perimeters` and `marker-coefficients`. Their keys, columns, chain keys and
-paths are defined in the [storage contract](jetp-ledger-storage.md)
-(section 1); this section says what they mean and how they are revised.
+`instrument-crosswalk`, `perimeters` and `marker-coefficients`. Their keys,
+columns, chain keys and paths are defined in the
+[storage contract](jetp-ledger-storage.md) (section 1); this section says what
+they mean and how they are revised.
 
 **Definition.** Every word the schema admits as a value is a `terms` row: the
 classes and relations of sections 2 and 3, the line classifications, measures,
@@ -436,7 +442,8 @@ force; no script or configuration file carries its own copy of a list.
 Sections 2 to 4 write every value in code type, which is what the alignment
 test reads; an axis's `term_id` names the list of its values, and the OECD DAC
 purpose codes that `sector-crosswalk` maps onto are cited by their five
-digits, not copied as terms. [M2]
+digits, not copied as terms. IATI FinanceType codes that
+`instrument-crosswalk` maps onto are terms in the `finance_type` list. [M2]
 
 **Traceability.** A term taken from an external vocabulary names its scheme
 (IATI, OC4IDS, GEM, OECD DAC, PROV-O, SKOS), the concept's URI or code, and a
@@ -446,12 +453,12 @@ itself. Similar labels do not justify `exactMatch`. A crosswalk row maps a
 publisher's word onto a term; a perimeter row defines a population that
 counts are made against. Both name who decided and when. A crosswalk row
 also states its mapping strength with the same SKOS relations, required when
-the row is accepted; the two crosswalk tables gain `mapping_relation` as a
-target of the storage contract (section 1), and a result that counts by
-shared status or sector states the weakest mapping among the rows it used,
-in the order exactMatch, closeMatch, broadMatch or narrowMatch,
-relatedMatch, with the count of rows per relation. [M2 for terms; M3b for
-crosswalk rows]
+the row is accepted. `instrument-crosswalk` carries it from creation; the two
+older crosswalk tables gain `mapping_relation` as a target of the storage
+contract (section 1). A result that counts by shared status, sector or finance
+type states the weakest mapping among the rows it used, in the order
+exactMatch, closeMatch, broadMatch or narrowMatch, relatedMatch, with the count
+of rows per relation. [M2 for terms; M3b for crosswalk rows]
 
 **Revision.** The in-force rule of the decision tables applies (storage
 contract, section 1), so a proposed revision leaves the adopted row in
@@ -486,7 +493,7 @@ later for LinkML]
 
 History: the alignment test was written under ticket 0880; the ontology
 tables' keys and columns moved to the storage contract in review wave 1
-(W1-41).
+(W1-41); `instrument-crosswalk` was added under ticket 1960.
 
 ## 6. Out of scope, by decision
 

@@ -9,7 +9,7 @@ combined and judged is [fusion](jetp-fusion.md). What the ledger's words mean is
 ## 1. Tables and rules
 
 One file is one table, joins happen at read time, nothing is materialised.
-Data tables under `data/jetp/`, the five ontology tables under
+Data tables under `data/jetp/`, the six ontology tables under
 `data/jetp/ontology/`, CSV, columns in this order. What the ontology tables
 mean, and how they are revised, is the [ontology](jetp-ontology.md)
 (section 5); their keys, columns and paths are here.
@@ -72,19 +72,21 @@ country from. [M2]
 | `terms` | `term_row_id` | *term_id*, kind, *list*, label, definition, scope_note, domain, range, external_scheme, external_uri, mapping_relation, recorded_at, decided_by, status, supersedes, notes |
 | `status-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_status)*, axis, shared_status, recorded_at, decided_by, status, supersedes, notes |
 | `sector-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_sector)*, purpose_code, recorded_at, decided_by, status, supersedes, notes |
+| `instrument-crosswalk` | `crosswalk_row_id` | *(publisher_id, own_instrument)*, finance_type, mapping_relation, recorded_at, decided_by, status, supersedes, notes |
 | `perimeters` | `perimeter_row_id` | *perimeter_id*, country, name, scope, definition, recorded_at, decided_by, status, supersedes, notes |
 | `marker-coefficients` | `coefficient_row_id` | *(donor_party_id, marker, score, year)*, coefficient, line_id, recorded_at, decided_by, status, supersedes |
 
 [M2 for the D1 and D2 tables, `parties`, `party-names`, the document relations of `relations`, and the ontology tables; M3a for the record of searches; M3b for the D3 and D4 tables, except `deflators`, later, and the rows of `marker-coefficients`, M4 unless the comparison of requirement F19 uses climate-marked amounts]
 
-The last five rows are the ontology tables, one file each under
+The last six rows are the ontology tables, one file each under
 `data/jetp/ontology/` (`terms.csv`, `status-crosswalk.csv`,
-`sector-crosswalk.csv`, `perimeters.csv`, `marker-coefficients.csv`). Each is
-keyed by a row identifier; the columns in *italics* are the chain key that
-successive revisions of one entry share. A term's `term_id` is unique within
-its `list`, so `cancelled` can be a value of several axes. A test fails when
-a table or column of this section differs from the DDL, and the ontology's
-alignment test (ontology section 5) checks the values. [M2]
+`sector-crosswalk.csv`, `instrument-crosswalk.csv`, `perimeters.csv`,
+`marker-coefficients.csv`). Each is keyed by a row identifier; the columns in
+*italics* are the chain key that successive revisions of one entry share. A
+term's `term_id` is unique within its `list`, so `cancelled` can be a value of
+several axes. A test fails when a table or column of this section differs from
+the DDL, and the ontology's alignment test (ontology section 5) checks the
+values. [M2]
 
 **Target schema.** The table above is the schema the DDL declares today.
 The rules of the specification require the changes below, each a target of

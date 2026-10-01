@@ -2,6 +2,7 @@
 Title: Ontology amendments from the panel v1 fitness check: finance type, roles, capacity quantity kinds
 Created: 2026-10-01
 Author: HDMX-coding-agent
+Closed: instrument crosswalk added with DDL, in-force and validation views, panel-v1 seed rows, contract documentation, and rebuilt ontology views
 
 --- log ---
 2026-10-01T10:30Z HDMX-coding-agent created — child of [[1500]]; prerequisite of [[1940]] (the v2 reader schema is generated from the ontology in force). Author decisions 2026-10-01, interactive: financing instrument "Yes, import existing typology"; share completed "No % needed"; roles and capacity raised by the author ("How about the implementation agency, project owner, and the pass-money-through roles?"; "Careful with energy accounting, net vs. gross, thermal vs electricity, VA vs. J ... a well known field, e.g. see Open Energy Ontology").
@@ -10,6 +11,8 @@ Author: HDMX-coding-agent
 2026-10-01T12:31Z HDMX-coding-agent note correction (PR #1679 review round 1): the coverage script itself now maps all 60 values (none flagged; peak electric power split out, 7); basis stated for 4 of 60, not 4 of 56; accountable mapped closeMatch like its IATI neighbours.
 2026-10-01T12:59Z HDMX-coding-agent decision author 2026-10-01, interactive, relayed from session haduong ('all as advised'): capacity term list of docs/jetp-study/1960-capacity-terms-proposal.md signed off with its four points: (i) basis gains unknown for physical quantities, never defaulting to gross or net; (ii) peak electric power (kWp, MWc) is its own local quantity kind, the STC rating, never mixed with MW; (iii) qualifiers (bounds, changes, rates) go to the v2 schema of 1940, not this list; (iv) thermal power, apparent power, VA and Ah are local terms with no OEO URI, marked local for later mapping. Proceed with the capacity import. channel's example reworded to a pass-through (a national development bank on-lending a DFI loan); PR #1679 merged now, 1960 stays open for the capacity import and the instrument crosswalk.
 2026-10-01T13:16Z HDMX-coding-agent note capacity terms imported on branch t1960-capacity-import: quantity kinds electric_power (OEO_00010257), peak_electric_power, thermal_power, apparent_power (local), energy (OEO_00000150), energy_storage_capacity (OEO_00230000), electric_charge (UO_0000219); units W, Wh, J (UO) and VA, Ah (local); basis gross, net, unknown superseded to cover physical quantities (same terms, broadened definitions; unknown never read as gross or net). Remaining: the instrument crosswalk table.
+2026-10-01T14:00Z HDMX-coding-agent closed — instrument crosswalk added with DDL, in-force and validation views, panel-v1 seed rows, contract documentation, and rebuilt ontology views
+2026-10-01T17:31Z HDMX-coding-agent decision author 2026-10-01, interactive ('Ready to fix the PR and merge it?'): approved the panel-v1 seed mappings for merge after review correction: grant labels to 110; loan labels and Highly concessional climate funds to 421; Commercial Investments to 510; Export Credits to 421; Guarantees to 1100; SKOS relations as tested, with the two broad publisher categories narrowMatch to their narrower IATI targets; concessionality remains grant_element only
 --- body ---
 ## Context
 
@@ -68,11 +71,11 @@ date, superseding nothing silently.
 
 ## Exit criteria
 
-- [ ] Finance type list imported (OECD CRS / IATI FinanceType), with
+- [x] Finance type list imported (OECD CRS / IATI FinanceType), with
   scheme, URIs and the date of the code list version; a crosswalk table for
   publisher instrument words, empty or seeded from the v1 "other" values
 - [x] Author decision logged on item 2, then roles amended accordingly
 - [x] OEO read and a proposal for capacity quantity kinds, units and basis
   presented with OEO URIs; author decision logged, then terms imported
-- [ ] `docs/jetp-ontology.md` § 2 to § 4 updated to match, with History
+- [x] `docs/jetp-ontology.md` § 2 to § 4 updated to match, with History
   notes; ontology views rebuilt; `make check-fast` and `make lint` pass
