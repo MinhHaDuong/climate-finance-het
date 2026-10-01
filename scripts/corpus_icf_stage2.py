@@ -147,6 +147,27 @@ def audit_sample(view_rows: list[dict], per_label: dict, seed: int) -> list[str]
 
 
 _CHUNK = re.compile(r"^(chunk\d+)\.ids\.json$")
+
+
+def _dims_table_is_new(table: str, dims_table: str, new_table: bool, prompt_sha: str) -> bool:
+    """Whether a missing dimensions table may be started, checked before any write.
+
+    It lives beside ``icf_screen`` under the same DVC pointer, so the first
+    version-2 parse must create it without ``--new-table`` (which would also
+    let ``icf_screen`` restart). It is missing for a wrong reason when
+    ``icf_screen`` already holds rows of this wrapper: those parses wrote it,
+    so it was lost or not fetched, and a new one would fork its history.
+    """
+    if new_table or os.path.exists(dims_table):
+        return new_table
+    if not os.path.exists(table):
+        return False  # the icf_screen append decides, through _refuse_fork
+    if any(r["prompt_sha256"] == prompt_sha for r in ics.read_table(table)):
+        raise Stage2Error(f"{dims_table} is missing but {table} already holds rows of this "
+                          "wrapper: fetch it (make rel-pool-data) before parsing; nothing written")
+    return True
+
+
 _DIM_HEAD = re.compile(r"^(yes|no|unsure|na)\|", re.IGNORECASE)
 
 
@@ -328,15 +349,14 @@ def main(argv=None):
             bad = [e for r in dims for e in ics.validate_row(r, ics.DIMENSIONS)]
             if bad:
                 raise Stage2Error(f"dimension rows refused, nothing written: {bad[:5]}")
+            dims_new = _dims_table_is_new(table, dims_table, args.new_table,
+                                          rows[0]["prompt_sha256"]) if dims else False
             added, skipped = ics.append_new(table, rows, note, args.new_table)
             log.info("chunks %s", report)
             log.info("%d answers, %d appended, %d already in %s", len(rows), added, skipped, table)
             if dims:
-                # The dimensions table lives beside icf_screen under the same DVC
-                # pointer: once icf_screen is there, a missing one is new, not unfetched.
-                d_added, d_skipped = ics.append_new(
-                    dims_table, dims, note, args.new_table or os.path.exists(table),
-                    ics.DIMENSIONS)
+                d_added, d_skipped = ics.append_new(dims_table, dims, note, dims_new,
+                                                    ics.DIMENSIONS)
                 log.info("%d dimension rows appended, %d already in %s", d_added, d_skipped,
                          dims_table)
         else:

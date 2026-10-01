@@ -103,6 +103,16 @@ def test_parse_main_writes_icf_and_dimension_rows_from_v2_answers(tmp_path):
         str(prompt))
     assert cs.main(args) == 0, "idempotent"
     assert len(ics.read_table(dims, schema=ics.DIMENSIONS)) == 2
+    # Agent C, PR 1652: a lost dimensions table must not restart beside an
+    # icf_screen that already holds rows of this wrapper; nothing is written.
+    (tmp_path / "rs" / "dims.csv").unlink()
+    (tmp_path / "rs" / "dims.manifest.jsonl").unlink()
+    (out / "chunk01.opus.txt").write_text(
+        "1|icf|research|SN|yes|economics|policy|GCF readiness\n2|aux|other|?|no|finance|empirical|x\n")
+    before = (tmp_path / "rs" / "icf_screen.csv").read_bytes()
+    assert cs.main(args[:-6] + ["--run-id", "r2", "--machine", "d", "--prompt", str(prompt)]) == 1
+    assert (tmp_path / "rs" / "icf_screen.csv").read_bytes() == before
+    assert not (tmp_path / "rs" / "dims.csv").exists()
 
 
 def test_parse_v1_answers_write_no_dimension_rows(tmp_path):
