@@ -1,0 +1,71 @@
+%erg 0.1
+Title: Parser for the South African JET Grants Register series (extraction 6.1)
+Created: 2026-10-01
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-01T09:40Z HDMX-coding-agent created — child of [[1500]], phase M2.3; author decision 2026-10-01, interactive: "grants register to purposely designed parser". Evidence from [[1895]] and [[1940]]: no LLM panel member and no generic converter reads the PDF register losslessly.
+
+--- body ---
+## Context
+
+The JET Grants Register (South Africa, Presidential Climate Commission /
+JET PMU) is a repeated series: one register per period, same columns. Four
+editions are held, all pending (a snapshot, no line):
+
+| Document | Format |
+|---|---|
+| `zaf-jet-grants-register-2023-q3` (JET-IP Grant Mapping Register) | PDF, 31 pages, one wide table with wrapped cells |
+| `zaf-jet-grants-register-2024-q2` | PDF |
+| `zaf-jet-grants-register-2024-q3` | XLSX |
+| `zaf-jet-grants-register-2025-q1` | XLSX |
+
+Why a parser: extraction § 6.1 gives a repeated series a parser, not
+assisted reading. Measured 2026-10-01:
+
+- Panel v1 ([[1895]]): on the 2023-q3 PDF, GLM-5.3 lost 138 of 140 rows to
+  locators, GPT-5.6 60 of 140; the South African table-row stratum rests
+  on that one document.
+- Docling ([[1940]] log): 29 page tables with real cells, but each
+  continuation page's first row becomes a header (about 28 rows) and some
+  rows merge, about 100 clean rows against 157 US dollar amounts in the
+  text layer.
+
+The columns, as printed in 2023-q3: Priority Area, Priority Areas
+(Description), Purpose, Source Group, Activities - Descriptions,
+Implementing institution, Funder, Funding instrument, Total US$, Total ZAR,
+Source, Parties to the funding agreement(s), Other key beneficiaries, Key
+terms and conditions, Disbursements status, Status - Dynamic, % Completed,
+Detailed Descriptions, Start Date, End Date; with a USD-to-ZAR rate
+printed on the first page.
+
+## Method
+
+- XLSX editions first: cells as stored, sheet by sheet, hidden rows and
+  sheets read and marked (extraction § 5). Locator: sheet and row.
+- PDF editions: a cell-level reader (pdfplumber, or Docling's table output
+  with the continuation-header and merged-row defects repaired), checked
+  row by row against the printed totals and, where an XLSX edition repeats
+  a grant, against it. Locator: page, table and row.
+- Each row is one statement (`register_allocation` unless the register
+  presents it otherwise); the column headers as printed are the verbatim
+  fields, under a declared, versioned header mapping per edition; the
+  publisher's status words copied as printed (`own_status`), no axis.
+- The exchange-rate note on the first page is a heading statement that
+  governs the rows.
+- Lines written through the ledger writers (`_ledger_headers.write_table`),
+  under a named parser method and version.
+
+## Exit criteria
+
+- [ ] Parser for the series reads all four editions; a document it cannot
+  read fails whole (extraction § 6.1), never partly
+- [ ] Tests on fixtures drawn from the real snapshots, red-tested with at
+  least: a shifted grid, a missing page or sheet, a duplicated row, a
+  count or total that disagrees with the printed one (extraction § 12)
+- [ ] Row counts per edition reported and reconciled with printed totals;
+  the 2023-q3 PDF reconciled with the 157 US dollar amounts of its text
+  layer (each amount accounted for, or the reason it is not a row)
+- [ ] Lines admitted under the parser's method and version; the four
+  editions leave the pending list
+- [ ] `make check-fast` and `make lint` pass
