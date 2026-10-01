@@ -1,0 +1,84 @@
+%erg 0.1
+Title: Panel reference set v2: Docling layer, element-ID locators, full ontology, defined statement unit
+Created: 2026-10-01
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-01T09:10Z HDMX-coding-agent created — successor of [[1895]] (panel v1, inconclusive), child of [[1500]], phase M2.3; prerequisite of [[1890]]. Author decisions 2026-10-01, interactive: "docling >> pdf2text, we should not be reinventing that link. Even consider mistral OCR if need be"; Mistral OCR "good technically, but not open weight so it is a reluctant go for fallback"; "Yes to v2 shape. Prerequisite"; "No new spending before my go".
+
+--- body ---
+## Context
+
+Panel v1 ([[1895]], `data/jetp/reference/panel-v1/`, PR #1664) delivered
+299 lines for USD 8.87 but is not conclusive (author, 2026-10-01): one
+informative stratum (ZAF en prose span, 35 of 50 held-out lines from one
+document); 66 of 836 aligned items unanimous (8 percent); 182 of 233 medium
+lines with the third member absent. Diagnosis, from its README:
+
+- **Text layer, not models.** A hand-built pdftotext layer and a
+  contiguous-substring locator: `-layout` interleaved the Vietnamese
+  newsletter columns; no text order recovers the wrapped-cell grants
+  register. Members read correctly (reading order, logical rows) and the
+  check rejected them. Same failure as the spike (22 of 28 misses were
+  locator rejections).
+- **Under-defined task.** 278 items proposed by one member only (members
+  disagree on what one statement is); 185 same-span items split by
+  classification; 74 field disagreements, mostly on five ad hoc panel
+  fields (funder versus implementer) that are not the ontology's.
+- **The ontology was not given.** Only the 13 line classifications reached
+  the members; not the classes, relations and closed lists of
+  `docs/jetp-ontology.md` and `data/jetp/ontology/`, against the author
+  decision of [[1890]] ("never in a vacuum").
+
+## Design (accepted shape, author 2026-10-01)
+
+- **Layer: Docling**, not a hand-built adapter (survey
+  `conception/jetp-m2-3-reading-design-survey-2026-10-01.md` picked it):
+  reading order across columns, table cells as cells, a numbered element
+  per block. Locator = element ID (page, table, row and cell for a table;
+  block for prose), derived by code, as extraction § 5 already specifies.
+  **Mistral OCR 4 is a reluctant fallback only** (not open weight): hosted
+  under zero retention, for a document Docling reads badly or a scan, each
+  use named in the record.
+- **Readers point, they do not quote.** Members pick element IDs from the
+  numbered layer; the ID and every closed list are schema enums, so a
+  locator cannot fail to resolve and a value cannot leave its list. Hosted:
+  JSON-schema structured output with `require_parameters`. Local:
+  llama.cpp GBNF, or llguidance (`~/llama.cpp-new/build-llg`) where a
+  verbatim substring must be constrained.
+- **The ontology, all of it.** Classes, relations and closed value lists in
+  force (`data/jetp/ontology/`), and the verbatim field list of each
+  document type from the ontology, not invented fields.
+- **The statement unit defined per shape before any run**: what one
+  statement is for a table row, a record page and a prose span, with a
+  classification decision rule for the confusable pairs seen in v1
+  (named_item, register_allocation, envelope, heading).
+- **Split by document**, not by line, so the held-out part measures unseen
+  documents; draw weighted to the thin strata (VNM, SEN, IDN).
+- Kept from v1: blind cross-vendor panel distinct from readers and arbiter,
+  positive control first (made harder than v1's four items), versioned
+  agreement rule committed before the first call, sealed held-out hash,
+  the limit named (agreement with a panel, not truth).
+
+## Spending gate
+
+No paid call, hosted or Mistral OCR, before the author's explicit go on a
+priced step (author, 2026-10-01). Local runs on padme need no budget but
+are coordinated with any session holding the GPUs.
+
+## Exit criteria
+
+- [ ] Docling layer for the v1 documents, its version pinned; the elements
+  of the v1 grants register and one Vietnamese newsletter checked to come
+  out as cells and in reading order
+- [ ] Statement unit per shape and classification decision rule written
+  and committed, with the full ontology prompt and schema
+- [ ] Free agreement check before any spend: v1's kept answers re-scored
+  where possible, and the defined unit applied to two documents locally (or
+  by the cheapest hosted route once approved), unanimity reported against
+  v1's 8 percent
+- [ ] Priced pilot plan (2 documents, then the full draw) presented, and
+  the author's go logged here before any paid call
+- [ ] Panel v2 built: control passed, split by document and sealed, counts
+  per stratum with the strata under 30 held-out items named, limit named
+- [ ] [[1890]] records that v2 is its reference set, or why not
