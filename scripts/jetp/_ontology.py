@@ -1,6 +1,6 @@
 """The JETP ontology as of a knowledge cutoff, and its reference hash (ticket 0880).
 
-The ontology is five tables under ``data/jetp/ontology/``, declared in
+The ontology is six tables under ``data/jetp/ontology/``, declared in
 ``config/jetp-ledger.sql`` (``docs/jetp-ontology.md`` section 5). They are
 revised by supersession, never edited in place, so the words the ledger used
 at any date can be read back:

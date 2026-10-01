@@ -480,23 +480,25 @@ def test_finance_types_are_the_iati_instrument_codes(terms):
 
 def test_panel_v1_instrument_words_have_reviewed_finance_type_mappings():
     rows = ontology.ontology_as_of(ledger_headers.LEDGER_DIR)['instrument_crosswalk']
-    mapped = {(r['publisher_id'], r['own_instrument']): r['finance_type'] for r in rows}
+    mapped = {(r['publisher_id'], r['own_instrument']):
+              (r['finance_type'], r['mapping_relation']) for r in rows}
     assert mapped == {
-        ('jet-project-management-unit', 'Grants'): '110',
-        ('jet-project-management-unit', 'Grants / TA'): '110',
-        ('jet-project-management-unit', 'Highly concessional climate funds'): '421',
-        ('jet-project-management-unit', 'Concessional Loans'): '421',
-        ('jet-project-management-unit', 'Commercial Investments'): '510',
-        ('jet-project-management-unit', 'Export Credits'): '421',
+        ('jet-project-management-unit', 'Grants'): ('110', 'exactMatch'),
+        ('jet-project-management-unit', 'Grants / TA'): ('110', 'closeMatch'),
+        ('jet-project-management-unit', 'Highly concessional climate funds'):
+            ('421', 'relatedMatch'),
+        ('jet-project-management-unit', 'Concessional Loans'): ('421', 'closeMatch'),
+        ('jet-project-management-unit', 'Commercial Investments'): ('510', 'narrowMatch'),
+        ('jet-project-management-unit', 'Export Credits'): ('421', 'narrowMatch'),
         ('foreign-commonwealth-and-development-office',
-         'Grants/techical assistance'): '110',
-        ('foreign-commonwealth-and-development-office', 'Concessional loans'): '421',
-        ('foreign-commonwealth-and-development-office', 'Commercial loans'): '421',
-        ('foreign-commonwealth-and-development-office', 'Guarantees'): '1100',
+         'Grants/techical assistance'): ('110', 'closeMatch'),
+        ('foreign-commonwealth-and-development-office', 'Concessional loans'):
+            ('421', 'closeMatch'),
+        ('foreign-commonwealth-and-development-office', 'Commercial loans'):
+            ('421', 'closeMatch'),
+        ('foreign-commonwealth-and-development-office', 'Guarantees'):
+            ('1100', 'closeMatch'),
     }
-    assert all(r['mapping_relation'] in {
-        'exactMatch', 'closeMatch', 'broadMatch', 'narrowMatch', 'relatedMatch'}
-               for r in rows)
     assert all('grant_element' in r['notes'] for r in rows
                if 'concessional' in r['own_instrument'].casefold())
 
