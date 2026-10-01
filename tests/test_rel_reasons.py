@@ -135,6 +135,22 @@ def test_forward_row_joining_the_deciding_label_wins():
     assert summary["dimension_rows_unused"] == 2
 
 
+def test_empty_stage2_run_never_matches_an_empty_dimension_run():
+    # A work with no stage-2 label (ICF from stage 1 under another rule) must not
+    # pick up a stage-2 dimension row whose run_id is blank.
+    row = {"stage2_model": "", "stage2_run_id": ""}
+    win, unused, _ = rr.discipline_of(row, [_dim("openalex:W1", "no", model="", run_id="")])
+    assert win is None and unused == 1
+
+
+def test_disagreeing_candidate_rows_are_counted():
+    labels = [_lab("openalex:W1", "2", "icf", run_id="v1")]
+    dims = [_dim("openalex:W1", "yes", stage="catchup", run_id="c1"),
+            _dim("openalex:W1", "no", stage="catchup", run_id="c2")]
+    _, summary = _rows(pool=POOL[:1], labels=labels, dims=dims)
+    assert summary["works_with_disagreeing_dimension_rows"] == 1
+
+
 def test_catchup_row_used_when_no_forward_row_last_one_wins():
     labels = [_lab("openalex:W1", "2", "icf", run_id="v1")]
     dims = [_dim("openalex:W1", "yes", stage="catchup", run_id="c1"),
@@ -259,6 +275,7 @@ def test_sensitivity_rows():
     assert table["drop_frontiers"]["included_works"] == 3
     assert table["tier_a_only"]["included_works"] == 2
     assert table["registries_plus_scopus_doaj"]["included_works"] == 2
+    assert table["kanalregisteret_flipped"]["exclude_registries"] == "hijacked"
     assert table["ngo_research_flipped"]["included_works"] == 3
     assert all(r["discipline_pending_works"] == 1 for r in table.values())
     assert table["default"]["included_works"] == rr.reason_counts(rows)["works"]["included"]
