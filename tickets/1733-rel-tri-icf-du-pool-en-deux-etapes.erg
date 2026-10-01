@@ -10,6 +10,9 @@ Author: HDMX-coding-agent
 2026-09-30T21:56Z HDMX-coding-agent note author decision 2026-09-30: stage 2 also rereads stage-1 aux (proche); only out leaves at stage 1 (PR 1638)
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 2026-10-01T06:46Z HDMX-coding-agent note design B (author decision 2026-10-01): leftovers (t1810, t1790, re-keyed works) screened via OpenRouter, drop only when Gemma 4 and Jev D1 P(out)>=0.95 both say out; rule in config/rel_screen.yaml stage1_joint; run ~/rel_pool_runs/2026-10-01-designB-stage1, import after merge
+2026-10-01T08:22Z HDMX-coding-agent note author decision 2026-10-01: Fable audit of ~300 stage-2 labels stratified by label; Cohen's kappa reported before any published REL count
+2026-10-01T08:22Z HDMX-coding-agent note author decision 2026-10-01: catalogue pin kept = unified_works_rel_pin.csv, 43,179 rows (md5 3633ad9f); the dvc.lock unified_works mismatch (35,143 rows) is settled at 1656
+2026-10-01T08:22Z HDMX-coding-agent note author decision 2026-10-01: local Gemma failed its bar; the rest of the full-pool stage 1 (160,690 unlabelled works of the 2026-10-01 Qwen input and the 1755 re-screen) goes through design B on OpenRouter; Qwen stays stopped
 --- body ---
 ## Context
 
