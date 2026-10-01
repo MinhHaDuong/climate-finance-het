@@ -17,8 +17,6 @@ UTF-8 is read as cp1252 and the row says so (``encoding``); a byte-order
 mark (UTF-8 or UTF-16) is honoured.
 """
 
-from __future__ import annotations
-
 import re
 from collections.abc import Iterator
 

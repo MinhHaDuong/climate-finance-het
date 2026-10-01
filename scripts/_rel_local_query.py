@@ -16,8 +16,6 @@ table (``phrase_hits``), then every query combines those index sets. That is
 what makes several hundred queries over millions of records affordable.
 """
 
-from __future__ import annotations
-
 import re
 import unicodedata
 from collections.abc import Callable, Iterable
@@ -53,7 +51,7 @@ def matches(folded_text: str, phrase: str) -> bool:
 class Node:
     op: str                      # "PHRASE", "AND", "OR", "NOT"
     phrase: str = ""
-    kids: tuple[Node, ...] = ()
+    kids: tuple["Node", ...] = ()
 
 
 def tokenize(query: str) -> list[tuple[str, str]]:

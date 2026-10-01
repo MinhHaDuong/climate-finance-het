@@ -33,8 +33,6 @@ Text of a work: ``title + ". " + abstract[:2000]`` (as the Jev-pilot router).
 Label target: 1 when the Opus (or adjudicated) label is ``out``.
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import hashlib
@@ -46,6 +44,10 @@ import sys
 import time
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
+
+from utils import get_logger
+
+log = get_logger('rel_repec_prefilter')
 
 MODEL_NAME = "BAAI/bge-m3"
 MAX_SEQ = 256
@@ -190,8 +192,8 @@ def embed(texts_path: str, out_dir: str, limit: int | None = None, threads: int 
         np.savez(f, vectors=v.astype(np.float32),
                  keys=np.array([rows[i]["key"] + "\t" + rows[i]["role"] for i in idx], dtype=object))
         n_new += len(idx)
-        print(f"block {b // BLOCK} {b + len(idx)}/{len(order)} {time.time() - t0:.1f}s "
-              f"{len(idx) / max(time.time() - t0, 1e-9):.1f}/s", flush=True)
+        log.info(f"block {b // BLOCK} {b + len(idx)}/{len(order)} {time.time() - t0:.1f}s "
+              f"{len(idx) / max(time.time() - t0, 1e-9):.1f}/s")
     keys, vecs = [], []
     for f in sorted(os.listdir(parts)):
         z = np.load(os.path.join(parts, f), allow_pickle=True)
@@ -420,7 +422,8 @@ def opus_run(sample: list[dict], out_path: str, key: str, screen_cfg: dict, chun
         with open(out_path + ".calls.jsonl", "a", encoding="utf-8") as fh:
             fh.write(json.dumps({"chunk": c // chunk_size, "n": len(chunk), "parsed": len(got),
                                  "usage": body.get("usage"), "status": r.status_code}) + "\n")
-        print(c // chunk_size, len(chunk), len(got), (body.get("usage") or {}).get("cost"), flush=True)
+        log.info("chunk %d: %d sent, %d parsed, cost %s", c // chunk_size, len(chunk), len(got),
+                 (body.get("usage") or {}).get("cost"))
     with open(out_path, "w", encoding="utf-8") as fh:
         for x in results:
             fh.write(json.dumps(x, ensure_ascii=False) + "\n")
@@ -483,13 +486,13 @@ def main(argv: list[str] | None = None) -> int:
         with open(a.output, "w", encoding="utf-8") as fh:
             for r in rows:
                 fh.write(json.dumps(r, ensure_ascii=False) + "\n")
-        print(json.dumps(Counter((r["role"], r["label"]) for r in rows).most_common(), ensure_ascii=False))
+        log.info(json.dumps(Counter((r["role"], r["label"]) for r in rows).most_common(), ensure_ascii=False))
     elif a.cmd == "embed":
-        print(json.dumps(embed(a.texts, a.output_dir, a.limit, a.threads,
+        log.info(json.dumps(embed(a.texts, a.output_dir, a.limit, a.threads,
                                           set(a.roles.split(",")) if a.roles else None), indent=1))
     elif a.cmd == "fit":
         rep = fit(a.texts, a.embeddings, a.output_dir)
-        print(json.dumps({k: v for k, v in rep.items() if k != "sweep"}, indent=1))
+        log.info(json.dumps({k: v for k, v in rep.items() if k != "sweep"}, indent=1))
     else:
         import yaml
         cfg = yaml.safe_load(open(a.screen_config, encoding="utf-8"))
@@ -502,7 +505,7 @@ def main(argv: list[str] | None = None) -> int:
                 "summary": opus_summary(res)}
         with open(os.path.splitext(a.output)[0] + ".summary.json", "w", encoding="utf-8") as fh:
             json.dump(summ, fh, indent=1)
-        print(json.dumps(summ, indent=1))
+        log.info(json.dumps(summ, indent=1))
     return 0
 
 

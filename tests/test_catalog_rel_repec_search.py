@@ -150,3 +150,13 @@ def test_zero_hit_controls_show_each_and_group(units):
     g = ctl["RP-RC-grid-IM-fr"]["and_group_hits"].split("|")
     assert g[0] == "1" and g[1] == "0"                 # ICF block seen, mediator absent
     assert ctl["RP-SUD-T1-hi"]["titles_in_script"] == 0
+
+
+def test_plan_matches_the_1652_entry_point():
+    import catalog_rel_causal_search as cs
+    causal = yaml.safe_load(open(os.path.join(ROOT, "config", "rel_causal_search.yaml"), encoding="utf-8"))
+    fams = yaml.safe_load(open(os.path.join(ROOT, "config", "rel_causal_families.yaml"), encoding="utf-8"))
+    sens = cs.load_sentinels(os.path.join(ROOT, "config", "rel_causal_sentinels.csv"))
+    theirs = [(s["search_id"], s["query_string"]) for s in cs.plan_queries(causal, fams, sens)]
+    ours = [(s["search_id"], s["query_string"]) for s in rs.plan_queries(causal, fams, sens)]
+    assert ours == theirs

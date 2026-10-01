@@ -27,8 +27,6 @@ Usage (padme; the bulk table stays under ``~/data/projets/…/rel_repec/``):
         --provenance provenance.json --jobs 16
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import json
@@ -39,6 +37,9 @@ from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime, timezone
 
 import _redif
+from utils import get_logger
+
+log = get_logger('rel_repec_redif')
 
 SKIP_EXT = (".pdf", ".doc", ".docx", ".xls", ".xlsx", ".zip", ".gz", ".png", ".jpg",
             ".jpeg", ".gif", ".xml", ".ps", ".tar", ".tgz", ".z", ".bz2", ".7z")
@@ -237,7 +238,7 @@ def main(argv: list[str] | None = None) -> int:
             counts["provenance"] = json.load(fh)
     with open(stem + ".counts.json", "w", encoding="utf-8") as fh:
         json.dump(counts, fh, indent=1)
-    print(json.dumps(counts["counts"], indent=1))
+    log.info(json.dumps(counts["counts"], indent=1))
     return 0
 
 

@@ -36,8 +36,6 @@ Usage (padme):
         --toc-1650 data/rel_intake/t1650-sommaires/2026-09-30 --output recall.json
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import json
@@ -52,9 +50,10 @@ from datetime import datetime, timezone
 
 import _rel_local_query as lq
 import yaml
-from _rel_causal_query import split_and_groups
-from catalog_rel_causal_search import load_sentinels, plan_queries
-from utils import normalize_doi, normalize_title
+from _rel_causal_query import expand_blocks, split_and_groups
+from utils import get_logger, normalize_doi, normalize_title
+
+log = get_logger('rel_repec_search')
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LANE = "t1810-repec-local"
@@ -84,6 +83,55 @@ def _cfg_path(p: str) -> str:
 
 
 # --- the query units ----------------------------------------------------------
+
+def load_sentinels(path: str) -> list[dict]:
+    with open(path, encoding="utf-8", newline="") as fh:
+        return list(csv.DictReader(fh))
+
+
+def _order(spec: dict) -> tuple[int, int]:
+    """The 1652 run order (``catalog_rel_causal_search._order``): priority
+    families in English, citation rows, themes, French and Spanish, others."""
+    g, lang, f = spec["group"], spec["language"], spec["formulation"]
+    if f == "SI":
+        return (1, 0)
+    if spec["question_type"] == "theme":
+        return (2, 0)
+    if g and lang == "en":
+        return (0, g)
+    return (3, g) if g else (4, 0)
+
+
+def plan_queries(causal: dict, fams: dict, sentinels: list[dict]) -> list[dict]:
+    """The 1652 query rows with their expanded strings, in the 1652 order.
+
+    Rebuilt here from the same configs and ``expand_blocks`` rather than
+    imported from the 1652 entry point (layering rule, tests/test_script_classification.py);
+    tests/test_catalog_rel_repec_search.py asserts the two plans are identical."""
+    families, themes = fams["families"], fams["themes"]
+    specs = []
+    for qtype, source in (("family", causal["queries"]), ("theme", causal["themes"])):
+        for question, by_lang in source.items():
+            meta = families.get(question) or themes[question]
+            for lang, forms in by_lang.items():
+                for form, template in forms.items():
+                    specs.append({"search_id": f"RC-{question}-{form}-{lang}", "question": question,
+                                  "question_type": qtype, "group": meta.get("group", 0),
+                                  "formulation": form, "language": lang,
+                                  "query_string": expand_blocks(template, causal["blocks"][lang])})
+    for question in list(families) + list(themes):
+        ids = [s["openalex_id"] for s in sentinels
+               if s["family"] == question and s["set"] == "tuning" and s["openalex_id"]]
+        if not ids:
+            continue
+        meta = families.get(question) or themes[question]
+        specs.append({"search_id": f"RC-{question}-SI-any", "question": question,
+                      "question_type": "family" if question in families else "theme",
+                      "group": meta.get("group", 0), "formulation": "SI", "language": "any",
+                      "query_string": "cites:" + "|".join(ids)})
+    specs.sort(key=_order)
+    return specs
+
 
 def plan_units(cfg: dict) -> list[dict]:
     """Every search unit, in registry order: causal text, causal SI (titles),
@@ -350,7 +398,7 @@ def cmd_search(a: argparse.Namespace) -> int:
         with open(a.counts, encoding="utf-8") as fh:
             counts = json.load(fh)
     m = deliver(units, hits, rows, a.output_dir, a.retrieved_at, run_at, counts)
-    print(json.dumps(m["counts"]))
+    log.info(json.dumps(m["counts"]))
     return 0
 
 
@@ -460,7 +508,7 @@ def cmd_recall(a: argparse.Namespace) -> int:
     _write_csv(stem + ".sentinels.csv", list(res[0].keys()), res)
     with open(a.output, "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=1, ensure_ascii=False)
-    print(json.dumps(out, indent=1, ensure_ascii=False))
+    log.info(json.dumps(out, indent=1, ensure_ascii=False))
     return 0
 
 

@@ -25,14 +25,16 @@ Usage (doudou):
         --output config/rel_prefilter_labels.csv
 """
 
-from __future__ import annotations
-
 import argparse
 import csv
 import hashlib
 import json
 import os
 import sys
+
+from utils import get_logger
+
+log = get_logger('rel_prefilter_labels')
 
 FIELDS = ["openalex_id", "label", "label_source", "split", "stratum", "weight"]
 LABELS = {"icf", "aux", "out", "unsure"}
@@ -80,7 +82,7 @@ def main(argv: list[str] | None = None) -> int:
     for name in ("router/sample.jsonl", "router/opus_labels.jsonl", "reference/adjudicated.jsonl"):
         with open(os.path.join(os.path.expanduser(a.archive), name), "rb") as fh:
             srcs[name] = hashlib.sha256(fh.read()).hexdigest()
-    print(json.dumps({"rows": len(rows), "sources_sha256": srcs}, indent=1))
+    log.info(json.dumps({"rows": len(rows), "sources_sha256": srcs}, indent=1))
     return 0
 
 
