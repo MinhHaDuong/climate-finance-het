@@ -11,10 +11,7 @@ are touched.
 
 - Before filing tickets with `erg`, read `.claude/rules/ticket-filing.md`.
   `erg` does not trigger its path scope.
-- Before any JETP source search, scout, or research round, use the
-  `jetp-research` skill.
-- A fresh worktree has no bulk corpus. Run `make data` when it is needed, or
-  `make jetp-data` for JETP documents only.
+- A fresh worktree has no bulk corpus. Run `make data` when it is needed.
 
 ## Merge gate
 
@@ -34,7 +31,7 @@ their relationship.
 Run test-domain and full gates in a clean checkout on padme. When already on
 padme, run them locally; from another host, connect with `ssh padme` first.
 Every fresh worktree, including one on padme, starts without bulk data: run
-`make data` and `make jetp-data` there first (it may need
+`make data` there first (it may need
 `dvc checkout --force`, ticket 1060). padme's `.env` sets
 `PYTEST_WORKERS=16`. Data-bound failures or skips from an unpopulated worktree
 are not gate evidence.

@@ -41,7 +41,7 @@ Markers gate which `make` target runs a test. Pick the tier by **cost**, not by 
 `make check-fast` = `-m "not slow and not integration and not adherence"` (the inner loop — must stay pure logic). `make lint` = `-m adherence`. `make check` runs everything. No coverage is lost by moving a test to a slower tier — the full `make check` still runs it: ex post on main (`/lair` step 9), and pre-PR for shared pipeline and test-selection changes (AGENTS.md § Merge gate).
 
 Each test module also declares one or more risk domains with `pytestmark`:
-`domain_literature`, `domain_corpus`, `domain_finance`, `domain_jetp`,
+`domain_literature`, `domain_corpus`, `domain_finance`,
 `domain_writing`, or `domain_infrastructure`. A test may carry more than one
 domain marker when it checks a boundary. These domains intentionally differ
 from build workpackages: workpackages partition artifacts and toolchains;

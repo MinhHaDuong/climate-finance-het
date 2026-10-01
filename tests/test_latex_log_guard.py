@@ -1,4 +1,4 @@
-"""The JETP LaTeX renderer rejects warnings that leave broken references."""
+"""The LaTeX log guard rejects warnings that leave broken references."""
 
 import shutil
 import subprocess
@@ -65,12 +65,3 @@ def test_log_guard_rejects_an_actual_tex_unresolved_reference(tmp_path: Path):
 
     with pytest.raises(ValueError, match="unresolved LaTeX"):
         assert_clean_log(tmp_path / "broken.log")
-
-
-@pytest.mark.parametrize("document", ["jetp-mesure", "jetp-econpol"])
-def test_latexmk_recipe_changes_to_the_source_directory(document: str):
-    """Sibling macro and bibliography paths require latexmk's ``-cd`` mode."""
-    recipe = (REPO / "deliverables" / document / f"{document}.mk").read_text(
-        encoding="utf-8"
-    )
-    assert "-cd" in recipe

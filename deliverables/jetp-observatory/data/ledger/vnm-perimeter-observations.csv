@@ -1,3 +1,0 @@
-observation_id,subject_kind,subject_id,axis,measure,flow_type,basis,value,value_low,value_high,unit,currency,own_status,indicator_code,line_id,method,method_version,recorded_at,status,supersedes,notes
-0877.vnm-2025-initial-count,perimeter,vnm-jetp-portfolio-2025,,count,,,7,,,proposals,,,,vnm-pilot-observations-local-record-row-34,source_count,1,2026-09-28,accepted,,initial projects identified in July 2025
-0877.vnm-2025-screened-count,perimeter,vnm-jetp-portfolio-2025,,count,,,17,,,proposals,,,,vnm-pilot-observations-local-record-row-35,source_count,1,2026-09-28,accepted,,new proposals preliminarily screened as JETP-aligned in July 2025

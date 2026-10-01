@@ -28,9 +28,7 @@ setting `CLIMATE_FINANCE_DATA` in `.env`. `scripts/utils.py` re-exports `DATA_DI
 Resolve paths through those constants — never hardcode `data/catalogs/` in a script.
 
 **A worktree needs `make data` for the bulk corpus.** DVC-managed data is
-normally absent in a fresh worktree. The exception is JETP documents: the hook
-attempts a private reflink from the primary checkout when `documents.dvc`
-matches; otherwise use `make jetp-data` (see `data/jetp/README.md` § Snapshots in worktrees).
+normally absent in a fresh worktree.
 `.githooks/post-checkout` symlinks the
 worktree's `.dvc/cache` at the primary checkout's cache, which is what lets
 `make data` (a `dvc checkout`, no network) populate `data/` from local blobs.
@@ -91,9 +89,7 @@ a script or Make constant resolves one there.
 **Data flows padme → doudou, never back.** On padme: `make corpus` (DVC repro +
 push; bare `dvc repro` skips the push). On doudou: `make corpus-sync`. New data
 found on doudou travels as a query-config change that padme re-collects; never
-`scp` data or `dvc push` from doudou (2026-03-17: hours of drift). JETP likewise:
-push DVC outputs from padme; a fresh clone needs `dvc pull data/jetp/documents.dvc`
-before `make jetp-data`, which is cache-only.
+`scp` data or `dvc push` from doudou (2026-03-17: hours of drift).
 
 **A corpus rerun is never "obviously additive"; measure it** (tickets 0347, 0350):
 the relevance cache keys on DOI, so no-DOI works are rescored on every

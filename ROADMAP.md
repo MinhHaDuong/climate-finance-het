@@ -4,33 +4,11 @@
 
 Building toward a book on international climate finance between solidarity and profit. This repo is the research infrastructure: a 30K-work corpus, analysis pipeline, and the articles that test each piece of the argument before it becomes a chapter.
 
-## JETP observatory and papers
+## JETP migration
 
-- [x] Local observatory preview with country synthesis, project evidence and
-  historical browsing; scientific date/link/acquisition corrections in PR #1343.
-- [x] Prepared, citable four-country data release0726 → local observatory
-  acceptance0727 → reviewed monthly-edition/replay handoff0728. Two immutable
-  releases replay offline; deployment remains an author decision.
-- [x] Historical/bilateral evidence audit 0735 and pilot protocol prepared in PR #1347.
-- [x] Selection audit PR #1348 accepted; its pinned evidence remains available.
-- [x] Run and merge bounded AFD 0737, KfW 0738 and FCDO 0739 feasibility pilots.
-  Their synthesis preserves NARROW/DEFER conclusions and rules out a
-  single-donor JETP-effect claim.
-- [x] Accepted the reviewed 0736 selection audit, 0729 causal DEFER and 0814
-  feasibility DEFER; do not repeat them as open decisions.
-- [x] Built the author-authorised non-causal JETP measurement foundation:
-  protocol0816 → source census0817 → country ingestion0818–0821 → frozen
-  snapshot0822 → statistics0730/figure0823 and MVP0824.
-- [ ] Write the short comparative paper0732 from the frozen progression,
-  public/private finance and operation-history evidence. Current framing:
-  `conception/jetp-short-paper-framing-2026-09-15.md`.
-- [ ] JETP data paper0731 after0726; long political-economy paper0733 with Christophe.
-  LaTeX scaffolds0711 are available for the two analytical manuscripts.
-
-See `conception/jetp-observatory-and-papers-plan.md`. A null effect is acceptable;
-failed identification returns to an author scope decision. The website and data
-paper do not depend on demonstrating acceleration. AEDIST methods pilot remains
-Imagine-only, separate from this operational programme.
+The JETP ledger, observatory and research outputs moved to
+[MinhHaDuong/JETP-observer](https://github.com/MinhHaDuong/JETP-observer).
+The legacy DVC store is retained for historical recovery.
 
 ## Œconomia manuscript outcome
 

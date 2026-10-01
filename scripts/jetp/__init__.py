@@ -1,1 +1,0 @@
-"""JETP documentary tracking pipeline."""

@@ -1,8 +1,7 @@
 """Fail a LaTeX render when latexmk left unresolved references behind.
 
 ``latexmk`` can return success while the PDF still contains a missing citation
-or cross-reference.  The JETP papers are plain LaTeX, so their render guard
-must read the LaTeX log rather than reuse Quarto's placeholder resolver.
+or cross-reference.  A plain LaTeX render guard must read the LaTeX log rather than reuse Quarto's placeholder resolver.
 """
 
 import argparse

@@ -6,7 +6,6 @@ DOMAIN_MARKERS = (
     "domain_literature",
     "domain_corpus",
     "domain_finance",
-    "domain_jetp",
     "domain_writing",
     "domain_infrastructure",
 )

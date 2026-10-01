@@ -1,4 +1,4 @@
-"""Write the committed macro handoffs for the live JETP LaTeX papers."""
+"""Write the committed macro handoffs for the registered LaTeX documents."""
 
 import argparse
 import os
@@ -8,7 +8,7 @@ from _vars_registry import LATEX_DOC_VARS, LATEX_DOC_VARS_FILE, write_latex_vars
 
 
 def write_registered_latex_vars(output_dir: Path) -> None:
-    """Write every registered JETP macro file below *output_dir*."""
+    """Write every registered macro file below *output_dir*."""
     for document, values in LATEX_DOC_VARS.items():
         path = output_dir / document / Path(LATEX_DOC_VARS_FILE[document]).name
         os.makedirs(path.parent, exist_ok=True)
@@ -21,7 +21,7 @@ def main() -> None:
         "--output",
         type=Path,
         required=True,
-        help="root directory containing the registered JETP deliverables",
+        help="root directory containing the registered deliverables",
     )
     args = parser.parse_args()
     write_registered_latex_vars(args.output)

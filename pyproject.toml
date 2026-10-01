@@ -100,7 +100,6 @@ markers = [
     "domain_literature: bibliography, source texts, and citation availability",
     "domain_corpus: bibliometric corpus construction and analysis",
     "domain_finance: comparable financial-flow datasets and measurement",
-    "domain_jetp: JETP documentary ledger, analysis, and observatory",
     "domain_writing: manuscript, report, and publication artifacts",
     "domain_infrastructure: repository-wide infrastructure and test discipline",
 ]
@@ -174,10 +173,6 @@ select = [
 # satisfy a length threshold would make the file no longer that script, which
 # defeats the reason it is committed. Length ignored, everything else enforced.
 "conception/exploration-sem-vs-citation/explore_semantic_vs_citation.py" = ["PLR0915"]
-# The independent recount behind ticket 1980, archived verbatim as evidence
-# from a scratch directory: restyling it would make it no longer the code that
-# produced the figures the ticket cites.
-"docs/jetp-study/1980-recount/*.py" = ["ALL"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 15
