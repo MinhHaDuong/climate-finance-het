@@ -2,25 +2,27 @@
 Title: REL — recherche dans le miroir RePEc local (ReDIF) et livraison au pool
 Created: 2026-09-30
 Author: haduong
-Closed: delivered; open items in docs/rel-repec-local-2026-10-01.md
+Closed: delivered data/rel_intake/t1810-repec-local/2026-10-01/ (PR 1640); open items below and in docs/rel-repec-local-2026-10-01.md
 
 --- log ---
 2026-09-30T19:30Z HDMX-coding-agent created
-
 2026-10-01T00:45Z HDMX-coding-agent note delivered 2026-10-01: 79,543 records (+915 no_dedup_key, 2 not_retrievable), qa exit 0; pre-filter run on a 10k sample (CPU budget), not registered in icf_screen (schema); see docs/rel-repec-local-2026-10-01.md
 2026-10-01T00:45Z HDMX-coding-agent closed — delivered; open items in docs/rel-repec-local-2026-10-01.md
+2026-10-01T02:09Z HDMX-coding-agent re-delivered from 44b59d8a after PR 1640 panel: handles cleaned, per-line decoding, sentinels out of pre-filter training; pre-filter experimental, not applied
 --- body ---
 ## Contexte
 
 Enfant de 0700, voie de moissonnage (étape 1 du protocole
 `conception/rel-audit-finalisation-corpus.md`). Le dépôt tient un miroir
 complet des métadonnées RePEc (module `RePEc-ReDIF` de `rsync://rsync.repec.org/`) :
-~2,02 millions de notices ReDIF (titres, auteurs, résumés, JEL, handles),
-articles et working papers. Déplacé de doudou vers padme le 2026-09-30
+~2,2 millions de fichiers ReDIF, soit 5,6 millions de notices une fois analysés
+(titres, auteurs, résumés, JEL, handles ; mesure du 2026-10-01, ticket 1810),
+articles, working papers, chapitres et livres. Déplacé de doudou vers padme le 2026-09-30
 (`/data/mirrors/RePEc/` sur padme, chemin exclu de la sauvegarde restic,
 car re-téléchargeable), puis rafraîchi depuis RePEc ;
-les fichiers retirés ou modifiés depuis le rsync du 2026-02-27 sont conservés
-dans `RePEc_replaced_2026-09-30/`, journal à côté.
+le rafraîchissement du 2026-10-01 (début 00:04 CEST) a conservé les fichiers
+retirés ou modifiés dans `/data/mirrors/RePEc_replaced_2026-10-01/`, journal
+`/data/mirrors/RePEc_refresh_2026-10-01.log`.
 
 Pourquoi : 1652 n'a interrogé RePEc qu'à travers bibCNRS, avec plafonds de
 résultats, et EconLit est inaccessible (1743). Une recherche locale est sans
@@ -39,6 +41,7 @@ DOI (3 700 notices non résolues).
 4. Mesurer le rappel sur les sentinelles de 1530/1652 et sur les AER 1990–1998
    non résolus de 1650.
 5. Criblage à l'échelle (décision de l'auteur, 2026-09-30) : ~2 M notices
+   estimées alors (5,6 M mesurées)
    dépassent Qwen (~300 h) et Jev (~70 USD, estimations dérivées). Entraîner
    un classifieur léger (plongements bge-m3 + régression logistique) sur les
    étiquettes Opus en priorité, utilisé seulement comme **pré-filtre de rappel** :
@@ -47,7 +50,9 @@ DOI (3 700 notices non résolues).
    puis à Opus selon la règle du protocole. Validation sur les mêmes mesures
    que le pilote Jev (`~/data/projets/climate-finance-het/rel_jev_pilot/2026-09-30/`),
    plus un échantillon Opus frais (~200) tiré de RePEc contre le décalage de
-   distribution. Le classifieur est enregistré comme étiqueteur dans `icf_screen`.
+   distribution. L'enregistrement du classifieur comme étiqueteur dans
+   `icf_screen` n'est pas fait : le schéma n'admet que les étiqueteurs `llm`
+   et `human` (voir « Résultat et points ouverts »).
    Rappel : le filtre v2 était un score de reranker et avait écarté 122 œuvres ICF
    sur 489 ; le paragraphe de méthode doit dire en quoi ce pré-filtre diffère.
 
@@ -57,5 +62,23 @@ DOI (3 700 notices non résolues).
 - [x] Livraison `data/rel_intake/t1810-repec-local/` conforme (`qa_rel_intake` exit 0)
 - [x] Pré-filtre : seuil, œuvres ICF et sentinelles perdues (0 exigé sur la réserve), part écartée, échantillon Opus RePEc ; script et modèle figé dans le dépôt ou archivés avec empreintes
 - [x] Note : ce que la voie ajoute à 1652 (RePEc via bibCNRS) et à 1650 (AER 1990–1998)
+
+## Résultat et points ouverts (2026-10-01)
+
+Livraison `data/rel_intake/t1810-repec-local/2026-10-01/` (79 520 notices,
+915 `no_dedup_key`, 1 `not_retrievable`, `qa_rel_intake` exit 0), tirée d'une
+table de 5,6 M notices ReDIF ; note complète : `docs/rel-repec-local-2026-10-01.md`.
+
+- **Pré-filtre expérimental, non appliqué.** Qwen doit cribler cette livraison
+  directement. Le pré-filtre (seuil 0,9589, fixé par un seul article CDM sans
+  résumé) écarterait ~6 % des notices ; borne haute de perte ICF de l'ordre de
+  celle du filtre v2 (122). Étiquettes d'entraînement et de validation toutes
+  issues d'Opus.
+- **Non fait : enregistrement dans `icf_screen`** (le schéma n'admet que
+  `llm` et `human`).
+- **Non fait : passe sémantique sur le miroir entier** (5,6 M notices ;
+  ~280–360 h CPU, débit GPU non mesuré).
+- 80 % de la livraison vient des lignes JEL de 1652 sans terme ICF : choix de
+  rappel non calibré, que le criblage trie.
 
 Hors périmètre : CitEc (citations RePEc, module `CitEc-AMF`) relève de 1654.

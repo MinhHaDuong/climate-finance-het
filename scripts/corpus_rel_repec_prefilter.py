@@ -1,5 +1,9 @@
 """Recall pre-filter for the RePEc lane: embeddings + logistic regression (ticket 1810, step 5).
 
+EXPERIMENTAL, NOT APPLIED: nothing reads its ``drop`` column. On RePEc its
+out-of-sample ICF loss bound is of the order of the v2 filter's loss, so Qwen
+screens the delivery directly (docs/rel-repec-local-2026-10-01.md).
+
 Purpose, author decision of 2026-09-30: the full RePEc mirror is too large for
 the stage-1 screen, so a light classifier trained mainly on Opus labels may
 drop records it is confident are *hors sujet* ("out"). It never admits
@@ -7,7 +11,8 @@ anything: every record it keeps still goes through stage 1 and stage 2 like
 any other pool record. The threshold is set so that no ICF-labelled training
 work (out of fold) and no tuning sentinel would have been dropped; reserve
 (hold-out) sentinels, the Jev-pilot held-out reference set and the 200-work
-control set are only measured, never used to set it.
+control set are only measured, never used to set it. No sentinel work, of any
+set, is ever a training row.
 
 How this differs from the refined-corpus v2 filter, which dropped 122 ICF
 works out of 489 later re-read: v2 scored a fixed query ("climate policy and
@@ -27,7 +32,9 @@ Subcommands (padme for texts/embed/fit; the Opus sample anywhere with the key):
 - ``fit``    5-fold out-of-fold scores, threshold, validation measures, the frozen
              model (``model.npz`` + sha256) and ``scores.csv`` for the delivered records;
 - ``opus-sample``: a fresh Opus sample of delivered records,
-             stratified by the drop decision, against distribution shift.
+             stratified by the drop decision, against distribution shift (API spend);
+- ``remap-embeddings`` / ``opus-rescore``: carry a sample's embeddings and its
+             Opus labels over to a re-delivery and a refit, at no API cost.
 
 Text of a work: ``title + ". " + abstract[:2000]`` (as the Jev-pilot router).
 Label target: 1 when the Opus (or adjudicated) label is ``out``.
