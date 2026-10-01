@@ -34,8 +34,8 @@ LEDGER_DIR = ROOT / 'data' / 'jetp'
 
 # Tables stored under data/jetp/ontology/ (ontology section 5, ticket 0880),
 # in the order the ontology reader walks them.
-ONTOLOGY_TABLES = ('terms', 'status_crosswalk', 'sector_crosswalk', 'perimeters',
-                   'marker_coefficients')
+ONTOLOGY_TABLES = ('terms', 'status_crosswalk', 'sector_crosswalk',
+                   'instrument_crosswalk', 'perimeters', 'marker_coefficients')
 
 # Files of the current ledger that share a path with a table of the new one.
 # Ticket 0875 replaced projects.csv; its old rows are retained under

@@ -56,6 +56,13 @@ def _crosswalk(row_id, own_status, shared, recorded_at, supersedes=None):
             'supersedes': supersedes}
 
 
+def _instrument_crosswalk(finance_type='421'):
+    return {'crosswalk_row_id': 'instrument-cw-1', 'publisher_id': 'pub-1',
+            'own_instrument': 'Concessional loan', 'finance_type': finance_type,
+            'mapping_relation': 'closeMatch', 'recorded_at': '2026-01-01',
+            'decided_by': 'fixture', 'status': 'accepted'}
+
+
 def _fixture_tables():
     return {
         'terms': [
@@ -72,6 +79,9 @@ def _fixture_tables():
             _term('named_undertaking', 'line_classification',
                   'A line that names one undertaking with an owner and a scope.',
                   '2026-06-01'),
+            _term('421', 'finance_type', 'A standard loan.', '2026-01-01'),
+            _term('closeMatch', 'mapping_relation',
+                  'Close enough to substitute in most uses.', '2026-01-01'),
         ],
         'parties': [{'party_id': 'pub-1'}],
         'party_names': [{'name_row_id': 'pub-1.name.1', 'party_id': 'pub-1',
@@ -83,6 +93,7 @@ def _fixture_tables():
             _crosswalk('cw-2', 'A. Planned', 'implementation', '2026-06-01',
                        supersedes='cw-1'),
         ],
+        'instrument_crosswalk': [_instrument_crosswalk()],
         'documents': [{'document_id': 'doc-1', 'title': 'Register'}],
         'snapshots': [{'sha256': SHA_A, 'storage_path': 'store/a'}],
         'retrievals': [{'retrieval_id': 'ret-1', 'document_id': 'doc-1',
@@ -125,7 +136,7 @@ def _definition(onto, list_name, term_id):
     return matches[0] if matches else None
 
 
-def test_ddl_declares_the_five_ontology_tables_under_ontology(tmp_path):
+def test_ddl_declares_the_six_ontology_tables_under_ontology(tmp_path):
     schema = ledger_headers.load_schema()
     for table in ontology.ONTOLOGY_TABLES:
         assert table in schema.tables
@@ -200,6 +211,8 @@ def test_python_in_force_rule_matches_the_ddl_views(tmp_path):
 @pytest.mark.parametrize('breakage, needle', [
     (lambda t: t['status_crosswalk'][1].update(shared_status='operating'),
      "shared_status = 'operating'"),
+    (lambda t: t['instrument_crosswalk'][0].update(finance_type='999'),
+     "instrument_crosswalk.finance_type = '999'"),
     (lambda t: t['terms'][4].update(term_id='named_thing'),
      'chain'),
     (lambda t: t['terms'].append(_term('pipeline', 'delivery', 'Twice.', '2026-02-01',
@@ -463,6 +476,29 @@ def test_finance_types_are_the_iati_instrument_codes(terms):
     assert all(t['external_scheme'] == 'IATI'
                and t['external_uri'] == f"FinanceType:{t['term_id']}"
                and t['mapping_relation'] == 'exactMatch' for t in rows)
+
+
+def test_panel_v1_instrument_words_have_reviewed_finance_type_mappings():
+    rows = ontology.ontology_as_of(ledger_headers.LEDGER_DIR)['instrument_crosswalk']
+    mapped = {(r['publisher_id'], r['own_instrument']): r['finance_type'] for r in rows}
+    assert mapped == {
+        ('jet-project-management-unit', 'Grants'): '110',
+        ('jet-project-management-unit', 'Grants / TA'): '110',
+        ('jet-project-management-unit', 'Highly concessional climate funds'): '421',
+        ('jet-project-management-unit', 'Concessional Loans'): '421',
+        ('jet-project-management-unit', 'Commercial Investments'): '510',
+        ('jet-project-management-unit', 'Export Credits'): '421',
+        ('foreign-commonwealth-and-development-office',
+         'Grants/techical assistance'): '110',
+        ('foreign-commonwealth-and-development-office', 'Concessional loans'): '421',
+        ('foreign-commonwealth-and-development-office', 'Commercial loans'): '421',
+        ('foreign-commonwealth-and-development-office', 'Guarantees'): '1100',
+    }
+    assert all(r['mapping_relation'] in {
+        'exactMatch', 'closeMatch', 'broadMatch', 'narrowMatch', 'relatedMatch'}
+               for r in rows)
+    assert all('grant_element' in r['notes'] for r in rows
+               if 'concessional' in r['own_instrument'].casefold())
 
 
 def test_the_specification_lists_exactly_the_imported_finance_codes():

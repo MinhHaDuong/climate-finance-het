@@ -101,8 +101,8 @@ def test_ddl_declares_the_common_tables_in_file_order():
             'assets', 'agreements', 'line_referents', 'relations',
             'observations', 'timings', 'external_ids', 'adjudications',
             'adjudication_members', 'rates', 'deflators', 'routes',
-            'coverage', 'status_crosswalk', 'sector_crosswalk', 'perimeters',
-            'marker_coefficients'} == set(schema.tables)
+            'coverage', 'status_crosswalk', 'sector_crosswalk', 'instrument_crosswalk',
+            'perimeters', 'marker_coefficients'} == set(schema.tables)
     assert schema.header('lines')[:4] == ['line_id', 'country', 'sha256', 'locator']
     assert schema.header('document_publishers') == ['document_id', 'party_id', 'role',
                                                      'name_row_id']
