@@ -5,6 +5,7 @@ Author: haduong
 
 --- log ---
 2026-10-01T09:00Z HDMX-coding-agent created
+2026-10-01T10:00Z HDMX-coding-agent note tracker: enfants 1840 (prompt étape 2), 1841 (rangs et signalements), 1842 (rattrapage discipline), 1843 (vue REL, PRISMA, protocole)
 
 --- body ---
 ## Contexte
@@ -45,6 +46,12 @@ analyse de sensibilité, sauf titre individuellement signalé.
    pour les ~4 952 œuvres déjà relues par Opus.
 4. Vue REL : exclusions par motif, comptes reproductibles, analyse de sensibilité
    par éditeur (MDPI/Frontiers/Hindawi) et par rang.
+
+## Enfants
+- 1840 : prompt étape 2 étendu (discipline, champ, type de contribution), avant lancement
+- 1841 : rangs de sérieux et signalements par source
+- 1842 : rattrapage discipline des œuvres déjà relues par Opus
+- 1843 : vue REL, PRISMA, protocole (bloqué par 1840, 1841, 1842)
 
 ## Exit criteria
 - [ ] Protocole et PRISMA décrivent les deux dimensions et leurs motifs
