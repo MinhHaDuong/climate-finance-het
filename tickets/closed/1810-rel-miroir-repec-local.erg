@@ -10,6 +10,7 @@ Closed: delivered data/rel_intake/t1810-repec-local/2026-10-01/ (PR 1640); open 
 2026-10-01T00:45Z HDMX-coding-agent closed — delivered; open items in docs/rel-repec-local-2026-10-01.md
 2026-10-01T02:09Z HDMX-coding-agent re-delivered from 44b59d8a after PR 1640 panel: handles cleaned, per-line decoding, sentinels out of pre-filter training; pre-filter experimental, not applied
 2026-10-01T03:07Z HDMX-coding-agent correction: the 00:45Z line's 79,543 records is superseded; round-3 delivery from cdaf0884 has 79,524 records, 915 no_dedup_key, 1 not_retrievable (handles: whitespace removed, not split; url blank for source-malformed handles); pre-filter not applied (MOE recommendation, pending author decision)
+2026-10-01T03:58Z HDMX-coding-agent round 4: a clean copy now beats a byte-shifted one (sos:sosjrn.txt); re-delivered from a5d285fa: 79,522 records, 915 no_dedup_key, 1 not_retrievable
 --- body ---
 ## Contexte
 
@@ -66,9 +67,9 @@ DOI (3 700 notices non résolues).
 
 ## Résultat et points ouverts (2026-10-01)
 
-Livraison `data/rel_intake/t1810-repec-local/2026-10-01/` (79 524 notices,
+Livraison `data/rel_intake/t1810-repec-local/2026-10-01/` (79 522 notices,
 915 `no_dedup_key`, 1 `not_retrievable`, `qa_rel_intake` exit 0, producteur
-`cdaf0884`), tirée d'une
+`a5d285fa`), tirée d'une
 table de 5,6 M notices ReDIF ; note complète : `docs/rel-repec-local-2026-10-01.md`.
 
 - **Pré-filtre expérimental, non appliqué (recommandation de la MOE, en

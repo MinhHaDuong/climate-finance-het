@@ -3,11 +3,17 @@
 Ticket 1810, child of 0700; harvest lane, step 1 of the protocol
 `conception/rel-audit-finalisation-corpus.md`. Run on padme, 2026-10-01.
 Delivery: `data/rel_intake/t1810-repec-local/2026-10-01/` (DVC), checked by
-`scripts/qa_rel_intake.py` (exit 0). Producer commit `cdaf0884`, on this
-branch. Two earlier deliveries were never merged and are not kept: round 1
-(producer `72a22eb`: 1,441 malformed `record_id`s, mixed-encoding mojibake)
-and round 2 (producer `44b59d8a`: handles cut at their first inner space,
-which merged distinct works; see below).
+`scripts/qa_rel_intake.py` (exit 0). Producer commit `a5d285fa`, on this
+branch. Three earlier deliveries were never merged and are not kept:
+
+- round 1 (producer `72a22eb`): 1,441 malformed `record_id`s and
+  mixed-encoding mojibake;
+- round 2 (producer `44b59d8a`): handles cut at their first inner space, which
+  merged distinct works;
+- round 3 (producer `cdaf0884`): 4 `sos` records taken from a byte-shifted
+  copy.
+
+The details are below.
 
 **For the screen.** The recall pre-filter of step 5 (below) is experimental and
 **not applied (MOE recommendation, pending author decision)**: it removes
@@ -65,17 +71,31 @@ an Amfiteatru special issue, `eeep10-2-von der Fehr` with `…-von Hirschhausen`
 plus series in `cep`, `exl`, `rsc`, `bla`, `gyz` and `akw`. Removing
 whitespace instead brings 238 rows back to the table. Of the 486 merges that
 cleaning still creates, 251 are the same work and 6 copies could not be re-read.
-229 rows (229 handles) remain distinct works under one handle at the source,
-which RePEc itself collapses:
+The other 229 rows are not 229 lost works:
 
-- 218 are in `sos:sosjrn`: the same handles also appear in a misaligned UTF-16
-  file, and that copy's titles belong to neighbouring records;
+- 218 are in `sos:sosjrn`. That archive holds its articles twice: in
+  `sosjrn.rdf`, which decodes cleanly (1,024 templates), and in `sosjrn.txt`, a
+  byte-shifted UTF-16 copy (270 templates). In the shifted copy every handle
+  and 156 titles carry NUL or U+0A00, and the titles belong to neighbouring
+  records. These rows are a corrupt duplicate of the same works under the
+  same handles, not distinct works.
 - 7 are in `mmb:journl`, which reuses item numbers `1` to `7` across issues;
-- 4 are elsewhere.
+  RePEc itself shows one page per handle.
+- 4 are in other archives (`azz`, `sur`, `aaa`, and one `noHandle`).
+
+Together with the 6 copies that could not be re-read, the residual true loss
+is therefore 17 rows or fewer out of 5.6 M.
+
+Up to round 3, the fuller-copy rule kept the shifted `sos` copy for 33
+handles, because that copy had more filled fields; 4 of those records were in
+the delivery. Since round 4, a copy with a non-printable character in its raw
+handle or title loses to a clean copy. No delivery record now comes from
+`sosjrn.txt`: all 49 delivered `sos` records come from `sosjrn.rdf`. The
+table keeps one `sosjrn.txt` row, a handle without a clean copy.
 
 Probe: `probe_n2v3.py` in the session scratchpad, not committed.
 
-Table: `~/data/projets/climate-finance-het/rel_repec/2026-10-01c/redif.parquet`
+Table: `~/data/projets/climate-finance-het/rel_repec/2026-10-01d/redif.parquet`
 on padme, with `redif.counts.json` and `redif.duplicates.csv` next to it.
 
 | | count |
@@ -138,7 +158,7 @@ keywords, and it matches phrases literally.
 | source | units | hits (sum over units) |
 |---|---:|---:|
 | 1652 text strings (RC) | 132 | 14,805 |
-| 1652 JEL rows (RE) | 22 | 76,036 |
+| 1652 JEL rows (RE) | 22 | 76,034 |
 | 1530 T1–T4 and gap-fill (SUD) | 41 | 17,958 |
 | declared JEL filter | 3 | 631 (195 / 321 / 115) |
 
@@ -166,18 +186,18 @@ that script. The 27 fall into five groups:
 
 | | count |
 |---|---:|
-| records (`records.csv`) | 79,524 |
+| records (`records.csv`) | 79,522 |
 | excluded `no_dedup_key` (no DOI, no year; title-only in the pool) | 915 |
 | excluded `not_retrievable` (template without a title) | 1 |
 | records with a DOI | 19,767 |
 | records with an abstract | 98.1 % |
-| articles / working papers / chapters / books | 57,412 / 19,909 / 1,806 / 397 |
+| articles / working papers / chapters / books | 57,410 / 19,909 / 1,806 / 397 |
 | records whose handle is malformed at source (`lane_note`) | 11 |
 
 `record_id` is the cleaned RePEc handle. No id now carries a space, a `#` or
 a control character; the first delivery had 1,441 such ids.
 
-Change from the first delivery's 79,543 records to 79,524:
+Change from the first delivery's 79,543 records to 79,522:
 
 - cleaning merged 4 of the first delivery's ids into others, leaving 79,539;
 - 29 of those are no longer retrieved:
@@ -189,7 +209,9 @@ Change from the first delivery's 79,543 records to 79,524:
 - 14 records are new, mostly re-keyed ids, for example handles carrying a
   stray RTF `\par`.
 
-So 79,543 − 4 − 29 + 14 = 79,524. Residual
+That gave 79,543 − 4 − 29 + 14 = 79,524 in round 3. Round 4 loses 2 more
+`sos` records, which had matched only through a neighbour's title in the
+shifted copy, giving 79,522. Residual
 mojibake sits in 16 titles and 36 abstracts, against 36 and 88 in the first
 delivery, and U+FFFD in 16 titles and 134 abstracts. These are presumed to be
 in the source files.
@@ -203,7 +225,7 @@ neither a DOI nor a year cannot be keyed and goes to `no_dedup_key`. The extra
 column `query_ids_all` (`;`-joined, as in 1530 and 1653) lists every unit that
 retrieved the record.
 
-**The JEL rows: a recall-first, uncalibrated choice.** 63,366 records (80 %)
+**The JEL rows: a recall-first, uncalibrated choice.** 63,364 records (80 %)
 come only from the per-family JEL rows, and none of them needs an ICF term.
 These rows pair a family's JEL codes with its mediator group; for example,
 `F35 or O4 or Q43` with "emissions" or "GDP". 1652 wrote them for EconLit and
@@ -214,8 +236,8 @@ sorts them out. The text strings and the declared JEL filter account for the
 other 16,158 records.
 
 Pool merge, run on padme with this delivery and the 1652 replacement
-2026-09-30b (output not committed): 77,489 pool works. Of these, 2,905 are in
-the catalogue, 9,602 are in another lane only, and 64,982 are new to the pool.
+2026-09-30b (output not committed): 77,487 pool works. Of these, 2,905 are in
+the catalogue, 9,602 are in another lane only, and 64,980 are new to the pool.
 2,950 rows fall into the same work as another row of the delivery, usually a
 working paper and its article sharing a DOI.
 
@@ -278,12 +300,12 @@ resolves none of them to a DOI.
 - **To 1652 (RePEc through bibCNRS EDS).** The replacement 1652 delivery
   (2026-09-30b) holds 2,225 RePEc records from EDS, capped at 500 per query
   (two queries hit the cap). This lane finds 1,992 of them (90 %), and 5,955
-  of its 77,489 works share a pool work with 1652. The local replay has no cap
+  of its 77,487 works share a pool work with 1652. The local replay has no cap
   and can be rerun. Most of its extra volume comes from the 1652 JEL rows,
   which returned nothing through EDS (above).
 - **To 1650 (tables of contents).** 5,870 works shared with 1650. For AER
   1990–1998, see above.
-- **To the pool.** 64,982 works new to the pool, unscreened as the contract
+- **To the pool.** 64,980 works new to the pool, unscreened as the contract
   requires.
 
 ## Recall pre-filter (step 5): experimental, not applied (MOE recommendation, pending author decision)
@@ -335,7 +357,7 @@ construction, so it is not a validation.
 
 **Which delivery.** The pre-filter was fitted and scored on the round-2
 delivery: 79,520 records plus 915 `no_dedup_key`, 80,435 rows, from producer
-`44b59d8a`. This round-3 delivery adds 4 records and changes 238 table rows.
+`44b59d8a`. The round-4 delivery has 2 more records (79,522) and differs in 238 table rows plus 33 `sos` rows now taken from the clean copy.
 The pre-filter is not applied, so it was not refitted; the figures below are
 those of round 2. Reproducing the fit needs that delivery, which stays in the
 DVC cache and remote as directory md5 `ba7a05b0be485b843608ff2cf1929464`.
@@ -408,10 +430,10 @@ its threshold inside. It sits with `report.json`, `scores.csv`,
 `opus_rescore.json`, the texts and the embeddings under
 `~/data/projets/climate-finance-het/rel_repec/2026-10-01b/` on padme,
 fingerprinted in `MANIFEST.sha256` there. The original Opus sample and its
-call log stay under `rel_repec/2026-10-01/prefilter/`. The round-3 ReDIF
-table that produced the delivery is `rel_repec/2026-10-01c/redif.parquet`,
-sha256 `024b462c799c84575bb2b314b8f7adf09b251f86ed96b026627b292b54f4a799`,
-fingerprinted with its counts, recall and controls in `2026-10-01c/MANIFEST.sha256`.
+call log stay under `rel_repec/2026-10-01/prefilter/`. The round-4 ReDIF
+table that produced the delivery is `rel_repec/2026-10-01d/redif.parquet`,
+sha256 `053080c1414305cf134dc3a0ae09abdb22c5ce47c1a5e6eaf390a93e1b22fe65`,
+fingerprinted with its counts, recall and controls in `2026-10-01d/MANIFEST.sha256`.
 
 **Not done (open).**
 
@@ -436,7 +458,7 @@ fingerprinted with its counts, recall and controls in `2026-10-01c/MANIFEST.sha2
 ## Reproduce (padme)
 
 ```bash
-W=~/data/projets/climate-finance-het/rel_repec/2026-10-01c   # round-3 table and delivery
+W=~/data/projets/climate-finance-het/rel_repec/2026-10-01d   # round-4 table and delivery
 uv run python scripts/catalog_rel_repec_redif.py --mirror /data/mirrors/RePEc \
     --output $W/redif.parquet --provenance $W/provenance.json \
     --rsync-log /data/mirrors/RePEc_refresh_2026-10-01.log --jobs 16      # ~4 min
