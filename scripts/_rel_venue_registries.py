@@ -10,6 +10,7 @@ One parser per registry of ``config/rel_venue_registries.yaml``. Each returns
     title      title as the registry spells it
     issns      tuple of normalized ISSNs (``NNNN-NNNC``), possibly empty
     domain     clone host (hijacked checker only)
+    levels     ``{year: level}`` of every non-blank yearly level (Kanalregisteret only)
     reason     the registry's stated status or reason
     entry_url  where a reader can see the entry
 
@@ -51,34 +52,61 @@ def host_of(url):
     return host[4:] if host.startswith("www.") else host
 
 
-def _entry(registry, entry_id, title, issns=(), domain="", reason="", entry_url=""):
+def _entry(registry, entry_id, title, issns=(), domain="", reason="", entry_url="", levels=None):
     return {"registry": registry, "entry_id": str(entry_id), "title": title.strip(),
             "issns": tuple(issns), "domain": domain, "reason": reason.strip(),
-            "entry_url": entry_url}
+            "entry_url": entry_url, "levels": dict(levels or {})}
 
 
 # ── Kanalregisteret (HK-dir), table 851 ──────────────────
 
 
+def levels_text(levels):
+    """``{2024: "1", 2025: "1", 2026: "X"}`` as ``Nivå 2024-2025 1, 2026 X``."""
+    runs = []
+    for y in sorted(levels):
+        if runs and runs[-1][2] == levels[y] and runs[-1][1] == y - 1:
+            runs[-1][1] = y
+        else:
+            runs.append([y, y, levels[y]])
+    return "Nivå " + ", ".join((f"{a}" if a == b else f"{a}-{b}") + f" {lv}" for a, b, lv in runs)
+
+
+def level_at(levels, year):
+    """A journal's level for a work of ``year``.
+
+    The register's yearly level is a per-year status (X is provisional and is
+    resolved in a later cycle), so a work takes the level of its own
+    publication year. A year the journal has no level for (blank cell, or
+    outside the register's columns) takes the journal's nearest year with a
+    level, the earlier one on a tie. An undated work (``year`` None) gets
+    ``None``: no level can be dated to it.
+    """
+    if year is None or not levels:
+        return None
+    if year in levels:
+        return levels[year]
+    return levels[min(levels, key=lambda y: (abs(y - year), y))]
+
+
 def parse_kanalregisteret(path, entry_url="{id}"):
-    """Journals whose latest non-blank yearly level is X."""
+    """Journals with level X in at least one year, with every yearly level."""
     with open(path, encoding="utf-8", newline="") as fh:
         reader = csv.DictReader(fh)
-        level_cols = sorted((c for c in reader.fieldnames if re.fullmatch(r"Nivå \d{4}", c)),
-                            reverse=True)
-        if not level_cols:
+        years = {int(c[-4:]): c for c in reader.fieldnames if re.fullmatch(r"Nivå \d{4}", c)}
+        if not years:
             raise ValueError(f"{path}: no 'Nivå YYYY' column")
         rows, entries = 0, []
         for r in reader:
             rows += 1
-            latest = next(((c, r[c].strip()) for c in level_cols if r[c].strip()), None)
-            if not latest or latest[1].upper() != "X":
+            levels = {y: r[c].strip().upper() for y, c in years.items() if r[c].strip()}
+            if "X" not in levels.values():
                 continue
             jid = r["Tidsskrift id"].strip()
             entries.append(_entry(
                 "kanalregisteret", jid, r.get("Original tittel") or r.get("Internasjonal tittel") or "",
                 issns_in(f"{r.get('Print ISSN', '')} {r.get('Online ISSN', '')}"),
-                reason=f"{latest[0]} = X", entry_url=entry_url.format(id=jid)))
+                reason=levels_text(levels), entry_url=entry_url.format(id=jid), levels=levels))
     return rows, entries
 
 

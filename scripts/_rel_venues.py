@@ -25,6 +25,10 @@ Pure functions over in-memory records; ``corpus_rel_venues.py`` does the I/O.
    OpenAlex id → B;
 5. ``other`` → C.
 
+A work with no venue is tier ``unknown`` (rule ``no_venue``), never C. Per
+work, an ``unknown`` or C work whose own URL is on a B institution's site
+(``b_domains``) is B, rule ``b_domain`` (``corpus_rel_venues.build``).
+
 **Flags**: a registry entry flags a venue whose ISSNs include one of the
 entry's ISSNs (``match=issn``), or, for a venue with no ISSN at all, whose
 folded name equals the entry's title when that title has two words or more and
@@ -44,7 +48,7 @@ import re
 import unicodedata
 from collections import Counter
 
-from _rel_venue_registries import host_of, norm_issn
+from _rel_venue_registries import host_of, level_at, norm_issn
 
 # ── Names ────────────────────────────────────────────────
 
@@ -101,6 +105,12 @@ def compile_tiers(cfg):
             "openalex": set(e.get("openalex") or []),
             "issn": {norm_issn(x) for x in e.get("issn") or []} - {""},
         })
+    domains = cfg.get("b_domains") or {}
+    unknown_ids = sorted(set(domains) - {e["id"] for e in b})
+    if unknown_ids:
+        raise ValueError(f"b_domains names ids not in b_list: {unknown_ids}")
+    for e in b:
+        e["domains"] = sorted(str(d).lower() for d in domains.get(e["id"]) or [])
     rep = cfg.get("repositories") or {}
     return {
         "version": cfg["version"], "b": b,
@@ -122,6 +132,17 @@ def without_categories(tiers, categories):
 def ngo_switch(cfg):
     """Value of the pending switch ``ngo_research_in_b`` (default ``True``)."""
     return bool((cfg.get("ngo_research_in_b") or {}).get("value", True))
+
+
+NO_VENUE_VALUES = ("keep_flagged", "exclude")
+
+
+def unknown_switch(cfg):
+    """Value of the pending switch ``no_venue`` (``keep_flagged`` or ``exclude``)."""
+    value = (cfg.get("no_venue") or {}).get("value", "keep_flagged")
+    if value not in NO_VENUE_VALUES:
+        raise ValueError(f"no_venue.value must be one of {NO_VENUE_VALUES}, not {value!r}")
+    return value
 
 
 def exclusion_registries(cfg):
@@ -168,8 +189,11 @@ def assign_tier(v, tiers):
     for e in tiers["b"]:
         if _repec_hit(e["repec"], repec) or _any(e["series"], names):
             return "B", "b_series", e["id"]
-    if (v.get("source_type") in tiers["repo_types"] or _any(tiers["repo_names"], names)
-            or _repec_hit(tiers["repo_repec"], repec)):
+    journal_typed = v.get("source_type") in tiers["journal_types"] or bool(v.get("toc_journal"))
+    # A repository name pattern never overrides a journal type: "REPeC" and
+    # "Compra Journal of Economics" are journals whose names hold "repec", "mpra".
+    if (v.get("source_type") in tiers["repo_types"] or _repec_hit(tiers["repo_repec"], repec)
+            or (not journal_typed and _any(tiers["repo_names"], names))):
         # A repository can still be a B institution's own (World Bank OKR),
         # by its own name: its host is not evidence (RePEc's host is a Fed).
         for e in tiers["b"]:
@@ -186,6 +210,20 @@ def assign_tier(v, tiers):
                 or (v.get("source_id") and v["source_id"] in e["openalex"]) or issns & e["issn"]):
             return "B", "b_institution", e["id"]
     return "C", "other", ""
+
+
+def b_by_domain(urls, tiers):
+    """Id of the B entry whose domain hosts one of ``urls``, else ``""``.
+
+    A host matches a domain it equals or sits under (``files.wri.org`` is
+    ``wri.org``); entries are tried in list order, so the first wins.
+    """
+    hosts = sorted({host_of(u) for u in urls} - {""})
+    for e in tiers["b"]:
+        for d in e.get("domains") or []:
+            if any(h == d or h.endswith("." + d) for h in hosts):
+                return e["id"]
+    return ""
 
 
 def publisher_flag(v, tiers):
@@ -223,7 +261,8 @@ class RegistryIndex:
 
     def _flag(self, e, match):
         return {"registry": e["registry"], "entry_id": e["entry_id"], "match": match,
-                "pull_date": self.pull_date, "entry_url": e["entry_url"], "reason": e["reason"]}
+                "pull_date": self.pull_date, "entry_url": e["entry_url"], "reason": e["reason"],
+                "levels": e.get("levels") or {}}
 
     def venue_flags(self, issns, name):
         """Flags of a venue, one per (registry, entry), sorted."""
@@ -236,11 +275,26 @@ class RegistryIndex:
                 out.setdefault((e["registry"], e["entry_id"]), self._flag(e, "title"))
         return [out[k] for k in sorted(out)]
 
-    def work_flags(self, landing_url):
-        """Hijacked-checker flags of one work, by landing-page host."""
-        host = host_of(landing_url)
-        return [self._flag(e, "domain") for e in sorted(self.by_domain.get(host, []),
-                                                         key=lambda e: e["entry_id"])]
+    def work_flags(self, urls):
+        """Hijacked-checker flags of one work: any of its URLs on a clone host."""
+        if isinstance(urls, str):
+            urls = [urls]
+        out = {}
+        for host in sorted({host_of(u) for u in urls} - {""}):
+            for e in self.by_domain.get(host, []):
+                out.setdefault(e["entry_id"], self._flag(e, "domain"))
+        return [out[k] for k in sorted(out)]
+
+
+def work_venue_flags(venue_flags, year):
+    """The venue's flags that apply to a work of ``year``.
+
+    A Kanalregisteret flag applies only when the journal's level for the
+    work's year is X (``_rel_venue_registries.level_at``); the other
+    registries carry no year and apply to every work of the venue.
+    """
+    return [f for f in venue_flags
+            if f["registry"] != "kanalregisteret" or level_at(f["levels"], year) == "X"]
 
 
 def flags_text(flags):
@@ -251,12 +305,14 @@ def flags_text(flags):
 # ── Loader for the REL view (ticket 1843) ────────────────
 
 
-def load_work_venues(path):
+def load_work_venues(path, no_venue="keep_flagged"):
     """``{work_key: row}`` of ``rel_work_venues.csv``.
 
-    ``flagged`` and ``excluded`` become bools; ``tier_included`` is tier A or B
-    and ``included`` is ``tier_included and not excluded``, both under the
-    switches the table was built with. Any other setting is recomputed from
+    ``flagged`` and ``excluded`` become bools; ``unknown`` is tier ``unknown``
+    (no resolvable venue). ``tier_included`` is tier A or B, or ``unknown``
+    when ``no_venue`` (switch c, ``unknown_switch``) is ``keep_flagged``;
+    ``included`` is ``tier_included and not excluded``. Switches a and b are
+    those the table was built with. Any other setting is recomputed from
     ``flags`` (``registry:entry_id[match]``; skip ``[title]`` matches, which never
     exclude) and ``tier_ngo_in_b`` / ``tier_ngo_not_b``.
     """
@@ -265,7 +321,8 @@ def load_work_venues(path):
         for r in csv.DictReader(fh):
             r["flagged"] = r["flagged"] == "true"
             r["excluded"] = r["excluded"] == "true"
-            r["tier_included"] = r["tier"] in ("A", "B")
+            r["unknown"] = r["tier"] == "unknown"
+            r["tier_included"] = r["tier"] in ("A", "B") or (r["unknown"] and no_venue == "keep_flagged")
             r["included"] = r["tier_included"] and not r["excluded"]
             out[r["work_key"]] = r
     return out

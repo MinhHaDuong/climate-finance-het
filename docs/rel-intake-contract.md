@@ -226,9 +226,32 @@ like the screen table (a paid, dated API snapshot, fetched by
 `rel_work_venues.csv` (per work) and `rel_venue_counts.{json,md}` into
 `data/rel_pool/`, deterministically, from the pool, the cache, the configured
 pull and `config/rel_venue_tiers.yaml` (the versioned B list). Ticket 1843
-joins the work table through `_rel_venues.load_work_venues`. Two author
-decisions are pending switches: which registries exclude
-(`exclusion` in `config/rel_venue_registries.yaml`) and whether the NGO
-research series are tier B (`ngo_research_in_b`). Every flag and both NGO
-tiers are written whatever the setting, so a sensitivity table can recompute
-any other.
+joins the work table through `_rel_venues.load_work_venues`; the per-work
+`flags` cell (`registry:entry_id[match]`) already applies the per-work rules
+below, so the venue table is for explanation only.
+
+- Tiers: A, B, C and `unknown`. `unknown` is a work with no resolvable venue;
+  it is never folded into C (C means a venue known and not serious). A work
+  in `unknown` or C whose own URL is on a B institution's site
+  (`b_domains`) is B with rule `b_domain`.
+- Kanalregisteret level X is per year and provisional (in the 2026-10-01 pull
+  every X is in `Nivå 2026`). A work is flagged only when the journal's level
+  for the work's publication year is X; a year with no level takes the
+  journal's nearest year with one (the earlier on a tie); an undated work is
+  not flagged. The venue row keeps every yearly level in `flag_details`.
+- The hijacked check reads every URL of a work: the landing page of each of
+  its OpenAlex rows (with or without a source) and the URL of each intake
+  record. Only 32% of pool works have a URL on a host other than doi.org, so
+  a zero hijacked count is a lower bound, not an absence.
+- The Scopus flag is broader than "discontinued for publication concerns":
+  Elsevier's list gives no per-title cause, so it also holds titles dropped
+  for low metrics. DOAJ withdrawals are mostly the 2014-2016 "best practice"
+  purge. Both are flags, not evidence of malpractice.
+
+Three author decisions are pending switches: (a) which registries exclude
+(`exclusion` in `config/rel_venue_registries.yaml`; a title match never
+excludes), (b) whether the NGO research series are tier B
+(`ngo_research_in_b`), (c) whether `unknown` works are kept, flagged, or
+excluded (`no_venue` in `config/rel_venue_tiers.yaml`, applied by the loader's
+`no_venue` argument). Every flag, both NGO tiers and the `unknown` state are
+written whatever the settings, so a sensitivity table can recompute any other.

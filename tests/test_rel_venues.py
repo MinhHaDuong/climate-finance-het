@@ -126,12 +126,25 @@ def test_issn_normalisation():
     assert rvr.norm_issn("2026") == ""
 
 
-def test_kanalregisteret_latest_level_x_only(registries):
+def test_kanalregisteret_lists_every_journal_with_an_x_year_and_its_levels(registries):
     day = os.path.join(registries, str(REG_CFG["use"]))
     rows, entries = rvr.parse_kanalregisteret(os.path.join(day, "kanalregisteret_851.csv"), "u{id}")
     assert rows == 3
-    # Journal 2 was X in 2026 but has a 2027 level: the latest level wins.
-    assert [(e["entry_id"], e["issns"], e["entry_url"]) for e in entries] == [("1", ("1111-1119",), "u1")]
+    assert [(e["entry_id"], e["issns"], e["entry_url"]) for e in entries] == [
+        ("1", ("1111-1119",), "u1"), ("2", ("2222-2228",), "u2")]
+    assert entries[1]["levels"] == {2025: "1", 2026: "X", 2027: "1"}
+    assert entries[1]["reason"] == "Nivå 2025 1, 2026 X, 2027 1"
+
+
+def test_kanal_level_is_the_level_of_the_work_year():
+    levels = {2018: "1", 2019: "1", 2026: "X", 2027: "1"}
+    assert rvr.level_at(levels, 2026) == "X"
+    assert rvr.level_at(levels, 2019) == "1"
+    assert rvr.level_at(levels, 2027) == "1"
+    assert rvr.level_at(levels, 2010) == "1"   # before the register: nearest year, 2018
+    assert rvr.level_at(levels, 2030) == "1"   # after: nearest year, 2027
+    assert rvr.level_at({2025: "1", 2027: "X"}, 2026) == "1"  # blank year, tie: the earlier
+    assert rvr.level_at(levels, None) is None
 
 
 def test_scopus_keeps_discontinuations_not_policy_changes(registries):
@@ -275,7 +288,7 @@ def _write(path, cols, rows):
             w.writerow({c: r.get(c, "") for c in cols})
 
 
-def _inputs(tmp_path):
+def _inputs(tmp_path, extra_oa=(), extra_pool=(), extra_recs=None):
     oa = [
         {"openalex_id": "W1", "status": "found", "source_id": "S10", "source_name": "Energies",
          "source_type": "journal", "issn_l": "1996-1073", "issns": "1996-1073",
@@ -291,7 +304,9 @@ def _inputs(tmp_path):
         {"openalex_id": "W6", "status": "found", "source_id": "S60", "source_name": "Oxfam Policy & Practice",
          "source_type": "other", "host_org_name": "Oxfam GB"},
     ]
-    pool_cols = ["work_key", "openalex_id", "all_openalex_ids", "journal", "doc_type", "sources", "member_record_ids"]
+    oa = oa + list(extra_oa)
+    pool_cols = ["work_key", "openalex_id", "all_openalex_ids", "year", "journal", "doc_type", "sources",
+                 "member_record_ids"]
     pool = [
         {"work_key": "openalex:W1", "openalex_id": "W1", "all_openalex_ids": "W1", "journal": "Energies",
          "sources": "catalogue", "member_record_ids": "openalex:W1"},
@@ -313,6 +328,7 @@ def _inputs(tmp_path):
         {"work_key": "title:y|2020", "journal": "Revista Andina de Economia", "doc_type": "Academic Journal",
          "sources": "t1652-causal-econlit", "member_record_ids": ""},
     ]
+    pool = pool + list(extra_pool)
     rec_cols = ["record_id", "issn", "journal_key", "series_handle", "template_type", "url"]
     intake = tmp_path / "intake"
     for lane, recs in {
@@ -322,6 +338,7 @@ def _inputs(tmp_path):
         "t1653-sud-hors-openalex": [{"record_id": "ipea:hdl:1"}],
         "t1650-sommaires": [{"record_id": "doi:10.1/toc", "issn": "5555-5552", "journal_key": "sj"}],
         "t1652-causal-econlit": [{"record_id": "z"}],
+        **(extra_recs or {}),
     }.items():
         _write(str(intake / lane / "d" / "records.csv"), rec_cols, recs)
     _write(str(tmp_path / "oa.csv"), OA_COLS, oa)
@@ -330,8 +347,8 @@ def _inputs(tmp_path):
     return str(intake)
 
 
-def _run(tmp_path, registries, out, extra=()):
-    intake = _inputs(tmp_path)
+def _run(tmp_path, registries, out, extra=(), **inputs):
+    intake = _inputs(tmp_path, **inputs)
     return crv.main(["--pool", str(tmp_path / "pool.csv"), "--intake-dir", intake,
                      "--oa-cache", str(tmp_path / "oa.csv"), "--toc-manifest", str(tmp_path / "toc.csv"),
                      "--archive-root", registries, "--output-dir", str(out), *extra])
@@ -351,12 +368,12 @@ def test_end_to_end_resolution_tiers_flags(tmp_path, registries):
         "url:repec1": ("openalex:S10", "repec_journal_name_to_openalex", "A", "", "mdpi"),
         "url:ipea1": ("prefix:ipea", "record_prefix", "B", "", ""),
         "doi:10.1/toc": ("issn:5555-5552", "toc_issn", "A", "doaj_withdrawn:5555-5552[issn]", ""),
-        "title:x|2020": ("none", "none", "C", "", ""),
+        "title:x|2020": ("none", "none", "unknown", "", ""),
         "title:y|2020": ("name:revista andina de economia", "name", "A", "", ""),
     }
     assert works["openalex:W2"]["flagged"] is True and works["openalex:W2"]["tier_included"] is True
     counts = json.load(open(tmp_path / "out" / "rel_venue_counts.json", encoding="utf-8"))
-    assert counts["works_by_lane"]["(all)"]["tier"] == {"A": 6, "B": 3, "C": 1}
+    assert counts["works_by_lane"]["(all)"]["tier"] == {"A": 6, "B": 3, "unknown": 1}
     assert counts["works_by_lane"]["(all)"]["no_venue"] == 1
     assert counts["works_by_lane"]["t1810-repec-local"]["publisher_flag"] == {"mdpi": 1}
 
@@ -462,7 +479,8 @@ def test_a_title_match_never_excludes():
 def test_a_hijacked_hit_stays_on_the_work_not_the_venue(tmp_path, registries):
     _run(tmp_path, registries, tmp_path / "out")
     venues = {r["venue_key"]: r for r in csv.DictReader(open(tmp_path / "out" / "rel_venues.csv", encoding="utf-8"))}
-    assert (venues["openalex:S40"]["flags"], venues["openalex:S40"]["excluded"]) == ("", "false")
+    # The venue carries no flag; it only counts its one excluded work.
+    assert (venues["openalex:S40"]["flags"], venues["openalex:S40"]["n_works_excluded"]) == ("", "1")
     works = rv.load_work_venues(str(tmp_path / "out" / "rel_work_venues.csv"))
     assert works["openalex:W4"]["excluded"]
 
@@ -513,6 +531,11 @@ def test_outputs_do_not_depend_on_the_hash_seed(tmp_path, registries):
     import subprocess
     import sys
     intake = _inputs(tmp_path)
+    # Positive control: the two seeds do reorder a set of strings.
+    probe = "print(list({'alpha', 'beta', 'gamma', 'delta', 'epsilon'}))"
+    orders = {seed: subprocess.run([sys.executable, "-c", probe], capture_output=True, text=True, check=True,
+                                   env=dict(os.environ, PYTHONHASHSEED=seed)).stdout for seed in ("0", "1")}
+    assert orders["0"] != orders["1"]
     digests = []
     for seed in ("0", "1"):
         out = tmp_path / f"seed{seed}"
@@ -525,3 +548,108 @@ def test_outputs_do_not_depend_on_the_hash_seed(tmp_path, registries):
         digests.append({n: hashlib.sha256((out / n).read_bytes()).hexdigest()
                         for n in sorted(os.listdir(out))})
     assert digests[0] == digests[1] and len(digests[0]) == 4
+
+
+# ── Panel fixes (PR 1657, top-level review) ──────────────
+
+
+def test_kanal_x_flags_only_the_works_of_an_x_year(tmp_path, registries):
+    """Red test: the latest-level rule flagged the venue's works of every year."""
+    oa = [{"openalex_id": w, "status": "found", "source_id": "S70", "source_name": "Doubtful Journal of Economics",
+           "source_type": "journal", "issn_l": "1111-1119", "issns": "1111-1119"} for w in ("W71", "W72", "W73")]
+    pool = [{"work_key": f"openalex:{w}", "openalex_id": w, "all_openalex_ids": w, "year": y, "sources": "catalogue",
+             "member_record_ids": f"openalex:{w}"} for w, y in (("W71", "2025"), ("W72", "2026"), ("W73", ""))]
+    _run(tmp_path, registries, tmp_path / "out", extra_oa=oa, extra_pool=pool)
+    works = rv.load_work_venues(str(tmp_path / "out" / "rel_work_venues.csv"))
+    # Journal 1 is level 1 in 2025 and X in 2026; an undated work gets no level.
+    assert {w: works[f"openalex:{w}"]["flags"] for w in ("W71", "W72", "W73")} == {
+        "W71": "", "W72": "kanalregisteret:1[issn]", "W73": ""}
+    assert [w for w in ("W71", "W72", "W73") if works[f"openalex:{w}"]["excluded"]] == ["W72"]
+    venues = {r["venue_key"]: r for r in csv.DictReader(open(tmp_path / "out" / "rel_venues.csv", encoding="utf-8"))}
+    v = venues["openalex:S70"]
+    assert v["flags"] == "kanalregisteret:1[issn]" and v["n_works_excluded"] == "1"
+    assert "Nivå 2025 1, 2026 X" in v["flag_details"]
+
+
+def test_hijacked_check_reads_sourceless_rows_and_member_urls(tmp_path, registries):
+    """Replay of openalex:W3176977668: a cache row with a clone landing page and no
+    source was never checked; nor were member-record URLs of non-OpenAlex lanes."""
+    oa = [{"openalex_id": "W3176977668", "status": "found", "work_type": "article",
+           "landing_url": "https://www.aomannals.com/article/7"}]
+    pool = [{"work_key": "openalex:W3176977668", "openalex_id": "W3176977668", "all_openalex_ids": "W3176977668",
+             "year": "2021", "sources": "catalogue", "member_record_ids": "openalex:W3176977668"},
+            {"work_key": "url:clone", "year": "2022", "sources": "t1790-sud-playwright",
+             "member_record_ids": "t1790-sud-playwright/d:pw:1"}]
+    recs = {"t1790-sud-playwright": [{"record_id": "pw:1", "url": "https://aomannals.com/vol3/x.pdf"}]}
+    _run(tmp_path, registries, tmp_path / "out", extra_oa=oa, extra_pool=pool, extra_recs=recs)
+    works = rv.load_work_venues(str(tmp_path / "out" / "rel_work_venues.csv"))
+    for k in ("openalex:W3176977668", "url:clone"):
+        assert (works[k]["tier"], works[k]["flags"], works[k]["excluded"]) == ("unknown", "hijacked:1[domain]", True), k
+
+
+def test_no_venue_switch_keeps_or_drops_the_unknown_tier(tmp_path, registries):
+    _run(tmp_path, registries, tmp_path / "out")
+    path = str(tmp_path / "out" / "rel_work_venues.csv")
+    kept = rv.load_work_venues(path)
+    assert kept["title:x|2020"]["unknown"] and kept["title:x|2020"]["included"]
+    dropped = rv.load_work_venues(path, no_venue="exclude")
+    assert not dropped["title:x|2020"]["included"]
+    assert {k for k in kept if kept[k]["included"] != dropped[k]["included"]} == {"title:x|2020"}
+    assert TIERS_CFG["no_venue"] == {"status": "pending", "value": "keep_flagged"}
+    assert rv.unknown_switch(TIERS_CFG) == "keep_flagged"
+    with pytest.raises(ValueError):
+        rv.unknown_switch({"no_venue": {"value": "drop"}})
+
+
+def test_unknown_exclusion_registry_is_refused(registries):
+    cfg = dict(REG_CFG, exclusion={"status": "pending", "exclude": ["kanalregister"]})
+    with pytest.raises(ValueError, match="unknown registries"):
+        crv.load_registries(registries, cfg)
+
+
+@pytest.mark.parametrize("venue, expected", [
+    (_v(name="REPeC", source_type="journal"), ("A", "journal", "")),
+    (_v(name="Compra Journal of Economics", source_type="journal"), ("A", "journal", "")),
+    (_v(name="Research Papers in Economics and Finance", source_type="journal"), ("A", "journal", "")),
+    (_v(name="RePEc: Research Papers in Economics", source_type="repository"), ("C", "repository", "")),
+    (_v(name="MPRA Paper", source_type="other"), ("C", "repository", "")),
+    (_v(repec="repec:wop:pennin", name="Center for Financial Institutions Working Papers"), ("C", "other", "")),
+    (_v(repec="repec:wop:iasawp", name="Working Papers"), ("B", "b_series", "iiasa")),
+    (_v(repec="repec:cam:camdae", name="Cambridge Working Papers in Economics"), ("C", "other", "")),
+    (_v(repec="repec:een:ccepwp", name="CCEP Working Papers"), ("B", "b_series", "ccep_anu")),
+    (_v(repec="repec:ctl:louvde", repec_template="redif-article", name="Journal of Demographic Economics"),
+     ("A", "journal", "")),
+])
+def test_repository_names_and_shared_repec_archives(venue, expected):
+    assert rv.assign_tier(venue, TIERS) == expected
+
+
+def test_b_institution_by_its_own_site_for_unresolved_and_c_works(tmp_path, registries):
+    """WRI, SEI, Oxfam... reports sat in tier unknown: no venue, but a landing page on the institution's site."""
+    oa = [{"openalex_id": "W81", "status": "found", "landing_url": "https://files.wri.org/d8/s3fs-public/x.pdf"},
+          {"openalex_id": "W82", "status": "found", "landing_url": "https://policy-practice.oxfam.org/resources/y"},
+          {"openalex_id": "W83", "status": "found", "source_id": "S83", "source_type": "repository",
+           "source_name": "Zenodo", "landing_url": "https://zenodo.org/records/1"},
+          {"openalex_id": "W84", "status": "found", "landing_url": "https://notwri.org/z"}]
+    pool = [{"work_key": f"openalex:{w}", "openalex_id": w, "all_openalex_ids": w, "year": "2020",
+             "sources": "catalogue", "member_record_ids": f"openalex:{w}"} for w in ("W81", "W82", "W83", "W84")]
+    _run(tmp_path, registries, tmp_path / "out", extra_oa=oa, extra_pool=pool)
+    works = rv.load_work_venues(str(tmp_path / "out" / "rel_work_venues.csv"))
+    got = {w: (works[f"openalex:{w}"]["tier"], works[f"openalex:{w}"]["tier_rule"], works[f"openalex:{w}"]["b_id"],
+               works[f"openalex:{w}"]["tier_ngo_not_b"]) for w in ("W81", "W82", "W83", "W84")}
+    assert got == {
+        "W81": ("B", "b_domain", "wri", "B"),
+        "W82": ("B", "b_domain", "oxfam", "unknown"),   # NGO series: the other setting leaves it unresolved
+        "W83": ("C", "repository", "", "C"),            # Zenodo is nobody's own site
+        "W84": ("unknown", "no_venue", "", "unknown"),  # notwri.org is not under wri.org
+    }
+
+
+def test_bndes_repository_is_b():
+    assert rv.assign_tier(_v(name="BNDES (The National Development Bank)", source_type="repository"), TIERS) == (
+        "B", "b_institution", "bndes")
+
+
+def test_b_domains_name_existing_entries():
+    with pytest.raises(ValueError, match="not in b_list"):
+        rv.compile_tiers(dict(TIERS_CFG, b_domains={"no_such_entry": ["x.org"]}))
