@@ -8,8 +8,9 @@ per ReDIF-Paper, -Article, -Book or -Chapter template.
 
 The RePEc handle is the row key. A handle met in several files (editor backup
 copies such as ``*.rdf~``, a series mirrored twice, Elsevier's overlapping
-per-journal files) keeps the copy with the most non-empty fields, the first
-in path order (backups last) on a tie; the others are counted as
+per-journal files) keeps a clean copy over one read from a corrupt file (a
+byte-shifted UTF-16 copy in ``sos/``), then the copy with the most non-empty
+fields, the first in path order (backups last) on a tie; the others are counted as
 ``duplicate_handle`` and listed in ``<output stem>.duplicates.csv``. A work
 template without a handle cannot be keyed and is counted, not kept.
 
@@ -135,6 +136,17 @@ def _filled(r: dict) -> int:
     return sum(1 for k in _redif.to_row({}) if r.get(k))
 
 
+def _clean(r: dict) -> bool:
+    """False for a copy read from a corrupt file: a non-printable character
+    (NUL, U+0A00 from a byte-shifted UTF-16 file) in its raw handle or title."""
+    return (r.get("handle_raw") or "").isprintable() and (r.get("title") or "").isprintable()
+
+
+def _better(r: dict, old: dict) -> bool:
+    """A clean copy beats a corrupt one; then the fuller copy wins; ties keep path order."""
+    return (_clean(r), _filled(r)) > (_clean(old), _filled(old))
+
+
 def _backup_last(path: str) -> tuple[int, str]:
     return (1 if path.endswith("~") else 0, path)
 
@@ -169,7 +181,7 @@ def build(root: str, jobs: int) -> tuple[list[dict], list[dict], Counter]:
             r["journal"] = series.get(r["series_handle"], "")
         if key in kept:
             old = kept[key]
-            if _filled(r) > _filled(old):  # the fuller copy wins; ties keep path order
+            if _better(r, old):
                 kept[key], r = r, old
             dropped.append(r)
             continue

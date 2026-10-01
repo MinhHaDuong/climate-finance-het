@@ -171,6 +171,23 @@ def test_duplicate_handle_keeps_the_fuller_copy(tmp_path):
     assert dups.source_file.tolist() == [os.path.join("eee", "jdevec", "a.rdf")]
 
 
+def test_clean_copy_beats_a_fuller_corrupt_one(tmp_path):
+    """Replays sos:sosjrn: a byte-shifted UTF-16 copy (NUL and U+0A00 in its
+    handle and title) carried more fields than the clean copy and was kept."""
+    root = tmp_path / "RePEc"
+    (root / "sos" / "sosjrn").mkdir(parents=True)
+    clean = "Template-Type: ReDIF-Article 1.0\nTitle: Right title\nHandle: Repec:sos:sosjrn:190210\n"
+    corrupt = ("Template-Type: ReDIF-Article 1.0\nTitle: Neighbour title਀\x00\nYear: 2019\n"
+               "Abstract: Shifted.\nHandle: Repec:sos:sosjrn:190210਀\x00\n")
+    (root / "sos" / "sosjrn" / "sosjrn.rdf").write_text(clean, encoding="utf-16")
+    (root / "sos" / "sosjrn" / "sosjrn.txt").write_text(corrupt, encoding="utf-16")
+    out = tmp_path / "o" / "t.parquet"
+    assert cat.main(["--mirror", str(root), "--output", str(out), "--jobs", "1"]) == 0
+    d = pd.read_parquet(out)
+    assert d.title.tolist() == ["Right title"]
+    assert d.source_file.tolist() == [os.path.join("sos", "sosjrn", "sosjrn.rdf")]
+
+
 def test_template_type_tolerates_suffix_typos():
     assert _redif.template_type({"template-type": ["ReDIF-Paper: 1.0"]}) == "redif-paper"
     assert _redif.template_type({"template-type": ["ReDIF-Article1.0"]}) == "redif-article"

@@ -259,5 +259,4 @@ def to_row(tpl: dict[str, list[str]], series_names: dict[str, str] | None = None
 
 def series_of(tpl: dict[str, list[str]]) -> tuple[str, str]:
     """(series handle lower-case, name) of a ReDIF-Series template."""
-    v = re.sub(r"\s*:\s*", ":", first(tpl, "handle").split("#", 1)[0].strip())
-    return (v.split()[0].lower() if v.split() else ""), first(tpl, "name")
+    return clean_handle(first(tpl, "handle")).lower(), first(tpl, "name")
