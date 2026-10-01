@@ -61,7 +61,12 @@ def write_xlsx(model, path):
                       for i in range(1, len(sheets) + 1)) + '</Relationships>'))
         archive.writestr('xl/styles.xml', (
             '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-            '<cellXfs><xf numFmtId="0"/><xf numFmtId="14"/></cellXfs></styleSheet>'))
+            '<fills>'
+            '<fill><patternFill patternType="none"/></fill>'
+            '<fill><patternFill patternType="gray125"/></fill>'
+            '<fill><patternFill patternType="solid"><fgColor rgb="FF00FF00"/></patternFill></fill>'
+            '</fills>'
+            '<cellXfs><xf numFmtId="0"/><xf numFmtId="14"/><xf numFmtId="0" fillId="2"/></cellXfs></styleSheet>'))
         for i, sheet in enumerate(sheets, 1):
             rows = []
             for row in sheet['rows']:
@@ -172,6 +177,162 @@ def test_xlsx_reader_turns_corrupt_bytes_into_an_error_not_a_crash(tmp_path):
     bad.write_bytes(b'not a zip')
     with pytest.raises(xlsx.XlsxError):
         xlsx.read_workbook(bad)
+
+
+def test_xlsx_reader_records_cell_fill_colours_as_verbatim_fields(tmp_path):
+    """Red test: a fixture row with and without the legend fill."""
+    model = {'sheets': [{'name': 'Sheet', 'state': 'visible', 'rows': [
+        {'r': 1, 'hidden': False, 'cells': {'A': 'Unique ID', 'B': 'Status'}},
+        {'r': 2, 'hidden': False, 'cells': {'A': 'ROW001', 'B': 'Active'}},
+        {'r': 3, 'hidden': False, 'cells': {'A': 'ROW002', 'B': 'Completed'}}]}]}
+    # Manually create an XLSX with a fill on ROW001
+    with zipfile.ZipFile(tmp_path / 'w.xlsx', 'w') as archive:
+        archive.writestr('[Content_Types].xml', '<Types/>')
+        archive.writestr('xl/workbook.xml', (
+            '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" '
+            'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+            '<sheets><sheet name="Sheet" sheetId="1" r:id="rId1"/></sheets></workbook>'))
+        archive.writestr('xl/_rels/workbook.xml.rels', (
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            '<Relationship Id="rId1" Target="worksheets/sheet1.xml"/>'
+            '</Relationships>'))
+        archive.writestr('xl/styles.xml', (
+            '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+            '<fills>'
+            '<fill><patternFill patternType="none"/></fill>'
+            '<fill><patternFill patternType="gray125"/></fill>'
+            '<fill><patternFill patternType="solid"><fgColor rgb="FF00FF00"/></patternFill></fill>'
+            '</fills>'
+            '<cellXfs>'
+            '<xf numFmtId="0"/>'  # style 0: no fill
+            '<xf numFmtId="0" fillId="2"/>'  # style 1: green fill
+            '</cellXfs></styleSheet>'))
+        archive.writestr('xl/worksheets/sheet1.xml', (
+            '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+            '<sheetData>'
+            '<row r="1"><c r="A1" t="inlineStr"><is><t>Unique ID</t></is></c><c r="B1" t="inlineStr"><is><t>Status</t></is></c></row>'
+            '<row r="2"><c r="A2" s="1" t="inlineStr"><is><t>ROW001</t></is></c><c r="B2" t="inlineStr"><is><t>Active</t></is></c></row>'
+            '<row r="3"><c r="A3" t="inlineStr"><is><t>ROW002</t></is></c><c r="B3" t="inlineStr"><is><t>Completed</t></is></c></row>'
+            '</sheetData></worksheet>'))
+    
+    sheets = xlsx.read_workbook(tmp_path / 'w.xlsx')
+    assert len(sheets) == 1
+    assert sheets[0].name == 'Sheet'
+    
+    # Row 1 (header) should have no fills
+    assert sheets[0].rows[0].fills == {}
+    
+    # Row 2 should have a green fill on A2 (style 1 -> green fill)
+    assert sheets[0].rows[1].fills == {'A': 'solid FF00FF00'}
+    
+    # Row 3 should have no fills (no style specified)
+    assert sheets[0].rows[2].fills == {}
+
+
+def test_xlsx_reader_records_fill_colour_legend_in_footer(tmp_path):
+    """Test that fill colour legend text in footnotes is captured."""
+    # Create a minimal model with a legend footnote - need all required headers
+    # Based on xlsx-2025-q1.json structure
+    model = {'sheets': [{
+        'name': 'DataTable - Overall',
+        'state': 'visible',
+        'rows': [
+            {'r': 1, 'hidden': False, 'cells': {'A': 'Unique ID', 'B': 'Portfolios', 'C': 'Priority Areas', 'D': 'Total US$', 'E': 'Total ZAR', 'F': 'Source', 'G': 'Implementing Entity', 'H': 'Institutional / South African Partner', 'I': 'Beneficiary', 'J': 'Status', 'K': 'Description', 'L': 'Date of Financing Agreement Signed*', 'M': 'End Date'}},
+            {'r': 2, 'hidden': False, 'cells': {'A': 'ROW001', 'B': 'Electricity', 'C': 'Transmission', 'D': '100', 'E': '1700', 'F': 'Test', 'G': 'Test', 'J': 'Active', 'K': 'Test description', 'L': '2022-01-01', 'M': '2023-12-31'}},
+            {'r': 3, 'hidden': False, 'cells': {'D': '100', 'E': '1700'}},
+            {'r': 5, 'hidden': False, 'cells': {'A': 'Footnote 1: Green Highlight: Indicates that all these projects were closed'}},
+        ]
+    }]}
+    
+    # Manually create an XLSX with a green fill on ROW001
+    with zipfile.ZipFile(tmp_path / 'w.xlsx', 'w') as archive:
+        archive.writestr('[Content_Types].xml', '<Types/>')
+        archive.writestr('xl/workbook.xml', (
+            '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" '
+            'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+            '<sheets><sheet name="DataTable - Overall" sheetId="1" r:id="rId1"/></sheets></workbook>'))
+        archive.writestr('xl/_rels/workbook.xml.rels', (
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            '<Relationship Id="rId1" Target="worksheets/sheet1.xml"/>'
+            '</Relationships>'))
+        archive.writestr('xl/styles.xml', (
+            '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+            '<fills>'
+            '<fill><patternFill patternType="none"/></fill>'
+            '<fill><patternFill patternType="gray125"/></fill>'
+            '<fill><patternFill patternType="solid"><fgColor rgb="FF00FF00"/></patternFill></fill>'
+            '</fills>'
+            '<cellXfs>'
+            '<xf numFmtId="0"/>'  # style 0: no fill
+            '<xf numFmtId="0" fillId="2"/>'  # style 1: green fill
+            '<xf numFmtId="14"/>'  # style 2: date format
+            '</cellXfs></styleSheet>'))
+        archive.writestr('xl/worksheets/sheet1.xml', (
+            '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+            '<sheetData>'
+            '<row r="1">'
+            '<c r="A1" t="inlineStr"><is><t>Unique ID</t></is></c>'
+            '<c r="B1" t="inlineStr"><is><t>Portfolios</t></is></c>'
+            '<c r="C1" t="inlineStr"><is><t>Priority Areas</t></is></c>'
+            '<c r="D1" t="inlineStr"><is><t>Total US$</t></is></c>'
+            '<c r="E1" t="inlineStr"><is><t>Total ZAR</t></is></c>'
+            '<c r="F1" t="inlineStr"><is><t>Source</t></is></c>'
+            '<c r="G1" t="inlineStr"><is><t>Implementing Entity</t></is></c>'
+            '<c r="H1" t="inlineStr"><is><t>Institutional / South African Partner</t></is></c>'
+            '<c r="I1" t="inlineStr"><is><t>Beneficiary</t></is></c>'
+            '<c r="J1" t="inlineStr"><is><t>Status</t></is></c>'
+            '<c r="K1" t="inlineStr"><is><t>Description</t></is></c>'
+            '<c r="L1" t="inlineStr"><is><t>Date of Financing Agreement Signed*</t></is></c>'
+            '<c r="M1" t="inlineStr"><is><t>End Date</t></is></c>'
+            '</row>'
+            '<row r="2">'
+            '<c r="A2" s="1" t="inlineStr"><is><t>ROW001</t></is></c>'  # green fill
+            '<c r="B2" t="inlineStr"><is><t>Electricity</t></is></c>'
+            '<c r="C2" t="inlineStr"><is><t>Transmission</t></is></c>'
+            '<c r="D2"><v>100</v></c>'
+            '<c r="E2"><v>1700</v></c>'
+            '<c r="F2" t="inlineStr"><is><t>Test</t></is></c>'
+            '<c r="G2" t="inlineStr"><is><t>Test</t></is></c>'
+            '<c r="H2" t="inlineStr"><is><t></t></is></c>'
+            '<c r="I2" t="inlineStr"><is><t></t></is></c>'
+            '<c r="J2" t="inlineStr"><is><t>Active</t></is></c>'
+            '<c r="K2" t="inlineStr"><is><t>Test description</t></is></c>'
+            '<c r="L2" s="2"><v>44562</v></c>'  # date serial for 2022-01-01
+            '<c r="M2" s="2"><v>45297</v></c>'  # date serial for 2023-12-31
+            '</row>'
+            '<row r="3">'
+            '<c r="D3"><v>100</v></c>'
+            '<c r="E3"><v>1700</v></c>'
+            '</row>'
+            '<row r="5"><c r="A5" t="inlineStr"><is><t>Footnote 1: Green Highlight: Indicates that all these projects were closed</t></is></c></row>'
+            '</sheetData></worksheet>'))
+    
+    # Need to declare the expected mismatch since we only have the overall table
+    mismatch = {
+        'reason': 'test fixture with only overall table',
+        'not_printed': set(),
+        'only_overall': {'ROW001'},
+        'only_registers': set()
+    }
+    items, controls, counts, out = layouts.parse_xlsx(tmp_path / 'w.xlsx', mismatch=mismatch)
+    
+    # Check that we have the expected items
+    assert counts == {'overall': 1}
+    
+    # Find the ROW001 item
+    rows = [i for i in items if i.classification == 'register_allocation']
+    assert len(rows) == 1
+    row001 = rows[0]
+    
+    # Check that fill colour is recorded as a verbatim field
+    assert 'Unique ID fill' in row001.fields
+    assert row001.fields['Unique ID fill'] == 'solid FF00FF00'
+    
+    # Check that the legend text is captured as a heading
+    headings = [i for i in items if i.classification == 'heading']
+    legend_texts = [h.label for h in headings if 'Green Highlight' in h.label]
+    assert len(legend_texts) > 0
+    assert any('Green Highlight' in h and 'closed' in h for h in legend_texts)
 
 
 # --- workbook editions (2024 Q3, 2025 Q1) ---------------------------------------

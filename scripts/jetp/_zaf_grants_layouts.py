@@ -317,12 +317,19 @@ def _xlsx_table(sheet, table, controls):
     items = [_xlsx_note_above(sheet, table, rows[:at])] if at else []
     heading = items[0].locator if items else ''
     grants, total, notes = [], None, []
+    # Collect legend texts from footnotes for fill colour interpretation
+    legend_texts = {}
     for row in rows[at + 1:]:
         unique = join(row.cells.get('A', ''))
         stray = [c for c in row.cells if c not in headers]
         if total is None and ID_PATTERN.match(unique) and not stray:
             fields = {headers[c]: row.cells[c] for c in headers if c in row.cells}
             fields['Unique ID'] = unique
+            # Record cell fill colours as verbatim fields
+            for col, fill in row.fills.items():
+                col_header = headers.get(col, col)
+                if fill and col_header:
+                    fields[f'{col_header} fill'] = fill
             items.append(Item(table, _locator_xlsx(sheet, f'row {row.number}'),
                               join(fields.get('Description', '')) or unique,
                               'register_allocation', fields,
@@ -334,8 +341,13 @@ def _xlsx_table(sheet, table, controls):
                 any(headers[c] == 'Total US$' for c in row.cells):
             total = {headers[c]: v for c, v in row.cells.items()}
         elif total is not None and set(row.cells) == {'A'} and not ID_PATTERN.match(unique):
+            note_text = join(row.cells['A'])
+            # Check if this is a fill colour legend
+            if 'highlight' in note_text.lower() or 'fill' in note_text.lower():
+                # This is a legend text for fill colours
+                legend_texts[row.number] = note_text
             notes.append(Item(table, _locator_xlsx(sheet, f'A{row.number}'),
-                              join(row.cells['A']), 'heading', heading=heading,
+                              note_text, 'heading', heading=heading,
                               note='footnote under the table'))
         else:
             raise RegisterError(f'{table}: row {row.number} is neither a grant, the total '
