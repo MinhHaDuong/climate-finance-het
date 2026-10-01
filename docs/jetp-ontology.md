@@ -353,6 +353,27 @@ The `measure` of an observation is from a closed list, extended by decision:
 | macro | `indicator` (with the publisher's indicator code) |
 | marker | `marker` (the publisher's policy-marker score: Rio `mitigation`, `adaptation`, `biodiversity`, `desertification`, and non-Rio markers such as `gender`; value `0`, `1` or `2`, or `not_screened` when the field is blank, which is not 0) |
 
+A `capacity` or an energy amount carries a quantity kind, a unit and a
+basis, so that no two numbers of different kinds are ever added. The
+quantity kinds are `electric_power`, `peak_electric_power` (a module's
+rated output under standard test conditions, printed Wp or Wc, never mixed
+with grid output), `thermal_power`, `apparent_power`, `energy`,
+`energy_storage_capacity` and `electric_charge`; the units are `W`, `VA`,
+`Wh`, `J` and `Ah`, with SI prefixes as a rule on the unit, not as terms.
+They follow the Open Energy Ontology (v2.13.0) and the Units of Measurement
+Ontology where those name the concept, and are marked local where they do
+not (thermal and apparent power, peak power, VA, Ah). The basis is
+`gross`, `net` or `unknown` for a physical quantity as for money, and a
+value whose line states none is `unknown`, never read as gross or net. A
+bound, a change or a rate printed with a value ("below 10 MW", "+0.7 GW
+year-on-year", "88 MWh par jour") is not a quantity kind; it stays verbatim
+on the line. An annual energy output is not observed. [M3b]
+
+History: quantity kinds and units added, and the basis extended to physical
+quantities, by the author's sign-off of 2026-10-01 (ticket 1960), after a
+check on the 60 capacity values of panel v1
+(`docs/jetp-study/1960-capacity-terms-proposal.md`).
+
 A marker is the donor's own scoring of an activity, at a reporting year,
 under the marker definition of that year. The "climate finance" that a
 marker yields is the score times a coefficient, 100 percent for principal
