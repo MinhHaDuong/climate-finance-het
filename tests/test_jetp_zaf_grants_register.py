@@ -222,6 +222,45 @@ def test_workbook_red_undeclared_amount_header(tmp_path):
         layouts.parse_xlsx(write_xlsx(model, tmp_path / 'w.xlsx'))
 
 
+@pytest.mark.parametrize('header', ['Yen', 'Funding USD', 'Sum', 'EUR'])
+def test_workbook_red_money_headers_without_a_total_control(tmp_path, header):
+    model = _model('xlsx-2025-q1.json')
+    row = next(r for r in _sheet(model, 'EU-Register')['rows']
+               if r['cells'].get('A') == 'Unique ID')
+    row['cells']['E'] = f'{header} - Amount' if header == 'Yen' else header
+    with pytest.raises(grants.RegisterError, match='not declared for a total control'):
+        layouts.parse_xlsx(write_xlsx(model, tmp_path / 'w.xlsx'))
+
+
+def test_admission_renders_every_file_before_writing_any(tmp_path, monkeypatch):
+    ledger = tmp_path / 'ledger'
+    ledger.mkdir()
+    first = _fixture_extraction(tmp_path)
+    second = copy.deepcopy(first)
+    second.document_id, second.sha256 = 'zaf-jet-grants-register-2024-q3', 'e' * 64
+    monkeypatch.setattr(grants, 'file_ceiling', lambda: 60_000)
+    second.items[3].fields['Description'] = 'x' * 70_000
+    with pytest.raises(grants.RegisterError, match='ceiling'):
+        grants.admit([first, second], ledger, recorded_at='2026-10-01')
+    assert not list(ledger.rglob('*.csv'))
+
+
+def test_xlsx_reader_refuses_a_date_serial_that_is_no_date(tmp_path):
+    model = {'sheets': [{'name': 'S', 'state': 'visible', 'rows': [
+        {'r': 1, 'hidden': False, 'cells': {'A': 'End Date'}},
+        {'r': 2, 'hidden': False, 'cells': {'A': '2024-12-31'}}]}]}
+    path = write_xlsx(model, tmp_path / 'w.xlsx')
+    with zipfile.ZipFile(path) as archive:
+        parts = {n: archive.read(n) for n in archive.namelist()}
+    parts['xl/worksheets/sheet1.xml'] = parts['xl/worksheets/sheet1.xml'].replace(
+        b'<v>45657</v>', b'<v>1e30</v>')
+    with zipfile.ZipFile(path, 'w') as archive:
+        for name, data in parts.items():
+            archive.writestr(name, data)
+    with pytest.raises(xlsx.XlsxError, match='not a date'):
+        xlsx.read_workbook(path)
+
+
 def test_workbook_red_grant_identifier_under_the_total(tmp_path):
     model = _model('xlsx-2025-q1.json')
     rows = _sheet(model, 'EU-Register')['rows']
@@ -392,7 +431,8 @@ def test_amount_reads_one_printed_number(text, value):
     assert layouts.amount(text) == value
 
 
-@pytest.mark.parametrize('text', ['ZAR 1,000 (approx 50 USD)', '1,000 and 2,000', '1.2.3'])
+@pytest.mark.parametrize('text', ['ZAR 1,000 (approx 50 USD)', '1,000 and 2,000', '1.2.3',
+                                  '1.000'])
 def test_amount_refuses_what_is_not_one_number(text):
     with pytest.raises(grants.RegisterError, match='not one number'):
         layouts.amount(text)
@@ -413,6 +453,10 @@ def test_union_red_undeclared_difference_and_wrong_truncation():
     declared = {'only_overall': {'UK002'}, 'only_registers': set()}
     layouts.check_overall_union(tables, controls, declared=declared)
     assert "publisher's own difference" in controls[-1]
+    for wrong in ({'only_overall': {'UK002', 'UK009'}, 'only_registers': set()},   # superset
+                  {'only_overall': set(), 'only_registers': set()}):                # subset
+        with pytest.raises(grants.RegisterError, match='list different grants'):
+            layouts.check_overall_union(tables, [], declared=wrong)
 
 
 # --- one document, admission ------------------------------------------------------

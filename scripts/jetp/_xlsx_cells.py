@@ -116,7 +116,10 @@ def _date_styles(archive):
 
 
 def _iso(serial_text, epoch):
-    moment = (epoch + timedelta(days=float(serial_text))).replace(microsecond=0)
+    try:
+        moment = (epoch + timedelta(days=float(serial_text))).replace(microsecond=0)
+    except (ValueError, OverflowError) as exc:
+        raise XlsxError(f'date serial {serial_text!r} is not a date: {exc}') from exc
     if moment.second >= 30:
         moment += timedelta(seconds=60 - moment.second)
     if (moment.hour, moment.minute) == (0, 0):

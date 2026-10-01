@@ -24,6 +24,14 @@ from jetp import _xlsx_cells as xlsx
 
 ID_PATTERN = re.compile(r'^[A-Z]{2,5}\d{3}[a-z]?\*?$')
 GRID_TOLERANCE = 1.5
+# A printed amount: one number, an optional sign and currency mark before it
+# (or kr. after it), grouped by commas or spaces.
+PRINTED_AMOUNT = re.compile(
+    r'(?P<sign>-)?\s*(?:\$|R|€|£|CHF|CAD|US\$)?\s*'
+    r'(?P<number>\d{1,3}(?:[ ,]\d{3})+|\d+)(?P<decimals>\.\d+)?\s*(?:kr\.?)?')
+# A header naming money: it must be one of AMOUNT_COLUMNS, which get a total control.
+MONEY_HEADER = re.compile(r'(?i)\b(amounts?|totals?|sum|usd|eur|euro|gbp|chf|cad|dkk|zar)\b'
+                          r'|[$€£]')
 AMOUNT_COLUMNS = ('Total US$', 'Total ZAR', 'Euro - Amount', 'Euro - Amounts', 'Euro: Amount',
                   'GBP - Amount', 'DKK - Amount', 'CAD - Amount', 'CHF: Amount')
 
@@ -118,25 +126,22 @@ def join(text):
     return ' '.join(str(text).split())
 
 
-PRINTED_AMOUNT = re.compile(
-    r'(?P<sign>-)?\s*(?:\$|R|€|£|CHF|CAD|US\$)?\s*'
-    r'(?P<number>\d{1,3}(?:[ ,]\d{3})+|\d+)(?P<decimals>\.\d+)?\s*(?:kr\.?)?')
-
-
 def amount(text):
     """The one number of a printed or stored amount; None when it prints no digit.
 
-    A stored value is a plain or scientific number. A printed value is one
-    number with an optional sign and currency mark (before it, or kr. after it),
-    grouped by commas or
-    spaces. Anything else with a digit in it (two numbers, a word between
-    digits) is refused: a control must not sum what it cannot read.
+    A stored value is a plain or scientific number; a printed one matches
+    ``PRINTED_AMOUNT``. Anything else with a digit in it (two numbers, a word
+    between digits, a dot grouping thousands) is refused: a control must not
+    sum what it cannot read.
     """
     if text is None:
         return None
     text = str(text).strip()
     if not re.search(r'\d', text):
         return None
+    if re.fullmatch(r'-?\d{1,3}(\.\d{3})+', text):
+        raise RegisterError(f'amount {text!r} is not one number: dots group thousands '
+                            'or mark decimals')
     if re.fullmatch(r'-?\d+(\.\d+)?([eE][-+]?\d+)?', text):
         return float(text)
     match = PRINTED_AMOUNT.fullmatch(text)
@@ -173,7 +178,9 @@ def check_total(table, column, rows, printed, controls, rounded=False):
     blank = len(printed_cells) - len(values)
     controls.append(f'{table}: {column} sum of {len(values)} rows {total:,.2f}, '
                     f'printed total {printed:,.2f} (gap {gap:+,.2f}, bound {tolerance:,.1f})'
-                    + (f'; {blank} cells print no number' if blank else ''))
+                    + (f'; {blank} cells print no number' if blank else '')
+                    + ('; a misread below the bound is not seen by the sum, a lost row is '
+                       'seen by the reviewed row count' if rounded else ''))
 
 
 def check_ids(table, rows, controls):
@@ -194,6 +201,7 @@ def check_overall_union(ids_by_table, controls, truncated=None, declared=None):
     declared.
     """
     if 'overall' not in ids_by_table:
+        controls.append('no overall table: the registers are not compared to one')
         return
     registers = set().union(*(ids for table, ids in ids_by_table.items() if table != 'overall'))
     overall = ids_by_table['overall']
@@ -270,7 +278,7 @@ def _xlsx_header(rows, table):
         if needed not in headers.values():
             raise RegisterError(f'{table}: landmark absent: header {needed!r}')
     undeclared = [h for h in headers.values()
-                  if re.search(r'(?i)amount|total|us\$|zar', h) and h not in AMOUNT_COLUMNS]
+                  if MONEY_HEADER.search(h) and h not in AMOUNT_COLUMNS]
     if undeclared:
         raise RegisterError(f'{table}: amount header(s) {undeclared} not declared for a '
                             'total control')
@@ -287,6 +295,7 @@ def _xlsx_note_above(sheet, table, above):
 
 
 def _hidden_note(sheet, row, headers):
+    """What of a grant row was read from a hidden sheet, row or column."""
     marks = ['hidden sheet'] if sheet.hidden else []
     if row.hidden:
         marks.append('hidden row')

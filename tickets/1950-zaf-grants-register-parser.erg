@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-10-01T09:40Z HDMX-coding-agent created — child of [[1500]], phase M2.3; author decision 2026-10-01, interactive: "grants register to purposely designed parser". Evidence from [[1895]] and [[1940]]: no LLM panel member and no generic converter reads the PDF register losslessly.
 2026-10-01T09:56Z HDMX-coding-agent note parser v1 (scripts/jetp/build_zaf_grants_register.py) admits 1,134 lines: 2023-q3 138 grant rows, 2024-q2 273, 2024-q3 330, 2025-q1 258, plus titles/rate notes/footnotes as headings; every printed total reconciles (docs/jetp-study/1950-zaf-grants-register-run.json). 2023-q3 text layer holds 160 dollar signs, each accounted for in docs/jetp-study/1950-zaf-grants-register-2023-q3-usd.csv (1 header, 137 row cells, 1 total, 21 amounts inside other cells of a row incl. 3 CAD$); the 157 of the 1940 log was a Docling-layer count, not reproduced. Out of scope, for the author: Financing Status pledge summary, cell highlight colours (2025-q1 'Green Highlight' legend).
+2026-10-01T10:31Z HDMX-coding-agent note PR #1675 review rounds 1-2 fixed in code: batch-atomic admission (checks and renderings before any write), exact declared not-printed set for the truncated 2024-q2 UK register, strict amount reader, money-header guard, hidden sheet/row/column marks, 1904 dates, printed field order; fields re-admitted in printed column order, lines unchanged (1,134).
 
 --- body ---
 ## Context

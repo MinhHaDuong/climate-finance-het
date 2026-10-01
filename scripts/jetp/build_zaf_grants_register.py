@@ -37,6 +37,7 @@ Usage::
 import argparse
 import csv
 import hashlib
+import io
 import json
 import logging
 from collections import Counter
@@ -46,9 +47,15 @@ from pathlib import Path
 from jetp import _pdf_ruled_table as ruled
 from jetp import _xlsx_cells as xlsx
 from jetp import _zaf_grants_layouts as layouts
-from jetp._ledger_headers import LEDGER_DIR, load_schema, read_table, write_table
+from jetp._ledger_headers import (
+    LEDGER_DIR,
+    file_ceiling,
+    load_schema,
+    read_table,
+    write_table,
+)
 from jetp._zaf_grants_layouts import RegisterError
-from jetp.build_comparators import _add, _fields, _rows
+from jetp.build_comparators import _add, _rows
 from jetp.build_iati_comparators import _append_lines
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -147,7 +154,8 @@ def extract(document_id, path):
 # ---------------------------------------------------------------------------
 
 def field_columns(extraction):
-    """The edition's verbatim field list: printed headers in order of first print."""
+    """The edition's verbatim field list: each table's printed headers in grid
+    order, a header placed where the first table that prints it puts it."""
     columns = []
     for item in extraction.items:
         columns.extend(name for name in item.fields if name not in columns)
@@ -195,11 +203,26 @@ def _replay(extraction, held, ledger_dir, new_lines, field_rows):
         raise RegisterError(f'{extraction.document_id}: replay differs from the lines of record')
 
 
+def _render_fields(columns, rows):
+    """A field file's text, refused when over the per-file ceiling."""
+    output = io.StringIO()
+    writer = csv.DictWriter(output, ['line_id', *columns], lineterminator='\n')
+    writer.writeheader()
+    writer.writerows(rows)
+    text = output.getvalue()
+    if len(text.encode('utf-8')) > file_ceiling():
+        raise RegisterError('a field file exceeds the per-file ceiling')
+    return text
+
+
 def admit(extractions, ledger_dir=LEDGER_DIR, *, recorded_at):
     """Append the lines of every extraction not yet admitted; replay the others.
 
-    All or nothing across the batch: every replay and identifier check runs
-    before the first byte is written, so a failure leaves the ledger as it was.
+    All or nothing across the batch: every replay, identifier check and file
+    rendering (with its size ceiling) runs before the first byte is written,
+    so a failed check leaves the ledger as it was. An input/output error in
+    the middle of the writes themselves is repaired by running again: the
+    replay finds what was written and the rest is appended.
     """
     ledger_dir = Path(ledger_dir)
     schema = load_schema()
@@ -219,13 +242,17 @@ def admit(extractions, ledger_dir=LEDGER_DIR, *, recorded_at):
             raise RegisterError(f'{minted[0]}: identifier already minted')
         pending.append((extraction, new_lines, field_rows))
         admitted[extraction.document_id] = len(new_lines)
+    rendered = []
     for extraction, new_lines, field_rows in pending:
         lines.extend(new_lines)
         columns = field_columns(extraction)
         _add(specs, {'document_id': extraction.document_id,
                      'columns': json.dumps(columns, ensure_ascii=False)}, ('document_id',))
-        _fields(ledger_dir / 'line-fields' / f'{extraction.document_id}.csv', columns,
-                field_rows)
+        rendered.append((ledger_dir / 'line-fields' / f'{extraction.document_id}.csv',
+                         _render_fields(columns, field_rows)))
+    for path, text in rendered:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding='utf-8')
     if pending:
         _append_lines(ledger_dir, schema, lines, existing, recorded_at)
         write_table(ledger_dir, 'line_field_specs', specs, schema=schema)
