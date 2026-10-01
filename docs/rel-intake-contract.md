@@ -225,3 +225,63 @@ when every verdict is `out`; one verdict that sends it to stage 2 is enough.
 The view
 counts REL in works and in work families: works linked by `version_hint` count
 once, represented by an included member, a published article first.
+
+Each pool work also gets a venue seriousness tier and registry flags (ticket
+1841). `make rel-venue-registries` pulls the four hard registries
+(Kanalregisteret level X, Scopus discontinued, DOAJ withdrawals, the hijacked
+journal checker) into a read-only dated directory under
+`~/data/projets/climate-finance-het/rel_venue_registries/` with
+`MANIFEST.sha256`, recorded in `config/rel_venue_registry_pulls.csv`.
+`make rel-venue-enrich` extends the OpenAlex venue cache
+`data/rel_venues/openalex_work_venues.csv`, tracked by `data/rel_venues.dvc`
+like the screen table (a paid, dated API snapshot, fetched by
+`make rel-pool-data`); it stops before the day's budget would fall below
+0.2 USD. `make rel-venues` writes `rel_venues.csv` (per venue),
+`rel_work_venues.csv` (per work) and `rel_venue_counts.{json,md}` into
+`data/rel_pool/`, deterministically, from the pool, the cache, the configured
+pull and `config/rel_venue_tiers.yaml` (the versioned B list). Ticket 1843
+joins the work table through `_rel_venues.load_work_venues`; the per-work
+`flags` cell (`registry:entry_id[match]`) already applies the per-work rules
+below, so the venue table is for explanation only.
+
+- Tiers: A, B, C and `unknown`. `unknown` is a work with no resolvable venue;
+  it is never folded into C (C means a venue known and not serious). A work
+  in `unknown` or C whose own URL is on a B institution's site
+  (`b_domains`; `=host` for one host only) is B with rule `b_domain`, unless
+  that URL is a non-research page (blog post, speech, homepage, library
+  guide, news issue, media compilation: the `nonresearch` list), which makes
+  it C with rule `nonresearch`; `tier_without_nonresearch` keeps the tier
+  the list would not have changed.
+- Kanalregisteret level X is per year and provisional (in the 2026-10-01 pull
+  every X is in `Nivå 2026`). A work is flagged only when the journal's level
+  for the work's publication year is X; a year with no level takes the
+  journal's nearest year with one (the earlier on a tie); a year after the
+  register's last column, or an undated work, is not flagged. The venue row keeps every yearly level in `flag_details`.
+- The hijacked check reads every URL of a work: the landing page of each of
+  its OpenAlex rows (with or without a source) and the URL of each intake
+  record. Only 32% of pool works have a URL on a host other than doi.org, so
+  a zero hijacked count is a lower bound, not an absence.
+- The Scopus flag is broader than "discontinued for publication concerns":
+  Elsevier's list gives no per-title cause, so it also holds titles dropped
+  for low metrics. DOAJ withdrawals are mostly the 2014-2016 "best practice"
+  purge. Both are flags, not evidence of malpractice.
+
+The author decided the five switches on 2026-10-01 (relayed by the MOE;
+`status: decided (author 2026-10-01)` in the configs):
+
+- (a) `exclusion.exclude` in `config/rel_venue_registries.yaml`: hijacked
+  clones only; Scopus and DOAJ are flags (a title match never excludes);
+- (a') `kanal_x`: `flag_only` (every X is a provisional 2026 level);
+- (b) `ngo_research_in_b` in `config/rel_venue_tiers.yaml`: true;
+- (c) `no_venue`: `keep_flagged` (applied by the loader's `no_venue`
+  argument, helper `unknown_switch`);
+- (d) `nonresearch`: `to_c` (helper `nonresearch_switch`).
+
+The tiers also read as memberships in the set of serious venues
+(`tier_membership`: A 1, B 1, unknown 0.5, C 0) cut at `alpha` 0.5, both
+decided by the author on 2026-10-01; 1843 reads them with
+`_rel_venues.tier_membership(cfg)` and `_rel_venues.alpha(cfg)`.
+
+Every flag, both NGO tiers, `tier_without_nonresearch` and the `unknown`
+state are written whatever the settings, so a sensitivity table can still
+show any other setting.

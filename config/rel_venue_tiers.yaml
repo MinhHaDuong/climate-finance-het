@@ -1,0 +1,430 @@
+# REL seriousness tiers per venue (ticket 1841, child of 1830).
+# Read by scripts/corpus_rel_venues.py through scripts/_rel_venues.py.
+#
+# Author decision 2026-10-01 (ticket 1830, do not reopen here):
+#   A  peer-reviewed journal
+#   B  recognised working-paper series and institutional reports (NBER, CEPR,
+#      IMF, World Bank, MDBs, major think tanks, Southern ones included)
+#   C  the rest (a venue known and not serious): excluded
+#   A and B are included, C excluded. Registry flags (rel_venue_registries.yaml)
+#   and the publisher flag below are recorded separately from the tier.
+# Added by ticket 1841: `unknown`, a work whose venue cannot be resolved; it is
+# not C, and switch (c) below decides whether it is kept or excluded.
+#
+# Versioned: bump `version` and add a changelog line for any edit to the B
+# list, the repository list or the publisher flag. The build writes the
+# version into every output row it derives from this file.
+version: 2
+changelog:
+  - "1 (2026-10-01, ticket 1841): first list."
+  - "2 (2026-10-01, ticket 1841): switch ngo_research_in_b; RePEc keys that match no pool venue pruned (ebrd:ebd, eib:eib, federal_reserve:fed, bundesbank:bub, cesifo:ifo, iza:iza, cmcc:cmc, pse_ofce:pse, brookings:bin, kdi:kdi, southeast_asia_institutes:tdr, eprg:cam:cameprg, ceepr:mee); bare name and series tokens word-bounded (diw matched Diwan, ademe Academe, iseas Diseases) and three patterns with commas or apostrophes, which fold() strips, rewritten; French tokens allow an elided l or d (fold() turns \"l'OFCE\" into \"lofce\"); switch no_venue and tier unknown; b_domains and the bndes entry; archive-level RePEc codes of shared archives narrowed to series (wop, unm, ctl, een, ind, ecr, cam); repository names word-bounded and never applied to journal-typed venues; switch nonresearch; fao.org matched on its own host only."
+
+# Switch (b): whether the NGO research series (B entries of category
+# ngo_research: Oxfam, Germanwatch) are tier B. Author decision 2026-10-01,
+# relayed by the MOE (ticket 1841). Decided: true, they stay in B. The build computes
+# both tiers (`tier_ngo_in_b`, `tier_ngo_not_b`) and writes the selected one
+# as `tier`, so the REL sensitivity table (ticket 1843) can show either.
+ngo_research_in_b:
+  status: decided (author 2026-10-01)
+  value: true
+
+# Switch (c): works with no resolvable venue (no OpenAlex source, no ISSN,
+# RePEc series, B prefix or journal name: 11,020 works on 2026-10-01; 616 of
+# them are on a B institution's own site, hence B (b_domain) or C
+# (nonresearch), leaving 10,404 in tier `unknown`). They are
+# never C: C means a venue known and not serious, these are unresolved.
+# Author decision 2026-10-01, relayed by the MOE (ticket 1841). Values:
+#   keep_flagged  kept in REL, marked by the tier `unknown` itself (no
+#                 registry flag is added) (decided: absence of metadata
+#                 is not evidence of unseriousness)
+#   exclude       left out, like C
+# The table always writes `unknown`; the loader (_rel_venues.load_work_venues,
+# no_venue=...) applies the setting, so 1843 can show both as a sensitivity row.
+no_venue:
+  status: decided (author 2026-10-01)
+  value: keep_flagged
+  membership: 0.5   # a venue of unknown seriousness (= tier_membership.unknown)
+
+# Fuzzy reading of the tiers (author decision 2026-10-01, relayed by the MOE):
+# each tier has a membership in the set of serious venues, and the crisp REL
+# set is the alpha-cut, membership >= alpha. With alpha 0.5, unknown (0.5) is
+# in, flagged by its tier; C (0) is out. Read by _rel_venues.tier_membership
+# and _rel_venues.alpha, so 1843 never hard-codes them.
+tier_membership:
+  status: decided (author 2026-10-01)
+  values: {A: 1.0, B: 1.0, unknown: 0.5, C: 0.0}
+alpha:
+  status: decided (author 2026-10-01)
+  value: 0.5
+
+# Switch (d): non-research pages of B institutions' own sites. A work made B
+# only by b_domains whose matching URL is a blog post, speech, homepage,
+# library guide, news issue or media compilation goes to C (rule
+# `nonresearch`; 70 works on 2026-10-01). Author decision 2026-10-01,
+# relayed by the MOE (ticket 1841): to_c; values to_c or off. The work table
+# writes `tier_without_nonresearch` (the tier with the list off) beside `tier`.
+nonresearch:
+  status: decided (author 2026-10-01)
+  value: to_c
+  url_patterns:
+    - 'wri\.org/insights/'                                  # WRI blog posts (52)
+    - 'worldbank\.org/curated/[a-z]{2}/[0-9/]+/(opening-)?(speech|statement|remarks|transcript)\b'  # speeches
+    - 'documentos\.bancomundial\.org/curated/[a-z]{2}/[0-9/]+/(discurso|declaracion)'
+    - '^https?://[^/]+/?$'                                   # a site's homepage
+    - 'biblioguias\.cepal\.org'                             # library guides
+    - 'elibrary\.imf\.org/view/IMF023/'                     # IMF Survey (news magazine)
+    - 'cifor\.org/publications/pdf_files/media/'            # media compilations
+
+# Inclusion rule for the B list (agent's judgement, for the author's review).
+# An institution or series is B when it is one of:
+#   igo           an intergovernmental organisation, multilateral development
+#                 bank, IFI, UN body, convention secretariat or its research arm
+#   central_bank  a central bank, the BIS or a supervisors' network
+#   public        a public economic-policy or research agency (CBO, CPB, JRC...)
+#   network       an economics research network or institute whose numbered
+#                 series the profession cites as such (NBER, CEPR, CESifo, IZA,
+#                 Leibniz institutes, Tinbergen...)
+#   think_tank    an independent policy research institute with a standing,
+#                 numbered publication series on climate, energy, development or
+#                 finance policy, North or South
+#   university_centre  a named university research centre in energy, climate
+#                 or development economics with its own series (Grantham, EPRG,
+#                 CEEPR, Oxford Smith School...)
+#   ngo_research  an NGO whose research series is a standard source of the
+#                 climate finance literature (Oxfam's shadow reports, Germanwatch)
+# Not B: generic university department series ("Working Papers" of an
+# economics department not named here), conference paper series, preprint
+# servers and repositories. Southern institutes are listed on the same footing
+# as Northern ones; a listed national institute counts whatever its language.
+#
+# Matching keys (all optional; any one match suffices):
+#   repec          RePEc archive code ("nbr") or archive:series ("wbk:wbrwps")
+#   series         regexes on the venue name, matched BEFORE the journal test
+#                  (a working-paper series OpenAlex types as a journal is B)
+#   names          regexes on the venue name, host organization or publisher,
+#                  matched AFTER the journal test (an institution's journal
+#                  stays A)
+#   record_prefix  intake record-id prefixes ("ipea:") and catalogue sources
+#                  ("unfccc") whose records are this institution's documents
+#   openalex       OpenAlex source ids;  issn  ISSNs
+# Regexes are Python, case-insensitive, matched on the accent-folded name.
+b_list:
+  # ── Intergovernmental, MDBs, IFIs, UN ──
+  - {id: world_bank, name: World Bank Group, category: igo, region: global,
+     repec: [wbk], series: ['policy research working paper', 'world bank (working|policy research|publications)'],
+     names: ['world bank', '\bifc\b', 'international finance corporation', '\bmiga\b', 'open knowledge repository']}
+  - {id: imf, name: International Monetary Fund, category: igo, region: global,
+     repec: [imf], series: ['\bimf (working|staff|policy|departmental|country|occasional)'],
+     names: ['international monetary fund', '^imf\b']}
+  - {id: oecd, name: OECD (incl. IEA/OECD CCXG, Development Centre), category: igo, region: global,
+     repec: [oec], record_prefix: [oecd], series: ['\boecd\b.*(working )?papers', 'oecd/iea climate change expert group'],
+     names: ['\boecd\b', 'organisation for economic co-operation', 'organization for economic cooperation']}
+  - {id: iea, name: International Energy Agency, category: igo, region: global,
+     names: ['international energy agency', '^iea\b']}
+  - {id: irena, name: IRENA, category: igo, region: global,
+     names: ['international renewable energy agency', '\birena\b']}
+  - {id: adb, name: Asian Development Bank and ADBI, category: igo, region: south,
+     repec: ['ris:adbewp', 'ris:adbiwp', 'asd'], series: ['adb(i)? (economics )?working paper', 'adb (reports|briefs)'],
+     names: ['asian development bank']}
+  - {id: afdb, name: African Development Bank, category: igo, region: south,
+     repec: [adb], names: ['african development bank']}
+  - {id: idb, name: Inter-American Development Bank, category: igo, region: south,
+     repec: [idb], series: ['idb (publications|working paper)'], names: ['inter-american development bank', 'banco interamericano de desarrollo']}
+  - {id: ebrd, name: EBRD, category: igo, region: global,
+     names: ['european bank for reconstruction']}
+  - {id: eib, name: European Investment Bank, category: igo, region: global,
+     names: ['european investment bank']}
+  - {id: aiib, name: Asian Infrastructure Investment Bank, category: igo, region: south,
+     names: ['asian infrastructure investment bank']}
+  - {id: ndb, name: New Development Bank, category: igo, region: south,
+     names: ['new development bank']}
+  - {id: isdb, name: Islamic Development Bank, category: igo, region: south,
+     names: ['islamic development bank']}
+  - {id: caf, name: CAF Development Bank of Latin America, category: igo, region: south,
+     repec: [dbl], names: ['\bcaf\b.*(banco|development bank)', 'corporacion andina de fomento', 'banco de desarrollo de america latina']}
+  - {id: afreximbank, name: Afreximbank, category: igo, region: south, names: ['\bafreximbank\b', 'african export-import bank']}
+  - {id: climate_funds, name: Climate funds (GCF, GEF, CIF, Adaptation Fund), category: igo, region: global,
+     names: ['green climate fund', 'global environment facility', 'climate investment funds', 'adaptation fund']}
+  - {id: unfccc, name: UNFCCC secretariat, category: igo, region: global,
+     record_prefix: [unfccc], names: ['\bunfccc\b', 'united nations framework convention on climate change']}
+  - {id: ipcc, name: IPCC, category: igo, region: global, names: ['intergovernmental panel on climate change', '\bipcc\b']}
+  - {id: un_bodies, name: UN programmes, agencies and regional commissions, category: igo, region: global,
+     repec: [unc, ilo, unu, une, 'ecr:col005', 'ecr:col013', 'ecr:col014', 'ecr:col015', 'ecr:col016', 'ecr:col022', 'ecr:col034',
+             'ecr:col043', 'ecr:col093', 'ecr:col095', 'ecr:col896'], series: ['wider working paper', 'documentos de proyectos'],
+     names: ['united nations', '\bundp\b', '\bunep\b', 'unep finance initiative', '\bunctad\b', 'un-?desa', '\bescap\b',
+             '\beclac\b', '\bcepal\b', 'economic commission for (africa|latin america|europe)', '\buneca\b',
+             'food and agriculture organization', '\bfao\b', 'international labour (organization|office)', '\bilo\b',
+             '\bunu-wider\b', 'united nations university', '\bunido\b', '\bunicef\b', 'world health organization']}
+  - {id: european_commission, name: European Commission (DG ECFIN, JRC), category: public, region: global,
+     repec: [euf, ipt], series: ['european economy - (discussion|economic) papers', 'jrc (research reports|working papers)'],
+     names: ['european commission', 'joint research centre']}
+  - {id: commonwealth_secretariat, name: Commonwealth Secretariat, category: igo, region: global, names: ['commonwealth secretariat']}
+  - {id: cgiar, name: CGIAR centres (CIFOR-ICRAF, IFPRI, CGSpace), category: igo, region: south,
+     repec: [fpr], names: ['\bcgiar\b', '\bcgspace\b', 'center for international forestry research', '\bcifor\b',
+                            'international food policy research institute', '\bifpri\b', 'world agroforestry']}
+  # ── Central banks and supervisors ──
+  - {id: bis, name: Bank for International Settlements and FSB, category: central_bank, region: global,
+     repec: [bis], names: ['bank for international settlements', '\bbis (working|papers|bulletin|quarterly)', 'financial stability board']}
+  - {id: ngfs, name: Network for Greening the Financial System, category: central_bank, region: global,
+     names: ['network for greening the financial system', '\bngfs\b']}
+  - {id: federal_reserve, name: US Federal Reserve System, category: central_bank, region: north,
+     repec: [fip], series: ['finance and economics discussion series', 'international finance discussion papers'],
+     names: ['federal reserve', 'board of governors of the federal reserve']}
+  - {id: ecb, name: European Central Bank, category: central_bank, region: north, repec: [ecb], names: ['european central bank']}
+  - {id: boe, name: Bank of England, category: central_bank, region: north, repec: [boe], names: ['bank of england']}
+  - {id: banque_de_france, name: Banque de France, category: central_bank, region: north, repec: [bfr], names: ['banque de france']}
+  - {id: bundesbank, name: Deutsche Bundesbank, category: central_bank, region: north, repec: ['zbw:bubdps'], names: ['\bbundesbank\b']}
+  - {id: banca_italia, name: Banca d'Italia, category: central_bank, region: north, repec: [bdi], names: ['banca d ?italia', 'bank of italy']}
+  - {id: banco_espana, name: Banco de Espana, category: central_bank, region: north, repec: [bde], names: ['banco de espana']}
+  - {id: other_central_banks, name: Other central banks (by name), category: central_bank, region: global,
+     repec: [bca, nbb, dnb, boj, bdr, rba, bcb, bdm],
+     names: ['central bank', 'reserve bank', 'bank of (canada|japan|korea|thailand|ghana|uganda|tanzania|mexico|israel|finland)',
+             'banco central', 'banque centrale', 'nederlandsche bank', '\briksbank\b', 'norges bank', 'banco de la republica',
+             'borradores de economia', 'banco de mexico', 'bank indonesia', 'peoples? bank of china', 'banka slovenije',
+             'national bank of (belgium|poland|romania|serbia|ukraine|georgia|kazakhstan|ethiopia|rwanda)']}
+  # ── Public agencies ──
+  - {id: public_agencies, name: Public economic-policy agencies, category: public, region: north,
+     repec: [cbo, cpb, ssb], names: ['congressional budget office', 'cpb netherlands bureau', 'statistics norway',
+                                       'office of scientific and technical information', 'national renewable energy laboratory', '\bnrel\b',
+                                       '\bumweltbundesamt\b', 'agence francaise de developpement', '\b[ld]?afd\b.*(papers|research)', '\b[ld]?ademe\b', 'france strategie',
+                                       '\bkfw\b', '\bgiz\b', 'deutsche gesellschaft fur internationale zusammenarbeit']}
+  # ── Research networks and institutes ──
+  - {id: nber, name: National Bureau of Economic Research, category: network, region: north,
+     repec: [nbr], series: ['\bnber\b'], names: ['national bureau of economic research']}
+  - {id: cepr, name: Centre for Economic Policy Research, category: network, region: north,
+     repec: [cpr, epo], series: ['\bcepr\b'], names: ['centre for economic policy research']}
+  - {id: cesifo, name: CESifo and ifo Institute, category: network, region: north,
+     repec: [ces], series: ['\bcesifo\b'], names: ['\bcesifo\b', '\bifo institut']}
+  - {id: iza, name: IZA Institute of Labor Economics, category: network, region: north, series: ['\biza\b']}
+  - {id: kiel, name: Kiel Institute for the World Economy, category: network, region: north,
+     repec: [kie, 'zbw:ifwkwp', 'zbw:ifwkie', 'zbw:ifwedp'], series: ['kiel (working|policy)'], names: ['kiel institute']}
+  - {id: diw, name: DIW Berlin, category: network, region: north, repec: [diw], series: ['\bdiw\b'], names: ['deutsches institut fur wirtschaftsforschung']}
+  - {id: zew, name: ZEW Mannheim, category: network, region: north, repec: ['zbw:zewdip'], series: ['\bzew\b']}
+  - {id: rwi, name: RWI Essen, category: network, region: north, repec: [rwi, 'zbw:rwirep'], series: ['ruhr economic papers']}
+  - {id: iwh, name: IWH Halle, category: network, region: north, repec: ['zbw:iwhdps'], series: ['iwh discussion']}
+  - {id: hwwi, name: HWWA / HWWI, category: network, region: north, repec: ['zbw:hwwadp', 'ags:hwwadp'], series: ['\bhwwa\b']}
+  - {id: idos, name: IDOS (German Institute of Development and Sustainability, ex-DIE), category: network, region: north,
+     repec: ['zbw:diedps', 'zbw:diebps', 'zbw:idospb'], series: ['idos (discussion|policy)', '\bdie (discussion|briefing)'],
+     names: ['german (development|institute of development)', 'deutsches institut fur entwicklungspolitik']}
+  - {id: wiiw, name: Vienna Institute for International Economic Studies, category: network, region: north, repec: [wii]}
+  - {id: tinbergen, name: Tinbergen Institute, category: network, region: north, repec: [tin], series: ['tinbergen institute']}
+  - {id: feem, name: Fondazione Eni Enrico Mattei, category: network, region: north,
+     repec: [fem, 'ags:feemcl', 'ags:feemdp', 'ags:feemwp'], series: ['\bfeem\b', 'fondazione eni enrico mattei'],
+     names: ['fondazione eni enrico mattei']}
+  - {id: cmcc, name: CMCC Euro-Mediterranean Center on Climate Change, category: network, region: north,
+     names: ['euro-mediterranean cent(er|re) on climate change', '\bcmcc\b']}
+  - {id: pik, name: Potsdam Institute for Climate Impact Research, category: network, region: north,
+     names: ['potsdam institute']}
+  - {id: mcc, name: Mercator Research Institute on Global Commons and Climate Change, category: network, region: north,
+     names: ['mercator research institute']}
+  - {id: iiasa, name: IIASA, category: network, region: global, repec: ['wop:iasawp'], names: ['international institute for applied systems analysis', '\biiasa\b']}
+  - {id: tse, name: Toulouse School of Economics, category: network, region: north, repec: ['tse', 'ide'], series: ['\btse working', '\bidei working']}
+  - {id: cirano, name: CIRANO, category: network, region: north, repec: [cir], series: ['\bcirano\b']}
+  - {id: cerge, name: CERGE-EI, category: network, region: north, repec: [cer], series: ['\bcerge-ei\b']}
+  - {id: core_lidam, name: CORE / LIDAM (UCLouvain), category: network, region: north, repec: [cor, 'ctl:louvir'], series: ['lidam discussion']}
+  - {id: pse_ofce, name: Paris School of Economics, OFCE and CEPII, category: network, region: north,
+     repec: [fce, cii], series: ['\b[ld]?ofce\b', '\bcepii\b'], names: ['\bcepii\b', 'observatoire francais des conjonctures']}
+  - {id: wider, name: UNU-WIDER and UNU-MERIT, category: igo, region: global, repec: ['unm:unumer', 'unm:unuint', unu], series: ['merit working', 'wider working']}
+  # ── Think tanks, North ──
+  - {id: brookings, name: Brookings Institution, category: think_tank, region: north, names: ['\bbrookings\b']}
+  - {id: piie, name: Peterson Institute for International Economics, category: think_tank, region: north,
+     repec: [iie], names: ['peterson institute', 'institute for international economics']}
+  - {id: cgd, name: Center for Global Development, category: think_tank, region: north,
+     repec: [cgd], names: ['center for global development']}
+  - {id: rff, name: Resources for the Future, category: think_tank, region: north,
+     repec: [rff], series: ['\brff (working|discussion|report)'], names: ['resources for the future']}
+  - {id: wri, name: World Resources Institute (incl. WRI India, WRI Brasil), category: think_tank, region: global,
+     names: ['world resources institute', '\bwri\b']}
+  - {id: cpi, name: Climate Policy Initiative, category: think_tank, region: global,
+     names: ['climate policy initiative']}
+  - {id: iisd, name: International Institute for Sustainable Development, category: think_tank, region: north,
+     names: ['international institute for sustainable development', '\biisd\b']}
+  - {id: iied, name: International Institute for Environment and Development, category: think_tank, region: north,
+     names: ['international institute for environment and development', '\biied\b']}
+  - {id: odi, name: ODI (Overseas Development Institute), category: think_tank, region: north,
+     names: ['overseas development institute']}
+  - {id: ids_sussex, name: Institute of Development Studies, category: think_tank, region: north,
+     names: ['institute of development studies']}
+  - {id: sei, name: Stockholm Environment Institute, category: think_tank, region: global, names: ['stockholm environment institute']}
+  - {id: iddri, name: IDDRI, category: think_tank, region: north, names: ['\b[ld]?iddri\b', 'institut du developpement durable et des relations internationales']}
+  - {id: i4ce, name: I4CE Institute for Climate Economics, category: think_tank, region: north, names: ['\bi4ce\b', 'institute for climate economics']}
+  - {id: bruegel, name: Bruegel, category: think_tank, region: north, repec: [bre], names: ['\bbruegel\b']}
+  - {id: ceps, name: Centre for European Policy Studies, category: think_tank, region: north, repec: [eps], names: ['centre for european policy studies']}
+  - {id: chatham, name: Chatham House, category: think_tank, region: north, names: ['chatham house', 'royal institute of international affairs']}
+  - {id: e3g, name: E3G, category: think_tank, region: north, names: ['\be3g\b']}
+  - {id: climate_analytics, name: Climate Analytics and NewClimate Institute, category: think_tank, region: north,
+     names: ['climate analytics', 'newclimate institute']}
+  - {id: wuppertal, name: Wuppertal Institute, category: think_tank, region: north, names: ['wuppertal institut']}
+  - {id: ecologic, name: Ecologic Institute and Oeko-Institut, category: think_tank, region: north, names: ['ecologic institut', '\boko-institut\b', '\boeko-institut\b']}
+  - {id: carbon_tracker, name: Carbon Tracker Initiative, category: think_tank, region: north, names: ['carbon tracker']}
+  - {id: cfr_csis, name: CFR, CSIS, Carnegie Endowment, category: think_tank, region: north,
+     names: ['council on foreign relations', 'center for strategic and international studies', 'carnegie endowment']}
+  - {id: rand, name: RAND Corporation, category: think_tank, region: north, names: ['rand corporation']}
+  - {id: c2es, name: C2ES (Center for Climate and Energy Solutions, ex-Pew Center), category: think_tank, region: north,
+     names: ['center for climate and energy solutions', 'pew center on global climate change']}
+  - {id: igss, name: IGES Institute for Global Environmental Strategies, category: think_tank, region: north,
+     names: ['institute for global environmental strategies']}
+  - {id: kdi, name: Korea Development Institute and KIEP, category: think_tank, region: north,
+     names: ['korea development institute', 'korea institute for international economic policy']}
+  # ── Think tanks and institutes, South ──
+  - {id: teri, name: TERI The Energy and Resources Institute, category: think_tank, region: south,
+     names: ['energy and resources institute', '\bteri\b', 'tata energy research institute']}
+  - {id: ceew, name: CEEW Council on Energy, Environment and Water, category: think_tank, region: south,
+     record_prefix: ['ceew'], names: ['council on energy environment and water', '\bceew\b']}
+  - {id: cse_india, name: Centre for Science and Environment, category: think_tank, region: south,
+     names: ['centre for science and environment']}
+  - {id: orf, name: Observer Research Foundation, category: think_tank, region: south, names: ['observer research foundation']}
+  - {id: cpr_india, name: Centre for Policy Research (New Delhi), category: think_tank, region: south,
+     names: ['centre for policy research']}
+  - {id: india_institutes, name: Indian public economics institutes (NIPFP, ICRIER, IGIDR, NCAER, RIS), category: think_tank, region: south,
+     repec: [npf, 'ind:igiwpp'], series: ['indira gandhi institute of development research'],
+     names: ['national institute of public finance and policy', '\bnipfp\b', '\bicrier\b', 'indian council for research on international economic relations',
+             'indira gandhi institute of development research', '\bigidr\b', 'national council of applied economic research', '\bncaer\b',
+             'research and information system for developing countries']}
+  - {id: acts, name: African Centre for Technology Studies, category: think_tank, region: south,
+     names: ['african centre for technology studies']}
+  - {id: saiia, name: South African Institute of International Affairs, category: think_tank, region: south,
+     names: ['south african institute of international affairs', '\bsaiia\b']}
+  - {id: tips, name: Trade & Industrial Policy Strategies (TIPS), category: think_tank, region: south,
+     names: ['trade (&|and) industrial policy strategies']}
+  - {id: aerc, name: African Economic Research Consortium, category: network, region: south,
+     names: ['african economic research consortium', '\baerc\b']}
+  - {id: codesria, name: CODESRIA, category: network, region: south,
+     names: ['council for the development of social science research in africa', '\bcodesria\b']}
+  - {id: agdi, name: African Governance and Development Institute, category: think_tank, region: south, repec: [agd]}
+  - {id: uneca_acpc, name: African Climate Policy Centre, category: igo, region: south, names: ['african climate policy centre']}
+  - {id: bndes, name: BNDES Brazilian Development Bank, category: public, region: south,
+     names: ['\bbndes\b', 'banco nacional de desenvolvimento economico']}
+  - {id: ipea, name: IPEA Instituto de Pesquisa Economica Aplicada, category: think_tank, region: south,
+     repec: [ipe], record_prefix: ['ipea'], names: ['instituto de pesquisa economica aplicada', '\bipea\b']}
+  - {id: cippec, name: CIPPEC, category: think_tank, region: south, names: ['\bcippec\b']}
+  - {id: clacso, name: CLACSO Consejo Latinoamericano de Ciencias Sociales, category: network, region: south,
+     record_prefix: ['clacso'], names: ['\bclacso\b', 'consejo latinoamericano de ciencias sociales']}
+  - {id: fgv, name: Fundacao Getulio Vargas research centres, category: think_tank, region: south,
+     repec: [fgv], names: ['fundacao getulio vargas', '\bfgv\b']}
+  - {id: latam_institutes, name: Latin American policy institutes (Fedesarrollo, GRADE, CEDLAS, CEDE, IETS, Escolhas), category: think_tank, region: south,
+     repec: ['col:000089'], series: ['documentos cede', '\bcedlas\b'],
+     names: ['\bfedesarrollo\b', 'grupo de analisis para el desarrollo', '\bcedlas\b', 'instituto escolhas', 'centro de estudios publicos']}
+  - {id: cpd_bangladesh, name: Centre for Policy Dialogue (Bangladesh), category: think_tank, region: south,
+     record_prefix: ['cpd'], names: ['centre for policy dialogue']}
+  - {id: south_asia_institutes, name: South Asian institutes (SDPI, PIDE, BIDS), category: think_tank, region: south,
+     repec: [pid], names: ['sustainable development policy institute', 'pakistan institute of development economics', '\bpide\b',
+                           'bangladesh institute of development studies']}
+  - {id: southeast_asia_institutes, name: Southeast Asian institutes (ERIA, PIDS, TDRI, CSIS Jakarta, ISEAS), category: think_tank, region: south,
+     repec: [era, phd], series: ['\beria\b'],
+     names: ['economic research institute for asean', 'philippine institute for development studies', 'thailand development research institute',
+             'centre for strategic and international studies.*(jakarta|indonesia)', '\biseas\b']}
+  - {id: china_institutes, name: Chinese policy research institutes (DRC, CASS, Tsinghua ICCSD), category: think_tank, region: south,
+     names: ['development research center of the state council', 'chinese academy of social sciences',
+             'institute of climate change and sustainable development']}
+  - {id: south_centre, name: South Centre and Third World Network, category: think_tank, region: south,
+     names: ['south centre', 'third world network']}
+  # ── University research centres (energy, climate, development economics) ──
+  - {id: grantham, name: Grantham Research Institute (LSE) and CCCEP, category: university_centre, region: north,
+     repec: ['lsg'], series: ['\bgri working', 'grantham research institute', 'centre for climate change economics and policy', '\bcccep\b'],
+     names: ['grantham research institute']}
+  - {id: eprg, name: Energy Policy Research Group (Cambridge), category: university_centre, region: north,
+     series: ['\beprg\b']}
+  - {id: ceepr, name: MIT CEEPR and MIT Joint Program, category: university_centre, region: north,
+     names: ['center for energy and environmental policy research', 'mit joint program on the science and policy of global change']}
+  - {id: harvard_climate, name: Harvard Project on Climate Agreements, Belfer, M-RCBG, category: university_centre, region: north,
+     repec: ['ecl:harjfk'], names: ['harvard project on climate agreements', 'belfer center', '\bmossavar-rahmani\b']}
+  - {id: oxford_centres, name: Oxford Smith School, OxCarre, Oxford Institute for Energy Studies, CSAE, category: university_centre, region: north,
+     repec: ['oxf:oxcrwp', csa], names: ['smith school of enterprise', 'oxford institute for energy studies', '\boxcarre\b', 'centre for the study of african economies']}
+  - {id: cer_eth, name: CER-ETH Center of Economic Research at ETH Zurich, category: university_centre, region: north,
+     repec: ['eth:wpswif'], series: ['\bcer-eth\b']}
+  - {id: ccep_anu, name: ANU Crawford CCEP and CAMA, category: university_centre, region: north,
+     repec: ['een:ccepwp', 'een:camaaa', 'een:eenhrr'], series: ['ccep working', 'cama working']}
+  - {id: efd, name: Environment for Development initiative, category: university_centre, region: global,
+     repec: ['hhs:gunefd'], series: ['efd discussion'], names: ['environment for development']}
+  - {id: ewi_fcn, name: EWI Cologne and FCN Aachen energy economics institutes, category: university_centre, region: north,
+     repec: ['ris:ewikln', 'ris:fcnwpa'], series: ['ewi working', 'fcn working']}
+  - {id: ceep_bit, name: CEEP-BIT Center for Energy and Environmental Policy Research (Beijing), category: university_centre, region: south,
+     repec: ['biw'], series: ['\bceep-bit\b']}
+  - {id: erc_uct, name: Energy Research Centre (University of Cape Town), category: university_centre, region: south,
+     names: ['energy research centre']}
+  # ── NGO research series ──
+  - {id: oxfam, name: Oxfam research reports, category: ngo_research, region: global, names: ['\boxfam\b']}
+  - {id: germanwatch, name: Germanwatch, category: ngo_research, region: north, names: ['\bgermanwatch\b']}
+
+# B entries that match no work of the 2026-10-01 pool (33, e.g. IPCC, IRENA,
+# IISD, IIED, TERI) are kept: they are bodies of the climate-finance
+# literature, and a zero here measured venue resolution, not relevance. Before
+# b_domains, WRI, SEI, CPI, ODI and Oxfam matched nothing either, although
+# 100+ of their reports were in the pool with no resolvable venue.
+
+# Landing-page hosts of B institutions (a host equal to or under the domain).
+# A work whose venue is unresolved (tier unknown) or C (a repository or an
+# unlisted source) is B, rule `b_domain`, when one of its URLs (OpenAlex
+# landing pages, intake record URLs) is on one of these hosts: the
+# institution published it itself. Built from the hosts of the 2026-10-01
+# unknown and C works (wri.org 78 works, bndes.gov.br 175, worldbank.org and
+# bancomundial.org 107, sei.org 15, oxfam 10, ipea.gov.br 38...).
+b_domains:
+  world_bank: [worldbank.org, bancomundial.org, banquemondiale.org]
+  imf: [imf.org, elibrary.imf.org]
+  oecd: [oecd.org, oecd-ilibrary.org]
+  iea: [iea.org, iea.blob.core.windows.net]
+  irena: [irena.org]
+  adb: [adb.org]
+  idb: [iadb.org]
+  afdb: [afdb.org]
+  climate_funds: [greenclimate.fund, thegef.org, cif.org, adaptation-fund.org]
+  unfccc: [unfccc.int]
+  ipcc: [ipcc.ch]
+  # =host: that host only (agris.fao.org is FAO's index of third-party records)
+  un_bodies: [un.org, undp.org, unep.org, unepfi.org, unctad.org, unescap.org, cepal.org, uneca.org, '=fao.org',
+              openknowledge.fao.org, ilo.org, wider.unu.edu]
+  cgiar: [cgspace.cgiar.org, cifor.org, cifor-icraf.org, ifpri.org]
+  nber: [nber.org]
+  cepr: [cepr.org]
+  brookings: [brookings.edu]
+  cgd: [cgdev.org]
+  rff: [rff.org]
+  wri: [wri.org]
+  cpi: [climatepolicyinitiative.org]
+  iisd: [iisd.org]
+  iied: [iied.org]
+  odi: [odi.org]
+  sei: [sei.org]
+  iddri: [iddri.org]
+  i4ce: [i4ce.org]
+  chatham: [chathamhouse.org]
+  e3g: [e3g.org]
+  carbon_tracker: [carbontracker.org]
+  teri: [teriin.org]
+  ceew: [ceew.in]
+  ipea: [ipea.gov.br]
+  bndes: [bndes.gov.br, bndes.net]
+  oxfam: [oxfam.org, oxfam.org.uk, oxfam.ca, oxfamilibrary.openrepository.com]
+  germanwatch: [germanwatch.org]
+
+# Repositories, preprint servers and index platforms: never a venue of their
+# own. A work whose only venue is one of these is C unless a B key matches.
+# Matched on the venue name and on the OpenAlex source type (`types`).
+repositories:
+  types: [repository]
+  # Word-bounded, and never applied to a journal-typed venue (see _rel_venues.assign_tier):
+  # bare substrings sent the journals "REPeC" and "Compra Journal of Economics" to C.
+  names: ['\bssrn\b', 'social science research network', 'research square', '\bpreprints?\b', '\barxiv\b', '\bbiorxiv\b',
+          '\bmedrxiv\b', '\bsocarxiv\b', '\bzenodo\b', '\bfigshare\b', 'open science framework', '\bosf\b', '\bresearchgate\b',
+          '^repec\b', '^research papers in economics$', '\bmpra\b', '\beconstor\b', 'hal\b.*(archive|ccsd)', '^post-print$',
+          '\bqeios\b', '\bauthorea\b', 'scielo preprints']
+  repec: ['pra', 'hal', 'zbw:esprep', 'arx', 'osf']
+
+# OpenAlex source types that count as a peer-reviewed journal (tier A).
+# `conference`, `book series`, `ebook platform`, `other`, `metadata` do not.
+journal_types: [journal]
+
+# Free-text document types (pool doc_type) that declare a journal article
+# when no OpenAlex source is known.
+journal_doc_types: ['journal-article', 'article', 'academic journal', 'review',
+                    'info:eu-repo/semantics/article', 'research-article']
+
+# Publisher flag (author decision: kept, recorded for a sensitivity analysis).
+# Matched on the OpenAlex host organization and its lineage, the RePEc
+# archive code, and the TOC manifest publisher.
+publisher_flags:
+  - {id: mdpi, names: ['multidisciplinary digital publishing institute', '^mdpi'], repec: [gam]}
+  - {id: frontiers, names: ['^frontiers media', '^frontiers\b'], repec: [fro]}
+  - {id: hindawi, names: ['^hindawi'], repec: [hin]}

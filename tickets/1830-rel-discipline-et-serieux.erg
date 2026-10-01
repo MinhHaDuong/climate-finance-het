@@ -49,9 +49,9 @@ sensitivity analysis, unless an individual title is flagged.
 
 ## Children
 - 1840: extended step 2 prompt (discipline, field, contribution type), before launch
-- 1841: seriousness ranks and per-source flags
+- 1841: seriousness ranks and per-source flags (closed, PR 1657)
 - 1842: discipline catch-up for works already re-read by Opus
-- 1843: REL view, PRISMA, protocol (blocked by 1840, 1841, 1842)
+- 1843: REL view, PRISMA, protocol (blocked by 1842; 1840 and 1841 closed)
 
 ## Exit criteria
 - [ ] Protocol and PRISMA describe the two dimensions and their reasons
