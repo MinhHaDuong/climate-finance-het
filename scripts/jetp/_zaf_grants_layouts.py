@@ -227,6 +227,8 @@ def check_overall_union(ids_by_table, controls, truncated=None, declared=None):
     if only_overall or only_registers:
         text += ("; publisher's own difference, reviewed: only in overall "
                  f'{sorted(only_overall)}, only in registers {sorted(only_registers)}')
+        if expected.get('reading'):
+            text += f" (reading: {expected['reading']})"
     controls.append(text)
 
 
