@@ -2,13 +2,14 @@
 Title: Build the cross-vendor panel reference set for M2.3 calibration
 Created: 2026-10-01
 Author: HDMX-coding-agent
-Label: needs-human
 
 --- log ---
 2026-10-01T09:00Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane); author decision 2026-10-01, interactive: build a small human gold set. [[1890]] (pilot) and [[1873]] (calibration) are Blocked-by this ticket.
 2026-10-01T09:00Z HDMX-coding-agent note open decision for the author (needs-human): who annotates, the author or a paid annotator; estimate in the body.
 
 2026-10-01T06:43Z HDMX-coding-agent note RETRACTION of the human gold set, author decision 2026-10-01, interactive: "I retract my decision in front of the costs. In France, a deal is not made until there is agreement on the price" and "I am NOT even considering a 30 hours annotation". No author hours, no paid annotator, no human annotation of any kind, not even an audit sample. The ticket is rewritten (title, Context, method, exit criteria) as a cross-vendor panel reference set; calibration then measures agreement with a panel, not truth. Label needs-human now covers only acceptance of the price and of the spec amendment. Priced in Context: USD 10 to 48 derived, central 18.
+2026-10-01T06:47Z HDMX-coding-agent note author decisions 2026-10-01, interactive: (a) the price of the panel reference set is accepted (USD 10 to 48, central about 18); (b) the spec amendment written here is accepted. Applied to Q17 and extraction § 6.3 by branch t1895-spec-amend-reference-answers, with the matching sentences of requirements Q5 and the legal note. Operation § 5 needed no change; the exit criterion of [[1873]] ("made by hand") remains for that ticket.
+2026-10-01T06:47Z HDMX-coding-agent unlabel needs-human
 --- body ---
 ## Context
 
@@ -254,9 +255,9 @@ does not stand for any annotation.
 
 ## Exit criteria
 
-- [ ] The author accepts the price range (USD 10 to 48, central 18) before
+- [x] The author accepts the price range (USD 10 to 48, central 18) before
   any paid call; the acceptance and the date are logged here
-- [ ] The author accepts the spec amendment of Q17 and extraction § 6.3
+- [x] The author accepts the spec amendment of Q17 and extraction § 6.3
   above (the spec is edited by its own PR after acceptance, not here)
 - [ ] The panel is fixed and logged (at least 3 makers, none among the
   readers and arbiter candidates), with versions, serving and the

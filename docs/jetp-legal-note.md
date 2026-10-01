@@ -361,7 +361,7 @@ annual plan of the responsible body.
 disclosure of AI-generated text published to inform the public on matters
 of public interest, except under human review and editorial responsibility;
 the Observatory's pages are authored and reviewed, the LLM readings are
-data calibrated on human reference answers (extraction §6.3) in a release
+data calibrated on cross-vendor panel reference answers (extraction §6.3) in a release
 a named reviewer accepts (results §5); the exception is to be stated
 explicitly.
 

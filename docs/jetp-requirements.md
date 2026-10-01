@@ -758,7 +758,7 @@ likelihood; recorded, every item ending with a stance and, unless
 undetermined, a calibrated likelihood and confidence, with every reader's
 answer; and served in the order of Fusion § 3. No item is queued for the
 author (C1). No person reviews high-impact items one by one: the held-out
-reference answers are the only human check, and the agree-but-wrong rate
+reference answers are the only check, and the agree-but-wrong rate
 and calibration error measured on them are published with each release
 (Extraction § 6.3). *M2* for statements extracted and for document identity
 judgements, *M3a* for discovery and admission judgements, *M3b* for the
@@ -783,14 +783,17 @@ reading of a statement or judgement, and every human decision on it, is
 kept; neither overwrites the other, and each names its method, version and
 cost. A decision that rejects a reading names the step at fault (retrieval,
 extraction, reading, matching). The reference answers for research on
-machine reading (AEDIST) are the hand-made readings: lines read by hand,
-match judgements decided by hand, and any decision the author chose to
-make. A statement admitted on machine readings alone carries that flag and
+machine reading (AEDIST) are the lines made by a blind cross-vendor panel,
+distinct from the readers and the arbiter, and named as panel agreement;
+match judgements decided by hand and any decision the author chose to make
+are reported apart. A statement admitted on machine readings alone carries that flag and
 is not a reference answer, and the readers and the arbiter are named, so
 that a benchmark can exclude the Observer's own readers. *M2.* Test: for a
 sample of checked statements, every machine reading and the decision are
 retrievable with method, version and cost; a decision that disagrees with a
 reading leaves the reading intact and names a step.
+
+History: reference answers made by a blind cross-vendor panel instead of by hand, decided by the author on 2026-10-01 (interactive), after retracting the human gold set in front of its cost; ticket 1895.
 
 ### 6.3 Integrity of the record
 
