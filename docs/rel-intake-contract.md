@@ -299,6 +299,7 @@ else `included` (`rel_reason`, `rel_final` in `rel_view.csv`). It needs
 in families under `reasons` in `rel_counts.json`, records the sha256 of the
 pool, both append-only tables and the venue table under `inputs`, and writes
 `rel_sensitivity.csv`, the included set under each seriousness setting
-(publishers dropped, tier A only, Scopus and DOAJ also excluding, NGO switch
-flipped). The rules (which dimension row wins, the family rule) are in the
-`scripts/_rel_reasons.py` docstring.
+(publishers dropped, tier A only, Kanalregisteret flipped, Scopus and DOAJ
+also excluding, NGO switch flipped, switch (c) flipped). The rules (which
+dimension row wins, the family rule) are in the `scripts/_rel_reasons.py`
+docstring.
