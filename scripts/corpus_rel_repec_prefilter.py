@@ -84,7 +84,7 @@ def screen_opus_labels(screen_csv: str) -> dict[str, dict]:
 
 
 def build_texts(pool_csv: str, screen_csv: str, labels_csv: str, delivery: str | None,
-                sentinel_files: list[str], redif_table: str | None = None) -> list[dict]:
+                sentinel_files: list[str], recall_sentinels: str | None = None) -> list[dict]:
     import pandas as pd
     pool = pd.read_csv(pool_csv, dtype=str, low_memory=False,
                        usecols=["work_key", "openalex_id", "doi", "title", "abstract"]).fillna("")
@@ -133,6 +133,16 @@ def build_texts(pool_csv: str, screen_csv: str, labels_csv: str, delivery: str |
         out.append({"key": r.record_id, "role": "repec", "label": "", "source": r.query_id,
                     "weight": "", "stratum": r.doc_type, "text": text_of(r.title, r.abstract),
                     "title": r.title, "abstract": r.abstract})
+    if recall_sentinels:
+        # the lane's own record of each retrieved sentinel, scored as the pre-filter would see it
+        recs = {r.record_id: r for r in rec.itertuples()}
+        for s in csv.DictReader(open(recall_sentinels, encoding="utf-8")):
+            for h in (s.get("handles") or "").split("|"):
+                r = recs.get(h)
+                if r is not None and s.get("retrieved") == "True":
+                    out.append({"key": f"{s['file']}:{s['sentinel']}:{h}", "role": "sentinel_repec",
+                                "label": "icf", "source": s["file"], "weight": "",
+                                "stratum": s.get("set", ""), "text": text_of(r.title, r.abstract)})
     exc = pd.read_csv(os.path.join(delivery, "excluded.csv"), dtype=str).fillna("")
     for r in exc[exc.reason == "no_dedup_key"].itertuples():
         out.append({"key": r.record_id, "role": "repec", "label": "", "source": r.query_id,
@@ -273,6 +283,11 @@ def fit(texts_path: str, emb_paths: list[str] | str, out_dir: str, seed: int = 1
             for s, g in (("tuning", [r for r in sent if r["stratum"] == "tuning"]),
                          ("reserve", [r for r in sent if r["stratum"] == "holdout"]),
                          ("other", [r for r in sent if r["stratum"] not in ("tuning", "holdout")]))},
+        "sentinels_lane_records": {
+            s: {"n": len(g), "dropped": [r["key"] for r in g if dropped(r["p_out"], t)],
+                "max_p_out": round(max((r["p_out"] for r in g), default=0), 4)}
+            for s, g in (("reserve", [r for r in by["sentinel_repec"] if r["stratum"] == "holdout"]),
+                         ("non_reserve", [r for r in by["sentinel_repec"] if r["stratum"] != "holdout"]))},
         "repec": {"n": len(by["repec"]), "dropped": sum(dropped(r["p_out"], t) for r in by["repec"]),
                   "share_dropped": round(sum(dropped(r["p_out"], t) for r in by["repec"])
                                          / max(1, len(by["repec"])), 3)},
@@ -282,6 +297,8 @@ def fit(texts_path: str, emb_paths: list[str] | str, out_dir: str, seed: int = 1
         rep["sweep"].append({"threshold": q,
                              "train_icf_lost_oof": sum(1 for r in train if r["label"] == "icf" and r["p_out"] > q),
                              "reserve_sentinels_lost": sum(1 for r in sent if r["stratum"] == "holdout" and r["p_out"] > q),
+                             "reserve_sentinel_lane_records_lost": sum(
+                                 1 for r in by["sentinel_repec"] if r["stratum"] == "holdout" and r["p_out"] > q),
                              "repec_share_dropped": round(sum(r["p_out"] > q for r in by["repec"])
                                                           / max(1, len(by["repec"])), 3)})
     with open(os.path.join(out_dir, "report.json"), "w", encoding="utf-8") as fh:
@@ -431,6 +448,8 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("--delivery", help="the lane delivery; omitted = training and validation texts only")
     t.add_argument("--sentinels", nargs="+",
                    default=["config/rel_sud_sentinels.csv", "config/rel_causal_sentinels.csv"])
+    t.add_argument("--recall-sentinels", help="recall.sentinels.csv of the search script: adds the lane's "
+                   "record of each retrieved sentinel (role sentinel_repec)")
     t.add_argument("--output", required=True)
     e = sub.add_parser("embed")
     e.add_argument("--texts", required=True)
@@ -453,7 +472,7 @@ def main(argv: list[str] | None = None) -> int:
     o.add_argument("--output", required=True)
     a = ap.parse_args(argv)
     if a.cmd == "texts":
-        rows = build_texts(a.pool, a.screen, a.labels, a.delivery, a.sentinels)
+        rows = build_texts(a.pool, a.screen, a.labels, a.delivery, a.sentinels, a.recall_sentinels)
         with open(a.output, "w", encoding="utf-8") as fh:
             for r in rows:
                 fh.write(json.dumps(r, ensure_ascii=False) + "\n")

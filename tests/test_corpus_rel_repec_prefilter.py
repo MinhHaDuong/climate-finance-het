@@ -69,7 +69,12 @@ def test_build_texts_never_trains_on_validation(tmp_path):
                    "title": "T. x", "abstract": "ab"}]).to_csv(d / "records.csv", index=False)
     pd.DataFrame([{"record_id": "RePEc:a:b:2", "query_id": "Q", "reason": "no_dedup_key",
                    "title": "Only title", "note": ""}]).to_csv(d / "excluded.csv", index=False)
-    rows = pf.build_texts(str(pool), str(screen), str(lab), str(d), [str(sen)])
+    rec_sen = tmp_path / "recall.sentinels.csv"
+    pd.DataFrame([{"file": "sen.csv", "sentinel": "S1", "set": "holdout", "retrieved": True,
+                   "handles": "RePEc:a:b:1"}]).to_csv(rec_sen, index=False)
+    rows = pf.build_texts(str(pool), str(screen), str(lab), str(d), [str(sen)], str(rec_sen))
+    sr = [r for r in rows if r["role"] == "sentinel_repec"]
+    assert [(r["key"], r["stratum"], r["text"]) for r in sr] == [("sen.csv:S1:RePEc:a:b:1", "holdout", "T. x. ab")]
     roles = {(r["key"], r["role"]) for r in rows}
     assert ("openalex:W1", "heldout") in roles and ("openalex:W1", "train") not in roles
     assert ("openalex:W2", "control") in roles
