@@ -181,10 +181,6 @@ def test_xlsx_reader_turns_corrupt_bytes_into_an_error_not_a_crash(tmp_path):
 
 def test_xlsx_reader_records_cell_fill_colours_as_verbatim_fields(tmp_path):
     """Red test: a fixture row with and without the legend fill."""
-    model = {'sheets': [{'name': 'Sheet', 'state': 'visible', 'rows': [
-        {'r': 1, 'hidden': False, 'cells': {'A': 'Unique ID', 'B': 'Status'}},
-        {'r': 2, 'hidden': False, 'cells': {'A': 'ROW001', 'B': 'Active'}},
-        {'r': 3, 'hidden': False, 'cells': {'A': 'ROW002', 'B': 'Completed'}}]}]}
     # Manually create an XLSX with a fill on ROW001
     with zipfile.ZipFile(tmp_path / 'w.xlsx', 'w') as archive:
         archive.writestr('[Content_Types].xml', '<Types/>')
@@ -231,18 +227,6 @@ def test_xlsx_reader_records_cell_fill_colours_as_verbatim_fields(tmp_path):
 
 def test_xlsx_reader_records_fill_colour_legend_in_footer(tmp_path):
     """Test that fill colour legend text in footnotes is captured."""
-    # Create a minimal model with a legend footnote - need all required headers
-    # Based on xlsx-2025-q1.json structure
-    model = {'sheets': [{
-        'name': 'DataTable - Overall',
-        'state': 'visible',
-        'rows': [
-            {'r': 1, 'hidden': False, 'cells': {'A': 'Unique ID', 'B': 'Portfolios', 'C': 'Priority Areas', 'D': 'Total US$', 'E': 'Total ZAR', 'F': 'Source', 'G': 'Implementing Entity', 'H': 'Institutional / South African Partner', 'I': 'Beneficiary', 'J': 'Status', 'K': 'Description', 'L': 'Date of Financing Agreement Signed*', 'M': 'End Date'}},
-            {'r': 2, 'hidden': False, 'cells': {'A': 'ROW001', 'B': 'Electricity', 'C': 'Transmission', 'D': '100', 'E': '1700', 'F': 'Test', 'G': 'Test', 'J': 'Active', 'K': 'Test description', 'L': '2022-01-01', 'M': '2023-12-31'}},
-            {'r': 3, 'hidden': False, 'cells': {'D': '100', 'E': '1700'}},
-            {'r': 5, 'hidden': False, 'cells': {'A': 'Footnote 1: Green Highlight: Indicates that all these projects were closed'}},
-        ]
-    }]}
     
     # Manually create an XLSX with a green fill on ROW001
     with zipfile.ZipFile(tmp_path / 'w.xlsx', 'w') as archive:

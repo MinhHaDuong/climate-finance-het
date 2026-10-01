@@ -204,39 +204,7 @@ def _fill_styles(archive):
         for fill in fills_elem.findall('m:fill', NS):
             pattern = fill.find('m:patternFill', NS)
             if pattern is not None:
-                pattern_type = pattern.get('patternType', 'none')
-                # Get foreground colour
-                fg_color = pattern.find('m:fgColor', NS)
-                bg_color = pattern.find('m:bgColor', NS)
-                
-                if fg_color is not None and pattern_type == 'solid':
-                    rgb = fg_color.get('rgb', '')
-                    if rgb:
-                        fills[len(fills)] = f'{pattern_type} {rgb}'
-                    else:
-                        # Indexed or theme colour - store as-is
-                        index = fg_color.get('indexed', '')
-                        theme = fg_color.get('theme', '')
-                        tint = fg_color.get('tint', '')
-                        parts = []
-                        if index:
-                            parts.append(f'indexed:{index}')
-                        if theme:
-                            parts.append(f'theme:{theme}')
-                        if tint:
-                            parts.append(f'tint:{tint}')
-                        if parts:
-                            fills[len(fills)] = f'{pattern_type} fg:{",".join(parts)}'
-                        else:
-                            fills[len(fills)] = pattern_type
-                elif bg_color is not None:
-                    rgb = bg_color.get('rgb', '')
-                    if rgb:
-                        fills[len(fills)] = f'{pattern_type} bg:{rgb}'
-                    else:
-                        fills[len(fills)] = pattern_type
-                else:
-                    fills[len(fills)] = pattern_type
+                fills[len(fills)] = _describe_pattern_fill(pattern)
             else:
                 # Gradient or other fill types - store as 'other'
                 fills[len(fills)] = 'other'
@@ -248,6 +216,36 @@ def _fill_styles(archive):
         xf_fills[index] = fills.get(fill_id, 'none')
     
     return xf_fills
+
+
+def _describe_pattern_fill(pattern):
+    """Describe a patternFill element as a string."""
+    pattern_type = pattern.get('patternType', 'none')
+    fg_color = pattern.find('m:fgColor', NS)
+    bg_color = pattern.find('m:bgColor', NS)
+    
+    if fg_color is not None and pattern_type == 'solid':
+        rgb = fg_color.get('rgb', '')
+        if rgb:
+            return f'{pattern_type} {rgb}'
+        # Indexed or theme colour
+        index = fg_color.get('indexed', '')
+        theme = fg_color.get('theme', '')
+        tint = fg_color.get('tint', '')
+        parts = []
+        if index:
+            parts.append(f'indexed:{index}')
+        if theme:
+            parts.append(f'theme:{theme}')
+        if tint:
+            parts.append(f'tint:{tint}')
+        if parts:
+            return f'{pattern_type} fg:{",".join(parts)}'
+    if bg_color is not None:
+        rgb = bg_color.get('rgb', '')
+        if rgb:
+            return f'{pattern_type} bg:{rgb}'
+    return pattern_type
 
 
 def read_workbook(path):
