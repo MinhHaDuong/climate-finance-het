@@ -10,6 +10,9 @@ Author: haduong
 2026-09-30T21:56Z HDMX-coding-agent note author decisions 2026-09-30: exit rule for incertaine (stay in REL, flagged) and counting unit (work family, published version) ticked; applied in the REL view, PR 1638
 2026-10-01T02:31Z HDMX-coding-agent CEEW year check: 'Role of Financial Players in the Indian Carbon Market' is 2024 (CEEW publication page and PDF); the 2023 in t1653 2026-09-30 came from the Aug 2023 stakeholder discussion in the brief, not an upload date. Correction in t1653 2026-10-01 (#1644) confirmed; no human check needed.
 2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
+2026-10-01T08:22Z HDMX-coding-agent note author decision 2026-10-01: Fable audit of ~300 stage-2 labels stratified by label; Cohen's kappa reported before any published REL count
+2026-10-01T08:22Z HDMX-coding-agent note author decision 2026-10-01: catalogue pin kept = unified_works_rel_pin.csv, 43,179 rows (md5 3633ad9f); the dvc.lock unified_works mismatch (35,143 rows) is settled at 1656
+2026-10-01T08:22Z HDMX-coding-agent note author decision 2026-10-01: local Gemma failed its bar; the rest of the full-pool stage 1 (160,690 unlabelled works of the 2026-10-01 Qwen input and the 1755 re-screen) goes through design B on OpenRouter; Qwen stays stopped
 --- body ---
 ## Context
 
