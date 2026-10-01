@@ -30,7 +30,7 @@ rows, no timestamps, byte-identical on rerun with the same inputs.
   flag, excluded, moved by the NGO switch and per publisher flag, by lane,
   and the works with no venue.
 
-Switches (pending author decisions): ``exclusion.exclude`` in
+Switches (author decisions 2026-10-01): ``exclusion.exclude`` in
 ``rel_venue_registries.yaml`` and ``ngo_research_in_b`` in
 ``rel_venue_tiers.yaml``. Every flag and both tiers are always written, so
 any other setting is recomputable from the tables.
@@ -43,7 +43,6 @@ Usage:
 
 import argparse
 import csv
-import hashlib
 import json
 import os
 import sys
@@ -66,7 +65,8 @@ VENUE_COLUMNS = ["venue_key", "openalex_source_id", "issn_l", "issns", "name", "
                  "flags", "flag_details", "n_works_excluded", "excluded_by", "publisher_flag",
                  "n_works", "tiers_version"]
 WORK_COLUMNS = ["work_key", "year", "lanes", "venue_key", "venue_resolution", "tier", "tier_rule",
-                "b_id", "tier_ngo_in_b", "tier_ngo_not_b", "flags", "flagged", "excluded",
+                "b_id", "tier_ngo_in_b", "tier_ngo_not_b", "tier_without_nonresearch", "flags", "flagged",
+                "excluded",
                 "excluded_by", "publisher_flag"]
 NGO_CATEGORY = "ngo_research"
 REPEC_LANE = "t1810-repec-local"
@@ -137,11 +137,7 @@ def load_registries(archive_root, reg_cfg):
     if missing:
         raise RuntimeError(f"{day}/MANIFEST.sha256 does not cover {missing}")
     for name, digest in manifest.items():
-        h = hashlib.sha256()
-        with open(os.path.join(day, name), "rb") as fh:
-            for chunk in iter(lambda: fh.read(1 << 20), b""):
-                h.update(chunk)
-        if h.hexdigest() != digest:
+        if rvr.sha256_file(os.path.join(day, name)) != digest:
             raise RuntimeError(f"{day}/{name}: sha256 differs from MANIFEST.sha256")
     entries = []
     entries += rvr.parse_kanalregisteret(os.path.join(day, regs["kanalregisteret"]["file"]),
@@ -266,6 +262,39 @@ def _tier(key, v, tiers, b_prefix):
     return rv.assign_tier(v, tiers)
 
 
+def _by_site(urls, tiers, base, nonresearch_on):
+    """``(tier, b_id, nonresearch)`` of a work of tier ``base`` by its own URLs."""
+    dom, url = rv.b_by_domain_url(urls, tiers)
+    if not dom:
+        return base, "", False
+    if nonresearch_on and rv.is_nonresearch(url, tiers):
+        return "C", "", True
+    return "B", dom, False
+
+
+def _work_tier(ven, urls, tiers, tiers_no_ngo, ngo_in_b, nonresearch_on):
+    """``(tier, rule, b_id, tier_ngo_in_b, tier_ngo_not_b, tier_without_nonresearch)`` of a work.
+
+    A work with no venue, or a C venue (repository, unlisted source), that a B
+    institution published on its own site is B by its URL (rule ``b_domain``);
+    a non-research page of such a site (blog post, speech, homepage, media
+    compilation: the ``nonresearch`` list, switch d) goes to C (rule
+    ``nonresearch``) when the switch is ``to_c``.
+    """
+    tier, rule, b_id = ven["tier"], ven["tier_rule"], ven["b_id"]
+    if tier not in ("unknown", "C"):
+        return tier, rule, b_id, ven["tier_ngo_in_b"], ven["tier_ngo_not_b"], tier
+    t_in, dom_in, nr_in = _by_site(urls, tiers, ven["tier_ngo_in_b"], nonresearch_on)
+    t_not, dom_not, nr_not = _by_site(urls, tiers_no_ngo, ven["tier_ngo_not_b"], nonresearch_on)
+    t_sel, dom, nr = (t_in, dom_in, nr_in) if ngo_in_b else (t_not, dom_not, nr_not)
+    raw = _by_site(urls, tiers if ngo_in_b else tiers_no_ngo, tier, False)[0]
+    if nr:
+        return "C", "nonresearch", "", t_in, t_not, raw
+    if dom:
+        return "B", "b_domain", dom, t_in, t_not, raw
+    return tier, rule, b_id, t_in, t_not, raw
+
+
 def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
     """``(venue rows, work rows)``, both sorted.
 
@@ -273,6 +302,7 @@ def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
     switch (b) is read from ``tiers_cfg``; both tiers are always computed.
     """
     ngo_in_b = rv.ngo_switch(tiers_cfg)
+    nonresearch_on = rv.nonresearch_switch(tiers_cfg) == "to_c"
     tiers_no_ngo = rv.without_categories(tiers, [NGO_CATEGORY])
     works, by_venue = [], defaultdict(list)
     for w in pool:
@@ -329,24 +359,14 @@ def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
         ven = venues[key]
         year = _year(w.get("year"))
         flags = rv.work_venue_flags(ven["_flags"], year) + registries.work_flags(ev["urls"])
-        tier, rule, b_id = ven["tier"], ven["tier_rule"], ven["b_id"]
-        t_in, t_not = ven["tier_ngo_in_b"], ven["tier_ngo_not_b"]
-        # A work with no venue, or a C venue (repository, unlisted source), that a
-        # B institution published on its own site is B by its URL (rule b_domain).
-        if tier in ("unknown", "C"):
-            dom_in = rv.b_by_domain(ev["urls"], tiers)
-            dom_not = rv.b_by_domain(ev["urls"], tiers_no_ngo)
-            t_in = "B" if dom_in else t_in
-            t_not = "B" if dom_not else t_not
-            dom = dom_in if ngo_in_b else dom_not
-            if dom:
-                tier, rule, b_id = "B", "b_domain", dom
+        tier, rule, b_id, t_in, t_not, t_raw = _work_tier(ven, ev["urls"], tiers, tiers_no_ngo,
+                                                          ngo_in_b, nonresearch_on)
         work_rows.append({
             "work_key": w["work_key"], "year": "" if year is None else str(year),
             "lanes": w.get("sources") or "", "venue_key": key,
             "venue_resolution": how, "tier": tier, "tier_rule": rule,
             "b_id": b_id, "tier_ngo_in_b": t_in,
-            "tier_ngo_not_b": t_not, "flags": rv.flags_text(flags),
+            "tier_ngo_not_b": t_not, "tier_without_nonresearch": t_raw, "flags": rv.flags_text(flags),
             "flagged": "true" if flags else "false", "excluded_by": rv.exclusion_of(flags, exclude),
             "publisher_flag": ven["publisher_flag"],
             "_flags": flags,
@@ -383,7 +403,7 @@ def make_counts(venue_rows, work_rows, registries_pull, tiers_version, switches=
         return [x for x in r["lanes"].split(";") if x] or ["(none)"]
 
     by_lane = defaultdict(lambda: {"works": 0, "tier": Counter(), "registry": Counter(),
-                                   "flagged": 0, "excluded": 0, "ngo_switch_moves": 0,
+                                   "flagged": 0, "excluded": 0, "ngo_switch_moves": 0, "nonresearch_moves": 0,
                                    "publisher_flag": Counter(), "no_venue": 0})
     for r in work_rows:
         regs = sorted({f["registry"] for f in r["_flags"]})
@@ -394,6 +414,7 @@ def make_counts(venue_rows, work_rows, registries_pull, tiers_version, switches=
             b["flagged"] += r["flagged"] == "true"
             b["excluded"] += r["excluded"] == "true"
             b["ngo_switch_moves"] += r["tier_ngo_in_b"] != r["tier_ngo_not_b"]
+            b["nonresearch_moves"] += r["tier"] != r["tier_without_nonresearch"]
             for g in regs:
                 b["registry"][g] += 1
             if r["publisher_flag"]:
@@ -416,6 +437,7 @@ def make_counts(venue_rows, work_rows, registries_pull, tiers_version, switches=
     works = {lane: {"works": b["works"], "tier": dict(sorted(b["tier"].items())),
                     "registry": dict(sorted(b["registry"].items())), "flagged": b["flagged"],
                     "excluded": b["excluded"], "ngo_switch_moves": b["ngo_switch_moves"],
+                    "nonresearch_moves": b["nonresearch_moves"],
                     "publisher_flag": dict(sorted(b["publisher_flag"].items())),
                     "no_venue": b["no_venue"]}
              for lane, b in sorted(by_lane.items())}
@@ -430,11 +452,14 @@ def counts_markdown(c):
     regs = sorted({g for b in c["works_by_lane"].values() for g in b["registry"]})
     pubs = sorted({g for b in c["works_by_lane"].values() for g in b["publisher_flag"]})
     lines = [f"# REL venue tiers and flags (tiers v{c['tiers_version']}, registries pull {c['registries_pull']})",
-             "", f"Switches (pending author decisions): excluding registries "
+             "", f"Switches (author decisions 2026-10-01): excluding registries "
              f"{', '.join(c['switches'].get('exclude', [])) or 'none'}; NGO research series in B: "
-             f"{c['switches'].get('ngo_research_in_b')}; works with no venue (tier unknown): "
-             f"{c['switches'].get('no_venue')}. `ngo moves` counts what the other "
-             "NGO setting would move between tiers.",
+             f"{c['switches'].get('ngo_research_in_b')}; tier unknown: {c['switches'].get('no_venue')}; "
+             f"Kanalregisteret X: {c['switches'].get('kanal_x')}; non-research list: "
+             f"{c['switches'].get('nonresearch')}. `ngo moves` counts what the other NGO setting would "
+             "move between tiers, `nonresearch moves` what the list moves to C. `no venue (key none)` counts "
+             "works with no venue key; some of them are B by their own site (b_domain), the rest are tier "
+             "`unknown`.",
              "", "## Venues", "",
              f"{c['venues']['total']} venues; per tier "
              + ", ".join(f"{t} {c['venues']['tier'].get(t, 0)}" for t in tiers)
@@ -443,12 +468,12 @@ def counts_markdown(c):
              + ", ".join(f"{g} {n}" for g, n in c["venues"]["registry"].items()) + "); publisher flag "
              + ", ".join(f"{g} {n}" for g, n in c["venues"]["publisher_flag"].items()) + ".",
              "", "## Works by lane", "",
-             "| lane | works | " + " | ".join(tiers) + " | ngo moves | flagged | excluded | "
-             + " | ".join(regs) + " | " + " | ".join(pubs) + " | no venue |",
-             "|" + "---|" * (6 + len(tiers) + len(regs) + len(pubs))]
+             "| lane | works | " + " | ".join(tiers) + " | ngo moves | nonresearch moves | flagged | excluded | "
+             + " | ".join(regs) + " | " + " | ".join(pubs) + " | no venue (key none) |",
+             "|" + "---|" * (7 + len(tiers) + len(regs) + len(pubs))]
     for lane, b in c["works_by_lane"].items():
         lines.append(f"| {lane} | {b['works']} | " + " | ".join(str(b["tier"].get(t, 0)) for t in tiers)
-                     + f" | {b['ngo_switch_moves']} | {b['flagged']} | {b['excluded']} | "
+                     + f" | {b['ngo_switch_moves']} | {b['nonresearch_moves']} | {b['flagged']} | {b['excluded']} | "
                      + " | ".join(str(b["registry"].get(g, 0)) for g in regs)
                      + " | " + " | ".join(str(b["publisher_flag"].get(g, 0)) for g in pubs)
                      + f" | {b['no_venue']} |")
@@ -494,7 +519,9 @@ def main(argv=None):
     venue_rows, work_rows = build(pool, resolver, tiers, registries, tiers_cfg, exclude)
     counts = make_counts(venue_rows, work_rows, registries.pull_date, tiers_cfg["version"],
                          {"exclude": exclude, "ngo_research_in_b": rv.ngo_switch(tiers_cfg),
-                          "no_venue": rv.unknown_switch(tiers_cfg)})
+                          "no_venue": rv.unknown_switch(tiers_cfg),
+                          "nonresearch": rv.nonresearch_switch(tiers_cfg),
+                          "kanal_x": rv.kanal_x_switch(reg_cfg)})
 
     os.makedirs(args.output_dir, exist_ok=True)
     _write_csv(os.path.join(args.output_dir, "rel_venues.csv"), VENUE_COLUMNS, venue_rows)

@@ -24,8 +24,9 @@ registries:
     # and one journal (Journal of Cleaner Production) is already back to 1 in
     # 2027. A journal is listed when any year is X; a work is flagged only
     # when the level of its own publication year is X. A year the journal
-    # has no level for (blank, or outside 2004-2027) takes its nearest year
-    # with a level, the earlier on a tie; an undated work is not flagged.
+    # has no level for (blank, or before the register's first column) takes
+    # its nearest year with a level, the earlier on a tie; a year after the
+    # register's last column, or an undated work, is not flagged.
     # The venue table keeps every yearly level in flag_details. Level 0 (not
     # approved) is not a flag: the decision names level X only.
     filter: "any 'Nivå YYYY' == X; a work is flagged when the level of its year (nearest year with a level) is X"
@@ -67,18 +68,28 @@ registries:
     # A work is flagged when its landing-page host is a listed clone domain.
     filter: "work landing-page host == host of 'URL (Hijacked)'"
 
-# Switch (a): which registry hits exclude a venue, which only flag it.
-# PENDING author decision (ticket 1841). Every flag stays in the tables
-# whatever the setting; the build derives `excluded` from this list (ISSN and
-# domain matches only: a title match never excludes), so the
-# REL sensitivity table (ticket 1843) can recompute any other setting from the
-# `flags` column. Default (MOE recommendation): exclude on Kanalregisteret
-# level X and on hijacked-journal clones only; Scopus discontinuation and DOAJ
-# withdrawal are flags only (their causes are mixed: metrics, publisher
-# changes, practice).
+# Switch (a): which registry hits exclude a work, which only flag it.
+# Author decision 2026-10-01, relayed by the MOE (ticket 1841): exclude
+# hijacked-journal clones only; Scopus discontinuation and DOAJ withdrawal are
+# flags only (their causes are mixed: metrics, publisher changes, practice).
+# Kanalregisteret is set by switch (a') below, never here. Every flag stays in
+# the tables whatever the setting; the build derives `excluded` from this list
+# (ISSN and domain matches only: a title match never excludes), so the REL
+# sensitivity table (ticket 1843) can recompute any other setting from the
+# per-work `flags` column.
 exclusion:
-  status: pending
-  exclude: [kanalregisteret, hijacked]
+  status: decided (author 2026-10-01)
+  exclude: [hijacked]
+
+# Switch (a'): Kanalregisteret level X, exclude or flag only. Author decision
+# 2026-10-01, relayed by the MOE (ticket 1841): flag_only (the other value is
+# exclude). On the 2026-10-01 pull every X is a 2026 level, a current-cycle
+# doubt: the 72 works it would exclude are all from 2026, and 29 of them are in
+# Journal of Cleaner Production, already back at level 1 for 2027. The per-work
+# `flags` cell carries the X of the work's own year whatever the setting.
+kanal_x:
+  status: decided (author 2026-10-01)
+  value: flag_only
 
 # The pull corpus_rel_venues.py reads (a date directory of the archive).
 use: "2026-10-01"

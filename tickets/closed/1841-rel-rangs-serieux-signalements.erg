@@ -2,7 +2,7 @@
 Title: REL — seriousness ranks and flags per source (dated hard registers, versioned list B)
 Created: 2026-10-01
 Author: HDMX-coding-agent
-Closed: tiers v2, dated registry pulls, deterministic venue and work tables with counts; two author switches left pending
+Closed: tiers v2, dated registry pulls, deterministic venue and work tables with counts; five switches, decided by the author 2026-10-01
 
 --- log ---
 2026-10-01T10:00Z HDMX-coding-agent created
@@ -10,6 +10,7 @@ Closed: tiers v2, dated registry pulls, deterministic venue and work tables with
 2026-10-01T06:06Z HDMX-coding-agent note WIP (doudou shutdown): registries pulled 2026-10-01 (kanal 40083 rows/16 X, scopus 1160/998, doaj 7531/4004, hijacked 471/477) archived ~/data/projets/climate-finance-het/rel_venue_registries/2026-10-01/ with MANIFEST.sha256, record config/rel_venue_registry_pulls.csv; tiers config, build, 30 tests pass. OpenAlex cache partial at ~/data/projets/climate-finance-het/rel_venues/2026-10-01/openalex_work_venues.csv. Next: copy it to data/rel_venues/ in a worktree of t1841-rel-venue-tiers, make rel-venue-enrich (resumes), make rel-venues, prune unused B keys, counts, gates, PR.
 2026-10-01T06:49Z HDMX-coding-agent note OpenAlex cache completed (302,545 ids, 1,776 requests, 0.1775 USD by header), archived with MANIFEST.sha256 and dvc-added as data/rel_venues; two pending switches added (exclusion registries, NGO series in B); 13 unused B RePEc codes pruned (tiers v2); counts in the PR
 2026-10-01T06:49Z HDMX-coding-agent closed — tiers v2, dated registry pulls, deterministic venue and work tables with counts; two author switches left pending
+2026-10-01T08:30Z HDMX-coding-agent note review fixes (PR 1657): Kanal X per work year, hijacked on every URL, tier unknown, b_domains and non-research list; five switches (a exclusion, a' kanal_x, b ngo_research_in_b, c no_venue, d nonresearch) decided by the author 2026-10-01, relayed by the MOE: hijacked only, Kanal flag only, NGO in B, unknown kept flagged, non-research to C
 --- body ---
 ## Context
 Child of 1830. Per source (OpenAlex source id, ISSN), deterministic, provenance of each flag. Rank A (peer-reviewed), B (recognised WP series and institutional reports, including Southern think tanks; versioned list), C (the rest). Hard registers only: Norwegian register (Kanalregisteret) level X via its open API, Scopus "discontinued" for publication reasons, DOAJ removals, known hijacked journals; each extraction dated. Publisher flag for MDPI, Frontiers, Hindawi (kept). Not Beall's list.

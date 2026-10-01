@@ -5,9 +5,11 @@
 #   A  peer-reviewed journal
 #   B  recognised working-paper series and institutional reports (NBER, CEPR,
 #      IMF, World Bank, MDBs, major think tanks, Southern ones included)
-#   C  the rest
+#   C  the rest (a venue known and not serious): excluded
 #   A and B are included, C excluded. Registry flags (rel_venue_registries.yaml)
 #   and the publisher flag below are recorded separately from the tier.
+# Added by ticket 1841: `unknown`, a work whose venue cannot be resolved; it is
+# not C, and switch (c) below decides whether it is kept or excluded.
 #
 # Versioned: bump `version` and add a changelog line for any edit to the B
 # list, the repository list or the publisher flag. The build writes the
@@ -15,30 +17,63 @@
 version: 2
 changelog:
   - "1 (2026-10-01, ticket 1841): first list."
-  - "2 (2026-10-01, ticket 1841): switch ngo_research_in_b; RePEc keys that match no pool venue pruned (pruned_repec below); bare name and series tokens word-bounded (diw matched Diwan, ademe Academe, iseas Diseases) and three patterns with commas or apostrophes, which fold() strips, rewritten; French tokens allow an elided l or d (fold() turns \"l'OFCE\" into \"lofce\"); switch no_venue and tier unknown; b_domains and the bndes entry; archive-level RePEc codes of shared archives narrowed to series (wop, unm, ctl, een, ind, ecr, cam); repository names word-bounded and never applied to journal-typed venues."
+  - "2 (2026-10-01, ticket 1841): switch ngo_research_in_b; RePEc keys that match no pool venue pruned (ebrd:ebd, eib:eib, federal_reserve:fed, bundesbank:bub, cesifo:ifo, iza:iza, cmcc:cmc, pse_ofce:pse, brookings:bin, kdi:kdi, southeast_asia_institutes:tdr, eprg:cam:cameprg, ceepr:mee); bare name and series tokens word-bounded (diw matched Diwan, ademe Academe, iseas Diseases) and three patterns with commas or apostrophes, which fold() strips, rewritten; French tokens allow an elided l or d (fold() turns \"l'OFCE\" into \"lofce\"); switch no_venue and tier unknown; b_domains and the bndes entry; archive-level RePEc codes of shared archives narrowed to series (wop, unm, ctl, een, ind, ecr, cam); repository names word-bounded and never applied to journal-typed venues; switch nonresearch; fao.org matched on its own host only."
 
 # Switch (b): whether the NGO research series (B entries of category
-# ngo_research: Oxfam, Germanwatch) are tier B. PENDING author decision
-# (ticket 1841). Default: true, they stay in B as built. The build computes
+# ngo_research: Oxfam, Germanwatch) are tier B. Author decision 2026-10-01,
+# relayed by the MOE (ticket 1841). Decided: true, they stay in B. The build computes
 # both tiers (`tier_ngo_in_b`, `tier_ngo_not_b`) and writes the selected one
 # as `tier`, so the REL sensitivity table (ticket 1843) can show either.
 ngo_research_in_b:
-  status: pending
+  status: decided (author 2026-10-01)
   value: true
 
 # Switch (c): works with no resolvable venue (no OpenAlex source, no ISSN,
-# RePEc series, B prefix or journal name; 11,020 works on 2026-10-01). They
-# get tier `unknown`, never C: C means a venue known and not serious, these
-# are unresolved. PENDING author decision (ticket 1841). Values:
-#   keep_flagged  kept in REL, tier `unknown` shown as a flag (default, MOE
-#                 recommendation: absence of metadata is not evidence of
-#                 unseriousness)
-#   exclude       left out with C
+# RePEc series, B prefix or journal name: 11,020 works on 2026-10-01; 616 of
+# them are on a B institution's own site, hence B (b_domain) or C
+# (nonresearch), leaving 10,404 in tier `unknown`). They are
+# never C: C means a venue known and not serious, these are unresolved.
+# Author decision 2026-10-01, relayed by the MOE (ticket 1841). Values:
+#   keep_flagged  kept in REL, marked by the tier `unknown` itself (no
+#                 registry flag is added) (decided: absence of metadata
+#                 is not evidence of unseriousness)
+#   exclude       left out, like C
 # The table always writes `unknown`; the loader (_rel_venues.load_work_venues,
 # no_venue=...) applies the setting, so 1843 can show both as a sensitivity row.
 no_venue:
-  status: pending
+  status: decided (author 2026-10-01)
   value: keep_flagged
+  membership: 0.5   # a venue of unknown seriousness (= tier_membership.unknown)
+
+# Fuzzy reading of the tiers (author decision 2026-10-01, relayed by the MOE):
+# each tier has a membership in the set of serious venues, and the crisp REL
+# set is the alpha-cut, membership >= alpha. With alpha 0.5, unknown (0.5) is
+# in, flagged by its tier; C (0) is out. Read by _rel_venues.tier_membership
+# and _rel_venues.alpha, so 1843 never hard-codes them.
+tier_membership:
+  status: decided (author 2026-10-01)
+  values: {A: 1.0, B: 1.0, unknown: 0.5, C: 0.0}
+alpha:
+  status: decided (author 2026-10-01)
+  value: 0.5
+
+# Switch (d): non-research pages of B institutions' own sites. A work made B
+# only by b_domains whose matching URL is a blog post, speech, homepage,
+# library guide, news issue or media compilation goes to C (rule
+# `nonresearch`; 70 works on 2026-10-01). Author decision 2026-10-01,
+# relayed by the MOE (ticket 1841): to_c; values to_c or off. The work table
+# writes `tier_without_nonresearch` (the tier with the list off) beside `tier`.
+nonresearch:
+  status: decided (author 2026-10-01)
+  value: to_c
+  url_patterns:
+    - 'wri\.org/insights/'                                  # WRI blog posts (52)
+    - 'worldbank\.org/curated/[a-z]{2}/[0-9/]+/(opening-)?(speech|statement|remarks|transcript)\b'  # speeches
+    - 'documentos\.bancomundial\.org/curated/[a-z]{2}/[0-9/]+/(discurso|declaracion)'
+    - '^https?://[^/]+/?$'                                   # a site's homepage
+    - 'biblioguias\.cepal\.org'                             # library guides
+    - 'elibrary\.imf\.org/view/IMF023/'                     # IMF Survey (news magazine)
+    - 'cifor\.org/publications/pdf_files/media/'            # media compilations
 
 # Inclusion rule for the B list (agent's judgement, for the author's review).
 # An institution or series is B when it is one of:
@@ -337,7 +372,9 @@ b_domains:
   climate_funds: [greenclimate.fund, thegef.org, cif.org, adaptation-fund.org]
   unfccc: [unfccc.int]
   ipcc: [ipcc.ch]
-  un_bodies: [un.org, undp.org, unep.org, unepfi.org, unctad.org, unescap.org, cepal.org, uneca.org, fao.org, ilo.org, wider.unu.edu]
+  # =host: that host only (agris.fao.org is FAO's index of third-party records)
+  un_bodies: [un.org, undp.org, unep.org, unepfi.org, unctad.org, unescap.org, cepal.org, uneca.org, '=fao.org',
+              openknowledge.fao.org, ilo.org, wider.unu.edu]
   cgiar: [cgspace.cgiar.org, cifor.org, cifor-icraf.org, ifpri.org]
   nber: [nber.org]
   cepr: [cepr.org]
@@ -361,24 +398,6 @@ b_domains:
   bndes: [bndes.gov.br, bndes.net]
   oxfam: [oxfam.org, oxfam.org.uk, oxfam.ca, oxfamilibrary.openrepository.com]
   germanwatch: [germanwatch.org]
-
-# RePEc codes pruned in version 2 (ticket 1841): they matched no venue of the
-# pool built 2026-10-01 (389,291 works, 3,269 RePEc series venues). Kept here
-# so a later pool can restore one that starts to match.
-pruned_repec:
-  - {b_id: ebrd, repec: 'ebd'}
-  - {b_id: eib, repec: 'eib'}
-  - {b_id: federal_reserve, repec: 'fed'}
-  - {b_id: bundesbank, repec: 'bub'}
-  - {b_id: cesifo, repec: 'ifo'}
-  - {b_id: iza, repec: 'iza'}
-  - {b_id: cmcc, repec: 'cmc'}
-  - {b_id: pse_ofce, repec: 'pse'}
-  - {b_id: brookings, repec: 'bin'}
-  - {b_id: kdi, repec: 'kdi'}
-  - {b_id: southeast_asia_institutes, repec: 'tdr'}
-  - {b_id: eprg, repec: 'cam:cameprg'}
-  - {b_id: ceepr, repec: 'mee'}
 
 # Repositories, preprint servers and index platforms: never a venue of their
 # own. A work whose only venue is one of these is C unless a B key matches.
