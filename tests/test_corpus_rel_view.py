@@ -275,7 +275,8 @@ def _files(tmp_path):
 
 
 SRULE = {"exclude": ["hijacked"], "ngo_research_in_b": True, "no_venue": "keep_flagged",
-         "tier_mu": {"A": 1.0, "B": 1.0, "C": 0.0, "unknown": 0.5}, "alpha": 0.5,
+         "nonresearch": "to_c", "alpha": 0.5,
+         "tier_mu": {"A": 1.0, "B": 1.0, "C": 0.0, "unknown": 0.5},
          "tiers": ["A", "B"], "drop_publishers": []}
 MRULE = {"status": "proposed", "icf": {"icf": 1.0, "unsure": 0.5, "aux": 0.0, "out": 0.0},
          "discipline": {"yes": 1.0, "unsure": 0.5, "no": 0.0}}
