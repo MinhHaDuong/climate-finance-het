@@ -3,9 +3,11 @@ Title: Select, calibrate and install the two local LLM readers and the hosted ar
 Created: 2026-10-01
 Author: HDMX-coding-agent
 Blocked-by: 1509
+Blocked-by: 1890
 
 --- log ---
 2026-10-01T05:50Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane); spec rules with no ticket found by the 2026-10-01 audit (author decision 2026-10-01, interactive: D4 hygiene)
+2026-10-01T05:54Z HDMX-coding-agent note Blocked-by [[1890]] (M2.3-0): the reading design is chosen by a pre-registered pilot before readers are selected (author decisions 2026-10-01, interactive)
 
 --- body ---
 ## Context

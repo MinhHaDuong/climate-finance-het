@@ -1,0 +1,50 @@
+%erg 0.1
+Title: M2.3-0: Choose the M2.3 reading design by a pre-registered pilot
+Created: 2026-10-01
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-01T05:55Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane), first of the phase; [[1873]] is now Blocked-by this ticket
+2026-10-01T05:55Z HDMX-coding-agent decision author decisions 2026-10-01, interactive: (1) "Extraction is done against the ontology, never in a vacuum. Readers fill the classes, relations and closed value lists of docs/jetp-ontology.md and data/jetp/ontology/ (terms, crosswalks, perimeters), using the field list the method version fixes per document type (extraction § 6.3). Judge every design on how well it binds output to that ontology: schema- or ontology-constrained generation, typed slots, closed vocabularies, grounding to ontology terms." (2) "A black-box commercial extraction service is not admissible as the engine. Do web-search extraction-as-a-service products, but only as leads to the open-source engine cores they build on or resemble." (3) "The design is where the big gains are. Compare architectures, not only models."
+
+--- body ---
+## Context
+
+Phase M2.3 reads the about 115 held one-off documents not yet extracted
+(English, Indonesian, Vietnamese, French; PDF with tables, HTML,
+spreadsheets, one scan; the largest text layer about 950k characters).
+The accepted specification v1 (tag `jetp-spec-v1`) fixes a default design,
+two blind local readers of different makers plus a hosted arbiter
+(`docs/jetp-extraction.md` § 6.3, § 6.4, § 12, § 14;
+`docs/jetp-operation.md` § 5 to 7), and already allows a hosted pair of
+different makers (operation § 5). The author's decisions of 2026-10-01
+(log) put the design itself up for comparison before any reader is
+selected ([[1873]]): output bound to the ontology, no black-box commercial
+engine, architectures compared and not only models.
+
+Binding constraints, from the spec: no item queued for the author, the
+held-out reference answers the only human check; every proposal carries a
+verbatim quote whose locator resolves; readers calibrated on held-out
+reference answers; a method version pins model, prompt, weights and
+serving; hosted calls under zero retention and `local_only` documents on
+padme (RTX A4000 16 GB, RTX 3060 12 GB); a budget of the order of the
+earlier spike (USD 14 to 26 for models in total); no heavy dependency
+without justification.
+
+The survey is `conception/jetp-m2-3-reading-design-survey-2026-10-01.md`.
+It also counts the reference lines per stratum and records that their
+provenance (a person's reading, blind to any machine) is not derivable from
+the ledger for any family; the pilot protocol must state which lines it
+treats as reference answers.
+
+Dependencies: [[1873]] (selection and calibration) waits for the chosen
+design. The reading protocol of [[1509]] is written for the default design;
+if the pilot picks another, 1509 is revised in the same method version.
+
+## Exit criteria
+
+- [ ] The survey report is merged (`conception/jetp-m2-3-reading-design-survey-2026-10-01.md`)
+- [ ] Reference-line counts per stratum (language × statement shape, and country) are recorded, with the strata under 30 held-out items named
+- [ ] A pre-registered pilot protocol is committed before any pilot call: the candidate designs; the metrics (precision, recall, agree-but-wrong rate, locator-resolution rate, ontology-conformance rate, cost, operational complexity); a tuning-part sample stratified by country × format × statement shape, with its size stated; and the decision rule
+- [ ] The pilot is run under the budgets of [[1874]], and its results pass a quality check by a non-author checker (cross-model or second vendor), findings recorded here (pilot rule, [[1500]])
+- [ ] The chosen design is recorded as a method version; or, when the winner departs from the accepted spec (for example a single reader plus a checker breaks the two-readers rule of extraction § 6.3), a spec amendment is proposed to the author with the pilot evidence
