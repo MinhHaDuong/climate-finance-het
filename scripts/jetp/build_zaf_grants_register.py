@@ -74,7 +74,7 @@ class Edition:
     sha256: str
     layout: str          # 'pdf-2023', 'pdf-2024', 'xlsx'
     rows: dict           # table slug -> reviewed grant-row count
-    mismatch: dict = None  # reviewed overall/register difference (workbooks)
+    mismatch: dict = None  # reviewed overall/register difference (workbooks), optional 'reading'
 
 
 EDITIONS = {e.document_id: e for e in (
@@ -93,10 +93,18 @@ EDITIONS = {e.document_id: e for e in (
                      'ger-register': 22, 'fr-register': 20, 'us-register': 35,
                      'actip-register': 2, 'dk-register': 13, 'nl-register': 6,
                      'can-register': 4, 'swiss-register': 11},
-            # The publisher's own: two overall rows under identifiers no register
-            # uses, four register rows the overall table leaves out.
+            # The identifier sets differ, but only DK011 and DK013 are missing
+            # grants: the overall table leaves out the workbook's two
+            # "A. Planned" rows. The FR differences are a relabelling: paired
+            # by position, the 20 FR rows agree on every field, amounts
+            # included, and from the 11th row the overall table carries the
+            # pre-renumbering identifiers (overall FR013..FR024 against
+            # register FR012..FR022). Identifiers are not stable keys (1980).
             {'only_overall': {'FR021', 'FR024'},
-             'only_registers': {'DK011', 'DK013', 'FR012', 'FR015'}}),
+             'only_registers': {'DK011', 'DK013', 'FR012', 'FR015'},
+             'reading': 'the FR identifiers are relabelled in the overall table, '
+                        'with 0 field differences when paired by position; only '
+                        'DK011 and DK013, the two "A. Planned" rows, are left out'}),
     Edition('zaf-jet-grants-register-2025-q1',
             '6eae2fffc800f6c82c2d03b21af150ba633bf60992bd8e37a98515808e44d9c0',
             'xlsx', {'overall': 129, 'eu-register': 8, 'uk-register': 47,

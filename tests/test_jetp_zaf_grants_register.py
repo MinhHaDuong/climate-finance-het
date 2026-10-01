@@ -466,6 +466,10 @@ def test_union_red_undeclared_difference_and_wrong_truncation():
     declared = {'only_overall': {'UK002'}, 'only_registers': set()}
     layouts.check_overall_union(tables, controls, declared=declared)
     assert "publisher's own difference" in controls[-1]
+    assert 'reading' not in controls[-1]
+    layouts.check_overall_union(tables, controls,
+                                declared={**declared, 'reading': 'a relabelling'})
+    assert controls[-1].endswith('(reading: a relabelling)')
     for wrong in ({'only_overall': {'UK002', 'UK009'}, 'only_registers': set()},   # superset
                   {'only_overall': set(), 'only_registers': set()}):                # subset
         with pytest.raises(grants.RegisterError, match='list different grants'):

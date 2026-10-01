@@ -147,7 +147,7 @@
     "swiss-register: Total US$ sum of 11 rows 50,626,778.41, printed total 50,626,778.41 (gap +0.00, bound 0.5)",
     "swiss-register: Total ZAR sum of 11 rows 891,537,567.81, printed total 891,537,567.81 (gap +0.00, bound 0.5)",
     "swiss-register: CHF: Amount sum of 11 rows 45,609,710.28, printed total 45,609,710.28 (gap +0.00, bound 0.5)",
-    "overall: 164 Unique IDs, donor registers 166; publisher's own difference, reviewed: only in overall ['FR021', 'FR024'], only in registers ['DK011', 'DK013', 'FR012', 'FR015']"
+    "overall: 164 Unique IDs, donor registers 166; publisher's own difference, reviewed: only in overall ['FR021', 'FR024'], only in registers ['DK011', 'DK013', 'FR012', 'FR015'] (reading: the FR identifiers are relabelled in the overall table, with 0 field differences when paired by position; only DK011 and DK013, the two \"A. Planned\" rows, are left out)"
    ],
    "out_of_scope": {
     "sheet \"PivotTables\"": "pivot tables: aggregates of the grant rows, not grant rows",

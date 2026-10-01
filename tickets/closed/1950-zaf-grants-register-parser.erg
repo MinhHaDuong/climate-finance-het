@@ -10,6 +10,7 @@ Closed: autoclosed — PR #1675
 2026-10-01T10:31Z HDMX-coding-agent note PR #1675 review rounds 1-2 fixed in code: batch-atomic admission (checks and renderings before any write), exact declared not-printed set for the truncated 2024-q2 UK register, strict amount reader, money-header guard, hidden sheet/row/column marks, 1904 dates, printed field order; fields re-admitted in printed column order, lines unchanged (1,134).
 
 2026-10-01T12:03Z HDMX-coding-agent closed — autoclosed — PR #1675
+2026-10-01T12:45Z HDMX-coding-agent note correction (author-approved 2026-10-01, after the independent recount): the 2024-q3 identifier differences declared by the parser are not missing grants. Paired by position the 20 FR rows agree on every field, amounts included; from the 11th row the overall table carries the pre-renumbering identifiers (overall FR013, 014, 016, 017, 018, 019, 020, 021, 022, 024 against register FR012, 013, 014, 015, 016, 017, 018, 019, 020, 022), so 0 real amount differences. Only DK011 and DK013, the workbook's two 'A. Planned' rows, are left out of the overall table. The control is unchanged; its comment and the run report now carry this reading. Identifier instability is ticket 1980.
 --- body ---
 ## Context
 
