@@ -333,7 +333,7 @@ REL_SUD_RUNS ?= $(HOME)/data/projets/climate-finance-het/rel_sud/2026-09-29/padm
 .PHONY: rel-pool rel-pool-data rel-intake-1530
 rel-pool-data:
 	$(UV_RUN) dvc pull data/catalogs/unified_works_rel_pin.csv.dvc $(wildcard data/rel_intake/*.dvc) \
-		$(wildcard data/rel_screen.dvc)
+		$(wildcard data/rel_screen.dvc) $(wildcard data/rel_venues.dvc)
 
 rel-pool:
 	$(PYTHON) scripts/corpus_rel_pool.py --output-dir data/rel_pool
@@ -357,6 +357,28 @@ rel-screen-import-1530:
 
 rel-view:
 	$(PYTHON) scripts/corpus_rel_view.py --output-dir data/rel_pool
+
+# ── REL venue seriousness tiers and registry flags (ticket 1841) ──
+# rel-venue-registries: dated pulls of the four hard registries into
+#   $(REL_VENUE_REGISTRIES)/<today>/ (read-only, MANIFEST.sha256), recorded in
+#   config/rel_venue_registries.yaml. Re-runnable; network.
+# rel-venue-enrich: incremental OpenAlex venue cache, data/rel_venues/, tracked
+#   with `dvc add data/rel_venues` like data/rel_screen (a paid, dated API
+#   snapshot, not rebuildable as is); fetched by rel-pool-data. Only ids the
+#   cache lacks are requested (100 per request, 0.0001 USD each); the run stops
+#   before the day's budget falls below 0.2 USD. After a run: dvc add + push.
+# rel-venues: the deterministic venue and per-work tables, data/rel_pool/rel_venue*
+#   (regenerable from pool, cache, configs and the registry archive; gitignored).
+REL_VENUE_REGISTRIES ?= $(HOME)/data/projets/climate-finance-het/rel_venue_registries
+.PHONY: rel-venue-registries rel-venue-enrich rel-venues
+rel-venue-registries:
+	$(PYTHON) scripts/catalog_rel_venue_registries.py --output-dir $(REL_VENUE_REGISTRIES)
+
+rel-venue-enrich:
+	$(PYTHON) scripts/enrich_rel_venues_openalex.py
+
+rel-venues:
+	$(PYTHON) scripts/corpus_rel_venues.py --archive-root $(REL_VENUE_REGISTRIES) --output-dir data/rel_pool
 
 # ── Corpus reporting (Phase 2 — reads only refined data) ──
 # The periodised coverage metric is computed once, here, and rendered by the

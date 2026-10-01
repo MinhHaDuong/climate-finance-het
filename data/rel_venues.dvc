@@ -1,0 +1,6 @@
+outs:
+- md5: d0692323276cc347b55cfd59d837ff69.dir
+  size: 61666449
+  nfiles: 1
+  hash: md5
+  path: rel_venues
