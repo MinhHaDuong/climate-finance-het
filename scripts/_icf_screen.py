@@ -35,7 +35,10 @@ The same guards serve a second append-only table, ``rel_dimensions`` (ticket
 1840): the discipline fields of the version-2 stage-2 wrapper (contribution
 test, field, contribution type), keyed like ``icf_screen`` so a dimension row
 joins the ICF label it was given with. Every function that touches a table
-takes a ``schema`` (``ICF``, the default, or ``DIMENSIONS``).
+takes a ``schema`` (``ICF``, the default, or ``DIMENSIONS``). ``rel_dimensions``
+alone also takes stage ``catchup`` (ticket 1842: discipline fields asked after
+the fact, ``scripts/corpus_rel_discipline_catchup.py``); ``icf_screen`` refuses
+it, so a catch-up can never become a work's last stage-2 label.
 """
 
 import csv
@@ -54,6 +57,10 @@ COLUMNS = ["label_id", "work_key", "openalex_id", "doi", "title_norm_year", "sta
            "doc_type", "studied_country", "why", "labelled_at", "source"]
 KEY = ("work_key", "stage", "model", "run_id")
 STAGES = {"1", "2", "audit"}
+# rel_dimensions also takes "catchup" (ticket 1842): the discipline fields asked
+# alone, after the fact, of works stage 2 labelled before version 2. icf_screen
+# never does: a catch-up row there would become the work's last stage-2 label.
+DIMENSION_STAGES = STAGES | {"catchup"}
 LABELLERS = {"llm", "human"}
 LABELS = {"icf", "aux", "out", "unsure"}
 DOC_TYPES = {"research", "institutional", "other", "unknown"}
@@ -89,7 +96,7 @@ ICF = Schema(COLUMNS, "label_id", REQUIRED,
               ("doc_type", DOC_TYPES)))
 DIMENSIONS = Schema(DIMENSION_COLUMNS, "dim_id",
                     [c for c in DIMENSION_COLUMNS if c != "dim_id"],
-                    (("stage", STAGES), ("labeller", LABELLERS),
+                    (("stage", DIMENSION_STAGES), ("labeller", LABELLERS),
                      ("contrib", CONTRIB | {UNKNOWN}), ("field", FIELDS | {UNKNOWN}),
                      ("contrib_type", CONTRIB_TYPES | {UNKNOWN})))
 
@@ -327,6 +334,7 @@ def format_stage2_record(n: int, rec: dict, title_max: int, abstract_max: int) -
 
 V1_FIELDS = ("n", "label", "doc", "studied", "why")
 V2_FIELDS = ("n", "label", "doc", "studied", "contrib", "field", "ctype", "why")
+CATCHUP_FIELDS = ("n", "contrib", "field", "ctype", "why")
 _DIM_VOCAB = {"contrib": CONTRIB, "field": FIELDS, "ctype": CONTRIB_TYPES}
 
 
@@ -373,6 +381,48 @@ def parse_stage2_answers(lines: Iterable[str], ids: list[str],
     return answers, faults
 
 
+def parse_discipline_answers(lines: Iterable[str], ids: list[str]) -> tuple[dict, list[str]]:
+    """``{id: answer}`` from catch-up answer lines (``CATCHUP_FIELDS``), and the faults.
+
+    The acceptance of ``parse_stage2_answers``: ``n`` in range and answered
+    once, ``why`` last and keeping any further ``|``; an out-of-vocabulary
+    discipline value is stored as ``unknown``. An ICF label (``icf``, ``aux``,
+    ``out``) where ``contrib`` belongs is a fault: a stage-2 answer line. Blank
+    lines and Markdown fence lines are skipped.
+    """
+    answers: dict = {}
+    faults = []
+    shape = "|".join(CATCHUP_FIELDS)
+    for lineno, line in enumerate(lines, 1):
+        if not line.strip() or line.strip().startswith("```"):
+            continue
+        parts = line.rstrip("\n").split("|")
+        if len(parts) < len(CATCHUP_FIELDS) - 1 or not parts[0].strip().isdigit():
+            faults.append(f"line {lineno}: not {shape}")
+            continue
+        n = int(parts[0])
+        if not 1 <= n <= len(ids):
+            faults.append(f"line {lineno}: n={n} out of range")
+            continue
+        if ids[n - 1] in answers:
+            faults.append(f"line {lineno}: record {n} answered twice")
+            continue
+        if parts[1].strip().lower() in LABELS - CONTRIB:
+            faults.append(f"line {lineno}: ICF label {parts[1].strip()!r} where contrib belongs "
+                          "(a stage-2 answer line?)")
+            continue
+        answer = {}
+        for i, name in enumerate(CATCHUP_FIELDS[1:-1], 1):
+            value = parts[i].strip().lower()
+            answer[name] = value if value in _DIM_VOCAB[name] else UNKNOWN
+        answer["why"] = "|".join(parts[len(CATCHUP_FIELDS) - 1:]).strip()
+        answers[ids[n - 1]] = answer
+    missing = len(ids) - len(answers)
+    if missing:
+        faults.append(f"{missing} of {len(ids)} records unanswered")
+    return answers, faults
+
+
 def _prompt_block(prompt_md_path: str) -> str:
     with open(prompt_md_path, encoding="utf-8") as fh:
         text = fh.read()
@@ -394,6 +444,17 @@ def stage2_answer_fields(prompt_md_path: str) -> tuple:
         raise IcfScreenError(f"{prompt_md_path}: answer format {found} is neither "
                              f"{'|'.join(V1_FIELDS)} nor {'|'.join(V2_FIELDS)}")
     return found
+
+
+def catchup_prompt_template(prompt_md_path: str) -> str:
+    """The fenced block of a catch-up wrapper, checked: ``CATCHUP_FIELDS``, one ``{records}``."""
+    block = _prompt_block(prompt_md_path)
+    m = re.search(r"format exactly:\s*\n\s*(\S+)", block)
+    found = tuple(m.group(1).split("|")) if m else None
+    if found != CATCHUP_FIELDS or block.count("{records}") != 1:
+        raise IcfScreenError(f"{prompt_md_path}: not a catch-up wrapper (answer format "
+                             f"{found}, exactly one {{records}} placeholder required)")
+    return block
 
 
 def stage2_prompt_sha256(prompt_md_path: str) -> str:

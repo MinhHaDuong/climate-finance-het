@@ -79,6 +79,15 @@ stage2:
   title_max_chars: 220
   abstract_max_chars: 650
 
+# Discipline catch-up (ticket 1842): works whose final stage-2 label is in
+# final_labels and that have no rel_dimensions row yet get the discipline
+# questions of the version-2 wrapper alone (prompt), in stage-2 chunks. The
+# answers go to rel_dimensions only, under stage "catchup", never to
+# icf_screen. Run with scripts/corpus_rel_discipline_catchup.py.
+catchup:
+  prompt: config/rel_discipline_catchup_prompt.md
+  final_labels: [icf, unsure]
+
 # Second-model audit of stage 2: a random sample stratified by the stage-2
 # label, the same chunk format. Sizes are per stratum (fewer when a stratum
 # is smaller).
