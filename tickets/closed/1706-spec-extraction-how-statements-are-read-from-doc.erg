@@ -2,12 +2,15 @@
 Title: Spec: extraction, how statements are read from documents
 Created: 2026-09-30
 Author: HDMX-coding-agent
+Closed: All criteria met: spec docs/jetp-extraction.md accepted in v1 (tag jetp-spec-v1); 1500 and 1506 aligned with it in the t0725-milestone-ticket-alignment PR
 
 --- log ---
 2026-09-30T11:00Z HDMX-coding-agent created
 2026-09-30T14:30Z HDMX-coding-agent note draft docs/jetp-extraction.md written (14 sections, checks table, 6 open questions); criteria 1-2 met; criterion 3 left open: lines carry no reading method in the storage contract while the spec, 1509 and fusion pedigree require one
 2026-09-30T15:10Z HDMX-coding-agent note revised with the author's decisions: second-vendor checker on every row, author on disagreements and a random sample (panel M4); new § 11 reading statements into observations (M3b); defaults stated as rules; 1500 invariant and 1702 criteria amended
 
+2026-10-01T05:42Z HDMX-coding-agent note last criterion met: [[1500]] rewritten to point at extraction §§ 6 and 13 with its phases and children, [[1506]] aligned with §§ 7 to 10 and blocked by the M2 schema slice [[1870]]; 1509 rescoped to § 6.3 (author decision 2026-10-01, interactive: D4 hygiene)
+2026-10-01T05:42Z HDMX-coding-agent closed — All criteria met: spec docs/jetp-extraction.md accepted in v1 (tag jetp-spec-v1); 1500 and 1506 aligned with it in the t0725-milestone-ticket-alignment PR
 --- body ---
 ## Context
 
@@ -34,4 +37,4 @@ built before it.
 
 - [x] `docs/jetp-extraction.md`, conceptual, covers document deduplication before reading, text layers per format, parsers per repeated series, assisted reading with row-by-row review for one-offs, dispositions with reasons, dated snapshots and restatements, replay and idempotence, red tests per extractor
 - [x] Every rule carries its milestone; the M2 slice is the minimum that extracts all held documents correctly and traceably
-- [ ] [[1500]] and [[1506]] exit criteria are consistent with it
+- [x] [[1500]] and [[1506]] exit criteria are consistent with it (2026-10-01, branch t0725-milestone-ticket-alignment)

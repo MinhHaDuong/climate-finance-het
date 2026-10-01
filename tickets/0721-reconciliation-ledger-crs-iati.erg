@@ -1,5 +1,5 @@
 %erg 0.1
-Title: Réconcilier les ledgers JETP avec CRS et IATI
+Title: Reconcile the JETP ledger with CRS and IATI records
 Created: 2026-09-11
 Author: Minh
 Blocked-by: 0717
@@ -9,25 +9,37 @@ Blocked-by: 0720
 
 --- log ---
 2026-09-11T21:38Z Minh created
-
+2026-10-01T06:35Z HDMX-coding-agent note translated to English and aligned with spec v1 (docs/jetp-fusion.md §§ 3 and 5, docs/jetp-results.md § 3; author decision 2026-10-01, interactive: D4 hygiene); M3b of [[0725]]. Missing upstream, not yet ticketed: the M3b extraction of the documents new since M2 (sketched in 0725, to be ticketed when [[1877]] is accepted); the M3b storage slice is [[1872]]. Blocked-by left as it is (author, 2026-10-01). On the existing blockers: [[0717]], [[0718]] and [[0719]] have every exit criterion checked and their ledgers were migrated into the D1 to D4 tables by [[0870]], so they look done rather than superseded; [[0720]] keeps one open criterion (each plan project linked to its funder or operator pages), which docs/jetp-collection.md § 3 places in the bounded M3a round per listed project. None is closed here
 --- body ---
-
 ## Context
 
-Les quatre ledgers documentaires donnent l'état courant ; CRS et IATI donnent
-des lignes structurées mais retardées ou peu étiquetées. Il faut les rapprocher
-sans traiter une absence de label JETP comme une absence de financement.
+The documentary ledger gives the current state of the partnerships; OECD CRS
+and IATI give structured records that report one to three years late and
+seldom carry a JETP label. Matching relates the two without reading the
+absence of a JETP label as an absence of finance. Milestone M3b of [[0725]].
+
+Normative text, accepted specification v1 (tag `jetp-spec-v1`):
+`docs/jetp-fusion.md` § 3 (identity: the proposers 1 to 5, judgement by
+adopted rule, "Who decides what") and § 5 (conflicting values: CRS and IATI
+have no precedence of their own, closeness to the event is the first
+consideration of a judgement and never a rank, the matching coverage rate);
+`docs/jetp-results.md` § 3 (two match thresholds); storage targets in
+[[1872]].
 
 ## Test
 
-Sur un échantillon ratifié, la réconciliation produit candidats, score et
-verdict sans fusion automatique ambiguë. Un agrégat échoue s'il mélange les
-périmètres `jetp_strict` et `ipg_energy_extended`, les couches de statut ou
-les conversions tierces.
+Each proposer's method version is tested on the matches already judged by
+hand before its judgements are used, and publishes its blocking recall,
+pairwise precision and recall, and B-cubed precision and recall (fusion
+§ 3). A candidate match is never merged automatically: it carries a stance,
+a likelihood and a confidence and counts only at a result's declared match
+threshold. An aggregate fails if it mixes counting scopes, status axes or
+third-party conversions.
 
 ## Exit criteria
 
-- [ ] Rapprochement document/CRS/IATI traçable, réversible et évalué
-- [ ] Écarts annonce, signé, déclaré et décaissé produits par pays/bailleur
-- [ ] Taux de traçabilité publique et carte d'opacité calculés
-- [ ] Chaque agrégat renvoie aux événements et documents qui le composent
+- [ ] Ledger statements are matched to CRS and IATI records through the proposers of fusion § 3, each method version tested on the hand-judged set with the metrics above
+- [ ] Every match is a judgement with stance, likelihood, confidence and basis, reversible by supersession, accepted only as fusion § 3 "Who decides what" allows
+- [ ] CRS and IATI have no precedence; the gaps between announced, signed, reported and disbursed amounts are produced per country and funder as findings (fusion § 5), and the reporting lag is measured, not assumed
+- [ ] The matching coverage rate is computed per country and funder at both match thresholds (fusion § 5, results § 3)
+- [ ] Every aggregate resolves to the events and documents that compose it

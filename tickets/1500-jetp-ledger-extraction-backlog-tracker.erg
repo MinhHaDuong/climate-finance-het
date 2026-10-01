@@ -10,15 +10,19 @@ Author: HDMX-coding-agent
 2026-09-30T08:09Z HDMX-coding-agent decision author (2026-09-30, interactive): M2 must be reusable by the periodic harvest — dated lines per snapshot, restatement as weak confirmation; criterion and invariant added, mechanism in [[1506]]
 2026-09-30T11:48Z HDMX-coding-agent note author decision 2026-09-30: M2 code waits for the accepted system specification (tracker [[1703]], gate [[1711]], carried by 1506)
 2026-09-30T15:10Z HDMX-coding-agent note invariant on duplicates aligned with the storage contract (author, 2026-09-30): a revoked same_as re-enables extraction of the folded document; spec docs/jetp-extraction.md § 2
+2026-10-01T06:20Z HDMX-coding-agent decision author decisions 2026-10-01, interactive: D2 Zotero — the spec governs, a one-way upload of the document bytes plus a restore test is M2 ([[1712]], now an M2 criterion here), the store move ([[1510]], [[1511]]) stays M4; D3 — M3a protocol declaration ([[1877]]) and sealed known-item list ([[1878]]) may start now, M2 targets the register frozen at 392 documents (369 snapshots); phases M2.0 to M2.4 recorded, children cut by lane (deterministic against reading), format and country as sample stratum; pilot rule stated once here
+2026-10-01T06:20Z HDMX-coding-agent note hygiene (author decision 2026-10-01, interactive: D4): line count corrected 13,089 -> 13,092 (docs/jetp-requirements.md DA2, data/jetp/lines.d counted 2026-10-01); body points at spec v1 instead of restating it; new children [[1870]], [[1873]], [[1874]], [[1875]], [[1876]]; exit criteria list every M2 child, the stale 'children 1501 to 1509 closed' dropped
 --- body ---
 ## Context
 
 Migration [[0870]] rebuilt what was already extracted and extracted nothing new.
-Measured 2026-09-29 on main (5382a1f5): 392 documents, 369 with a snapshot, 254
-with lines (13,089 lines from 253 snapshots), 115 snapshotted documents with
-zero lines, 23 with no snapshot (acquisition, out of scope). The join is
-document, then `retrievals.sha256`, then `lines.sha256`: `snapshots.csv` has no
-`document_id`.
+Measured 2026-09-29 on main (5382a1f5): 392 documents, 369 with a snapshot, 254 with lines (13,092
+lines from 253 snapshots; `docs/jetp-requirements.md` DA2, which gives the
+full count table), 115 snapshotted documents with zero lines, 23 with no
+snapshot. Of the 13,092 lines, 10,452 are comparator records (CRS, IATI and
+World Bank) in the 91 snapshots kept outside the document store. The join is
+document, then `retrievals.sha256`, then `lines.sha256`: `snapshots.csv` has
+no `document_id`.
 
 The 115 by country: ZAF 49, SEN 28, VNM 25, IDN 13. By type: progress_update 24
 (VNM 14, ZAF 9), project_page 27, data_portal 19, official_news 11,
@@ -27,94 +31,129 @@ investment_plan 3, approval_document 2, secondary_news 2. All 115 are active;
 languages en 59, vi 20, fr 16, empty 20. Snapshot formats over the 115: HTML 66,
 PDF 38, octet-stream 6, xlsx 2, JSON 2, JavaScript 2.
 
-Dedup pass done at planning time (documents only, storage contract § 4, now `docs/jetp-fusion.md` § 3): no
+Dedup pass done at planning time (documents only, `docs/jetp-fusion.md` § 3): no
 tier-1 group (same fingerprint) touches the 115; no `edition_of` row exists;
 one title matches an already extracted document (to be checked by 1501). Tier 2
 (normalised text) was not run: the snapshot bytes are not in a fresh worktree
 (DVC), so 1501 runs it where the bytes are.
 
-## What "works" means (M2 criterion, [[0725]])
+## What M2 is (normative text in the spec)
 
-- **Replay:** the pipeline reproduces the lines of the 254 extracted documents
-  byte for byte, or every difference is explained. This is the oracle; the 115
-  have none, so they get row-by-row review.
-- **Idempotence:** re-running on an extracted snapshot changes nothing and
-  never renumbers a `line_id`.
-- **Reuse by the periodic harvest:** a new dated snapshot of a document
-  already extracted appends lines tied to that snapshot; earlier lines never
-  change, and content restated unchanged is kept under the later date as weak
-  confirmation that it still holds (author, 2026-09-30; mechanism in
-  [[1506]]). A pending list of snapshots without lines or disposition is the
-  input of every run, so the M4 recurring passes ([[1184]], [[1140]]) reuse
-  this pipeline instead of building their own.
-- **Complete run:** all 392 documents end with lines or a recorded disposition
-  (duplicate of a canonical document, translation not canonical, no snapshot,
-  judged without extractable content, with the reason).
-- **Polish:** each extractor is red-tested by replaying a defect it must reject.
-- **Limit:** an LLM read is not byte-reproducible; the committed CSV is the
-  record. Replay and idempotence bind parsers and the writer, not a fresh LLM
-  read.
+The accepted specification v1 (`docs/jetp-spec.md`, tag `jetp-spec-v1`)
+governs; this tracker points at it and does not restate it. M2 is
+`docs/jetp-requirements.md` § 2.2 (milestone M2), `docs/jetp-extraction.md`
+§ 13 (the M2 slice) and `docs/jetp-operation.md` § 12 (the M2 and M3 slice).
+In short: replay of the 254 extracted documents (comparator records by
+ingestion run under the count control), idempotence, every one of the 392
+documents ending with lines or a disposition, autonomous assisted reading
+of the one-off documents (two blind local readers, a hosted arbiter,
+calibration on held-out reference answers, nothing queued for the author),
+transcription of the held scan, dated snapshots and restatements, budgets
+and secrets, run reports and the run-output gate, and the off-site copy of
+the document bytes with a restore test.
+
+**Zotero (author decision 2026-10-01, interactive, D2).** The spec governs:
+a one-way upload of every snapshot's bytes to the Zotero group, with its
+SHA-256 in the item metadata, plus a test restore of one snapshot from each
+off-disk copy (`docs/jetp-operation.md` § 9), is M2 and is carried by
+[[1712]]. No job reads from Zotero at M2. The move of the document store
+behind the registry interface ([[1510]], pilot [[1511]]) stays M4.
+
+**M3a overlaps M2 (author decision 2026-10-01, interactive, D3).** The M3a
+protocol declaration ([[1877]]) and the sealed known-item list ([[1878]])
+may start now. M2 targets the register as frozen at 392 documents (369
+with a snapshot): what M3a admits is extracted at M3b, not here.
+
+## Pilot rule (author decision 2026-10-01, interactive)
+
+Every long task (a full run, a batch, the replay, a transcription batch, a
+selection run, a discovery campaign) first runs on a pilot sample,
+stratified by country × format (language and statement shape where the
+task reads text), with its size stated. A quality check on the pilot
+passes, and its findings are recorded on the task's ticket, before the task
+is scaled up. The checker is not the author: a cross-model or second-vendor
+check, with only its residue going to the author. Each long-task child
+carries an exit criterion to that effect.
+
+## Phases
+
+M2 is cut along three dimensions:
+
+- **Lane.** The deterministic lane (parsers, ingestion runs, the replay,
+  with an oracle that already exists) against the reading lane (two LLM
+  readers, the arbiter, calibration, budgets). The deterministic lane runs
+  first: it needs no LLM and no paid call.
+- **Format.** Adapters per format (text-layer PDF, HTML, spreadsheet, JSON;
+  a scan needs transcription), each with its own text layer.
+- **Country and language** are the strata of every pilot sample and
+  calibration, not separate tickets; a country gets its own ticket only when
+  it is a separate sign-off unit.
+
+| Phase | What | Children | Lane |
+|---|---|---|---|
+| M2.0 | Schema and core: the M2 storage targets, the pipeline core, the run report, run-output gate and agent permissions | [[1870]], [[1506]], [[1875]] | both |
+| M2.1 | Deterministic replay, no LLM: the 254 extracted documents, the comparator records by ingestion run under the count control | [[1507]] | deterministic |
+| M2.2 | Format adapters | [[1508]] | both |
+| M2.3 | Reading: assisted reading protocol, reader selection and calibration, budgets and guards, transcription of the held scan | [[1509]], [[1873]], [[1874]], [[1876]] | reading |
+| M2.4 | The run over the 115: dedup, the four waves, dispositions | [[1501]], [[1502]], [[1503]], [[1504]], [[1505]] | both |
+| M2.x | Off-site copy of the document bytes and restore test; may run in any phase | [[1712]] | — |
+
+The phase order is the dependency order recorded in the children's
+`Blocked-by`; a phase may start as soon as its own blockers close.
+Departures from the suggested order, and why: transcription ([[1876]]) sits
+in M2.3, not M2.2, because extraction § 6.4 reads a scan with two hosted
+vision readers and the arbiter under the § 6.3 protocol, so only its
+recogniser text layer is an adapter; the run report and gate ([[1875]]) sit
+in M2.0 because the M2.1 replay is already a run.
 
 ## Pipeline stages
 
 1. Registry and dedup gate ([[1501]]). 2. Bytes by `sha256`, behind a registry
-interface. 3. Text layer, cached by hash and parser version. 4. Extractor:
-a per-series parser or an LLM-assisted read. 5. Writer: append-only lines,
-`line-field-specs`, dispositions. 6. Validator (`make jetp-ledger-check`) and a
-review diff. Build from cases: the first parser is the VNM progress updates;
-generalise after two or three cases, not before.
+interface. 3. Text layer, cached by hash and adapter version. 4. Extractor:
+a per-series parser, an ingestion run, assisted reading, or transcription
+(`docs/jetp-extraction.md` § 6). 5. Writer: append-only lines,
+`line-field-specs`, the journals of [[1870]] (runs, readings, dispositions,
+restatements). 6. Validator (`make jetp-ledger-check`) and the run-output
+gate of [[1875]]. Build from cases: the first parser is the VNM progress
+updates; generalise after two or three cases, not before.
 
 ## Relation to other work
 
-- M1b ([[0833]]) covers only the four M1a documents and forbids new
-  acquisition, not extraction from archived bytes. It runs first and does not
-  wait for these children. M3a discovery follows M2.
-- The Zotero document store ([[1510]], pilot [[1511]]) is milestone M4 and
-  deferred, so it does not block M2. M2 must not paint it into a corner: the
-  registry interface of 1506 is the seam (documents and bytes by `sha256`
-  behind one interface, as [[1140]] and [[1184]] already require of
-  acquisition), and the text layer of 1508 takes up [[1512]] (deferred, to be
-  taken up when a new parser is written, which is now).
+- M1b ([[0833]]) was accepted on 2026-10-01 ([[0725]]).
+- The registry interface of 1506 is the seam for the M4 document store
+  ([[1510]], [[1511]]), as [[1140]] and [[1184]] already require of
+  acquisition; the text layer of 1508 takes up [[1512]].
 - Document relations (`same_as`, `edition_of`, `translation_of`): for M2 the
-  home is the ledger, per the storage contract, because 1501 needs them before
-  any Zotero item exists. 1510 decision 2 places editions and translations in
-  Zotero as linked items; at M4 the ledger rows become the source of that
-  migration. Recorded here so nobody re-decides it in 1501.
-- The Viet Nam byte-identical check of the pilot is no longer concurrent with
-  the VNM waves, since M4 comes after M2.
+  home is the ledger, because 1501 needs them before any Zotero item exists.
+  1510 decision 2 places editions and translations in Zotero as linked
+  items; at M4 the ledger rows become the source of that migration.
 - [[0920]] finishes the 55 pending links of 0874 and overlaps only on the
-  documents it acquires.
-
-## Children, in order
-
-| Kind | Child | Scope |
-|---|---|---|
-| code | [[1506]] | pipeline core: registry interface, writer, dispositions, idempotence |
-| code | [[1508]] | format adapters (HTML, PDF text layer, xlsx, JSON) |
-| code | [[1507]] | replay harness over the 254 extracted documents |
-| code | [[1509]] | LLM-assisted extractor and review protocol |
-| run | [[1501]] | dedup and canonical pass over the 115; fill the 20 empty languages |
-| run | [[1502]] | 47 periodic or structured documents: progress updates 24, annual and operator reports 15, project lists 8 |
-| run | [[1505]] | 9 one-off plans and approval documents |
-| run | [[1503]] | 19 data portals, after checking what each snapshot holds |
-| run | [[1504]] | 40 project pages and news items |
-
-VNM and ZAF first inside each wave: they are the acceptance cases.
+  documents it acquires. M2 may retry, on the first two rungs of the access
+  ladder, the retrieval of registered documents without a snapshot
+  (`docs/jetp-collection.md` § 11, "M2 before the campaign").
+- The storage targets of M3a and M3b are [[1871]] and [[1872]] (tracker
+  [[1702]]), not M2.
 
 ## Invariants
 
 - Lines of the 254 extracted documents are byte-identical before and after.
 - Lines of an earlier snapshot are never edited by a later snapshot's run.
 - `make jetp-ledger-check` passes at every child.
-- A `line_id` is `<document_id>-<table>-<ordinal>`, appended, never renumbered.
+- A `line_id` is appended, never renumbered; ordinals continue across
+  snapshots (`docs/jetp-extraction.md` § 9).
 - Duplicates are resolved before extraction; a revoked duplicate judgement
-  re-enables extraction of the document it had folded (storage contract § 1).
+  re-enables extraction of the document it had folded (`docs/jetp-extraction.md` § 2).
+- No item of a run is queued for the author (`docs/jetp-operation.md` § 4).
 
 ## Exit criteria
 
-- [ ] Children 1501 to 1509 are closed
-- [ ] The replay of the 254 extracted documents passes (1507)
-- [ ] All 392 documents have lines or a recorded disposition with the reason
-- [ ] Each extractor was red-tested against a defect it must reject
-- [ ] A second dated snapshot of a living document runs through the pipeline and appends dated lines without touching earlier ones (1506)
+- [ ] M2.0 closed: [[1870]] (M2 schema slice of [[1702]]), [[1506]], [[1875]]
+- [ ] M2.1 closed: [[1507]]; the replay of the 254 extracted documents passes, comparator records included under the count control
+- [ ] M2.2 closed: [[1508]]
+- [ ] M2.3 closed: [[1509]], [[1873]], [[1874]], [[1876]]
+- [ ] M2.4 closed: [[1501]], [[1502]], [[1503]], [[1504]], [[1505]]
+- [ ] [[1712]] closed: every snapshot uploaded one way to the Zotero group, and one snapshot restored from each off-disk copy and checked by hash
+- [ ] All 392 documents have lines or a recorded disposition with the reason; the deferred ones are named by country and type
+- [ ] Each extractor was red-tested against a defect it must reject, and each long task passed its pilot check
+- [ ] A second dated snapshot runs through the pipeline and appends dated lines without touching earlier ones, on the fixture and held page of `docs/jetp-extraction.md` § 13 ([[1506]])
 - [ ] Author acceptance of M2 after an integration review, recorded in [[0725]]

@@ -8,6 +8,7 @@ Label: needs-human
 2026-09-30T13:10Z HDMX-coding-agent created — found by the operation spec draft (ticket 1708), verified
 2026-09-30T19:10Z HDMX-coding-agent note author decision (spec review wave 1, W1-22): padme's nightly restic backup to a Hetzner Storage Box exists, was found failing and repaired the same day; Zotero is the off-site copy of snapshots now; docs/jetp-operation.md section 9 states both; restore test pending
 2026-09-30T20:27Z HDMX-coding-agent note machine backup restored 2026-09-30: after the author repointed /etc/restic/excludes.txt, restic saved snapshot b6e9a723 to the Hetzner Storage Box (2h24, 25.7 GiB added); exit status 3 because files vanished mid-run (RePEc being rehomed under /data/mirrors), which systemd reports as failed. Open: the M2 test restore of one snapshot, and the Zotero off-site copy
+2026-10-01T06:25Z HDMX-coding-agent decision author decision 2026-10-01, interactive (D2): the spec governs (docs/jetp-operation.md § 9) — the one-way upload of every snapshot to the Zotero group with its SHA-256 and the test restore of one snapshot from each off-disk copy are M2, an exit criterion of tracker [[1500]]; the store move stays M4 ([[1510]], [[1511]]). Criterion 2 is conditional on no machine backup and its condition is false (restic to Hetzner, log 2026-09-30), so it is checked as not applicable; the M2 criteria are added. Label needs-human kept: creating the Zotero group has no API endpoint and is the author's step ([[1511]])
 --- body ---
 ## Context
 
@@ -39,5 +40,7 @@ Author's statement (2026-09-30, spec review wave 1, W1-22):
 ## Exit criteria
 
 - [x] The author states whether a machine-level backup of padme's `/data` exists, and where
-- [ ] If none: the document bytes have a copy on another physical device or site (the operation spec draft proposes doudou pulling a copy after each push; an institutional or cloud store is an alternative), and a restore of one snapshot from it is tested
+- [x] (Not applicable: a machine-level backup exists, restic to a Hetzner Storage Box, see log 2026-09-30) If none: the document bytes have a copy on another physical device or site (the operation spec draft proposes doudou pulling a copy after each push; an institutional or cloud store is an alternative), and a restore of one snapshot from it is tested
 - [x] `docs/jetp-operation.md` (backups section) states the arrangement
+- [ ] [M2] Every snapshot is uploaded one way to the project's Zotero group with its SHA-256 in the item metadata when it is pushed to DVC, and the objects pushed before the rule are uploaded once; no job reads from Zotero (`docs/jetp-operation.md` § 9)
+- [ ] [M2] One snapshot is restored from the Zotero group and one from the machine backup, each checked against its hash; the test reads the date of the latest backup snapshot and fails when it is stale (`docs/jetp-operation.md` § 9, "Test of recovery")

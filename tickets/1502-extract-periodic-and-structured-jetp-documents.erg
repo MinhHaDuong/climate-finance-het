@@ -10,6 +10,7 @@ Blocked-by: 1507
 
 2026-09-29T09:14Z HDMX-coding-agent note reshaped 2026-09-29 under milestone M2 of [[0725]]: run child, Blocked-by the replay harness 1507 so a parser proves itself on extracted documents first
 2026-09-29T13:36Z HDMX-coding-agent note ticket 1620 (2026-09-29): sen-senelec-procurement-2026 (Senelec procurement notice index, project_list, no lines) is the only page dating AAO 30/2026 (index date 09/09/2026, the bid deadline); its lines would give the Saloum procurement observation a cited date line
+2026-10-01T06:15Z HDMX-coding-agent note phase M2.4 of [[1500]]; deterministic lane (a parser per repeated series, extraction § 6.1); formats PDF text layer, HTML, spreadsheet; pilot criterion added (pilot rule, author decision 2026-10-01, interactive)
 --- body ---
 ## Context
 
@@ -40,3 +41,4 @@ duplicates and translations first. Some are Vietnamese (`vi`) or French.
 - [ ] `make jetp-ledger-check`, `make check-fast`, `make lint` and `make check-domain-jetp` pass
 - [ ] New counts by country and document type stated in the PR
 - [ ] `sen-senelec-procurement-2026` (Senelec notice index) has lines, so the Saloum AAO 30/2026 index date 09/09/2026 is a cited line for `sen-project-annex-16-procurement-2026-09-09` (ticket 1620, log note 2026-09-29)
+- [ ] Pilot on a stratified sample of the wave (country × format, size stated) passes a quality check by a cross-model checker, findings recorded here, before the full run (pilot rule, [[1500]])
