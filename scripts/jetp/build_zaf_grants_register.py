@@ -274,7 +274,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     parser.add_argument('--recorded-at')
     parser.add_argument('--ledger-dir', type=Path, default=LEDGER_DIR)
-    parser.add_argument('--output', type=Path, default=REPORT, help='run report (JSON)')
+    parser.add_argument('--output', type=Path,
+                        help=f'run report (JSON), e.g. {REPORT.relative_to(ROOT)}; the 2023 Q3 '
+                             'dollar reconciliation is written beside it')
     parser.add_argument('--dry-run', action='store_true',
                         help='extract and check every edition; admit nothing')
     args = parser.parse_args()
@@ -292,14 +294,15 @@ def main():
     if args.dry_run:
         log.info('dry run: %s', json.dumps(run_report(extractions, reconciliation)['usd_reconciliation_2023_q3']))
         return
-    if not args.recorded_at:
-        parser.error('--recorded-at is required to admit lines')
+    if not args.recorded_at or not args.output:
+        parser.error('--recorded-at and --output are required to admit lines')
     log.info('admitted: %s', admit(extractions, args.ledger_dir, recorded_at=args.recorded_at))
-    beside = args.output.with_name(args.output.stem.removesuffix('-run') + '-2023-q3-usd.csv')
+    output = args.output.resolve()
+    beside = output.with_name(output.stem.removesuffix('-run') + '-2023-q3-usd.csv')
     _write_reconciliation(reconciliation, beside)
     relative = beside.relative_to(ROOT) if beside.is_relative_to(ROOT) else beside
-    args.output.write_text(json.dumps(run_report(extractions, reconciliation, str(relative)),
-                                      indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
+    output.write_text(json.dumps(run_report(extractions, reconciliation, str(relative)),
+                                 indent=1, ensure_ascii=False) + '\n', encoding='utf-8')
 
 
 if __name__ == '__main__':
