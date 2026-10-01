@@ -110,9 +110,10 @@ by them, because codes such as `F35 or O4 or Q43` combined with a mediator
 group like "emissions" or "GDP" are broad. The text strings and the declared
 JEL filter account for the other 16,167.
 
-Pool merge (`make rel-pool` on padme with this delivery; not committed):
-77,508 pool works, of which 2,905 are in the catalogue, 9,555 are in another
-lane only, and 65,048 are new to the pool. 2,950 rows fall into the same
+Pool merge (`make rel-pool` on padme with this delivery and the 1652
+replacement 2026-09-30b; not committed):
+77,509 pool works, of which 2,905 are in the catalogue, 9,600 are in another
+lane only, and 65,004 are new to the pool. 2,949 rows fall into the same
 work as another row of the delivery, usually a working paper and its article
 sharing a DOI.
 
@@ -138,8 +139,8 @@ limits, not parser limits:
   developing economies", carries no ICF or aid term.
 - C09, "Debt-for-climate swaps for small islands", has the SY phrase but none
   of its debt-outcome terms.
-- C33, "The effect of aid on growth", has no emissions term, and its JEL codes
-  are O1 and O4, without F35.
+- C33, "The effect of aid on growth", has no emissions or energy term, so
+  neither its text strings nor the growth_scale JEL row (O4 AND mediator) reach it.
 
 RePEc holds few of the southern sentinels (10 of 55): the strength of this
 lane is economics indexed by JEL, not the South.
@@ -156,14 +157,16 @@ confirms 1650's items but resolves none of them to a DOI.
 
 ## What this lane adds
 
-- **To 1652 (RePEc through bibCNRS EDS).** 1652 received 2,231 RePEc records
-  from EDS, capped at 500 per query. This lane finds 1,989 of them (89 %), and
-  its 77,508 works include 5,907 that share a pool work with 1652. The local
-  replay has no cap and can be rerun. Most of its extra volume comes from the
-  1652 JEL rows, which EDS could not apply as EconLit does.
+- **To 1652 (RePEc through bibCNRS EDS).** The replacement 1652 delivery
+  (2026-09-30b) holds 2,225 RePEc records from EDS, capped at 500 per query
+  (two queries hit the cap). This lane finds 1,992 of them (90 %), and 5,954
+  of its 77,509 works share a pool work with 1652. The local replay has no cap
+  and can be rerun. Most of its extra volume comes from the 1652 JEL rows,
+  which returned nothing through EDS (every `EDS-RePEc-*-JEL-en` row, 0
+  records): the EDS RePEc index does not answer the EconLit `CC` field.
 - **To 1650 (tables of contents).** 5,869 works shared with 1650. For AER
   1990–1998, see above.
-- **To the pool.** 65,048 works new to the pool, unscreened as the contract
+- **To the pool.** 65,004 works new to the pool, unscreened as the contract
   requires. The pre-filter below estimates how many of them are surely off
   topic.
 
