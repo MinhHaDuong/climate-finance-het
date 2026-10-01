@@ -208,6 +208,11 @@ second append-only table with its own manifest, same key and same DVC pointer.
 from the pool and the table. Paths, the 1530 archive, the stage-2 chunking and
 the audit sample are set in `config/rel_screen.yaml`, with the screen rule
 (which stage-1 labels leave, whether works still unsure after stage 2 stay in
-REL flagged) that the view applies and records in `rel_counts.json`. The view
+REL flagged) that the view applies and records in `rel_counts.json`. Works no
+local Qwen run takes get stage 1 by design B (author decision of 2026-10-01,
+`scripts/corpus_icf_stage1_designb.py`, imported with `corpus_icf_import.py
+stage1-designb`): two stage-1 rows per work, Gemma 4 and the Jev D1
+classifier, and the work leaves only when both say `out` with Jev's P(out) at
+least 0.95 (`stage1_joint` in `config/rel_screen.yaml`). The view
 counts REL in works and in work families: works linked by `version_hint` count
 once, represented by an included member, a published article first.

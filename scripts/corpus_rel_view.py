@@ -18,7 +18,13 @@ Status per work (latest label wins within a stage, table order):
 - ``stage1_<label>``: stage-1 label in ``stage1_exit_labels`` (config), no
   stage-2 label: excluded at stage 1. Since the author decision of 2026-09-30
   only ``out`` exits (``stage1_out``); ``stage1_aux`` stays at zero unless the
-  config restores the older rule;
+  config restores the older rule. Design B (author decision of 2026-10-01,
+  ``stage1_joint``): the two rows of one design-B run are one decision, which
+  exits only when both labellers say ``out`` and the classifier's P(out)
+  reaches the threshold (``_rel_view.stage1_decisions``, which also states the
+  precedence between Qwen rows and design-B runs: the latest decision wins).
+  ``stage1_joint`` in the view spells out such a decision
+  (``llm=…;classifier=…;p_out=…``);
 - ``pending_stage2``: stage-1 label in ``stage2_labels`` (``icf``, ``unsure``,
   ``aux``), no stage-2 label yet;
 - ``icf`` / ``aux`` / ``out``: the stage-2 label, final;
@@ -32,7 +38,8 @@ counts report the flagged works separately within REL.
 A stage-2 label is final whatever the stage-1 label was (the 1530 Opus pilot
 judged 160 works that stage 1 had excluded). ``audit`` labels never set a
 status. Works whose labels disagree within a stage (several labellers or
-models) are counted as conflicts.
+models) are counted as conflicts; at stage 1 the unit is the decision, so the
+two rows of one design-B run never count as a conflict by themselves.
 
 Window: ``pipeline_loaders.classify_rel_review_works`` (``config/rel_review.yaml``)
 on title and year; the pool carries no publication date, so a 2026 work is
@@ -80,7 +87,7 @@ DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_screen.yaml")
 
 VIEW_COLUMNS = ["work_key", "openalex_id", "doi", "title", "year", "in_catalogue", "sources",
                 "version_hint", "status", "doc_type", "studied_country",
-                "stage1_label", "stage1_doc", "stage1_model", "stage1_run_id",
+                "stage1_label", "stage1_doc", "stage1_model", "stage1_run_id", "stage1_joint",
                 "stage2_label", "stage2_doc", "stage2_model", "stage2_run_id",
                 "n_audit", "n_labels", "conflict", "rel_disposition", "rel_year_status",
                 "rel_included", "rel_flag", "family_id", "family_first_year", "family_size"]
@@ -147,6 +154,11 @@ def make_counts(rows: list[dict], summary: dict, window_cfg: dict, inputs: dict,
         "rel": rel,
         "labels": {k: v for k, v in summary.items() if k != "families"},
         "families": summary["families"],
+        "stage1_joint": {"works": n(lambda r: bool(r["stage1_joint"])),
+                         "stage1_out": n(lambda r: bool(r["stage1_joint"])
+                                         and r["status"] == "stage1_out"),
+                         "pending_stage2": n(lambda r: bool(r["stage1_joint"])
+                                             and r["status"] == "pending_stage2")},
         "conflicts": {"stage1": n(lambda r: "stage1" in r["conflict"]),
                       "stage2": n(lambda r: "stage2" in r["conflict"])},
         "notes": ("status: latest label within a stage wins; stage 2 is final. "

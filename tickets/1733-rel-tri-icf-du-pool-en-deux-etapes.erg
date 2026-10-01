@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-09-30T19:21Z HDMX-coding-agent note blocker 1732 closed — Blocked-by removed.
 2026-09-30T21:56Z HDMX-coding-agent note author decision 2026-09-30: stage 2 also rereads stage-1 aux (proche); only out leaves at stage 1 (PR 1638)
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
+2026-10-01T06:46Z HDMX-coding-agent note design B (author decision 2026-10-01): leftovers (t1810, t1790, re-keyed works) screened via OpenRouter, drop only when Gemma 4 and Jev D1 P(out)>=0.95 both say out; rule in config/rel_screen.yaml stage1_joint; run ~/rel_pool_runs/2026-10-01-designB-stage1, import after merge
 --- body ---
 ## Context
 

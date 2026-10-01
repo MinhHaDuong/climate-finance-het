@@ -99,3 +99,38 @@ def test_title_less_works_are_named_residue_in_the_summary(tmp_path):
     assert summary["per_lane"] == {"catalogue": 1}
     res = summary["residue_no_title"]
     assert (res["works"], res["per_lane"], res["work_keys"]) == (1, {"unknown": 1}, ["doi:10.9/z"])
+
+
+def test_works_in_another_runs_input_are_excluded_by_key_openalex_or_doi(tmp_path):
+    # Design B (ticket 1733) screens only what the running Qwen runs do not take;
+    # a rebuilt pool may have re-keyed a work, hence the OpenAlex id and DOI matches.
+    pool = [_work("openalex:W1", "catalogue", openalex_id="W1", all_openalex_ids="W1"),
+            _work("doi:10.1/a", "t1652-x", openalex_id="W2", doi="10.1/a"),
+            _work("doi:10.1/b", "t1810-repec-local", doi="10.1/B"),
+            _work("title:new|2020", "t1810-repec-local"),
+            _work("title:also new|2021", "t1790-sud-playwright")]
+    pool_path = tmp_path / "pool.csv"
+    with open(pool_path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=rv.POOL_FIELDS)
+        w.writeheader()
+        w.writerows(pool)
+    table = str(tmp_path / "rel_screen" / "icf_screen.csv")
+    ics.append_rows(table, [{"work_key": "openalex:W9", "stage": "1", "labeller": "llm",
+                             "model": "q", "prompt_sha256": "p", "run_id": "r",
+                             "machine": "padme", "label": "out", "doc_type": "research",
+                             "labelled_at": "2026-09-30", "source": "s"}], new_table=True)
+    other = tmp_path / "qwen_input.jsonl"
+    other.write_text("\n".join(json.dumps(r) for r in [
+        {"work_key": "openalex:W1", "openalex_id": "W1", "doi": ""},
+        {"work_key": "title:old key|2020", "openalex_id": "W2", "doi": ""},
+        {"work_key": "title:x|2020", "openalex_id": "", "doi": "10.1/b"}]) + "\n")
+    out = tmp_path / "in" / "screen_input.jsonl"
+    summary = si.run(str(pool_path), table, str(out), PRIORITY + ["t1790", "t1810"], RULE,
+                     [str(other)])
+    assert [json.loads(x)["work_key"] for x in open(out, encoding="utf-8")] == [
+        "title:also new|2021", "title:new|2020"]
+    ex = summary["excluded_other_runs"]
+    assert ex["works"] == 3 and ex["per_lane"] == {
+        "catalogue": {"work_key": 1}, "t1652": {"openalex_id": 1}, "t1810": {"doi": 1}}
+    assert ex["inputs"][0]["sha256"] == rv.sha256_file(str(other))
+    assert summary["per_lane"] == {"t1790": 1, "t1810": 1}

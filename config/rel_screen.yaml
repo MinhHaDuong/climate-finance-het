@@ -11,7 +11,8 @@ view_dir: data/rel_pool
 # Read-only archive of ticket 1530 (doudou). The import never writes into it.
 t1530_archive: ~/data/projets/climate-finance-het/rel_sud/2026-09-29
 
-# Stage 1 (ticket 1733): every unscreened pool work, local Qwen on padme, the
+# Stage 1 (ticket 1733): every unscreened pool work, local Qwen on padme (design
+# B through OpenRouter for the works no Qwen run takes, stage1_joint below), the
 # prompts of config/rel_sud_screen.yaml, keyed by work_key. Input order: small,
 # complete lanes first so they finish early, the 1650 tables of contents last.
 # An entry matches a source equal to it or starting with it plus "-". The order
@@ -31,6 +32,26 @@ stage1:
 # The rule before that decision was stage1_exit_labels: [out, aux].
 stage1_exit_labels: [out]
 stage2_labels: [icf, unsure, aux]
+
+# Design B (author decision of 2026-10-01, ticket 1733): the works no local
+# Qwen run screens get stage 1 from two labellers through OpenRouter
+# (scripts/corpus_icf_stage1_designb.py), each recorded as its own stage-1
+# row of the same run_id. A work leaves at stage 1 (stage1_out) only when, in
+# that run, the LLM row is "out" AND the classifier row is "out" with
+# P(out) >= classifier_p_out_min (written "p_out=<p>" at the start of the
+# classifier row's `why`). Every other combination, and a run that holds only
+# one of the two rows, sends the work to stage 2 (pending_stage2).
+# A row counts as a design-B row by its exact served model id, listed here;
+# the import refuses a served model these lists do not name.
+# Precedence: each single-labeller stage-1 row (Qwen, Haiku) is one decision
+# under stage1_exit_labels, as before; each design-B run is one decision at
+# the position of its last row. The latest decision in table order wins, so a
+# Qwen-screened work keeps the single-labeller rule unless a design-B pair is
+# appended after it (and the reverse).
+stage1_joint:
+  llm_models: [google/gemma-4-26b-a4b-it]
+  classifier_models: [typesafe/jev-1.13-20260917]
+  classifier_p_out_min: 0.95
 
 # Exit rule for works still "unsure" after stage 2 (author decision of
 # 2026-09-30, recall first): true keeps them in REL, flagged (rel_flag unsure)
