@@ -164,7 +164,7 @@ def test_duplicate_handle_keeps_the_fuller_copy(tmp_path):
     (root / "eee" / "jdevec" / "a.rdf").write_text(bare, encoding="utf-8")
     (root / "eee" / "jdevec" / "b.rdf").write_text(full, encoding="utf-8")
     out = tmp_path / "o" / "t.parquet"
-    assert cat.main(["--mirror", str(root), "--output", str(out)]) == 0
+    assert cat.main(["--mirror", str(root), "--output", str(out), "--jobs", "1"]) == 0
     d = pd.read_parquet(out)
     assert d.abstract.tolist() == ["An abstract."]
     dups = pd.read_csv(tmp_path / "o" / "t.duplicates.csv")
@@ -180,8 +180,8 @@ def test_template_type_tolerates_suffix_typos():
 @pytest.mark.parametrize("raw,want", [
     ("RePEc:zbw:hwware:26096 #END 46 #BEGIN 47", "RePEc:zbw:hwware:26096"),
     ("RePEc: rsp: wpaper: wp48", "RePEc:rsp:wpaper:wp48"),
-    ("RePEC: srs: jaes: v:10:y:2015:i:1(31)_Spring2015:p:20-33 The article template",
-     "RePEc:srs:jaes:v:10:y:2015:i:1(31)_Spring2015:p:20-33"),
+    ("RePEc:aud:audfin:v:20:y:2018:i:Special 12:p:827", "RePEc:aud:audfin:v:20:y:2018:i:Special12:p:827"),
+    ("RePEc:aen:eeepjl:eeep10-2-von der Fehr", "RePEc:aen:eeepjl:eeep10-2-vonderFehr"),
     ("Repec:sos:sosjrn:170307਀", "RePEc:sos:sosjrn:170307"),
     ("repec:aea:aecrev:v:100:y:2010:i:1:p:5-34", "RePEc:aea:aecrev:v:100:y:2010:i:1:p:5-34"),
     ("not a handle", ""),
@@ -189,6 +189,16 @@ def test_template_type_tolerates_suffix_typos():
 ])
 def test_norm_handle(raw, want):
     assert _redif.norm_handle(raw) == want
+
+
+def test_inner_spaces_keep_distinct_works_apart_and_continuations_out():
+    a = _redif.norm_handle("RePEc:aud:audfin:v:20:y:2018:i:Special 12:p:827")
+    b = _redif.norm_handle("RePEc:aud:audfin:v:20:y:2018:i:Special 12:p:1016")
+    assert a != b
+    text = ("Template-Type: ReDIF-Article 1.0\nTitle: T\n"
+            "Handle: RePEC: srs: jaes: v:10:y:2015:i:1(31)_Spring2015:p:20-33\nThe article template\n")
+    (t,) = list(_redif.iter_templates(text))
+    assert _redif.to_row(t)["handle"] == "RePEc:srs:jaes:v:10:y:2015:i:1(31)_Spring2015:p:20-33"
 
 
 def test_to_row_keeps_the_raw_handle_when_normalised():

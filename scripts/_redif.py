@@ -91,13 +91,15 @@ def clean_handle(value: str) -> str:
     Archives write inline comments (``RePEc:zbw:hwware:26096 #END 46``), spaces
     around colons (``RePEc: rsp: wpaper: wp48``), a swallowed continuation
     line, stray control characters, and the prefix in any case. The comment
-    is cut, spaces next to a colon are closed, the first whitespace-free token
-    is kept, non-printable characters are dropped and the prefix is written
-    ``RePEc``."""
+    is cut, non-printable characters are dropped, every whitespace is removed
+    and the prefix is written ``RePEc``. Whitespace is removed, not split on:
+    an inner space can be part of the id (``…:i:Special 12:p:827``,
+    ``eeep10-2-von der Fehr``), and keeping only the first token merged
+    distinct works (PR 1640 round 2, N2). A continuation line never reaches
+    the handle: ``iter_templates`` keeps only the first line of a ``Handle``."""
     v = (value or "").split("#", 1)[0]
     v = "".join(c for c in v if c.isprintable() and c != "\ufffd")
-    v = re.sub(r"\s*:\s*", ":", v.strip())
-    v = v.split()[0] if v.split() else ""
+    v = "".join(v.split())
     if v[:6].lower() == "repec:":
         v = "RePEc:" + v[6:]
     return v
@@ -122,7 +124,10 @@ def iter_templates(text: str) -> Iterator[dict[str, list[str]]]:
 
     def flush() -> None:
         if cur is not None and key is not None:
-            cur.setdefault(key, []).append(" ".join(" ".join(buf).split()))
+            # a handle is one line: a following non-attribute line is text the
+            # archive forgot to prefix, never part of the id
+            lines = buf[:1] if key == "handle" else buf
+            cur.setdefault(key, []).append(" ".join(" ".join(lines).split()))
 
     for line in text.splitlines():
         if line.startswith("#") and key is None:
