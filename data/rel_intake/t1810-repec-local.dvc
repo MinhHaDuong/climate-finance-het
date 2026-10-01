@@ -1,0 +1,6 @@
+outs:
+- md5: 5aab113d7f540e989fed5580ea01dbe3.dir
+  size: 154779403
+  nfiles: 4
+  hash: md5
+  path: t1810-repec-local
