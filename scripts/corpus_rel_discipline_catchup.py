@@ -12,15 +12,17 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
     Works whose final stage-2 label (REL view over the pool and ``icf_screen``)
     is in ``catchup.final_labels`` and whose work key has no ``rel_dimensions``
     row yet, sorted by work key, in stage-2 chunks (``chunkNN.txt``,
-    ``chunkNN.ids.json``, ``works.csv``, ``build.json`` with the counts), each
-    rendered as ``chunkNN.prompt.txt``.
+    ``chunkNN.ids.json``, ``works.csv``, ``build.json`` with the counts), then
+    rendered. Refused when ``rel_dimensions`` is missing although
+    ``icf_screen`` holds version-2 stage-2 rows (the table was lost, not empty).
 
 ``render``
     Writes ``chunkNN.prompt.txt`` (the wrapper with the chunk's records) next
-    to each ``chunkNN.txt`` of a chunk directory built elsewhere (a test set).
-    The rendered prompt is the instrument for every route: an OpenRouter call
-    sends it as the user message; a Claude Code subagent is told to follow it
-    and write its reply to ``chunkNN.<suffix>.txt``.
+    to each ``chunkNN.txt`` of a chunk directory, and ``render.json`` with the
+    wrapper's hash; a directory rendered with one wrapper refuses another. The
+    rendered prompt is the instrument for every route: an OpenRouter call sends
+    it as the user message; a Claude Code subagent is told to follow it and
+    write its reply to ``chunkNN.<suffix>.txt``.
 
 ``count-tokens``
     Input tokens of every rendered prompt, measured with the Anthropic
@@ -29,21 +31,33 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
 ``submit`` / ``collect``
     OpenRouter Batch API (``POST /api/v1/batches``, asynchronous, 24-hour
     window, about half the synchronous price on ``:batch`` endpoints): one
-    request per chunk, ``custom_id`` = chunk name. ``submit`` refuses when the
-    estimated cost exceeds ``--max-usd``. ``collect`` polls once (``--wait`` to
-    poll until terminal), then writes the raw batch object, each answer file
-    ``chunkNN.<suffix>.txt`` and ``<suffix>.calls.jsonl``.
+    request per chunk, ``custom_id`` = chunk name. ``collect`` polls once
+    (``--wait`` to poll until terminal); on a completed batch it writes the
+    raw batch object, each reply verbatim (``chunkNN.<suffix>.raw.txt``), its
+    answer lines (``chunkNN.<suffix>.txt``: the lines that start with a record
+    number) and ``<suffix>.calls.jsonl``, rewritten whole, so a second collect
+    does not double the cost log. An errored request writes no answer file.
 
 ``call``
     The same requests through the synchronous ``/chat/completions`` endpoint,
-    for a model or a run without batch.
+    for a model or a run without batch. Chunks that already have an answer
+    file are skipped; each call appends its line to ``<suffix>.calls.jsonl``.
 
 ``parse``
     Reads ``chunkNN.<suffix>.txt`` (``n|contrib|field|ctype|why``) and appends
     the rows to ``rel_dimensions`` under stage ``catchup``, with the model, run
-    id and machine given. A chunk with a malformed or duplicated line, or with
-    no valid discipline value at all (an answer file of another format), is
-    refused; nothing is written unless every row validates. Idempotent.
+    id and machine given and the wrapper hash recorded by ``render``. A chunk
+    with a malformed, duplicated or stage-2 line, or with no valid discipline
+    value at all, refuses the whole parse; an incomplete chunk is accepted and
+    reported. A work that already has a ``rel_dimensions`` row under another
+    stage, model or run id is skipped and counted, so a second run id never
+    gives a work two catch-up answers. Idempotent for one run id.
+
+Spend guard (``submit``, ``call``): the bound is the input tokens (measured by
+``count-tokens`` when ``tokens.json`` exists, else characters / 3) at the
+listed input price, plus ``--max-tokens`` per chunk at the listed output price.
+Reasoning tokens count as output and fall under ``--max-tokens``. Nothing is
+sent when the bound exceeds ``--max-usd`` or a price is not a positive number.
 
 Token and cost log (``<suffix>.calls.jsonl``, one line per chunk): records,
 answered, prompt, completion and reasoning tokens, cost (``cost_source``:
@@ -56,16 +70,17 @@ Usage:
     python scripts/corpus_rel_discipline_catchup.py render --chunk-dir DIR
     python scripts/corpus_rel_discipline_catchup.py count-tokens --chunk-dir DIR
     python scripts/corpus_rel_discipline_catchup.py submit --chunk-dir DIR --model M \\
-        --suffix S --max-usd X
+        --suffix S --max-usd X [--max-tokens N]
     python scripts/corpus_rel_discipline_catchup.py collect --chunk-dir DIR --suffix S [--wait]
     python scripts/corpus_rel_discipline_catchup.py call --chunk-dir DIR --model M --suffix S \\
-        --max-usd X
-    python scripts/corpus_rel_discipline_catchup.py parse --chunk-dir DIR --model M --run-id R \\
-        --machine padme [--suffix S]
+        --max-usd X [--max-tokens N]
+    python scripts/corpus_rel_discipline_catchup.py parse --chunk-dir DIR --suffix S --model M \\
+        --run-id R --machine padme
 """
 
 import argparse
 import json
+import math
 import os
 import re
 import sys
@@ -90,6 +105,7 @@ ANTHROPIC_COUNT = "https://api.anthropic.com/v1/messages/count_tokens"
 KEY_VAR = "OPENROUTER_API_KEY_CLIMATEFINANCE"
 CHARS_PER_TOKEN_FLOOR = 3.0  # conservative, for the spend guard only
 _CHUNK = re.compile(r"^(chunk\d+)\.ids\.json$")
+_ANSWER_LINE = re.compile(r"^\s*\d+\s*\|")
 
 
 class CatchupError(Exception):
@@ -108,6 +124,21 @@ def select_catchup(view_rows: list[dict], final_labels: list[str], with_dims: se
             "already_with_dimensions": len(eligible) - len(keys)}
 
 
+def dimension_rows(table: str, dims_table: str, v2_prompt: str) -> list[dict]:
+    """``rel_dimensions`` rows; refuse a missing table that version-2 parses wrote.
+
+    ``rel_dimensions`` starts with the first version-2 stage-2 parse. If it is
+    missing while ``icf_screen`` holds rows of the version-2 wrapper, it was
+    lost or not fetched: reading it as empty would plan every work again.
+    """
+    if not os.path.exists(dims_table):
+        sha = ics.stage2_prompt_sha256(v2_prompt)
+        if any(r["prompt_sha256"] == sha for r in ics.read_table(table)):
+            raise CatchupError(f"{dims_table} is missing but {table} holds version-2 stage-2 "
+                               "rows: fetch it (make rel-pool-data) first; nothing built")
+    return ics.read_table(dims_table, ics.DIMENSIONS)
+
+
 # ── prompts ──────────────────────────────────────────────
 
 
@@ -115,15 +146,36 @@ def chunk_names(chunk_dir: str) -> list[str]:
     return sorted(m.group(1) for m in map(_CHUNK.match, os.listdir(chunk_dir)) if m)
 
 
-def render(chunk_dir: str, template: str) -> list[str]:
-    """``chunkNN.prompt.txt`` for every chunk: the wrapper with the chunk's records."""
+def render(chunk_dir: str, prompt_path: str) -> list[str]:
+    """``chunkNN.prompt.txt`` for every chunk, and ``render.json`` (the wrapper's hash)."""
+    template = ics.catchup_prompt_template(prompt_path)
+    sha = ics.stage2_prompt_sha256(prompt_path)
+    meta_path = os.path.join(chunk_dir, "render.json")
+    if os.path.exists(meta_path):
+        with open(meta_path, encoding="utf-8") as fh:
+            prior = json.load(fh)["prompt_sha256"]
+        if prior != sha:
+            raise CatchupError(f"{chunk_dir} was rendered with wrapper {prior[:12]}, not "
+                               f"{sha[:12]}: build a new directory")
     names = chunk_names(chunk_dir)
     for name in names:
         with open(os.path.join(chunk_dir, f"{name}.txt"), encoding="utf-8") as fh:
             records = fh.read().rstrip("\n")
         with open(os.path.join(chunk_dir, f"{name}.prompt.txt"), "w", encoding="utf-8") as fh:
             fh.write(template.replace("{records}", records) + "\n")
+    with open(meta_path, "w", encoding="utf-8") as fh:
+        json.dump({"prompt": prompt_path, "prompt_sha256": sha, "chunks": names}, fh, indent=2)
+        fh.write("\n")
     return names
+
+
+def rendered_sha(chunk_dir: str) -> str:
+    """The hash of the wrapper the chunk prompts were rendered with."""
+    meta_path = os.path.join(chunk_dir, "render.json")
+    if not os.path.exists(meta_path):
+        raise CatchupError(f"{meta_path} missing: the prompts were not rendered by this command")
+    with open(meta_path, encoding="utf-8") as fh:
+        return json.load(fh)["prompt_sha256"]
 
 
 def _prompts(chunk_dir: str) -> dict:
@@ -146,21 +198,23 @@ def _ids(chunk_dir: str, name: str) -> list[str]:
 
 
 def model_pricing(model: str, get=requests.get) -> dict:
-    """Listed USD per token of an OpenRouter model id (``prompt``, ``completion``)."""
+    """Listed USD per token of an OpenRouter model id; refused unless both are positive."""
     resp = get(f"{OPENROUTER}/models", timeout=60)
     resp.raise_for_status()
     for m in resp.json()["data"]:
         if m["id"] == model:
-            p = m["pricing"]
-            return {"prompt": float(p["prompt"]), "completion": float(p["completion"])}
+            p = {k: float(m["pricing"][k]) for k in ("prompt", "completion")}
+            if not all(math.isfinite(v) and v > 0 for v in p.values()):
+                raise CatchupError(f"{model} lists prices {p}: no spend bound possible")
+            return p
     raise CatchupError(f"{model} is not in the OpenRouter model list")
 
 
-def estimate_usd(prompts: dict, n_records: int, pricing: dict, out_per_record: int,
-                 tokens: dict | None = None) -> float:
-    """Upper-side estimate for the spend guard: measured input tokens when known."""
+def spend_bound_usd(prompts: dict, pricing: dict, max_tokens: int,
+                    tokens: dict | None = None) -> float:
+    """Most a run can cost: input tokens plus ``max_tokens`` of output per chunk."""
     inp = sum((tokens or {}).get(k) or len(v) / CHARS_PER_TOKEN_FLOOR for k, v in prompts.items())
-    return inp * pricing["prompt"] + n_records * out_per_record * pricing["completion"]
+    return inp * pricing["prompt"] + len(prompts) * max_tokens * pricing["completion"]
 
 
 def usage_log(chunk: str, body: dict, n_records: int, n_answered: int, pricing: dict,
@@ -187,10 +241,19 @@ def _content(body: dict) -> str:
 
 
 def _write_answer(chunk_dir: str, chunk: str, suffix: str, text: str) -> int:
-    """Write the reply verbatim as the answer file; return how many records it answers."""
-    with open(os.path.join(chunk_dir, f"{chunk}.{suffix}.txt"), "w", encoding="utf-8") as fh:
-        fh.write(text if text.endswith("\n") or not text else text + "\n")
-    answers, _ = ics.parse_discipline_answers(text.splitlines(), _ids(chunk_dir, chunk))
+    """Keep the reply verbatim (``.raw.txt``) and its answer lines; return records answered.
+
+    Only lines that start with a record number go to the answer file, so a
+    model's preamble or closing sentence does not refuse a paid chunk; the raw
+    reply keeps them for audit.
+    """
+    stem = os.path.join(chunk_dir, f"{chunk}.{suffix}")
+    with open(f"{stem}.raw.txt", "w", encoding="utf-8") as fh:
+        fh.write(text)
+    lines = [ln for ln in text.splitlines() if _ANSWER_LINE.match(ln)]
+    with open(f"{stem}.txt", "w", encoding="utf-8") as fh:
+        fh.writelines(ln + "\n" for ln in lines)
+    answers, _ = ics.parse_discipline_answers(lines, _ids(chunk_dir, chunk))
     return len(answers)
 
 
@@ -208,7 +271,9 @@ def _request_body(prompt: str, max_tokens: int, effort: str | None) -> dict:
     return body
 
 
-def _guard(chunk_dir: str, model: str, max_usd: float, out_per_record: int) -> dict:
+def _guard(chunk_dir: str, model: str, max_usd: float, max_tokens: int) -> dict:
+    if not (math.isfinite(max_usd) and max_usd > 0) or max_tokens < 1:
+        raise CatchupError(f"--max-usd {max_usd} and --max-tokens {max_tokens} must be positive")
     prompts = _prompts(chunk_dir)
     n = sum(len(_ids(chunk_dir, k)) for k in prompts)
     tokens = None
@@ -217,24 +282,24 @@ def _guard(chunk_dir: str, model: str, max_usd: float, out_per_record: int) -> d
         with open(tok_path, encoding="utf-8") as fh:
             tokens = json.load(fh)["by_chunk"]
     pricing = model_pricing(model)
-    est = estimate_usd(prompts, n, pricing, out_per_record, tokens)
-    if est > max_usd:
-        raise CatchupError(f"estimated {est:.3f} USD for {n} records exceeds --max-usd "
+    bound = spend_bound_usd(prompts, pricing, max_tokens, tokens)
+    if bound > max_usd:
+        raise CatchupError(f"spend bound {bound:.3f} USD for {n} records exceeds --max-usd "
                            f"{max_usd}; nothing sent")
-    log.info("%d records in %d chunks, estimated %.3f USD (cap %.2f)", n, len(prompts), est,
-             max_usd)
-    return {"prompts": prompts, "pricing": pricing, "estimate_usd": round(est, 4), "records": n}
+    log.info("%d records in %d chunks, spend bound %.3f USD (cap %.2f)", n, len(prompts),
+             bound, max_usd)
+    return {"prompts": prompts, "pricing": pricing, "bound_usd": round(bound, 4), "records": n}
 
 
 # ── routes ───────────────────────────────────────────────
 
 
 def submit(chunk_dir: str, model: str, suffix: str, max_usd: float, max_tokens: int,
-           effort: str | None, out_per_record: int, post=requests.post) -> dict:
+           effort: str | None, post=requests.post) -> dict:
     meta_path = os.path.join(chunk_dir, f"{suffix}.batch.json")
     if os.path.exists(meta_path):
         raise CatchupError(f"{meta_path} exists: this suffix was already submitted")
-    g = _guard(chunk_dir, model, max_usd, out_per_record)
+    g = _guard(chunk_dir, model, max_usd, max_tokens)
     payload = {"endpoint": "/v1/chat/completions", "model": model,
                "requests": [{"custom_id": k, "body": _request_body(v, max_tokens, effort)}
                             for k, v in g["prompts"].items()]}
@@ -246,7 +311,7 @@ def submit(chunk_dir: str, model: str, suffix: str, max_usd: float, max_tokens: 
     meta = {"batch_id": batch["id"], "model": model, "route": "openrouter-batch",
             "submitted_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "max_tokens": max_tokens, "reasoning_effort": effort, "pricing": g["pricing"],
-            "estimate_usd": g["estimate_usd"], "records": g["records"],
+            "bound_usd": g["bound_usd"], "records": g["records"],
             "chunks": list(g["prompts"])}
     with open(meta_path, "w", encoding="utf-8") as fh:
         json.dump(meta, fh, indent=2)
@@ -275,24 +340,28 @@ def collect(chunk_dir: str, suffix: str, wait: bool, poll_s: int = 60,
     with open(os.path.join(chunk_dir, f"{suffix}.batch_result.json"), "w",
               encoding="utf-8") as fh:
         json.dump(batch, fh, ensure_ascii=False)
+    known = set(meta["chunks"])
     lines = []
-    for res in batch["results"]:
-        chunk = res["custom_id"]
-        n = len(_ids(chunk_dir, chunk))
+    for res in batch.get("results") or []:
+        chunk = res.get("custom_id")
+        if chunk not in known:
+            raise CatchupError(f"batch result for unknown custom_id {chunk!r}")
         body = (res.get("response") or {}).get("body") or {}
         answered = _write_answer(chunk_dir, chunk, suffix, _content(body)) if body else 0
-        lines.append(usage_log(chunk, body, n, answered, meta["pricing"],
+        lines.append(usage_log(chunk, body, len(_ids(chunk_dir, chunk)), answered,
+                               meta["pricing"],
                                {"route": meta["route"], "model": meta["model"],
                                 "batch_id": batch["id"], "error": res.get("error")}))
-    _write_calls(chunk_dir, suffix, lines)
+    with open(os.path.join(chunk_dir, f"{suffix}.calls.jsonl"), "w", encoding="utf-8") as fh:
+        fh.writelines(json.dumps(x, ensure_ascii=False) + "\n" for x in lines)
     summary = {"status": "completed", "batch_usage": batch.get("usage"), **_totals(lines)}
     log.info("collected: %s", summary)
     return summary
 
 
 def call(chunk_dir: str, model: str, suffix: str, max_usd: float, max_tokens: int,
-         effort: str | None, out_per_record: int, post=requests.post) -> dict:
-    g = _guard(chunk_dir, model, max_usd, out_per_record)
+         effort: str | None, post=requests.post) -> dict:
+    g = _guard(chunk_dir, model, max_usd, max_tokens)
     lines = []
     for chunk, prompt in g["prompts"].items():
         if os.path.exists(os.path.join(chunk_dir, f"{chunk}.{suffix}.txt")):
@@ -306,19 +375,14 @@ def call(chunk_dir: str, model: str, suffix: str, max_usd: float, max_tokens: in
         if resp.status_code != 200:
             raise CatchupError(f"{chunk}: http {resp.status_code} {resp.text[:300]}")
         js = resp.json()
-        n = len(_ids(chunk_dir, chunk))
         answered = _write_answer(chunk_dir, chunk, suffix, _content(js))
-        lines.append(usage_log(chunk, js, n, answered, g["pricing"],
+        lines.append(usage_log(chunk, js, len(_ids(chunk_dir, chunk)), answered, g["pricing"],
                                {"route": "openrouter-sync", "model": model,
                                 "latency_s": round(time.monotonic() - t0, 1)}))
-        _write_calls(chunk_dir, suffix, lines[-1:])
+        with open(os.path.join(chunk_dir, f"{suffix}.calls.jsonl"), "a",
+                  encoding="utf-8") as fh:
+            fh.write(json.dumps(lines[-1], ensure_ascii=False) + "\n")
     return _totals(lines)
-
-
-def _write_calls(chunk_dir: str, suffix: str, lines: list[dict]) -> None:
-    with open(os.path.join(chunk_dir, f"{suffix}.calls.jsonl"), "a", encoding="utf-8") as fh:
-        for line in lines:
-            fh.write(json.dumps(line, ensure_ascii=False) + "\n")
 
 
 def _totals(lines: list[dict]) -> dict:
@@ -391,10 +455,21 @@ def parse_answers(chunk_dir: str, suffix: str, model: str, run_id: str, machine:
     return dims, report
 
 
+def drop_already_dimensioned(dims: list[dict], existing: list[dict]) -> tuple[list[dict], int]:
+    """Rows whose work has no dimension row under another key; and how many were dropped.
+
+    Rows with the same key stay, for ``append_new`` to skip (idempotent rerun).
+    """
+    keys = {ics.key_of(r) for r in existing}
+    other = {r["work_key"] for r in existing}
+    kept = [r for r in dims if r["work_key"] not in other or ics.key_of(r) in keys]
+    return kept, len(dims) - len(kept)
+
+
 # ── main ─────────────────────────────────────────────────
 
 
-def main(argv=None):
+def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--config", default=DEFAULT_CONFIG)
@@ -404,6 +479,9 @@ def main(argv=None):
                         help="default: config dimensions_table")
     parser.add_argument("--prompt", default=None, help="default: config catchup.prompt")
     sub = parser.add_subparsers(dest="cmd", required=True)
+    # Multi-output: build writes chunk files, ids, works.csv, build.json and the
+    # rendered prompts into one directory; the other commands read and write
+    # next to them in that --chunk-dir.
     sub.add_parser("build").add_argument("--output-dir", required=True)
     for name in ("render", "count-tokens", "submit", "collect", "call", "parse"):
         sub.add_parser(name).add_argument("--chunk-dir", required=True)
@@ -412,58 +490,82 @@ def main(argv=None):
         p = sub.choices[name]
         p.add_argument("--model", required=True, help="OpenRouter model id")
         p.add_argument("--suffix", required=True)
-        p.add_argument("--max-usd", type=float, required=True, help="refuse above this estimate")
-        p.add_argument("--max-tokens", type=int, default=32000)
+        p.add_argument("--max-usd", type=float, required=True,
+                       help="refuse when the spend bound exceeds this")
+        p.add_argument("--max-tokens", type=int, default=32000,
+                       help="output tokens per chunk, reasoning included (also the bound)")
         p.add_argument("--reasoning-effort", default=None, help="default: the model's own")
-        p.add_argument("--est-out-per-record", type=int, default=400,
-                       help="output tokens per record (reasoning included) for the estimate")
     sub.choices["collect"].add_argument("--suffix", required=True)
     sub.choices["collect"].add_argument("--wait", action="store_true")
     pp = sub.choices["parse"]
+    pp.add_argument("--suffix", required=True)
     pp.add_argument("--model", required=True)
     pp.add_argument("--run-id", required=True)
     pp.add_argument("--machine", required=True)
-    pp.add_argument("--suffix", default="opus")
     pp.add_argument("--labeller", choices=sorted(ics.LABELLERS), default="llm")
     pp.add_argument("--labelled-at", default=None, help="default: today (UTC)")
     pp.add_argument("--new-table", action="store_true",
                     help="allow creating the dimensions table although a .dvc pointer tracks it")
-    args = parser.parse_args(argv)
+    return parser
+
+
+def _build(args, cfg: dict, prompt: str, dims_table: str) -> None:
+    pool_path, table = args.pool or cfg["pool"], args.table or cfg["table"]
+    ics.require_table(table)
+    with_dims = {r["work_key"] for r in dimension_rows(table, dims_table, cfg["stage2"]["prompt"])}
+    rule = rv.screen_rule(cfg)
+    pool, view = ch.view(pool_path, table, rule)
+    sel = select_catchup(view, cfg["catchup"]["final_labels"], with_dims)
+    by_key = {p["work_key"]: p for p in pool}
+    manifest = {"kind": "catchup", "pool": os.path.basename(pool_path),
+                "pool_sha256": rv.sha256_file(pool_path),
+                "table_sha256": rv.sha256_file(table),
+                "prompt": prompt, "prompt_sha256": ics.stage2_prompt_sha256(prompt),
+                "rule": rule, "final_labels": cfg["catchup"]["final_labels"],
+                "eligible": sel["eligible"],
+                "already_with_dimensions": sel["already_with_dimensions"]}
+    names = ch.write_chunks(args.output_dir, [by_key[k] for k in sel["keys"]], cfg["stage2"],
+                            manifest)
+    render(args.output_dir, prompt)
+    log.info("build: %d works (%d eligible, %d already with dimensions) in %d chunks under %s",
+             len(sel["keys"]), sel["eligible"], sel["already_with_dimensions"], len(names),
+             args.output_dir)
+
+
+def _parse(args, dims_table: str) -> None:
+    labelled_at = args.labelled_at or datetime.now(timezone.utc).date().isoformat()
+    dims, report = parse_answers(args.chunk_dir, args.suffix, args.model, args.run_id,
+                                 args.machine, args.labeller, rendered_sha(args.chunk_dir),
+                                 labelled_at, os.path.basename(os.path.normpath(args.chunk_dir)))
+    bad = [e for r in dims for e in ics.validate_row(r, ics.DIMENSIONS)]
+    if bad:
+        raise CatchupError(f"dimension rows refused, nothing written: {bad[:5]}")
+    dims, dropped = drop_already_dimensioned(dims, ics.read_table(dims_table, ics.DIMENSIONS))
+    added, skipped = ics.append_new(dims_table, dims, f"parse catchup {args.run_id}",
+                                    args.new_table, ics.DIMENSIONS)
+    log.info("chunks %s", report)
+    log.info("%d answers: %d appended, %d already in %s, %d skipped (work already has a "
+             "dimension row under another key)", len(dims) + dropped, added, skipped,
+             dims_table, dropped)
+
+
+def main(argv=None):
+    args = _parser().parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
     prompt = args.prompt or cfg["catchup"]["prompt"]
     dims_table = args.dimensions_table or cfg["dimensions_table"]
     try:
-        template = ics.catchup_prompt_template(prompt)
         if args.cmd == "build":
-            pool_path, table = args.pool or cfg["pool"], args.table or cfg["table"]
-            ics.require_table(table)
-            rule = rv.screen_rule(cfg)
-            pool, view = ch.view(pool_path, table, rule)
-            with_dims = {r["work_key"] for r in ics.read_table(dims_table, ics.DIMENSIONS)}
-            sel = select_catchup(view, cfg["catchup"]["final_labels"], with_dims)
-            by_key = {p["work_key"]: p for p in pool}
-            manifest = {"kind": "catchup", "pool": os.path.basename(pool_path),
-                        "pool_sha256": rv.sha256_file(pool_path),
-                        "table_sha256": rv.sha256_file(table),
-                        "prompt": prompt, "prompt_sha256": ics.stage2_prompt_sha256(prompt),
-                        "rule": rule, "final_labels": cfg["catchup"]["final_labels"],
-                        "eligible": sel["eligible"],
-                        "already_with_dimensions": sel["already_with_dimensions"]}
-            names = ch.write_chunks(args.output_dir, [by_key[k] for k in sel["keys"]],
-                                    cfg["stage2"], manifest)
-            render(args.output_dir, template)
-            log.info("build: %d works (%d eligible, %d already with dimensions) in %d chunks "
-                     "under %s", len(sel["keys"]), sel["eligible"],
-                     sel["already_with_dimensions"], len(names), args.output_dir)
+            _build(args, cfg, prompt, dims_table)
         elif args.cmd == "render":
-            log.info("rendered %d prompts", len(render(args.chunk_dir, template)))
+            log.info("rendered %d prompts", len(render(args.chunk_dir, prompt)))
         elif args.cmd == "count-tokens":
             res = count_tokens(args.chunk_dir, args.count_model)
             log.info("%d input tokens over %d chunks", res["total"], len(res["by_chunk"]))
         elif args.cmd == "submit":
             submit(args.chunk_dir, args.model, args.suffix, args.max_usd, args.max_tokens,
-                   args.reasoning_effort, args.est_out_per_record)
+                   args.reasoning_effort)
         elif args.cmd == "collect":
             res = collect(args.chunk_dir, args.suffix, args.wait)
             if res["status"] != "completed":
@@ -472,21 +574,9 @@ def main(argv=None):
         elif args.cmd == "call":
             log.info("call totals: %s", call(args.chunk_dir, args.model, args.suffix,
                                              args.max_usd, args.max_tokens,
-                                             args.reasoning_effort, args.est_out_per_record))
+                                             args.reasoning_effort))
         else:
-            labelled_at = args.labelled_at or datetime.now(timezone.utc).date().isoformat()
-            dims, report = parse_answers(
-                args.chunk_dir, args.suffix, args.model, args.run_id, args.machine,
-                args.labeller, ics.stage2_prompt_sha256(prompt), labelled_at,
-                os.path.basename(os.path.normpath(args.chunk_dir)))
-            bad = [e for r in dims for e in ics.validate_row(r, ics.DIMENSIONS)]
-            if bad:
-                raise CatchupError(f"dimension rows refused, nothing written: {bad[:5]}")
-            added, skipped = ics.append_new(dims_table, dims, f"parse catchup {args.run_id}",
-                                            args.new_table, ics.DIMENSIONS)
-            log.info("chunks %s", report)
-            log.info("%d answers, %d appended, %d already in %s", len(dims), added, skipped,
-                     dims_table)
+            _parse(args, dims_table)
     except (CatchupError, ics.IcfScreenError, ch.Stage2Error, requests.RequestException) as exc:
         log.error("%s", exc)
         return 1

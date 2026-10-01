@@ -386,9 +386,10 @@ def parse_discipline_answers(lines: Iterable[str], ids: list[str]) -> tuple[dict
 
     The acceptance of ``parse_stage2_answers``: ``n`` in range and answered
     once, ``why`` last and keeping any further ``|``; an out-of-vocabulary
-    discipline value is stored as ``unknown``. An ICF label (``icf``, ``aux``,
-    ``out``) where ``contrib`` belongs is a fault: a stage-2 answer line. Blank
-    lines and Markdown fence lines are skipped.
+    discipline value is stored as ``unknown``. A line that reads as a stage-2
+    answer (an ICF label ``icf``/``aux``/``out`` where ``contrib`` belongs, or a
+    document type ``research``/``institutional`` where ``field`` belongs) is a
+    fault. Blank lines and Markdown fence lines are skipped.
     """
     answers: dict = {}
     faults = []
@@ -397,19 +398,25 @@ def parse_discipline_answers(lines: Iterable[str], ids: list[str]) -> tuple[dict
         if not line.strip() or line.strip().startswith("```"):
             continue
         parts = line.rstrip("\n").split("|")
-        if len(parts) < len(CATCHUP_FIELDS) - 1 or not parts[0].strip().isdigit():
+        head = parts[0].strip()
+        # ASCII digits only, and short: int() accepts "²" or "٣" and chokes on huge strings.
+        if (len(parts) < len(CATCHUP_FIELDS) - 1 or not head.isascii() or not head.isdigit()
+                or len(head) > 6):
             faults.append(f"line {lineno}: not {shape}")
             continue
-        n = int(parts[0])
+        n = int(head)
         if not 1 <= n <= len(ids):
             faults.append(f"line {lineno}: n={n} out of range")
             continue
         if ids[n - 1] in answers:
             faults.append(f"line {lineno}: record {n} answered twice")
             continue
-        if parts[1].strip().lower() in LABELS - CONTRIB:
-            faults.append(f"line {lineno}: ICF label {parts[1].strip()!r} where contrib belongs "
-                          "(a stage-2 answer line?)")
+        # A stage-2 line reads n|label|doc|...: an ICF label where contrib belongs, or
+        # a document type where field belongs.
+        if (parts[1].strip().lower() in LABELS - CONTRIB
+                or parts[2].strip().lower() in DOC_TYPES - FIELDS - {UNKNOWN}):
+            faults.append(f"line {lineno}: {parts[1].strip()}|{parts[2].strip()} reads as a "
+                          "stage-2 answer line (label|doc)")
             continue
         answer = {}
         for i, name in enumerate(CATCHUP_FIELDS[1:-1], 1):
@@ -458,7 +465,7 @@ def catchup_prompt_template(prompt_md_path: str) -> str:
 
 
 def stage2_prompt_sha256(prompt_md_path: str) -> str:
-    """sha256 of the fenced stage-2 wrapper of a prompt file.
+    """sha256 of the fenced wrapper of a prompt file (stage-2 or catch-up).
 
     That wrapper is the text each stage-2 labeller received, with the chunk
     file names filled in; the hash identifies the template. The version-1

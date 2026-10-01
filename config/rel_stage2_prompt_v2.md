@@ -84,7 +84,9 @@ an append-only table with the same guards, keyed like `icf_screen` by
 `(work_key, stage, model, run_id)`. An out-of-vocabulary value is stored as
 `unknown` and counted in the parse report; it never refuses the chunk. A
 version-1 answer file still parses (the t1530 import re-reads them) and writes
-no dimension rows.
+no dimension rows. Works labelled under version 1 get the discipline fields
+from the catch-up wrapper `config/rel_discipline_catchup_prompt.md` (ticket
+1842), which copies the three definitions above word for word.
 
 ## Test before launch (2026-10-01)
 
