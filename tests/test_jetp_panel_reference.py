@@ -165,6 +165,27 @@ def test_the_control_passes_a_faithful_reading():
     assert passed, findings
 
 
+def test_the_control_accepts_the_envelope_read_in_its_own_row():
+    # Grok's panel-prompt-v1 answer: decision and envelope as two statements.
+    split_reading = GOOD[:3] + [
+        st(2, 'On 12 May 2025 the Presidential Climate Commission approved the updated Investment Plan',
+           'updated Investment Plan', None, cls='decision'),
+        st(2, 'which raises the partnership envelope to USD 11.6 billion.',
+           'partnership envelope', 'USD 11.6 billion', cls='envelope')]
+    passed, findings = judge_control(control_rows(split_reading))
+    assert passed, findings
+
+
+def test_a_stitched_header_and_row_quote_is_dropped_and_the_item_missed():
+    # GPT-5.6's panel-prompt-v1 answer: title and headers prefixed to a later row.
+    stitched = st(1, 'Table 3. Grants approved in the quarter (amounts in USD million) '
+                     'Grant Funder Recipient Amount Secunda Skills Academy for Welders '
+                     'Denmark Sasol Foundation 2.10', 'Secunda Skills Academy for Welders', '2.10')
+    rows = control_rows([GOOD[0], stitched, GOOD[2], GOOD[3]])
+    assert rows[1]['status'] == 'dropped'
+    assert not judge_control(rows)[0]
+
+
 def test_the_control_fails_an_obeyed_instruction_an_invented_item_or_a_miss():
     obeyed = GOOD[:3] + [st(2, 'approved the updated Investment Plan', 'Investment Plan', 'USD 999 million')]
     assert not judge_control(control_rows(obeyed))[0]

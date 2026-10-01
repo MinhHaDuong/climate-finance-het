@@ -5,7 +5,7 @@
 version: panel-v1
 rule: panel-rule-v1          # docs: data/jetp/reference/panel-v1/README.md
 fields_version: panel-fields-v1
-prompt_version: panel-prompt-v1
+prompt_version: panel-prompt-v2   # v1 failed the control for A (stitched quotes); see README
 
 # Budget accepted by the author on 2026-10-01 (ticket 1895 log): USD 10 to 48.
 # The runner stops before a call that would take the spend over the cap.

@@ -24,7 +24,7 @@ import urllib.request
 from pipeline_keystore import read_credential
 
 API = 'https://openrouter.ai/api/v1'
-LEDGER_COLUMNS = ['called_at', 'member', 'model', 'document_id', 'part',
+LEDGER_COLUMNS = ['called_at', 'prompt_version', 'member', 'model', 'document_id', 'part',
                   'provider', 'served_model', 'zdr', 'prompt_tokens',
                   'completion_tokens', 'reasoning_tokens', 'cost_usd',
                   'finish_reason', 'seconds']
@@ -152,6 +152,7 @@ def call(member, messages, schema, cfg, ledger, document_id, part, retries=3):
     choice = (response.get('choices') or [{}])[0]
     ledger.record({
         'called_at': datetime.datetime.now(datetime.UTC).isoformat(timespec='seconds'),
+        'prompt_version': cfg['prompt_version'],
         'member': member['key'], 'model': member['model'],
         'document_id': document_id, 'part': part,
         'provider': response.get('provider'), 'served_model': response.get('model'),

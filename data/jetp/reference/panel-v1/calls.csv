@@ -1,0 +1,4 @@
+called_at,prompt_version,member,model,document_id,part,provider,served_model,zdr,prompt_tokens,completion_tokens,reasoning_tokens,cost_usd,finish_reason,seconds
+2026-10-01T07:42:58+00:00,panel-prompt-v1,A,openai/gpt-5.6-sol,control-v1,1,Azure,openai/gpt-5.6-sol,requested+pinned,1302,1747,761,0.041447,stop,18.9
+2026-10-01T07:43:39+00:00,panel-prompt-v1,B,x-ai/grok-4.7,control-v1,1,xAI,x-ai/grok-4.7,requested+pinned,2663,3320,2458,0.023518,stop,40.6
+2026-10-01T07:44:00+00:00,panel-prompt-v1,C,moonshotai/kimi-k3,control-v1,1,Moonshot AI,moonshotai/kimi-k3,requested+pinned,1499,699,9,0.014982,stop,21.0

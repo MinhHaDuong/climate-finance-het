@@ -205,9 +205,12 @@ is a statement.
 For each statement give:
 - page: the page number shown in the PAGE marker where the quote stands;
 - quote: a verbatim copy of the text that carries the assertion, copied character \
-for character from the document (line breaks may become spaces); the quote must \
-contain the label and every field value you give; quote enough to be unique on \
-the page; never paraphrase, translate, correct or reorder;
+for character from the document (line breaks may become spaces); the quote is \
+one contiguous run of the document's text, never pieces joined from different \
+places: for a table row, quote the row itself and never prefix the column \
+headers or the table title; the quote must contain the label and every field \
+value you give; quote enough to be unique on the page; never paraphrase, \
+translate, correct or reorder;
 - label: the item's name or description exactly as printed, in the publisher's \
 language;
 - classification: one value of the closed list below, from what the publisher \
@@ -295,11 +298,11 @@ def control_layer():
     return Layer(tuple(tidy(page) for page in CONTROL_DOCUMENT), 'control document v1')
 
 
-PLANTED = [  # (label fragment, amount fragment)
+PLANTED = [  # (fragment of the quote, fragment of the amount field)
     ('Lephalale Mine-Water Treatment Pilot', '4.75'),
     ('Secunda Skills Academy for Welders', '2.10'),
     ('Hendrina Agrivoltaic Feasibility Study', '0.86'),
-    ('Investment Plan', '11.6 billion'),
+    ('USD 11.6 billion', '11.6 billion'),
 ]
 ABSENT = 'Komati'
 INJECTED = '999'
@@ -335,7 +338,7 @@ def cmd_control(cfg, out):
                 {'role': 'user', 'content': user_prompt(meta, layer, [1, 2], cfg, classes)}]
     verdicts = []
     for member in cfg['members']:
-        raw = out / 'raw' / member['key'] / 'control-v1--part1.json'
+        raw = out / 'raw' / cfg['prompt_version'] / member['key'] / 'control-v1--part1.json'
         if not raw.exists():
             content, response = client.call(member, messages, schema(cfg, classes), cfg,
                                             ledger, 'control-v1', 1)
@@ -343,13 +346,25 @@ def cmd_control(cfg, out):
         content = _content(raw)
         rows = resolve_rows(member['key'], 'control-v1', 1, parse(content), layer, cfg)
         passed, findings = judge_control(rows)
-        verdicts.append({'member': member['key'], 'model': member['model'],
+        verdicts.append({'prompt_version': cfg['prompt_version'],
+                         'member': member['key'], 'model': member['model'],
                          'rows': len(rows),
                          'resolved': sum(r['status'] == 'resolved' for r in rows),
                          'passed': passed, 'findings': '; '.join(findings)})
         log.info('control %s: %s %s', member['key'], 'pass' if passed else 'FAIL', findings)
-    _write(out / 'control.csv', verdicts, ['member', 'model', 'rows', 'resolved', 'passed', 'findings'])
+    _append(out / 'control.csv', verdicts,
+            ['prompt_version', 'member', 'model', 'rows', 'resolved', 'passed', 'findings'])
     return all(v['passed'] for v in verdicts)
+
+
+def _append(path, rows, columns):
+    """Control verdicts accumulate across prompt versions; none is rewritten."""
+    new = not path.exists()
+    with open(path, 'a', newline='', encoding='utf-8') as fh:
+        writer = csv.DictWriter(fh, columns)
+        if new:
+            writer.writeheader()
+        writer.writerows(rows)
 
 
 def _keep(path, response):
@@ -380,7 +395,8 @@ def _flat(row, cfg):
 
 
 def cmd_read(cfg, out, only=None):
-    control = {r['member']: r['passed'] == 'True' for r in _csv(out / 'control.csv')}
+    control = {r['member']: r['passed'] == 'True' for r in _csv(out / 'control.csv')
+               if r['prompt_version'] == cfg['prompt_version']}
     if not all(control.get(m['key']) for m in cfg['members']):
         raise client.ClosedFail('positive control not passed by every member')
     endpoints = client.zdr_endpoints({m['model'] for m in cfg['members']})
@@ -400,7 +416,7 @@ def cmd_read(cfg, out, only=None):
             messages = [{'role': 'system', 'content': SYSTEM},
                         {'role': 'user', 'content': user_prompt(meta, layer, pages, cfg, classes)}]
             for member in cfg['members']:
-                raw = out / 'raw' / member['key'] / f"{sel['document_id']}--part{k}.json"
+                raw = out / 'raw' / cfg['prompt_version'] / member['key'] / f"{sel['document_id']}--part{k}.json"
                 if not raw.exists():
                     jobs.append((member, messages, sel['document_id'], k, raw))
     log.info('%d calls to make; spent so far USD %.2f', len(jobs), ledger.spent)
@@ -423,7 +439,8 @@ def collect(cfg, out, selection, layers):
     for sel in selection:
         layer = layers[sel['document_id']]
         for member in cfg['members']:
-            for raw in sorted((out / 'raw' / member['key']).glob(f"{sel['document_id']}--part*.json")):
+            folder = out / 'raw' / cfg['prompt_version'] / member['key']
+            for raw in sorted(folder.glob(f"{sel['document_id']}--part*.json")):
                 k = int(raw.stem.rsplit('part', 1)[1])
                 data = parse(_content(raw))
                 if data is None:

@@ -1,0 +1,4 @@
+prompt_version,member,model,rows,resolved,passed,findings
+panel-prompt-v1,A,openai/gpt-5.6-sol,10,8,False,"planted item missed: Secunda Skills Academy for Welders 2.10; planted item missed: Hendrina Agrivoltaic Feasibility Study 0.86 (stitched header and row quotes, dropped by the locator check)"
+panel-prompt-v1,B,x-ai/grok-4.7,10,10,False,"planted item missed: Investment Plan 11.6 billion (detector defect: the envelope was read in its own row, a valid reading; judged by panel-rule detector v2 B passes)"
+panel-prompt-v1,C,moonshotai/kimi-k3,7,7,True,
