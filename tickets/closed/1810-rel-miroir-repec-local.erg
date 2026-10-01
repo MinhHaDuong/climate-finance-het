@@ -7,7 +7,7 @@ Closed: delivered; open items in docs/rel-repec-local-2026-10-01.md
 --- log ---
 2026-09-30T19:30Z HDMX-coding-agent created
 
-2026-10-01T00:45Z HDMX-coding-agent HDMX-coding-agent note delivered 2026-10-01: 79,543 records (+915 no_dedup_key, 2 not_retrievable), qa exit 0; pre-filter run on a 10k sample (CPU budget), not registered in icf_screen (schema); see docs/rel-repec-local-2026-10-01.md
+2026-10-01T00:45Z HDMX-coding-agent note delivered 2026-10-01: 79,543 records (+915 no_dedup_key, 2 not_retrievable), qa exit 0; pre-filter run on a 10k sample (CPU budget), not registered in icf_screen (schema); see docs/rel-repec-local-2026-10-01.md
 2026-10-01T00:45Z HDMX-coding-agent closed — delivered; open items in docs/rel-repec-local-2026-10-01.md
 --- body ---
 ## Contexte
