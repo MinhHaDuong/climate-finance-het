@@ -12,6 +12,7 @@ Author: HDMX-coding-agent
 2026-09-30T15:10Z HDMX-coding-agent note invariant on duplicates aligned with the storage contract (author, 2026-09-30): a revoked same_as re-enables extraction of the folded document; spec docs/jetp-extraction.md § 2
 2026-10-01T06:20Z HDMX-coding-agent decision author decisions 2026-10-01, interactive: D2 Zotero — the spec governs, a one-way upload of the document bytes plus a restore test is M2 ([[1712]], now an M2 criterion here), the store move ([[1510]], [[1511]]) stays M4; D3 — M3a protocol declaration ([[1877]]) and sealed known-item list ([[1878]]) may start now, M2 targets the register frozen at 392 documents (369 snapshots); phases M2.0 to M2.4 recorded, children cut by lane (deterministic against reading), format and country as sample stratum; pilot rule stated once here
 2026-10-01T06:20Z HDMX-coding-agent note hygiene (author decision 2026-10-01, interactive: D4): line count corrected 13,089 -> 13,092 (docs/jetp-requirements.md DA2, data/jetp/lines.d counted 2026-10-01); body points at spec v1 instead of restating it; new children [[1870]], [[1873]], [[1874]], [[1875]], [[1876]]; exit criteria list every M2 child, the stale 'children 1501 to 1509 closed' dropped
+2026-10-01T05:54Z HDMX-coding-agent note new child [[1890]] (M2.3-0, phase M2.3): choose the reading design by a pre-registered pilot; [[1873]] Blocked-by it (author decisions 2026-10-01, interactive)
 --- body ---
 ## Context
 
@@ -94,7 +95,7 @@ M2 is cut along three dimensions:
 | M2.0 | Schema and core: the M2 storage targets, the pipeline core, the run report, run-output gate and agent permissions | [[1870]], [[1506]], [[1875]] | both |
 | M2.1 | Deterministic replay, no LLM: the 254 extracted documents, the comparator records by ingestion run under the count control | [[1507]] | deterministic |
 | M2.2 | Format adapters | [[1508]] | both |
-| M2.3 | Reading: assisted reading protocol, reader selection and calibration, budgets and guards, transcription of the held scan | [[1509]], [[1873]], [[1874]], [[1876]] | reading |
+| M2.3 | Reading: the design chosen by a pre-registered pilot, assisted reading protocol, reader selection and calibration, budgets and guards, transcription of the held scan | [[1890]], [[1509]], [[1873]], [[1874]], [[1876]] | reading |
 | M2.4 | The run over the 115: dedup, the four waves, dispositions | [[1501]], [[1502]], [[1503]], [[1504]], [[1505]] | both |
 | M2.x | Off-site copy of the document bytes and restore test; may run in any phase | [[1712]] | — |
 
@@ -150,7 +151,7 @@ updates; generalise after two or three cases, not before.
 - [ ] M2.0 closed: [[1870]] (M2 schema slice of [[1702]]), [[1506]], [[1875]]
 - [ ] M2.1 closed: [[1507]]; the replay of the 254 extracted documents passes, comparator records included under the count control
 - [ ] M2.2 closed: [[1508]]
-- [ ] M2.3 closed: [[1509]], [[1873]], [[1874]], [[1876]]
+- [ ] M2.3 closed: [[1890]], [[1509]], [[1873]], [[1874]], [[1876]]
 - [ ] M2.4 closed: [[1501]], [[1502]], [[1503]], [[1504]], [[1505]]
 - [ ] [[1712]] closed: every snapshot uploaded one way to the Zotero group, and one snapshot restored from each off-disk copy and checked by hash
 - [ ] All 392 documents have lines or a recorded disposition with the reason; the deferred ones are named by country and type
