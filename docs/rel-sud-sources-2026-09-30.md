@@ -330,7 +330,7 @@ records in `records.csv`. Pool columns from `make rel-pool` on 2026-10-01
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | AJOL | oai-pmh, Chromium | `ListRecords oai_dc` per journal of five categories, lexicon en/fr/pt/ar | 232 (232) | 36,207 | 66 | 66 | 14 / 10 / 42 | `t1790-ajol/run/` |
 | SciELO Argentina | oai-pmh | `ListRecords oai_dc set=<ISSN>`, social-science journals, lexicon es/pt/en | 47 (41) | 13,473 | 3 | 3 | 0 / 2 / 1 | `t1790-scielo/run/` |
-| CEEW | listing | sitemap publication pages, lexicon en/hi | 1 (0: 13 stale pages) | 693 | 53 | 51 + 2 `no_dedup_key` | 0 / 43 / 10 | `t1790-ceew/run-b/` |
+| CEEW | listing | sitemap publication pages, lexicon en/hi | 1 (0: 13 stale pages) | 706 listed, 693 read | 53 | 51 + 2 `no_dedup_key` | 0 / 43 / 10 | `t1790-ceew/run-b/` |
 | USP repository via CORE | listing | `repositories.id:373`, lexicon en/fr | 1 (1) | 9,889 | 32 | 32 | 4 / 11 / 17 | `t1790-aggregators/core/` |
 | CyberLeninka via CORE | listing | `repositories.id:1252`, lexicon ru/en | 1 (1) | 400 | 0 | 0 | | `t1790-aggregators/core/` |
 | Shodhganga via CORE | listing | `repositories.id:8818` | 1 (1) | 0 | 0 | 0 | | `t1790-aggregators/core/` |
@@ -351,12 +351,12 @@ screenshot, the BASE refusal) are in `t1790-probes/` and
 own so the t1653 pointer the pool merge reads is untouched; written by
 `scripts/catalog_rel_1653_delivery.py export --lane t1790-sud-playwright
 --ticket 1790` (invocation in `producer.runs`), DVC-tracked and pushed to
-padme; `qa_rel_intake.py`: `OK`, exit 0. 219 records (AJOL 66, OpenAlex 67,
+padme; `qa_rel_intake.py`: `OK`, exit 0. `records.csv` holds 219 records (AJOL 66, OpenAlex 67,
 CEEW 51, CORE 32, SciELO 3); 10 `duplicate_in_lane` and 2 `no_dedup_key`
 (the two undated CEEW pages of 1653). Two source DOIs shared by
 differently titled records are kept in `lane_note` only (an AJOL issue DOI;
 one article under two titles in CORE and OpenAlex). In the pool (merge
-report, by delivery): the 219 records and 2 title-only rows fall in 209 works,
+report, by delivery): the 219 records plus the 2 title-only rows of `excluded.csv` fall in 209 works,
 since several routes found the same work: 34 in the catalogue, 95 in another
 lane only, 80 new. The per-route pool columns above count a work once per
 route that found it (and the CEEW row includes its 2 title-only pages), so

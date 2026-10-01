@@ -238,7 +238,10 @@ sources:
       The 13 others are stale sitemap entries: /publications/<slug>
       redirects to a /solutions-factory/ page that answers 404 (checked
       2026-10-01, list in t1790-ceew/missing-pages.txt); no title exists to
-      match. The 1653 run (ceew/, 54 matches, listing not archived) is
+      match. Status run because every page the site serves was read; the
+      registry row stays incomplete ("13 of 706 pages failed") and the
+      delivery manifest lists it. The 1653 run (ceew/, 54 matches, listing
+      not archived) is
       superseded: it read 7 of its 52 delivered years from the upload
       timestamp. t1790-ceew/run (first 1790 rerun, same defect) is archive
       only.
