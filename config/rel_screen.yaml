@@ -18,7 +18,8 @@ t1530_archive: ~/data/projets/climate-finance-het/rel_sud/2026-09-29
 # is provisional: ticket 1755 (replacement 1652 delivery) will revise it.
 stage1:
   # t1810 (RePEc mirror, ~80k records, mostly JEL rows) last: provisional.
-  lane_priority: [catalogue, t1530, t1651, t1653, t1652, t1650, t1810]
+  # t1790 (both 1790 lanes) placed before t1810 so that 1810 outranks no lane.
+  lane_priority: [catalogue, t1530, t1651, t1653, t1652, t1650, t1790, t1810]
 
 # Stage-1 exit rule, applied where the view and the stage-2 input are built
 # (labels are never rewritten). A work whose latest stage-1 label is in

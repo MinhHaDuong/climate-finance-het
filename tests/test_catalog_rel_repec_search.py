@@ -110,6 +110,10 @@ def test_run_and_deliver_meets_the_contract(units, tmp_path):
     assert r0["url"] == "https://econpapers.repec.org/RePEc:aaa:wpaper:1"
     assert r0["doc_type"] == "working-paper" and r0["first_author"] == "Doe, Jane"
     assert recs[1]["doi"] == "10.1000/abc" and recs[1]["url"] == "https://doi.org/10.1000/abc"
+    flagged = {**row("RePEc:bre::node_1", "T"), "handle_valid": "0"}
+    rec = rs.to_record(flagged, ["Q"], "2026-10-01")
+    assert rec["url"] == "" and "malformed at source" in rec["lane_note"]
+    assert rs.to_record({**flagged, "doi": "10.1000/x"}, ["Q"], "2026-10-01")["url"] == "https://doi.org/10.1000/x"
     bad = rs.to_record(row("RePEc:z:z:9", "T", doi="10.12/short"), ["Q"], "2026-10-01")
     assert bad["doi"] == "" and "malformed DOI" in bad["lane_note"]
     assert qa_rel_intake.main([str(out)]) == 0

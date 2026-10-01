@@ -303,7 +303,9 @@ def to_record(r: dict, qids: list[str], retrieved_at: str) -> dict:
         "doc_type": DOC_TYPES.get(r.get("template_type") or "", r.get("template_type") or ""),
         "language": lang if len(lang) == 2 and lang.isalpha() else "",
         "abstract": r.get("abstract") or "", "abstract_provenance": "",
-        "url": ("https://doi.org/" + doi) if doi else econpapers_url(r["handle"]),
+        # a handle malformed at source has no EconPapers page (9 of 11 checked 404)
+        "url": ("https://doi.org/" + doi) if doi else (
+            "" if r.get("handle_valid") == "0" else econpapers_url(r["handle"])),
         "affiliation_countries": "", "version_hint": "",
         "lane_status": "candidate", "lane_note": "; ".join(note),
         "query_ids_all": ";".join(qids), "jel": r.get("jel") or "",
@@ -372,7 +374,7 @@ def deliver(units: list[dict], hits: dict[str, set[int]], rows: list[dict], out_
         "needs_human": [],
         "supersedes": None,
         "notes": ("Local RePEc ReDIF mirror; record_id = RePEc handle. url = DOI resolver when a "
-                  "DOI is known, else the EconPapers handle page (a landing page, not a key). "
+                  "DOI is known, else the EconPapers handle page (a landing page, not a key; blank for a handle malformed at source). "
                   "1652 SI rows replayed as tuning-sentinel title searches; no citation search "
                   "(CitEc is ticket 1654). No year or language filter."),
         "mirror": table_counts or {},
