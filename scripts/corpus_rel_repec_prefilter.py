@@ -1,8 +1,9 @@
 """Recall pre-filter for the RePEc lane: embeddings + logistic regression (ticket 1810, step 5).
 
-EXPERIMENTAL, NOT APPLIED: nothing reads its ``drop`` column. On RePEc its
-out-of-sample ICF loss bound is of the order of the v2 filter's loss, so Qwen
-screens the delivery directly (docs/rel-repec-local-2026-10-01.md).
+EXPERIMENTAL, NOT APPLIED (MOE recommendation, pending author decision):
+nothing reads its ``drop`` column. On RePEc its out-of-sample ICF loss bound
+is of the order of the v2 filter's loss, so the MOE recommends that Qwen
+screen the delivery directly (docs/rel-repec-local-2026-10-01.md).
 
 Purpose, author decision of 2026-09-30: the full RePEc mirror is too large for
 the stage-1 screen, so a light classifier trained mainly on Opus labels may

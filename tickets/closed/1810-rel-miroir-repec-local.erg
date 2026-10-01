@@ -9,6 +9,7 @@ Closed: delivered data/rel_intake/t1810-repec-local/2026-10-01/ (PR 1640); open 
 2026-10-01T00:45Z HDMX-coding-agent note delivered 2026-10-01: 79,543 records (+915 no_dedup_key, 2 not_retrievable), qa exit 0; pre-filter run on a 10k sample (CPU budget), not registered in icf_screen (schema); see docs/rel-repec-local-2026-10-01.md
 2026-10-01T00:45Z HDMX-coding-agent closed — delivered; open items in docs/rel-repec-local-2026-10-01.md
 2026-10-01T02:09Z HDMX-coding-agent re-delivered from 44b59d8a after PR 1640 panel: handles cleaned, per-line decoding, sentinels out of pre-filter training; pre-filter experimental, not applied
+2026-10-01T03:07Z HDMX-coding-agent correction: the 00:45Z line's 79,543 records is superseded; round-3 delivery from cdaf0884 has 79,524 records, 915 no_dedup_key, 1 not_retrievable (handles: whitespace removed, not split; url blank for source-malformed handles); pre-filter not applied (MOE recommendation, pending author decision)
 --- body ---
 ## Contexte
 
@@ -65,12 +66,14 @@ DOI (3 700 notices non résolues).
 
 ## Résultat et points ouverts (2026-10-01)
 
-Livraison `data/rel_intake/t1810-repec-local/2026-10-01/` (79 520 notices,
-915 `no_dedup_key`, 1 `not_retrievable`, `qa_rel_intake` exit 0), tirée d'une
+Livraison `data/rel_intake/t1810-repec-local/2026-10-01/` (79 524 notices,
+915 `no_dedup_key`, 1 `not_retrievable`, `qa_rel_intake` exit 0, producteur
+`cdaf0884`), tirée d'une
 table de 5,6 M notices ReDIF ; note complète : `docs/rel-repec-local-2026-10-01.md`.
 
-- **Pré-filtre expérimental, non appliqué.** Qwen doit cribler cette livraison
-  directement. Le pré-filtre (seuil 0,9589, fixé par un seul article CDM sans
+- **Pré-filtre expérimental, non appliqué (recommandation de la MOE, en
+  attente de la décision de l'auteur).** La MOE recommande que Qwen crible
+  cette livraison directement ; l'auteur n'a pas encore tranché. Le pré-filtre (seuil 0,9589, fixé par un seul article CDM sans
   résumé) écarterait ~6 % des notices ; borne haute de perte ICF de l'ordre de
   celle du filtre v2 (122). Étiquettes d'entraînement et de validation toutes
   issues d'Opus.
@@ -78,6 +81,8 @@ table de 5,6 M notices ReDIF ; note complète : `docs/rel-repec-local-2026-10-01
   `llm` et `human`).
 - **Non fait : passe sémantique sur le miroir entier** (5,6 M notices ;
   ~280–360 h CPU, débit GPU non mesuré).
+- Critère 4 coché : seuil, pertes, part écartée et échantillon Opus sont
+  mesurés ; le pré-filtre lui-même n'est pas appliqué (voir ci-dessus).
 - 80 % de la livraison vient des lignes JEL de 1652 sans terme ICF : choix de
   rappel non calibré, que le criblage trie.
 
