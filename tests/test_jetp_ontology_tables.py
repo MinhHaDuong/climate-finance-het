@@ -479,5 +479,6 @@ def test_owner_is_a_role_and_channel_carries_no_iati_code(terms):
     assert roles['funder']['external_uri'] == 'OrganisationRole:1'
     assert roles['implementing_entity']['external_uri'] == 'OrganisationRole:4'
     assert not roles['channel']['external_uri']
+    assert 'on-lending' in roles['channel']['definition']
     assert roles['accountable']['external_uri'] == 'OrganisationRole:2'
     assert 'extending' not in roles
