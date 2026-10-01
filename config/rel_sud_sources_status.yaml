@@ -1,28 +1,46 @@
-# REL "Sud et langues", sources outside OpenAlex (ticket 1653): status of each
-# source on 2026-09-30. Read by scripts/catalog_rel_1653_delivery.py to
-# fill the delivery manifest (incomplete, needs_human); narrated in
+# REL "Sud et langues", sources outside OpenAlex (tickets 1653 and 1790): status
+# of each source on 2026-09-30/10-01. Read by scripts/catalog_rel_1653_delivery.py
+# to fill the delivery manifests (incomplete); narrated in
 # docs/rel-sud-sources-2026-09-30.md.
 #
 # status: run (executed to completion), partial (executed, coverage short),
-#         impossible (not executable: access, licence, no API), substitute
+#         dead (author's rule of 2026-09-30, ticket 1790: "If you can't
+#         Playwright it, it's dead": one attempt in headless Chromium within
+#         robots.txt and the terms, no CAPTCHA solved, no account; or no
+#         attempt where robots.txt or the terms forbid robots), substitute
 #         (another route used in its place), not needed.
 # run: the run directory under ~/data/projets/climate-finance-het/rel_sud/
 #      2026-09-30/ holding its registry and raw export, when it ran.
+# tried_1790: the ticket-1790 attempt and its result.
+# aggregators: routes through an aggregator that harvests the source with its
+#      consent (ticket 1790): query, date, n_expected (read or announced),
+#      n_received (lexicon matches of a whole-provider read, or search hits;
+#      the records delivered after in-lane deduplication may be fewer, see
+#      the doc's query register), and where the delivered works fall in the REL pool (make rel-pool,
+#      2026-10-01: in the catalogue / in another lane only / new to the pool).
+#      Registry rows: data/rel_intake/t1790-sud-playwright/2026-09-30/.
 
 sources:
   scielo:
     status: partial
     route: oai-pmh
-    endpoint: "https://<collection>/oai/scielo-oai.php (mex, ven, bol, cri, pry); journal selection via ArticleMeta"
+    endpoint: "https://<collection>/oai/scielo-oai.php (mex, ven, bol, cri, pry; arg since 1790); journal selection via ArticleMeta"
     stratum: LAC
     reason: >-
       search.scielo.org is robots-disallowed (Disallow: /) and behind a Bunny
       Shield proof-of-work 403; ArticleMeta has no text search. OAI harvest of
-      the social-science journal sets only: 216 sets, 212 complete (cri
-      0379-3982 bad xml, 3 pry RuntimeError). Brazil OAI 404/502,
-      Argentina and Colombia time out, Cuba refused, Chile and Peru
-      robots-disallowed.
-    needs_human: "SciELO OAI access or dump for Brazil, Chile, Peru, Argentina, Colombia, Cuba"
+      the social-science journal sets only: mex, ven, bol, cri, pry (1653: 216
+      sets, 212 complete) and arg (1790: 47 sets, 41 complete, 6 lost to HTTP
+      500). Dead: Brazil (OAI 404, /oai 502 behind Bunny, the same in headless
+      Chromium), Chile and Peru (robots.txt Disallow: / for every agent but
+      named search engines, re-read 2026-09-30), Colombia (TCP connection
+      times out, in Chromium too), Cuba (scielo.sld.cu does not resolve).
+    tried_1790: >-
+      2026-09-30: robots.txt re-read for br, ar, cl, pe, co, cu. Argentina's
+      OAI answered plain HTTP again and was harvested (run t1790-scielo/run,
+      13,473 records read, 3 lexicon matches delivered). Brazil, Colombia and
+      Cuba tried once in headless Chromium: 404/502, timeout, DNS failure.
+    pool: {in_catalogue: 0, in_other_lane_only: 2, new_to_pool: 1}  # the 3 Argentine records
   redalyc:
     status: run
     route: api
@@ -31,7 +49,8 @@ sources:
     reason: >-
       Undocumented JSON service behind the site's article finder (robots.txt
       allows it); the documented OAI endpoint has no subject sets (775,205
-      records, about 5.5 h). Full-text search: every hit delivered.
+      records, about 5.5 h). Full-text search: every hit delivered. Use of
+      the undocumented service approved by the author on 2026-09-30.
   clacso:
     status: run
     route: api
@@ -51,13 +70,31 @@ sources:
     stratum: LAC (Caribbean)
     reason: "DSpace 7 discovery."
   usp_repository:
-    status: impossible
+    status: dead
     stratum: Pacific
     reason: >-
       robots.txt disallows /cgi/ (oai2, search, export); every path answers a
-      Cloudflare challenge (403); CORE v3 search HTTP 500; not registered in
-      OpenAIRE. No automated Pacific source remains.
-    needs_human: "Ask the USP library for an allowlist or an OAI dump"
+      Cloudflare challenge (403); not registered in OpenAIRE. Dead under the
+      rule of 2026-09-30 without an attempt: the OAI and search paths are
+      robots-disallowed.
+    aggregators:
+      - route: "CORE v3 search/outputs q=repositories.id:373, whole provider, local lexicon en/fr on title+abstract"
+        date: 2026-09-30
+        n_expected: 9889
+        n_received: 32
+        pool: {in_catalogue: 4, in_other_lane_only: 11, new_to_pool: 17}
+      - route: "OpenAlex, source S4306402186 (USP Electronic Research Repository), 8 lexicon queries en/fr"
+        date: 2026-09-30
+        n_expected: 5
+        n_received: 5
+        pool: {in_catalogue: 0, in_other_lane_only: 5, new_to_pool: 0}
+      - route: "OpenAlex, institution I44666525 (University of the South Pacific), 8 lexicon queries en/fr"
+        date: 2026-09-30
+        n_expected: 35
+        n_received: 35
+        pool: {in_catalogue: 11, in_other_lane_only: 17, new_to_pool: 0}
+      - route: "BASE API: not used (access denied for this IP; registration is a form, a human errand)"
+        date: 2026-09-30
   garuda:
     status: run
     route: api
@@ -73,53 +110,99 @@ sources:
     stratum: SE Asia (Indonesia)
     reason: "robots.txt answers 403; GARUDA covers the Indonesian journals."
   cyberleninka:
-    status: partial
+    status: dead
     route: oai-pmh
     endpoint: "https://cyberleninka.ru/oai"
     stratum: Russia
     reason: >-
       Substitute for eLIBRARY. /search and /api/ are robots-disallowed;
-      oai_dc carries titles only. The repec set was not economics (9,830
-      received, 0 matched, stopped on bad xml); a captcha after about 980
-      pages blocked the journal-set run at ListSets.
-    needs_human: "Ask skynet@cyberleninka.ru for permission, an allowlist or a dump"
+      oai_dc carries titles only. The 1653 repec set was not economics (9,830
+      received, 0 matched); a captcha after about 980 pages blocked the
+      journal-set run. On 2026-09-30 about 20:30 UTC the first request of
+      1790 (OAI ListSets, plain HTTP) answered the reCAPTCHA page
+      ("Для продолжения работы вам необходимо ввести капчу"): stopped there,
+      never solved; one headless-Chromium attempt on OAI Identify
+      (2026-10-01) met the same reCAPTCHA. What 1653 received stands (0
+      records delivered).
+    tried_1790: "plain HTTP: reCAPTCHA on the first request (OAI ListSets, 2026-09-30 about 20:30 UTC); headless Chromium, one attempt (OAI Identify, 2026-10-01 02:18 UTC, /oai allowed by robots.txt): the same reCAPTCHA page, not solved, stopped. Archived in t1790-cyberleninka/"
+    aggregators:
+      - route: "CORE v3 search/outputs q=repositories.id:1252, whole provider, local lexicon ru/en"
+        date: 2026-09-30
+        n_expected: 400
+        n_received: 0
+      - route: "OpenAlex, source S4306401404 (CyberLeninka), 8 lexicon queries ru/en"
+        date: 2026-09-30
+        n_expected: 29
+        n_received: 29
+        pool: {in_catalogue: 2, in_other_lane_only: 16, new_to_pool: 8}
   elibrary:
-    status: impossible
+    status: dead
     stratum: Russia
     reason: >-
       agreement.asp forbids robots and automated search or download; no OAI
-      (404); API by organisation contract only.
-    needs_human: "eLIBRARY API contract (api@elibrary.ru) or manual export of the 4 ru queries"
+      (404); API by organisation contract only. Dead without an attempt (terms
+      forbid robots). Its open-access part overlaps CyberLeninka, whose
+      OpenAlex copy was queried (see cyberleninka).
   cnki:
-    status: impossible
+    status: dead
     stratum: China
     reason: >-
       cnki.net redirects to oversea.cnki.net, robots Disallow: /; no OAI;
-      JavaScript search; no public API.
-    needs_human: "Institutional access through bibCNRS and manual export of the 4 zh queries"
+      JavaScript search; no public API. Dead without an attempt (robots.txt).
+      No aggregator route: CORE lists no CNKI data provider; OpenAlex has no
+      CNKI source and cannot filter works by the country of their source; the
+      zh stratum of the 1530 OpenAlex pass remains the only route to Chinese
+      journals.
   wanfang:
-    status: impossible
+    status: dead
     stratum: China
     reason: >-
-      Results come from an internal undocumented JavaScript API (not used);
-      no OAI; the open-platform API requires registration.
-    needs_human: "Register on apps.wanfangdata.com.cn/open or subscribe, or export the 4 zh queries manually"
+      No OAI; the open-platform API requires registration (an account, which
+      the rule excludes). robots.txt: none (404 on www and w., the SPA page on
+      s.wanfangdata.com.cn). One attempt in headless Chromium on 2026-09-30:
+      the first search page (s.wanfangdata.com.cn/paper?q="气候融资") answered
+      a slider CAPTCHA ("请按住滑块，拖动到最右边"), not solved. No aggregator
+      route (as for CNKI).
+    tried_1790: "slider CAPTCHA on the first search page; screenshot in t1790-probes/"
   ajol:
-    status: impossible
+    status: run
     route: oai-pmh
     endpoint: "https://www.ajol.info/index.php/<journal>/oai"
     stratum: Africa
     reason: >-
-      AWS WAF JavaScript challenge (202, x-amzn-waf-action: challenge) after
-      6-10 requests even at 4 s spacing, about 2 requests per minute; the
-      site-level OAI endpoint is empty; search and API are robots-disallowed.
-      No record received.
-    needs_human: "Ask support@ajol.info to allowlist the harvester or supply a dump"
+      Per-journal OAI-PMH (robots.txt allows /index.php/<journal>/oai; search
+      and API are disallowed; the site-level endpoint is empty), restricted
+      as in 1653 to the journals of five subject categories
+      (economics-and-development, finance-and-management,
+      environmental-sciences, political-science-and-law, earth-sciences):
+      232 journals, all complete, 36,207 records read, 66 lexicon matches
+      delivered. 1653 got no record: the AWS WAF answers a JavaScript
+      challenge (202, x-amzn-waf-action: challenge) after a few requests.
+    tried_1790: >-
+      2026-09-30/10-01, run t1790-ajol/run: headless Chromium (Playwright),
+      8 s between requests, User-Agent ClimateFinancePipeline/1.0; the
+      challenge was run in the browser page 55 times and always cleared; no
+      CAPTCHA was met. Recovered.
+    pool: {in_catalogue: 14, in_other_lane_only: 10, new_to_pool: 42}
   shodhganga:
-    status: impossible
+    status: dead
     stratum: South Asia (India)
-    reason: "robots.txt Disallow: / (Crawl-delay 600); OAI and REST 404 (DSpace 5.3)."
-    needs_human: "INFLIBNET OAI access or export, or BASE API after IP registration"
+    reason: >-
+      robots.txt Disallow: / (Crawl-delay 600); OAI and REST 404 (DSpace 5.3).
+      Dead without an attempt (robots.txt).
+    aggregators:
+      - route: "CORE v3 search/outputs q=repositories.id:8818 (Shodhganga@INFLIBNET)"
+        date: 2026-09-30
+        n_expected: 0
+        n_received: 0
+        note: "CORE registers the provider but holds no output of it"
+      - route: "OpenAlex, source S4377209701 (Shodhganga, 117,659 works), 8 lexicon queries en/hi"
+        date: 2026-09-30
+        n_expected: 8
+        n_received: 8
+        pool: {in_catalogue: 6, in_other_lane_only: 0, new_to_pool: 2}
+      - route: "BASE API: not used (access denied for this IP; registration is a form, a human errand)"
+        date: 2026-09-30
   ersa:
     status: run
     route: listing
@@ -151,8 +234,47 @@ sources:
     stratum: South Asia (India)
     reason: >-
       No API or feed; search and paged listings are robots-disallowed; every
-      publication page of the sitemap read at crawl-delay 10 s, some pages
-      failed.
+      publication page of the sitemap read at crawl-delay 10 s. 1790 rerun
+      (t1790-ceew/run-b, failed pages read a second time, year read after the
+      page heading): 693 of 706 pages read and archived, 53 lexicon matches.
+      The 13 others are stale sitemap entries: /publications/<slug>
+      redirects to a /solutions-factory/ page that answers 404 (checked
+      2026-10-01, list in t1790-ceew/missing-pages.txt); no title exists to
+      match. Partial: every page the site serves was read, but the
+      registry row stays incomplete ("13 of 706 pages failed") and the
+      delivery manifest lists it. The 1653 run (ceew/, 54 matches, listing
+      not archived) is
+      superseded: it read 7 of its 52 delivered years from the upload
+      timestamp. t1790-ceew/run (first 1790 rerun, same defect) is archive
+      only.
+    pool: {in_catalogue: 0, in_other_lane_only: 43, new_to_pool: 10}
+
+# Aggregator routes for dead sources (ticket 1790, scope added with the
+# author's approval on 2026-09-30); per-source rows under `aggregators`.
+aggregators_1790:
+  base:
+    status: dead
+    reason: >-
+      API answers "Access denied for IP address" (2026-09-30): access needs IP
+      registration through a form, a human errand; the web search is
+      robots-disallowed except the home and advanced-search pages.
+  core:
+    status: run
+    reason: >-
+      API v3 with a registered key; search/works has no provider filter,
+      search/outputs takes q=repositories.id:<provider>. Providers 373 (USP),
+      1252 (CyberLeninka) and 8818 (Shodhganga) read whole and matched
+      locally (run t1790-aggregators/core).
+  openalex:
+    status: run
+    reason: >-
+      32 lexicon queries restricted to sources S4377209701 (Shodhganga),
+      S4306401404 (CyberLeninka), S4306402186 (USP repository) and the
+      institution I44666525 (University of the South Pacific), run
+      t1790-aggregators/openalex. Spend:
+      the daily remaining fell from 0.4639 to 0.4318 USD around the run
+      (headers, 2026-09-30 20:47-21:03 UTC), so at most 0.032 USD, any other
+      user of the shared key included.
 
 # Review of the machine-drafted zh, ru, hi, bn, id and ar query strings of
 # config/rel_sud_search.yaml (ticket 1790, author decision 2026-09-30: two
