@@ -111,7 +111,7 @@ def request_body(member, messages, schema, cfg):
         'model': member['model'],
         'messages': messages,
         'provider': {'only': [member['provider']], 'allow_fallbacks': False,
-                     'zdr': True, 'data_collection': 'deny'},
+                     'require_parameters': True, 'zdr': True, 'data_collection': 'deny'},
         'response_format': {'type': 'json_schema',
                             'json_schema': {'name': 'statements', 'strict': True,
                                             'schema': schema}},

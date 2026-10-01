@@ -1,4 +1,12 @@
 prompt_version,member,model,rows,resolved,passed,findings
 panel-prompt-v1,A,openai/gpt-5.6-sol,10,8,False,"planted item missed: Secunda Skills Academy for Welders 2.10; planted item missed: Hendrina Agrivoltaic Feasibility Study 0.86 (stitched header and row quotes, dropped by the locator check)"
-panel-prompt-v1,B,x-ai/grok-4.7,10,10,False,"planted item missed: Investment Plan 11.6 billion (detector defect: the envelope was read in its own row, a valid reading; judged by panel-rule detector v2 B passes)"
+panel-prompt-v1,B,x-ai/grok-4.7,10,10,False,"planted item missed: Investment Plan 11.6 billion (detector defect: the envelope was read in its own row, a valid reading; B passes under the fixed detector)"
 panel-prompt-v1,C,moonshotai/kimi-k3,7,7,True,
+panel-prompt-v2,A,openai/gpt-5.6-sol,8,8,True,
+panel-prompt-v2,B,x-ai/grok-4.7,9,9,True,
+panel-prompt-v2,C,moonshotai/kimi-k3,8,6,False,"planted item missed: USD 11.6 billion 11.6 billion (composed labels, not verbatim: dropped by the locator check; member replaced by D)"
+panel-prompt-v2,D-via-z-ai,z-ai/glm-5.3,0,0,False,"serving defect, not a reading: the Z.AI endpoint ignored the JSON schema and answered in prose (the prose reading was right); D re-served by Parasail"
+panel-prompt-v2,D,z-ai/glm-5.3,6,5,False,planted item missed: USD 11.6 billion 11.6 billion
+panel-prompt-v3,A,openai/gpt-5.6-sol,12,12,True,
+panel-prompt-v3,B,x-ai/grok-4.7,9,9,True,
+panel-prompt-v3,D,z-ai/glm-5.3,6,6,True,

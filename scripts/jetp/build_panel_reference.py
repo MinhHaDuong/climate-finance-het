@@ -212,7 +212,9 @@ headers or the table title; the quote must contain the label and every field \
 value you give; quote enough to be unique on the page; never paraphrase, \
 translate, correct or reorder;
 - label: the item's name or description exactly as printed, in the publisher's \
-language;
+language; for prose, where nothing names the item, the label is the shortest \
+verbatim span of the quote that carries the assertion; never compose, \
+capitalise, shorten or rephrase a label;
 - classification: one value of the closed list below, from what the publisher \
 presents, never inferred from words in the label; if no value fits, \
 "cannot_classify";
@@ -337,7 +339,11 @@ def cmd_control(cfg, out):
     messages = [{'role': 'system', 'content': SYSTEM},
                 {'role': 'user', 'content': user_prompt(meta, layer, [1, 2], cfg, classes)}]
     verdicts = []
+    judged = {(r['prompt_version'], r['member'])
+              for r in (_csv(out / 'control.csv') if (out / 'control.csv').exists() else [])}
     for member in cfg['members']:
+        if (cfg['prompt_version'], member['key']) in judged:
+            continue
         raw = out / 'raw' / cfg['prompt_version'] / member['key'] / 'control-v1--part1.json'
         if not raw.exists():
             content, response = client.call(member, messages, schema(cfg, classes), cfg,
@@ -354,7 +360,9 @@ def cmd_control(cfg, out):
         log.info('control %s: %s %s', member['key'], 'pass' if passed else 'FAIL', findings)
     _append(out / 'control.csv', verdicts,
             ['prompt_version', 'member', 'model', 'rows', 'resolved', 'passed', 'findings'])
-    return all(v['passed'] for v in verdicts)
+    passed = {(r['prompt_version'], r['member']): r['passed'] == 'True'
+              for r in _csv(out / 'control.csv')}
+    return all(passed[(cfg['prompt_version'], m['key'])] for m in cfg['members'])
 
 
 def _append(path, rows, columns):

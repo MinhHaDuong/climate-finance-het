@@ -208,7 +208,8 @@ MEMBER = {'key': 'A', 'model': 'openai/gpt-5.6-sol', 'provider': 'azure',
 def test_the_request_pins_one_zero_retention_provider_without_fallback():
     body = client.request_body(MEMBER, [], {}, {'reasoning_effort': 'low', 'max_output_tokens': 10})
     assert body['provider'] == {'only': ['azure'], 'allow_fallbacks': False,
-                                'zdr': True, 'data_collection': 'deny'}
+                                'require_parameters': True, 'zdr': True,
+                                'data_collection': 'deny'}
 
 
 def test_a_response_from_another_provider_stops_the_run():

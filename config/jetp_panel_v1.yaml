@@ -5,7 +5,7 @@
 version: panel-v1
 rule: panel-rule-v1          # docs: data/jetp/reference/panel-v1/README.md
 fields_version: panel-fields-v1
-prompt_version: panel-prompt-v2   # v1 failed the control for A (stitched quotes); see README
+prompt_version: panel-prompt-v3   # v1, v2 failed the control (stitched quotes, composed labels); README
 
 # Budget accepted by the author on 2026-10-01 (ticket 1895 log): USD 10 to 48.
 # The runner stops before a call that would take the spend over the cap.
@@ -31,16 +31,18 @@ members:
     provider_name: xAI
     price_in_per_m: 2.0
     price_out_per_m: 6.0
-  - key: C
-    maker: Moonshot AI
-    model: moonshotai/kimi-k3
-    provider: moonshotai
-    provider_name: Moonshot AI
-    price_in_per_m: 3.0      # first-party endpoint; the 0.70 quote of the
-    price_out_per_m: 15.0    # estimate is an fp4 reseller
+  # C, Moonshot AI moonshotai/kimi-k3 via Moonshot AI, failed the positive
+  # control under panel-prompt-v2 (composed labels, not verbatim) and is
+  # replaced, not weighted (README, control.csv). Its answers are kept.
+  - key: D
+    maker: Z.ai
+    model: z-ai/glm-5.3
+    provider: parasail       # fp8; Z.AI's own endpoint ignores the JSON
+    provider_name: Parasail  # schema (structured outputs unsupported)
+    price_in_per_m: 1.4
+    price_out_per_m: 4.4
 reasoning_effort: low
 max_output_tokens: 64000
-temperature: 0
 part_max_chars: 120000
 
 # Selection: pending documents (a snapshot, no line), stratified cells, a

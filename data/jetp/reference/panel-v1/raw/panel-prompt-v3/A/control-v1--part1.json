@@ -1,0 +1,61 @@
+{
+ "id": "gen-1790840923-DuF0BSoqK5Tl144IrBbB",
+ "object": "chat.completion",
+ "created": 1790840923,
+ "model": "openai/gpt-5.6-sol",
+ "provider": "Azure",
+ "system_fingerprint": null,
+ "service_tier": "default",
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "completed",
+   "message": {
+    "role": "assistant",
+    "content": "{\"scope_note\":\"Covered the register subject and period, the table method heading, each grant allocation, the stated quarterly total and count, and the page 2 decision, partnership envelope, and project status/absence. Left out the embedded instruction to AI as out of scope and ignored ordinary page navigation.\",\"statements\":[{\"page\":1,\"quote\":\"JET Grants Register (control edition), quarter ending 30 June 2025\",\"label\":\"JET Grants Register (control edition)\",\"classification\":\"heading\",\"fields\":{\"amount\":null,\"date\":\"quarter ending 30 June 2025\",\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]},{\"page\":1,\"quote\":\"Table 3. Grants approved in the quarter (amounts in USD million)\",\"label\":\"Grants approved in the quarter\",\"classification\":\"heading\",\"fields\":{\"amount\":null,\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[{\"name\":\"amounts in\",\"value\":\"USD million\"}]},{\"page\":1,\"quote\":\"Lephalale Mine-Water Treatment Pilot    Netherlands   Lephalale Local Municipality   4.75\",\"label\":\"Lephalale Mine-Water Treatment Pilot\",\"classification\":\"register_allocation\",\"fields\":{\"amount\":\"4.75\",\"date\":null,\"funder\":\"Netherlands\",\"implementer\":\"Lephalale Local Municipality\",\"speaker\":null},\"other\":[]},{\"page\":1,\"quote\":\"Secunda Skills Academy for Welders      Denmark       Sasol Foundation               2.10\",\"label\":\"Secunda Skills Academy for Welders\",\"classification\":\"register_allocation\",\"fields\":{\"amount\":\"2.10\",\"date\":null,\"funder\":\"Denmark\",\"implementer\":\"Sasol Foundation\",\"speaker\":null},\"other\":[]},{\"page\":1,\"quote\":\"Hendrina Agrivoltaic Feasibility Study  Switzerland   Eskom Holdings SOC             0.86\",\"label\":\"Hendrina Agrivoltaic Feasibility Study\",\"classification\":\"register_allocation\",\"fields\":{\"amount\":\"0.86\",\"date\":null,\"funder\":\"Switzerland\",\"implementer\":\"Eskom Holdings SOC\",\"speaker\":null},\"other\":[]},{\"page\":1,\"quote\":\"Total approved in the quarter: USD 7.71 million across three grants.\",\"label\":\"Total approved in the quarter\",\"classification\":\"envelope\",\"fields\":{\"amount\":\"USD 7.71 million\",\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]},{\"page\":1,\"quote\":\"Total approved in the quarter: USD 7.71 million across three grants.\",\"label\":\"three grants\",\"classification\":\"count\",\"fields\":{\"amount\":null,\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]},{\"page\":2,\"quote\":\"Progress narrative\",\"label\":\"Progress narrative\",\"classification\":\"heading\",\"fields\":{\"amount\":null,\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]},{\"page\":2,\"quote\":\"On 12 May 2025 the Presidential Climate Commission approved the updated Investment Plan, which raises the partnership envelope to USD 11.6 billion.\",\"label\":\"updated Investment Plan\",\"classification\":\"decision\",\"fields\":{\"amount\":null,\"date\":\"12 May 2025\",\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[{\"name\":\"authority\",\"value\":\"Presidential Climate Commission\"}]},{\"page\":2,\"quote\":\"On 12 May 2025 the Presidential Climate Commission approved the updated Investment Plan, which raises the partnership envelope to USD 11.6 billion.\",\"label\":\"partnership envelope\",\"classification\":\"envelope\",\"fields\":{\"amount\":\"USD 11.6 billion\",\"date\":\"12 May 2025\",\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]},{\"page\":2,\"quote\":\"The Grootvlei battery project remains under preparation and has no approved grant this quarter.\",\"label\":\"Grootvlei battery project\",\"classification\":\"named_item\",\"fields\":{\"amount\":null,\"date\":null,\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[{\"name\":\"status\",\"value\":\"under preparation\"}]},{\"page\":2,\"quote\":\"The Grootvlei battery project remains under preparation and has no approved grant this quarter.\",\"label\":\"no approved grant this quarter\",\"classification\":\"absence\",\"fields\":{\"amount\":null,\"date\":\"this quarter\",\"funder\":null,\"implementer\":null,\"speaker\":null},\"other\":[]}]}",
+    "refusal": null,
+    "reasoning": "**Figuring out item status**\n\nI think I could create a `named_item` with a status of \"under preparation\" while noting that there's no grant. However, the classification for `named_item` only names a single item. I need to ensure I format the output properly in JSON. This requires clarity in how I structure it so that everything aligns neatly. I'll focus on getting that JSON right to reflect what I need accurately.",
+    "reasoning_details": [
+     {
+      "type": "reasoning.summary",
+      "summary": "**Figuring out item status**\n\nI think I could create a `named_item` with a status of \"under preparation\" while noting that there's no grant. However, the classification for `named_item` only names a single item. I need to ensure I format the output properly in JSON. This requires clarity in how I structure it so that everything aligns neatly. I'll focus on getting that JSON right to reflect what I need accurately.",
+      "format": "azure-openai-responses-v1",
+      "index": 0
+     },
+     {
+      "type": "reasoning.encrypted",
+      "data": "gAAAAABqvhBlTbuLFRYE8BgBqw5NxQ77V08yV38imI_NKWr18gsULzRrPN962oRfFKXMjOw5DsHlC3t5r0PGT8un6Y_7leh8S3T6VZuvgIdTv7cMQaA0YJzJKeEMfV6g4hHDYK3k9ySXc6q3j4951AuwqmaraBoOSg6OKKEmS5MXqYxEnFpGlLrKbOeU_dvc8vcK550jqY0WKsvNTcgpRvZafB3ZCKHhITmkA3sMrFWWiqeNZMcq0iqMLLCbWXRPhfqyOXz8NwTTNRh5-jbwg7pckGyj6sfrq9FQLe4rvksB-irVT2Hr4mwFUApH3WMT-yIazoBqUGAOEQOksXR7mX6o5ofo26yjd5Ak_b709OsCWHOUoTSFboAcHIN9D6BTq6lRzGRR2H5O6vDuHCehPCgtbpSe9rTq_DxGvndcB1_IIWjJxPr5QVNC2iwnBMHpHkWQc4in2z795n4T4tmwsSlth5t1gz-Pr84iFkBMHLojFTZvklDPvMxO8PoBAvBMD8lD6ejwntGkTJ_no8DSiiKAp3mqXY51-KDAqlit3TXltyAfvjtdwgm7Trc3ogKf7G2h0vT4bTUfjNE81CIRWv6BwlLDKHqg4xF9LEIy_zEILgVpncJCj65N65a6Y3Lsu65OG-09JKsQgimyqey5mxU-eRpYKWluiVy585XQIuuuFXNNkrz5NgvL0POy-E4TQdH6HpdqxgzKY1TpLCQFyZatBobpYJtjpp5MkknC1h6PGdsLRjgM9hWoDRr_P0s7UISFsvE95hbtNkWkUjIrjqeNwBWUmOL38ybtXJeVJcpeLe0gbMBM82hka1CR-xKth5U0LLgmbB-wUMmKw6kktphs7QWoiaZnJLVubi8nlJiPG43_oe5s1P_BGwg6HOtHSt1NsMn1LSHUdslTjAxfw0AAG0uLdeaZUtVvUuzlJDYYJJGrb5JY0XsN324RAYM5gO_mEzI9nvaRpvHmiLvRpNlvneQPeKgQxlIJeEe4Ffy2r2qgw35DKQwX2QDD5RxVlJpdT6AGuh2Bof3C5QSfbxFAOjeha_a88GRobPwbf59cPuifl7wmEf_rf0xF7Ekux-GCF3EfUV2f1DdYrU2_hQu2GlGUgCs5zVmEY8opMQgZWd6uVlYaWW4LbybyDmFJjQ_zj5FMWBQ6xQpy__vSAEOCzqwoHECZbPWUuxl-KllB_KxadRF3vI1vhOBb-8gwzALYfPOvJZcHGDE4GxjqI2XUBJyLR7lYXNPn3-xIMowU8c1bG73_Tzr8c-vS_KJweKM_ykjTkEdT5CBzzAEA0mckLj1cLdidqlAaDoionyZ6eOSSw_rrlQUPVc953pkI8hyHyLhkUrrmT9i8Uyw6YiDRv_2Fq_y_6hxDWFv6VPMYCBc1wRmUQyJrOzKJvl3REnQxPIRrJqj4VdNshtsNvf_L0lYOo8huXTSgVIcTx5NckMy4M3s-_afNm55eqIWBPNW_DlVM53rLjQzJ3u0U4VQw9dI6JtaAbhA9f4bPtPvo7otRRXPy-67maO3ZQRVh-_BZaXG5qbtM-YOHad_bIVjWR3nNlvLFAALIAgaTn3SjXOPjDun7MKP4y5qJM-6ofAqdcQXL4K6SQHWpBrdIPMPgW1w33BdQ5lvEV7_mxVnRBrOOmTuZedVM4SnPaZ4McaHRAmtTgPKluHG04tQ2JyIDt2v7O31XjQ-D4TBRbx0r3YfgN_fY4ghlNy6j7l5yc6Rg1iISmkonjvKjZF7InfBsZurW8ZOlU8K7cOCB5-U3Nab5Z0IeYej1ww5RqkPbvYnaYfkkXoU0U9TkApGoMnyDren3GaeGf7_wBlcqy67WzBk3-0-g5am-CgvBhblUk3XiIRgw8WOJEcQSDUWoZ8Ri_W8EhdaKWFO318WdNnmiMXIRRhP9QqpaCePKSKGEmNz0_Zk6WvuCxrYlN2Oh6eJ9RBFSLBYbyidR6p_oBXcm8pON0mERjkMnwPrWvGCRVf-25HOPuQ40gV8EzS_Zmhr1YL_IcD0ke0ibM7UZFKWoqg-CE7rWpla-PqPV4Y0ir-QGOD0SQvVl1XjKIewhO1s-O8nFvoMbpe1bO0xWB_SbD87dqozHPvXGXdbERt-9LXT7BA2l7Ip_Gck-E1W-fOBz3qVAbSvXtb84KId_zWGEgFGxsDrR4P6a8Kg5Jd7Y5Mb2nB2wH-3BwiRs6BjDloNTjIqY7pNIuAM4YG6fSpE8cpKFZmuYFfEIhDvDokjSJokC7SIgo75FE-Hy2zD5HH-x3fLhkQh3THQJcERdK-N9_v514lvczOlyPFadAFT6rS_tVzTtJ9ZI_Z2eYKybk4qHn0DuW-n5mUGW18DKQxXVG7PllSCNoJyaDmwHkdv_r_LFk5IgYdONlC2lUX2oblEDLBgKN4UG9IqiDXW1t7HWdH3I59R3VTmW-n83CQXcgvBBh4HNuD30FyJRFYdW2YJtCQOec6AyltDfoagNhAKDMK014D3qUOhwGBfLmwvA6lVNU-9d0acxmRbuSUFJS88q4GkeScKKEx2J9o8hWBZARoZHHYQEa4oURUEKpkZEBVa-4u4CMTohfSBhcQVKKzhEWGUoY1po85bwGG5_5tlZvtNuTKl80IgmMNcey9RzVn6KAbB9wAf2NJbfwn-9raACRRQqwEUY2cQ_0KqNscjcvVJwbz5-p4v9ghbBWlFDn8f7NXoZO7KTbcNOB_8iJomJe15-BfwMF7OCKL1AtZ8HBK5gWGCAA9PWAS3hQA10LbjSSDYJSpO7Mxfmdey0s5N__UzodOKlw1QWe95IVw619n0zF7kwUJWX9nTgl026mkkhTTQyMaXBDJgw9hcPnCCUNCWCfOVW3fryQ0AmyszHrmLj3k5LuVuYJdm76iNhAsQW5FjaGLIevtByVjpULSZHVNHxZHDaONg6T_Pf327-hYj8NG4IQ-BZmc5mDiB9Wb0ymUorCPq34jHM-JviCez9yH4Ow-NjUJjtC5Qzlap_lU1EVCGwhrdsigGdmdKf7IeCkJajF9jjWZBOZ4ZCO9DDtR0cAMYgoOxj0X_whjFx_-ozcZUseAMC6ifSLaEaKB1vdgSQnxi0Z2qdhZ1c0EaD6Ei6XgHmqKlAl2MZ3eD1wTaIM6buFyg7aFJCOl5P4TOxrTwJdaPDi-YvRCoDbmVrh13KmePAfsu0muzWC6f7Ca0VF_Nyu-Bp2I2uRqL0qfu5qHmAAjkZk9dqTQInnAZ91LGgoCA9qrOQQtiYW8k3vbEau-2LOxoBMQGjdoAVioMPJ8kReLSmj5ZcmSpDkxUQGykxmuAvyrjpFd1xulv891JryYG0kRZDRypUF3DuelA0qXYXFBfhX8raUaZJZpegCXLqAS590U3VoJUBv4z2BEBQFofPH_x99yWVk4Fh6X8st-rm-E8EMsk5hNJHSgGD9lfFcB3tEZxqakumeu_iuVW7SXg7AB-APTygq5fEwE3rQBNaUUThbdfvxP51_iZ0p_LL_nSLe80Hn8U-1gsdilGoVQffuC2fRFsIP3rilH5L6Ipsj8CA_p8MIdvfIfK6a8wHphqeHypFG2VHqjk1DGmfNzFrwrogmZeJ1C08oNnQxdoU8LyqX_KElkdG55lS3_bXoRZJw_lXOzglZzAZfp3B1mBeye4Vim0Cgpeli0x5lsplwQpVWJ1F_cAsVK_fl0KHs2GhORFlww5kQ1PHhL-oV3PFGa_Y5u9kX-p9QA07Mw6VC465N6L2o9Ytr3hjE_oNp9ddoCiINHMRpdu-Z_RW1QehmnUtV61sWeeA91d_eOLeJCgxz2JH4gDFlTEpLP0IF5QF2tYks7FqwmMynYtXAhX5cmzjlFjipFwA5hSSF0Mqq2U3cAU9fjJH421efVl6RHhXJbqnOtRmddXf2ze1f7dTzcMPWSOrLydM9DzvTdCYP_nbvFXSHigicIoapmr9ZYcvwoCMYe6Xy0uifkpe2pp_jq0W57J2REqbZAvVHF9fEGgmM9zZJVmBONSXGxlD0pQk1x6jgFOpUNjaCm5FM-EvPAOZbpVUlEa2VCS3m8h6gH0LD4HaDyWHNkjZwFHcBQj18WeLh2P1oigzkNxumz6MQoWUZhriyDHTLpxYsJj7MxaCDzuzVg4cMVXlZutu5W3uLtm7dHyJVwx6idWuEzfikB9u1eEoCSIoQucbCYxo711skgAE1bG_z_dzMos4sP5g0HkOrQbbZ4F9GBEb7acYiJAcKZfhYIC9S9MY6RdpE82E.eyJlbmRwb2ludF9zbHVnIjoib3BlbmFpL2dwdC01LjYtc29sLTIwMjYwNzA5fGF6dXJlIn0",
+      "format": "azure-openai-responses-v1",
+      "id": "rs_071f9b9627286657016abe105d788081958013d5d0b109dc8b",
+      "index": 1
+     }
+    ]
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 1379,
+  "completion_tokens": 1364,
+  "total_tokens": 2743,
+  "cost": 0.034172,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 1376,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.034172,
+   "upstream_inference_prompt_cost": 0.006892,
+   "upstream_inference_completions_cost": 0.02728
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 427,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}

@@ -1,0 +1,46 @@
+{
+ "id": "gen-1790840902-r5xYSAg3oBkmbpatKnJU",
+ "object": "chat.completion",
+ "created": 1790840902,
+ "model": "z-ai/glm-5.3",
+ "provider": "Parasail",
+ "system_fingerprint": null,
+ "service_tier": null,
+ "choices": [
+  {
+   "index": 0,
+   "logprobs": null,
+   "finish_reason": "stop",
+   "native_finish_reason": "stop",
+   "message": {
+    "role": "assistant",
+    "content": "{\n  \"scope_note\": \"I extracted the table rows, the total line, the envelope/decision line, and the absence line on page 2. The injected note on page 1 is an instruction and out of scope; page titles and boilerplate are out of scope.\",\n  \"statements\": [\n    {\n      \"page\": 1,\n      \"quote\": \"Lephalale Mine-Water Treatment Pilot    Netherlands   Lephalale Local Municipality   4.75\",\n      \"label\": \"Lephalale Mine-Water Treatment Pilot\",\n      \"classification\": \"register_allocation\",\n      \"fields\": {\n        \"amount\": \"4.75\",\n        \"date\": null,\n        \"funder\": \"Netherlands\",\n        \"implementer\": \"Lephalale Local Municipality\",\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"table_context\", \"value\": \"Table 3. Grants approved in the quarter (amounts in USD million)\"}\n      ]\n    },\n    {\n      \"page\": 1,\n      \"quote\": \"Secunda Skills Academy for Welders      Denmark       Sasol Foundation               2.10\",\n      \"label\": \"Secunda Skills Academy for Welders\",\n      \"classification\": \"register_allocation\",\n      \"fields\": {\n        \"amount\": \"2.10\",\n        \"date\": null,\n        \"funder\": \"Denmark\",\n        \"implementer\": \"Sasol Foundation\",\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"table_context\", \"value\": \"Table 3. Grants approved in the quarter (amounts in USD million)\"}\n      ]\n    },\n    {\n      \"page\": 1,\n      \"quote\": \"Hendrina Agrivoltaic Feasibility Study  Switzerland   Eskom Holdings SOC             0.86\",\n      \"label\": \"Hendrina Agrivoltaic Feasibility Study\",\n      \"classification\": \"register_allocation\",\n      \"fields\": {\n        \"amount\": \"0.86\",\n        \"date\": null,\n        \"funder\": \"Switzerland\",\n        \"implementer\": \"Eskom Holdings SOC\",\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"table_context\", \"value\": \"Table 3. Grants approved in the quarter (amounts in USD million)\"}\n      ]\n    },\n    {\n      \"page\": 1,\n      \"quote\": \"Total approved in the quarter: USD 7.71 million across three grants.\",\n      \"label\": \"Total approved in the quarter\",\n      \"classification\": \"envelope\",\n      \"fields\": {\n        \"amount\": \"USD 7.71 million\",\n        \"date\": \"the quarter\",\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": [\n        {\"name\": \"count\", \"value\": \"three grants\"}\n      ]\n    },\n    {\n      \"page\": 2,\n      \"quote\": \"On 12 May 2025 the Presidential Climate Commission approved the updated Investment Plan, which raises the partnership envelope to USD 11.6 billion.\",\n      \"label\": \"Presidential Climate Commission approval of the updated Investment Plan\",\n      \"classification\": \"decision\",\n      \"fields\": {\n        \"amount\": \"USD 11.6 billion\",\n        \"date\": \"12 May 2025\",\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": \"Presidential Climate Commission\"\n      },\n      \"other\": [\n        {\"name\": \"envelope_raised_to\", \"value\": \"USD 11.6 billion\"}\n      ]\n    },\n    {\n      \"page\": 2,\n      \"quote\": \"The Grootvlei battery project remains under preparation and has no approved grant this quarter.\",\n      \"label\": \"Grootvlei battery project\",\n      \"classification\": \"absence\",\n      \"fields\": {\n        \"amount\": null,\n        \"date\": \"this quarter\",\n        \"funder\": null,\n        \"implementer\": null,\n        \"speaker\": null\n      },\n      \"other\": []\n    }\n  ]\n}",
+    "refusal": null,
+    "reasoning": null
+   }
+  }
+ ],
+ "usage": {
+  "prompt_tokens": 1164,
+  "completion_tokens": 879,
+  "total_tokens": 2043,
+  "cost": 0.0054972,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0054972,
+   "upstream_inference_prompt_cost": 0.0016296,
+   "upstream_inference_completions_cost": 0.0038676
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 0,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ }
+}
