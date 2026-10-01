@@ -282,7 +282,8 @@ def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
 
 
 def designb_rows(run_dir: str, input_path: str, run_id: str, joint: dict,
-                 basis: tuple[str, str] | None = None) -> tuple[list[dict], int]:
+                 basis: tuple[str, str] | None = None,
+                 stopped: str = "") -> tuple[list[dict], int]:
     """Table rows of a design-B run (``corpus_icf_stage1_designb.py``) and the
     number of works left out because only one labeller labelled them.
 
@@ -300,8 +301,9 @@ def designb_rows(run_dir: str, input_path: str, run_id: str, joint: dict,
     """
     log_path = os.path.join(run_dir, "run.log")
     text = open(log_path, encoding="utf-8").read() if os.path.exists(log_path) else ""
-    _require(bool(FINISHED.search(text)),
-             f"{run_dir}: run.log has no closing 'labelled N, unlabelled M' line")
+    _require(bool(FINISHED.search(text)) or bool(stopped.strip()),
+             f"{run_dir}: run.log has no closing 'labelled N, unlabelled M' line "
+             "(pass --stopped REASON for a run stopped on purpose)")
     invocations = _jsonl(os.path.join(run_dir, "screen_runs.jsonl"))
     _require(bool(invocations), f"{run_dir}: screen_runs.jsonl is empty")
     hashes = {(i["llm_prompt_sha256"], i["classifier_prompt_sha256"]) for i in invocations}
@@ -393,6 +395,9 @@ def main(argv=None):
     p3.add_argument("--run-id", default=None, help="default: the run directory name")
     p3.add_argument("--pool", default=None,
                     help="the pool the input was built on (default: config pool)")
+    p3.add_argument("--stopped", default="",
+                    help="reason the run was stopped on purpose before its end; imports the "
+                         "works both labellers labelled (recorded in the manifest note)")
     p3.add_argument("--allow-input-drift", action="store_true",
                     help="import although pool or table differ from those the input was "
                          "built on")
@@ -413,9 +418,12 @@ def main(argv=None):
                 raise ImportRefused(f"{args.config} has no stage1_joint block")
             input_path = args.input or os.path.join(run_dir, "screen_input.jsonl")
             basis = None if args.allow_input_drift else (args.pool or cfg["pool"], table)
-            rows, half = designb_rows(run_dir, input_path, run_id, joint, basis)
+            rows, half = designb_rows(run_dir, input_path, run_id, joint, basis,
+                                      args.stopped)
             log.info("%d works labelled by one labeller only: left unscreened", half)
             note = f"import design-B stage-1 run {run_id}"
+            if args.stopped.strip():
+                note += f" (stopped before its end: {args.stopped.strip()})"
         else:
             run_dir = args.run_dir.rstrip("/")
             run_id = args.run_id or os.path.basename(run_dir)

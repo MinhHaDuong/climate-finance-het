@@ -327,6 +327,19 @@ def test_designb_import_refusals(tmp_path, kw, match):
         ci.designb_rows(str(d), str(d / "screen_input.jsonl"), "designB", JOINT)
 
 
+def test_designb_import_of_a_run_stopped_on_purpose(tmp_path):
+    d = _designb_dir(tmp_path, finished=False)
+    rows, half = ci.designb_rows(str(d), str(d / "screen_input.jsonl"), "designB", JOINT,
+                                 stopped="wind-down")
+    assert len(rows) == 4 and half == 1
+    table = str(tmp_path / "icf_screen.csv")
+    args = ["--output", table, "stage1-designb", "--run-dir", str(d), "--allow-input-drift",
+            "--stopped", "wind-down"]
+    assert ci.main(args) == 0 and ci.main(args) == 0
+    assert len(ics.read_table(table)) == 4
+    assert "stopped before its end: wind-down" in ics._manifest_entries(table)[-1]["note"]
+
+
 def test_designb_import_refuses_disagreeing_invocations(tmp_path):
     d = _designb_dir(tmp_path)
     _jsonl(d / "screen_runs.jsonl", [
