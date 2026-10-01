@@ -30,6 +30,12 @@ both files. The real tamper anchor is the DVC hash of ``data/rel_screen``
 (table and manifest together) committed in git.
 
 Readers go through ``read_table``, which runs the same verification.
+
+The same guards serve a second append-only table, ``rel_dimensions`` (ticket
+1840): the discipline fields of the version-2 stage-2 wrapper (contribution
+test, field, contribution type), keyed like ``icf_screen`` so a dimension row
+joins the ICF label it was given with. Every function that touches a table
+takes a ``schema`` (``ICF``, the default, or ``DIMENSIONS``).
 """
 
 import csv
@@ -37,7 +43,9 @@ import hashlib
 import io
 import json
 import os
+import re
 from collections.abc import Iterable
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import IO
 
@@ -53,6 +61,37 @@ WORK_KEY_PREFIXES = ("openalex:", "doi:", "url:", "title:")
 REQUIRED = ["work_key", "stage", "labeller", "model", "prompt_sha256", "run_id",
             "machine", "label", "doc_type", "labelled_at", "source"]
 UNKNOWN = "unknown"
+
+# Closed vocabularies of the version-2 wrapper (config/rel_stage2_prompt_v2.md,
+# where each value is defined). "na" is the answer for a work labelled out;
+# "unknown" stores an out-of-vocabulary answer.
+CONTRIB = {"yes", "no", "unsure", "na"}
+FIELDS = {"economics", "politics", "law", "finance", "management", "data_science",
+          "natural_science", "other", "na"}
+CONTRIB_TYPES = {"empirical", "theory", "method", "policy", "review", "case", "other", "na"}
+DIMENSION_COLUMNS = ["dim_id", "work_key", "stage", "labeller", "model", "prompt_sha256",
+                     "run_id", "machine", "contrib", "field", "contrib_type", "labelled_at",
+                     "source"]
+
+
+@dataclass(frozen=True)
+class Schema:
+    """One append-only table: its header, id column, required columns and vocabularies."""
+
+    columns: list
+    id_column: str
+    required: list
+    enums: tuple  # ((column, allowed values), ...)
+
+
+ICF = Schema(COLUMNS, "label_id", REQUIRED,
+             (("stage", STAGES), ("labeller", LABELLERS), ("label", LABELS),
+              ("doc_type", DOC_TYPES)))
+DIMENSIONS = Schema(DIMENSION_COLUMNS, "dim_id",
+                    [c for c in DIMENSION_COLUMNS if c != "dim_id"],
+                    (("stage", STAGES), ("labeller", LABELLERS),
+                     ("contrib", CONTRIB | {UNKNOWN}), ("field", FIELDS | {UNKNOWN}),
+                     ("contrib_type", CONTRIB_TYPES | {UNKNOWN})))
 
 
 class IcfScreenError(Exception):
@@ -143,20 +182,21 @@ def verify(table_path: str) -> dict | None:
     return last
 
 
-def _read_rows(table_path: str) -> list[dict]:
+def _read_rows(table_path: str, schema: Schema = ICF) -> list[dict]:
     with _open(table_path, "r") as fh:
         reader = csv.DictReader(fh)
-        if reader.fieldnames != COLUMNS:
-            raise IcfScreenError(f"{table_path}: header {reader.fieldnames} is not {COLUMNS}")
+        if reader.fieldnames != schema.columns:
+            raise IcfScreenError(f"{table_path}: header {reader.fieldnames} is not "
+                                 f"{schema.columns}")
         return list(reader)
 
 
-def read_table(table_path: str) -> list[dict]:
-    """All labels, in append order, after verification; [] when there is no table."""
+def read_table(table_path: str, schema: Schema = ICF) -> list[dict]:
+    """All rows, in append order, after verification; [] when there is no table."""
     last = verify(table_path)
     if last is None:
         return []
-    rows = _read_rows(table_path)
+    rows = _read_rows(table_path, schema)
     if len(rows) != last["rows_total"]:
         raise IcfScreenError(f"{table_path}: {len(rows)} rows, manifest records "
                              f"{last['rows_total']}")
@@ -167,18 +207,16 @@ def key_of(row: dict) -> tuple[str, ...]:
     return tuple(row[k] for k in KEY)
 
 
-def validate_row(row: dict) -> list[str]:
+def validate_row(row: dict, schema: Schema = ICF) -> list[str]:
     """Faults of one row (empty list when it may be appended)."""
     errors = []
-    extra = set(row) - set(COLUMNS)
+    extra = set(row) - set(schema.columns)
     if extra:
         errors.append(f"unknown columns {sorted(extra)}")
-    for col in REQUIRED:
+    for col in schema.required:
         if not (row.get(col) or "").strip():
             errors.append(f"{col} is empty")
-    checks = (("stage", STAGES), ("labeller", LABELLERS), ("label", LABELS),
-              ("doc_type", DOC_TYPES))
-    for col, allowed in checks:
+    for col, allowed in schema.enums:
         if row.get(col) and row[col] not in allowed:
             errors.append(f"{col}={row[col]!r} not in {sorted(allowed)}")
     wk = row.get("work_key") or ""
@@ -205,8 +243,8 @@ def _refuse_fork(table_path: str, new_table: bool) -> None:
 
 
 def append_rows(table_path: str, rows: Iterable[dict], note: str = "",
-                new_table: bool = False) -> int:
-    """Append ``rows`` (dicts over ``COLUMNS`` minus ``label_id``); return how many.
+                new_table: bool = False, schema: Schema = ICF) -> int:
+    """Append ``rows`` (dicts over the schema's columns minus its id); return how many.
 
     Every row is validated and checked against the keys already in the table
     before a single byte is written: one bad row refuses the whole batch.
@@ -217,14 +255,14 @@ def append_rows(table_path: str, rows: Iterable[dict], note: str = "",
     if not rows:
         return 0
     _refuse_fork(table_path, new_table)
-    existing = read_table(table_path)
+    existing = read_table(table_path, schema)
     seen = {key_of(r) for r in existing}
     faults = []
     for n, row in enumerate(rows, 1):
-        for col in COLUMNS:
+        for col in schema.columns:
             row.setdefault(col, "")
             row[col] = "" if row[col] is None else str(row[col])
-        errors = validate_row(row)
+        errors = validate_row(row, schema)
         if not errors:
             k = key_of(row)
             if k in seen:
@@ -232,18 +270,18 @@ def append_rows(table_path: str, rows: Iterable[dict], note: str = "",
             seen.add(k)
         if errors:
             faults.append(f"row {n}: " + "; ".join(errors))
-        row["label_id"] = label_id(row) if not errors else ""
+        row[schema.id_column] = label_id(row) if not errors else ""
     if faults:
         raise IcfScreenError(f"{len(faults)} row(s) refused, nothing written:\n  "
                              + "\n  ".join(faults[:20]))
 
     buf = io.StringIO()
-    writer = csv.DictWriter(buf, fieldnames=COLUMNS, lineterminator="\n")
+    writer = csv.DictWriter(buf, fieldnames=schema.columns, lineterminator="\n")
     new_table = not existing and not os.path.exists(table_path)
     if new_table:
         writer.writeheader()
     for row in rows:
-        writer.writerow({c: row[c] for c in COLUMNS})
+        writer.writerow({c: row[c] for c in schema.columns})
     os.makedirs(os.path.dirname(os.path.abspath(table_path)), exist_ok=True)
     with _open(table_path, "x" if new_table else "a") as fh:
         fh.write(buf.getvalue())
@@ -259,16 +297,16 @@ def append_rows(table_path: str, rows: Iterable[dict], note: str = "",
 
 
 def append_new(table_path: str, rows: Iterable[dict], note: str = "",
-               new_table: bool = False) -> tuple[int, int]:
+               new_table: bool = False, schema: Schema = ICF) -> tuple[int, int]:
     """Append the rows whose key is not in the table yet: ``(appended, skipped)``.
 
     The idempotent entry point for importers: a second run appends nothing.
     """
     rows = list(rows)
     _refuse_fork(table_path, new_table)
-    seen = {key_of(r) for r in read_table(table_path)}
+    seen = {key_of(r) for r in read_table(table_path, schema)}
     fresh = [r for r in rows if key_of({k: str(r.get(k) or "") for k in KEY}) not in seen]
-    return append_rows(table_path, fresh, note, new_table), len(rows) - len(fresh)
+    return append_rows(table_path, fresh, note, new_table, schema), len(rows) - len(fresh)
 
 
 # ── Shared record formats (1530 stage 2) ─────────────────
@@ -287,22 +325,32 @@ def format_stage2_record(n: int, rec: dict, title_max: int, abstract_max: int) -
             f"   Title: {(rec.get('title') or '')[:title_max]}\n   Abstract: {abstract}\n")
 
 
-def parse_stage2_answers(lines: Iterable[str], ids: list[str]) -> tuple[dict, list[str]]:
-    """``{id: answer}`` from ``n|label|doc|studied|why`` lines, and the faults.
+V1_FIELDS = ("n", "label", "doc", "studied", "why")
+V2_FIELDS = ("n", "label", "doc", "studied", "contrib", "field", "ctype", "why")
+_DIM_VOCAB = {"contrib": CONTRIB, "field": FIELDS, "ctype": CONTRIB_TYPES}
 
-    Same acceptance as the 1530 consolidation: a line is kept when ``n`` is in
-    range and the label valid; ``why`` keeps any further ``|``. A number
-    answered twice, a blank line or an out-of-range line is a fault, reported,
-    never guessed.
+
+def parse_stage2_answers(lines: Iterable[str], ids: list[str],
+                         fields: tuple = V1_FIELDS) -> tuple[dict, list[str]]:
+    """``{id: answer}`` from answer lines in the ``fields`` format, and the faults.
+
+    ``V1_FIELDS`` (``n|label|doc|studied|why``, the 1530 wrapper) or
+    ``V2_FIELDS`` (``n|label|doc|studied|contrib|field|ctype|why``, ticket
+    1840). Same acceptance as the 1530 consolidation: a line is kept when ``n``
+    is in range and the label valid; ``why``, always last, keeps any further
+    ``|``. A number answered twice, a short or out-of-range line is a fault,
+    reported, never guessed. An out-of-vocabulary ``doc`` or discipline value
+    is stored as ``unknown``. Blank lines are skipped.
     """
     answers: dict = {}
     faults = []
+    shape = "|".join(fields)
     for lineno, line in enumerate(lines, 1):
         parts = line.rstrip("\n").split("|")
         if not line.strip():
             continue
-        if len(parts) < 4 or not parts[0].strip().isdigit():
-            faults.append(f"line {lineno}: not n|label|doc|studied|why")
+        if len(parts) < len(fields) - 1 or not parts[0].strip().isdigit():
+            faults.append(f"line {lineno}: not {shape}")
             continue
         n = int(parts[0])
         if not 1 <= n <= len(ids) or parts[1].strip() not in LABELS:
@@ -312,25 +360,48 @@ def parse_stage2_answers(lines: Iterable[str], ids: list[str]) -> tuple[dict, li
             faults.append(f"line {lineno}: record {n} answered twice")
             continue
         doc = parts[2].strip()
-        answers[ids[n - 1]] = {"label": parts[1].strip(),
-                               "doc": doc if doc in DOC_TYPES else UNKNOWN,
-                               "studied": parts[3].strip(),
-                               "why": "|".join(parts[4:]).strip()}
+        answer = {"label": parts[1].strip(), "doc": doc if doc in DOC_TYPES else UNKNOWN,
+                  "studied": parts[3].strip()}
+        for i, name in enumerate(fields[4:-1], 4):
+            value = parts[i].strip().lower()
+            answer[name] = value if value in _DIM_VOCAB[name] else UNKNOWN
+        answer["why"] = "|".join(parts[len(fields) - 1:]).strip()
+        answers[ids[n - 1]] = answer
     missing = len(ids) - len(answers)
     if missing:
         faults.append(f"{missing} of {len(ids)} records unanswered")
     return answers, faults
 
 
-def stage2_prompt_sha256(prompt_md_path: str) -> str:
-    """sha256 of the fenced stage-2 wrapper in ``config/rel_sud_stage2_prompt.md``.
-
-    That wrapper is the text each stage-2 labeller received, with the chunk
-    file names filled in; the hash identifies the template.
-    """
+def _prompt_block(prompt_md_path: str) -> str:
     with open(prompt_md_path, encoding="utf-8") as fh:
         text = fh.read()
     parts = text.split("```")
     if len(parts) < 3:
         raise IcfScreenError(f"{prompt_md_path}: no fenced prompt block")
-    return hashlib.sha256(parts[1].strip("\n").encode()).hexdigest()
+    return parts[1].strip("\n")
+
+
+def stage2_answer_fields(prompt_md_path: str) -> tuple:
+    """The answer format a stage-2 wrapper asks for: ``V1_FIELDS`` or ``V2_FIELDS``.
+
+    Read from the line after "format exactly:" in the fenced wrapper, so the
+    prompt file is the one place the format is declared.
+    """
+    m = re.search(r"format exactly:\s*\n\s*(\S+)", _prompt_block(prompt_md_path))
+    found = tuple(m.group(1).split("|")) if m else None
+    if found not in (V1_FIELDS, V2_FIELDS):
+        raise IcfScreenError(f"{prompt_md_path}: answer format {found} is neither "
+                             f"{'|'.join(V1_FIELDS)} nor {'|'.join(V2_FIELDS)}")
+    return found
+
+
+def stage2_prompt_sha256(prompt_md_path: str) -> str:
+    """sha256 of the fenced stage-2 wrapper of a prompt file.
+
+    That wrapper is the text each stage-2 labeller received, with the chunk
+    file names filled in; the hash identifies the template. The version-1
+    file (``t1530_stage2_prompt`` in ``config/rel_screen.yaml``) is frozen:
+    its hash is on the t1530 Opus rows of ``icf_screen``.
+    """
+    return hashlib.sha256(_prompt_block(prompt_md_path).encode()).hexdigest()

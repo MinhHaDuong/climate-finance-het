@@ -2,13 +2,14 @@
 Title: REL — REL view and PRISMA: exclusions by reason, publisher and rank sensitivity
 Created: 2026-10-01
 Author: HDMX-coding-agent
-Blocked-by: 1840
 Blocked-by: 1841
 Blocked-by: 1842
 
 --- log ---
 2026-10-01T10:00Z HDMX-coding-agent created
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
+2026-10-01T05:56Z HDMX-coding-agent note blocker 1840 closed — Blocked-by removed.
+2026-10-01T07:01Z HDMX-coding-agent note on the 1840 gold set Opus v2 excludes 4 of 59 gold includes, 3 of them applied finance with a policy question (green-bond certification W3122424672, EU ETS speculation W4399863925, W7212372846), against 3 extra includes (gold no 1, na 1, unsure 1); the discipline exclusion count therefore leans toward over-excluding applied finance: report it with that direction stated (Agent C, PR 1652)
 --- body ---
 ## Context
 Child of 1830. Closes 1830 with the integration review.

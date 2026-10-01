@@ -11,7 +11,8 @@ memory from the pool and the ``icf_screen`` table, so it is never stale):
     affiliations: CC, CC]``, ``Title:`` ≤ 220, ``Abstract:`` ≤ 650 characters),
     ``chunkNN.ids.json`` (the chunk's work keys, in order) and ``works.csv``
     (identifiers of every work, for the parser). The labeller gets the wrapper
-    of ``config/rel_sud_stage2_prompt.md``; the chunk never shows stage-1 labels.
+    of ``stage2.prompt`` (``config/rel_stage2_prompt_v2.md`` since ticket 1840);
+    the chunk never shows stage-1 labels.
 
 ``audit-sample``
     A random sample of works with a final stage-2 label, stratified by that
@@ -19,12 +20,21 @@ memory from the pool and the ``icf_screen`` table, so it is never stale):
     shuffled, in the same chunk format, for the second-model audit.
 
 ``parse``
-    Reads ``chunkNN.<suffix>.txt`` answers (``n|label|doc|studied|why``) next to
-    each ``chunkNN.ids.json`` and appends them to ``icf_screen`` as stage ``2``
-    or ``audit``, with the model, run id and machine given on the command line.
+    Reads ``chunkNN.<suffix>.txt`` answers next to each ``chunkNN.ids.json``, in
+    the format the wrapper declares (``--prompt``, default ``stage2.prompt``:
+    ``n|label|doc|studied|why`` for version 1, ``n|label|doc|studied|contrib|
+    field|ctype|why`` for version 2), and appends the labels to ``icf_screen``
+    as stage ``2`` or ``audit``, with the model, run id and machine given on the
+    command line. Version-2 answers also append the discipline fields to
+    ``rel_dimensions`` (``dimensions_table``), same key, same prompt hash
+    (ticket 1840); both batches are validated before either is written.
     A chunk with a malformed or duplicated answer line is refused whole (the
-    numbering can no longer be trusted); unanswered records are reported and
-    stay pending. Idempotent: labels already in the table are skipped.
+    numbering can no longer be trusted), and so is an answer file written for
+    the other wrapper (``_format_mismatch``); unanswered records are reported and
+    stay pending. The per-chunk report also counts, for version 2, answers with
+    an ``unknown`` discipline value (``unknown_dimension``) and answers that break
+    the wrapper's rule of ``na`` exactly for ``out`` (``na_off_rule``); both are
+    stored as answered. Idempotent: labels already in the table are skipped.
 
 ``agreement``
     Cohen's kappa and the confusion matrix of the audit labels of one run
@@ -35,7 +45,7 @@ Usage:
     python scripts/corpus_icf_stage2.py build --output-dir DIR
     python scripts/corpus_icf_stage2.py audit-sample --output-dir DIR
     python scripts/corpus_icf_stage2.py parse --chunk-dir DIR --model M --run-id R \\
-        --machine doudou [--stage 2|audit] [--suffix opus] [--labeller llm]
+        --machine doudou [--stage 2|audit] [--suffix opus] [--labeller llm] [--prompt MD]
     python scripts/corpus_icf_stage2.py agreement --audit-run-id R --output FILE
 """
 
@@ -139,13 +149,57 @@ def audit_sample(view_rows: list[dict], per_label: dict, seed: int) -> list[str]
 _CHUNK = re.compile(r"^(chunk\d+)\.ids\.json$")
 
 
+def _dims_table_is_new(table: str, dims_table: str, new_table: bool, prompt_sha: str) -> bool:
+    """Whether a missing dimensions table may be started, checked before any write.
+
+    It lives beside ``icf_screen`` under the same DVC pointer, so the first
+    version-2 parse must create it without ``--new-table`` (which would also
+    let ``icf_screen`` restart). It is missing for a wrong reason when
+    ``icf_screen`` already holds rows of this wrapper: those parses wrote it,
+    so it was lost or not fetched, and a new one would fork its history.
+    """
+    if new_table or os.path.exists(dims_table):
+        return new_table
+    if not os.path.exists(table):
+        return False  # the icf_screen append decides, through _refuse_fork
+    if any(r["prompt_sha256"] == prompt_sha for r in ics.read_table(table)):
+        raise Stage2Error(f"{dims_table} is missing but {table} already holds rows of this "
+                          "wrapper: fetch it (make rel-pool-data) before parsing; nothing written")
+    return True
+
+
+_DIM_HEAD = re.compile(r"^(yes|no|unsure|na)\|", re.IGNORECASE)
+
+
+def _format_mismatch(answers: dict, fields: tuple) -> str:
+    """Why an answer file looks written for the other wrapper, or "".
+
+    Both tables are append-only, so an answer file parsed under the wrong
+    ``--prompt`` cannot be corrected once written. A version-1 file read as
+    version 2 leaves every discipline field ``unknown``; a version-2 file read
+    as version 1 leaves every ``why`` starting with a discipline value. Either
+    pattern over a whole chunk refuses it. One stray line stays an ``unknown``.
+    """
+    if not answers:
+        return ""
+    if fields == ics.V2_FIELDS:
+        if all(a["contrib"] == a["field"] == a["ctype"] == ics.UNKNOWN for a in answers.values()):
+            return ("no record has a valid discipline field: a version-1 answer file, "
+                    "or every discipline value out of vocabulary?")
+    elif all(_DIM_HEAD.match(a["why"]) for a in answers.values()):
+        return "every why starts with a discipline value: a version-2 answer file?"
+    return ""
+
+
 def parse_answers(chunk_dir: str, suffix: str, stage: str, model: str, run_id: str,
                   machine: str, labeller: str, prompt_sha: str, labelled_at: str,
-                  source_prefix: str) -> tuple[list[dict], dict]:
-    """Table rows for every answered record, and a per-chunk report."""
+                  source_prefix: str, fields: tuple = ics.V1_FIELDS
+                  ) -> tuple[list[dict], list[dict], dict]:
+    """``icf_screen`` rows, ``rel_dimensions`` rows (version-2 answers only) for
+    every answered record, and a per-chunk report."""
     with open(os.path.join(chunk_dir, "works.csv"), encoding="utf-8", newline="") as fh:
         works = {r["work_key"]: r for r in csv.DictReader(fh)}
-    rows, report = [], {}
+    rows, dims, report = [], [], {}
     for name in sorted(os.listdir(chunk_dir)):
         m = _CHUNK.match(name)
         if not m:
@@ -158,12 +212,21 @@ def parse_answers(chunk_dir: str, suffix: str, stage: str, model: str, run_id: s
             report[chunk] = {"ids": len(ids), "answered": 0, "status": "no answer file"}
             continue
         with open(answer, encoding="utf-8") as fh:
-            answers, faults = ics.parse_stage2_answers(fh, ids)
+            answers, faults = ics.parse_stage2_answers(fh, ids, fields)
         hard = [f for f in faults if "unanswered" not in f]
         if hard:
             raise Stage2Error(f"{answer}: refused, {hard[:5]}")
+        mismatch = _format_mismatch(answers, fields)
+        if mismatch:
+            raise Stage2Error(f"{answer}: refused, {mismatch}")
         report[chunk] = {"ids": len(ids), "answered": len(answers),
                          "status": "complete" if len(answers) == len(ids) else "incomplete"}
+        if fields == ics.V2_FIELDS:
+            report[chunk]["unknown_dimension"] = sum(
+                ics.UNKNOWN in (a["contrib"], a["field"], a["ctype"]) for a in answers.values())
+            # The wrapper asks na exactly for out; stored as answered, counted here.
+            report[chunk]["na_off_rule"] = sum(
+                (a["label"] == "out") != (a["contrib"] == "na") for a in answers.values())
         for key in ids:
             if key not in answers:
                 continue
@@ -175,7 +238,11 @@ def parse_answers(chunk_dir: str, suffix: str, stage: str, model: str, run_id: s
                          "doc_type": a["doc"], "studied_country": a["studied"], "why": a["why"],
                          "labelled_at": labelled_at,
                          "source": f"{source_prefix}/{chunk}.{suffix}.txt"})
-    return rows, report
+            if fields == ics.V2_FIELDS:
+                dims.append({**{k: rows[-1][k] for k in ics.KEY + (
+                    "labeller", "prompt_sha256", "machine", "labelled_at", "source")},
+                    "contrib": a["contrib"], "field": a["field"], "contrib_type": a["ctype"]})
+    return rows, dims, report
 
 
 # ── agreement ────────────────────────────────────────────
@@ -220,6 +287,8 @@ def main(argv=None):
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--pool", default=None, help="default: config pool")
     parser.add_argument("--table", default=None, help="default: config table")
+    parser.add_argument("--dimensions-table", default=None,
+                        help="default: config dimensions_table")
     sub = parser.add_subparsers(dest="cmd", required=True)
     # Multi-output: chunk files, ids, works.csv and build.json in one directory.
     for name in ("build", "audit-sample"):
@@ -233,6 +302,8 @@ def main(argv=None):
     pp.add_argument("--suffix", default="opus", help="answer files chunkNN.<suffix>.txt")
     pp.add_argument("--labeller", choices=sorted(ics.LABELLERS), default="llm")
     pp.add_argument("--labelled-at", default=None, help="default: today (UTC)")
+    pp.add_argument("--prompt", default=None,
+                    help="wrapper the answers were given under (default: config stage2.prompt)")
     pp.add_argument("--new-table", action="store_true",
                     help="allow creating the table although a .dvc pointer tracks it")
     pa = sub.add_parser("agreement")
@@ -267,14 +338,27 @@ def main(argv=None):
                      args.output_dir)
         elif args.cmd == "parse":
             labelled_at = args.labelled_at or datetime.now(timezone.utc).date().isoformat()
-            rows, report = parse_answers(
+            prompt = args.prompt or cfg["stage2"]["prompt"]
+            rows, dims, report = parse_answers(
                 args.chunk_dir, args.suffix, args.stage, args.model, args.run_id, args.machine,
-                args.labeller, ics.stage2_prompt_sha256(cfg["stage2"]["prompt"]), labelled_at,
-                os.path.basename(os.path.normpath(args.chunk_dir)))
-            added, skipped = ics.append_new(table, rows, f"parse {args.stage} {args.run_id}",
-                                           args.new_table)
+                args.labeller, ics.stage2_prompt_sha256(prompt), labelled_at,
+                os.path.basename(os.path.normpath(args.chunk_dir)),
+                ics.stage2_answer_fields(prompt))
+            dims_table = args.dimensions_table or cfg["dimensions_table"]
+            note = f"parse {args.stage} {args.run_id}"
+            bad = [e for r in dims for e in ics.validate_row(r, ics.DIMENSIONS)]
+            if bad:
+                raise Stage2Error(f"dimension rows refused, nothing written: {bad[:5]}")
+            dims_new = _dims_table_is_new(table, dims_table, args.new_table,
+                                          rows[0]["prompt_sha256"]) if dims else False
+            added, skipped = ics.append_new(table, rows, note, args.new_table)
             log.info("chunks %s", report)
             log.info("%d answers, %d appended, %d already in %s", len(rows), added, skipped, table)
+            if dims:
+                d_added, d_skipped = ics.append_new(dims_table, dims, note, dims_new,
+                                                    ics.DIMENSIONS)
+                log.info("%d dimension rows appended, %d already in %s", d_added, d_skipped,
+                         dims_table)
         else:
             res = agreement(rv.read_pool(pool_path), ics.read_table(table), args.audit_run_id)
             with open(args.output, "w", encoding="utf-8") as fh:

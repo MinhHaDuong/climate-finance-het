@@ -37,10 +37,20 @@ stage2_labels: [icf, unsure, aux]
 # and counted apart within REL; false leaves them out of REL.
 stage2_unsure_in_rel: true
 
+# Discipline fields of the version-2 stage-2 wrapper (ticket 1840): contribution
+# test, field, contribution type. Append-only, same guards as `table`, same key
+# (work_key, stage, model, run_id); in data/rel_screen, so the same DVC pointer.
+dimensions_table: data/rel_screen/rel_dimensions.csv
+
+# The version-1 stage-2 wrapper (ticket 1530), frozen: its hash is stamped on the
+# 4,752 t1530 Opus rows, so the t1530 import reads it, never stage2.prompt.
+t1530_stage2_prompt: config/rel_sud_stage2_prompt.md
+
 # Stage 2: works in stage2_labels at stage 1 with no stage-2 label yet, in
-# chunks of the 1530 format (prompt: stage2.prompt).
+# chunks of the 1530 format (prompt: stage2.prompt). Version 2 since 2026-10-01
+# (ticket 1840): the ICF wrapper of version 1 plus the discipline fields.
 stage2:
-  prompt: config/rel_sud_stage2_prompt.md
+  prompt: config/rel_stage2_prompt_v2.md
   chunk_size: 150
   title_max_chars: 220
   abstract_max_chars: 650
