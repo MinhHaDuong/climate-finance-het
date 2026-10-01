@@ -8,6 +8,7 @@ Author: haduong
 2026-10-01T10:00Z HDMX-coding-agent note tracker: enfants 1840 (prompt étape 2), 1841 (rangs et signalements), 1842 (rattrapage discipline), 1843 (vue REL, PRISMA, protocole)
 2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
+2026-10-01T06:06Z HDMX-coding-agent HDMX-coding-agent note handoff (doudou shutdown): done: children 1840-1843 filed (PR #1647). 1840 (prompt v2, gold set, control test) and 1841 (venue tiers, registries) have WIP pushed on their executors' branches (see the 1840/1841 handoff notes); MOE chose catch-up option A (Opus subagents, v2 discipline questions, final icf/unsure only, run id recorded, no OpenRouter), run only after 1840 passes. Next: finish 1840/1841, PR, top-level /gaze; then 1842; then 1843 (view, PRISMA, protocol). icf_screen holds 4,952 Opus stage-2 rows (4,752 t1530-opus-stage2 + 200 pilot). Archives: ~/data/projets/climate-finance-het/rel_discipline_test/2026-10-01/, ~/data/projets/climate-finance-het/rel_venue_registries/.
 --- body ---
 ## Context
 
