@@ -243,14 +243,21 @@ def check_input_basis(input_path: str, pool_path: str, table_path: str) -> None:
 
 def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
                     source: str, skip_ids: frozenset = frozenset(),
-                    basis: tuple[str, str] | None = None) -> list[dict]:
+                    basis: tuple[str, str] | None = None,
+                    stopped: str = "") -> list[dict]:
     """Table rows of a finished run; ``basis`` = (pool, table) checks a work_key
-    run's input against them (``check_input_basis``), None skips that check."""
+    run's input against them (``check_input_basis``), None skips that check.
+
+    ``stopped``: the reason a run was stopped on purpose before its end (its
+    log then has no closing line). Its labels are imported as they stand; the
+    unlabelled rest of its input stays unscreened. Without it, a run with no
+    closing line is refused as still running.
+    """
     log_path = os.path.join(run_dir, "run.log")
     text = open(log_path, encoding="utf-8").read() if os.path.exists(log_path) else ""
-    _require(bool(FINISHED.search(text)),
+    _require(bool(FINISHED.search(text)) or bool(stopped.strip()),
              f"{run_dir}: run.log has no closing 'labelled N, unlabelled M' line; "
-             "the run is not finished")
+             "the run is not finished (pass --stopped REASON for a run stopped on purpose)")
     invocations = _jsonl(os.path.join(run_dir, "screen_runs.jsonl"))
     _require(bool(invocations), f"{run_dir}: screen_runs.jsonl is empty")
     models = {i["model"] for i in invocations}
@@ -374,6 +381,9 @@ def main(argv=None):
     p2.add_argument("--allow-input-drift", action="store_true",
                     help="import a work_key run although pool or table differ from those its "
                          "input was built on")
+    p2.add_argument("--stopped", default="",
+                    help="reason the run was stopped on purpose before its end; imports "
+                         "its labels as they stand (recorded in the manifest note)")
     p2.add_argument("--skip-ids", default=None,
                     help="file of input ids (one per line) whose labels are not imported, "
                          "e.g. ids that are not real OpenAlex ids")
@@ -416,9 +426,13 @@ def main(argv=None):
             input_path = args.input or os.path.join(run_dir, "screen_input.jsonl")
             basis = None if args.allow_input_drift else (args.pool or cfg["pool"], table)
             rows = stage1_run_rows(run_dir, input_path, args.machine, run_id,
-                                   f"{run_id}/screen.jsonl", skip, basis)
+                                   f"{run_id}/screen.jsonl", skip, basis, args.stopped)
             log.info("skipped %d ids listed in --skip-ids", len(skip))
             note = f"import stage-1 run {run_id}"
+            if args.stopped.strip():
+                note += f" (stopped before its end: {args.stopped.strip()})"
+            if basis is None:
+                note += " (--allow-input-drift)"
         added, skipped = ics.append_new(table, rows, note, args.new_table)
     except (ImportRefused, ics.IcfScreenError) as exc:
         log.error("%s", exc)
