@@ -359,6 +359,7 @@ one article under two titles in CORE and OpenAlex). In the pool (merge
 report, by delivery): the 219 records and 2 title-only rows fall in 209 works,
 since several routes found the same work: 34 in the catalogue, 95 in another
 lane only, 80 new. The per-route pool columns above count a work once per
-route that found it, so they sum to more (37 / 102 / 80). No class-b sentinel
+route that found it (and the CEEW row includes its 2 title-only pages), so
+they sum to more (37 / 104 / 80). No class-b sentinel
 found.
 

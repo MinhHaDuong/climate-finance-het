@@ -13,9 +13,10 @@
 #      2026-09-30/ holding its registry and raw export, when it ran.
 # tried_1790: the ticket-1790 attempt and its result.
 # aggregators: routes through an aggregator that harvests the source with its
-#      consent (ticket 1790): query, date, n_expected (read), n_received
-#      (delivered: lexicon matches of a whole-provider read, or search hits),
-#      and where the delivered works fall in the REL pool (make rel-pool,
+#      consent (ticket 1790): query, date, n_expected (read or announced),
+#      n_received (lexicon matches of a whole-provider read, or search hits;
+#      the records delivered after in-lane deduplication may be fewer, see
+#      the doc's query register), and where the delivered works fall in the REL pool (make rel-pool,
 #      2026-10-01: in the catalogue / in another lane only / new to the pool).
 #      Registry rows: data/rel_intake/t1790-sud-playwright/2026-09-30/.
 
