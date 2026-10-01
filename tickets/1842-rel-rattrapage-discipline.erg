@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-10-01T10:00Z HDMX-coding-agent created
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 2026-10-01T07:01Z HDMX-coding-agent note parse writes ICF rows to icf_screen and the REL view takes the last stage-2 row: the catch-up must write through a dimensions-only path or under a distinct stage, never as stage 2 (Agent C, PR 1652); no dimensions-only mode yet, its format depends on the method chosen here; exit criterion added
+2026-10-01T08:54Z HDMX-coding-agent note tooling PR 1660 (no close claim): discipline-only wrapper config/rel_discipline_catchup_prompt.md, runner scripts/corpus_rel_discipline_catchup.py, stage catchup in rel_dimensions only; input 2,615 works (2,470 icf, 145 unsure) in 18 chunks, 618,889 input tokens measured; gold validation via OpenRouter anthropic/claude-opus-5.5:batch, 0.154 USD, archive ~/data/projets/climate-finance-het/rel_discipline_catchup/2026-10-01/; full run waits for the stage-2 judge decision
 --- body ---
 ## Context
 Child of 1830. The works reread at stage 2 before 1840 lack the discipline fields. Method and cost proposed before any spend; USD 2 ceiling without agreement. Candidates: Jev pass with decomposed questions (design of the Jev pilot archive 2026-09-30), or the discipline questions of the 1840 prompt alone.
