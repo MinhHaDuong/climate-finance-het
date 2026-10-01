@@ -11,6 +11,12 @@ labelled `aux`: its input is every work whose stage-1 label is in
 `stage2_labels` of `config/rel_screen.yaml` (`icf`, `unsure`, `aux`). The
 wrapper below, and so its hash, is unchanged.
 
+Since 2026-10-01 (ticket 1840) new stage-2 chunks use
+`config/rel_stage2_prompt_v2.md`, which adds the discipline fields. This file
+is frozen: its wrapper hash is stamped on the t1530 Opus rows of `icf_screen`,
+and `t1530_stage2_prompt` in `config/rel_screen.yaml` points here
+(`tests/test_icf_screen.py` pins the hash).
+
 ```
 Read-only labelling task. Do not run git commands; do not edit any file other
 than the one output file named below.

@@ -19,9 +19,14 @@ memory from the pool and the ``icf_screen`` table, so it is never stale):
     shuffled, in the same chunk format, for the second-model audit.
 
 ``parse``
-    Reads ``chunkNN.<suffix>.txt`` answers (``n|label|doc|studied|why``) next to
-    each ``chunkNN.ids.json`` and appends them to ``icf_screen`` as stage ``2``
-    or ``audit``, with the model, run id and machine given on the command line.
+    Reads ``chunkNN.<suffix>.txt`` answers next to each ``chunkNN.ids.json``, in
+    the format the wrapper declares (``--prompt``, default ``stage2.prompt``:
+    ``n|label|doc|studied|why`` for version 1, ``n|label|doc|studied|contrib|
+    field|ctype|why`` for version 2), and appends the labels to ``icf_screen``
+    as stage ``2`` or ``audit``, with the model, run id and machine given on the
+    command line. Version-2 answers also append the discipline fields to
+    ``rel_dimensions`` (``dimensions_table``), same key, same prompt hash
+    (ticket 1840); both batches are validated before either is written.
     A chunk with a malformed or duplicated answer line is refused whole (the
     numbering can no longer be trusted); unanswered records are reported and
     stay pending. Idempotent: labels already in the table are skipped.
@@ -35,7 +40,7 @@ Usage:
     python scripts/corpus_icf_stage2.py build --output-dir DIR
     python scripts/corpus_icf_stage2.py audit-sample --output-dir DIR
     python scripts/corpus_icf_stage2.py parse --chunk-dir DIR --model M --run-id R \\
-        --machine doudou [--stage 2|audit] [--suffix opus] [--labeller llm]
+        --machine doudou [--stage 2|audit] [--suffix opus] [--labeller llm] [--prompt MD]
     python scripts/corpus_icf_stage2.py agreement --audit-run-id R --output FILE
 """
 
@@ -141,11 +146,13 @@ _CHUNK = re.compile(r"^(chunk\d+)\.ids\.json$")
 
 def parse_answers(chunk_dir: str, suffix: str, stage: str, model: str, run_id: str,
                   machine: str, labeller: str, prompt_sha: str, labelled_at: str,
-                  source_prefix: str) -> tuple[list[dict], dict]:
-    """Table rows for every answered record, and a per-chunk report."""
+                  source_prefix: str, fields: tuple = ics.V1_FIELDS
+                  ) -> tuple[list[dict], list[dict], dict]:
+    """``icf_screen`` rows, ``rel_dimensions`` rows (version-2 answers only) for
+    every answered record, and a per-chunk report."""
     with open(os.path.join(chunk_dir, "works.csv"), encoding="utf-8", newline="") as fh:
         works = {r["work_key"]: r for r in csv.DictReader(fh)}
-    rows, report = [], {}
+    rows, dims, report = [], [], {}
     for name in sorted(os.listdir(chunk_dir)):
         m = _CHUNK.match(name)
         if not m:
@@ -158,12 +165,15 @@ def parse_answers(chunk_dir: str, suffix: str, stage: str, model: str, run_id: s
             report[chunk] = {"ids": len(ids), "answered": 0, "status": "no answer file"}
             continue
         with open(answer, encoding="utf-8") as fh:
-            answers, faults = ics.parse_stage2_answers(fh, ids)
+            answers, faults = ics.parse_stage2_answers(fh, ids, fields)
         hard = [f for f in faults if "unanswered" not in f]
         if hard:
             raise Stage2Error(f"{answer}: refused, {hard[:5]}")
         report[chunk] = {"ids": len(ids), "answered": len(answers),
                          "status": "complete" if len(answers) == len(ids) else "incomplete"}
+        if fields == ics.V2_FIELDS:
+            report[chunk]["unknown_dimension"] = sum(
+                ics.UNKNOWN in (a["contrib"], a["field"], a["ctype"]) for a in answers.values())
         for key in ids:
             if key not in answers:
                 continue
@@ -175,7 +185,11 @@ def parse_answers(chunk_dir: str, suffix: str, stage: str, model: str, run_id: s
                          "doc_type": a["doc"], "studied_country": a["studied"], "why": a["why"],
                          "labelled_at": labelled_at,
                          "source": f"{source_prefix}/{chunk}.{suffix}.txt"})
-    return rows, report
+            if fields == ics.V2_FIELDS:
+                dims.append({**{k: rows[-1][k] for k in ics.KEY + (
+                    "labeller", "prompt_sha256", "machine", "labelled_at", "source")},
+                    "contrib": a["contrib"], "field": a["field"], "contrib_type": a["ctype"]})
+    return rows, dims, report
 
 
 # ── agreement ────────────────────────────────────────────
@@ -220,6 +234,8 @@ def main(argv=None):
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--pool", default=None, help="default: config pool")
     parser.add_argument("--table", default=None, help="default: config table")
+    parser.add_argument("--dimensions-table", default=None,
+                        help="default: config dimensions_table")
     sub = parser.add_subparsers(dest="cmd", required=True)
     # Multi-output: chunk files, ids, works.csv and build.json in one directory.
     for name in ("build", "audit-sample"):
@@ -233,6 +249,8 @@ def main(argv=None):
     pp.add_argument("--suffix", default="opus", help="answer files chunkNN.<suffix>.txt")
     pp.add_argument("--labeller", choices=sorted(ics.LABELLERS), default="llm")
     pp.add_argument("--labelled-at", default=None, help="default: today (UTC)")
+    pp.add_argument("--prompt", default=None,
+                    help="wrapper the answers were given under (default: config stage2.prompt)")
     pp.add_argument("--new-table", action="store_true",
                     help="allow creating the table although a .dvc pointer tracks it")
     pa = sub.add_parser("agreement")
@@ -267,14 +285,28 @@ def main(argv=None):
                      args.output_dir)
         elif args.cmd == "parse":
             labelled_at = args.labelled_at or datetime.now(timezone.utc).date().isoformat()
-            rows, report = parse_answers(
+            prompt = args.prompt or cfg["stage2"]["prompt"]
+            rows, dims, report = parse_answers(
                 args.chunk_dir, args.suffix, args.stage, args.model, args.run_id, args.machine,
-                args.labeller, ics.stage2_prompt_sha256(cfg["stage2"]["prompt"]), labelled_at,
-                os.path.basename(os.path.normpath(args.chunk_dir)))
-            added, skipped = ics.append_new(table, rows, f"parse {args.stage} {args.run_id}",
-                                           args.new_table)
+                args.labeller, ics.stage2_prompt_sha256(prompt), labelled_at,
+                os.path.basename(os.path.normpath(args.chunk_dir)),
+                ics.stage2_answer_fields(prompt))
+            dims_table = args.dimensions_table or cfg["dimensions_table"]
+            note = f"parse {args.stage} {args.run_id}"
+            bad = [e for r in dims for e in ics.validate_row(r, ics.DIMENSIONS)]
+            if bad:
+                raise Stage2Error(f"dimension rows refused, nothing written: {bad[:5]}")
+            added, skipped = ics.append_new(table, rows, note, args.new_table)
             log.info("chunks %s", report)
             log.info("%d answers, %d appended, %d already in %s", len(rows), added, skipped, table)
+            if dims:
+                # The dimensions table lives beside icf_screen under the same DVC
+                # pointer: once icf_screen is there, a missing one is new, not unfetched.
+                d_added, d_skipped = ics.append_new(
+                    dims_table, dims, note, args.new_table or os.path.exists(table),
+                    ics.DIMENSIONS)
+                log.info("%d dimension rows appended, %d already in %s", d_added, d_skipped,
+                         dims_table)
         else:
             res = agreement(rv.read_pool(pool_path), ics.read_table(table), args.audit_run_id)
             with open(args.output, "w", encoding="utf-8") as fh:
