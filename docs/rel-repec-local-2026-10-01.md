@@ -98,6 +98,11 @@ RePEc.
 | records with a DOI | 19,769 |
 | records with an abstract | 98.1 % |
 
+The manifest names producer commit `72a22eb`, which the branch lost when it
+was rebased onto `main`. Every file that produced the delivery is
+byte-identical at `93442c49` on this branch: the search and parser scripts,
+`_rel_causal_query.py`, `utils.py`, and the query and sentinel configs.
+
 `record_id` is the RePEc handle. A RePEc handle is not a CNRI Handle, and the
 contract counts an EconPapers or IDEAS page as a landing page, not a key, so
 `url` carries the DOI resolver when the record has a DOI and the EconPapers
