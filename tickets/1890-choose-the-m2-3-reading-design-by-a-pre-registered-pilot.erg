@@ -9,6 +9,7 @@ Blocked-by: 1895
 2026-10-01T05:55Z HDMX-coding-agent decision author decisions 2026-10-01, interactive: (1) "Extraction is done against the ontology, never in a vacuum. Readers fill the classes, relations and closed value lists of docs/jetp-ontology.md and data/jetp/ontology/ (terms, crosswalks, perimeters), using the field list the method version fixes per document type (extraction § 6.3). Judge every design on how well it binds output to that ontology: schema- or ontology-constrained generation, typed slots, closed vocabularies, grounding to ontology terms." (2) "A black-box commercial extraction service is not admissible as the engine. Do web-search extraction-as-a-service products, but only as leads to the open-source engine cores they build on or resemble." (3) "The design is where the big gains are. Compare architectures, not only models."
 2026-10-01T09:00Z HDMX-coding-agent note Blocked-by [[1895]]: the human gold set supplies the reference answers (existing lines were agent-made, so circular); the pilot protocol states which lines are reference answers
 
+2026-10-01T06:43Z HDMX-coding-agent note [[1895]] retracted its human gold set (author decision 2026-10-01) and now builds a cross-vendor panel reference set; still Blocked-by [[1895]]. Wording "the human gold set supplies the reference answers" above is superseded: the pilot protocol treats the panel reference set (agreement with a panel, not truth) as the reference answers.
 --- body ---
 ## Context
 
