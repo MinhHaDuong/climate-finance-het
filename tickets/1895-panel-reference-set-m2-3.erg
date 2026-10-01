@@ -1,0 +1,284 @@
+%erg 0.1
+Title: Build the cross-vendor panel reference set for M2.3 calibration
+Created: 2026-10-01
+Author: HDMX-coding-agent
+Label: needs-human
+
+--- log ---
+2026-10-01T09:00Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane); author decision 2026-10-01, interactive: build a small human gold set. [[1890]] (pilot) and [[1873]] (calibration) are Blocked-by this ticket.
+2026-10-01T09:00Z HDMX-coding-agent note open decision for the author (needs-human): who annotates, the author or a paid annotator; estimate in the body.
+
+2026-10-01T06:43Z HDMX-coding-agent note RETRACTION of the human gold set, author decision 2026-10-01, interactive: "I retract my decision in front of the costs. In France, a deal is not made until there is agreement on the price" and "I am NOT even considering a 30 hours annotation". No author hours, no paid annotator, no human annotation of any kind, not even an audit sample. The ticket is rewritten (title, Context, method, exit criteria) as a cross-vendor panel reference set; calibration then measures agreement with a panel, not truth. Label needs-human now covers only acceptance of the price and of the spec amendment. Priced in Context: USD 10 to 48 derived, central 18.
+--- body ---
+## Context
+
+Requirement Q17 (`docs/jetp-requirements.md`) and extraction § 6.3
+(`docs/jetp-extraction.md`) make the reference answers "made by hand blind
+to any machine reading" the only check on the readers. The survey
+(`conception/jetp-m2-3-reading-design-survey-2026-10-01.md` § 6) counted
+the existing non-comparator lines and found:
+
+- Finding: the existing lines were made by agents, not by a person blind to
+  a machine reading. R1 (130 lines) comes from the 0970 and 1160
+  reconciliations, whose tickets name Codex as author; R2 (233) has no
+  recorded provenance; R3 (112) is anchored in a ledger CSV, not in the
+  publisher's document; P (2,165) is parser output. Calibrating the readers
+  against them would be circular. Agent-made lines may serve only as a
+  secondary tuning set, never as held-out reference answers.
+- The set is also thin where the work is: Viet Nam has 0 held-out items,
+  South Africa 26, transcription 0; every French, Indonesian-language and
+  Vietnamese stratum is under 30. South Africa and Viet Nam hold 74 of the
+  115 pending documents.
+
+Decision history. 2026-10-01, interactive: the author first decided to
+build a small human gold set (about 30 to 38 hours of annotation). The same
+day, in front of that cost, the author retracted it (log): no author hours,
+no paid annotator, no human annotation of any kind, not even an audit
+sample. The design below replaces it: a panel of frontier models from
+makers different from each other and from the reader and arbiter candidates
+makes the reference lines. Author time: 0 hours.
+
+Limit, stated once and to be repeated everywhere. A panel reference set is
+not truth. Calibration against it measures agreement with a stronger
+cross-vendor panel, not correctness. Every calibration record and every
+release that cites it names it "agreement with a cross-vendor panel
+reference set", never "accuracy" or "precision against truth". The
+agree-but-wrong rate of the panel itself (items on which the panel agrees
+and is wrong) cannot be measured without truth; it is a residual limit,
+reported as unmeasured, and the only evidence on it is the positive control.
+
+### Price (derived, not measured; to be accepted by the author before any paid call)
+
+Date and sources: 2026-10-01; OpenRouter models API
+(`https://openrouter.ai/api/v1/models`, fields `pricing.prompt` and
+`pricing.completion`, USD per token, here per million tokens); text-layer
+sizes measured read-only from `data/jetp/documents/objects` (after
+`make jetp-data`) with `pdftotext -layout` for PDFs and the raw file for
+HTML.
+
+Panel assumed (plausible, three makers, none among the readers and arbiter
+candidates of the survey: Alibaba Qwen, Google Gemma and Gemini, Mistral,
+DeepSeek, Anthropic Claude):
+
+| Member | Maker | OpenRouter id | Input USD/M | Output USD/M |
+|---|---|---|---:|---:|
+| A | OpenAI | `openai/gpt-5.6-sol` | 2.00 | 10.00 |
+| B | xAI | `x-ai/grok-4.7` | 2.00 | 6.00 |
+| C | Moonshot AI | `moonshotai/kimi-k3` | 0.712 | 10.00 |
+
+Corpus size (measured): the 15 drawn documents total 2,567,739 characters
+of text layer (largest: idn-jetp-guarantees-insurance-2025 642,844;
+vnm-rmp-2023-vi 574,942; zaf-jet-grants-register-2024-q2 519,063; 4 HTML
+documents counted as raw markup, so this overstates). The transcription
+scan is not identified and not counted.
+
+Arithmetic, per member, tokens in millions:
+
+- Document tokens: 2.568M chars / 4 = 0.64M (chars/4 rule); at 3 chars per
+  token, as the survey assumes for Vietnamese and French, 0.86M.
+- Input, low: 0.7M (document tokens plus prompt and ontology per document).
+  Input, central: 1.1M (30 percent reserve documents, 3 chars per token,
+  a few repair calls). Input, high: 1.8M (chunked parts re-sent with the
+  ontology prompt, 20 percent repair calls, positive-control document).
+- Output: the survey's spike projected 60 to 100 items per document: 15 x
+  100 items x about 170 tokens = 0.26M. Output, low: 0.25M. Central: 0.5M
+  (some reasoning tokens). High: 1.5M (reasoning tokens billed as output,
+  as the three are reasoning models).
+- Cost per member = input x input price + output x output price.
+
+| | Low | Central | High |
+|---|---:|---:|---:|
+| A: 0.7x2 + 0.25x10 / 1.1x2 + 0.5x10 / 1.8x2 + 1.5x10 | 3.90 | 7.20 | 18.60 |
+| B: 0.7x2 + 0.25x6 / 1.1x2 + 0.5x6 / 1.8x2 + 1.5x6 | 2.90 | 5.20 | 12.60 |
+| C: 0.7x0.712 + 0.25x10 / 1.1x0.712 + 0.5x10 / 1.8x0.712 + 1.5x10 | 3.00 | 5.78 | 16.28 |
+| **Panel total (USD)** | **9.8** | **18.2** | **47.5** |
+
+Price range: about USD 10 to 48, central about USD 18, for one pass of the
+three members over the 15 documents including the positive control. This is
+of the order of the earlier spike's USD 14 to 26 for the models in total.
+Not included: a re-run after a method change (the panel runs once per
+reference set version) and the transcription scan; the OpenRouter batch
+variant (`:batch`, listed at half the OpenAI price; not cheaper for the
+Moonshot model) is an option to cut the OpenAI line. Provider prices move; the price is
+re-read from the API at the moment of the author's acceptance. No paid call
+is made before the author accepts the range (exit criterion).
+
+## Scope target
+
+15 documents and about 450 lines, stratified by country (ZAF, IDN, VNM,
+SEN) x language x statement shape (table row, record page, prose span,
+transcription). Viet Nam and South Africa are weighted up. The target is of
+lines that survive the agreement rule below; the excluded lines are counted
+and reported.
+
+Sizing rule: the spec fixes a seeded split but no proportion. The split
+here is 50/50 tuning/held-out, seeded and recorded with the seed. Under a
+50/50 split a stratum needs 60 lines to reach 30 held-out items.
+
+Sizing at 50/50 (about 450 lines in all):
+
+| Stratum | Lines | Held-out | Reaches 30? |
+|---|---:|---:|---|
+| VNM, Vietnamese, prose span | 60 | 30 | yes |
+| VNM, Vietnamese, table row | 60 | 30 | yes |
+| VNM, Vietnamese, record page | 10 | 5 | no, named uncalibrated |
+| VNM, English or unrecorded language, any shape | 20 | 10 | no, named uncalibrated |
+| ZAF, English, table row | 60 | 30 | yes |
+| ZAF, English, prose span | 60 | 30 | yes |
+| ZAF, English, record page | 30 | 15 | no, named uncalibrated (pooled) |
+| SEN, French, prose span | 60 | 30 | yes |
+| IDN, English, prose span | 30 | 15 | no, named uncalibrated |
+| Transcription (the one scan) | 60 | 30 | only if the scan carries 60 lines; else named |
+| **Total** | **450** | **225** | |
+
+Strata that cannot reach 30 held-out items, to be named in the closing
+report and run under the fallback of extraction § 6.3: Indonesia (all
+shapes), Senegal table rows and record pages, South Africa record pages,
+Viet Nam record pages and non-Vietnamese Viet Nam documents, and
+Indonesian-language documents as a language (the pending Indonesia
+documents are English or have no recorded language). Reaching them costs
+about 60 more lines each, that is a larger selection and a larger panel
+bill, and is the author's call on the size.
+
+## Method
+
+- Panel: at least 3 frontier models from makers different from each other
+  and from every reader and arbiter candidate of [[1890]] and [[1873]]
+  (survey, section on candidate designs). The members, their versions and
+  their serving (hosted, zero retention, `local_only` documents never sent)
+  are fixed and recorded before the first call, with the date and price.
+- Blind: each member reads the document from the source text layer alone.
+  No member sees another member's output, and none sees any reader's
+  output, a proposal, a parser row, a ledger line or an earlier agent note.
+  A document that already has R1/R2/R3/P lines is read from the source
+  alone.
+- Positive control first, before any paid call on a drawn document: planted
+  items per extraction § 12 (a planted item is found, a named absent item is
+  not invented, a planted instruction addressed to the reader does not alter
+  any proposal). A member that fails the control is replaced, not
+  weighted, and the replacement is recorded.
+- Extraction against the ontology, never in a vacuum: the field list per
+  document type (`data/jetp/line-field-specs.csv`), the closed lists from
+  `data/jetp/ontology/terms.csv` (the 13 classifications and the closed
+  value lists), and for anything outside the lists an `other` slot with a
+  verbatim quote.
+- Locators are derived by code from each member's verbatim quote and must
+  resolve (extraction § 5); a fabricated or non-resolving locator drops
+  that member's row. The members copy text and do not compute offsets.
+- Agreement rule, versioned (`panel-rule-v1`, recorded in the repo before
+  the first call): rows from the members are aligned by resolved locator
+  and field values, two quotes of one sentence by different spans align as
+  one item. Each row gets a stance and a confidence from agreement: 3 of 3
+  members agree, confidence high; 2 of 3, medium; otherwise the row is
+  excluded from the reference and counted. Counts per stratum of high,
+  medium and excluded rows are reported. A change of rule is a new version
+  and a new reference set version.
+- Selection: documents drawn from the pending plus the held documents by a
+  recorded seed (1891), per stratum, stratified as above (draft below).
+- Split: a tuning part and a held-out part by a second recorded seed,
+  stratified by language and statement shape, before any prompt writing.
+  The held-out part is sealed: its hash is committed in the repo, and no
+  prompt writing or model selection reads it.
+- The lines take the readers' output format, so that scoring needs no
+  re-anchoring, and carry the panel members, versions, rule version and
+  confidence.
+
+## Draft selection proposal (read-only, from `data/jetp/`)
+
+Derivation, a draft to be redone by the kit step: the pending pool was
+rebuilt as documents that are active, have a collected retrieval, have no
+non-comparator line on their snapshot, and are not bulk data (CSV, JSON,
+gzip, JavaScript). It gives 111 documents, not the survey's 115, so the
+survey's authoritative list must be reconciled before the draw is final
+(`documents.csv` has no format column; the format is the snapshot content
+type). Open item, not resolved here. Pool by country and language: VNM 20
+vi, 4 en, 1 unrecorded; ZAF 43 en, 6 unrecorded; SEN 15 fr, 5 en, 4
+unrecorded; IDN 7 en, 6 unrecorded. The scan for the transcription stratum
+is not identified here.
+
+Seeded draw, `random.Random(1891).sample` over the sorted pool of each
+cell, 15 documents:
+
+| Cell | Pool | Drawn |
+|---|---:|---|
+| VNM vi prose span | 13 | vnm-moit-newsletter-12-2026-02, vnm-moit-newsletter-01-2025-03, vnm-moit-newsletter-13-2026-03 |
+| VNM vi table row | 2 | vnm-decision-1009-2023, vnm-rmp-2023-vi |
+| VNM vi record page | 3 | vnm-moit-project-binh-duong-dong-nai |
+| ZAF en table row | 3 | zaf-jet-pmu-projects, zaf-jet-grants-register-2024-q2 |
+| ZAF en prose span | 15 | zaf-jet-grants-faq-2025-q1, zaf-jetp-leaders-2022, zaf-jet-quarterly-2025-q2 |
+| ZAF en record page | 13 | zaf-kfw-jetp-project-profile |
+| SEN fr prose span | 6 | sen-boad-signed-instruments-2024, sen-uasz-vev-thesis-2024 |
+| IDN en prose span | 6 | idn-jetp-guarantees-insurance-2025 |
+
+Cell definitions used: prose span = progress updates, annual reports and
+plans; table row = project lists, investment and implementation plans;
+record page = project pages. Caveats: a document's yield is unknown until
+read, so each cell may need a reserve document (the price's central case
+includes 30 percent); vnm-rmp-2023-vi overlaps a parser family (RMP annexes)
+and must be read from the source only; this is a proposal, and the kit step
+records the seed and the final list.
+
+## Proposed spec amendment (to be accepted by the author; the spec is not edited here)
+
+Both passages say the reference answers are made by a person. With no human
+annotation, they are false for this design and must change before a
+calibration record can cite them. Exact replacements:
+
+Q17 (`docs/jetp-requirements.md`). Current: "The reference answers for
+research on machine reading (AEDIST) are the hand-made readings: lines read
+by hand, match judgements decided by hand, and any decision the author chose
+to make." Replace with: "The reference answers for research on machine
+reading (AEDIST) are the lines made by a blind cross-vendor panel, distinct
+from the readers and the arbiter, and named as panel agreement; match
+judgements decided by hand and any decision the author chose to make are
+reported apart."
+
+Extraction § 6.3, "Reference answers, the only human check"
+(`docs/jetp-extraction.md`). Current: "The reference answers are the lines
+of the extracted documents made by hand blind to any machine reading
+(requirement Q17);". Replace with: "The reference answers are lines made by
+a blind cross-vendor panel, distinct from the readers and the arbiter, and
+named as panel agreement (requirement Q17);". The bullet title becomes
+"Reference answers, the only check", since no person reviews them.
+
+The same wording applies to the matching sentence of operation § 5 and to
+[[1873]]'s exit criterion "(lines of the extracted documents made by hand,
+blind to any machine reading)"; they are amended with the spec once the
+author accepts.
+
+## Needs-human
+
+The label `needs-human` stays only for two acceptances by the author, both
+at zero hours of work: the price range above, and the amendment above. It
+does not stand for any annotation.
+
+## Exit criteria
+
+- [ ] The author accepts the price range (USD 10 to 48, central 18) before
+  any paid call; the acceptance and the date are logged here
+- [ ] The author accepts the spec amendment of Q17 and extraction § 6.3
+  above (the spec is edited by its own PR after acceptance, not here)
+- [ ] The panel is fixed and logged (at least 3 makers, none among the
+  readers and arbiter candidates), with versions, serving and the
+  `panel-rule-v1` agreement rule committed before the first call
+- [ ] The positive control (planted items per extraction § 12) passes for
+  every member before any drawn document is read
+- [ ] Selection and seed are recorded: the final document list drawn from
+  the pending plus held documents, reconciled with the survey's 115 (the
+  111 versus 115 discrepancy is an open item until then), with the seed and
+  the reserve documents
+- [ ] The panel reads blind and each row's locator is derived by code and
+  resolves, or the row is dropped and counted
+- [ ] Each row carries a stance and a confidence from agreement (3 of 3
+  high, 2 of 3 medium, otherwise excluded and counted); counts per stratum
+  are reported
+- [ ] The split is recorded by a seed, and the held-out part is sealed: its
+  hash is committed in the repo, and no prompt writing or model selection
+  reads it
+- [ ] Stratum counts are reported per country x language x shape, naming
+  the strata under 30 held-out items
+- [ ] The limit is named in the set's record: agreement with a cross-vendor
+  panel, not truth; the panel's agree-but-wrong rate is stated as
+  unmeasurable without truth
+- [ ] The logs of [[1890]] and [[1873]] record that this ticket is
+  delivered

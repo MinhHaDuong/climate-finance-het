@@ -11,6 +11,7 @@ Blocked-by: 1895
 2026-10-01T05:54Z HDMX-coding-agent note Blocked-by [[1890]] (M2.3-0): the reading design is chosen by a pre-registered pilot before readers are selected (author decisions 2026-10-01, interactive)
 2026-10-01T09:00Z HDMX-coding-agent note Blocked-by [[1895]]: calibration needs the human gold set; agent-made lines are a secondary tuning set only
 
+2026-10-01T06:43Z HDMX-coding-agent note [[1895]] retracted its human gold set (author decision 2026-10-01) and now builds a cross-vendor panel reference set; still Blocked-by [[1895]]. "Calibration needs the human gold set" above is superseded: calibration runs on the panel reference set and every record names it agreement with a cross-vendor panel, not truth. The exit criterion on reference answers "made by hand" awaits the spec amendment proposed in 1895.
 --- body ---
 ## Context
 
