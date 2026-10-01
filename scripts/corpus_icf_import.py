@@ -302,7 +302,8 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="cmd", required=True)
     p1 = sub.add_parser("t1530")
     p1.add_argument("--archive", default=None, help="default: config t1530_archive")
-    p1.add_argument("--stage2-prompt", default=None, help="default: config stage2.prompt")
+    p1.add_argument("--stage2-prompt", default=None,
+                    help="default: config t1530_stage2_prompt (the frozen v1 wrapper)")
     p2 = sub.add_parser("stage1-run")
     p2.add_argument("--run-dir", required=True)
     p2.add_argument("--machine", required=True)
@@ -323,7 +324,7 @@ def main(argv=None):
     try:
         if args.cmd == "t1530":
             archive = os.path.expanduser(args.archive or cfg["t1530_archive"])
-            rows = t1530_rows(archive, args.stage2_prompt or cfg["stage2"]["prompt"])
+            rows = t1530_rows(archive, args.stage2_prompt or cfg["t1530_stage2_prompt"])
             note = f"import t1530 from {archive}"
         else:
             run_dir = args.run_dir.rstrip("/")

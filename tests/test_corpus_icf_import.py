@@ -82,6 +82,22 @@ def test_t1530_import_is_idempotent(tmp_path):
     assert open(table, "rb").read() == first, "a second import appends nothing"
 
 
+def test_t1530_import_defaults_to_the_frozen_v1_wrapper(tmp_path, monkeypatch):
+    """Ticket 1840: stage2.prompt moved to v2; the t1530 hash must still come from v1."""
+    seen = {}
+
+    def fake_rows(archive, prompt_md):
+        seen["prompt"] = prompt_md
+        return []
+
+    monkeypatch.setattr(ci, "t1530_rows", fake_rows)
+    a, _ = _archive(tmp_path)
+    assert ci.main(["--output", str(tmp_path / "t.csv"), "t1530", "--archive", str(a)]) == 0
+    assert seen["prompt"].endswith("config/rel_sud_stage2_prompt.md")
+    assert ics.stage2_prompt_sha256(seen["prompt"]) == (
+        "8ff53ea8c818c2d88542a06f62e24613c9446691b8298452e407d8114e51a93d")
+
+
 def test_t1530_refuses_inconsistent_copies(tmp_path):
     a, prompt = _archive(tmp_path)
     _jsonl(a / "padme-rel_sud_runs" / "screen1" / "screen-haiku-first12491.jsonl",

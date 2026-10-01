@@ -350,7 +350,8 @@ rel-intake-1530:
 # `dvc add data/rel_screen` (never a dvc.yaml out, never rebuilt). Fetch it
 # first (make rel-pool-data); the writers refuse to start a new table where
 # data/rel_screen.dvc tracks one. The import is idempotent; the view is
-# regenerable from pool + table.
+# regenerable from pool + table. Version-2 stage-2 answers also append to
+# data/rel_screen/rel_dimensions.csv under the same guards (ticket 1840).
 .PHONY: rel-screen-import-1530 rel-view
 rel-screen-import-1530:
 	$(PYTHON) scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv t1530

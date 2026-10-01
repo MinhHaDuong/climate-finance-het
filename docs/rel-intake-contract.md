@@ -200,6 +200,9 @@ never a `dvc.yaml` out): the manifest only anchors the table to itself, so the
 DVC hash committed to git is the real tamper anchor. Fetch the table before
 writing (`make rel-pool-data`); the writers refuse to start a new table where
 `data/rel_screen.dvc` tracks one, unless `--new-table` is given.
+Stage-2 answers in the version-2 wrapper (ticket 1840) also append their discipline
+fields (`contrib`, `field`, `contrib_type`) to `data/rel_screen/rel_dimensions.csv`, a
+second append-only table with its own manifest, same key and same DVC pointer.
 `make rel-screen-import-1530` appends the ticket 1530 labels (idempotent), and
 `make rel-view` regenerates `data/rel_pool/rel_view.csv` and `rel_counts.json`
 from the pool and the table. Paths, the 1530 archive, the stage-2 chunking and

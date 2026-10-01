@@ -149,3 +149,89 @@ def test_require_table_names_the_fetch(tmp_path, table):
         ics.require_table(table)
     ics.append_rows(table, [_row()])
     ics.require_table(table)
+
+
+# ── Version-2 answers and the dimensions table (ticket 1840) ──
+
+
+V2 = ics.V2_FIELDS
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def test_t1530_stage2_prompt_hash_is_frozen():
+    """The 4,752 t1530 Opus rows carry this hash: the import must keep reading the v1 file."""
+    import yaml
+
+    with open(os.path.join(ROOT, "config", "rel_screen.yaml"), encoding="utf-8") as fh:
+        cfg = yaml.safe_load(fh)
+    v1 = os.path.join(ROOT, cfg["t1530_stage2_prompt"])
+    assert ics.stage2_prompt_sha256(v1) == (
+        "8ff53ea8c818c2d88542a06f62e24613c9446691b8298452e407d8114e51a93d")
+    assert ics.stage2_answer_fields(v1) == ics.V1_FIELDS
+    current = os.path.join(ROOT, cfg["stage2"]["prompt"])
+    assert os.path.abspath(current) != os.path.abspath(v1)
+    assert ics.stage2_answer_fields(current) == V2
+
+
+def test_v2_wrapper_keeps_the_v1_icf_instructions():
+    """The ICF label stays comparable: the v1 ICF paragraph is in v2 word for word."""
+    def block(name):
+        with open(os.path.join(ROOT, "config", name), encoding="utf-8") as fh:
+            return fh.read().split("```")[1]
+    v1, v2 = block("rel_sud_stage2_prompt.md"), block("rel_stage2_prompt_v2.md")
+    icf_part = v1.split("\nWrite one line per record")[0]
+    assert v2.startswith(icf_part)
+
+
+def test_parse_v2_answers_and_vocabularies():
+    ids = ["a", "b", "c"]
+    lines = ["1|icf|research|BR|yes|economics|empirical|CDM additionality | Brazil\n",
+             "2|aux|research|CN|no|data_science|method|forecasts CER prices\n",
+             "3|out|other|?|na|na|na|\n"]
+    answers, faults = ics.parse_stage2_answers(lines, ids, V2)
+    assert faults == []
+    assert answers["a"] == {"label": "icf", "doc": "research", "studied": "BR", "contrib": "yes",
+                            "field": "economics", "ctype": "empirical",
+                            "why": "CDM additionality | Brazil"}
+    assert (answers["b"]["contrib"], answers["b"]["field"]) == ("no", "data_science")
+    assert answers["c"]["contrib"] == answers["c"]["ctype"] == "na"
+    odd, _ = ics.parse_stage2_answers(["1|icf|research|BR|maybe|astrology|empirical|x\n"],
+                                      ["a"], V2)
+    assert (odd["a"]["contrib"], odd["a"]["field"], odd["a"]["ctype"]) == (
+        "unknown", "unknown", "empirical")
+
+
+def test_v2_parser_refuses_a_v1_line_and_v1_parser_is_unchanged():
+    _, faults = ics.parse_stage2_answers(["1|icf|research|BR|GCF readiness\n"], ["a"], V2)
+    assert any("not n|label|doc|studied|contrib" in f for f in faults)
+    old, faults = ics.parse_stage2_answers(["1|icf|research|BR|a|b|c|d\n"], ["a"])
+    assert faults == [] and old["a"]["why"] == "a|b|c|d" and "contrib" not in old["a"]
+
+
+def _dim(wk="openalex:W1", run_id="r1", **kw):
+    row = {"work_key": wk, "stage": "2", "labeller": "llm", "model": "opus",
+           "prompt_sha256": "abc", "run_id": run_id, "machine": "doudou", "contrib": "yes",
+           "field": "economics", "contrib_type": "policy", "labelled_at": "2026-10-01",
+           "source": "c.opus.txt"}
+    row.update(kw)
+    return row
+
+
+def test_dimensions_table_has_the_icf_screen_guards(tmp_path):
+    t = str(tmp_path / "rel_screen" / "rel_dimensions.csv")
+    S = ics.DIMENSIONS
+    assert ics.append_rows(t, [_dim()], schema=S) == 1
+    with open(t, encoding="utf-8") as fh:
+        assert next(csv.reader(fh)) == S.columns
+    with pytest.raises(ics.IcfScreenError, match="already in the table"):
+        ics.append_rows(t, [_dim()], schema=S)
+    with pytest.raises(ics.IcfScreenError, match="refused"):
+        ics.append_rows(t, [_dim("openalex:W2", contrib="maybe")], schema=S)
+    assert ics.append_new(t, [_dim(), _dim(run_id="r2")], schema=S) == (1, 1)
+    with pytest.raises(ics.IcfScreenError, match="header"):
+        ics.read_table(t)  # the icf_screen schema does not read a dimensions table
+    data = open(t, "rb").read()
+    with open(t, "wb") as fh:
+        fh.write(data[:-5])
+    with pytest.raises(ics.IcfScreenError, match="truncated"):
+        ics.read_table(t, schema=S)

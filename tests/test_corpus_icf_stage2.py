@@ -62,7 +62,7 @@ def test_parse_appends_answers_and_refuses_malformed(tmp_path):
     cs.write_chunks(str(out), [_work(1), _work(2), _work(3)], S2CFG, {})
     (out / "chunk01.opus.txt").write_text("1|icf|research|SN|GCF readiness\n2|aux|research|?|\n")
     (out / "chunk02.opus.txt").write_text("")
-    rows, report = cs.parse_answers(str(out), "opus", "2", "opus-x", "run1", "doudou", "llm",
+    rows, _, report = cs.parse_answers(str(out), "opus", "2", "opus-x", "run1", "doudou", "llm",
                                     "p", "2026-10-01", "s2")
     assert [(r["work_key"], r["label"], r["studied_country"]) for r in rows] == [
         ("openalex:W1", "icf", "SN"), ("openalex:W2", "aux", "?")]
@@ -73,6 +73,85 @@ def test_parse_appends_answers_and_refuses_malformed(tmp_path):
     (out / "chunk02.opus.txt").write_text("1|icf|research|?|x\n1|out|research|?|\n")
     with pytest.raises(cs.Stage2Error, match="refused"):
         cs.parse_answers(str(out), "opus", "2", "m", "r", "d", "llm", "p", "d", "s")
+
+
+V2_PROMPT = ("# v2\n\n```\nWrite one line per record, in order, to <chunk>.opus.txt, format "
+             "exactly:\nn|label|doc|studied|contrib|field|ctype|why\n```\n")
+
+
+def test_parse_main_writes_icf_and_dimension_rows_from_v2_answers(tmp_path):
+    """Ticket 1840: one v2 answer file feeds icf_screen and rel_dimensions, same keys."""
+    out = tmp_path / "s2"
+    cs.write_chunks(str(out), [_work(1), _work(2)], S2CFG, {})
+    (out / "chunk01.opus.txt").write_text(
+        "1|icf|research|SN|yes|economics|policy|GCF readiness\n2|out|other|?|na|na|na|\n")
+    prompt = tmp_path / "v2.md"
+    prompt.write_text(V2_PROMPT)
+    (tmp_path / "rs").mkdir()
+    table, dims = str(tmp_path / "rs" / "icf_screen.csv"), str(tmp_path / "rs" / "dims.csv")
+    args = ["--table", table, "--dimensions-table", dims, "parse", "--chunk-dir", str(out),
+            "--model", "opus", "--run-id", "r", "--machine", "d", "--prompt", str(prompt)]
+    assert cs.main(args) == 0
+    icf = ics.read_table(table)
+    dim = ics.read_table(dims, schema=ics.DIMENSIONS)
+    assert [(r["work_key"], r["label"], r["why"]) for r in icf] == [
+        ("openalex:W1", "icf", "GCF readiness"), ("openalex:W2", "out", "")]
+    assert [(r["work_key"], r["contrib"], r["field"], r["contrib_type"]) for r in dim] == [
+        ("openalex:W1", "yes", "economics", "policy"), ("openalex:W2", "na", "na", "na")]
+    assert {ics.key_of(r) for r in icf} == {ics.key_of(r) for r in dim}
+    assert icf[0]["prompt_sha256"] == dim[0]["prompt_sha256"] == ics.stage2_prompt_sha256(
+        str(prompt))
+    assert cs.main(args) == 0, "idempotent"
+    assert len(ics.read_table(dims, schema=ics.DIMENSIONS)) == 2
+    # Agent C, PR 1652: a lost dimensions table must not restart beside an
+    # icf_screen that already holds rows of this wrapper; nothing is written.
+    (tmp_path / "rs" / "dims.csv").unlink()
+    (tmp_path / "rs" / "dims.manifest.jsonl").unlink()
+    (out / "chunk01.opus.txt").write_text(
+        "1|icf|research|SN|yes|economics|policy|GCF readiness\n2|aux|other|?|no|finance|empirical|x\n")
+    before = (tmp_path / "rs" / "icf_screen.csv").read_bytes()
+    assert cs.main(args[:-6] + ["--run-id", "r2", "--machine", "d", "--prompt", str(prompt)]) == 1
+    assert (tmp_path / "rs" / "icf_screen.csv").read_bytes() == before
+    assert not (tmp_path / "rs" / "dims.csv").exists()
+
+
+def test_parse_v1_answers_write_no_dimension_rows(tmp_path):
+    out = tmp_path / "s2"
+    cs.write_chunks(str(out), [_work(1)], S2CFG, {})
+    (out / "chunk01.opus.txt").write_text("1|icf|research|SN|x\n")
+    prompt = tmp_path / "v1.md"
+    prompt.write_text("# v1\n\n```\nformat exactly:\nn|label|doc|studied|why\n```\n")
+    table, dims = str(tmp_path / "icf_screen.csv"), str(tmp_path / "dims.csv")
+    assert cs.main(["--table", table, "--dimensions-table", dims, "parse", "--chunk-dir",
+                    str(out), "--model", "m", "--run-id", "r", "--machine", "d",
+                    "--prompt", str(prompt), "--new-table"]) == 0
+    assert len(ics.read_table(table)) == 1 and not (tmp_path / "dims.csv").exists()
+
+
+@pytest.mark.parametrize("answers, fields", [
+    # a version-1 file whose why holds pipes, read as version 2 (red team, PR 1652)
+    ("1|icf|research|SN|because a|b|c|d\n2|aux|research|?|x|y|z|w\n", ics.V2_FIELDS),
+    # a version-2 file read as version 1
+    ("1|icf|research|SN|yes|economics|policy|GCF\n2|out|other|?|na|na|na|\n", ics.V1_FIELDS),
+])
+def test_parse_refuses_an_answer_file_in_the_other_format(tmp_path, answers, fields):
+    """Both tables are append-only: a wrong --prompt must refuse, not write."""
+    out = tmp_path / "s2"
+    cs.write_chunks(str(out), [_work(1), _work(2)], S2CFG, {})
+    (out / "chunk01.opus.txt").write_text(answers)
+    with pytest.raises(cs.Stage2Error, match="answer file"):
+        cs.parse_answers(str(out), "opus", "2", "m", "r", "d", "llm", "p", "d", "s", fields)
+
+
+def test_parse_counts_na_off_rule_without_refusing(tmp_path):
+    out = tmp_path / "s2"
+    cs.write_chunks(str(out), [_work(1), _work(2)], S2CFG, {})
+    (out / "chunk01.opus.txt").write_text(
+        "1|out|research|SN|yes|economics|policy|\n2|aux|other|?|BOGUS|na|na|\n")
+    rows, dims, report = cs.parse_answers(str(out), "opus", "2", "m", "r", "d", "llm", "p",
+                                          "d", "s", ics.V2_FIELDS)
+    assert len(rows) == len(dims) == 2
+    assert report["chunk01"]["na_off_rule"] == 1 and report["chunk01"]["unknown_dimension"] == 1
 
 
 def test_cohen_kappa_known_values():
@@ -109,15 +188,18 @@ def test_missing_table_is_a_clean_error(tmp_path, cmd):
 def test_parse_refuses_to_fork_a_dvc_tracked_table(tmp_path):
     out = tmp_path / "s2"
     cs.write_chunks(str(out), [_work(1)], S2CFG, {})
-    (out / "chunk01.opus.txt").write_text("1|icf|research|SN|x\n")
+    # The default wrapper (config stage2.prompt) is version 2 since ticket 1840.
+    (out / "chunk01.opus.txt").write_text("1|icf|research|SN|yes|economics|policy|x\n")
     (tmp_path / "rs.dvc").write_text("outs:\n- path: rs\n")
     table = str(tmp_path / "rs" / "icf_screen.csv")
-    base = ["--table", table, "parse", "--chunk-dir", str(out), "--model", "m",
-            "--run-id", "r", "--machine", "d"]
+    dims = str(tmp_path / "rs" / "rel_dimensions.csv")
+    base = ["--table", table, "--dimensions-table", dims, "parse", "--chunk-dir", str(out),
+            "--model", "m", "--run-id", "r", "--machine", "d"]
     assert cs.main(base) == 1
     assert not (tmp_path / "rs").exists()
     assert cs.main(base + ["--new-table"]) == 0
     assert len(ics.read_table(table)) == 1
+    assert len(ics.read_table(dims, schema=ics.DIMENSIONS)) == 1
 
 
 def test_build_sends_stage1_aux_to_stage2_under_the_config_rule(tmp_path):

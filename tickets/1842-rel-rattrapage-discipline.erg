@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-10-01T10:00Z HDMX-coding-agent created
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
+2026-10-01T07:01Z HDMX-coding-agent note parse writes ICF rows to icf_screen and the REL view takes the last stage-2 row: the catch-up must write through a dimensions-only path or under a distinct stage, never as stage 2 (Agent C, PR 1652); no dimensions-only mode yet, its format depends on the method chosen here; exit criterion added
 --- body ---
 ## Context
 Child of 1830. The works reread at stage 2 before 1840 lack the discipline fields. Method and cost proposed before any spend; USD 2 ceiling without agreement. Candidates: Jev pass with decomposed questions (design of the Jev pilot archive 2026-09-30), or the discipline questions of the 1840 prompt alone.
@@ -14,3 +15,4 @@ Child of 1830. The works reread at stage 2 before 1840 lack the discipline field
 - [ ] Method and cost proposed and accepted
 - [ ] Discipline fields recorded in the dimensions table for all works concerned, counts reported
 - [ ] Validation on the 1840 gold set
+- [ ] The catch-up writes the discipline fields without touching the ICF labels: `corpus_icf_stage2.py parse` appends an `icf_screen` row for every answer and the REL view takes the last stage-2 row, so a catch-up parsed as stage 2 would overwrite or shadow the existing ICF labels. Write through a dimensions-only path, or under a distinct stage. No dimensions-only parse mode exists yet (PR 1652 left it out: its answer format depends on the method chosen here)

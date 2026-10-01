@@ -1,0 +1,23 @@
+%erg 0.1
+Title: REL — extended stage-2 prompt: discipline, field, contribution type (before launch)
+Created: 2026-10-01
+Author: HDMX-coding-agent
+Closed: done: v2 stage-2 wrapper, rel_dimensions table, tested on gold and control sets
+
+--- log ---
+2026-10-01T10:00Z HDMX-coding-agent created
+2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
+2026-10-01T06:05Z HDMX-coding-agent note v2 wrapper config/rel_stage2_prompt_v2.md, table rel_dimensions; test results conception/rel-stage2-prompt-v2-test.md, archive ~/data/projets/climate-finance-het/rel_discipline_test/2026-10-01/
+2026-10-01T05:56Z HDMX-coding-agent closed — done: v2 stage-2 wrapper, rel_dimensions table, tested on gold and control sets
+2026-10-01T06:10Z HDMX-coding-agent note handoff: branch t1840-stage2-discipline-prompt pushed (worktree .claude/worktrees/agent-a7ef67149e0ec6530); archive ~/data/projets/climate-finance-het/rel_discipline_test/2026-10-01/ (MANIFEST.sha256); OpenRouter spend 0.65 USD; check-fast, lint, verify-adherence pass; check-domain-corpus local without bulk data: 7 failures, all data-bound file-existence tests; next: open PR, /review-pr rounds
+2026-10-01T06:46Z HDMX-coding-agent note log stamps are not monotone: the created entry reads 10:00Z but the ticket was committed 05:37Z (f636d0cb), and the closed entry (05:56Z) follows a 06:05Z note; left as written, log is append-only. aux->out drift resolved as rerun noise (PR 1652, conception/rel-stage2-prompt-v2-test.md); review round 2 fixes: wrong-format answer files refused, na_off_rule counted
+--- body ---
+## Context
+Child of 1830 (author decisions of 2026-10-01, see 1830). Priority: must merge before the launch of the Opus stage 2 (waiting for the router experiment). The new questions are separate output fields; the ICF wording and the historical prompt (hash of the 4,752 t1530 labels) stay intact: new prompt file, separate append-only dimensions table.
+
+## Exit criteria
+- [x] New stage-2 wrapper (distinct versioned file), output with discipline (contribution test), field, contribution type; the historical hash of the t1530 prompt is not modified
+- [x] Parser accepts the old and the new format; append-only dimensions table with the same guard as `icf_screen`
+- [x] Gold discipline set (100-150 works, stratified ML/data science, pure finance, management), two decorrelated judges + panel arbitration, without the author
+- [x] Test on the control set (200) and the sentinels: ICF agreement with the old prompt, discipline agreement with the gold set, cost reported
+- [x] `make check-fast` and `make lint` pass
