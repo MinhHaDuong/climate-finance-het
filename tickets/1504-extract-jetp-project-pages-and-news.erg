@@ -4,11 +4,14 @@ Created: 2026-09-29
 Author: HDMX-coding-agent
 Blocked-by: 1501
 Blocked-by: 1509
+Blocked-by: 1873
+Blocked-by: 1874
 
 --- log ---
 2026-09-29T09:10Z HDMX-coding-agent created — child of [[1500]]
 
 2026-09-29T09:14Z HDMX-coding-agent note reshaped 2026-09-29 under milestone M2 of [[0725]]: run child using the LLM-assisted extractor 1509
+2026-10-01T06:15Z HDMX-coding-agent note phase M2.4 of [[1500]]; reading lane for pages without a shared template (extraction § 6.3), a parser where a page template repeats (§ 6.1); mostly HTML; Blocked-by 1873 (calibrated readers before any unattended run, extraction § 6.3) and 1874 (budgets, hosted-call restriction) added; pilot criterion added (pilot rule, author decision 2026-10-01, interactive)
 --- body ---
 ## Context
 
@@ -34,3 +37,4 @@ known project mints nothing.
 - [ ] No page mints a project, asset or agreement by itself; new identities, if any, come by the matching tiers of `docs/jetp-fusion.md` § 3
 - [ ] Lines of previously extracted documents are byte-identical
 - [ ] `make jetp-ledger-check`, `make check-fast` and `make lint` pass
+- [ ] Pilot on a stratified sample of the 40 (country × format, size stated) passes a quality check by a cross-model checker, findings recorded here, before the full run (pilot rule, [[1500]])

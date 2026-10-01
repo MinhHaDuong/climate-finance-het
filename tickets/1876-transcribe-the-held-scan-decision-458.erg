@@ -1,0 +1,43 @@
+%erg 0.1
+Title: Transcription method and the held scan without a text layer (Viet Nam Decision 458)
+Created: 2026-10-01
+Author: HDMX-coding-agent
+Blocked-by: 1508
+Blocked-by: 1509
+Blocked-by: 1874
+
+--- log ---
+2026-10-01T05:50Z HDMX-coding-agent created — child of [[1500]], phase M2.3 (reading lane, scan format); spec rule with no ticket found by the 2026-10-01 audit (author decision 2026-10-01, interactive: D4 hygiene)
+
+--- body ---
+## Context
+
+M2 transcribes the one held scan without a text layer, the Vietnamese plan
+decision (Decision 458, 23 pages), and every statement it yields names the
+transcription as its method. No ticket carried this. Normative text,
+accepted specification v1 (tag `jetp-spec-v1`):
+
+- `docs/jetp-extraction.md` § 6.4 (transcription: a recogniser text layer,
+  two vision-capable hosted readers of different families blind to each
+  other under the protocol of § 6.3, every item to the arbiter, the method
+  named uncalibrated); § 13 (the M2 slice); § 15 (the check "A decision is
+  held only as a scan").
+- `docs/jetp-collection.md` § 8 and § 11 "M2 before the campaign": a
+  born-digital copy is searched for first, and the search recorded.
+- `docs/jetp-operation.md` § 5 (transcription readers, hosted, within the
+  per-document budget, never for a `local_only` document).
+
+The recogniser's text layer is an adapter (format dimension, [[1508]]); the
+reading is the reading lane. Blocked by [[1508]] (text layer), [[1509]]
+(the § 6.3 protocol it runs under) and [[1874]] (budgets and hosted-call
+settings: both readers and the arbiter are hosted).
+
+## Exit criteria
+
+- [ ] The search for a born-digital copy of Decision 458 is recorded; if one is found it is registered and extracted instead, and this ticket closes on that
+- [ ] A recogniser produces a text layer of the scan, cached by hash and adapter version
+- [ ] Two vision-capable hosted readers of different makers read the page images and that layer blind to each other; every item goes to the arbiter; every statement names the transcription method and version, a locator with page index and page-normalised region, a likelihood and a confidence
+- [ ] The run report and the coverage report name the method uncalibrated
+- [ ] Pilot on a stratified sample of pages (page kind × table or prose, size stated) passes a quality check by a cross-model checker, findings recorded here, before the full 23 pages (pilot rule, [[1500]])
+- [ ] Spend stays within the per-document budget (operation § 7.2)
+- [ ] `make jetp-ledger-check`, `make check-fast` and `make lint` pass

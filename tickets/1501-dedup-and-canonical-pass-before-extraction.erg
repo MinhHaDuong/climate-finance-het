@@ -9,6 +9,7 @@ Blocked-by: 1508
 
 2026-09-29T09:14Z HDMX-coding-agent note reshaped 2026-09-29 under milestone M2 of [[0725]]: run child, stage 1 of the pipeline; Blocked-by 1508 for the text layer tier 2 needs
 2026-09-29T13:30Z HDMX-coding-agent decision scope widened by the author (2026-09-29, interactive, 0870 integration review): the language step covers the whole register, 59 blank of 392, not 20 of the 115. Documents with bytes are read by the pass (which has them); documents with no bytes (35 of the 59) get a title pass by a small model (Haiku tier), controlled first on the 45 labelled titles it must reproduce, proposals not writes. No deterministic rule fills language in the meantime (bytes rule: 5 disagreements in 305 labelled documents)
+2026-10-01T06:15Z HDMX-coding-agent note phase M2.4 of [[1500]] (the run over the 115); pilot criterion added (pilot rule, author decision 2026-10-01, interactive); an LLM identity judgement in this pass runs under the reading lane of [[1509]] and [[1873]] (requirements Q5: document identity judgements are M2)
 --- body ---
 ## Context
 
@@ -47,3 +48,4 @@ language canonical per pair) needs.
 - [ ] No `language` is empty in `documents.csv`; the title pass reproduced the 45 labelled titles before it was used
 - [ ] The cleared list per wave is committed and cited by 1502 to 1505
 - [ ] `make jetp-ledger-check` and `make check-fast` pass
+- [ ] Pilot on a stratified sample of the 115 (country × format, size stated) passes a quality check by a cross-model checker, findings recorded here, before the full run (pilot rule, [[1500]])
