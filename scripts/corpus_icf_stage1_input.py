@@ -19,13 +19,19 @@ not written: the rule cannot be applied to an empty record. They are accepted
 residue, not unscreened work: the summary names them (count per lane and
 work keys), so a completeness check of stage 1 subtracts them by name.
 
+``--exclude-input`` (repeatable) leaves out the works another stage-1 run
+already takes: those of that run's input JSONL, matched by ``work_key``, else
+OpenAlex id, else DOI (a rebuilt pool may re-key a work). Ticket 1733 uses it
+for design B, which screens only what the running Qwen runs do not; the
+summary counts the works left out per lane and per match.
+
 Outputs: ``--output`` (JSONL) and ``<output stem>.summary.json`` (inputs'
-sha256, works written per lane in order, and the residue).
+sha256, works written per lane in order, the works excluded, and the residue).
 ``corpus_icf_import.py stage1-run`` checks a run against those hashes.
 
 Usage:
     python scripts/corpus_icf_stage1_input.py --output DIR/screen_input.jsonl \\
-        [--pool PATH] [--table PATH]
+        [--pool PATH] [--table PATH] [--exclude-input OTHER_RUN/screen_input.jsonl ...]
 """
 
 import argparse
@@ -94,13 +100,48 @@ def select(pool: list[dict], view_rows: list[dict], priority: list[str]
     return picked, Counter(lane for lane, _ in picked), {k: sorted(v) for k, v in skipped.items()}
 
 
+def exclusion_index(paths: list[str]) -> dict[str, set[str]]:
+    """``{"work_key"|"openalex_id"|"doi": ids}`` of the records of other runs' inputs."""
+    index: dict[str, set[str]] = {"work_key": set(), "openalex_id": set(), "doi": set()}
+    for path in paths:
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                if not line.strip():
+                    continue
+                r = json.loads(line)
+                for field, ids in index.items():
+                    v = (r.get(field) or "").strip()
+                    if v:
+                        ids.add(v.lower() if field == "doi" else v)
+    return index
+
+
+def excluded_by(rec: dict, index: dict[str, set[str]]) -> str:
+    """The field by which ``rec`` is in another run's input, or ``""``."""
+    for field, ids in index.items():
+        v = (rec.get(field) or "").strip()
+        if v and (v.lower() if field == "doi" else v) in ids:
+            return field
+    return ""
+
+
 def run(pool_path: str, table_path: str, output: str, priority: list[str],
-        rule: dict) -> dict:
+        rule: dict, exclude_inputs: list[str] | None = None) -> dict:
     """``rule``: ``_rel_view.screen_rule``; unscreened works do not depend on it."""
     ics.require_table(table_path)
     pool = rv.read_pool(pool_path)
     view, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config(), rule)
     picked, per_lane, skipped = select(pool, view, priority)
+    index = exclusion_index(exclude_inputs or [])
+    excluded: dict = defaultdict(Counter)
+    kept = []
+    for lane, rec in picked:
+        how = excluded_by(rec, index)
+        if how:
+            excluded[lane][how] += 1
+        else:
+            kept.append((lane, rec))
+    picked, per_lane = kept, Counter(lane for lane, _ in kept)
     os.makedirs(os.path.dirname(os.path.abspath(output)), exist_ok=True)
     with open(output, "w", encoding="utf-8") as fh:
         for _, rec in picked:
@@ -112,6 +153,10 @@ def run(pool_path: str, table_path: str, output: str, priority: list[str],
         "lane_priority": priority,
         "works": len(picked),
         "per_lane": {lane: per_lane[lane] for lane in lanes if per_lane[lane]},
+        "excluded_other_runs": {
+            "inputs": [{"path": p, "sha256": rv.sha256_file(p)} for p in exclude_inputs or []],
+            "works": sum(sum(c.values()) for c in excluded.values()),
+            "per_lane": {lane: dict(sorted(c.items())) for lane, c in excluded.items()}},
         "residue_no_title": {
             "note": "not screened: no title to apply the rule to; accepted residue of stage 1, "
                     "not unscreened work",
@@ -132,18 +177,23 @@ def main(argv=None):
     parser.add_argument("--pool", default=None, help="default: config pool")
     parser.add_argument("--table", default=None, help="default: config table")
     parser.add_argument("--output", required=True, help="stage-1 input JSONL")
+    parser.add_argument("--exclude-input", action="append", default=[],
+                        help="another stage-1 run's input JSONL whose works are left out "
+                             "(repeatable)")
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
     try:
         summary = run(args.pool or cfg["pool"], args.table or cfg["table"], args.output,
-                      list(cfg["stage1"]["lane_priority"]), rv.screen_rule(cfg))
+                      list(cfg["stage1"]["lane_priority"]), rv.screen_rule(cfg),
+                      args.exclude_input)
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1
-    log.info("%d unscreened works written to %s; per lane %s; residue without title %s",
-             summary["works"], args.output, summary["per_lane"],
-             summary["residue_no_title"]["per_lane"])
+    log.info("%d unscreened works written to %s; per lane %s; residue without title %s; "
+             "excluded as in other runs' inputs %s", summary["works"], args.output,
+             summary["per_lane"], summary["residue_no_title"]["per_lane"],
+             summary["excluded_other_runs"]["per_lane"])
     return 0
 
 

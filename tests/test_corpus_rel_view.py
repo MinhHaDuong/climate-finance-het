@@ -84,8 +84,9 @@ def test_statuses_matching_and_latest_label():
 
 def test_config_rule_sends_stage1_aux_to_stage2_and_out_leaves():
     # Author decision 2026-09-30: only "out" leaves at stage 1.
-    assert RULE == {"stage1_exit_labels": ["out"], "stage2_labels": ["aux", "icf", "unsure"],
-                    "stage2_unsure_in_rel": True}
+    assert {k: v for k, v in RULE.items() if k != "stage1_joint"} == {
+        "stage1_exit_labels": ["out"], "stage2_labels": ["aux", "icf", "unsure"],
+        "stage2_unsure_in_rel": True}
     aux = rv.work_status([_lab("openalex:W3", "1", "aux")], RULE)
     out = rv.work_status([_lab("openalex:W2", "1", "out")], RULE)
     assert aux["status"] == "pending_stage2" and aux["stage1_label"] == "aux"
@@ -293,3 +294,137 @@ def test_view_reports_a_missing_table_cleanly(tmp_path):
         crv.run(pool, missing, str(tmp_path / "a"), WINDOW, RULE)
     assert crv.main(["--pool", pool, "--table", missing,
                      "--output-dir", str(tmp_path / "a")]) == 1
+
+
+# ── Design B (author decision 2026-10-01): stage 1 drops only when both say out ──
+
+GEMMA, JEV = "google/gemma-4-26b-a4b-it", "typesafe/jev-1.13-20260917"
+
+
+def _pair(llm_label, clf_label, p_out, run_id="designB-1", wk="openalex:W1", why=None):
+    return [_lab(wk, "1", llm_label, model=GEMMA, run_id=run_id),
+            {**_lab(wk, "1", clf_label, model=JEV, run_id=run_id),
+             "why": why if why is not None else f"p_out={p_out!r}"}]
+
+
+def test_config_declares_the_design_b_rule():
+    assert RULE["stage1_joint"] == {"llm_models": [GEMMA], "classifier_models": [JEV],
+                                    "classifier_p_out_min": 0.95}
+
+
+@pytest.mark.parametrize("llm, clf, p_out, status", [
+    ("out", "out", 0.97, "stage1_out"),        # both out, P above the threshold
+    ("out", "out", 0.95, "stage1_out"),        # the threshold itself drops
+    ("out", "out", 0.94, "pending_stage2"),    # Jev out but P(out) 0.94
+    ("out", "aux", 0.40, "pending_stage2"),    # only the LLM says out
+    ("aux", "out", 0.99, "pending_stage2"),    # only the classifier says out
+    ("icf", "icf", 0.00, "pending_stage2"),
+])
+def test_design_b_drops_only_when_both_say_out(llm, clf, p_out, status):
+    s = rv.work_status(_pair(llm, clf, p_out), RULE)
+    assert s["status"] == status
+    assert s["stage1_run_id"] == "designB-1" and s["stage1_model"] == f"{GEMMA}+{JEV}"
+    assert s["stage1_joint"] == f"llm={llm};classifier={clf};p_out={p_out}"
+    assert s["conflict"] == "", "the two rows of one run are one decision"
+
+
+def test_design_b_disagreement_keeps_the_llm_label_but_goes_to_stage2():
+    s = rv.work_status(_pair("out", "aux", 0.4), RULE)
+    assert (s["stage1_label"], s["status"]) == ("out", "pending_stage2")
+
+
+@pytest.mark.parametrize("labs", [
+    _pair("out", "out", 0.99)[:1],                 # the LLM row alone
+    _pair("out", "out", 0.99)[1:],                 # the classifier row alone
+    _pair("out", "out", 0.99, why="no p here"),    # classifier row without P(out)
+])
+def test_half_a_design_b_decision_never_drops(labs):
+    assert rv.work_status(labs, RULE)["status"] == "pending_stage2"
+
+
+def test_without_the_rule_design_b_rows_drop_below_the_threshold():
+    # What the rule prevents: read as two single-labeller rows, both "out",
+    # the pair drops the work although Jev's P(out) is only 0.5.
+    labs = _pair("out", "out", 0.5)
+    assert rv.work_status(labs, {**RULE, "stage1_joint": None})["status"] == "stage1_out"
+    assert rv.work_status(labs, RULE)["status"] == "pending_stage2"
+
+
+QWEN_OUT = _lab("openalex:W1", "1", "out", model="qwen3.8-27b", run_id="pool-stage1")
+QWEN_AUX = _lab("openalex:W1", "1", "aux", model="qwen3.8-27b", run_id="pool-stage1")
+
+
+def test_a_lone_qwen_out_keeps_the_single_labeller_rule():
+    assert rv.work_status([QWEN_OUT], RULE)["status"] == "stage1_out"
+
+
+@pytest.mark.parametrize("labs", [
+    [QWEN_OUT] + _pair("out", "aux", 0.3),     # design-B pass after a Qwen out
+    _pair("out", "aux", 0.3) + [QWEN_OUT],     # Qwen out after a design-B pass
+    [QWEN_AUX] + _pair("out", "out", 0.99),    # design-B drop after a Qwen pass
+    _pair("out", "out", 0.99) + [QWEN_AUX],    # Qwen pass after a design-B drop
+])
+def test_several_stage1_verdicts_leave_only_if_all_are_out(labs):
+    # Recall first (2026-10-01): one verdict that sends the work on is enough,
+    # whichever came later in the table.
+    s = rv.work_status(labs, RULE)
+    assert s["status"] == "pending_stage2"
+    assert s["conflict"] == "stage1"
+
+
+@pytest.mark.parametrize("labs", [
+    [QWEN_OUT] + _pair("out", "out", 0.99),
+    _pair("out", "out", 0.99) + [QWEN_OUT],
+])
+def test_every_verdict_out_leaves_at_stage1(labs):
+    s = rv.work_status(labs, RULE)
+    assert s["status"] == "stage1_out" and s["conflict"] == ""
+
+
+def test_the_shown_stage1_verdict_is_the_latest_that_passes():
+    s = rv.work_status(_pair("out", "aux", 0.3) + [QWEN_OUT], RULE)
+    assert (s["stage1_model"], s["stage1_run_id"]) == (f"{GEMMA}+{JEV}", "designB-1")
+
+
+def test_p_out_just_under_the_threshold_never_rounds_onto_it():
+    # 0.94995 rounded to 4 decimals would be 0.9500 and drop the work.
+    assert rv.work_status(_pair("out", "out", 0.94995), RULE)["status"] == "pending_stage2"
+    assert rv.work_status(_pair("out", "out", 0.95), RULE)["status"] == "stage1_out"
+
+
+@pytest.mark.parametrize("why, p", [("p_out=0.97", 0.97), ("p_out=9.5e-01", 0.95),
+                                    ("p_out=1e-05", 1e-05), ("p_out=9.5", None),
+                                    ("p_out=nan?", None), ("P=0.99", None)])
+def test_p_out_parsing(why, p):
+    assert rv.p_out_of({"why": why}) == p
+
+
+def test_stage2_stays_final_over_a_design_b_drop():
+    s = rv.work_status(_pair("out", "out", 0.99) + [_lab("openalex:W1", "2", "icf")], RULE)
+    assert (s["status"], s["rel_included"]) == ("icf", "true")
+
+
+@pytest.mark.parametrize("block, match", [
+    ({"llm_models": [GEMMA], "classifier_models": [GEMMA], "classifier_p_out_min": 0.95},
+     "disjoint"),
+    ({"llm_models": [], "classifier_models": [JEV], "classifier_p_out_min": 0.95}, "non-empty"),
+    ({"llm_models": [GEMMA], "classifier_models": [JEV], "classifier_p_out_min": 1.5}, r"\(0, 1\]"),
+    ({"llm_models": [GEMMA], "classifier_models": [JEV]}, r"\(0, 1\]"),
+])
+def test_joint_rule_is_checked(block, match):
+    with pytest.raises(ics.IcfScreenError, match=match):
+        rv.joint_rule(block)
+
+
+def test_view_counts_design_b_decisions():
+    pool = [_work("openalex:W1", oas="W1"), _work("openalex:W2", oas="W2"),
+            _work("openalex:W3", oas="W3")]
+    labels = (_pair("out", "out", 0.99, wk="openalex:W1")
+              + _pair("out", "aux", 0.2, wk="openalex:W2")
+              + [_lab("openalex:W3", "1", "out", model="qwen3.8-27b")])
+    rows, summary = rv.build_view(pool, labels, WINDOW, RULE)
+    assert _status(rows) == {"openalex:W1": "stage1_out", "openalex:W2": "pending_stage2",
+                             "openalex:W3": "stage1_out"}
+    counts = crv.make_counts(rows, summary, WINDOW, {}, RULE)
+    assert counts["stage1_joint"] == {"works": 2, "stage1_out": 1, "pending_stage2": 1}
+    assert counts["conflicts"]["stage1"] == 0

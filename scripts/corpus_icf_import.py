@@ -51,6 +51,11 @@ throwaway builder of the 2026-09-30 catalogue run took the first "W + digits"
 inside any ``source_id``, so 7 EconBiz ids (``EDSZBW…``) and 3 SciSpace URLs came in
 as false W-ids; a label keyed on one would sit forever on the wrong work.
 
+``stage1-designb``: one run directory of ``corpus_icf_stage1_designb.py``
+(design B, author decision of 2026-10-01): two stage-1 rows per work, the
+LLM's and the classifier's (``designb_rows``), for the works both labelled;
+served models must be listed in ``config/rel_screen.yaml`` → ``stage1_joint``.
+
 Creating the table where ``data/rel_screen.dvc`` tracks it is refused (an
 unfetched table, not a new one): ``dvc checkout`` first, or ``--new-table``.
 
@@ -58,6 +63,8 @@ Usage:
     python scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv t1530 [--archive DIR]
     python scripts/corpus_icf_import.py --output TABLE stage1-run --run-dir DIR --machine padme \\
         [--input DIR/screen_input.jsonl] [--run-id NAME] [--skip-ids FILE]
+    python scripts/corpus_icf_import.py --output TABLE stage1-designb --run-dir DIR \\
+        [--input DIR/screen_input.jsonl] [--run-id NAME]
 """
 
 import argparse
@@ -69,6 +76,7 @@ import re
 import sys
 
 import _icf_screen as ics
+import _rel_view as rv
 import yaml
 from utils import get_logger, normalize_doi, normalize_title
 
@@ -266,6 +274,58 @@ def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
             if lab[field] not in skip_ids]
 
 
+def designb_rows(run_dir: str, input_path: str, run_id: str, joint: dict,
+                 basis: tuple[str, str] | None = None) -> tuple[list[dict], int]:
+    """Table rows of a design-B run (``corpus_icf_stage1_designb.py``) and the
+    number of works left out because only one labeller labelled them.
+
+    Two stage-1 rows per work, one per labeller, both ``labeller=llm`` and
+    ``run_id``: the LLM row (its label, doc, ``why``) and the classifier row,
+    whose ``why`` is ``p_out=<P(out)>`` at full precision (``repr``: a value
+    just under the threshold is never rounded up onto it), which the view's
+    drop rule reads (``_rel_view.p_out_of``). ``model`` is the served model id, ``machine`` is
+    ``openrouter/<provider>``. Only works labelled by both are imported, so the
+    table never holds half a decision; the others stay unscreened for a rerun.
+    Refused when the run has no closing line, when its invocations disagree on
+    prompt hashes, when a served model is not in ``stage1_joint`` (so every
+    imported row is one the view recognises), or, with ``basis``, when the
+    input was built on another pool or table (``check_input_basis``).
+    """
+    log_path = os.path.join(run_dir, "run.log")
+    text = open(log_path, encoding="utf-8").read() if os.path.exists(log_path) else ""
+    _require(bool(FINISHED.search(text)),
+             f"{run_dir}: run.log has no closing 'labelled N, unlabelled M' line")
+    invocations = _jsonl(os.path.join(run_dir, "screen_runs.jsonl"))
+    _require(bool(invocations), f"{run_dir}: screen_runs.jsonl is empty")
+    hashes = {(i["llm_prompt_sha256"], i["classifier_prompt_sha256"]) for i in invocations}
+    _require(len(hashes) == 1 and {i.get("id_field") for i in invocations} == {"work_key"},
+             f"{run_dir}: invocations disagree on prompt hashes {hashes} or are not work_key runs")
+    (llm_sha, clf_sha), = hashes
+    started = min(i["started"] for i in invocations)
+    if basis:
+        check_input_basis(input_path, *basis)
+    inputs = {r["work_key"]: r for r in _jsonl(input_path)}
+    llm = {x["work_key"]: x for x in _jsonl(os.path.join(run_dir, "llm.jsonl"))}
+    clf = {x["work_key"]: x for x in _jsonl(os.path.join(run_dir, "classifier.jsonl"))}
+    for name, labs, allowed in (("llm", llm, joint["llm_models"]),
+                                ("classifier", clf, joint["classifier_models"])):
+        bad = sorted({x["model"] for x in labs.values()} - set(allowed))
+        _require(not bad, f"{run_dir}: {name} rows served by {bad}, not in stage1_joint")
+        outside = [k for k in labs if k not in inputs]
+        _require(not outside, f"{len(outside)} {name} labels outside the run input, "
+                              f"e.g. {outside[:3]}")
+    rows = []
+    for key in (k for k in inputs if k in llm and k in clf):  # input order
+        meta = work_meta(inputs[key], "work_key")
+        for lab, sha, why, src in ((llm[key], llm_sha, llm[key].get("why") or "", "llm.jsonl"),
+                                   (clf[key], clf_sha, f"p_out={float(clf[key]['p_out'])!r}",
+                                    "classifier.jsonl")):
+            rows.append(_stage1_row(meta, {**lab, "why": why}, run_id, lab["model"], sha,
+                                    f"openrouter/{lab.get('provider') or 'unknown'}",
+                                    started, f"{run_id}/{src}"))
+    return rows, len(set(llm) ^ set(clf))
+
+
 ID_FIELDS = ("openalex_id", "work_key")
 
 
@@ -317,6 +377,15 @@ def main(argv=None):
     p2.add_argument("--skip-ids", default=None,
                     help="file of input ids (one per line) whose labels are not imported, "
                          "e.g. ids that are not real OpenAlex ids")
+    p3 = sub.add_parser("stage1-designb")
+    p3.add_argument("--run-dir", required=True)
+    p3.add_argument("--input", default=None, help="default: RUN_DIR/screen_input.jsonl")
+    p3.add_argument("--run-id", default=None, help="default: the run directory name")
+    p3.add_argument("--pool", default=None,
+                    help="the pool the input was built on (default: config pool)")
+    p3.add_argument("--allow-input-drift", action="store_true",
+                    help="import although pool or table differ from those the input was "
+                         "built on")
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
@@ -326,6 +395,17 @@ def main(argv=None):
             archive = os.path.expanduser(args.archive or cfg["t1530_archive"])
             rows = t1530_rows(archive, args.stage2_prompt or cfg["t1530_stage2_prompt"])
             note = f"import t1530 from {archive}"
+        elif args.cmd == "stage1-designb":
+            run_dir = args.run_dir.rstrip("/")
+            run_id = args.run_id or os.path.basename(run_dir)
+            joint = rv.joint_rule(cfg.get("stage1_joint"))
+            if joint is None:
+                raise ImportRefused(f"{args.config} has no stage1_joint block")
+            input_path = args.input or os.path.join(run_dir, "screen_input.jsonl")
+            basis = None if args.allow_input_drift else (args.pool or cfg["pool"], table)
+            rows, half = designb_rows(run_dir, input_path, run_id, joint, basis)
+            log.info("%d works labelled by one labeller only: left unscreened", half)
+            note = f"import design-B stage-1 run {run_id}"
         else:
             run_dir = args.run_dir.rstrip("/")
             run_id = args.run_id or os.path.basename(run_dir)
