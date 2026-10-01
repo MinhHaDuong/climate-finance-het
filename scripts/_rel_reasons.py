@@ -1,45 +1,52 @@
-"""REL exclusions by reason: ICF, discipline, seriousness (ticket 1843, tracker 1830).
+"""REL membership and exclusion reasons: a fuzzy set cut at alpha (ticket 1843, tracker 1830).
 
 Pure functions over the REL view rows (``_rel_view.build_view``), the
-``rel_dimensions`` rows (ticket 1840/1842) and the per-work venue table
+``rel_dimensions`` rows (tickets 1840, 1842) and the per-work venue table
 (``_rel_venues.load_work_venues``, ticket 1841). ``corpus_rel_view.py`` does
 the I/O.
 
-**One reason per work, first that applies, in this fixed order:**
+**Model** (author framing of 2026-10-01). REL is a fuzzy set, the
+intersection of fuzzy facets. A work's membership ``mu`` is the minimum of its
+facet values. Facets are evaluated in ``FACETS`` order, cheapest first:
 
-1. ICF: ``icf_excluded`` (the ICF status leaves REL: ``stage1_out``, ``aux``,
-   ``out``, ``unsure_unresolved`` when the rule drops it) or ``icf_pending``
-   (``unscreened``, ``pending_stage2``);
-2. discipline: ``discipline_excluded`` (contribution test ``contrib`` = ``no``)
-   or ``discipline_pending`` (no dimension row yet: the catch-up of ticket 1842
-   has not reached the work). ``unsure``, and ``na``/``unknown`` answers given
-   to an ICF-included work, stay in, flagged (``discipline_flag``), recall
-   first like the ICF ``unsure``;
-3. seriousness: ``seriousness_excluded``, by a registry exclusion (switch (a),
-   ISSN or domain matches only, never a title match), then by tier C (tier
-   under switch (b); tiers kept: A and B). Tier ``unknown`` (no resolvable
-   venue) follows switch (c), ``no_venue``: kept and flagged (``seriousness_flag``) by
-   default, ``tier_unknown`` exclusion otherwise, never tier C;
-4. ``included``.
+1. ``seriousness`` (deterministic, free: the venue table). Values per tier
+   from ``_rel_venues.tier_membership`` (decided: A 1, B 1, unknown 0.5, C 0);
+   0 for a registry exclusion (switch (a), never on a title match) and, in the
+   sensitivity rows, for a dropped publisher; tier ``unknown`` is 0 under switch
+   (c) ``exclude``, never C;
+2. ``icf`` (stage-1 model, then Opus): by the work's ICF status, values in
+   ``config/rel_screen.yaml`` ``membership.icf`` (proposed: icf 1, unsure 0.5,
+   aux and out 0); ``unscreened`` and ``pending_stage2`` are not graded yet.
+   Planned (pending): ICF = min(international, climate, finance), three
+   facets in place of this one; the list form of ``FACETS`` takes them as is;
+3. ``discipline`` (Opus v2 or the 1842 catch-up): the contribution test,
+   ``membership.discipline`` (proposed: yes 1, unsure 0.5, no 0; ``na`` and
+   ``unknown`` as unsure). Not graded while no dimension row exists.
 
-A later dimension is still recorded on the row (``contrib``, ``seriousness``)
-but never counted once an earlier reason applies.
+Evaluation stops at the first facet worth 0 (later facets need not be
+graded), or at the first facet not graded yet. ``mu`` is the minimum over the
+facets evaluated; ``mu_complete`` says whether it is final (a 0, or every
+facet graded). The crisp REL set is the alpha-cut ``mu >= alpha``
+(``_rel_venues.alpha``, decided 0.5).
 
-**Which dimension row wins** (several runs per work): the row with the key of
-the work's deciding stage-2 ICF label (same model and run: the forward
-version-2 answer, given with the ICF label it sits beside); otherwise the
-last ``catchup`` row in table order (ticket 1842; the table is append-only,
-so the order is the order of the runs). Stage-2 rows of a superseded run and
-``audit`` rows are not used, and counted (``dimension_rows_unused``).
+**Reason**: ``<facet>_excluded`` for the first facet, in evaluation order, that
+attains ``mu`` when ``mu < alpha``; else ``<facet>_pending`` for the first facet
+not graded; else ``included``. ``mu_facet`` names the facet attaining ``mu``.
 
-**Families** (version_hint links, ``family_id`` of the view): a family counts
-once and takes the most favourable reason of its members, in the order
-``FAMILY_RANK`` (included, then the two pending reasons, then exclusions by the
-latest stage reached); among members with that reason, a published article
-first, then the earliest year, then the smallest ``work_key``. So every
-dimension, seriousness included, is judged on any member: a family is in REL
-when one member passes all three, and its representative (``rel_family_id``)
-is then an included member, the article first.
+**Which dimension row wins** (several runs per work): the row with the model
+and run of the work's deciding stage-2 ICF label (the forward version-2
+answer, given beside the ICF label); otherwise the last ``catchup`` row in
+table order (ticket 1842; the table is append-only). Stage-2 rows of a
+superseded run and ``audit`` rows are not used, and counted.
+
+**Families** (version_hint links, ``family_id`` of the view): a family is the
+union of its versions, so its membership is the maximum over its members.
+This is how the decided rule "a family counts once, the article preferred" is
+realised: the representative (``rel_family_id``) is the member attaining that
+maximum, the published article first, then the earliest year, then the
+smallest ``work_key``; when no member is final, the member furthest along the
+evaluation stands for the family (pending before excluded, a later facet
+before an earlier one).
 """
 
 import re
@@ -48,23 +55,29 @@ from collections import Counter, defaultdict
 import _rel_venues as rvn
 import _rel_view as rv
 
-REASONS = ["icf_excluded", "icf_pending", "discipline_excluded", "discipline_pending",
-           "seriousness_excluded", "included"]
-FAMILY_RANK = {"included": 0, "discipline_pending": 1, "icf_pending": 2,
-               "seriousness_excluded": 3, "discipline_excluded": 4, "icf_excluded": 5}
+FACETS = ["seriousness", "icf", "discipline"]  # evaluation order, cheapest first
+REASONS = [f"{f}_{k}" for f in FACETS for k in ("excluded", "pending")] + ["included"]
+ICF_STATUS = {"icf": "icf", "unsure_unresolved": "unsure", "aux": "aux", "out": "out",
+              "stage1_out": "out", "stage1_aux": "aux"}
 ICF_PENDING = {"unscreened", "pending_stage2"}
+DISCIPLINE_AS_UNSURE = {"na", "unknown"}
 PUBLISHERS = ["mdpi", "frontiers", "hindawi"]
 WIDE_REGISTRIES = ["doaj_withdrawn", "scopus_discontinued"]
 VIEW_COLUMNS = ["contrib", "discipline_field", "contrib_type", "discipline_source",
                 "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag",
-                "seriousness", "seriousness_flag", "rel_reason", "rel_reason_detail", "rel_final",
-                "rel_family_id"]
+                "seriousness", "seriousness_flag", *[f"mu_{f}" for f in FACETS],
+                "mu", "mu_facet", "mu_complete", "rel_reason", "rel_reason_detail",
+                "rel_final", "rel_family_id"]
 DISCIPLINE_NOTE = (
     "discipline_excluded leans toward over-excluding applied finance: on the 1840 gold "
     "set, Opus v2 excluded 4 of 59 gold includes, 3 of them applied finance with a "
     "policy question (W3122424672, W4399863925, W7212372846), against 3 extra includes "
     "(ticket 1843 note, PR 1652). Read this count as an upper bound on the discipline "
     "exclusions of applied finance.")
+SERIOUSNESS_NOTE = (
+    "seriousness_excluded is overstated: some journal articles reachable only through "
+    "aggregators (DOAJ, Dialnet, ORBi) fall to tier C as repository copies, about 5 of "
+    "20 in the ticket 1841 sample.")
 
 _FLAG = re.compile(r"^([^:]+):(.*)\[(\w+)\]$")
 
@@ -80,34 +93,96 @@ def parse_flags(text: str) -> list[dict]:
     return out
 
 
+# ── Membership functions ─────────────────────────────────
+
+
 def seriousness_rule(registries_cfg: dict, tiers_cfg: dict) -> dict:
-    """Switches (a), (b) and (c) as configured (all pending author decisions)."""
+    """The seriousness facet as configured: switches (a), (b), (c), tier values, alpha."""
     return {"exclude": rvn.exclusion_registries(registries_cfg),
             "ngo_research_in_b": rvn.ngo_switch(tiers_cfg),
             "no_venue": rvn.unknown_switch(tiers_cfg),
+            "tier_mu": dict(sorted(rvn.tier_membership(tiers_cfg).items())),
+            "alpha": rvn.alpha(tiers_cfg),
             "tiers": ["A", "B"], "drop_publishers": []}
 
 
-def seriousness_of(venue: dict, srule: dict) -> str:
-    """``""`` (passes), ``registry:<r>``, ``tier_c``, ``tier_unknown`` or ``publisher:<p>``.
+def membership_rule(cfg: dict, screen_rule: dict, alpha: float) -> dict:
+    """ICF and discipline values of ``config/rel_screen.yaml`` ``membership``, checked.
 
-    Tier ``unknown`` (no resolvable venue, ticket 1841) passes under switch (c)
-    ``no_venue`` = ``keep_flagged`` and is flagged on the row (``seriousness_flag``); under
-    ``exclude`` it is a seriousness exclusion of its own, never tier C.
+    Every value lies in [0, 1]; the alpha-cut must reproduce the crisp ICF exit
+    rule: unsure is in REL iff ``stage2_unsure_in_rel``.
+    """
+    m = cfg.get("membership") or {}
+    out = {"status": m.get("status", ""),
+           "icf": {str(k): float(v) for k, v in (m.get("icf") or {}).items()},
+           "discipline": {str(k): float(v) for k, v in (m.get("discipline") or {}).items()}}
+    for facet, keys in (("icf", {"icf", "unsure", "aux", "out"}),
+                        ("discipline", {"yes", "unsure", "no"})):
+        if set(out[facet]) != keys or not all(0 <= v <= 1 for v in out[facet].values()):
+            raise ValueError(f"membership.{facet} must give {sorted(keys)} values in [0, 1]")
+    if (out["icf"]["unsure"] >= alpha) != screen_rule["stage2_unsure_in_rel"]:
+        raise ValueError("membership.icf.unsure and alpha contradict stage2_unsure_in_rel")
+    return out
+
+
+def seriousness_of(venue: dict, srule: dict) -> tuple[float, str]:
+    """``(value, detail)`` of the seriousness facet for one work.
+
+    ``detail``: ``registry:<r>``, ``tier_c``, ``tier_unknown`` (switch (c)
+    ``exclude``), ``tier_<t>`` for a tier left out by ``tiers``,
+    ``publisher:<p>``, or ``""``.
     """
     excl = sorted({f["registry"] for f in parse_flags(venue["flags"]) if f["match"] != "title"}
                   & set(srule["exclude"]))
     if excl:
-        return "registry:" + excl[0]
+        return 0.0, "registry:" + excl[0]
     tier = venue["tier_ngo_in_b"] if srule["ngo_research_in_b"] else venue["tier_ngo_not_b"]
-    if tier == "unknown":
-        if srule["no_venue"] == "exclude":
-            return "tier_unknown"
-    elif tier not in srule["tiers"]:
-        return "tier_c"
+    if tier == "unknown" and srule["no_venue"] == "exclude":
+        return 0.0, "tier_unknown"
+    if tier != "unknown" and tier not in srule["tiers"]:
+        return 0.0, f"tier_{tier.lower()}"
     if venue.get("publisher_flag") in srule["drop_publishers"]:
-        return "publisher:" + venue["publisher_flag"]
-    return ""
+        return 0.0, "publisher:" + venue["publisher_flag"]
+    value = float(srule["tier_mu"][tier])
+    return value, "tier_c" if tier == "C" and not value else ""
+
+
+def icf_of(row: dict, mrule: dict) -> tuple[float | None, str]:
+    if row["status"] in ICF_PENDING:
+        return None, row["status"]
+    return mrule["icf"][ICF_STATUS[row["status"]]], row["status"]
+
+
+def discipline_value(contrib: str, mrule: dict) -> float | None:
+    if not contrib:
+        return None
+    return mrule["discipline"]["unsure" if contrib in DISCIPLINE_AS_UNSURE else contrib]
+
+
+def evaluate(values: list[tuple[str, float | None, str]], alpha: float) -> dict:
+    """Membership, attaining facet and reason from ``(facet, value, detail)`` in order."""
+    graded, pending = [], ""
+    for name, value, detail in values:
+        if value is None:
+            pending = name
+            break
+        graded.append((name, value, detail))
+        if value == 0:
+            break
+    mu = min(v for _, v, _ in graded) if graded else None
+    first = next(((n, d) for n, v, d in graded if v == mu), ("", ""))
+    if mu is not None and mu < alpha:
+        reason, detail = f"{first[0]}_excluded", first[1]
+    elif pending:
+        reason, detail = f"{pending}_pending", ""
+    else:
+        reason, detail = "included", ""
+    return {"mu": mu, "mu_facet": first[0], "mu_complete": not pending or reason.endswith(
+        "_excluded"), "rel_reason": reason, "rel_reason_detail": detail,
+        "graded": {n for n, _, _ in graded}}
+
+
+# ── Discipline rows ──────────────────────────────────────
 
 
 def _match_dimensions(pool: list[dict], dims: list[dict]) -> dict:
@@ -131,25 +206,23 @@ def discipline_of(row: dict, dims: list[dict]) -> tuple[dict | None, int, bool]:
     forward = [d for d in dims if d["stage"] == "2" and row["stage2_run_id"]
                and (d["model"], d["run_id"]) == (row["stage2_model"], row["stage2_run_id"])]
     catchup = [d for d in dims if d["stage"] == "catchup"]
-    pool = forward or catchup
-    win = pool[-1] if pool else None
-    return win, len(dims) - (win is not None), len({d["contrib"] for d in pool}) > 1
+    cands = forward or catchup
+    win = cands[-1] if cands else None
+    return win, len(dims) - (win is not None), len({d["contrib"] for d in cands}) > 1
 
 
-def _reason(row: dict) -> tuple[str, str]:
-    if row["rel_included"] != "true":
-        return ("icf_pending" if row["status"] in ICF_PENDING else "icf_excluded"), row["status"]
-    if not row["discipline_source"]:
-        return "discipline_pending", ""
-    if row["contrib"] == "no":
-        return "discipline_excluded", row["discipline_field"]
-    if row["seriousness"]:
-        return "seriousness_excluded", row["seriousness"]
-    return "included", ""
+# ── The view ─────────────────────────────────────────────
+
+
+def _facet_values(row: dict, venue: dict, srule: dict, mrule: dict) -> list:
+    s_val, s_detail = seriousness_of(venue, srule)
+    i_val, i_detail = icf_of(row, mrule)
+    return [("seriousness", s_val, s_detail), ("icf", i_val, i_detail),
+            ("discipline", discipline_value(row["contrib"], mrule), row["discipline_field"])]
 
 
 def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
-           srule: dict) -> dict:
+           srule: dict, mrule: dict) -> dict:
     """Add ``VIEW_COLUMNS`` to the view rows (pool order, as ``build_view`` returns
     them); return a summary. A pool work missing from ``venues`` is refused: the
     venue table is stale (``make rel-venues``).
@@ -176,13 +249,17 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
             "venue_key": venue.get("venue_key", ""),
             "tier": venue["tier_ngo_in_b"] if srule["ngo_research_in_b"] else venue["tier_ngo_not_b"],
             "publisher_flag": venue.get("publisher_flag", ""),
-            "seriousness": seriousness_of(venue, srule),
         })
-        # Flag only an unknown-venue work that switch (c) keeps.
-        row["seriousness_flag"] = ("no_venue" if row["tier"] == "unknown"
-                                   and not row["seriousness"] else "")
-        row["rel_reason"], row["rel_reason_detail"] = _reason(row)
-        row["rel_final"] = "true" if row["rel_reason"] == "included" else "false"
+        values = _facet_values(row, venue, srule, mrule)
+        ev = evaluate(values, srule["alpha"])
+        row["seriousness"] = values[0][2]
+        row["seriousness_flag"] = "no_venue" if row["tier"] == "unknown" and values[0][1] else ""
+        for name, value, _ in values:
+            row[f"mu_{name}"] = _fmt(value) if name in ev["graded"] else ""
+        row.update({k: ev[k] for k in ("mu_facet", "rel_reason", "rel_reason_detail")})
+        row["mu"] = _fmt(ev["mu"])
+        row["mu_complete"] = "true" if ev["mu_complete"] else "false"
+        row["rel_final"] = "true" if ev["rel_reason"] == "included" else "false"
     assign_families(rows)
     return {"dimension_rows": len(dims),
             "dimension_rows_matched": sum(len(v) for v in by_work.values()),
@@ -190,17 +267,31 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
             "works_with_disagreeing_dimension_rows": conflicts}
 
 
+def _fmt(value: float | None) -> str:
+    return "" if value is None else f"{value:g}"
+
+
+def _rank(r: dict) -> tuple:
+    """Sort key of a family member: final members by mu, then furthest along."""
+    reason = r["rel_reason"]
+    cls = 0 if reason == "included" else 1 if reason.endswith("_pending") else 2
+    facet = FACETS.index(reason.rsplit("_", 1)[0]) if cls else 0
+    return (cls, -facet, -float(r["mu"] or 0), not rv._is_article(r["pool_doc_type"]),
+            r["year"] or "9999", r["work_key"])
+
+
 def assign_families(rows: list[dict]) -> None:
-    """``rel_family_id``: the representative of each family under ``FAMILY_RANK``."""
+    """``rel_family_id``: the representative of each family (module docstring)."""
     groups = defaultdict(list)
     for row in rows:
         groups[row["family_id"]].append(row)
     for members in groups.values():
-        rep = min(members, key=lambda r: (FAMILY_RANK[r["rel_reason"]],
-                                          not rv._is_article(r["pool_doc_type"]),
-                                          r["year"] or "9999", r["work_key"]))
+        rep = min(members, key=_rank)
         for r in members:
             r["rel_family_id"] = rep["work_key"]
+
+
+# ── Counts ───────────────────────────────────────────────
 
 
 def _split(rows, key):
@@ -219,21 +310,24 @@ def reason_counts(rows: list[dict]) -> dict:
     by = defaultdict(list)
     for r in rows:
         by[r["rel_reason"]].append(r)
-    pending = by["discipline_pending"]
     included = by["included"]
     return {
+        "facet_order": FACETS,
         "works": {k: len(by[k]) for k in REASONS},
         "families": {k: sum(r["rel_reason"] == k for r in fam_rows) for k in REASONS},
-        "icf_excluded_by_status": _split(by["icf_excluded"], "rel_reason_detail"),
-        "icf_pending_by_status": _split(by["icf_pending"], "rel_reason_detail"),
-        "discipline_excluded_by_field": _split(by["discipline_excluded"], "discipline_field"),
-        "discipline_excluded_by_source": _split(by["discipline_excluded"], "discipline_source"),
-        "discipline_pending_by_seriousness": dict(sorted(Counter(
-            (r["seriousness"].split(":")[0] or "pass") for r in pending).items())),
-        "discipline_pending_no_venue_flagged_works": sum(
-            r["seriousness_flag"] == "no_venue" for r in pending),
-        "seriousness_excluded_by_detail": _split(by["seriousness_excluded"],
-                                                 "rel_reason_detail"),
+        "seriousness_excluded_by_detail_works": _split(by["seriousness_excluded"],
+                                                       "rel_reason_detail"),
+        "icf_excluded_by_status_works": _split(by["icf_excluded"], "rel_reason_detail"),
+        "icf_pending_by_status_works": _split(by["icf_pending"], "status"),
+        "icf_pending_by_tier_works": _split(by["icf_pending"], "tier"),
+        "discipline_excluded_by_field_works": _split(by["discipline_excluded"],
+                                                     "discipline_field"),
+        "discipline_excluded_by_source_works": _split(by["discipline_excluded"],
+                                                      "discipline_source"),
+        "discipline_pending_by_tier_works": _split(by["discipline_pending"], "tier"),
+        "discipline_pending_by_mu_works": _split(by["discipline_pending"], "mu"),
+        "included_by_mu_works": _split(included, "mu"),
+        "included_mu_weighted_works": sum(float(r["mu"]) for r in included),
         "included_by_tier_works": _split(included, "tier"),
         "included_by_publisher_flag_works": dict(sorted(Counter(
             r["publisher_flag"] for r in included if r["publisher_flag"]).items())),
@@ -241,8 +335,23 @@ def reason_counts(rows: list[dict]) -> dict:
             [r for r in included if r["discipline_flag"]], "discipline_flag"),
         "included_icf_unsure_flagged_works": sum(r["rel_flag"] == "unsure" for r in included),
         "included_no_venue_flagged_works": sum(r["seriousness_flag"] == "no_venue"
-                                              for r in included),
+                                               for r in included),
     }
+
+
+def stage2_skip(rows: list[dict]) -> dict:
+    """ICF-pending works by tier: those whose seriousness is 0 need no ICF screening."""
+    out = {}
+    for status in sorted(ICF_PENDING):
+        rs = [r for r in rows if r["status"] == status]
+        out[status] = {"by_tier": _split(rs, "tier"),
+                       "skippable_seriousness_0": sum(
+                           r["rel_reason"] == "seriousness_excluded" for r in rs),
+                       "to_screen": sum(r["rel_reason"] == "icf_pending" for r in rs)}
+    return out
+
+
+# ── Sensitivity ──────────────────────────────────────────
 
 
 def _scenarios(base: dict) -> list[tuple[str, dict]]:
@@ -260,25 +369,26 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
     return out
 
 
-def sensitivity(rows: list[dict], venues: dict, base: dict) -> list[dict]:
-    """REL included set under each seriousness setting (ICF and discipline fixed).
+def sensitivity(rows: list[dict], venues: dict, base: dict, mrule: dict) -> list[dict]:
+    """REL under each seriousness setting, ICF and discipline values fixed.
 
-    Works and families (family groups of the view: a family is in when any
-    member is). Under switch (c) ``keep_flagged``, ``tier_a_only`` still keeps
-    the works of tier ``unknown`` (their tier is not known to be B or C); the
-    ``no_venue_flipped`` row shows them excluded. ``discipline_pending_*``: works still awaiting the discipline
-    test whose venue passes the setting, the provisional upper bound.
+    Every work is re-evaluated (seriousness comes first, so a setting moves
+    works between every reason). Works and families (a family is in when any
+    member is); ``included_mu_weighted``: the sum of ``mu`` over the included
+    works. ``discipline_pending_*``: works whose only missing facet is
+    discipline, the provisional upper bound while 1842 has not run. Under
+    switch (c) ``keep_flagged``, ``tier_a_only`` still keeps the works of tier
+    ``unknown``; the ``no_venue_flipped`` row shows them excluded.
     """
     out = []
     for name, srule in _scenarios(base):
         inc, pend = [], []
         for r in rows:
-            if r["rel_reason"] in ("included", "seriousness_excluded"):
-                if not seriousness_of(venues[r["work_key"]], srule):
-                    inc.append(r)
-            elif r["rel_reason"] == "discipline_pending":
-                if not seriousness_of(venues[r["work_key"]], srule):
-                    pend.append(r)
+            ev = evaluate(_facet_values(r, venues[r["work_key"]], srule, mrule), srule["alpha"])
+            if ev["rel_reason"] == "included":
+                inc.append((r, ev["mu"]))
+            elif ev["rel_reason"] == "discipline_pending":
+                pend.append(r)
         out.append({
             "scenario": name,
             "exclude_registries": ";".join(srule["exclude"]),
@@ -287,7 +397,8 @@ def sensitivity(rows: list[dict], venues: dict, base: dict) -> list[dict]:
             "drop_publishers": ";".join(srule["drop_publishers"]),
             "no_venue": srule["no_venue"],
             "included_works": len(inc),
-            "included_families": len({r["family_id"] for r in inc}),
+            "included_families": len({r["family_id"] for r, _ in inc}),
+            "included_mu_weighted": _fmt(sum(mu for _, mu in inc)),
             "discipline_pending_works": len(pend),
             "discipline_pending_families": len({r["family_id"] for r in pend}),
         })
