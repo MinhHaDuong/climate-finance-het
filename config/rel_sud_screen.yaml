@@ -68,7 +68,7 @@ prompt_template: |
 
 # Design B stage 1 through OpenRouter (ticket 1733, author decision of
 # 2026-10-01; scripts/corpus_icf_stage1_designb.py). Two labellers per work;
-# the drop rule (both "out", the classifier with P(out) >= 0.95) lives in
+# the drop rule (both "out", the classifier with P(out) >= 0.90) lives in
 # config/rel_screen.yaml (stage1_joint).
 designb:
   # The LLM gets the prompt above with the pipe answer format of `local`
