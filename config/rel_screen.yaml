@@ -51,10 +51,14 @@ stage2_labels: [icf, unsure, aux]
 # only when EVERY verdict is out; one verdict that sends it on is enough, in
 # either order: a later single "out" does not override a design-B pass, nor
 # a later design-B drop a single-labeller pass (_rel_view.work_status).
+# Author decision of 2026-10-06 (ticket 1733): threshold lowered from 0.95 to
+# 0.90. Calibration against Opus on 4,887 t1530 works (~/rel_pool_runs/
+# 2026-10-06-calibration-opus): 0 of 2,471 icf and 4 of 1,798 aux lost at 0.90
+# (0 and 1 at 0.95); 148 works dropped instead of 99.
 stage1_joint:
   llm_models: [google/gemma-4-26b-a4b-it]
   classifier_models: [typesafe/jev-1.13-20260917]
-  classifier_p_out_min: 0.95
+  classifier_p_out_min: 0.90
 
 # Exit rule for works still "unsure" after stage 2 (author decision of
 # 2026-09-30, recall first): true keeps them in REL, flagged (rel_flag unsure)

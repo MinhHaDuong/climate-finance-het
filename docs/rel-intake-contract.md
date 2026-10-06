@@ -213,7 +213,7 @@ local Qwen run takes get stage 1 by design B (author decision of 2026-10-01,
 `scripts/corpus_icf_stage1_designb.py`, imported with `corpus_icf_import.py
 stage1-designb`): two stage-1 rows per work, Gemma 4 and the Jev D1
 classifier, and the work leaves only when both say `out` with Jev's P(out) at
-least 0.95 (`stage1_joint` in `config/rel_screen.yaml`). Both rows carry
+least 0.90 (`stage1_joint` in `config/rel_screen.yaml`). Both rows carry
 `labeller=llm`, the served model id, `machine=openrouter/<provider>` and the
 same `run_id`; the Jev row's `why` starts with `p_out=<P(out)>` at full
 precision. The view shows such a decision in its `stage1_joint` column
