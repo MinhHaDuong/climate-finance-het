@@ -96,7 +96,10 @@ def _labels(d, name):
 
 
 LLM5 = {1: "out", 2: "out", 3: "aux", 4: "out", 5: "icf"}
-CLF5 = {1: ("out", 0.99), 2: ("out", 0.94), 3: ("out", 0.99), 4: ("aux", 0.10), 5: ("icf", 0.0)}
+with open(os.path.join(ROOT, "config", "rel_screen.yaml"), encoding="utf-8") as _fh:
+    P_MIN = yaml.safe_load(_fh)["stage1_joint"]["classifier_p_out_min"]
+BELOW = round(P_MIN - 0.01, 4)  # a "out" classifier verdict just under the configured threshold
+CLF5 = {1: ("out", 0.99), 2: ("out", BELOW), 3: ("out", 0.99), 4: ("aux", 0.10), 5: ("icf", 0.0)}
 
 
 def test_both_labellers_label_every_work_and_the_summary_previews_design_b(tmp_path):
@@ -106,10 +109,10 @@ def test_both_labellers_label_every_work_and_the_summary_previews_design_b(tmp_p
     assert db.run(cfg, screen, args, post=router, sleep=lambda s: None) == 0
     llm, clf = _labels(args.output_dir, "llm"), _labels(args.output_dir, "classifier")
     assert {k: v["label"] for k, v in llm.items()} == {f"openalex:W{i}": l for i, l in LLM5.items()}
-    assert clf["openalex:W2"]["p_out"] == 0.94 and clf["openalex:W1"]["model"] == JEV
+    assert clf["openalex:W2"]["p_out"] == BELOW and clf["openalex:W1"]["model"] == JEV
     assert llm["openalex:W1"]["provider"] == "NextBit" and llm["openalex:W1"]["why"] == "why 1"
     s = json.loads(open(os.path.join(args.output_dir, "summary.json")).read())
-    # only W1 has both "out" with P >= 0.95; W2 (0.94), W3, W4 disagree
+    # only W1 has both "out" with P >= the threshold; W2 (just below), W3, W4 disagree
     assert (s["labelled_both"], s["designb_stage1_out"], s["designb_to_stage2"]) == (5, 1, 4)
     assert s["llm_out_classifier_below_threshold"] == 2
     assert s["spent_usd"] == pytest.approx(3 * 0.0004 + 5 * 0.00003)
@@ -243,7 +246,7 @@ def test_run_import_view_end_to_end(tmp_path):
     view, _ = rv.build_view(pool, ics.read_table(table), window, rv.screen_rule(screen))
     assert {r["work_key"]: r["status"] for r in view} == {
         "openalex:W1": "stage1_out",        # both out, P 0.99
-        "openalex:W2": "pending_stage2",    # both out, P 0.94
+        "openalex:W2": "pending_stage2",    # both out, P just below the threshold
         "openalex:W3": "pending_stage2",    # LLM aux
         "openalex:W4": "pending_stage2",    # classifier aux
         "openalex:W5": "pending_stage2"}

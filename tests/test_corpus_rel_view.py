@@ -309,13 +309,16 @@ def _pair(llm_label, clf_label, p_out, run_id="designB-1", wk="openalex:W1", why
 
 def test_config_declares_the_design_b_rule():
     assert RULE["stage1_joint"] == {"llm_models": [GEMMA], "classifier_models": [JEV],
-                                    "classifier_p_out_min": 0.95}
+                                    "classifier_p_out_min": 0.90}
+
+
+P_MIN = RULE["stage1_joint"]["classifier_p_out_min"]
 
 
 @pytest.mark.parametrize("llm, clf, p_out, status", [
-    ("out", "out", 0.97, "stage1_out"),        # both out, P above the threshold
-    ("out", "out", 0.95, "stage1_out"),        # the threshold itself drops
-    ("out", "out", 0.94, "pending_stage2"),    # Jev out but P(out) 0.94
+    ("out", "out", 0.99, "stage1_out"),        # both out, P above the threshold
+    ("out", "out", P_MIN, "stage1_out"),       # the threshold itself drops
+    ("out", "out", round(P_MIN - 0.01, 4), "pending_stage2"),  # Jev out but P(out) just under
     ("out", "aux", 0.40, "pending_stage2"),    # only the LLM says out
     ("aux", "out", 0.99, "pending_stage2"),    # only the classifier says out
     ("icf", "icf", 0.00, "pending_stage2"),
@@ -387,9 +390,9 @@ def test_the_shown_stage1_verdict_is_the_latest_that_passes():
 
 
 def test_p_out_just_under_the_threshold_never_rounds_onto_it():
-    # 0.94995 rounded to 4 decimals would be 0.9500 and drop the work.
-    assert rv.work_status(_pair("out", "out", 0.94995), RULE)["status"] == "pending_stage2"
-    assert rv.work_status(_pair("out", "out", 0.95), RULE)["status"] == "stage1_out"
+    # P_MIN - 5e-5 rounded to 4 decimals would be P_MIN and drop the work.
+    assert rv.work_status(_pair("out", "out", P_MIN - 0.00005), RULE)["status"] == "pending_stage2"
+    assert rv.work_status(_pair("out", "out", P_MIN), RULE)["status"] == "stage1_out"
 
 
 @pytest.mark.parametrize("why, p", [("p_out=0.97", 0.97), ("p_out=9.5e-01", 0.95),
