@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-10-01T10:00Z HDMX-coding-agent created
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 2026-10-01T07:01Z HDMX-coding-agent note parse writes ICF rows to icf_screen and the REL view takes the last stage-2 row: the catch-up must write through a dimensions-only path or under a distinct stage, never as stage 2 (Agent C, PR 1652); no dimensions-only mode yet, its format depends on the method chosen here; exit criterion added
+2026-10-07T11:09Z HDMX-coding-agent note 2026-10-07: the population changed since this ticket was written. Stage 2 was judged by GPT-6.1 Sol in the v1 pipe format, with no discipline fields: the 158,636 works labelled have none. The catch-up now concerns the final icf and unsure that have an abstract (about 9,701 icf and 114 unsure; the 2,281 icf and 5,141 unsure without abstract are bibliometric only, ticket 1733), not only the ~4,952 Opus rows; the judge decision is recorded in 1733
 --- body ---
 ## Context
 Child of 1830. The works reread at stage 2 before 1840 lack the discipline fields. Method and cost proposed before any spend; USD 2 ceiling without agreement. Candidates: Jev pass with decomposed questions (design of the Jev pilot archive 2026-09-30), or the discipline questions of the 1840 prompt alone.
