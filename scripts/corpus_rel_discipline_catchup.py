@@ -16,6 +16,11 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
     ``chunkNN.ids.json``, ``works.csv``, ``build.json`` with the counts), then
     rendered. Refused when ``rel_dimensions`` is missing although
     ``icf_screen`` holds version-2 stage-2 rows (the table was lost, not empty).
+    With ``--keys FILE`` (one work key per line), the validation mode: exactly
+    those works, in that order, with no label or dimension selection (the gold
+    set of ticket 1840); refused when a key is absent from the pool, repeated,
+    or has no abstract. ``build.json`` then records kind ``keys`` and the file's
+    hash.
 
 ``render``
     Writes ``chunkNN.prompt.txt`` (the wrapper with the chunk's records) next
@@ -70,7 +75,7 @@ price when the response carries no cost), cost per answered record. The model
 is a parameter everywhere: the catch-up must use the model forward stage 2 uses.
 
 Usage:
-    python scripts/corpus_rel_discipline_catchup.py build --output-dir DIR
+    python scripts/corpus_rel_discipline_catchup.py build --output-dir DIR [--keys FILE]
     python scripts/corpus_rel_discipline_catchup.py render --chunk-dir DIR
     python scripts/corpus_rel_discipline_catchup.py count-tokens --chunk-dir DIR
     python scripts/corpus_rel_discipline_catchup.py submit --chunk-dir DIR --model M \\
@@ -137,6 +142,18 @@ def select_catchup(view_rows: list[dict], final_labels: list[str], with_dims: se
     return {"keys": [k for k, _ in picked], "eligible": len(eligible),
             "no_abstract": len(eligible) - len(with_abstract),
             "already_with_dimensions": len(with_abstract) - len(picked), "by_label": by_label}
+
+
+def select_keys(pool: list[dict], keys: list[str]) -> list[dict]:
+    """Pool rows of ``keys``, in order; refused for a key absent, repeated or without abstract."""
+    by_key = {p["work_key"]: p for p in pool}
+    missing = [k for k in keys if k not in by_key]
+    repeated = sorted({k for k in keys if keys.count(k) > 1})
+    no_abstract = [k for k in keys if k in by_key and not (by_key[k]["abstract"] or "").strip()]
+    if missing or repeated or no_abstract or not keys:
+        raise CatchupError(f"keys refused: {len(keys)} keys, missing {missing[:5]}, repeated "
+                           f"{repeated[:5]}, without abstract {no_abstract[:5]}; nothing built")
+    return [by_key[k] for k in keys]
 
 
 def dimension_rows(table: str, dims_table: str, v2_prompt: str) -> list[dict]:
@@ -510,6 +527,8 @@ def _parser() -> argparse.ArgumentParser:
     # rendered prompts into one directory; the other commands read and write
     # next to them in that --chunk-dir.
     sub.add_parser("build").add_argument("--output-dir", required=True)
+    sub.choices["build"].add_argument("--keys", default=None,
+                                      help="validation mode: these work keys, in order")
     for name in ("render", "count-tokens", "submit", "collect", "call", "parse"):
         sub.add_parser(name).add_argument("--chunk-dir", required=True)
     sub.choices["count-tokens"].add_argument("--count-model", default="claude-opus-5-5")
@@ -536,8 +555,23 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _build_keys(args, cfg: dict, prompt: str, pool_path: str) -> None:
+    with open(args.keys, encoding="utf-8") as fh:
+        keys = [ln.strip() for ln in fh if ln.strip()]
+    works = select_keys(rv.read_pool(pool_path), keys)
+    manifest = {"kind": "keys", "keys": args.keys, "keys_sha256": rv.sha256_file(args.keys),
+                "pool": os.path.basename(pool_path), "pool_sha256": rv.sha256_file(pool_path),
+                "prompt": prompt, "prompt_sha256": ics.stage2_prompt_sha256(prompt)}
+    names = ch.write_chunks(args.output_dir, works, cfg["stage2"], manifest)
+    render(args.output_dir, prompt)
+    log.info("build --keys: %d works in %d chunks under %s", len(works), len(names),
+             args.output_dir)
+
+
 def _build(args, cfg: dict, prompt: str, dims_table: str) -> None:
     pool_path, table = args.pool or cfg["pool"], args.table or cfg["table"]
+    if getattr(args, "keys", None):
+        return _build_keys(args, cfg, prompt, pool_path)
     ics.require_table(table)
     with_dims = {r["work_key"] for r in dimension_rows(table, dims_table, cfg["stage2"]["prompt"])}
     rule = rv.screen_rule(cfg)

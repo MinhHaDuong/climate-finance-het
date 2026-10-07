@@ -203,6 +203,34 @@ def test_build_sends_no_work_without_abstract(tmp_path, monkeypatch):
     assert (build["works"], build["no_abstract"]) == (1, 2)
 
 
+def test_build_keys_chunks_the_listed_works_in_order(tmp_path, monkeypatch):
+    """Gold-input mode: the listed works, in the listed order, no label selection."""
+    pool = [_work(1), _work(2), _work(3), {**_work(4), "abstract": ""}]
+    monkeypatch.setattr(cc.rv, "read_pool", lambda path: pool)
+    monkeypatch.setattr(cc.rv, "sha256_file", lambda path: "x")
+    monkeypatch.setattr(ch, "view", _boom)
+    keys = tmp_path / "keys.txt"
+    keys.write_text("openalex:W3\nopenalex:W1\n")
+    out = tmp_path / "gold"
+    args = type("A", (), {"pool": "p", "table": "t", "output_dir": str(out),
+                          "keys": str(keys)})()
+    cfg = {"stage2": {**S2CFG, "prompt": V2_PROMPT},
+           "catchup": {"final_labels": ["icf", "unsure"]}}
+    cc._build(args, cfg, CATCHUP_PROMPT, "d")
+    assert json.loads((out / "chunk01.ids.json").read_text()) == ["openalex:W3", "openalex:W1"]
+    build = json.loads((out / "build.json").read_text())
+    assert (build["kind"], build["works"]) == ("keys", 2)
+    assert build["keys_sha256"] == cc.rv.sha256_file(str(keys))
+    assert json.loads((out / "render.json").read_text())["prompt_sha256"] == \
+        ics.stage2_prompt_sha256(CATCHUP_PROMPT)
+    for bad in ("openalex:W9\n", "openalex:W1\nopenalex:W1\n", "openalex:W4\n"):
+        keys.write_text(bad)
+        args.output_dir = str(tmp_path / f"bad{len(bad)}")
+        with pytest.raises(cc.CatchupError):
+            cc._build(args, cfg, CATCHUP_PROMPT, "d")
+        assert not os.path.exists(args.output_dir)
+
+
 def test_render_fills_the_records(chunks):
     text = (chunks / "chunk01.prompt.txt").read_text(encoding="utf-8")
     assert "{records}" not in text and "1. [en | 2020 | ? | affiliations: ?]" in text
