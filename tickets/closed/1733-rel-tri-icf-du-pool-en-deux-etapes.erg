@@ -2,6 +2,7 @@
 Title: REL — two-stage ICF screening of the pool and Fable audit of stage 2
 Created: 2026-09-30
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1708
 
 --- log ---
 2026-09-30T08:00Z HDMX-coding-agent created
@@ -24,6 +25,8 @@ Author: HDMX-coding-agent
 2026-10-07T09:52Z HDMX-coding-agent note provenance 2026-10-07: the one-off scripts that produced the stage-2 labels, audits and registers are copied beside their outputs in rel_pool_runs/2026-10-07-code-snapshot (63 files, MANIFEST.sha256, README mapping script to artifact); they are not repository code and were only in the session scratchpad, outside the nightly backup; rel_pool_runs itself is under the backed-up home (next snapshot 02:30, today's outputs not in one yet); commit them to the repo only if the author decides so
 2026-10-07T11:09Z HDMX-coding-agent note 2026-10-07: filed 1995 as the child that carries the import of the design-B stage-1 run, the 72 exclusion rows and the stage-2 labels into icf_screen; the open items of this checkpoint are 1995 (import), 1842 (discipline, scope updated), 1843 (no_abstract facet), and the PRs 1660 and 1662
 2026-10-07T20:12Z HDMX-coding-agent note 2026-10-07 (closing the written state): the exit criterion 'Fable audit of a stage-2 sample, agreement measured' is set aside by author decision of 2026-10-07 ('on arrête de vérifier les vérifications et les échantillonnages'); it is NOT measured and stays unticked, superseded by that decision. The only kappa on file is Fable 5.1 on 300 of Sol's labels before the Fable and Opus corrections of the unsure works: ICF vs non-ICF 0.810 weighted (0.853 sample), four labels 0.549 weighted (0.611 sample); it predates the corrections and is cited as is. Final pool counts after stage 2 and corrections (derived from the REL view, tickets 1995 and 1843): icf 14,452, aux 94,060, out 49,683, unsure 5,400, pending stage 2 296, unscreened 59; stage 2 done for 158,636 works. Open on this ticket: the other exit criteria
+2026-10-07T20:18Z HDMX-coding-agent note integration check 2026-10-07: children 1995 (PR 1703), 1842, 1843 closed; view rebuilt from main: icf 14,452, aux 94,060, out 49,683, unsure 5,400, pending 296, unscreened 59 (stage1_out 225,341), reasons as in 1830; equal to conception/rel-prisma-flux-provisoire.md. Fable audit criterion set aside by author decision of 2026-10-07, NOT measured (marked [~]). Note: 1995 was autoclosed with its six criteria still unticked although the import is done; left as written. Closed by the PR that carries this entry
+2026-10-07T20:21Z HDMX-coding-agent closed — autoclosed — PR #1708
 --- body ---
 ## Context
 
@@ -52,7 +55,7 @@ those Qwen labels will show as not-in-pool residue in the view; importing
 either Qwen run against the current pool needs `--allow-input-drift`.
 
 ## Exit criteria
-- [ ] Stage 1 on all unlabelled works of the pool, machine and run recorded
-- [ ] Stage 2 on the stage-1 "icf", "incertaine" and "proche"
-- [ ] Fable audit of a stage-2 sample, agreement measured — set aside by author decision of 2026-10-07, not measured (see log); the only kappa on file predates the corrections
-- [ ] REL view counts published from the table, with the run identifier
+- [x] Stage 1 on all unlabelled works of the pool, machine and run recorded (imported by 1995, PR 1703, icf_screen sha256 c6fae914; residue: 59 title-less works unscreened, accepted 2026-10-01; view rebuilt 2026-10-07: stage1_out 225,341, unscreened 59)
+- [x] Stage 2 on the stage-1 "icf", "incertaine" and "proche" (158,636 works; 296 left unlabelled, accepted residue; pool-wide icf 14,452, aux 94,060, out 49,683, unsure 5,400, reproduced by the view rebuild of 2026-10-07)
+- [~] Fable audit of a stage-2 sample, agreement measured — set aside by author decision of 2026-10-07, not measured (see log); the only kappa on file predates the corrections
+- [x] REL view counts published from the table, with the run identifier (data/rel_pool/rel_counts.json records the sha256 of pool 3e07852b and table c6fae914; PRISMA conception/rel-prisma-flux-provisoire.md matches the rebuild)
