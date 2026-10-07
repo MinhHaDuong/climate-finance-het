@@ -210,7 +210,7 @@ def test_agree_rule_keeps_icf_only_when_the_check_agrees(tmp_path):
                               "fable-run", "rule-run", "2026-10-07T08:52:43Z")
     (r,) = rows
     assert (r["work_key"], r["label"], r["labeller"], r["model"], r["run_id"]) == (
-        "doi:10.1/a", "unsure", "human", "author-decision", "rule-run")
+        "doi:10.1/a", "unsure", "llm", "rule:fable-opus-agree", "rule-run")
     assert r["prompt_sha256"] == hashlib.sha256(ci.AGREE_RULE.encode()).hexdigest()
     assert r["doc_type"] == "institutional" and r["studied_country"] == "global"
     assert "claude-opus-5.5 aux" in r["why"] and r["source"] == "opus-check/opus.json"

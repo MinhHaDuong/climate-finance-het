@@ -380,6 +380,7 @@ _ANSWER = re.compile(r"^(\d+)\|")
 AGREE_RULE = ("Author decision 2026-10-07 (ticket 1733): a work the relabelling run labelled icf "
               "stays icf only when the check model also labels it icf; otherwise it is unsure, "
               "kept in REL and flagged.")
+RULE_MODEL = "rule:fable-opus-agree"
 
 
 def pool_by_key(pool_path: str) -> dict:
@@ -524,8 +525,9 @@ def agree_rule_rows(checks_path: str, check_model: str, table_rows: list[dict],
     relabelling run (``relabel_run_id``, already in the table) labelled icf,
     and on no other. Each work gets one row, ``icf`` when the check says icf,
     ``unsure`` otherwise; the check's own label is in ``why``. Author decision
-    applied mechanically: ``labeller`` human, ``model`` author-decision,
-    ``prompt_sha256`` the hash of the rule text; doc type and country are the
+    applied mechanically to model labels: ``labeller`` llm, ``model``
+    ``RULE_MODEL`` (the rule, not a served model), ``prompt_sha256`` the hash
+    of the rule text; doc type and country are the
     relabelling row's. Refused unless the relabelling row is each work's latest
     stage-2 row (the rule decides on top of it).
     """
@@ -550,7 +552,7 @@ def agree_rule_rows(checks_path: str, check_model: str, table_rows: list[dict],
         label = "icf" if checks[key] == "icf" else "unsure"
         rows.append({k: base[k] for k in ("work_key", "openalex_id", "doi", "title_norm_year",
                                           "doc_type", "studied_country")}
-                    | {"stage": "2", "labeller": "human", "model": "author-decision",
+                    | {"stage": "2", "labeller": "llm", "model": RULE_MODEL,
                        "prompt_sha256": sha, "run_id": run_id, "machine": "padme",
                        "label": label, "labelled_at": labelled_at, "source": source,
                        "why": f"{base['model'].rsplit('/', 1)[-1]} icf, {short} {checks[key]}: "
