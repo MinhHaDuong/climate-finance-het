@@ -17,6 +17,7 @@ Blocked-by: 1842
 2026-10-06T22:23Z HDMX-coding-agent note author decision 2026-10-07: the fuzzy-set view carries a no_abstract facet (bibliometric only, outside the synthesis tier); register and counts in ticket 1733
 2026-10-07T13:18Z HDMX-coding-agent note 2026-10-07: rebased on main 083630e4 (stage-2 import 1995, PR 1660); no_abstract facet added (blank abstract after trimming, as the 1842 build; register of 2026-10-07 is a subset, the rule adds 785 icf/unsure works of other runs); view refilled: seriousness 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 14,173 (5,894 without abstract), included 0 by construction until 1842 writes rel_dimensions; stays open, Blocked-by 1842
 2026-10-07T13:41Z HDMX-coding-agent note verify-reroll — round 1: sensitivity() counts a mixed family in both included_families and discipline_pending_families (_rel_reasons.py:459,462; _in_window)
+2026-10-07T20:12Z HDMX-coding-agent note 2026-10-07 closing: discipline counts are final since 1842 wrote rel_dimensions (11,645 works): discipline_excluded 780 (upper bound), discipline_pending 5,894 (all no_abstract), included 7,499; written into conception/rel-prisma-flux-provisoire.md, conception/rel-audit-finalisation-corpus.md and docs/rel-intake-contract.md. The family counts, rank split and sensitivity table of the PRISMA note were not remeasured here (rerun make rel-view on padme for them)
 --- body ---
 ## Context
 Child of 1830. Closes 1830 with the integration review.
@@ -34,7 +35,7 @@ non-research pages of B sites to C (70 works). Sensitivity rows remain
 computable from the work table.
 
 ## Exit criteria
-- [x] REL view: exclusions by reason (ICF, discipline, seriousness), one count per reason, reproducible (machinery; the discipline counts are 0 by construction until 1842 writes rel_dimensions)
+- [x] REL view: exclusions by reason (ICF, discipline, seriousness), one count per reason, reproducible (machinery; discipline counts final since 1842 wrote rel_dimensions: see log of 2026-10-07)
 - [x] Sensitivity table by publisher flag and by rank
 - [x] PRISMA (`conception/rel-prisma-flux-provisoire.md`) and protocol (`conception/rel-audit-finalisation-corpus.md`) describe the two dimensions, their operational definitions and reasons
 - [x] no_abstract facet in the fuzzy-set view (author decision 2026-10-07, log above): `abstract_flag`, `rel_use` synthesis / bibliometric_only, never moving mu or the reason; counts in `reasons.no_abstract_*`

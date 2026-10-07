@@ -296,8 +296,8 @@ discipline, evaluated in that order (cheapest first) and stopped at the first
 0 or the first facet not graded yet; the crisp REL set is `mu >= alpha`
 (`rel_final`). Each work gets one reason (`rel_reason`): `<facet>_excluded`
 for the first facet attaining `mu` below alpha, `<facet>_pending` for the
-first facet not graded (`icf_pending`, `discipline_pending` while no dimension
-row exists), else `included`. Membership values: seriousness per tier and
+first facet not graded (`icf_pending`, `discipline_pending` for a work with no
+dimension row), else `included`. Membership values: seriousness per tier and
 alpha in `config/rel_venue_tiers.yaml` (decided), ICF and discipline under
 `membership` in `config/rel_screen.yaml` (proposed). The view needs
 `rel_work_venues.csv` (`make rel-venues` first), counts reasons in works and
@@ -308,10 +308,11 @@ under `inputs`, and writes `rel_sensitivity.csv`: under each seriousness
 setting (publishers dropped, tier A only, Kanalregisteret flipped, Scopus and
 DOAJ also excluding, NGO switch flipped, switch (c) flipped, switch (d)
 flipped), the included works, families and mu-weighted count, and the works
-missing only the discipline facet (`discipline_pending_*`, the informative
-column until the 1842 catch-up runs). The rules (which dimension row wins, the
+missing only the discipline facet (`discipline_pending_*`, informative for the
+works the 1842 catch-up cannot answer, those without abstract). The rules (which dimension row wins, the
 family rule) are in the `scripts/_rel_reasons.py` docstring. A work whose pool abstract is blank after trimming
 carries `abstract_flag` `no_abstract` (author decision 2026-10-07): it counts
 in the bibliometric analysis only, so `rel_use` is `bibliometric_only` for an
 included work without abstract and `synthesis` for one with an abstract; the
 flag never moves `mu`, `rel_reason` or `rel_final`.
+Final counts of 2026-10-07 (view rebuilt twice, byte-identical; measured, from the 1842 and 1843 logs): `seriousness_excluded` 39,115, `icf_excluded` 335,652, `icf_pending` 351, `discipline_pending` 5,894 (all without abstract), `discipline_excluded` 780 (an upper bound: Opus v2 tends to over-exclude applied finance), `included` 7,499; sum 389,291. `rel_dimensions.csv` holds 11,645 works.

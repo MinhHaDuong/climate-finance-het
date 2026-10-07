@@ -1,21 +1,24 @@
 # State
 
-Last updated: 2026-10-07T11:50Z
+Last updated: 2026-10-07T20:12Z
 
 ## Current goal
 
 **REL literature review — the only work on a clock, due ~2026-12-06.** 0700 tracks it; the research plan is approved (#1558).
-Stage-2 screening of the pool closed on 2026-10-07; the next step is importing its labels (1995). 0701 (article outline, revisable) and 0705 (Œconomia non-overlap) remain open.
+Stage-2 screening and the discipline catch-up are done and the REL view is final for now (7,499 included); the next step is the review itself (see below). 0701 (article outline, revisable) and 0705 (Œconomia non-overlap) remain open.
 
 ## REL workstream
 
 The dated 2025–2026 catch-up ran on OpenAlex, ISTEX and World Bank; Scopus was unavailable.
 The analytic corpus is unfrozen, with merged/refined views pinned at 33,344 works;
 annual series stop at 2025, while 2026 is partial.
-Two-stage ICF screening of the pool (1733): stage 1 (design B) is finished with the joint drop threshold at 0.90; stage 2 is done for 158,636 works (icf 11,982 / aux 92,261 / out 49,138 / unsure 5,255), with 296 works left unlabelled as accepted residue.
-Works without an abstract (icf 2,281, unsure 5,141) count in the bibliometric analysis only and are never deleted.
-**Nothing is imported into `icf_screen` yet**: ticket 1995 carries the import; the labels live in `~/rel_pool_runs` on padme, outside git.
-Open: discipline catch-up (1842), `no_abstract` facet (1843), PRs 1660 and 1662.
+Two-stage ICF screening of the pool (1733): stage 1 (design B) finished with the joint drop threshold at 0.90; stage 2 done for 158,636 works (judges: Opus for the t1530 works; Sol, then Fable and Opus on the unsure, for the rest), labels imported into `icf_screen` (1995).
+Pool-wide ICF labels: icf 14,452, aux 94,060, out 49,683, unsure 5,400, pending stage 2 296 (accepted residue), unscreened 59.
+Works without an abstract (8,207 icf or unsure) count in the bibliometric analysis only and are never deleted.
+Discipline catch-up (1842): `rel_dimensions.csv` holds 11,645 works (all icf or unsure with an abstract); gold-set contribution kappa 0.790 unweighted; cost about USD 12.3 plus an unexplained USD 0.54 key-usage rise (may rise if an abandoned Batch bills).
+REL view (1843), 389,291 works: seriousness_excluded 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 5,894 (all without abstract), discipline_excluded 780 (upper bound: Opus v2 over-excludes applied finance), included 7,499.
+The Fable audit of a stage-2 sample is set aside by author decision (1733), not measured.
+Open: 1830 and 1733 (closing).
 Then: Gavard/Schoch; DAG and independent EconLit/OpenAlex searches; 61-journal contents pilot, South/languages (including BRICS), versions and PRISMA; then map and synthesis.
 
 ## JETP migration
