@@ -51,7 +51,9 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
     id and machine given and the wrapper hash recorded by ``render``. A chunk
     with a malformed, duplicated or stage-2 line, or with no valid discipline
     value at all, refuses the whole parse; an incomplete chunk is accepted and
-    reported. A work that already has a ``rel_dimensions`` row under another
+    reported, with its ``na`` answers (no climate-finance object at all) and
+    those that put ``na`` in some but not all three fields (``na_off_rule``,
+    stored as answered). A work that already has a ``rel_dimensions`` row under another
     stage, model or run id is skipped and counted, so a second run id never
     gives a work two catch-up answers. Idempotent for one run id.
 
@@ -465,8 +467,10 @@ def parse_answers(chunk_dir: str, suffix: str, model: str, run_id: str, machine:
                          "unknown_dimension": sum(ics.UNKNOWN in (a["contrib"], a["field"],
                                                                   a["ctype"])
                                                   for a in answers.values()),
-                         # the wrapper offers yes/no/unsure only: na is off the rule
-                         "na_off_rule": sum(a["contrib"] == "na" for a in answers.values())}
+                         "na": sum(a["contrib"] == "na" for a in answers.values()),
+                         # the wrapper asks na in all three fields or in none
+                         "na_off_rule": sum(0 < [a["contrib"], a["field"], a["ctype"]].count("na")
+                                            < 3 for a in answers.values())}
         for key in ids:
             if key in answers:
                 a = answers[key]

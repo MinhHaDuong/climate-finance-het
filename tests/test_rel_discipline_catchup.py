@@ -139,11 +139,26 @@ def test_parse_refuses_a_malformed_chunk_and_writes_nothing(tmp_path, chunks, an
 
 
 def test_parse_counts_na_and_unknown_and_skips_fences(chunks):
+    """na is on the rule in all three fields; a partial na is counted off the rule."""
     (chunks / "chunk01.or.txt").write_text("```\n1|na|economics|policy|\n2|yes|BOGUS|case|\n```\n")
     dims, report = cc.parse_answers(str(chunks), "or", "m", "r", "d", "llm", "p", "d", "s")
     assert len(dims) == 2
-    assert report["chunk01"]["na_off_rule"] == 1 and report["chunk01"]["unknown_dimension"] == 1
+    assert (report["chunk01"]["na"], report["chunk01"]["na_off_rule"],
+            report["chunk01"]["unknown_dimension"]) == (1, 1, 1)
     assert report["chunk02"]["status"] == "no answer file"
+    (chunks / "chunk02.or.txt").write_text("1|na|na|na|no climate-finance object\n")
+    dims, report = cc.parse_answers(str(chunks), "or", "m", "r", "d", "llm", "p", "d", "s")
+    assert (report["chunk02"]["na"], report["chunk02"]["na_off_rule"]) == (1, 0)
+    assert [(d["contrib"], d["field"], d["contrib_type"]) for d in dims][2] == ("na", "na", "na")
+    assert not [e for d in dims for e in ics.validate_row(d, ics.DIMENSIONS)]
+
+
+def test_wrapper_offers_na_like_v2():
+    """Ticket 1842 log, 2026-10-01: leaving na out cost the gold kappa; offer it as v2 does."""
+    block = " ".join(ics.catchup_prompt_template(CATCHUP_PROMPT).split())
+    assert "write na in all three fields" in block
+    assert "contrib is yes, no, unsure or na" in block
+    assert "Do not re-judge that." not in block
 
 
 def test_select_catchup_takes_final_icf_and_unsure_without_dimensions():
