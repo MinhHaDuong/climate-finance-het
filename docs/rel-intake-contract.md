@@ -227,7 +227,8 @@ verdicts (Qwen rows, design-B pairs, in any order) leaves at stage 1 only
 when every verdict is `out`; one verdict that sends it to stage 2 is enough.
 The view
 counts REL in works and in work families: works linked by `version_hint` count
-once, represented by an included member, a published article first.
+once, represented by the member attaining the family's maximum membership
+(ticket 1843), a published article first on ties.
 
 Each pool work also gets a venue seriousness tier and registry flags (ticket
 1841). `make rel-venue-registries` pulls the four hard registries
@@ -288,3 +289,29 @@ decided by the author on 2026-10-01; 1843 reads them with
 Every flag, both NGO tiers, `tier_without_nonresearch` and the `unknown`
 state are written whatever the settings, so a sensitivity table can still
 show any other setting.
+
+`make rel-view` (ticket 1843) then grades every work as a member of a fuzzy
+set: its membership `mu` is the minimum over the facets seriousness, ICF and
+discipline, evaluated in that order (cheapest first) and stopped at the first
+0 or the first facet not graded yet; the crisp REL set is `mu >= alpha`
+(`rel_final`). Each work gets one reason (`rel_reason`): `<facet>_excluded`
+for the first facet attaining `mu` below alpha, `<facet>_pending` for the
+first facet not graded (`icf_pending`, `discipline_pending` while no dimension
+row exists), else `included`. Membership values: seriousness per tier and
+alpha in `config/rel_venue_tiers.yaml` (decided), ICF and discipline under
+`membership` in `config/rel_screen.yaml` (proposed). The view needs
+`rel_work_venues.csv` (`make rel-venues` first), counts reasons in works and
+in families under `reasons` in `rel_counts.json`, counts the ICF-pending works
+by tier under `stage2_skip` (those of seriousness 0 need no screening),
+records the sha256 of the pool, both append-only tables and the venue table
+under `inputs`, and writes `rel_sensitivity.csv`: under each seriousness
+setting (publishers dropped, tier A only, Kanalregisteret flipped, Scopus and
+DOAJ also excluding, NGO switch flipped, switch (c) flipped, switch (d)
+flipped), the included works, families and mu-weighted count, and the works
+missing only the discipline facet (`discipline_pending_*`, the informative
+column until the 1842 catch-up runs). The rules (which dimension row wins, the
+family rule) are in the `scripts/_rel_reasons.py` docstring. A work whose pool abstract is blank after trimming
+carries `abstract_flag` `no_abstract` (author decision 2026-10-07): it counts
+in the bibliometric analysis only, so `rel_use` is `bibliometric_only` for an
+included work without abstract and `synthesis` for one with an abstract; the
+flag never moves `mu`, `rel_reason` or `rel_final`.
