@@ -361,6 +361,36 @@ def test_collect_writes_answers_and_the_token_log(chunks, monkeypatch):
     assert calls[1]["error"] == {"message": "overloaded"}
 
 
+@pytest.mark.parametrize("last", ["2|yes|econ", "2|", "2|yes|economics|policy|"])
+def test_a_truncated_reply_drops_its_last_line(chunks, monkeypatch, last):
+    """Full run 2026-10-07: four chunks stopped at --max-tokens (finish_reason length) and
+    the cut-off last line refused the whole parse. The line where output stopped is never
+    trusted, even when it parses: a value or the reason may be cut."""
+    monkeypatch.setattr(cc, "_headers", lambda: {})
+    (chunks / "or.batch.json").write_text(json.dumps(
+        {"batch_id": "b1", "model": "m:batch", "route": "openrouter-batch",
+         "chunks": ["chunk01"], "pricing": {"prompt": 2e-6, "completion": 1e-5}}))
+    reply = f"1|yes|economics|policy|\n{last}"
+    body = {"model": "m", "choices": [{"message": {"content": reply},
+                                       "finish_reason": "length"}],
+            "usage": {"prompt_tokens": 100, "completion_tokens": 50, "cost": 0.1}}
+    batch = {"id": "b1", "status": "completed",
+             "results": [{"custom_id": "chunk01", "response": {"body": body}}]}
+
+    class Resp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return batch
+    res = cc.collect(str(chunks), "or", wait=False, get=lambda *a, **k: Resp())
+    assert res["answered"] == 1
+    assert (chunks / "chunk01.or.raw.txt").read_text() == reply, "raw reply kept whole"
+    assert (chunks / "chunk01.or.txt").read_text() == "1|yes|economics|policy|\n"
+    _, report = cc.parse_answers(str(chunks), "or", "m", "r", "x", "llm", "h", "2026-10-07", "p")
+    assert report["chunk01"]["status"] == "incomplete" and report["chunk01"]["answered"] == 1
+
+
 @pytest.mark.parametrize("reply", ["", "| n | contrib |\n|---|---|\n", "Sorry, I cannot."])
 def test_a_reply_without_answer_lines_leaves_the_chunk_pending(chunks, monkeypatch, reply):
     """Review round 3, PR 1660: an empty answer file made call skip a chunk for good."""
