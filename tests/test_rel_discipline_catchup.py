@@ -98,9 +98,12 @@ def test_parse_stamps_the_hash_of_the_rendered_wrapper(tmp_path, chunks):
         "Read-only labelling task.", "Read-only labelling task, edited."))
     (chunks / "chunk01.or.txt").write_text("1|yes|economics|policy|\n")
     dims = str(tmp_path / "rel_dimensions.csv")
-    assert cc.main(["--prompt", str(edited), "--dimensions-table", dims, "parse",
-                    "--chunk-dir", str(chunks), "--model", "m", "--run-id", "r",
-                    "--machine", "d", "--suffix", "or", "--new-table"]) == 0
+    tail = ["--dimensions-table", dims, "parse", "--chunk-dir", str(chunks), "--model", "m",
+            "--run-id", "r", "--machine", "d", "--suffix", "or", "--new-table"]
+    # PR 1704 M1: parse under another wrapper than the rendered one is refused outright
+    assert cc.main(["--prompt", str(edited)] + tail) == 1
+    assert not os.path.exists(dims)
+    assert cc.main(tail) == 0
     assert ics.read_table(dims, ics.DIMENSIONS)[0]["prompt_sha256"] == \
         ics.stage2_prompt_sha256(CATCHUP_PROMPT)
     with pytest.raises(cc.CatchupError, match="rendered with wrapper"):
@@ -108,6 +111,52 @@ def test_parse_stamps_the_hash_of_the_rendered_wrapper(tmp_path, chunks):
     (chunks / "render.json").unlink()
     with pytest.raises(cc.CatchupError, match="render.json missing"):
         cc.rendered_sha(str(chunks))
+
+
+def test_parse_refuses_a_keys_dir_into_the_default_dimensions_table(tmp_path, chunks):
+    """Reroll round 1, PR 1704: gold validation rows must not reach production rel_dimensions,
+    where drop_already_dimensioned would then skip those works in the real catch-up."""
+    build = json.loads((chunks / "build.json").read_text())
+    (chunks / "build.json").write_text(json.dumps({**build, "kind": "keys"}))
+    (chunks / "chunk01.or.txt").write_text("1|yes|economics|policy|\n")
+    default = tmp_path / "prod_dims.csv"
+    cfg = tmp_path / "cfg.yaml"
+    cfg.write_text(f"dimensions_table: {default}\ncatchup:\n  prompt: {CATCHUP_PROMPT}\n")
+    tail = ["parse", "--chunk-dir", str(chunks), "--model", "m", "--run-id", "r",
+            "--machine", "d", "--suffix", "or", "--new-table"]
+    args = cc._parser().parse_args(["--config", str(cfg)] + tail)
+    with pytest.raises(cc.CatchupError, match="kind keys"):
+        cc._parse(args, str(default))
+    assert cc.main(["--config", str(cfg)] + tail) == 1
+    assert not default.exists()
+    gold = tmp_path / "gold_dims.csv"
+    assert cc.main(["--config", str(cfg), "--dimensions-table", str(gold)] + tail) == 0
+    assert len(ics.read_table(str(gold), ics.DIMENSIONS)) == 1
+    assert not default.exists()
+
+
+@pytest.mark.parametrize("cmd", [
+    ["parse", "--model", "m", "--run-id", "r", "--machine", "d", "--suffix", "or",
+     "--new-table"],
+    ["count-tokens"],
+    ["submit", "--model", "m", "--suffix", "or", "--max-usd", "1"],
+    ["call", "--model", "m", "--suffix", "or", "--max-usd", "1"],
+])
+def test_routes_refuse_a_dir_rendered_with_another_wrapper(tmp_path, chunks, monkeypatch, cmd):
+    """Red team M1, PR 1704: a v1-rendered dir is refused before any paid call or write."""
+    monkeypatch.setattr(cc.requests, "post", _boom)
+    monkeypatch.setattr(cc.requests, "get", _boom)
+    monkeypatch.setattr(cc, "read_credential", _boom)
+    meta = json.loads((chunks / "render.json").read_text())
+    (chunks / "render.json").write_text(json.dumps({**meta, "prompt_sha256": "0" * 64}))
+    (chunks / "chunk01.or.txt").write_text("1|yes|economics|policy|\n")
+    before = sorted(os.listdir(chunks))
+    dims = tmp_path / "dims.csv"
+    with pytest.raises(cc.CatchupError, match="rendered with wrapper"):
+        cc._check_rendered(str(chunks), CATCHUP_PROMPT)
+    assert cc.main(["--dimensions-table", str(dims), cmd[0], "--chunk-dir", str(chunks)]
+                   + cmd[1:]) == 1
+    assert not dims.exists() and sorted(os.listdir(chunks)) == before
 
 
 def test_build_refuses_a_lost_dimensions_table(tmp_path):

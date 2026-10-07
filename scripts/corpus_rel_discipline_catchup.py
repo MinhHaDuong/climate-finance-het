@@ -60,7 +60,12 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
     those that put ``na`` in some but not all three fields (``na_off_rule``,
     stored as answered). A work that already has a ``rel_dimensions`` row under another
     stage, model or run id is skipped and counted, so a second run id never
-    gives a work two catch-up answers. Idempotent for one run id.
+    gives a work two catch-up answers. Idempotent for one run id. A ``build
+    --keys`` directory (kind ``keys``) is refused unless ``--dimensions-table``
+    is given explicitly, so validation rows never reach the production table.
+
+``count-tokens``, ``submit``, ``call`` and ``parse`` refuse a directory whose
+``render.json`` records another wrapper than the current one, before any call.
 
 Spend guard (``submit``, ``call``): the bound is the input tokens (measured by
 ``count-tokens`` when ``tokens.json`` exists, else characters / 3) at the
@@ -181,14 +186,8 @@ def chunk_names(chunk_dir: str) -> list[str]:
 def render(chunk_dir: str, prompt_path: str) -> list[str]:
     """``chunkNN.prompt.txt`` for every chunk, and ``render.json`` (the wrapper's hash)."""
     template = ics.catchup_prompt_template(prompt_path)
-    sha = ics.stage2_prompt_sha256(prompt_path)
     meta_path = os.path.join(chunk_dir, "render.json")
-    if os.path.exists(meta_path):
-        with open(meta_path, encoding="utf-8") as fh:
-            prior = json.load(fh)["prompt_sha256"]
-        if prior != sha:
-            raise CatchupError(f"{chunk_dir} was rendered with wrapper {prior[:12]}, not "
-                               f"{sha[:12]}: build a new directory")
+    sha = _check_rendered(chunk_dir, prompt_path, missing_ok=True)
     names = chunk_names(chunk_dir)
     for name in names:
         with open(os.path.join(chunk_dir, f"{name}.txt"), encoding="utf-8") as fh:
@@ -208,6 +207,18 @@ def rendered_sha(chunk_dir: str) -> str:
         raise CatchupError(f"{meta_path} missing: the prompts were not rendered by this command")
     with open(meta_path, encoding="utf-8") as fh:
         return json.load(fh)["prompt_sha256"]
+
+
+def _check_rendered(chunk_dir: str, prompt_path: str, missing_ok: bool = False) -> str:
+    """The current wrapper's hash; refused when the directory was rendered with another."""
+    sha = ics.stage2_prompt_sha256(prompt_path)
+    if missing_ok and not os.path.exists(os.path.join(chunk_dir, "render.json")):
+        return sha
+    prior = rendered_sha(chunk_dir)
+    if prior != sha:
+        raise CatchupError(f"{chunk_dir} was rendered with wrapper {prior[:12]}, not "
+                           f"{sha[:12]}: build a new directory")
+    return sha
 
 
 def _prompts(chunk_dir: str) -> dict:
@@ -597,6 +608,12 @@ def _build(args, cfg: dict, prompt: str, dims_table: str) -> None:
 
 
 def _parse(args, dims_table: str) -> None:
+    with open(os.path.join(args.chunk_dir, "build.json"), encoding="utf-8") as fh:
+        kind = json.load(fh).get("kind")
+    if kind == "keys" and not args.dimensions_table:
+        raise CatchupError(f"{args.chunk_dir} was built with --keys (kind keys, validation): "
+                           "give --dimensions-table explicitly, the default is the production "
+                           "table; nothing written")
     labelled_at = args.labelled_at or datetime.now(timezone.utc).date().isoformat()
     dims, report = parse_answers(args.chunk_dir, args.suffix, args.model, args.run_id,
                                  args.machine, args.labeller, rendered_sha(args.chunk_dir),
@@ -620,6 +637,8 @@ def main(argv=None):
     prompt = args.prompt or cfg["catchup"]["prompt"]
     dims_table = args.dimensions_table or cfg["dimensions_table"]
     try:
+        if args.cmd in ("count-tokens", "submit", "call", "parse"):
+            _check_rendered(args.chunk_dir, prompt)
         if args.cmd == "build":
             _build(args, cfg, prompt, dims_table)
         elif args.cmd == "render":
