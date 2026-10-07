@@ -82,6 +82,9 @@ under ``reasons`` in ``rel_counts.json``; ``stage2_skip`` counts the
 ICF-pending works by tier, those of seriousness 0 needing no screening. The
 membership values are ``membership`` in ``config/rel_screen.yaml`` (ICF,
 discipline) and the tier values and alpha of ``config/rel_venue_tiers.yaml``.
+``abstract_flag`` marks a work with no abstract (blank after trimming) and
+``rel_use`` splits the REL set into ``synthesis`` and ``bibliometric_only``
+(author decision 2026-10-07); the flag never moves ``mu`` or the reason.
 
 Outputs (``--output-dir``, default ``data/rel_pool``): ``rel_view.csv`` (one row
 per pool work), ``rel_counts.json``, which records the exit rule it applied

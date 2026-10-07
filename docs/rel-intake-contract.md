@@ -310,4 +310,8 @@ DOAJ also excluding, NGO switch flipped, switch (c) flipped, switch (d)
 flipped), the included works, families and mu-weighted count, and the works
 missing only the discipline facet (`discipline_pending_*`, the informative
 column until the 1842 catch-up runs). The rules (which dimension row wins, the
-family rule) are in the `scripts/_rel_reasons.py` docstring.
+family rule) are in the `scripts/_rel_reasons.py` docstring. A work whose pool abstract is blank after trimming
+carries `abstract_flag` `no_abstract` (author decision 2026-10-07): it counts
+in the bibliometric analysis only, so `rel_use` is `bibliometric_only` for an
+included work without abstract and `synthesis` for one with an abstract; the
+flag never moves `mu`, `rel_reason` or `rel_final`.

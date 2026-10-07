@@ -138,6 +138,38 @@ def test_discipline_unsure_is_kept_and_flagged_at_half_membership():
         "included", "unsure", "0.5", "discipline")
 
 
+def _with_abstracts(blank):
+    """POOL with an abstract on every work except those in ``blank`` (whitespace counts as blank)."""
+    return [dict(w, abstract="   " if w["work_key"] in blank else "An abstract.") for w in POOL]
+
+
+def test_no_abstract_facet_keeps_the_work_in_rel_outside_the_synthesis_tier():
+    # Author decision 2026-10-07 (tickets 1733, 1843): a work with no abstract
+    # (blank after trimming, the rule of the 1842 catch-up build) counts in the
+    # bibliometric analysis only. The facet never moves mu or rel_final; it
+    # splits the REL set into the synthesis tier and the bibliometric-only rest.
+    pool = _with_abstracts({"openalex:W1", "openalex:W5", "openalex:W2"})
+    rows, _ = _rows(pool=pool)
+    by = _by(rows)
+    assert _reasons(rows) == _reasons(_rows()[0])  # reasons unchanged by the facet
+    assert by["openalex:W1"]["abstract_flag"] == "no_abstract"
+    assert (by["openalex:W1"]["rel_final"], by["openalex:W1"]["rel_use"]) == (
+        "true", "bibliometric_only")
+    assert by["openalex:W3"]["abstract_flag"] == ""
+    assert by["openalex:W2"]["rel_use"] == ""  # not in REL: no use
+    rows2, _ = _rows(pool=_with_abstracts(set()))
+    assert _by(rows2)["openalex:W1"]["rel_use"] == "synthesis"
+
+
+def test_no_abstract_counts_by_reason():
+    pool = _with_abstracts({"openalex:W1", "openalex:W5", "openalex:W2"})
+    counts = rr.reason_counts(_rows(pool=pool)[0])
+    assert counts["no_abstract_by_reason_works"] == {
+        "discipline_pending": 1, "icf_excluded": 1, "included": 1}
+    assert counts["included_by_use_works"] == {"bibliometric_only": 1}
+    assert counts["no_abstract_note"] == rr.NO_ABSTRACT_NOTE
+
+
 def _crisp(status, contrib, tier, flags):
     """The crisp rules before the fuzzy model (1830 decisions, 2026-10-01 switches)."""
     if "hijacked" in flags or tier == "C":

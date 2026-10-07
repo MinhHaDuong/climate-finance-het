@@ -30,6 +30,15 @@ facets evaluated; ``mu_complete`` says whether it is final (a 0, or every
 facet graded). The crisp REL set is the alpha-cut ``mu >= alpha``
 (``_rel_venues.alpha``, decided 0.5).
 
+**Abstract** (author decision 2026-10-07, tickets 1733 and 1843): a work whose
+pool abstract is blank after trimming (the rule of the 1842 catch-up ``build``)
+carries ``abstract_flag`` ``no_abstract``. It counts in the bibliometric
+analysis only: the flag never moves ``mu``, ``rel_reason`` or ``rel_final``;
+it splits the REL set (``rel_use``) into ``synthesis`` (with an abstract) and
+``bibliometric_only``. The register of 2026-10-07
+(``rel_pool_runs/2026-10-07-no-abstract-register``, stage-2 icf and unsure of
+one run) is a subset of this rule, which also covers the other runs.
+
 **Reason**: ``<facet>_excluded`` for the first facet, in evaluation order, that
 attains ``mu`` when ``mu < alpha``; else ``<facet>_pending`` for the first facet
 not graded; else ``included``. ``mu_facet`` names the facet attaining ``mu``.
@@ -70,13 +79,18 @@ VIEW_COLUMNS = ["contrib", "discipline_field", "contrib_type", "discipline_sourc
                 "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag",
                 "seriousness", "seriousness_flag", *[f"mu_{f}" for f in FACETS],
                 "mu", "mu_facet", "mu_complete", "rel_reason", "rel_reason_detail",
-                "rel_final", "rel_family_id"]
+                "rel_final", "rel_family_id", "abstract_flag", "rel_use"]
 DISCIPLINE_NOTE = (
     "discipline_excluded leans toward over-excluding applied finance: on the 1840 gold "
     "set, Opus v2 excluded 4 of 59 gold includes, 3 of them applied finance with a "
     "policy question (W3122424672, W4399863925, W7212372846), against 3 extra includes "
     "(ticket 1843 note, PR 1652). Read this count as an upper bound on the discipline "
     "exclusions of applied finance.")
+NO_ABSTRACT_NOTE = (
+    "no_abstract works (blank abstract after trimming) count in the bibliometric "
+    "analysis only, outside the synthesis tier (author decision 2026-10-07, tickets "
+    "1733 and 1843). The 1842 catch-up leaves them out, so a no_abstract work in "
+    "discipline_pending stays there unless a stage-2 answer grades it.")
 SERIOUSNESS_NOTE = (
     "seriousness_excluded is overstated: some journal articles reachable only through "
     "aggregators (DOAJ, Dialnet, ORBi) fall to tier C as repository copies, about 5 of "
@@ -291,6 +305,9 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
         row["mu"] = _fmt(ev["mu"])
         row["mu_complete"] = "true" if ev["mu_complete"] else "false"
         row["rel_final"] = "true" if ev["rel_reason"] == "included" else "false"
+        row["abstract_flag"] = "" if (pool[i].get("abstract") or "").strip() else "no_abstract"
+        row["rel_use"] = (("bibliometric_only" if row["abstract_flag"] else "synthesis")
+                          if row["rel_final"] == "true" else "")
     assign_families(rows)
     return {"dimension_rows": len(dims),
             "dimension_rows_matched": sum(len(v) for v in by_work.values()),
@@ -367,6 +384,12 @@ def reason_counts(rows: list[dict]) -> dict:
         "included_icf_unsure_flagged_works": sum(r["rel_flag"] == "unsure" for r in included),
         "included_no_venue_flagged_works": sum(r["seriousness_flag"] == "no_venue"
                                                for r in included),
+        "included_by_use_works": _split(included, "rel_use"),
+        "no_abstract_by_reason_works": _split(
+            [r for r in rows if r["abstract_flag"]], "rel_reason"),
+        "no_abstract_by_status_works": _split(
+            [r for r in rows if r["abstract_flag"]], "status"),
+        "no_abstract_note": NO_ABSTRACT_NOTE,
     }
 
 
