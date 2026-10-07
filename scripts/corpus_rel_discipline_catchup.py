@@ -283,7 +283,12 @@ def _content(body: dict) -> str:
     return (((body.get("choices") or [{}])[0].get("message") or {}).get("content")) or ""
 
 
-def _write_answer(chunk_dir: str, chunk: str, suffix: str, text: str) -> int:
+def _truncated(body: dict) -> bool:
+    return ((body.get("choices") or [{}])[0].get("finish_reason")) == "length"
+
+
+def _write_answer(chunk_dir: str, chunk: str, suffix: str, text: str,
+                  truncated: bool = False) -> int:
     """Keep the reply verbatim (``.raw.txt``) and its answer lines; return records answered.
 
     Only lines that start with a record number go to the answer file, so a
@@ -293,11 +298,17 @@ def _write_answer(chunk_dir: str, chunk: str, suffix: str, text: str) -> int:
     a bare ``1 | yes``, a record number out of range, a stage-2 line) writes no
     answer file: the chunk stays pending, so ``call`` retries it and ``parse``
     reports it as unanswered instead of aborting on it.
+
+    A ``truncated`` reply (``finish_reason`` length: output stopped at
+    ``--max-tokens``) loses its last line, where output stopped: a value or the
+    reason may be cut even when the line parses, and a cut line would refuse
+    the whole parse. Its record stays unanswered.
     """
     stem = os.path.join(chunk_dir, f"{chunk}.{suffix}")
     with open(f"{stem}.raw.txt", "w", encoding="utf-8") as fh:
         fh.write(text)
-    lines = [ln for ln in text.splitlines() if _ANSWER_LINE.match(ln)]
+    kept = text.splitlines()[:-1] if truncated else text.splitlines()
+    lines = [ln for ln in kept if _ANSWER_LINE.match(ln)]
     answers = ics.parse_discipline_answers(lines, _ids(chunk_dir, chunk))[0] if lines else {}
     if not answers:
         log.warning("%s: no valid answer line in the reply (%d numbered of %d characters), "
@@ -400,7 +411,8 @@ def collect(chunk_dir: str, suffix: str, wait: bool, poll_s: int = 60,
         if chunk not in known:
             raise CatchupError(f"batch result for unknown custom_id {chunk!r}")
         body = (res.get("response") or {}).get("body") or {}
-        answered = _write_answer(chunk_dir, chunk, suffix, _content(body)) if body else 0
+        answered = (_write_answer(chunk_dir, chunk, suffix, _content(body), _truncated(body))
+                    if body else 0)
         lines.append(usage_log(chunk, body, len(_ids(chunk_dir, chunk)), answered,
                                meta["pricing"],
                                {"route": meta["route"], "model": meta["model"],
@@ -428,7 +440,7 @@ def call(chunk_dir: str, model: str, suffix: str, max_usd: float, max_tokens: in
         if resp.status_code != 200:
             raise CatchupError(f"{chunk}: http {resp.status_code} {resp.text[:300]}")
         js = resp.json()
-        answered = _write_answer(chunk_dir, chunk, suffix, _content(js))
+        answered = _write_answer(chunk_dir, chunk, suffix, _content(js), _truncated(js))
         lines.append(usage_log(chunk, js, len(_ids(chunk_dir, chunk)), answered, g["pricing"],
                                {"route": "openrouter-sync", "model": model,
                                 "latency_s": round(time.monotonic() - t0, 1)}))
