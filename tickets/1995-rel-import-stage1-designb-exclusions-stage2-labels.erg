@@ -1,0 +1,49 @@
+%erg 0.1
+Title: REL — import the stage-1 design-B run, the 72 exclusions and the stage-2 labels into icf_screen
+Created: 2026-10-07
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-07T11:08Z HDMX-coding-agent created
+2026-10-07T11:20Z HDMX-coding-agent note filed as the child of 1733 that carries the import PR; until it lands, `main` holds none of the 2026-10-06/07 labels, which live in ~/rel_pool_runs on padme (backed up nightly at 02:30, outside git and DVC)
+
+--- body ---
+## Context
+
+Child of 1733. After the stage-2 close of 2026-10-07 nothing is in `data/rel_screen/icf_screen.csv`:
+the stage-1 design-B run, the 72 exclusion rows and the stage-2 labels exist only as run
+directories. This ticket is the one PR that imports them, on the fetched DVC table, so the REL view
+can count from the table with a run identifier (1733's last exit criterion).
+
+Inputs, all under `~/rel_pool_runs/` (decisions and counts in the log of 1733):
+
+- stage 1: `2026-10-01-designB-stage1` (65,679 works) and `2026-10-02-designB-stage1-rest`
+  (160,813 of 160,885 labelled by both; the 72 left are front/back matter);
+- the 72 exclusion rows: `2026-10-02-designB-stage1-rest/frontmatter_exclusion_rows.csv`
+  (human stage-2 `out`, run `t1733-frontmatter-exclusion`, validated on a fresh table);
+- stage 2: per-run `labels.jsonl` in `2026-10-06-stage2-sol-designB` and `-otherlanes` (GPT-6.1 Sol,
+  prompt sha256 `9ae284c1…`, in each run's `prompt_template.txt`), then the Fable relabelling of the
+  unsure works with an abstract (`2026-10-07-unsure-fable/fable_labels.json`) and the Opus recheck of
+  the 236 Fable icf (`2026-10-07-fable-icf-opus-check/opus_on_fable_icf_236.json`);
+- the reference to reproduce: `2026-10-07-stage2-final-labels-2of3.json`, 158,636 works: icf 11,982,
+  aux 92,261, out 49,138, unsure 5,255 (5,141 of them without abstract);
+- the one-off scripts that made them: `2026-10-07-code-snapshot/`.
+
+Method points to settle in the PR, not decide here:
+
+- `corpus_icf_stage2.py parse` reads `chunkNN.<suffix>.txt` answers next to `chunkNN.ids.json`; the
+  Sol runs wrote `labels.jsonl` keyed by work, so a converter or an import mode is needed. Check the
+  work keys: the other-lanes input has HTML-escaped DOI keys (`&lt;`), the design-B one does not.
+- 34,766 works carry two Sol labels (the two runs overlap); the REL view takes the latest stage-2 row,
+  so the rows must be written in `labelled_at` order, then the Fable rows, then the Opus-rule rows.
+- The pool must be the one the runs were built on (`pool.csv` sha256 `3e07852b…`; `make rel-pool-data
+  rel-pool`), and the import checks the input basis.
+
+## Exit criteria
+
+- [ ] `corpus_icf_import.py stage1-designb` run for both design-B run directories (idempotent), then the 72 exclusion rows appended with `append_new`
+- [ ] Stage-2 Sol labels, the Fable relabelling and the Opus-rule rows written as `icf_screen` stage-2 rows with their own `model`, `run_id` and `prompt_sha256`; no label rewritten, no row deleted
+- [ ] The REL view built from the table reproduces the reference counts above (icf 11,982 / aux 92,261 / out 49,138 / unsure 5,255) and the check is shown in the PR
+- [ ] The 296 works left without a stage-2 label are named in the PR as accepted residue
+- [ ] The updated table is tracked as the repo prescribes (`dvc add data/rel_screen`, push), and `data/rel_screen.dvc` is in the PR
+- [ ] The no-abstract register is carried as a reason by the view when 1843 lands, or its path is recorded here until then
