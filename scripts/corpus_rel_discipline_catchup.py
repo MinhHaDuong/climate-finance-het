@@ -10,7 +10,8 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
 
 ``build``
     Works whose final stage-2 label (REL view over the pool and ``icf_screen``)
-    is in ``catchup.final_labels`` and whose work key has no ``rel_dimensions``
+    is in ``catchup.final_labels``, that have an abstract (no-abstract works are
+    bibliometric only, ticket 1733) and whose work key has no ``rel_dimensions``
     row yet, sorted by work key, in stage-2 chunks (``chunkNN.txt``,
     ``chunkNN.ids.json``, ``works.csv``, ``build.json`` with the counts), then
     rendered. Refused when ``rel_dimensions`` is missing although
@@ -115,13 +116,24 @@ class CatchupError(Exception):
 # ── selection ────────────────────────────────────────────
 
 
-def select_catchup(view_rows: list[dict], final_labels: list[str], with_dims: set) -> dict:
-    """Work keys to catch up, sorted, and the counts behind the selection."""
+def select_catchup(view_rows: list[dict], final_labels: list[str], with_dims: set,
+                   no_abstract: set = frozenset()) -> dict:
+    """Work keys to catch up, sorted, and the counts behind the selection.
+
+    Works in ``no_abstract`` are left out: by the no-abstract policy (ticket
+    1733, author decision 2026-10-07) they count in the bibliometric analysis
+    only and are never sent to a model.
+    """
     statuses = {s for s, lab in ch.FINAL_STAGE2.items() if lab in final_labels}
-    eligible = sorted(r["work_key"] for r in view_rows if r["status"] in statuses)
-    keys = [k for k in eligible if k not in with_dims]
-    return {"keys": keys, "eligible": len(eligible),
-            "already_with_dimensions": len(eligible) - len(keys)}
+    eligible = sorted((r["work_key"], r["status"]) for r in view_rows if r["status"] in statuses)
+    with_abstract = [(k, s) for k, s in eligible if k not in no_abstract]
+    picked = [(k, s) for k, s in with_abstract if k not in with_dims]
+    by_label = {lab: 0 for lab in final_labels}
+    for _, s in picked:
+        by_label[ch.FINAL_STAGE2[s]] += 1
+    return {"keys": [k for k, _ in picked], "eligible": len(eligible),
+            "no_abstract": len(eligible) - len(with_abstract),
+            "already_with_dimensions": len(with_abstract) - len(picked), "by_label": by_label}
 
 
 def dimension_rows(table: str, dims_table: str, v2_prompt: str) -> list[dict]:
@@ -523,20 +535,23 @@ def _build(args, cfg: dict, prompt: str, dims_table: str) -> None:
     with_dims = {r["work_key"] for r in dimension_rows(table, dims_table, cfg["stage2"]["prompt"])}
     rule = rv.screen_rule(cfg)
     pool, view = ch.view(pool_path, table, rule)
-    sel = select_catchup(view, cfg["catchup"]["final_labels"], with_dims)
+    no_abstract = {p["work_key"] for p in pool if not (p["abstract"] or "").strip()}
+    sel = select_catchup(view, cfg["catchup"]["final_labels"], with_dims, no_abstract)
     by_key = {p["work_key"]: p for p in pool}
     manifest = {"kind": "catchup", "pool": os.path.basename(pool_path),
                 "pool_sha256": rv.sha256_file(pool_path),
                 "table_sha256": rv.sha256_file(table),
                 "prompt": prompt, "prompt_sha256": ics.stage2_prompt_sha256(prompt),
                 "rule": rule, "final_labels": cfg["catchup"]["final_labels"],
-                "eligible": sel["eligible"],
-                "already_with_dimensions": sel["already_with_dimensions"]}
+                "eligible": sel["eligible"], "no_abstract": sel["no_abstract"],
+                "already_with_dimensions": sel["already_with_dimensions"],
+                "by_label": sel["by_label"]}
     names = ch.write_chunks(args.output_dir, [by_key[k] for k in sel["keys"]], cfg["stage2"],
                             manifest)
     render(args.output_dir, prompt)
-    log.info("build: %d works (%d eligible, %d already with dimensions) in %d chunks under %s",
-             len(sel["keys"]), sel["eligible"], sel["already_with_dimensions"], len(names),
+    log.info("build: %d works %s (%d eligible, %d without abstract left out, %d already with "
+             "dimensions) in %d chunks under %s", len(sel["keys"]), sel["by_label"],
+             sel["eligible"], sel["no_abstract"], sel["already_with_dimensions"], len(names),
              args.output_dir)
 
 

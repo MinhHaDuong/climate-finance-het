@@ -153,8 +153,39 @@ def test_select_catchup_takes_final_icf_and_unsure_without_dimensions():
             {"work_key": "openalex:W4", "status": "pending_stage2"},
             {"work_key": "openalex:W5", "status": "icf"}]
     sel = cc.select_catchup(view, ["icf", "unsure"], {"openalex:W5"})
-    assert sel == {"keys": ["openalex:W1", "openalex:W2"], "eligible": 3,
-                   "already_with_dimensions": 1}
+    assert sel == {"keys": ["openalex:W1", "openalex:W2"], "eligible": 3, "no_abstract": 0,
+                   "already_with_dimensions": 1, "by_label": {"icf": 1, "unsure": 1}}
+
+
+def test_select_catchup_leaves_out_works_without_abstract():
+    """No-abstract policy (ticket 1733, 2026-10-07): bibliometric only, never sent to a model."""
+    view = [{"work_key": "openalex:W1", "status": "icf"},
+            {"work_key": "openalex:W2", "status": "unsure_unresolved"},
+            {"work_key": "openalex:W3", "status": "icf"},
+            {"work_key": "openalex:W4", "status": "unsure_unresolved"}]
+    sel = cc.select_catchup(view, ["icf", "unsure"], set(),
+                            no_abstract={"openalex:W3", "openalex:W4", "openalex:W9"})
+    assert sel["keys"] == ["openalex:W1", "openalex:W2"]
+    assert (sel["eligible"], sel["no_abstract"], sel["by_label"]) == (4, 2, {"icf": 1,
+                                                                             "unsure": 1})
+
+
+def test_build_sends_no_work_without_abstract(tmp_path, monkeypatch):
+    pool = [_work(1), {**_work(2), "abstract": "  "}, {**_work(3), "abstract": ""}]
+    view = [{"work_key": p["work_key"], "status": "icf"} for p in pool]
+    monkeypatch.setattr(ch, "view", lambda *a: (pool, view))
+    monkeypatch.setattr(cc.rv, "screen_rule", lambda cfg: {})
+    monkeypatch.setattr(cc.rv, "sha256_file", lambda path: "x")
+    monkeypatch.setattr(cc.ics, "require_table", lambda path: None)
+    monkeypatch.setattr(cc, "dimension_rows", lambda *a: [])
+    out = tmp_path / "cu"
+    args = type("A", (), {"pool": "p", "table": "t", "output_dir": str(out)})()
+    cfg = {"stage2": {**S2CFG, "prompt": V2_PROMPT},
+           "catchup": {"final_labels": ["icf", "unsure"]}}
+    cc._build(args, cfg, CATCHUP_PROMPT, "d")
+    assert json.loads((out / "chunk01.ids.json").read_text()) == ["openalex:W1"]
+    build = json.loads((out / "build.json").read_text())
+    assert (build["works"], build["no_abstract"]) == (1, 2)
 
 
 def test_render_fills_the_records(chunks):
