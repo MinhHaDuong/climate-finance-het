@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-10-07T11:08Z HDMX-coding-agent created
 2026-10-07T11:20Z HDMX-coding-agent note filed as the child of 1733 that carries the import PR; until it lands, `main` holds none of the 2026-10-06/07 labels, which live in ~/rel_pool_runs on padme (backed up nightly at 02:30, outside git and DVC)
+2026-10-07T11:42Z HDMX-coding-agent note imported on pool sha256 3e07852b (389,291 works), table a4ed5367 (816,039 rows, data/rel_screen md5 334cd4d1, pushed to padme): design-B 2026-10-01 (0 new rows) and 2026-10-02-rest (275,406 new; finished per its summary.json, closing line only in stdout-2026-10-06-retry.log), the 72 front-matter rows (rows subcommand), 193,402 Sol rows in labelled_at order (150 earlier repeats within the other-lanes run superseded, they stay in labels.jsonl), 539 Fable rows (run t1733-stage2-fable-unsure-2026-10-07, prompt 9ae284c1, the Sol template), 236 rule rows (t1733-stage2-fable-opus-rule-2026-10-07, labeller human, model author-decision); the view gives the reference label to all 158,636 works, 0 mismatches; pending_stage2 296, the accepted residue
+2026-10-07T11:42Z HDMX-coding-agent note no-abstract register kept outside the table until 1843 carries the facet: ~/rel_pool_runs/2026-10-07-no-abstract-register/no_abstract_register.csv (icf 2,281 and unsure 5,141 by the Sol final labels; README.txt beside it)
 
 --- body ---
 ## Context
