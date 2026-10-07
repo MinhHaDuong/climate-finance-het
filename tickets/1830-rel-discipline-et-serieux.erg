@@ -8,6 +8,7 @@ Author: haduong
 2026-10-01T10:00Z HDMX-coding-agent note tracker: enfants 1840 (prompt étape 2), 1841 (rangs et signalements), 1842 (rattrapage discipline), 1843 (vue REL, PRISMA, protocole)
 2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
+2026-10-07T20:18Z HDMX-coding-agent note integration check 2026-10-07: children 1840, 1841, 1842, 1843 closed and merged (PR 1652, 1657, 1660/1704-1707, 1662); view rebuilt from main (make rel-pool-data rel-pool rel-venues rel-view): reasons seriousness_excluded 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 5,894, discipline_excluded 780, included 7,499 (sum 389,291), equal to the PRISMA and protocol; exit criteria ticked with evidence; closed by the PR that carries this entry
 --- body ---
 ## Context
 
@@ -50,12 +51,13 @@ sensitivity analysis, unless an individual title is flagged.
 ## Children
 - 1840: extended step 2 prompt (discipline, field, contribution type), before launch
 - 1841: seriousness ranks and per-source flags (closed, PR 1657)
-- 1842: discipline catch-up for works already re-read by Opus
-- 1843: REL view, PRISMA, protocol (blocked by 1842; 1840 and 1841 closed)
+- 1842: discipline catch-up for works already re-read by Opus (closed, PR 1707)
+- 1843: REL view, PRISMA, protocol (closed, PR 1707)
+- 1840: closed; 1841: closed
 
 ## Exit criteria
-- [ ] Protocol and PRISMA describe the two dimensions and their reasons
-- [ ] Rank table per source with provenance; registries consulted are dated; B list versioned
-- [ ] Step 2 prompt extended (discipline, contribution type) and tested on the control set before launch
-- [ ] Discipline catch-up on works already re-read by Opus
-- [ ] REL view: counts by reason (ICF, discipline, seriousness) and publisher sensitivity
+- [x] Protocol and PRISMA describe the two dimensions and their reasons (1843, PR 1662 and 1707: conception/rel-audit-finalisation-corpus.md, conception/rel-prisma-flux-provisoire.md)
+- [x] Rank table per source with provenance; registries consulted are dated; B list versioned (1841, PR 1657: config/rel_venue_tiers.yaml v2, config/rel_venue_registry_pulls.csv, data/rel_pool/rel_venues.csv; rebuilt 2026-10-07: 31,329 venues, tiers A 327,641 / B 12,133 / C 39,113 / unknown 10,404 works)
+- [x] Step 2 prompt extended (discipline, contribution type) and tested on the control set before launch (1840, PR 1652: config/rel_stage2_prompt_v2.md, conception/rel-stage2-prompt-v2-test.md; the stage-2 judge finally run on the pool was Sol in the v1 format, discipline came through the catch-up wrapper v2, see 1733 and 1842)
+- [x] Discipline catch-up on works already re-read by Opus (1842, PR 1704-1707: rel_dimensions for 11,645 of 11,645 works with abstract picked; the 8,207 icf or unsure works without abstract are bibliometric only by the 1733 decision)
+- [x] REL view: counts by reason (ICF, discipline, seriousness) and publisher sensitivity (1843, PR 1662 and 1707; rebuilt 2026-10-07 at integration check: seriousness_excluded 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 5,894, discipline_excluded 780, included 7,499, sum 389,291; rel_sensitivity.csv regenerated but the PRISMA sensitivity table still dates from before the catch-up)
