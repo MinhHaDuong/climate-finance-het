@@ -16,6 +16,11 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
     ``chunkNN.ids.json``, ``works.csv``, ``build.json`` with the counts), then
     rendered. Refused when ``rel_dimensions`` is missing although
     ``icf_screen`` holds version-2 stage-2 rows (the table was lost, not empty).
+    With ``--keys FILE`` (one work key per line), the validation mode: exactly
+    those works, in that order, with no label or dimension selection (the gold
+    set of ticket 1840); refused when a key is absent from the pool, repeated,
+    or has no abstract. ``build.json`` then records kind ``keys`` and the file's
+    hash.
 
 ``render``
     Writes ``chunkNN.prompt.txt`` (the wrapper with the chunk's records) next
@@ -51,9 +56,16 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
     id and machine given and the wrapper hash recorded by ``render``. A chunk
     with a malformed, duplicated or stage-2 line, or with no valid discipline
     value at all, refuses the whole parse; an incomplete chunk is accepted and
-    reported. A work that already has a ``rel_dimensions`` row under another
+    reported, with its ``na`` answers (no climate-finance object at all) and
+    those that put ``na`` in some but not all three fields (``na_off_rule``,
+    stored as answered). A work that already has a ``rel_dimensions`` row under another
     stage, model or run id is skipped and counted, so a second run id never
-    gives a work two catch-up answers. Idempotent for one run id.
+    gives a work two catch-up answers. Idempotent for one run id. A ``build
+    --keys`` directory (kind ``keys``) is refused unless ``--dimensions-table``
+    is given explicitly, so validation rows never reach the production table.
+
+``count-tokens``, ``submit``, ``call`` and ``parse`` refuse a directory whose
+``render.json`` records another wrapper than the current one, before any call.
 
 Spend guard (``submit``, ``call``): the bound is the input tokens (measured by
 ``count-tokens`` when ``tokens.json`` exists, else characters / 3) at the
@@ -68,7 +80,7 @@ price when the response carries no cost), cost per answered record. The model
 is a parameter everywhere: the catch-up must use the model forward stage 2 uses.
 
 Usage:
-    python scripts/corpus_rel_discipline_catchup.py build --output-dir DIR
+    python scripts/corpus_rel_discipline_catchup.py build --output-dir DIR [--keys FILE]
     python scripts/corpus_rel_discipline_catchup.py render --chunk-dir DIR
     python scripts/corpus_rel_discipline_catchup.py count-tokens --chunk-dir DIR
     python scripts/corpus_rel_discipline_catchup.py submit --chunk-dir DIR --model M \\
@@ -137,6 +149,18 @@ def select_catchup(view_rows: list[dict], final_labels: list[str], with_dims: se
             "already_with_dimensions": len(with_abstract) - len(picked), "by_label": by_label}
 
 
+def select_keys(pool: list[dict], keys: list[str]) -> list[dict]:
+    """Pool rows of ``keys``, in order; refused for a key absent, repeated or without abstract."""
+    by_key = {p["work_key"]: p for p in pool}
+    missing = [k for k in keys if k not in by_key]
+    repeated = sorted({k for k in keys if keys.count(k) > 1})
+    no_abstract = [k for k in keys if k in by_key and not (by_key[k]["abstract"] or "").strip()]
+    if missing or repeated or no_abstract or not keys:
+        raise CatchupError(f"keys refused: {len(keys)} keys, missing {missing[:5]}, repeated "
+                           f"{repeated[:5]}, without abstract {no_abstract[:5]}; nothing built")
+    return [by_key[k] for k in keys]
+
+
 def dimension_rows(table: str, dims_table: str, v2_prompt: str) -> list[dict]:
     """``rel_dimensions`` rows; refuse a missing table that version-2 parses wrote.
 
@@ -162,14 +186,8 @@ def chunk_names(chunk_dir: str) -> list[str]:
 def render(chunk_dir: str, prompt_path: str) -> list[str]:
     """``chunkNN.prompt.txt`` for every chunk, and ``render.json`` (the wrapper's hash)."""
     template = ics.catchup_prompt_template(prompt_path)
-    sha = ics.stage2_prompt_sha256(prompt_path)
     meta_path = os.path.join(chunk_dir, "render.json")
-    if os.path.exists(meta_path):
-        with open(meta_path, encoding="utf-8") as fh:
-            prior = json.load(fh)["prompt_sha256"]
-        if prior != sha:
-            raise CatchupError(f"{chunk_dir} was rendered with wrapper {prior[:12]}, not "
-                               f"{sha[:12]}: build a new directory")
+    sha = _check_rendered(chunk_dir, prompt_path, missing_ok=True)
     names = chunk_names(chunk_dir)
     for name in names:
         with open(os.path.join(chunk_dir, f"{name}.txt"), encoding="utf-8") as fh:
@@ -189,6 +207,18 @@ def rendered_sha(chunk_dir: str) -> str:
         raise CatchupError(f"{meta_path} missing: the prompts were not rendered by this command")
     with open(meta_path, encoding="utf-8") as fh:
         return json.load(fh)["prompt_sha256"]
+
+
+def _check_rendered(chunk_dir: str, prompt_path: str, missing_ok: bool = False) -> str:
+    """The current wrapper's hash; refused when the directory was rendered with another."""
+    sha = ics.stage2_prompt_sha256(prompt_path)
+    if missing_ok and not os.path.exists(os.path.join(chunk_dir, "render.json")):
+        return sha
+    prior = rendered_sha(chunk_dir)
+    if prior != sha:
+        raise CatchupError(f"{chunk_dir} was rendered with wrapper {prior[:12]}, not "
+                           f"{sha[:12]}: build a new directory")
+    return sha
 
 
 def _prompts(chunk_dir: str) -> dict:
@@ -465,8 +495,10 @@ def parse_answers(chunk_dir: str, suffix: str, model: str, run_id: str, machine:
                          "unknown_dimension": sum(ics.UNKNOWN in (a["contrib"], a["field"],
                                                                   a["ctype"])
                                                   for a in answers.values()),
-                         # the wrapper offers yes/no/unsure only: na is off the rule
-                         "na_off_rule": sum(a["contrib"] == "na" for a in answers.values())}
+                         "na": sum(a["contrib"] == "na" for a in answers.values()),
+                         # the wrapper asks na in all three fields or in none
+                         "na_off_rule": sum(0 < [a["contrib"], a["field"], a["ctype"]].count("na")
+                                            < 3 for a in answers.values())}
         for key in ids:
             if key in answers:
                 a = answers[key]
@@ -506,6 +538,8 @@ def _parser() -> argparse.ArgumentParser:
     # rendered prompts into one directory; the other commands read and write
     # next to them in that --chunk-dir.
     sub.add_parser("build").add_argument("--output-dir", required=True)
+    sub.choices["build"].add_argument("--keys", default=None,
+                                      help="validation mode: these work keys, in order")
     for name in ("render", "count-tokens", "submit", "collect", "call", "parse"):
         sub.add_parser(name).add_argument("--chunk-dir", required=True)
     sub.choices["count-tokens"].add_argument("--count-model", default="claude-opus-5-5")
@@ -532,8 +566,23 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _build_keys(args, cfg: dict, prompt: str, pool_path: str) -> None:
+    with open(args.keys, encoding="utf-8") as fh:
+        keys = [ln.strip() for ln in fh if ln.strip()]
+    works = select_keys(rv.read_pool(pool_path), keys)
+    manifest = {"kind": "keys", "keys": args.keys, "keys_sha256": rv.sha256_file(args.keys),
+                "pool": os.path.basename(pool_path), "pool_sha256": rv.sha256_file(pool_path),
+                "prompt": prompt, "prompt_sha256": ics.stage2_prompt_sha256(prompt)}
+    names = ch.write_chunks(args.output_dir, works, cfg["stage2"], manifest)
+    render(args.output_dir, prompt)
+    log.info("build --keys: %d works in %d chunks under %s", len(works), len(names),
+             args.output_dir)
+
+
 def _build(args, cfg: dict, prompt: str, dims_table: str) -> None:
     pool_path, table = args.pool or cfg["pool"], args.table or cfg["table"]
+    if getattr(args, "keys", None):
+        return _build_keys(args, cfg, prompt, pool_path)
     ics.require_table(table)
     with_dims = {r["work_key"] for r in dimension_rows(table, dims_table, cfg["stage2"]["prompt"])}
     rule = rv.screen_rule(cfg)
@@ -559,6 +608,12 @@ def _build(args, cfg: dict, prompt: str, dims_table: str) -> None:
 
 
 def _parse(args, dims_table: str) -> None:
+    with open(os.path.join(args.chunk_dir, "build.json"), encoding="utf-8") as fh:
+        kind = json.load(fh).get("kind")
+    if kind == "keys" and not args.dimensions_table:
+        raise CatchupError(f"{args.chunk_dir} was built with --keys (kind keys, validation): "
+                           "give --dimensions-table explicitly, the default is the production "
+                           "table; nothing written")
     labelled_at = args.labelled_at or datetime.now(timezone.utc).date().isoformat()
     dims, report = parse_answers(args.chunk_dir, args.suffix, args.model, args.run_id,
                                  args.machine, args.labeller, rendered_sha(args.chunk_dir),
@@ -582,6 +637,8 @@ def main(argv=None):
     prompt = args.prompt or cfg["catchup"]["prompt"]
     dims_table = args.dimensions_table or cfg["dimensions_table"]
     try:
+        if args.cmd in ("count-tokens", "submit", "call", "parse"):
+            _check_rendered(args.chunk_dir, prompt)
         if args.cmd == "build":
             _build(args, cfg, prompt, dims_table)
         elif args.cmd == "render":
