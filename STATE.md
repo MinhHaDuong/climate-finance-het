@@ -1,6 +1,6 @@
 # State
 
-Last updated: 2026-10-07T20:12Z
+Last updated: 2026-10-07T20:49Z
 
 ## Current goal
 
@@ -28,15 +28,15 @@ The JETP ledger, observatory and research outputs moved to
 The legacy DVC store is retained for historical recovery.
 
 ## Status
-<!-- generated 2026-10-01T10:46Z · as of de6f8e6f -->
+<!-- generated 2026-10-07T20:49Z · as of 397613e0 -->
 
-**Tickets:** 73 ready · 86 blocked · 14 awaiting author — `erg ready tickets/` for full list
+**Tickets:** 42 ready · 54 blocked · 10 awaiting author — `erg ready tickets/` for full list
   next: 0272 Extract shared derive_companion_path() helper f… · 0273 load_cluster_labels() ignores --input, reads cl…
-**In flight:** 3 open PRs, oldest #1660 0d
+**In flight:** no open PRs
 **Recent (first-parent):**
-  de6f8e6f Merge pull request #1674 from MinhHaDuong/t1940-handoff
-  18c29376 Merge pull request #1673 from MinhHaDuong/t1955-file-ontology-ticket
-  8757f33c Merge pull request #1672 from MinhHaDuong/t1940-ontology-bound
+  397613e0 Merge pull request #1708 from MinhHaDuong/close-trackers
+  c8f7c15b Merge pull request #1707 from MinhHaDuong/docs-rel-close
+  c93c8701 Merge pull request #1706 from MinhHaDuong/t1842-rerun-152
 
 ## Corpus and submissions
 
