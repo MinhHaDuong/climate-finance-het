@@ -8,12 +8,13 @@ discipline table (``data/rel_screen/rel_dimensions.csv``, tickets 1840 and
 1842; absent until a version-2 run or the catch-up writes it) and the per-work
 venue table (``data/rel_pool/rel_work_venues.csv``, ``make rel-venues``,
 ticket 1841). Regenerable: the outputs are a function of those files,
-``config/rel_review.yaml``, the stage-1 exit rule of ``config/rel_screen.yaml``
-and the two seriousness switches (``exclusion.exclude`` in
-``config/rel_venue_registries.yaml``, ``ngo_research_in_b`` in
-``config/rel_venue_tiers.yaml``) only: same inputs, byte-identical outputs; no
-timestamp is written; ``rel_counts.json`` records the sha256 of the four input
-files (``inputs``) and the rule with both switches (``rule``).
+``config/rel_review.yaml``, the stage-1 exit rule and the ``membership`` block
+of ``config/rel_screen.yaml``, and the seriousness rule (switches (a, a')
+``exclusion.exclude`` in ``config/rel_venue_registries.yaml``; switches (b),
+(c), (d), the tier values and alpha in ``config/rel_venue_tiers.yaml``) only:
+same inputs, byte-identical outputs; no timestamp is written;
+``rel_counts.json`` records the sha256 of the four input files (``inputs``)
+and the exit, seriousness and membership rules as values (``rule``).
 
 Matching a label to a pool work: its ``work_key`` equals the work's
 ``work_key``; else its OpenAlex id is one of the work's member ids
@@ -62,13 +63,15 @@ Counting unit (author decision of 2026-09-30): the work family. Works linked
 by ``version_hint`` (a DOI, an OpenAlex id or a same-lane record id of another
 version, e.g. a working paper and its article) form one family
 (``_rel_view.version_families``, union-find; DOI-equal records are already one
-pool work). ``family_id`` is the representative's ``work_key``: an included
-member first, then a published article, then the earliest year, then the
-smallest ``work_key``; ``family_first_year`` keeps the year of first
-dissemination over all members. Rows stay one per pool work; REL counts are
-given in works and in families, and ``families`` counts the multi-work
-families whose members differ in ``rel_included`` and the unresolved hints by
-cause.
+pool work). ``family_id`` (the crisp grouping, stage 2) is its representative's
+``work_key``: a ``rel_included`` member first, then a published article, then
+the earliest year, then the smallest ``work_key``; ``family_first_year`` keeps
+the year of first dissemination over all members. ``rel_family_id`` (the fuzzy
+representative within the same family, below) is the member attaining the
+maximum membership, the published article first on ties. Rows stay one per
+pool work; REL counts are given in works and in families, and ``families``
+counts the multi-work families whose members differ in ``rel_included`` and
+the unresolved hints by cause.
 
 Membership and reasons (``_rel_reasons``, whose docstring states the model):
 REL is a fuzzy set; each work's membership ``mu`` is the minimum over the
@@ -286,13 +289,21 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
 
 
 def _in_window(rows: list[dict]) -> dict:
-    """Included and discipline-pending research works of the window, works and families."""
+    """Included and discipline-pending research works of the window, works and families.
+
+    A family with an included member is included (family MAX), so it never
+    counts among the pending families.
+    """
     def win(reason):
         return [r for r in rows if r["rel_reason"] == reason and r["doc_type"] == "research"
                 and r["rel_disposition"] == "include" and r["rel_year_status"] == "complete"]
-    out = {f"{reason}_{unit}": (len(rs) if unit == "works" else len({r["rel_family_id"] for r in rs}))
-           for reason in ("included", "discipline_pending")
-           for rs in [win(reason)] for unit in ("works", "families")}
+    included_fams = {r["rel_family_id"] for r in rows if r["rel_reason"] == "included"}
+    out = {}
+    for reason in ("included", "discipline_pending"):
+        rs = win(reason)
+        fams = {r["rel_family_id"] for r in rs}
+        out[f"{reason}_works"] = len(rs)
+        out[f"{reason}_families"] = len(fams if reason == "included" else fams - included_fams)
     out["discipline_pending_works_by_mu"] = dict(sorted(Counter(
         r["mu"] for r in win("discipline_pending")).items()))
     return out

@@ -162,10 +162,9 @@ def seriousness_of(venue: dict, srule: dict) -> tuple[float, str]:
     ``exclude``), ``tier_<t>`` for a tier left out by ``tiers``,
     ``publisher:<p>``, or ``""``.
     """
-    excl = sorted({f["registry"] for f in parse_flags(venue["flags"]) if f["match"] != "title"}
-                  & set(srule["exclude"]))
+    excl = rvn.exclusion_of(parse_flags(venue["flags"]), srule["exclude"])
     if excl:
-        return 0.0, "registry:" + excl[0]
+        return 0.0, "registry:" + excl.split(";")[0]
     tier = _tier(venue, srule)
     if tier == "unknown" and srule["no_venue"] == "exclude":
         return 0.0, "tier_unknown"
@@ -434,7 +433,8 @@ def sensitivity(rows: list[dict], venues: dict, base: dict, mrule: dict) -> list
     works between every reason). Works and families (a family is in when any
     member is); ``included_mu_weighted``: the sum of ``mu`` over the included
     works. ``discipline_pending_*``: works whose only missing facet is
-    discipline, the provisional upper bound while 1842 has not run. Under
+    discipline, the provisional upper bound while 1842 has not run (a family
+    with an included member is included, not pending: family MAX). Under
     switch (c) ``keep_flagged``, ``tier_a_only`` still keeps the works of tier
     ``unknown``; the ``no_venue_flipped`` row shows them excluded.
     """
@@ -447,6 +447,7 @@ def sensitivity(rows: list[dict], venues: dict, base: dict, mrule: dict) -> list
                 inc.append((r, ev["mu"]))
             elif ev["rel_reason"] == "discipline_pending":
                 pend.append(r)
+        inc_fams = {r["family_id"] for r, _ in inc}
         out.append({
             "scenario": name,
             "exclude_registries": ";".join(srule["exclude"]),
@@ -456,9 +457,9 @@ def sensitivity(rows: list[dict], venues: dict, base: dict, mrule: dict) -> list
             "no_venue": srule["no_venue"],
             "nonresearch": srule.get("nonresearch", ""),
             "included_works": len(inc),
-            "included_families": len({r["family_id"] for r, _ in inc}),
+            "included_families": len(inc_fams),
             "included_mu_weighted": _fmt(sum(mu for _, mu in inc)),
             "discipline_pending_works": len(pend),
-            "discipline_pending_families": len({r["family_id"] for r in pend}),
+            "discipline_pending_families": len({r["family_id"] for r in pend} - inc_fams),
         })
     return out

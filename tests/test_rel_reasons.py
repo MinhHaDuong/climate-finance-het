@@ -394,6 +394,23 @@ def test_family_pending_member_beats_an_excluded_article():
     assert counts["families"] == dict.fromkeys(rr.REASONS, 0) | {"discipline_pending": 1}
 
 
+def test_mixed_family_counts_as_included_not_pending():
+    # One included member, one discipline-pending member: under family MAX the
+    # family is included, so it is not counted among the pending families.
+    venues = {k: _ven(k) for k in ("openalex:W31", "openalex:W72")}
+    rows = _family([_dim("openalex:W31", "yes"), _dim("openalex:W72", "")], venues)
+    assert sorted(r["rel_reason"] for r in rows) == ["discipline_pending", "included"]
+    table = {r["scenario"]: r for r in rr.sensitivity(rows, venues, SRULE, MRULE)}
+    assert table["default"]["included_families"] == 1
+    assert table["default"]["discipline_pending_families"] == 0
+    assert table["default"]["discipline_pending_works"] == 1
+    for r in rows:
+        r.update(doc_type="research", rel_disposition="include", rel_year_status="complete")
+    win = crv._in_window(rows)
+    assert win["included_families"] == 1 and win["discipline_pending_families"] == 0
+    assert win["discipline_pending_works"] == 1
+
+
 def test_stage2_skip_counts_icf_pending_works_by_tier():
     pool = POOL + [_work("openalex:W9", oas="W9"), _work("openalex:W10", oas="W10")]
     labels = LABELS + [_lab("openalex:W9", "1", "aux")]

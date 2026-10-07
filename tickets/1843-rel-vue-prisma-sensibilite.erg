@@ -16,6 +16,7 @@ Blocked-by: 1842
 2026-10-01T09:00Z HDMX-coding-agent panel pending; discipline counts provisional until 1842
 2026-10-06T22:23Z HDMX-coding-agent note author decision 2026-10-07: the fuzzy-set view carries a no_abstract facet (bibliometric only, outside the synthesis tier); register and counts in ticket 1733
 2026-10-07T13:18Z HDMX-coding-agent note 2026-10-07: rebased on main 083630e4 (stage-2 import 1995, PR 1660); no_abstract facet added (blank abstract after trimming, as the 1842 build; register of 2026-10-07 is a subset, the rule adds 785 icf/unsure works of other runs); view refilled: seriousness 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 14,173 (5,894 without abstract), included 0 by construction until 1842 writes rel_dimensions; stays open, Blocked-by 1842
+2026-10-07T13:41Z HDMX-coding-agent note verify-reroll — round 1: sensitivity() counts a mixed family in both included_families and discipline_pending_families (_rel_reasons.py:459,462; _in_window)
 --- body ---
 ## Context
 Child of 1830. Closes 1830 with the integration review.
