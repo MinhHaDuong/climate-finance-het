@@ -37,7 +37,8 @@ there, so a catch-up written as stage 2 would shadow its ICF label.
     raw batch object, each reply verbatim (``chunkNN.<suffix>.raw.txt``), its
     answer lines (``chunkNN.<suffix>.txt``: the lines that start with a record
     number) and ``<suffix>.calls.jsonl``, rewritten whole, so a second collect
-    does not double the cost log. An errored request writes no answer file.
+    does not double the cost log. An errored request, or a reply with no valid
+    answer line, writes no answer file: the chunk stays pending.
 
 ``call``
     The same requests through the synchronous ``/chat/completions`` endpoint,
@@ -257,23 +258,25 @@ def _write_answer(chunk_dir: str, chunk: str, suffix: str, text: str) -> int:
 
     Only lines that start with a record number go to the answer file, so a
     model's preamble or closing sentence does not refuse a paid chunk; the raw
-    reply keeps them for audit. A reply with no such line (empty, truncated,
-    an error body, a table) writes no answer file: the chunk stays pending, so
-    ``call`` retries it and ``parse`` reports it as unanswered.
+    reply keeps them for audit. A reply with no valid answer line (empty,
+    truncated, an error body, a table, or numbered lines none of which parses:
+    a bare ``1 | yes``, a record number out of range, a stage-2 line) writes no
+    answer file: the chunk stays pending, so ``call`` retries it and ``parse``
+    reports it as unanswered instead of aborting on it.
     """
     stem = os.path.join(chunk_dir, f"{chunk}.{suffix}")
     with open(f"{stem}.raw.txt", "w", encoding="utf-8") as fh:
         fh.write(text)
     lines = [ln for ln in text.splitlines() if _ANSWER_LINE.match(ln)]
-    if not lines:
-        log.warning("%s: no answer line in the reply (%d characters), left pending", chunk,
-                    len(text))
+    answers = ics.parse_discipline_answers(lines, _ids(chunk_dir, chunk))[0] if lines else {}
+    if not answers:
+        log.warning("%s: no valid answer line in the reply (%d numbered of %d characters), "
+                    "left pending", chunk, len(lines), len(text))
         if os.path.exists(f"{stem}.txt"):
             os.remove(f"{stem}.txt")
         return 0
     with open(f"{stem}.txt", "w", encoding="utf-8") as fh:
         fh.writelines(ln + "\n" for ln in lines)
-    answers, _ = ics.parse_discipline_answers(lines, _ids(chunk_dir, chunk))
     return len(answers)
 
 

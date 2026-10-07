@@ -290,3 +290,33 @@ def test_a_reply_without_answer_lines_leaves_the_chunk_pending(chunks, monkeypat
     assert not (chunks / "chunk01.or.txt").exists() and (chunks / "chunk01.or.raw.txt").exists()
     cc.call(str(chunks), "m", "or", 1.0, 100, None, post=post)
     assert len(sent) == 4, "both chunks retried"
+
+
+@pytest.mark.parametrize("reply", ["1 | yes", "7|yes|economics|empirical|why",
+                                   "1|icf|research|VN|why\n2|out|institutional||why"])
+def test_a_reply_without_a_valid_answer_leaves_the_chunk_pending(chunks, monkeypatch, reply):
+    """Reroll round 1, PR 1660: numbered lines with no valid answer wrote an answer file,
+    so call skipped the chunk for good and parse aborted on it."""
+    monkeypatch.setattr(cc, "_headers", lambda: {})
+    monkeypatch.setattr(cc, "model_pricing", lambda m: {"prompt": 1e-6, "completion": 1e-6})
+    sent = []
+
+    class Resp:
+        status_code = 200
+
+        def json(self):
+            return {"choices": [{"message": {"content": reply}, "finish_reason": "stop"}],
+                    "usage": {"prompt_tokens": 10, "completion_tokens": 5}}
+
+    def post(*a, **k):
+        sent.append(1)
+        return Resp()
+    cc.call(str(chunks), "m", "or", 1.0, 100, None, post=post)
+    assert not (chunks / "chunk01.or.txt").exists()
+    assert (chunks / "chunk01.or.raw.txt").read_text() == reply
+    calls = [json.loads(x) for x in (chunks / "or.calls.jsonl").read_text().splitlines()]
+    assert [c["answered"] for c in calls] == [0, 0]
+    cc.call(str(chunks), "m", "or", 1.0, 100, None, post=post)
+    assert len(sent) == 4, "both chunks retried"
+    _, report = cc.parse_answers(str(chunks), "or", "m", "r", "x", "llm", "h", "2026-10-07", "p")
+    assert report["chunk01"]["status"] == "no answer file"
