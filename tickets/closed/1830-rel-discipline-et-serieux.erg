@@ -2,6 +2,7 @@
 Title: REL — two forgotten screening dimensions: discipline (contribution test) and seriousness (ranks A+B, hard registries)
 Created: 2026-10-01
 Author: haduong
+Closed: autoclosed — PR #1708
 
 --- log ---
 2026-10-01T09:00Z HDMX-coding-agent created
@@ -9,6 +10,7 @@ Author: haduong
 2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
 2026-10-07T20:18Z HDMX-coding-agent note integration check 2026-10-07: children 1840, 1841, 1842, 1843 closed and merged (PR 1652, 1657, 1660/1704-1707, 1662); view rebuilt from main (make rel-pool-data rel-pool rel-venues rel-view): reasons seriousness_excluded 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 5,894, discipline_excluded 780, included 7,499 (sum 389,291), equal to the PRISMA and protocol; exit criteria ticked with evidence; closed by the PR that carries this entry
+2026-10-07T20:21Z HDMX-coding-agent closed — autoclosed — PR #1708
 --- body ---
 ## Context
 
