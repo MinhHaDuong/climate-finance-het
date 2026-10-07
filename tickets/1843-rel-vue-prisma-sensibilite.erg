@@ -15,6 +15,7 @@ Blocked-by: 1842
 2026-10-01T09:00Z HDMX-coding-agent reopened — author stop for 2026-10-01; close deferred
 2026-10-01T09:00Z HDMX-coding-agent panel pending; discipline counts provisional until 1842
 2026-10-06T22:23Z HDMX-coding-agent note author decision 2026-10-07: the fuzzy-set view carries a no_abstract facet (bibliometric only, outside the synthesis tier); register and counts in ticket 1733
+2026-10-07T13:18Z HDMX-coding-agent note 2026-10-07: rebased on main 083630e4 (stage-2 import 1995, PR 1660); no_abstract facet added (blank abstract after trimming, as the 1842 build; register of 2026-10-07 is a subset, the rule adds 785 icf/unsure works of other runs); view refilled: seriousness 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 14,173 (5,894 without abstract), included 0 by construction until 1842 writes rel_dimensions; stays open, Blocked-by 1842
 --- body ---
 ## Context
 Child of 1830. Closes 1830 with the integration review.
@@ -35,4 +36,5 @@ computable from the work table.
 - [x] REL view: exclusions by reason (ICF, discipline, seriousness), one count per reason, reproducible (machinery; the discipline counts are 0 by construction until 1842 writes rel_dimensions)
 - [x] Sensitivity table by publisher flag and by rank
 - [x] PRISMA (`conception/rel-prisma-flux-provisoire.md`) and protocol (`conception/rel-audit-finalisation-corpus.md`) describe the two dimensions, their operational definitions and reasons
+- [x] no_abstract facet in the fuzzy-set view (author decision 2026-10-07, log above): `abstract_flag`, `rel_use` synthesis / bibliometric_only, never moving mu or the reason; counts in `reasons.no_abstract_*`
 - [x] AGENTS.md gates pass
