@@ -2,11 +2,16 @@
 Title: REL — import the stage-1 design-B run, the 72 exclusions and the stage-2 labels into icf_screen
 Created: 2026-10-07
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1703
 
 --- log ---
 2026-10-07T11:08Z HDMX-coding-agent created
 2026-10-07T11:20Z HDMX-coding-agent note filed as the child of 1733 that carries the import PR; until it lands, `main` holds none of the 2026-10-06/07 labels, which live in ~/rel_pool_runs on padme (backed up nightly at 02:30, outside git and DVC)
+2026-10-07T11:42Z HDMX-coding-agent note imported on pool sha256 3e07852b (389,291 works), table a4ed5367 (816,039 rows, data/rel_screen md5 334cd4d1, pushed to padme): design-B 2026-10-01 (0 new rows) and 2026-10-02-rest (275,406 new; finished per its summary.json, closing line only in stdout-2026-10-06-retry.log), the 72 front-matter rows (rows subcommand), 193,402 Sol rows in labelled_at order (150 earlier repeats within the other-lanes run superseded, they stay in labels.jsonl), 539 Fable rows (run t1733-stage2-fable-unsure-2026-10-07, prompt 9ae284c1, the Sol template), 236 rule rows (t1733-stage2-fable-opus-rule-2026-10-07, labeller human, model author-decision); the view gives the reference label to all 158,636 works, 0 mismatches; pending_stage2 296, the accepted residue
+2026-10-07T11:42Z HDMX-coding-agent note no-abstract register kept outside the table until 1843 carries the facet: ~/rel_pool_runs/2026-10-07-no-abstract-register/no_abstract_register.csv (icf 2,281 and unsure 5,141 by the Sol final labels; README.txt beside it)
+2026-10-07T11:59Z HDMX-coding-agent note supersedes the 11:42Z import note (author decision relayed 2026-10-07): the 236 rule rows are labeller llm, model rule:fable-opus-agree (run id, rule-text sha256 and Opus's label in why unchanged; the 72 exclusions stay human); the import was redone from the table of origin/main (sha256 4fe34bf0), giving table sha256 c6fae914 (816,039 rows, data/rel_screen md5 c3a3a119, pushed to padme); the 334cd4d1 table was never merged; view: 0 per-work mismatches, pending 296
 
+2026-10-07T12:41Z HDMX-coding-agent closed — autoclosed — PR #1703
 --- body ---
 ## Context
 

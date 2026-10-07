@@ -55,6 +55,20 @@ as false W-ids; a label keyed on one would sit forever on the wrong work.
 (design B, author decision of 2026-10-01): two stage-1 rows per work, the
 LLM's and the classifier's (``designb_rows``), for the works both labelled;
 served models must be listed in ``config/rel_screen.yaml`` → ``stage1_joint``.
+A run counts as finished on the closing line of ``run.log`` or on the
+``finished`` time its ``summary.json`` records with no ``stopped`` reason.
+
+Stage 2 of ticket 1733 (imported by ticket 1995; ``corpus_icf_stage2.py
+parse`` reads chunk answer files, these runs wrote other formats):
+
+``stage2-sol``: runs that wrote one JSON label per line (``labels.jsonl``,
+with ``manifest.json`` and ``prompt_template.txt``), merged in ``labelled_at``
+order so the view's latest stage-2 row is the most recent label (``sol_rows``).
+``stage2-relabel``: a relabelling of stage-2 ``unsure`` works
+(``relabel_rows``). ``stage2-agree-rule``: the author's rule over a check of
+the relabelled ``icf`` (``agree_rule_rows``). ``rows``: rows already written by
+``append_new`` to a side table (the 72 front-matter exclusions). Every key is
+a pool ``work_key``, compared byte-exact (some carry ``&lt;``: never unescaped).
 
 Creating the table where ``data/rel_screen.dvc`` tracks it is refused (an
 unfetched table, not a new one): ``dvc checkout`` first, or ``--new-table``.
@@ -65,6 +79,12 @@ Usage:
         [--input DIR/screen_input.jsonl] [--run-id NAME] [--skip-ids FILE]
     python scripts/corpus_icf_import.py --output TABLE stage1-designb --run-dir DIR \\
         [--input DIR/screen_input.jsonl] [--run-id NAME]
+    python scripts/corpus_icf_import.py --output TABLE stage2-sol --run-dir A --run-dir B [--pool P]
+    python scripts/corpus_icf_import.py --output TABLE stage2-relabel --run-dir DIR --run-id R \\
+        --prompt-template FILE --labelled-at TS [--machine M] [--pool P]
+    python scripts/corpus_icf_import.py --output TABLE stage2-agree-rule --checks JSON \\
+        --check-model M --relabel-run-id R --run-id R2 --labelled-at TS
+    python scripts/corpus_icf_import.py --output TABLE rows --rows-file CSV [--pool P]
 """
 
 import argparse
@@ -281,6 +301,26 @@ def stage1_run_rows(run_dir: str, input_path: str, machine: str, run_id: str,
             if lab[field] not in skip_ids]
 
 
+def designb_finished(run_dir: str) -> bool:
+    """Whether a design-B run ended on its own: the closing line in ``run.log``,
+    or ``summary.json`` with a ``finished`` time and no ``stopped`` reason.
+
+    The runner logs its closing line to stdout; ``run.log`` holds it only when
+    the launcher piped stdout there (the resumes of 2026-10-06 wrote
+    ``stdout-*.log`` instead). ``summary.json`` is the runner's own record,
+    rewritten at the end of every invocation, so it covers both.
+    """
+    log_path = os.path.join(run_dir, "run.log")
+    text = open(log_path, encoding="utf-8").read() if os.path.exists(log_path) else ""
+    if FINISHED.search(text):
+        return True
+    summary_path = os.path.join(run_dir, "summary.json")
+    if not os.path.exists(summary_path):
+        return False
+    summary = _json(summary_path)
+    return bool(summary.get("finished")) and not (summary.get("stopped") or "").strip()
+
+
 def designb_rows(run_dir: str, input_path: str, run_id: str, joint: dict,
                  basis: tuple[str, str] | None = None,
                  stopped: str = "") -> tuple[list[dict], int]:
@@ -299,11 +339,9 @@ def designb_rows(run_dir: str, input_path: str, run_id: str, joint: dict,
     imported row is one the view recognises), or, with ``basis``, when the
     input was built on another pool or table (``check_input_basis``).
     """
-    log_path = os.path.join(run_dir, "run.log")
-    text = open(log_path, encoding="utf-8").read() if os.path.exists(log_path) else ""
-    _require(bool(FINISHED.search(text)) or bool(stopped.strip()),
-             f"{run_dir}: run.log has no closing 'labelled N, unlabelled M' line "
-             "(pass --stopped REASON for a run stopped on purpose)")
+    _require(designb_finished(run_dir) or bool(stopped.strip()),
+             f"{run_dir}: run.log has no closing 'labelled N, unlabelled M' line and "
+             "summary.json records no finish (pass --stopped REASON for a run stopped on purpose)")
     invocations = _jsonl(os.path.join(run_dir, "screen_runs.jsonl"))
     _require(bool(invocations), f"{run_dir}: screen_runs.jsonl is empty")
     hashes = {(i["llm_prompt_sha256"], i["classifier_prompt_sha256"]) for i in invocations}
@@ -335,6 +373,206 @@ def designb_rows(run_dir: str, input_path: str, run_id: str, joint: dict,
     return rows, len(set(llm) ^ set(clf))
 
 
+# ── Stage 2 of ticket 1733 (2026-10-06/07) ───────────────
+
+ISO_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+_ANSWER = re.compile(r"^(\d+)\|")
+AGREE_RULE = ("Author decision 2026-10-07 (ticket 1733): a work the relabelling run labelled icf "
+              "stays icf only when the check model also labels it icf; otherwise it is unsure, "
+              "kept in REL and flagged.")
+RULE_MODEL = "rule:fable-opus-agree"
+
+
+def pool_by_key(pool_path: str) -> dict:
+    """Pool rows by ``work_key`` (byte-exact)."""
+    return {p["work_key"]: p for p in rv.read_pool(pool_path)}
+
+
+def _pool_meta(key: str, pool: dict, where: str) -> dict:
+    """Identifier columns of a pool work; refused when ``key`` is not a pool key.
+
+    Keys compare byte-exact. Some pool keys carry HTML entities (``&lt;`` in
+    SICI DOIs, as the lane delivered them); a label keyed on the unescaped form
+    names no pool work, and the reverse, so neither side is ever unescaped.
+    """
+    rec = pool.get(key)
+    _require(rec is not None, f"{where}: {key!r} is not a pool work_key")
+    return work_meta(rec, "work_key")
+
+
+def sol_rows(run_dirs: list[str], pool: dict) -> tuple[list[dict], dict]:
+    """Stage-2 rows of the ``labels.jsonl`` runs (one JSON label per line), all
+    runs merged in ``labelled_at`` order, and a report.
+
+    Each run directory holds ``labels.jsonl``, ``manifest.json`` (run id,
+    model, tier, prompt hash) and ``prompt_template.txt``, whose sha256 must be
+    the manifest's. Every line must carry the manifest's run id, model and
+    prompt hash, a label of the vocabulary, a UTC ``labelled_at`` and a pool
+    ``work_key``. The table key is ``(work_key, stage, model, run_id)``, so a
+    work labelled twice within one run (a resumed chunk) keeps its latest label
+    (``labelled_at``, then line order); the earlier ones are counted in
+    ``superseded_in_run`` and stay in the run's file. Rows of all runs come out
+    sorted by ``labelled_at`` (ties: run order, then line order): the REL view
+    takes the last stage-2 row of a work, so a work labelled by two runs gets
+    its most recent label.
+    """
+    stamped, report = [], {"lines": {}, "superseded_in_run": {}}
+    for r_idx, run_dir in enumerate(run_dirs):
+        run_dir = run_dir.rstrip("/")
+        name = os.path.basename(run_dir)
+        manifest = _json(os.path.join(run_dir, "manifest.json"))
+        expected = {k: manifest[k] for k in ("run_id", "model", "prompt_sha256")}
+        _require(_sha256(os.path.join(run_dir, "prompt_template.txt")) == expected["prompt_sha256"],
+                 f"{run_dir}: prompt_template.txt does not hash to the manifest prompt_sha256")
+        latest: dict = {}
+        lines = _jsonl(os.path.join(run_dir, "labels.jsonl"))
+        for n, lab in enumerate(lines, 1):
+            where = f"{name}/labels.jsonl line {n}"
+            got = {k: lab.get(k) for k in expected}
+            _require(got == expected, f"{where}: {got} disagree with manifest {expected}")
+            _require(lab.get("label") in ics.LABELS, f"{where}: label {lab.get('label')!r}")
+            _require(bool(ISO_UTC.match(lab.get("labelled_at") or "")),
+                     f"{where}: labelled_at {lab.get('labelled_at')!r} is not YYYY-MM-DDTHH:MM:SSZ")
+            meta = _pool_meta(lab["work_key"], pool, where)
+            order = (lab["labelled_at"], r_idx, n)
+            if lab["work_key"] in latest and latest[lab["work_key"]][0] > order:
+                continue
+            latest[lab["work_key"]] = (order, {
+                **meta, "stage": "2", "labeller": "llm", "model": lab["model"],
+                "prompt_sha256": lab["prompt_sha256"], "run_id": lab["run_id"],
+                "machine": f"openai/{manifest.get('tier') or 'unknown'}", "label": lab["label"],
+                "doc_type": lab.get("doc") if lab.get("doc") in ics.DOC_TYPES else ics.UNKNOWN,
+                "studied_country": lab.get("studied") or "", "why": lab.get("why") or "",
+                "labelled_at": lab["labelled_at"], "source": f"{name}/labels.jsonl"})
+        report["lines"][expected["run_id"]] = len(lines)
+        report["superseded_in_run"][expected["run_id"]] = len(lines) - len(latest)
+        stamped += latest.values()
+    return [row for _, row in sorted(stamped, key=lambda x: x[0])], report
+
+
+def _latest_stage2(table_rows: list[dict], before_run: str) -> dict:
+    """``{work_key: last stage-2 row}`` in table order (keys as written), over
+    the rows that precede the first row of run ``before_run`` (all rows when
+    the run is not in the table yet), so that a re-run checks what the first
+    run saw and stays idempotent."""
+    out = {}
+    for r in table_rows:
+        if r["run_id"] == before_run:
+            break
+        if r["stage"] == "2":
+            out[r["work_key"]] = r
+    return out
+
+
+def relabel_rows(run_dir: str, table_rows: list[dict], pool: dict, run_id: str,
+                 prompt_sha: str, labelled_at: str, machine: str) -> list[dict]:
+    """Stage-2 rows of a relabelling run over works whose stage-2 label is unsure.
+
+    The run directory (the Fable pass of 2026-10-07) holds ``fable_labels.json``
+    (``{work_key: {label, why}}``, the labels its script kept), ``summary.json``
+    (served model) and the raw answers ``chunkNN.txt`` (``n|label|doc|studied|
+    why``), sent in sorted work-key order. The labels file has no doc type or
+    country; they are read from the answers, aligned with the sorted labelled
+    keys, skipping answer lines whose label is out of vocabulary (the script
+    kept no label for those works). Every aligned line must give back the
+    label and ``why`` of the labels file, else the alignment is refused.
+    Refused too when a relabelled work's latest stage-2 row in the table is not
+    ``unsure`` (the relabelling replaces unsure only), or is not a pool work.
+    """
+    run_dir = run_dir.rstrip("/")
+    name = os.path.basename(run_dir)
+    model = _json(os.path.join(run_dir, "summary.json"))["model"]
+    labels = _json(os.path.join(run_dir, "fable_labels.json"))
+    keys = iter(sorted(labels))
+    answers = {}
+    for path in sorted(glob.glob(os.path.join(run_dir, "chunk*.txt"))):
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                if not _ANSWER.match(line):
+                    continue
+                parts = line.rstrip("\n").split("|", 4)
+                if len(parts) < 5 or parts[1].strip().lower() not in ics.LABELS:
+                    continue
+                key = next(keys, None)
+                _require(key is not None, f"{path}: more answers than labels; cannot align")
+                answers[key] = (parts, os.path.basename(path))
+    _require(next(keys, None) is None and len(answers) == len(labels),
+             f"{run_dir}: {len(answers)} answers for {len(labels)} labels; cannot align")
+    latest = _latest_stage2(table_rows, run_id)
+    rows = []
+    for key in sorted(labels):
+        (parts, chunk), lab = answers[key], labels[key]
+        _require((parts[1].strip().lower(), parts[4].strip()) == (lab["label"], lab["why"]),
+                 f"{chunk}: the answer for {key!r} does not align with fable_labels.json")
+        prev = latest.get(key)
+        _require(prev is not None and prev["label"] == "unsure",
+                 f"{key!r}: latest stage-2 label is {prev and prev['label']!r}, not unsure")
+        doc = parts[2].strip()
+        rows.append({**_pool_meta(key, pool, name), "stage": "2", "labeller": "llm",
+                     "model": model, "prompt_sha256": prompt_sha, "run_id": run_id,
+                     "machine": machine, "label": lab["label"],
+                     "doc_type": doc if doc in ics.DOC_TYPES else ics.UNKNOWN,
+                     "studied_country": parts[3].strip(), "why": lab["why"],
+                     "labelled_at": labelled_at, "source": f"{name}/{chunk}"})
+    return rows
+
+
+def agree_rule_rows(checks_path: str, check_model: str, table_rows: list[dict],
+                    relabel_run_id: str, run_id: str, labelled_at: str) -> list[dict]:
+    """Stage-2 rows of the agreement rule (``AGREE_RULE``) over the relabelled icf.
+
+    ``checks_path``: ``{work_key: label}`` of the check model on every work the
+    relabelling run (``relabel_run_id``, already in the table) labelled icf,
+    and on no other. Each work gets one row, ``icf`` when the check says icf,
+    ``unsure`` otherwise; the check's own label is in ``why``. Author decision
+    applied mechanically to model labels: ``labeller`` llm, ``model``
+    ``RULE_MODEL`` (the rule, not a served model), ``prompt_sha256`` the hash
+    of the rule text; doc type and country are the
+    relabelling row's. Refused unless the relabelling row is each work's latest
+    stage-2 row (the rule decides on top of it).
+    """
+    checks = _json(checks_path)
+    relabelled = {r["work_key"]: r for r in table_rows
+                  if r["stage"] == "2" and r["run_id"] == relabel_run_id and r["label"] == "icf"}
+    _require(bool(relabelled), f"no icf row of run {relabel_run_id!r} in the table")
+    _require(set(checks) == set(relabelled),
+             f"{checks_path}: {len(set(relabelled) - set(checks))} relabelled icf without a "
+             f"check, {len(set(checks) - set(relabelled))} checks on other works")
+    bad = sorted(k for k, v in checks.items() if v not in ics.LABELS)
+    _require(not bad, f"{checks_path}: {len(bad)} checks without a label, e.g. {bad[:3]}")
+    latest = _latest_stage2(table_rows, run_id)
+    source = "/".join(os.path.normpath(checks_path).split(os.sep)[-2:])
+    sha = hashlib.sha256(AGREE_RULE.encode()).hexdigest()
+    short = check_model.rsplit("/", 1)[-1]
+    rows = []
+    for key in sorted(checks):
+        base = relabelled[key]
+        _require(latest[key]["label_id"] == base["label_id"],
+                 f"{key!r}: the relabelling row is not its latest stage-2 row")
+        label = "icf" if checks[key] == "icf" else "unsure"
+        rows.append({k: base[k] for k in ("work_key", "openalex_id", "doi", "title_norm_year",
+                                          "doc_type", "studied_country")}
+                    | {"stage": "2", "labeller": "llm", "model": RULE_MODEL,
+                       "prompt_sha256": sha, "run_id": run_id, "machine": "padme",
+                       "label": label, "labelled_at": labelled_at, "source": source,
+                       "why": f"{base['model'].rsplit('/', 1)[-1]} icf, {short} {checks[key]}: "
+                              "icf only when both agree, else unsure (author decision "
+                              "2026-10-07)"})
+    return rows
+
+
+def side_table_rows(path: str, pool: list[dict]) -> list[dict]:
+    """Rows of a side table written by ``ics.append_new`` (verified against its
+    own manifest), without their ``label_id``; refused when a row matches no
+    pool work (by the view's matching: work_key, OpenAlex id, then DOI)."""
+    rows = ics.read_table(path)
+    _require(bool(rows), f"{path} holds no rows")
+    _, unmatched, _ = rv.match_labels(pool, rows)
+    _require(not unmatched, f"{path}: {len(unmatched)} rows match no pool work, e.g. "
+                            f"{[r['work_key'] for r in unmatched[:3]]}")
+    return [{k: v for k, v in r.items() if k != "label_id"} for r in rows]
+
+
 ID_FIELDS = ("openalex_id", "work_key")
 
 
@@ -358,6 +596,56 @@ def run_id_field(invocations: list[dict], labels: list[dict], run_dir: str) -> s
     _require(keyed <= {(field,)},
              f"{run_dir}: label lines are keyed {sorted(keyed)}, not by {field!r} alone")
     return field
+
+
+STAGE2_COMMANDS = ("stage2-sol", "stage2-relabel", "stage2-agree-rule", "rows")
+
+
+def _add_stage2_parsers(sub) -> None:
+    p = sub.add_parser("stage2-sol", help="labels.jsonl runs (one JSON label per line)")
+    p.add_argument("--run-dir", action="append", required=True,
+                   help="repeatable; ties in labelled_at keep this order")
+    p.add_argument("--pool", default=None, help="default: config pool")
+    p = sub.add_parser("stage2-relabel", help="relabelling of stage-2 unsure works")
+    p.add_argument("--run-dir", required=True)
+    p.add_argument("--run-id", required=True)
+    p.add_argument("--prompt-template", required=True,
+                   help="the template the relabeller received; its sha256 is recorded")
+    p.add_argument("--labelled-at", required=True)
+    p.add_argument("--machine", default="openrouter")
+    p.add_argument("--pool", default=None, help="default: config pool")
+    p = sub.add_parser("stage2-agree-rule", help="icf kept only when the check agrees")
+    p.add_argument("--checks", required=True, help="JSON {work_key: label} of the check model")
+    p.add_argument("--check-model", required=True)
+    p.add_argument("--relabel-run-id", required=True)
+    p.add_argument("--run-id", required=True)
+    p.add_argument("--labelled-at", required=True)
+    p = sub.add_parser("rows", help="rows of a side table written by append_new")
+    p.add_argument("--rows-file", required=True)
+    p.add_argument("--pool", default=None, help="default: config pool")
+
+
+def _stage2_rows(args, cfg: dict, table: str) -> tuple[list[dict], str]:
+    """Rows and manifest note of one ``STAGE2_COMMANDS`` invocation."""
+    pool_path = getattr(args, "pool", None) or cfg["pool"]
+    if args.cmd == "stage2-sol":
+        rows, report = sol_rows(args.run_dir, pool_by_key(pool_path))
+        log.info("stage-2 runs: %s", report)
+        return rows, (f"import stage-2 runs {', '.join(sorted(report['lines']))} in "
+                      f"labelled_at order (pool sha256 {rv.sha256_file(pool_path)[:12]}; "
+                      f"superseded repeats within a run: {report['superseded_in_run']})")
+    if args.cmd == "stage2-relabel":
+        rows = relabel_rows(args.run_dir, ics.read_table(table), pool_by_key(pool_path),
+                            args.run_id, _sha256(args.prompt_template), args.labelled_at,
+                            args.machine)
+        return rows, f"import stage-2 relabelling {args.run_id} of unsure works"
+    if args.cmd == "stage2-agree-rule":
+        rows = agree_rule_rows(args.checks, args.check_model, ics.read_table(table),
+                               args.relabel_run_id, args.run_id, args.labelled_at)
+        return rows, (f"agreement rule {args.run_id}: {args.relabel_run_id} icf kept only "
+                      f"when {args.check_model} agrees")
+    return (side_table_rows(args.rows_file, rv.read_pool(pool_path)),
+            f"append rows of {args.rows_file}")
 
 
 def main(argv=None):
@@ -401,12 +689,15 @@ def main(argv=None):
     p3.add_argument("--allow-input-drift", action="store_true",
                     help="import although pool or table differ from those the input was "
                          "built on")
+    _add_stage2_parsers(sub)
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
     table = args.output
     try:
-        if args.cmd == "t1530":
+        if args.cmd in STAGE2_COMMANDS:
+            rows, note = _stage2_rows(args, cfg, table)
+        elif args.cmd == "t1530":
             archive = os.path.expanduser(args.archive or cfg["t1530_archive"])
             rows = t1530_rows(archive, args.stage2_prompt or cfg["t1530_stage2_prompt"])
             note = f"import t1530 from {archive}"
