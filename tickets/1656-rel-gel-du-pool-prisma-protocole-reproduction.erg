@@ -70,3 +70,7 @@ First red test: synthetic overlapping sources with two query dates, one work in 
 
 Verified helpers: corpus_rel_view.run(pool_path,table_path,out_dir,window_cfg,rule,*,dims_path,venues_path,seriousness_rule,membership); pipeline_loaders.classify_rel_review_works(works,config=None); pool/report builders and make rel-pool-data restore exact frozen pin without catalogue regeneration. Use pathlib/shutil/hashlib/CSV/JSON/YAML+DVC; no archive framework/service.
 
+
+## Raid checkpoint — 1656 — Phase 4 feasibility: WARN, feasible with corrections
+
+Archives present locally; hash/content sufficiency pending. Scientific blockers: unfinished1654, missing required evidence, corruption, unreconcilable counts/unsafe identity transfer. Declared gaps/accepted residues/audit waiver remain documented limitations. Target11paths: script,test,inventory,searchdateconfig,protocol,PRISMA,completionnote,reconstruction/methodnote,ticket,DVCpointer,.gitignore. Reuse1654rekey helper; two optional helper/test paths plus second.gitignore reach14; enforce split guard15+. Two sequential ticketPRs do not trigger3+shared-registry coordination; shared completion docs/data pointers require merge/rebase sequencing, not concurrent edits.

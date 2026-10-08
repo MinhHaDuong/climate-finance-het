@@ -58,3 +58,8 @@ Verified reusable signatures/CLI:
 - corpus_icf_stage2.py build --output-dir …; parse --chunk-dir … --model … --run-id … --machine … --suffix … --prompt config/rel_stage2_prompt_v2.md.
 - enrich_rel_venues_openalex.fetch_batch(ids,api_key); CLI --pool/--output/--budget-floor.
 
+
+## Raid checkpoint — 1654 — Phase 4 feasibility: WARN, feasible with corrections
+
+All named existing paths/CLI verified. Full v2 execution adapter and safe generic rekey mapping remain implementation. Existing resolve_openalex_ids strips abstracts; catalog_rel_sud_search.slim truncates to1500; neither is full metadata archival. Planning source checks made no paid calls. Count actual git paths before execute: target ≤14 including ticket/tests/DVC pointers/.gitignore; if15+, split scoped implementation/delivery PRs via child tickets without weakening scientific closure. No Makefile/shared pipeline edits needed.
+
