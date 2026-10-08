@@ -2,9 +2,21 @@
 
 Ticket1654 remains open. First-round citation collection is archived, but screening, subsequent rounds and scientific closure are incomplete. Ticket1656 final freezing has not begun.
 
-The first-round scientific intake contains270647 titled candidate records and235 separately preserved titleless records, with all seed-candidate edges and complete available metadata. Administrative identity-search results are separate from scientific citation yield. Backward183/183, forward183/183, reference1388/1388 and archive48/48 planned query units completed. Reference12434, seed identity1657 and seed metadata80 gaps remain documented; these prevent a saturation claim. The rebuilt pool has597317 works, a net208026 increase, which is not synonymous with new admissible families.
+The first-round delivery contains 270,647 titled records: 260,567 citation-edge
+candidates and 10,080 source-seed metadata updates. The 235 separately preserved
+titleless records comprise 199 citation-edge candidates and 36 source-seed
+metadata records, giving 270,882 received metadata records overall. Source-seed
+metadata updates are not new citation yield; administrative identity-search
+responses are also recorded separately. All actual seed-candidate edges and
+complete available metadata remain archived. Planned query units completed:
+backward 183/183, forward 183/183, references 1,388/1,388 and archive 48/48.
+Reference 12,434, seed identity 1,657 and seed metadata 80 gaps remain documented
+and prevent a saturation claim. The rebuilt pool has 597,317 works, a net
+208,026 increase; this is not a count of novel admissible families.
 
-Historical labels and the accepted296 stage2 plus59 titleless residues are preserved. Exact identifier/member reconciliation leaves33 historical keys associated with22 changed current families requiring genuine decisions; merges will not count as new-work yield. No uncertain or title-only discovery route is silently discarded.
+Historical labels and the accepted296 stage2 plus59 titleless residues are preserved. Exact identifier/member reconciliation records 33 historical keys across 22 changed current families. Scientific dispositions retain valid historical judgments and assess only genuinely unscreened groups; merges do not count as new-work yield. No uncertain or title-only discovery route is silently discarded.
+
+## Historical execution checkpoints — 8 October
 
 The author subsequently instructed “Use only local”. Active remote Stage2 processing stopped immediately; all native successful replies and the unresolved in-flight request remain archived. Earlier known conservative provider-price costs totalUSD4.065929198 and unresolved maximum liabilitiesUSD0.275199636; these are derived costs/reservations, not verified cash billing. No outbound corpus/model request followed that instruction until the later explicit, separately bounded Haiku pilot authorization.
 
