@@ -1,0 +1,19 @@
+# Citation chaining checkpoint, 2026-10-08
+
+Ticket1654 remains open. First-round citation collection is archived, but screening, subsequent rounds and scientific closure are incomplete. Ticket1656 final freezing has not begun.
+
+The first-round scientific intake contains270647 titled candidate records and235 separately preserved titleless records, with all seed-candidate edges and complete available metadata. Administrative identity-search results are separate from scientific citation yield. Backward183/183, forward183/183, reference1388/1388 and archive48/48 planned query units completed. Reference12434, seed identity1657 and seed metadata80 gaps remain documented; these prevent a saturation claim. The rebuilt pool has597317 works, a net208026 increase, which is not synonymous with new admissible families.
+
+Historical labels and the accepted296 stage2 plus59 titleless residues are preserved. Exact identifier/member reconciliation leaves33 historical keys associated with22 changed current families requiring genuine decisions; merges will not count as new-work yield. No uncertain or title-only discovery route is silently discarded.
+
+The author subsequently instructed “Use only local”. Active remote Stage2 processing stopped immediately; all native successful replies and the unresolved in-flight request remain archived. Earlier known conservative provider-price costs totalUSD4.065929198 and unresolved maximum liabilitiesUSD0.275199636; these are derived costs/reservations, not verified cash billing. No outbound corpus/model request followed that instruction until the later explicit, separately bounded Haiku pilot authorization.
+
+Existing local Qwen Stage1 completed40/40 records in two requests totaling23.753 seconds: about1.68 records/second. The206182-record remaining input excludes1999 already paired remote-pilot records. At the observed rate, Stage1 alone would take about34 hours. The full local job was held when the author rejected this duration. Local runtime/model/weight fingerprints, prompt/config hashes and native request/reply evidence are under the run archive; no unrelated server was stopped.
+
+The author approved local Qwen Stage2 with validation. The adapter uses the existing v2 instrument and parser, captures raw native replies, requires the established loopback model and has no remote fallback. Same-model Stage1/Stage2 cannot provide independent stronger adjudication. A blinded frozen reference of220 records and separate historical discipline benchmark are prepared; validation has not yet run or modified authoritative tables.
+
+The author then explicitly authorized a Haiku5.5 validation/speed pilot up toUSD0.25 using verified public bibliographic text. A separate atomic pilot ledger reserves every attempt and retains unknown charges, without retries or fallback.49 frozen reference records have six-field exact public OpenAlex proof;171 others remain unsent. A seeded random100 verified remaining queue records supplies the Stage1 speed sample, excluding the completed local40. Exact requests, private local maps, provider-native replies, pricing sources and basis hashes are archived. This exception authorizes the pilot only; remote bulk screening and further remote retrieval remain unauthorized.
+
+Archive root: `data/rel_chaining/2026-10-08/`. Key operational locations: `operations/local-only-stop.json`, `round1/screen/local-qwen/pilot/`, `operations/local-stage2-validation-reference/`, and `operations/haiku-pilot-preview/`. Native archives remain local and are not represented as a completed immutable DVC delivery. The active worktree must be preserved.
+
+Focused collection/screening tests:17 passed. Full populated padme gate and scientific exit-criterion review remain required before a final PR. This checkpoint is not a closure or merge request.

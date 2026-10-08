@@ -8,6 +8,7 @@ The existing stage-2 parser owns label/dimension validation and append.
 import argparse
 import hashlib
 import json
+import time
 from pathlib import Path
 
 import _icf_chunks as chunks
@@ -64,6 +65,67 @@ def prompt_for(wrapper, rule, record_text):
                           "Return only these answer lines, without commentary or counts.")
     definition = rule.split("{answer_format}")[0]
     return definition + "\n" + block + "\nRecords:\n" + record_text
+
+
+def stage2_local(chunk_dir, output_dir, prompt_path, model="qwen3.8-27b", max_tokens=12000,
+                 post=requests.post):
+    """Run the unchanged v2 instrument through the configured loopback server.
+
+    Local predictions are a method substitution, not independent adjudication.
+    Validation callers keep their outputs separate from authoritative tables.
+    """
+    cfg_path = Path("config/rel_sud_screen.yaml")
+    cfg = yaml.safe_load(cfg_path.read_text())
+    local = cfg["local"]
+    if local["api_base"].rstrip("/") != "http://127.0.0.1:8080/v1" or model != local["model"]:
+        raise ChainError("local stage2 requires the established loopback model; no remote fallback")
+    chunk_dir, output_dir = Path(chunk_dir), Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    wrapper = Path(prompt_path).read_text(encoding="utf-8")
+    basis = {"route": "local-only", "model": model, "config_sha256": sha(cfg_path),
+             "wrapper_sha256": sha(prompt_path), "max_tokens": max_tokens,
+             "method": "approved local Qwen v2 substitution; same-model stages"}
+    dump(output_dir / "local_basis.json", basis)
+    for path in sorted(chunk_dir.glob("chunk*.txt")):
+        if "." in path.stem:
+            continue
+        name = path.stem
+        answer = chunk_dir / f"{name}.qwen.txt"
+        raw = output_dir / f"{name}.reply.json"
+        request_path = output_dir / f"{name}.request.json"
+        rendered = chunk_dir / f"{name}.prompt.txt"
+        prompt = rendered.read_text(encoding="utf-8") if rendered.exists() else prompt_for(
+            wrapper, cfg["prompt_template"], path.read_text(encoding="utf-8"))
+        body = {"model": model, "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": max_tokens, **local.get("request_extra", {})}
+        digest = hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest()
+        if request_path.exists() and json.loads(request_path.read_text())["request_sha256"] != digest:
+            raise ChainError(f"changed local chunk/request basis: {name}")
+        if answer.exists():
+            if not raw.exists() or not request_path.exists():
+                raise ChainError(f"local answer without native evidence: {name}")
+            continue
+        if not raw.exists():
+            if request_path.exists():
+                raise ChainError(f"{name}: unresolved local request; inspect before resubmission")
+            dump(request_path, {"request_sha256": digest, "request": body, "basis": basis, "started_at": now()})
+            started = time.monotonic()
+            response = post(local["api_base"].rstrip("/") + "/chat/completions", json=body, timeout=900)
+            # Preserve exact response bytes before decoding even malformed JSON.
+            dump(raw, {"status": response.status_code, "retrieved_at": now(),
+                       "elapsed_seconds": time.monotonic() - started, "raw_text": response.text})
+        record = json.loads(raw.read_text())
+        if record["status"] != 200:
+            raise ChainError(f"{name}: local HTTP {record['status']}; native response retained")
+        js = json.loads(record["raw_text"])
+        if js.get("model") != model:
+            raise ChainError(f"{name}: unexpected local served model")
+        choice = (js.get("choices") or [{}])[0]
+        text = choice.get("message", {}).get("content") or ""
+        if choice.get("finish_reason") != "stop" or not text.strip():
+            raise ChainError(f"{name}: incomplete local response; inspect native evidence")
+        answer.write_text(text + "\n", encoding="utf-8")
+        log.info("%s answered locally", name)
 
 
 def stage2(store, chunk_dir, output_dir, prompt_path, model, input_price, output_price,
@@ -124,8 +186,12 @@ def stage2(store, chunk_dir, output_dir, prompt_path, model, input_price, output
         js = record["body"]
         usage = js.get("usage") or {}
         if record["status"] != 200:
-            # A rejected request with no usage is unpaid; its evidence remains.
-            store.settle(req["call"], 0, {"chunk": name, "http": record["status"], "usage": usage})
+            # Only documented Flex rejection is known to be unpaid. Unknown
+            # provider failures retain the full liability pending evidence.
+            error = js.get("error") or {}
+            if record["status"] == 429 and error.get("type") == "resource_unavailable":
+                store.settle(req["call"], 0, {"chunk": name, "http": 429, "usage": usage,
+                                             "disposition": "documented uncharged Flex ResourceUnavailable"})
             raise ChainError(f"{name}: HTTP {record['status']}; inspect archived error before retry")
         actual_tier = js.get("service_tier")
         multiplier = 1 if actual_tier == tier else 2
@@ -146,7 +212,7 @@ def stage2(store, chunk_dir, output_dir, prompt_path, model, input_price, output
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["build", "stage2"])
+    parser.add_argument("action", choices=["build", "stage2", "stage2-local"])
     parser.add_argument("--output-dir", required=True, help="multi-output execution archive")
     parser.add_argument("--budget-ledger", required=True)
     parser.add_argument("--input")
@@ -165,6 +231,9 @@ def main():
     parser.add_argument("--correction-keys", help="archived changed-family relations JSON, correction_keys field")
     parser.add_argument("--config", default="config/rel_screen.yaml")
     args = parser.parse_args()
+    if args.action == "stage2-local":
+        stage2_local(args.chunk_dir, args.output_dir, args.prompt, args.model or "qwen3.8-27b", args.max_tokens)
+        return 0
     store = Store(args.output_dir, args.budget_ledger)
     store.bind("budget_usd", 20)
     try:
