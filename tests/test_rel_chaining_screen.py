@@ -11,6 +11,27 @@ from corpus_rel_chaining_screen import build_stage2, prompt_for, stage2, stage2_
 pytestmark = pytest.mark.domain_corpus
 
 
+def test_authorized_budget_change_is_shared_but_original_basis_is_immutable(tmp_path):
+    ledger = tmp_path / "budget.sqlite"
+    first, second = Store(tmp_path / "one", ledger), Store(tmp_path / "two", ledger)
+    first.bind("budget_usd", 20)
+    second.bind("budget_usd", 20)
+    first.reserve("test", 19, {})
+    with pytest.raises(ChainError, match="cumulative"):
+        second.reserve("test", 2, {})
+    first.authorize_budget(30, "Author explicitly approved30total")
+    second.reserve("test", 10, {})
+    assert second.config("budget_usd") == 20
+    with pytest.raises(ChainError, match="cumulative"):
+        first.reserve("test", 2, {})
+    with pytest.raises(ChainError, match="existing liabilities"):
+        first.authorize_budget(20, "cannot erase existing commitments")
+    with pytest.raises(ChainError, match="positive cap"):
+        first.authorize_budget(float("nan"), "invalid numeric authorization")
+    with pytest.raises(ChainError, match="positive request"):
+        first.reserve("test", float("nan"), {})
+
+
 def test_batch_result_mapping_unordered_failed_and_duplicate_decisions():
     import json
 
