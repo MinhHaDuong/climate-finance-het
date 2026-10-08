@@ -315,8 +315,36 @@ flipped), the included works, families and mu-weighted count, and the works
 missing only the discipline facet (`discipline_pending_*`, informative for the
 works the 1842 catch-up cannot answer, those without abstract). The rules (which dimension row wins, the
 family rule) are in the `scripts/_rel_reasons.py` docstring. A work whose pool abstract is blank after trimming
-carries `abstract_flag` `no_abstract` (author decision 2026-10-07): it counts
-in the bibliometric analysis only, so `rel_use` is `bibliometric_only` for an
-included work without abstract and `synthesis` for one with an abstract; the
-flag never moves `mu`, `rel_reason` or `rel_final`.
+carries `abstract_flag` `no_abstract` (author decision 2026-10-07). This
+raw trimmed-empty predicate remains unchanged; it does not assess whether
+nonempty text is a substantive abstract.
+
+For an included work without a selected policy disposition, `rel_use` is
+`bibliometric_only` when the raw abstract
+is empty (`rel_use_reason` `no_abstract`), or when the selected ICF assessment
+has effective input quality `absent`, `nonabstract` or `truncated` (reason
+`absent_input`, `nonabstract_input` or `truncated_input`). Nonempty source
+text remains intact, including front matter or a source fragment; the quality
+restriction does not recode it as an empty abstract. A selected local policy
+ICF or dimension disposition also restricts an included work to
+`bibliometric_only`, with `rel_use_reason` `local_screen_abstention`, even
+when its abstract is nonempty. Its native answer is absent and policy input
+quality is `unassessed`; neither is a model assessment. The view exposes
+`local_screen_abstention` and selected policy scope, method, run, decision,
+reason and proof gaps, backed by the append-only policy provenance table
+configured as `policies_table` in `config/rel_screen.yaml` (ticket 2011).
+
+Other included works use `synthesis`: assessed usable abstracts have reason
+`usable_abstract`; nonempty legacy abstracts without an input-quality
+assessment retain reason `legacy_abstract_unassessed`. These evidence-use
+restrictions never move `mu`, `rel_reason` or `rel_final`. Independently
+excluded works keep `rel_use` empty; a selected policy still exposes its flag,
+provenance and `local_screen_abstention` reason without implying inclusion.
+Restrictions follow the assessments actually selected by the view. A later
+valid selected usable ICF assessment clears the earlier input-quality
+restriction; policy restriction clears only when no policy ICF or dimension
+disposition remains selected. A later ICF assessment alone therefore does
+not clear a dimension-policy restriction if that policy remains the winning
+catchup dimension row; a later valid selected dimension assessment replaces
+it under the normal selection rule.
 Final counts of 2026-10-07 (view rebuilt twice, byte-identical; measured, from the 1842 and 1843 logs): `seriousness_excluded` 39,115, `icf_excluded` 335,652, `icf_pending` 351, `discipline_pending` 5,894 (all without abstract), `discipline_excluded` 780 (an upper bound: Opus v2 tends to over-exclude applied finance), `included` 7,499; sum 389,291. `rel_dimensions.csv` holds 11,645 works.
