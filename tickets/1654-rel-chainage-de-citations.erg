@@ -34,3 +34,27 @@ REL set alone is not the discovery universe. Execution plan and baseline evidenc
 
 The baseline is complete but chaining has not run. Simplest path: a narrow resumable OpenAlex collector plus existing intake/pool/screen/venue/view procedures. Discovery seeds are final ICF icf/unsure and sentinels, not the fully graded REL population: baseline 19,852 seeds, 17,641 OA identities, 2,211 missing OA identities, 6,433 without DOI. Resolve missing IDs or document unresolved routes. Do not replace this discovery population with 7,499 inclusions. Avoid a new harvest framework. Existing metadata resolvers are lossy and existing cursor search is not resumable; reuse HTTP/text/keystore helpers, not their filtered outputs. Archive complete raw payloads and separate seed–candidate edges.
 
+
+## Raid checkpoint — 1654 — Phase 3 Actions and first test
+
+1. Archive deterministic seed roster, sentinel inclusion reasons and pool/config hashes. Resolve missing OA IDs by batched DOI then evidence-based title/author/year; preserve ambiguous/no-match routes.
+2. Add a narrow collector and meaningful tests. Batch backward seed metadata/reference resolution and forward OR-cites queries with cursor paging, no year cap. Request referenced_works in forward payloads; intersect against all query seeds to preserve all edges. Save full raw page before committing next cursor. Resume idempotently; changed query/input basis refuses resume.
+3. Export complete metadata/full reconstructed abstracts, all retrieved works including existing-pool/out-of-window works, query/date/pagination registry, exclusions, duplicate-discovery ledger, raw files and all edges. Validate intake. No relevance filtering before pool merge.
+4. Meter current OA credits from meta.cost and credit headers, also historical USD headers where present. Current source check: single-entity ID/DOI free; filter/list 1 credit=$0.0001/call; search 10 credits=$0.001/call; free $1/day. Maximum100 OR values/page100; detect exhausted/repeated cursor and complete documented termination. Reconcile monetary charges and free allowance separately. Reserve outstanding-call maximum liabilities against total USD20 before submission, including retries; never restart concurrent abandoned batch and synchronous work blindly.
+5. Merge each round via existing pool builder. Reconcile keys using explicit identifiers/member provenance and append-only migration records; ambiguous joins refuse label transfer. Refresh venues/view, run Design B for new or changed unscreened works, import paired labels, then v2 stage2 plus established correction procedures and dimensions. Archive all answers/routes/prompts/costs. A new small generalized v2 paid runner is required: discipline catch-up transport cannot be used unchanged because answer writer/parser are discipline-only.
+6. Measure eligible research works and observed families only after screening/venue/dimension reconciliation; separately report retrieved records, unique candidates, overlap, genuinely new works, metadata enrichment, ICF/unsure routes and unresolved/pending works. Advance from newly admissible retained works with uncertain/sentinel discovery routes kept as protocol requires.
+7. Run two rounds; trigger third if round2 yields admissible works; continue if protocol closure requires further chaining. Interrupted queries, missed sentinels, external references without decision, incomplete summaries or pending new-work decisions do not support saturation/closure. Budget exhaustion checkpoints incomplete work and does not close1654.
+8. DVC-push immutable delivery/screen/venue/run artifacts, report stopping decision, then required populated padme gate and PR.
+
+First red test: one mocked forward result cites two query seeds; assert one delivered work and two distinct edges, complete abstract, no year filter. A first-seed-only association must fail. Add meaningful interruption/resume and unresolved-identity coverage.
+
+Verified reusable signatures/CLI:
+- pipeline_io.retry_get(url, params=None, headers=None, delay=0.2, max_retries=…, timeout=60, counters=None, backoff_base=2.0, jitter_max=1.0).
+- pipeline_keystore.read_credential(provider, source, *, keys_dir=None); OpenAlex and OPENROUTER_API_KEY_CLIMATEFINANCE present, generic OPENROUTER_API_KEY absent. Never log keys.
+- reconstruct_abstract from openalex_corpus.text (utils facade also exports); NOT pipeline_text.
+- corpus_rel_pool.run(cfg,catalogue_path,intake_dir,out_dir).
+- corpus_icf_stage1_input.run(pool_path,table_path,output,priority,rule,exclude_inputs=None); CLI --output/--exclude-input.
+- corpus_icf_stage1_designb.py --input … --output-dir … --budget-usd …; cumulative run-directory cap. corpus_icf_import.py --output TABLE stage1-designb --run-dir … --pool ….
+- corpus_icf_stage2.py build --output-dir …; parse --chunk-dir … --model … --run-id … --machine … --suffix … --prompt config/rel_stage2_prompt_v2.md.
+- enrich_rel_venues_openalex.fetch_batch(ids,api_key); CLI --pool/--output/--budget-floor.
+
