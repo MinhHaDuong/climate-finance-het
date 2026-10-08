@@ -1,0 +1,16 @@
+# REL facet and policy events, 2026-10-08
+
+Audience: public. This entry contains method and public-code events; it contains no record text, private roster or native model output.
+
+PR1713 introduced the versioned international, climate and finance memberships, their minimum, separate contribution and append-only native/effective provenance. Poor-input negative memberships become uncertainty in effective judgments while native answers remain preserved. Review identified a legacy exact-family proof bypass, invalid persisted effective answers and an unavailable claimed alias archive. The retry corrected those cases and documented the operator-approved provenance trust boundary; it passed the clean populated-padme full gate with 25 library and 3,176 repository tests, 33 skips.
+
+PR1714 introduced a separately identified local policy method, policy:local-evidence-abstention-v1. The approved scope was 43 full-facet policy dispositions and 37 dimension-only catchups; four valid historical assessments were reused. Policy values are distinct from model assessments, with native answer absent and quality unassessed. Included selected policy dispositions restrict evidence use to bibliometric_only; independently excluded rows retain blank evidence use. Selection of later valid assessments clears superseded restrictions. The actual copied-ledger check preserved the 37 dimension-only ICF rows and confirmed idempotent import. The clean populated-padme gate passed 25 library and 3,189 repository tests, 33 skips.
+
+The PR1714 documentation retry corrected the live evidence-use contract. All executable blobs remained identical to its full-gated head. The merge helper first refused a missing explicit close claim; a PR-body correction allowed ticket closure and merge. The local CI helper could not initialize because ci-local/common.sh was absent; it was not counted as a pass. There is no project CI (ticket0321).
+
+Both review loops used independent sequential portable seats and a cross-family CLI reviewer. Their raw trails and exact revisions are retained in parent operations/gaze-1713/cad44025-221f-45c0-8b55-405d5c730574 and operations/gaze-1714/a2d5e0a5-c7a5-4e9e-b1ab-16643afe3961. Attribution entries retain all attempts and visible identity limitations. Parent tickets0700 and1654 remain open; these child merges do not establish corpus closure or scientific calibration.
+
+References: https://github.com/MinhHaDuong/climate-finance-het/pull/1713 and https://github.com/MinhHaDuong/climate-finance-het/pull/1714. Integration tip3b19801c1946670ddcd4952cba21133699cab970. The seven-day close-claim sweep examined17 PRs and8 claims across6 PRs, with no dropped or unresolved claims. The integration-ref sweep found the same blanket nonempty-abstract synthesis statement remaining in scripts/_rel_reasons.py:38. Ticket2025 records this actual documentation contradiction; the implementation already applies the restrictions correctly. No shared-source change was made in this wrap-up.
+
+Commissioned defect-backfill attempts appended no events: each reported three unresolved records because prior revision evidence was absent or the current fix PR was not a past review. Original adopted findings remain unchanged; unresolved evidence is not an all-clear.
+

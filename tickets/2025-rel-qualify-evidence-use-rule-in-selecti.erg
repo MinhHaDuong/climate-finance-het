@@ -1,0 +1,43 @@
+%erg 0.1
+Title: REL — qualify evidence-use rule in selection module documentation
+Created: 2026-10-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-08T22:28Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Follow-up from the merged-ref /roar sweep of PR1713 and PR1714 at
+3b19801c1946670ddcd4952cba21133699cab970. Parent1654 remains open.
+The public live intake contract now documents selected-policy and assessed
+poor-input restrictions. The selection module docstring still states at
+scripts/_rel_reasons.py:38 that synthesis is for works “with an abstract”.
+That blanket statement contradicts its correct implementation at lines315–322:
+an included nonempty selected-policy record is bibliometric_only, as is an
+included assessed absent/nonabstract/truncated input. This is documentation
+of an actual method, rather than a proposal for another guard.
+
+## Scope
+
+Correct only the module's evidence-use explanation. Preserve the dated raw
+trimmed-empty rule, membership/exclusion semantics and historical provenance.
+Do not alter implementation, policy scope, model outputs or corpus data.
+
+## Exit criteria
+
+- The module docstring agrees with docs/rel-intake-contract.md: selected policy
+  and assessed absent/nonabstract/truncated inputs restrict included works to
+  bibliometric_only even with nonempty text; independently excluded rel_use
+  remains blank.
+- Explain that restrictions follow actually selected assessments and that an
+  ICF update alone cannot clear a still-selected dimension policy.
+- Preserve the raw-empty abstract flag and mu/rel_reason/rel_final semantics.
+  Verify executable AST unchanged and run the sufficient documentation gate.
+
+## Evidence
+
+PR1714 round2 gate: https://github.com/MinhHaDuong/climate-finance-het/pull/1714#issuecomment-6070231560.
+Existing regression: tests/test_rel_policy.py::test_policy_view_restriction_and_later_valid_assessment.
