@@ -15,9 +15,11 @@ import socket
 import sqlite3
 import subprocess
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
+import _icf_screen as screens
 import qa_rel_intake as contract
 import requests
 from openalex_corpus.text import reconstruct_abstract
@@ -99,7 +101,7 @@ class Store:
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         (self.root / "raw").mkdir(exist_ok=True)
-        self.db = sqlite3.connect(self.root / "checkpoint.sqlite")
+        self.db = sqlite3.connect(self.root / "checkpoint.sqlite", timeout=120)
         self.db.row_factory = sqlite3.Row
         self.budget_path = Path(budget_ledger) if budget_ledger else self.root.parent / "budget.sqlite"
         self.db.execute("ATTACH DATABASE ? AS budget", (str(self.budget_path),))
@@ -144,8 +146,10 @@ class Store:
         self.db.commit()
 
     def reserve(self, provider, bound, details):
+        self.db.execute("BEGIN IMMEDIATE")
         spent = self.db.execute("SELECT COALESCE(SUM(COALESCE(cost,reserve)),0) FROM budget.calls").fetchone()[0]
         if spent + bound > self.config("budget_usd"):
+            self.db.rollback()
             raise ChainError(f"cumulative budget: {spent:.5f}+{bound:.5f} exceeds cap")
         call = self.db.execute("INSERT INTO budget.calls(round,provider,reserve,status,details,date) VALUES(?,?,?,?,?,?)",
                                (str(self.root), provider, bound, "reserved", json.dumps(details), now())).lastrowid
@@ -240,7 +244,37 @@ def archive_identity_results(store, params, body, date):
     return complete
 
 
-def resolve_seeds(store, get=requests.get):
+def resolve_one_seed(root, ledger, seed, archived, get):
+    store = Store(root, ledger)
+    rec = json.loads(seed["body"])
+    doi = normalize_doi(rec.get("doi"))
+    params = {"filter": "doi:" + doi, "per_page": 100} if doi else {
+        "search": normalize_title(rec.get("title") or ""), "per_page": 100}
+    if not doi and not params["search"]:
+        matches = []
+    else:
+        body = archived.get(json.dumps(params, sort_keys=True))
+        if body is None:
+            body = oa_request(store, params, get)
+        complete = archive_identity_results(store, params, body, now())
+        results = body["results"]
+        matches = [w for w in results if normalize_doi(w.get("doi")) == doi] if doi else [
+            w for w in results if same_title_identity(rec, w)]
+        if not complete:
+            matches = []
+    if len(matches) == 1:
+        oa = oid(matches[0]["id"])
+        store.db.execute("UPDATE seeds SET oa=?,resolution=? WHERE k=?",
+                         (oa, "doi_exact" if doi else "title_year_author_exact", seed["k"]))
+    else:
+        reason = "ambiguous identity" if matches else "no exact identity match"
+        store.db.execute("UPDATE seeds SET resolution=? WHERE k=?", (reason, seed["k"]))
+        store.db.execute("INSERT OR REPLACE INTO unresolved VALUES(?,?,?)", (seed["k"], "seed", reason))
+    store.db.commit()
+    store.db.close()
+
+
+def resolve_seeds(store, get=requests.get, workers=8):
     # Raw pages also recover an interrupted identity request without recharging.
     archived = {}
     for path in sorted((store.root / "raw").glob("*.json.gz")):
@@ -250,34 +284,15 @@ def resolve_seeds(store, get=requests.get):
             archive_identity_results(store, obj["query"], obj["body"], obj["retrieved_at"])
             archived[json.dumps(obj["query"], sort_keys=True)] = obj["body"]
     pending = list(store.db.execute("SELECT * FROM seeds WHERE oa='' AND resolution='pending' ORDER BY k"))
-    for i, seed in enumerate(pending):
-        rec = json.loads(seed["body"])
-        doi = normalize_doi(rec.get("doi"))
-        params = {"filter": "doi:" + doi, "per_page": 100} if doi else {
-            "search": normalize_title(rec.get("title") or ""), "per_page": 100}
-        if not doi and not params["search"]:
-            matches = []
-        else:
-            body = archived.get(json.dumps(params, sort_keys=True))
-            if body is None:
-                body = oa_request(store, params, get)
-            complete = archive_identity_results(store, params, body, now())
-            results = body["results"]
-            matches = [w for w in results if normalize_doi(w.get("doi")) == doi] if doi else [
-                w for w in results if same_title_identity(rec, w)]
-            if not complete:
-                matches = []
-        if len(matches) == 1:
-            oa = oid(matches[0]["id"])
-            store.db.execute("UPDATE seeds SET oa=?,resolution=? WHERE k=?",
-                             (oa, "doi_exact" if doi else "title_year_author_exact", seed["k"]))
-        else:
-            reason = "ambiguous identity" if matches else "no exact identity match"
-            store.db.execute("UPDATE seeds SET resolution=? WHERE k=?", (reason, seed["k"]))
-            store.db.execute("INSERT OR REPLACE INTO unresolved VALUES(?,?,?)", (seed["k"], "seed", reason))
-        store.db.commit()
-        if i % 100 == 0:
-            log.info("identity resolution %d/%d", i + 1, len(pending))
+    # Bound task submission as well as calls in flight: errors stop the next wave.
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        for start in range(0, len(pending), workers):
+            tasks = [executor.submit(resolve_one_seed, store.root, store.budget_path, seed, archived, get)
+                     for seed in pending[start:start + workers]]
+            for task in tasks:
+                task.result()
+            if start % 80 == 0:
+                log.info("identity resolution %d/%d", min(start + workers, len(pending)), len(pending))
 
 
 def query_page(store, query, get=requests.get):
@@ -392,9 +407,72 @@ def export_delivery(store, output):
     log.info("exported %d records; %d incomplete units", n, len(incomplete))
 
 
+def identity_indexes(new_rows):
+    by_identity = {}
+    by_member = {}
+    for row in new_rows:
+        for field in ("all_dois", "all_openalex_ids"):
+            for value in (row.get(field) or "").split(";"):
+                if value:
+                    by_identity.setdefault((field, value), set()).add(row["work_key"])
+        for member in (row.get("member_record_ids") or "").split(";"):
+            if member:
+                by_member.setdefault(member, set()).add(row["work_key"])
+    return by_identity, by_member
+
+
+def exact_rekey_map(old_rows, new_rows):
+    by_identity, by_member = identity_indexes(new_rows)
+    new_keys = {r["work_key"] for r in new_rows}
+    result, unresolved = {}, []
+    old_member_counts = Counter(m for r in old_rows for m in (r.get("member_record_ids") or "").split(";") if m)
+    new_lookup = {r["work_key"]: r for r in new_rows}
+    for old in old_rows:
+        key = old["work_key"]
+        if key in new_keys:
+            continue
+        candidates = set()
+        for field in ("all_dois", "all_openalex_ids"):
+            for value in (old.get(field) or "").split(";"):
+                if value:
+                    candidates.update(by_identity.get((field, value), ()))
+        members = [m for m in (old.get("member_record_ids") or "").split(";") if m]
+        if not candidates and members and all(old_member_counts[m] == 1 for m in members):
+            member_sets = [by_member.get(m, set()) for m in members]
+            candidates = set.intersection(*member_sets)
+            candidates = {c for c in candidates if normalize_title(new_lookup[c]["title"]) == normalize_title(old["title"])
+                          and new_lookup[c]["year"] == old["year"]}
+        if len(candidates) == 1:
+            result[key] = candidates.pop()
+        else:
+            unresolved.append({"old_key": key, "candidates": sorted(candidates), "reason": "absent or ambiguous exact identity"})
+    multi = Counter(result.values())
+    for old, new in list(result.items()):
+        if multi[new] > 1:
+            unresolved.append({"old_key": old, "candidates": [new], "reason": "many-to-one historical identity"})
+            del result[old]
+    return result, unresolved
+
+
+def migrate_labels(store, old_pool, new_pool, table, dims_table):
+    mapping, unresolved = exact_rekey_map(list(rows(old_pool)), list(rows(new_pool)))
+    report = {"old_pool_sha256": sha(old_pool), "new_pool_sha256": sha(new_pool),
+              "mapping": mapping, "unresolved": unresolved, "tables": {}}
+    for path, schema in ((table, screens.ICF), (dims_table, screens.DIMENSIONS)):
+        entries = screens.read_table(path, schema)
+        additions = [{**row, "work_key": mapping[row["work_key"]]} for row in entries if row["work_key"] in mapping]
+        added, skipped = screens.append_new(path, additions, "t1654 exact identity migration", schema=schema)
+        report["tables"][str(path)] = {"appended": added, "skipped": skipped}
+    path = store.root / "key_migrations.jsonl"
+    with path.open("a", encoding="utf-8") as stream:
+        stream.write(json.dumps({"at": now(), **report}, ensure_ascii=False) + "\n")
+    if unresolved:
+        raise ChainError(f"{len(unresolved)} rekey identities remain unresolved; no labels transferred for them")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["seeds", "harvest", "export"])
+    parser.add_argument("action", choices=["seeds", "harvest", "export", "rekey"])
     parser.add_argument("--output-dir", required=True, help="multi-output round checkpoint")
     parser.add_argument("--pool")
     parser.add_argument("--view")
@@ -402,6 +480,9 @@ def main():
     parser.add_argument("--budget-usd", type=float, default=20)
     parser.add_argument("--delivery")
     parser.add_argument("--budget-ledger", help="shared cumulative ledger across every round and screening route")
+    parser.add_argument("--old-pool")
+    parser.add_argument("--table")
+    parser.add_argument("--dimensions-table")
     args = parser.parse_args()
     store = Store(args.output_dir, args.budget_ledger)
     try:
@@ -409,8 +490,10 @@ def main():
             init_seeds(store, args.pool, args.view, args.sentinel, args.budget_usd)
         elif args.action == "harvest":
             harvest(store)
-        else:
+        elif args.action == "export":
             export_delivery(store, args.delivery)
+        else:
+            migrate_labels(store, args.old_pool, args.pool, args.table, args.dimensions_table)
     except (ChainError, requests.RequestException) as exc:
         log.error("checkpoint preserved: %s", exc)
         return 2

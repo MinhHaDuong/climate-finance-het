@@ -1,9 +1,12 @@
 """Citation discovery preserves every route, full text and resumable pages."""
 
+from concurrent.futures import ThreadPoolExecutor
+
 import pytest
 from catalog_rel_citation_chaining import (
     ChainError,
     Store,
+    exact_rekey_map,
     forward_edges,
     intake_record,
     query_page,
@@ -71,3 +74,37 @@ def test_resume_refuses_changed_input_basis(tmp_path):
     store.bind("basis", {"seed_hash": "first"})
     with pytest.raises(ChainError, match="resume basis changed"):
         store.bind("basis", {"seed_hash": "changed"})
+
+
+def test_concurrent_reservations_cannot_overcommit_cap(tmp_path):
+    root = tmp_path / "round1"
+    store = Store(root)
+    store.bind("budget_usd", 1)
+
+    def reserve(_):
+        local = Store(root)
+        try:
+            local.reserve("test", .3, {})
+            return True
+        except ChainError:
+            return False
+        finally:
+            local.db.close()
+
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        results = list(executor.map(reserve, range(8)))
+    assert sum(results) == 3
+    assert store.db.execute("SELECT SUM(reserve) FROM budget.calls").fetchone()[0] == pytest.approx(.9)
+
+
+def test_rekey_requires_unique_identity_and_refuses_many_to_one_history():
+    old = [{"work_key": "doi:10.x/a", "all_dois": "10.x/a"}]
+    new = [{"work_key": "openalex:W1", "all_dois": "10.x/a", "all_openalex_ids": "W1"}]
+    mapping, unresolved = exact_rekey_map(old, new)
+    assert mapping == {"doi:10.x/a": "openalex:W1"} and not unresolved
+    ambiguous = new + [{"work_key": "openalex:W2", "all_dois": "10.x/a"}]
+    mapping, unresolved = exact_rekey_map(old, ambiguous)
+    assert not mapping and unresolved[0]["reason"] == "absent or ambiguous exact identity"
+    merged_history = old + [{"work_key": "title:old-a", "all_dois": "10.x/a"}]
+    mapping, unresolved = exact_rekey_map(merged_history, new)
+    assert not mapping and len(unresolved) == 2
