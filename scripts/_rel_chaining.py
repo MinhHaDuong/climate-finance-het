@@ -10,6 +10,7 @@ import gzip
 import hashlib
 import html
 import json
+import math
 import os
 import re
 import socket
@@ -258,6 +259,23 @@ class Store:
             CREATE TABLE IF NOT EXISTS seed_aliases(old TEXT PRIMARY KEY,new TEXT,status TEXT);
         """)
 
+    def authorize_budget(self, cap, authorization):
+        """Record an explicit steering change in the shared ledger atomically."""
+        if not math.isfinite(cap) or cap <= 0 or not authorization.strip():
+            raise ChainError("positive cap and explicit authorization evidence required")
+        self.db.execute("CREATE TABLE IF NOT EXISTS budget.policy(k TEXT PRIMARY KEY,v TEXT)")
+        self.db.execute("CREATE TABLE IF NOT EXISTS budget.policy_history(at TEXT,old_cap REAL,new_cap REAL,authorization TEXT)")
+        self.db.execute("BEGIN IMMEDIATE")
+        old = self.db.execute("SELECT v FROM budget.policy WHERE k='cap_usd'").fetchone()
+        previous = float(old[0]) if old else self.config("budget_usd")
+        spent = self.db.execute("SELECT COALESCE(SUM(COALESCE(cost,reserve)),0) FROM budget.calls").fetchone()[0]
+        if spent > cap:
+            self.db.rollback()
+            raise ChainError("authorized cap below existing liabilities")
+        self.db.execute("INSERT OR REPLACE INTO budget.policy VALUES('cap_usd',?)", (str(cap),))
+        self.db.execute("INSERT INTO budget.policy_history VALUES(?,?,?,?)", (now(), previous, cap, authorization))
+        self.db.commit()
+
     def bind(self, name, value):
         value = json.dumps(value, sort_keys=True)
         old = self.db.execute("SELECT v FROM config WHERE k=?", (name,)).fetchone()
@@ -285,11 +303,14 @@ class Store:
         self.db.commit()
 
     def reserve(self, provider, bound, details):
-        if bound <= 0:
+        if not math.isfinite(bound) or bound <= 0:
             raise ChainError("positive request liability required")
         self.db.execute("BEGIN IMMEDIATE")
         spent = self.db.execute("SELECT COALESCE(SUM(COALESCE(cost,reserve)),0) FROM budget.calls").fetchone()[0]
-        if spent + bound > self.config("budget_usd"):
+        policy_exists = self.db.execute("SELECT 1 FROM budget.sqlite_master WHERE type='table' AND name='policy'").fetchone()
+        policy = self.db.execute("SELECT v FROM budget.policy WHERE k='cap_usd'").fetchone() if policy_exists else None
+        cap = float(policy[0]) if policy else self.config("budget_usd")
+        if spent + bound > cap:
             self.db.rollback()
             raise ChainError(f"cumulative budget: {spent:.5f}+{bound:.5f} exceeds cap")
         call = self.db.execute("INSERT INTO budget.calls(round,provider,reserve,status,details,date) VALUES(?,?,?,?,?,?)",
