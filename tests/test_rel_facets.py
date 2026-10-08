@@ -294,3 +294,61 @@ def test_raw_empty_forces_absent_and_consistent_effective_evidence():
     assert disposition == "unresolved" and effective["contrib"] == "unsure"
     facets.validate_answer(effective)
     assert all(effective[f] == .5 for f in facets.FACETS)
+
+
+def test_unicode_line_separator_in_json_evidence_is_not_an_answer_boundary(tmp_path):
+    import _rel_facet_io as fio
+    r = _record()
+    fio.write_chunks(str(tmp_path), [r], [_proof(r)], _config())
+    native = answer(finance_evidence="supporting: finance\u2028instrument\u2029allocation")
+    (tmp_path / "chunk01.luna.txt").write_text(json.dumps(native, ensure_ascii=False) + "\n")
+    raw, labels, dims, report = fio.parse_chunks(str(tmp_path), "luna", {
+        "stage": "2", "model": "luna", "run_id": "unicode", "machine": "padme",
+        "labeller": "llm", "labelled_at": "2026-10-08"})
+    assert len(raw) == len(labels) == len(dims) == 1
+    assert report["chunk01"]["pending"] == 0
+    assert json.loads(raw[0]["native_answer"])["finance_evidence"] == native["finance_evidence"]
+
+
+def _typed_proof(r, source_id="W2", source_type="openalex"):
+    import _rel_facet_io as fio
+    witness = {"source_type": source_type, "source_id": source_id, "native_sha256": "a" * 64,
+               "source_url": f"https://api.openalex.org/works/{source_id}" if source_type == "openalex"
+               else "rsync://rsync.repec.org/RePEc-ReDIF/"}
+    return {"work_key": r["work_key"], "source_type": "public_fieldwise",
+            "full_sixfield_sha256": fio.proof_hash(r), "declared_source_ids": [f"{source_type}:{source_id}"],
+            "field_evidence": {f: {"sha256": fio.sha(fio.encoded(v)), "sources": [dict(witness)]}
+                               for f, v in fio.public_record(r).items()}}
+
+
+def test_public_fieldwise_proof_exact_member_and_field_hashes(tmp_path):
+    import _rel_facet_io as fio
+    r = _record()
+    proof = _typed_proof(r)
+    family = {r["work_key"]: {"openalex:W1", "openalex:W2"}}
+    manifest = fio.write_chunks(str(tmp_path), [r], [proof], _config(), family)
+    assert manifest["proven"] == 1
+    assert "openalex:W2" not in (tmp_path / "chunk01.txt").read_text()
+    assert not fio.valid_public_proof(r, proof, {"openalex:W1"})
+    altered = json.loads(json.dumps(proof))
+    altered["field_evidence"]["abstract"]["sha256"] = "f" * 64
+    assert not fio.valid_public_proof(r, altered, family[r["work_key"]])
+    altered = json.loads(json.dumps(proof))
+    altered["field_evidence"]["abstract"]["sources"][0]["source_type"] = "licensed_database"
+    assert not fio.valid_public_proof(r, altered, family[r["work_key"]])
+    altered = json.loads(json.dumps(proof))
+    altered["field_evidence"]["title"]["sources"][0]["native_sha256"] = ""
+    assert not fio.valid_public_proof(r, altered, family[r["work_key"]])
+
+
+def test_redif_proof_exact_handle_with_native_archive_and_no_openalex_id(tmp_path):
+    import _rel_facet_io as fio
+    r = _record("doi:10.123/example", openalex_id="")
+    handle = "RePEc:ags:feemdp:59418"
+    proof = _typed_proof(r, handle, "repec_redif")
+    proof.update(source_archive="native-redif-subset.jsonl", source_manifest_sha256="b" * 64)
+    family = {r["work_key"]: fio.family_source_ids({"member_record_ids": f"t1810-repec-local/2026-10-08:{handle}"})}
+    assert fio.write_chunks(str(tmp_path), [r], [proof], _config(), family)["proven"] == 1
+    assert not fio.valid_public_proof(r, dict(proof, source_manifest_sha256=""), family[r["work_key"]])
+    assert not fio.valid_public_proof(r, {"work_key": r["work_key"], "public": True,
+                                       "full_sixfield_sha256": fio.proof_hash(r)}, family[r["work_key"]])

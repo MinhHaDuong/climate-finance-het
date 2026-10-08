@@ -6,6 +6,7 @@ input tokens; requests exceeding either configured bound are refused, not clippe
 import hashlib
 import json
 import os
+import re
 from collections import Counter
 
 import _icf_screen as ics
@@ -64,6 +65,65 @@ def render_request(records: list[dict], frozen: dict) -> str:
 
 
 
+
+def family_source_ids(pool_record: dict) -> set[str]:
+    """Exact declared source membership; no title or DOI fuzzy joins."""
+    ids = {"openalex:" + x for x in pool_record.get("all_openalex_ids", "").split(";") if x}
+    if pool_record.get("openalex_id"):
+        ids.add("openalex:" + pool_record["openalex_id"])
+    for member in pool_record.get("member_record_ids", "").split(";"):
+        handle = member.partition(":")[2]
+        if handle.startswith("RePEc:"):
+            ids.add("repec_redif:" + handle)
+    return ids
+
+
+def _is_sha(value: object) -> bool:
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+
+def valid_public_proof(record: dict, proof: dict | None, family_sources: set[str]) -> bool:
+    """Exact complete-field bindings to declared public native sources only.
+
+    Legacy direct OpenAlex proofs remain accepted for their original record.
+    Fieldwise proofs additionally freeze source-native hashes and value hashes;
+    the caller supplies exact pool membership, never inferred alias matches.
+    """
+    if not proof or proof.get("work_key") != record["work_key"] or proof.get("full_sixfield_sha256") != proof_hash(record):
+        return False
+    if proof.get("source_type") != "public_fieldwise":
+        return (bool(proof.get("native_openalex_id")) and proof["native_openalex_id"] == record.get("openalex_id")
+                and not proof.get("source_type"))
+    declared = proof.get("declared_source_ids")
+    evidence = proof.get("field_evidence")
+    if (not isinstance(declared, list) or any(not isinstance(x, str) for x in declared)
+            or not declared or not set(declared) <= family_sources
+            or not isinstance(evidence, dict) or set(evidence) != set(PUBLIC_FIELDS)):
+        return False
+    for field, value in public_record(record).items():
+        binding = evidence[field]
+        if not isinstance(binding, dict) or binding.get("sha256") != sha(encoded(value)):
+            return False
+        sources = binding.get("sources")
+        if not isinstance(sources, list) or not sources:
+            return False
+        if any(not _valid_source(source, declared, proof) for source in sources):
+            return False
+    return True
+
+
+def _valid_source(source: object, declared: list[str], proof: dict) -> bool:
+    if not isinstance(source, dict) or not _is_sha(source.get("native_sha256")):
+        return False
+    kind, source_id = source.get("source_type"), source.get("source_id")
+    if not isinstance(kind, str) or kind not in {"openalex", "repec_redif"} or not isinstance(source_id, str) or f"{kind}:{source_id}" not in declared:
+        return False
+    if kind == "openalex":
+        return bool(re.fullmatch(r"W[0-9]+", source_id)) and source.get("source_url") == f"https://api.openalex.org/works/{source_id}"
+    return (source_id.startswith("RePEc:") and source.get("source_url") == "rsync://rsync.repec.org/RePEc-ReDIF/"
+            and bool(proof.get("source_archive")) and _is_sha(proof.get("source_manifest_sha256")))
+
+
 def _validate_inputs(records: list[dict], proofs: list[dict], config: dict) -> dict:
     by_proof = {}
     for p in proofs:
@@ -79,7 +139,8 @@ def _validate_inputs(records: list[dict], proofs: list[dict], config: dict) -> d
     return by_proof
 
 
-def write_chunks(out_dir: str, records: list[dict], proofs: list[dict], config: dict) -> dict:
+def write_chunks(out_dir: str, records: list[dict], proofs: list[dict], config: dict,
+                 family_sources: dict[str, set[str]] | None = None) -> dict:
     """Freeze proven complete records, private maps and byte-budgeted requests.
 
     A proof must identify the original public source and bind all six complete
@@ -98,11 +159,11 @@ def write_chunks(out_dir: str, records: list[dict], proofs: list[dict], config: 
                 or not isinstance(values["countries"], list)
                 or any(not isinstance(c, str) for c in values["countries"])):
             raise ValueError("public fields must be strings and countries a string list")
-        if (not p or not p.get("native_openalex_id") or p["native_openalex_id"] != r.get("openalex_id")
-                or p.get("full_sixfield_sha256") != proof_hash(r)):
+        declared_family = (family_sources or {}).get(r["work_key"], set())
+        if not valid_public_proof(r, p, declared_family):
             pending.append(r["work_key"])
         else:
-            accepted.append(dict(r, public_proof=p))
+            accepted.append(dict(r, public_proof=p, source_family=sorted(declared_family)))
     chunks, current = [], []
     for r in accepted:
         candidate = current + [r]
@@ -158,7 +219,7 @@ def parse_chunks(chunk_dir: str, suffix: str, metadata: dict) -> tuple[list, lis
         if keys != [r["work_key"] for r in records] or request != render_request(records, frozen):
             raise ValueError(f"{name}: ordinal mapping differs from frozen request")
         for r in records:
-            if r["public_proof"]["full_sixfield_sha256"] != proof_hash(r):
+            if not valid_public_proof(r, r["public_proof"], set(r["source_family"])):
                 raise ValueError(f"{name}: public proof mismatch")
         answer_path = os.path.join(chunk_dir, f"{name}.{suffix}.txt")
         if not os.path.exists(answer_path):
@@ -166,7 +227,7 @@ def parse_chunks(chunk_dir: str, suffix: str, metadata: dict) -> tuple[list, lis
             continue
         with open(answer_path, encoding="utf-8") as fh:
             native = fh.read()
-        answers, faults = facets.parse_answers(native.splitlines(), keys)
+        answers, faults = facets.parse_answers(native.split("\n"), keys)
         report[name] = {"answered": len(answers), "pending": len(keys) - len(answers), "faults": faults}
         for r in records:
             key = r["work_key"]

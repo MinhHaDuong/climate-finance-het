@@ -262,7 +262,7 @@ def _facet_parsers(sub) -> None:
 
 def _run_facets(args, cfg: dict, pool_path: str, table: str) -> None:
     if args.cmd == "build-facets":
-        _, view = _view(pool_path, table, rv.screen_rule(cfg))
+        pool, view = _view(pool_path, table, rv.screen_rule(cfg))
         pending = set(select_pending(view))
         with open(args.input, encoding="utf-8") as fh:
             records = [json.loads(line) for line in fh if line.strip()]
@@ -270,7 +270,8 @@ def _run_facets(args, cfg: dict, pool_path: str, table: str) -> None:
             raise ValueError("facet input contains a work outside the pending Stage2 queue")
         with open(args.public_proofs, encoding="utf-8") as fh:
             proofs = [json.loads(line) for line in fh if line.strip()]
-        manifest = fio.write_chunks(args.output_dir, records, proofs, cfg["stage2_facets"])
+        manifest = fio.write_chunks(args.output_dir, records, proofs, cfg["stage2_facets"],
+                                    {r["work_key"]: fio.family_source_ids(r) for r in pool})
         log.info("facets: %d proven, %d unproven, %d chunks", manifest["proven"],
                  len(manifest["unproven"]), len(manifest["chunks"]))
     else:
