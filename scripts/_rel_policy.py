@@ -1,7 +1,7 @@
 """Scoped deterministic policy abstentions, never synthetic model answers (2011).
 
 The approved registry binds local frozen source/decision/failure artifacts. It
-permits only its complete 47/37 rosters; it is not blanket screening authority.
+permits only its registered complete rosters; it is not blanket screening authority.
 Native calibration attempts remain separate and none of these works was inferred.
 """
 import json

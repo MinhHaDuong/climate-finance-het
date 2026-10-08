@@ -1,5 +1,5 @@
 # Scientific authorization is limited to these two frozen local-only rosters.
 version: policy-local-evidence-abstention-v1
 method: policy:local-evidence-abstention-v1
-approved_manifest_sha256: 6072c6781e1d2ddd6ab68dccd12c8a6dcc2774a89900b9f6b0b17f37f7669e2a
+approved_manifest_sha256: 41351d80108786810f124d4fc49490053323844f7475b556ddb2dedd94347b2d
 failed_route_ref: data/rel_chaining/2026-10-08/operations/local-facet-replay60/failed-route-report.json

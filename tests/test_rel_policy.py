@@ -181,3 +181,28 @@ def test_registered_manifest_cli_and_artifact_guards(tmp_path):
     with pytest.raises(ValueError, match="registered"):
         policy.load_context(str(root / "manifest.json"), str(root), str(pool_path), "full_facets",
                             dict(registry, approved_manifest_sha256="0" * 64))
+
+
+def test_existing_valid_historical_icf_cannot_be_replaced_by_policy():
+    import _rel_policy as policy
+    from test_corpus_rel_view import _lab
+    record, context, labels = _fixture()
+    historical = _lab(record["work_key"], "2", "aux")
+    with pytest.raises(ValueError, match="relabel assessed ICF"):
+        policy.build_rows([record], context, labels + [historical], [], "policy-run", "2026-10-08", "padme")
+
+
+def test_selected_policy_without_provenance_refused():
+    import _rel_facet_io as fio
+    import _rel_policy as policy
+    import _rel_reasons as rr
+    import _rel_view as rv
+    from test_corpus_rel_view import RULE, WINDOW
+    from test_rel_reasons import MRULE, SRULE, _ven
+    record, context, labels = _fixture("discipline_only")
+    _, _, dims = policy.build_rows([record], context, labels, [], "run", "2026-10-08", "padme")
+    pool = context["pool_rows"]
+    rows, _ = rv.build_view(pool, labels, WINDOW, RULE)
+    fio.assign_view(rows, [])
+    with pytest.raises(ValueError, match="aligned provenance"):
+        rr.assign(rows, pool, dims, {record["work_key"]: _ven(record["work_key"])}, SRULE, MRULE)
