@@ -119,6 +119,7 @@ def test_import_append_idempotent_and_history_preserved(tmp_path, scope):
     cli.import_dispositions([record], context, **kwargs)
     assert frozen == [open(p, "rb").read() for p in (table, dims, output)]
     assert ics.read_table(output, policy.SCHEMA)[0]["native_answer"] == ""
+    assert policy.METHOD in open(ics.manifest_path(output)).read()
     with pytest.raises(ics.IcfScreenError):
         cli.import_dispositions([record], context, **dict(kwargs, labelled_at="2026-10-09"))
     assert frozen == [open(p, "rb").read() for p in (table, dims, output)]

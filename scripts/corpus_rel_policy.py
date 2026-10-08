@@ -36,7 +36,7 @@ def import_dispositions(records: list[dict], context: dict, *, table: str, dimen
                (dimensions, dim_rows, ics.DIMENSIONS, new_table)]
     if icf_rows:
         batches.append((table, icf_rows, ics.ICF, new_table))
-    result = fio.append_batches(batches)
+    result = fio.append_batches(batches, policy.METHOD)
     return {"scope": context["scope"], "dispositions": len(dispositions),
             "icf_rows": len(icf_rows), "dimension_rows": len(dim_rows),
             "appended_skipped": result, "native_model_answers": 0}
