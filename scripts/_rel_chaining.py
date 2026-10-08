@@ -302,14 +302,18 @@ class Store:
                         (key, kind, filt, json.dumps(list(seeds))))
         self.db.commit()
 
-    def reserve(self, provider, bound, details):
+    def reserve(self, provider, bound, details, *, admission_ceiling=None):
         if not math.isfinite(bound) or bound <= 0:
             raise ChainError("positive request liability required")
+        if admission_ceiling is not None and (not math.isfinite(admission_ceiling) or admission_ceiling <= 0):
+            raise ChainError("positive finite admission ceiling required")
         self.db.execute("BEGIN IMMEDIATE")
         spent = self.db.execute("SELECT COALESCE(SUM(COALESCE(cost,reserve)),0) FROM budget.calls").fetchone()[0]
         policy_exists = self.db.execute("SELECT 1 FROM budget.sqlite_master WHERE type='table' AND name='policy'").fetchone()
         policy = self.db.execute("SELECT v FROM budget.policy WHERE k='cap_usd'").fetchone() if policy_exists else None
         cap = float(policy[0]) if policy else self.config("budget_usd")
+        if admission_ceiling is not None:
+            cap = min(cap, admission_ceiling)
         if spent + bound > cap:
             self.db.rollback()
             raise ChainError(f"cumulative budget: {spent:.5f}+{bound:.5f} exceeds cap")

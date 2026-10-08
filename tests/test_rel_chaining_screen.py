@@ -233,3 +233,24 @@ def test_family_facet_registry_refuses_stale_arbitrary_or_waived_keys(tmp_path, 
     input_path.write_text(json.dumps({"work_key": "current"}) + "\n")
     with pytest.raises(ChainError, match="accepted baseline"):
         build_family_facets(pool, table, baseline, baseline_view, "config/rel_screen.yaml", tmp_path / "output", registry_path, input_path, proof_path)
+    # The registered historical group can use complete text through the normal
+    # facet renderer without admitting altered bibliographic text.
+    baseline_view.write_text("work_key,status\nold,out\n")
+    registry["baseline_view_sha256"] = sha(baseline_view)
+    registry_path.write_text(json.dumps(registry))
+    import _rel_facet_io as facets
+    record = {"work_key": "current", "openalex_id": "W123", "title": current["title"], "year": "2020",
+              "abstract": "full", "language": "en", "journal": "", "countries": []}
+    input_path.write_text(json.dumps(record) + "\n")
+    proof_path.write_text(json.dumps({"work_key": "current", "native_openalex_id": "W123",
+                                     "full_sixfield_sha256": facets.proof_hash(record)}) + "\n")
+    result = build_family_facets(pool, table, baseline, baseline_view, "config/rel_screen.yaml",
+                                tmp_path / "output", registry_path, input_path, proof_path)
+    assert result["proven"] == 1 and result["unproven"] == []
+    assert result["chaining_reconciliation"]["correction_keys"] == ["current"]
+    assert "full" in (tmp_path / "output" / "chunk01.txt").read_text()
+    record["abstract"] = "unverified altered public text"
+    input_path.write_text(json.dumps(record) + "\n")
+    with pytest.raises(ChainError, match="canonical pool fields"):
+        build_family_facets(pool, table, baseline, baseline_view, "config/rel_screen.yaml",
+                            tmp_path / "second-output", registry_path, input_path, proof_path)
