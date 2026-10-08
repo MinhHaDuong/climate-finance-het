@@ -2,11 +2,12 @@
 Title: REL — citation chaining, two rounds
 Created: 2026-09-29
 Author: haduong
-Blocked-by: 1655
 
 --- log ---
 2026-09-29T15:00Z haduong created
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
+2026-10-08T16:13Z HDMX-coding-agent note blocker 1655 closed — Blocked-by removed.
+
 --- body ---
 
 ## Context
@@ -16,7 +17,15 @@ by 1655. Decision of the 29 September consultation: two rounds; a third only if
 the second brings admissible works. Rerun conditions: interrupted query, missed
 sentinel, external reference without decision, incomplete summary.
 
+Baseline integration closes under 1655. This ticket owns incremental delivery,
+pool merge, ICF screening, venue and discipline refresh, and count reconciliation
+for its additions, through the existing intake and screening procedures. Screen
+each round before measuring its eligible yield and choosing the next frontier.
+Keep uncertain works and sentinel routes in the seed roster; the fully graded
+REL set alone is not the discovery universe. Execution plan and baseline evidence:
+`docs/rel-corpus-completion-2026-10-08.md`.
+
 ## Exit criteria
 - [ ] Two rounds run, counts per round (references and citations, duplicates, new works)
 - [ ] Third round triggered or dropped, with the measurement that decides it
-- [ ] New works delivered to 1655 for screening, with provenance
+- [ ] New works delivered under the intake contract with provenance, merged and screened incrementally within 1654; venue/discipline data and counts reconciled before each round's yield is measured

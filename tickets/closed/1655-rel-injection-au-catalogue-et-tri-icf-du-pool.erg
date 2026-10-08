@@ -2,6 +2,7 @@
 Title: REL — catalogue injection and ICF screen of the whole pool
 Created: 2026-09-29
 Author: haduong
+Closed: autoclosed — PR #1710
 
 --- log ---
 2026-09-29T15:00Z haduong created
@@ -15,8 +16,16 @@ Author: haduong
 2026-10-01T08:22Z HDMX-coding-agent note author decision 2026-10-01: local Gemma failed its bar; the rest of the full-pool stage 1 (160,690 unlabelled works of the 2026-10-01 Qwen input and the 1755 re-screen) goes through design B on OpenRouter; Qwen stays stopped
 2026-10-01T09:14Z HDMX-coding-agent note stage 1 status 2026-10-01 wind-down. DONE: design-B run 2026-10-02-designB-stage1-rest stopped at a clean point (09:09Z), 23,110 works labelled by both labellers imported (46,220 rows; 10,042 stage1_out, 13,068 pending_stage2); ledger USD 1.10 of its USD 10 cap. REMAINING unscreened: 137,727 works (t1650 137,720, t1790 5, t1652 2) plus 59 title-less catalogue works (accepted residue) and 48 re-screen works of 1755 appended to that run's input, not yet labelled
 2026-10-01T09:14Z HDMX-coding-agent note RESUME (padme, from a main checkout with pool sha256 3e07852b, PYTHONPATH=scripts:libs/openalex-corpus/src): uv run --env-file .env python scripts/corpus_icf_stage1_designb.py --input ~/rel_pool_runs/2026-10-02-designB-stage1-rest/screen_input.jsonl --output-dir ~/rel_pool_runs/2026-10-02-designB-stage1-rest --budget-usd 10 (cap cumulative over the run dir: USD 8.90 left). IMPORT after it: uv run --env-file .env python scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv stage1-designb --run-dir ~/rel_pool_runs/2026-10-02-designB-stage1-rest --pool data/rel_pool/pool.csv [--stopped REASON if stopped again]; idempotent, appends only the new pairs. Stage 2 on hold
+2026-10-08T15:45Z HDMX-coding-agent note Astra high-effort plan review: baseline closure only; 1654 owns chaining additions and their screen. Final audit waived by author on 2026-10-07, not measured. Integration evidence: docs/rel-corpus-completion-2026-10-08.md and docs/rel-corpus-baseline-2026-10-08.json.
+2026-10-08T16:13Z HDMX-coding-agent closed — autoclosed — PR #1710
+
 --- body ---
 ## Context
+
+Baseline integration tracker. The existing stock closes here; citation-chaining
+additions, their merge and incremental screening belong to 1654. Final counting,
+coverage reconciliation and the reproduction/freeze package belong to 1656.
+See `docs/rel-corpus-completion-2026-10-08.md` and its measured baseline JSON.
 
 Child of 0700. Design decision of 29 September: pool the raw pool and the search
 results, then apply the ICF rule once to everything, instead of adding screened
@@ -31,13 +40,13 @@ Opus re-reading of 4,792 works, 55 sentinels. This work stays valid: same rule.
 Chosen shape:
 - append-only `icf_screen` table (work, stage, labeller and model, label, document type, country studied, reason, date), never in a regenerable file;
 - REL view derived by join; `refined_works` stays pinned for the other deliverables;
-- searches injected as a source of the merged catalogue, with provenance and a merge report per source (Phase 1, own PR).
+- searches delivered as sources of the dedicated REL pool, with provenance and a per-delivery merge report (1730/1731); the catalogue and refined corpus for other deliverables stay pinned.
 
 ## Exit criteria
-- [ ] The searches (1530, 1650 to 1653) enter the catalogue as sources, with provenance; merge report per source before deduplication
-- [ ] ICF screen of the whole pool in two stages, same rule and same prompts, labeller and model recorded for each label
-- [ ] Sample audit of stage 2 by a second model (Fable), agreement measured
-- [x] Exit rule fixed for works left "uncertain" (177 to date): they stay in REL, flagged (decision of 30 September 2026)
-- [ ] REL view built; counts reproducible from the table
-- [ ] The scripts that build the screen input (deduplication, exclusion of the corpus) and the stage-2 tables, today one-off (archive `adhoc-scripts/` of 2026-09-29), are in the repository, tested
+- [x] The searches (1530, 1650 to 1653) enter the dedicated REL pool as sources, with provenance and per-delivery merge reports (1730/1731; pinned catalogue remains an input, not overwritten; rebuilt on padme 2026-10-08)
+- [x] Baseline pool screened under the dated ICF rule, with actual prompts, labellers/models and run provenance recorded (1733/1995; design-B threshold 0.90, Sol stage 2 and Fable/Opus corrections; 296 stage-2 and 59 title-less unscreened works are accepted residues)
+- [~] Final sample audit of stage 2 by Fable — waived by author decision of 2026-10-07 (1733), not measured; historical agreement predates final corrections
+- [x] Exit rule fixed for works left "uncertain" (177 to date): they remain ICF-eligible, flagged; final REL membership also applies seriousness and discipline (decision of 30 September 2026)
+- [x] Baseline REL view rebuilt from pool, screen, dimensions and venue tables (1842/1843); 389,291 pool works, 7,499 fully graded included works / 7,484 observed families, including 5,354 research works / 5,339 families in the complete-year window; 5,894 no-abstract discipline-pending works reported separately; hashes and sensitivity in baseline evidence
+- [x] Tested repository builders: corpus_rel_pool.py, corpus_icf_stage1_input.py and corpus_icf_stage2.py, with tests for deduplication, stage selection, chunks, imports and audit sampling (1731/1732). The 63 external actual-run/audit scripts and artifact map remain a 1656 packaging obligation, not a claim that all production scripts were committed
 - [x] Counting unit for versions (working paper / article) fixed before the final view: the work family, published version as representative (decision of 30 September 2026)
