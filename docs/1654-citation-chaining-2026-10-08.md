@@ -59,3 +59,16 @@ Policy preflight found four valid historical assessments within the original47 u
 Merged policy CLI production import and idempotent repeat preserve all historical ICF and dimension byte prefixes. The refreshed view selects 43 full-facet and 37 dimension-only policy dispositions: 52 final included rows are bibliometric-only; 28 seriousness-excluded rows retain a blank use and explicit policy restriction. No model-native answers are fabricated. Two bounded Luna production waves are processing; additional submissions wait for the first complete job to pass native association, normal guarded import and usage-cost reconciliation.
 
 Local round-two preparation uses a consistent immutable SQLite backup and a label-independent projection of every citation-edge candidate and directed edge. Exact pool/baseline hashes and raw metadata/query/page/alias/unresolved provenance remain bound in its manifest. The frontier rule and query template are inert; final seed selection requires the entire reconciled first-round disposition snapshot, venue/dimension refresh and duplicate-aware confirmed/uncertain yields. This preparation neither activates retrieval nor establishes closure. Exact native IDs, costs, hashes and commands remain in the private run archive.
+
+### First Luna production wave
+
+2026-10-09 first production wave checkpoint: all 500 native requests completed.
+Normal strict parsing imported 9,909 actual facet, ICF and dimension rows;
+91 structurally invalid records remain pending. A repeat appended no rows, and
+all prior ICF/dimension byte prefixes retain their hashes. The deterministic
+quality guard preserves native answers and softens unsupported poor-input
+negatives; the refreshed view selects every new judgment with the versioned
+three-facet method. Final included poor-input works remain bibliometric-only.
+Further submissions wait for the actual first-wave release review. Remaining
+production screening, citation rounds, yield reconciliation and final gate are
+incomplete; this checkpoint does not close 1654 or begin the 1656 freeze.
