@@ -192,3 +192,44 @@ def test_incremental_build_keeps_accepted_baseline_and_no_abstract_routes(tmp_pa
     meta = json.loads((out / "build.json").read_text())
     assert meta["accepted_baseline_pending_not_reopened"] == 1
     assert meta["no_abstract_title_adjudication"] == ["noabstract"]
+
+
+def test_family_facet_registry_refuses_stale_arbitrary_or_waived_keys(tmp_path, monkeypatch):
+    import csv
+    import json
+    from corpus_rel_chaining_screen import build_family_facets
+    from _rel_chaining import sha
+
+    old = {"work_key": "old", "member_record_ids": "source:record", "abstract": "full", "title": "Original", "year": "2020"}
+    current = dict(old, work_key="current", all_openalex_ids="W123", openalex_id="W123", doi="", language="en", journal="", affiliation_countries="")
+    pool = tmp_path / "current.csv"
+    baseline = tmp_path / "baseline.csv"
+    for path, row in [(pool, current), (baseline, old)]:
+        with path.open("w", newline="") as fh:
+            writer = csv.DictWriter(fh, fieldnames=list(row))
+            writer.writeheader()
+            writer.writerow(row)
+    baseline_view = tmp_path / "baseline-view.csv"
+    baseline_view.write_text("work_key,status\nold,out\n")
+    table = tmp_path / "labels.csv"
+    table.write_text("unchanged labels")
+    monkeypatch.setattr("corpus_rel_chaining_screen.chunks.view", lambda *args: ([current], [{"work_key": "current", "status": "out"}]))
+    registry = {"pool_sha256": sha(pool), "baseline_pool_sha256": sha(baseline), "baseline_view_sha256": sha(baseline_view), "old_rows": {"old": old}, "relations": {"old": ["current"]}, "correction_keys": ["current"]}
+    registry_path = tmp_path / "registry.json"
+    registry_path.write_text(json.dumps(registry))
+    input_path, proof_path = tmp_path / "input.jsonl", tmp_path / "proof.jsonl"
+    input_path.write_text(json.dumps({"work_key": "arbitrary"}) + "\n")
+    proof_path.write_text("")
+    with pytest.raises(ChainError, match="declared changed family"):
+        build_family_facets(pool, table, baseline, baseline_view, "config/rel_screen.yaml", tmp_path / "output", registry_path, input_path, proof_path)
+    registry["pool_sha256"] = "stale"
+    registry_path.write_text(json.dumps(registry))
+    with pytest.raises(ChainError, match="hash"):
+        build_family_facets(pool, table, baseline, baseline_view, "config/rel_screen.yaml", tmp_path / "output", registry_path, input_path, proof_path)
+    registry["pool_sha256"] = sha(pool)
+    baseline_view.write_text("work_key,status\nold,pending_stage2\n")
+    registry["baseline_view_sha256"] = sha(baseline_view)
+    registry_path.write_text(json.dumps(registry))
+    input_path.write_text(json.dumps({"work_key": "current"}) + "\n")
+    with pytest.raises(ChainError, match="accepted baseline"):
+        build_family_facets(pool, table, baseline, baseline_view, "config/rel_screen.yaml", tmp_path / "output", registry_path, input_path, proof_path)
