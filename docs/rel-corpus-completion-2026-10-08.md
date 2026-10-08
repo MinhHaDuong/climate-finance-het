@@ -22,7 +22,8 @@ the baseline integration of ticket 1655; it does not freeze the REL corpus.
    evidence for stopping, including any further chaining required by the
    protocol's closure rule.
 3. **1656 — counting and coverage reconciliation.** Reconcile version hints,
-   unresolved work families, document types, publication dates and first
+   unresolved work families, unmatched historical screening keys, document
+   types, publication dates and first
    dissemination years. Report complete annual series through 2025 and 2026
    separately. Reconcile the final search date with the dated registries:
    `config/rel_review.yaml` still says 2026-09-28, preceding later searches;
@@ -135,3 +136,10 @@ main `83af92b3`. No new ticket IDs are introduced by this change.
 A second `make rel-view` produced byte-identical `rel_view.csv`,
 `rel_counts.json` and `rel_sensitivity.csv`. No screen, configuration or DVC
 pointer was changed during baseline reconciliation.
+
+Astra approved the implemented baseline reconciliation after independently
+checking all ten artifact hashes and the embedded counts, merge report and
+sensitivity against the generated files. The historical screen also has 1,156
+unmatched label rows, grouped as 818 titled and 277 title-less works not in
+the current pool; these are preserved in the table and assigned to 1656 for
+key/provenance reconciliation. They are not added to the current pool counts.
