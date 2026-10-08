@@ -19,7 +19,7 @@ COLUMNS = ["facet_id", *ics.KEY, "labeller", "prompt_sha256", "machine", "labell
            "proof_sha256", "native_answer", "effective_answer", "input_quality",
            "guard_disposition", "guard_reasons", "quality_origin"]
 SCHEMA = ics.Schema(COLUMNS, "facet_id", [c for c in COLUMNS if c != "facet_id"],
-                    (("stage", {"2", "audit"}), ("labeller", ics.LABELLERS),
+                    (("stage", {"2", "audit"}), ("labeller", ics.MODEL_LABELLERS),
                      ("input_quality", {"usable", "absent", "nonabstract", "truncated"}),
                      ("guard_disposition", {"accepted", "unresolved"})))
 VIEW_COLUMNS = [*[f"mu_{f}" for f in facets.FACETS], "icf_instrument",

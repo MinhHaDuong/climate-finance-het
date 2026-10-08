@@ -65,6 +65,7 @@ before an earlier one).
 import re
 from collections import Counter, defaultdict
 
+import _rel_policy as policy
 import _rel_venues as rvn
 import _rel_view as rv
 
@@ -80,7 +81,7 @@ VIEW_COLUMNS = ["contrib", "discipline_field", "contrib_type", "discipline_sourc
                 "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag",
                 "seriousness", "seriousness_flag", *[f"mu_{f}" for f in FACETS],
                 "mu", "mu_facet", "mu_complete", "rel_reason", "rel_reason_detail",
-                "rel_final", "rel_family_id", "abstract_flag", "rel_use", "rel_use_reason"]
+                "rel_final", "rel_family_id", "abstract_flag", "rel_use", "rel_use_reason", *policy.VIEW_COLUMNS]
 DISCIPLINE_NOTE = (
     "discipline_excluded leans toward over-excluding applied finance: on the 1840 gold "
     "set, Opus v2 excluded 4 of 59 gold includes, 3 of them applied finance with a "
@@ -191,7 +192,7 @@ def _tier(venue: dict, srule: dict) -> str:
 
 
 def icf_of(row: dict, mrule: dict) -> tuple[float | None, str]:
-    if row.get("icf_instrument") == "three_facets_v3.2":
+    if row.get("icf_instrument") in {"three_facets_v3.2", "policy_local_abstention_v1"}:
         return min(float(row["mu_" + f]) for f in ("international", "climate", "finance")), row["status"]
     if row["status"] in ICF_PENDING:
         return None, row["status"]
@@ -269,7 +270,7 @@ def _facet_values(row: dict, venue: dict, srule: dict, mrule: dict) -> list:
 
 
 def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
-           srule: dict, mrule: dict) -> dict:
+           srule: dict, mrule: dict, policies: list[dict] | None = None) -> dict:
     """Add ``VIEW_COLUMNS`` to the view rows (pool order, as ``build_view`` returns
     them); return a summary. A pool work missing from ``venues`` is refused: the
     venue table is stale (``make rel-venues``).
@@ -278,12 +279,14 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
     if missing:
         raise ValueError(f"{len(missing)} pool works have no row in the venue table "
                          f"(first: {missing[0]}): rebuild it with `make rel-venues`")
+    policy_index = policy.assign_full_view(rows, policies or [])
     by_work = _match_dimensions(pool, dims)
     unused = conflicts = 0
     for i, row in enumerate(rows):
         win, n_unused, disagree = discipline_of(row, by_work.get(i, []))
         unused += n_unused
         conflicts += disagree
+        policy.assign_dimension_view(row, win, policy_index)
         contrib = win["contrib"] if win else ""
         venue = venues[row["work_key"]]
         row.update({
@@ -312,11 +315,15 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
         reason = ("no_abstract" if row["abstract_flag"] else
                   f"{quality}_input" if quality in {"absent", "nonabstract", "truncated"} else
                   "usable_abstract" if quality == "usable" else "legacy_abstract_unassessed")
-        row["rel_use_reason"] = reason if row["rel_final"] == "true" else ""
-        row["rel_use"] = (("bibliometric_only" if reason in {"no_abstract", "absent_input", "nonabstract_input", "truncated_input"}
+        if row["local_screen_abstention"] == "true":
+            reason = "local_screen_abstention"
+        row["rel_use_reason"] = reason if row["rel_final"] == "true" or row["local_screen_abstention"] == "true" else ""
+        row["rel_use"] = (("bibliometric_only" if reason in {"no_abstract", "absent_input", "nonabstract_input", "truncated_input", "local_screen_abstention"}
                            else "synthesis") if row["rel_final"] == "true" else "")
     assign_families(rows)
-    return {"dimension_rows": len(dims),
+    return {"policy_abstention_selected_by_scope": dict(Counter(r["policy_scope"] for r in rows
+                                                              if r["local_screen_abstention"] == "true")),
+            "dimension_rows": len(dims),
             "dimension_rows_matched": sum(len(v) for v in by_work.values()),
             "dimension_rows_unused": unused,
             "works_with_disagreeing_dimension_rows": conflicts}

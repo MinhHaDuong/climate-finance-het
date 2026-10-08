@@ -139,3 +139,6 @@ stage2_facets:
   # UTF-8 bytes bound tokens conservatively; reserve output separately.
   max_input_tokens: 100000
   reserved_output_tokens: 8192
+
+# Deterministic, scientifically scoped dispositions with no native model answer.
+policies_table: data/rel_screen/rel_policy_dispositions.csv

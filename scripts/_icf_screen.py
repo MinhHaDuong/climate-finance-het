@@ -61,7 +61,9 @@ STAGES = {"1", "2", "audit"}
 # alone, after the fact, of works stage 2 labelled before version 2. icf_screen
 # never does: a catch-up row there would become the work's last stage-2 label.
 DIMENSION_STAGES = STAGES | {"catchup"}
-LABELLERS = {"llm", "human"}
+MODEL_LABELLERS = {"llm", "human"}
+LABELLERS = MODEL_LABELLERS | {"policy"}
+POLICY_METHOD = "policy:local-evidence-abstention-v1"
 LABELS = {"icf", "aux", "out", "unsure"}
 DOC_TYPES = {"research", "institutional", "other", "unknown"}
 WORK_KEY_PREFIXES = ("openalex:", "doi:", "url:", "title:")
@@ -226,6 +228,15 @@ def validate_row(row: dict, schema: Schema = ICF) -> list[str]:
     for col, allowed in schema.enums:
         if row.get(col) and row[col] not in allowed:
             errors.append(f"{col}={row[col]!r} not in {sorted(allowed)}")
+    if row.get("labeller") == "policy":
+        if row.get("model") != POLICY_METHOD or not str(row.get("source", "")).startswith("policy:"):
+            errors.append("policy rows require explicit policy method/provenance")
+        if row.get("stage") not in {"2", "catchup"}:
+            errors.append("policy is not a Stage1/audit model answer")
+        if "label" in schema.columns and (row.get("label") != "unsure" or row.get("doc_type") != "unknown"):
+            errors.append("policy ICF label must be unsure with unassessed document type")
+        if "contrib" in schema.columns and (row.get("contrib"), row.get("field"), row.get("contrib_type")) != ("unsure", "other", "other"):
+            errors.append("policy discipline must be unsure/other/other")
     wk = row.get("work_key") or ""
     if wk and not wk.startswith(WORK_KEY_PREFIXES):
         errors.append(f"work_key {wk!r} lacks a prefix {WORK_KEY_PREFIXES}")
