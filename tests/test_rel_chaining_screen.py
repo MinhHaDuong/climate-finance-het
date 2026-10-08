@@ -5,9 +5,41 @@ from pathlib import Path
 import pytest
 import yaml
 from _rel_chaining import ChainError, Store, bounded_screen_post
-from corpus_rel_chaining_screen import build_stage2, prompt_for, stage2
+from corpus_rel_chaining_screen import build_stage2, prompt_for, stage2, stage2_local
 
 pytestmark = pytest.mark.domain_corpus
+
+
+def test_local_v2_keeps_dimensions_title_only_and_native_bytes(tmp_path, monkeypatch):
+    import json
+    from _icf_screen import V2_FIELDS, parse_stage2_answers
+
+    monkeypatch.setattr("corpus_rel_chaining_screen.read_credential", lambda *args: pytest.fail("local route read credential"))
+    chunk_dir = tmp_path / "chunks"
+    chunk_dir.mkdir()
+    (chunk_dir / "chunk01.txt").write_text("1. [en] Title: Climate grants\n(no abstract)\n")
+    answer = "1|icf|article|yes|yes|econ|theory|international climate grants"
+
+    class Reply:
+        status_code = 200
+        text = json.dumps({"model": "qwen3.8-27b", "choices": [{"finish_reason": "stop", "message": {"content": answer}}]})
+
+    def post(url, **kwargs):
+        assert url == "http://127.0.0.1:8080/v1/chat/completions"
+        prompt = kwargs["json"]["messages"][0]["content"]
+        assert "(no abstract)" in prompt and "n|label|doc|studied|contrib|field|ctype|why" in prompt
+        assert kwargs["json"]["chat_template_kwargs"]["enable_thinking"] is False
+        return Reply()
+
+    stage2_local(chunk_dir, tmp_path / "native", "config/rel_stage2_prompt_v2.md", post=post)
+    saved = json.loads((tmp_path / "native" / "chunk01.reply.json").read_text())
+    assert saved["raw_text"] == Reply.text
+    assert (chunk_dir / "chunk01.qwen.txt").read_text().strip() == answer
+    parsed, faults = parse_stage2_answers([answer], ["fixture"], V2_FIELDS)
+    assert not faults
+    assert parsed["fixture"]["label"] == "icf" and parsed["fixture"]["contrib"] == "yes"
+    with pytest.raises(ChainError, match="established loopback model"):
+        stage2_local(chunk_dir, tmp_path / "other", "config/rel_stage2_prompt_v2.md", model="remote-model", post=post)
 
 
 def test_stage1_each_retry_reserves_full_liability_and_ambiguous_calls_stop(tmp_path):
@@ -67,6 +99,27 @@ def test_ambiguous_request_retains_liability_and_refuses_retry(tmp_path, monkeyp
         stage2(*args)
     with pytest.raises(ChainError, match="unresolved prior request"):
         stage2(*args)
+    row = store.db.execute("SELECT status,reserve,cost FROM budget.calls").fetchone()
+    assert row["status"] == "reserved" and row["reserve"] > 0 and row["cost"] is None
+
+
+def test_provider_error_without_billing_evidence_retains_liability(tmp_path, monkeypatch):
+    monkeypatch.setattr("corpus_rel_chaining_screen.read_credential", lambda *args: "fake")
+    store = Store(tmp_path / "run")
+    store.bind("budget_usd", 20)
+    chunk_dir = tmp_path / "chunks"
+    chunk_dir.mkdir()
+    (chunk_dir / "chunk01.txt").write_text("1. Title: Public record")
+
+    class Reply:
+        status_code = 500
+
+        def json(self):
+            return {"error": {"type": "server_error"}}
+
+    with pytest.raises(ChainError, match="HTTP 500"):
+        stage2(store, chunk_dir, tmp_path / "replies", "config/rel_stage2_prompt_v2.md", "gpt-6.1-sol",
+               .000001, .000005, 1000, "low", "flex", lambda *args, **kwargs: Reply())
     row = store.db.execute("SELECT status,reserve,cost FROM budget.calls").fetchone()
     assert row["status"] == "reserved" and row["reserve"] > 0 and row["cost"] is None
 

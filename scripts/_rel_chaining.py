@@ -121,7 +121,8 @@ def bounded_screen_post(root, ledger, pricing, key, post=requests.post):
         bound = (len(json.dumps(payload, ensure_ascii=False).encode()) + 2048) * price["prompt"]
         bound += body.get("max_tokens", price.get("max_completion_tokens", 0)) * price["completion"]
         bound += price.get("request", 0)
-        call = store.reserve("openrouter-designb", max(bound, 1e-9), {"model": model})
+        digest = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+        call = store.reserve("openrouter-designb", max(bound, 1e-9), {"model": model, "request_sha256": digest})
         request = {"url": url, "body": payload, "call": call,
                    "pricing": price, "reserved_usd": bound, "at": now()}
         store.db.execute("INSERT INTO screen_http(call,request) VALUES(?,?)",
@@ -139,6 +140,14 @@ def bounded_screen_post(root, ledger, pricing, key, post=requests.post):
         store.db.commit()
         cost = (data.get("usage") or {}).get("cost")
         if cost is None:
+            if response.status_code == 529 and data.get("error") and not data.get("answers") and not data.get("choices"):
+                store.db.execute("UPDATE budget.calls SET details=? WHERE k=?", (json.dumps({
+                    "model": model, "request_sha256": digest, "http": 529,
+                    "disposition": "terminal overload, no valid decision; replacement allowed within established retry limit",
+                    "maximum_liability_retained": True}), call))
+                store.db.commit()
+                store.db.close()
+                return 529, data, "terminal overload; full unknown liability retained"
             if response.status_code == 429:
                 cost = 0
             else:
