@@ -352,3 +352,17 @@ def test_redif_proof_exact_handle_with_native_archive_and_no_openalex_id(tmp_pat
     assert not fio.valid_public_proof(r, dict(proof, source_manifest_sha256=""), family[r["work_key"]])
     assert not fio.valid_public_proof(r, {"work_key": r["work_key"], "public": True,
                                        "full_sixfield_sha256": fio.proof_hash(r)}, family[r["work_key"]])
+
+
+
+def test_redif_mixed_field_proof_carries_archive_on_source_witness():
+    import _rel_facet_io as fio
+    r = _record()
+    handle = "RePEc:ags:feemdp:59418"
+    proof = _typed_proof(r, handle, "repec_redif")
+    for binding in proof["field_evidence"].values():
+        binding["sources"][0].update(source_archive="ags/feemdp/feemdp.redif", source_manifest_sha256="b" * 64)
+    family = {f"repec_redif:{handle}"}
+    assert fio.valid_public_proof(r, proof, family)
+    proof["field_evidence"]["abstract"]["sources"][0]["source_manifest_sha256"] = ""
+    assert not fio.valid_public_proof(r, proof, family)

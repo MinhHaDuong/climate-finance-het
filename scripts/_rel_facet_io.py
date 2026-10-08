@@ -121,7 +121,8 @@ def _valid_source(source: object, declared: list[str], proof: dict) -> bool:
     if kind == "openalex":
         return bool(re.fullmatch(r"W[0-9]+", source_id)) and source.get("source_url") == f"https://api.openalex.org/works/{source_id}"
     return (source_id.startswith("RePEc:") and source.get("source_url") == "rsync://rsync.repec.org/RePEc-ReDIF/"
-            and bool(proof.get("source_archive")) and _is_sha(proof.get("source_manifest_sha256")))
+            and bool(source.get("source_archive") or proof.get("source_archive"))
+            and _is_sha(source.get("source_manifest_sha256") or proof.get("source_manifest_sha256")))
 
 
 def _validate_inputs(records: list[dict], proofs: list[dict], config: dict) -> dict:
