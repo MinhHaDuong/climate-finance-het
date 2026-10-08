@@ -201,3 +201,28 @@ def test_identity_lookup_uses_title_field_and_delivers_nonmatching_results(tmp_p
     resolve_one_seed(store.root, store.budget_path, seed, {}, get)
     assert store.db.execute("SELECT oa FROM seeds").fetchone()[0] == "W1"
     assert store.db.execute("SELECT COUNT(*) FROM works").fetchone()[0] == 2
+
+
+def test_atomic_admission_ceiling_preserves_completion_headroom(tmp_path):
+    ledger = tmp_path / 'shared-budget.sqlite'
+    first = Store(tmp_path / 'first', ledger)
+    first.bind('budget_usd', 30)
+    first.reserve('prior', 20, {})
+    # Independent connections share BEGIN IMMEDIATE admission, so only one
+    # simultaneous wave fits the protected ceiling, irrespective of timing.
+    def admit(n):
+        store = Store(tmp_path / str(n), ledger)
+        store.bind('budget_usd', 30)
+        try:
+            store.reserve('main-wave', 3, {}, admission_ceiling=24)
+            return True
+        except ChainError:
+            return False
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        assert sorted(pool.map(admit, [2, 3])) == [False, True]
+    # Completion tasks can still use the author-approved global capacity.
+    first.reserve('completion', 6, {})
+    with pytest.raises(ChainError, match='cumulative budget'):
+        first.reserve('exceeds-global', 2, {}, admission_ceiling=100)
+    with pytest.raises(ChainError, match='admission ceiling'):
+        first.reserve('invalid-ceiling', 1, {}, admission_ceiling=float('nan'))

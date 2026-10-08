@@ -55,6 +55,75 @@ def build_stage2(pool_path, table_path, baseline_pool, baseline_view, config_pat
     log.info("incremental stage2: %d works, %d title adjudications without abstracts", len(picked), len(no_abstract))
 
 
+def build_family_facets(pool_path, table_path, baseline_pool, baseline_view, config_path,
+                        output_dir, registry_path, input_path, proofs_path):
+    """Normal facet rendering for exact changed families, never a pending bypass.
+
+    Recompute source-member relations against the frozen baseline and current
+    pool. Historical waived residues cannot be reopened by a correction roster.
+    """
+    import _rel_facet_io as facets
+
+    registry = json.loads(Path(registry_path).read_text())
+    for field, path in (("pool_sha256", pool_path), ("baseline_pool_sha256", baseline_pool),
+                        ("baseline_view_sha256", baseline_view)):
+        if registry.get(field) != sha(path):
+            raise ChainError(f"changed-family registry {field} hash mismatch")
+    old_records = registry["old_rows"]
+    accepted_keys = {r["work_key"] for r in rows(baseline_view)
+                     if r["status"] in {"pending_stage2", "unscreened"}}
+    baseline = {r["work_key"]: r for r in rows(baseline_pool)
+                if r["work_key"] in set(old_records) | accepted_keys}
+    if any(baseline.get(key) != record for key, record in old_records.items()):
+        raise ChainError("changed-family registry differs from exact baseline rows")
+    members = lambda r: {m for m in r.get("member_record_ids", "").split(";") if m}
+    target_members = set().union(*(members(r) for r in baseline.values()))
+    by_member, current = {}, {}
+    for record in rows(pool_path):
+        relevant = members(record) & target_members
+        if relevant:
+            current[record["work_key"]] = record
+        for member in relevant:
+            by_member.setdefault(member, set()).add(record["work_key"])
+    relations = {key: sorted(set().union(*(by_member.get(m, set()) for m in members(record))))
+                 for key, record in old_records.items()}
+    if (any(not members(r) for r in old_records.values())
+            or relations != registry["relations"]
+            or sorted(set().union(*(set(v) for v in relations.values()))) != sorted(registry["correction_keys"])):
+        raise ChainError("changed-family registry lacks exact declared member relations")
+    accepted_current = set()
+    for key in accepted_keys:
+        if key not in baseline:
+            raise ChainError("accepted baseline residue identity unresolved")
+        candidates = set().union(*(by_member.get(m, set()) for m in members(baseline[key])))
+        if not candidates:
+            raise ChainError("accepted baseline residue identity unresolved")
+        accepted_current.update(candidates)
+    records = [json.loads(line) for line in Path(input_path).read_text().split("\n") if line]
+    keys = {r["work_key"] for r in records}
+    if not records or len(keys) != len(records) or not keys <= set(registry["correction_keys"]):
+        raise ChainError("facet reconciliation requires an exact declared changed family")
+    if keys & accepted_current:
+        raise ChainError("correction queue overlaps accepted baseline residues")
+    for record in records:
+        source = current[record["work_key"]]
+        public = {f: source.get(f, "").replace("\r\n", "\n").replace("\r", "\n")
+                  for f in facets.PUBLIC_FIELDS if f != "countries"}
+        public["countries"] = [c.strip() for c in source.get("affiliation_countries", "").split(";") if c.strip()]
+        if facets.public_record(record) != public:
+            raise ChainError("facet reconciliation input differs from complete canonical pool fields")
+    proofs = [json.loads(line) for line in Path(proofs_path).read_text().split("\n") if line]
+    cfg = yaml.safe_load(Path(config_path).read_text())
+    manifest = facets.write_chunks(str(output_dir), records, proofs, cfg["stage2_facets"],
+                                    {key: facets.family_source_ids(current[key]) for key in keys})
+    manifest["chaining_reconciliation"] = {"registry_sha256": sha(registry_path),
+        "pool_sha256": sha(pool_path), "table_sha256": sha(table_path),
+        "baseline_pool_sha256": sha(baseline_pool), "baseline_view_sha256": sha(baseline_view),
+        "correction_keys": sorted(keys), "accepted_baseline_not_reopened": len(accepted_keys)}
+    dump(Path(output_dir) / "build.json", manifest)
+    return manifest
+
+
 def prompt_for(wrapper, rule, record_text):
     block = wrapper.split("```", 2)[1]
     start = block.index("This is a second-stage review")
@@ -212,7 +281,7 @@ def stage2(store, chunk_dir, output_dir, prompt_path, model, input_price, output
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["build", "stage2", "stage2-local"])
+    parser.add_argument("action", choices=["build", "build-family-facets", "stage2", "stage2-local"])
     parser.add_argument("--output-dir", required=True, help="multi-output execution archive")
     parser.add_argument("--budget-ledger", required=True)
     parser.add_argument("--input")
@@ -229,8 +298,19 @@ def main():
     parser.add_argument("--baseline-view")
     parser.add_argument("--baseline-pool")
     parser.add_argument("--correction-keys", help="archived changed-family relations JSON, correction_keys field")
+    parser.add_argument("--public-proofs", help="complete full-field public source proofs")
+    parser.add_argument("--reconciliation-registry", help="exact source-member relations with pool/baseline hashes")
     parser.add_argument("--config", default="config/rel_screen.yaml")
     args = parser.parse_args()
+    if args.action == "build-family-facets":
+        try:
+            build_family_facets(args.pool, args.table, args.baseline_pool, args.baseline_view,
+                                args.config, args.output_dir, args.reconciliation_registry,
+                                args.input, args.public_proofs)
+        except (ChainError, ValueError) as exc:
+            log.error("reconciliation refused: %s", exc)
+            return 2
+        return 0
     if args.action == "stage2-local":
         stage2_local(args.chunk_dir, args.output_dir, args.prompt, args.model or "qwen3.8-27b", args.max_tokens)
         return 0
