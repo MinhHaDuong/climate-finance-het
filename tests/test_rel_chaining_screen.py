@@ -5,9 +5,34 @@ from pathlib import Path
 import pytest
 import yaml
 from _rel_chaining import ChainError, Store, bounded_screen_post
+from _rel_chaining import parse_stage1_batch_results
 from corpus_rel_chaining_screen import build_stage2, prompt_for, stage2, stage2_local
 
 pytestmark = pytest.mark.domain_corpus
+
+
+def test_batch_result_mapping_unordered_failed_and_duplicate_decisions():
+    import json
+
+    def success(ident, answers):
+        return {"custom_id": ident, "result": {"type": "succeeded", "message": {
+            "model": "claude-haiku-5-5", "stop_reason": "end_turn", "usage": {"input_tokens": 100, "output_tokens": 20},
+            "content": [{"type": "thinking", "thinking": "private reasoning"}, {"type": "text", "text": json.dumps(answers)}]}}}
+
+    answer = lambda n, label: {"n": n, "label": label, "doc": "research", "why": ""}
+    mapping = {"a": ["work1", "work2"], "b": ["work3"], "c": ["work4"]}
+    results = [success("c", [answer(1, "unsure")]), {"custom_id": "b", "result": {"type": "expired"}},
+               success("a", [answer(1, "out"), answer(1, "icf"), answer(2, "aux")])]
+    labels, receipts, faults = parse_stage1_batch_results(results, mapping)
+    assert {(r["work_key"], r["label"]) for r in labels} == {("work2", "aux"), ("work4", "unsure")}
+    assert next(r for r in receipts if r["custom_id"] == "b")["derived_cost"] == 0
+    assert {k for f in faults for k in f["pending_keys"]} == {"work1", "work3"}
+    with pytest.raises(ChainError, match="coverage"):
+        parse_stage1_batch_results(results[:-1], mapping)
+    with pytest.raises(ChainError, match="duplicate native"):
+        parse_stage1_batch_results(results + results[:1], mapping)
+    with pytest.raises(ChainError, match="unknown or duplicate"):
+        parse_stage1_batch_results([success("unmapped", [answer(1, "out")])], mapping)
 
 
 def test_local_v2_keeps_dimensions_title_only_and_native_bytes(tmp_path, monkeypatch):
