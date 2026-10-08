@@ -1,0 +1,101 @@
+%erg 0.1
+Title: REL — three-facet Stage2 instrument and append-only provenance
+Created: 2026-10-08
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1713
+
+--- log ---
+2026-10-08T20:26Z HDMX-coding-agent created
+2026-10-08T21:20Z HDMX-coding-agent note verify-reroll — round 1: legacy public proof bypasses exact pool-family membership.
+2026-10-08T21:31Z HDMX-coding-agent closed — autoclosed — PR #1713
+
+--- body ---
+
+## Context
+
+Scoped implementation child of1654, created before its projected content-bearing diff exceeds14paths. Parent1654 retains actual scientific screening, native production archives, citation-round closure and yield reconciliation; this child does not claim those scientific criteria. Author2026-10-08 requested exactly three independently scored ICF facets and mechanism synonyms, with mass processing using Luna/Haiku Batch after valid instrument testing. Frozenv2 and completedStage1 are preserved.
+
+Current scientific draft/native tuning evidence live in the1654 isolated run archive, operations/stage2-clarification-20261008[-v31]. Root scientific review must disposition the second60pilot before production method adoption; no arbitrary overallagreement threshold or historical-label-as-gold claim.
+
+## Exit criteria
+
+- Versioned Stage2 instrument scores exactly international,climate,finance with0/0.5/1 memberships and separate evidence for the same main studied object. Mechanism fullnames/acronyms/historical/multilingual variants include source-backed carbon/fund/development/forest/riskfinance families. Single-country implementation retains identified international mechanism identity; incidental mentions and nonclimate/mixedpurpose institutions are guarded.0requires affirmative contrary evidence,missing information remains0.5; discipline remains separate and sparse contribution unsure.
+- Normal corpus Stage2 CLI explicitly renders this instrument and parses its response, without relying on /tmp or opaque alternate production harnesses. Prompt/lexicon/config/source/native hashes distinguish method/run and are reproducible. Record text is data rather than prompt instructions.
+- Strict parser rejects malformed/nonfinite/out-of-vocabulary scores, ambiguous/duplicate/missing ordinals and inconsistent evidence prefixes without coercion or first-wins. Valid decisions are keyed to exact original work identifiers; invalid decisions remain pending.
+- Append-only facet judgments keyed(work_key,stage,model,run_id) preserve native provenance and evidence. Deterministic membership=min(threefacets), legacylabel mapping and guarded ICF/dimension import remain explicit. Docunknown is preserved,notinvented research/institutional.
+- View exposes independent scored facets and provenance for scored rows; historical unscored facets remain blank/explicitlegacy, never fabricated from combined labels. Existing seriousness/discipline/familyunion/alpha and noabstract bibliometric-only rules remain intact. Missing judgments remain pending.
+- Meaningful parser/mapping/routing/provenance/appendguard/viewbackwardcompatibility tests pass; final clean populatedpadme makecheck passes. Diff≤14contentbearingpaths; no productionbatch or corpusclosure claim in child.
+
+## Relevant files
+
+config/rel_stage2_prompt_v2.md (frozen), config/rel_screen.yaml, scripts/_icf_screen.py, scripts/corpus_icf_stage2.py, scripts/corpus_rel_view.py, scripts/_rel_reasons.py, existing Stage2/view tests. New privatefacet module/versionedprompt/test paths as needed within scope.
+
+## Test
+
+First red test: strict facet parser must preserve a topic-positive/discipline-negative record, derive membership from exactlythree independent scores, retain uncertain sparse fields, and quarantine duplicate/missing ordinals rather than importing first answers. Extend through all27scorecombinations, finite/vocabulary/evidenceguards, appendonly conflicts, methodhash separation and historicalviewcompatibility.
+
+## Implementation scope
+
+Fork currentorigin/main independently of1654parentbranch so reviewed child diff does not inherit its scientificdelivery paths. Proposed≤10paths: newversionedprompt; existingrel_screen; newprivatefacetmodule; existingStage2CLI/view; newfacet tests; affectedStage2/viewtests; thischildticket; optionalmethod note. No Makefile/shareddependency/testselection change. Fullgate because helper used by Stage2andview is sharedpipelineinfrastructure.
+
+## Implementation checkpoint
+
+2026-10-08: Explicit build-facets/parse-facets CLI freezes the v3.2 prompt,
+mechanism lexicon, full proven-public source strings, byte/token bounds and
+private ordinal maps. Frozen historical v2 and Stage1 remain unchanged.
+Append-only native/effective facets preflight alongside derived ICF labels and
+independent discipline rows; changed existing run keys refuse the entire batch.
+Automatic poor-input negatives remain unresolved even with title quotations
+(latest author/Astra decision); native answers remain immutable. Actual and
+native facets/provenance are exposed in the view; historical facets stay blank.
+Known unusable substantive evidence uses bibliometric_only with a reason while
+raw-empty abstract_flag and membership rules remain unchanged.
+
+Targeted regression: 160 passed before final CLI/absence additions; those two
+additional tests passed with all 52 facet tests. Offline deterministic replay
+of all 60 v32 native answers: 4 quality-guarded records, 3 contribution overrides,
+zero surviving poor-input zero facets. Indonesian causal case finance=1,
+contrib=yes; Portuguese frontmatter finance=0.5, contrib=unsure. This reuses
+frozen calibration evidence, not a new accuracy estimate; no API replay.
+
+Clean populated padme full gate at24ce5586: library25passed; root3168passed,
+33skipped,33warnings in132.66s. Log /tmp/climate-finance-2010-full-check.log.
+Root review then identified physical-newline JSONL parsing and the need for
+source-typed full-field proofs beyond a single OpenAlex record. Both repaired:
+Unicode U+2028/U+2029 inside JSON strings is preserved; public fieldwise proofs
+require exact six-field and per-field hashes, native source hashes, approved
+OpenAlex/ReDIF origins, and exact source membership from the actual pool.
+Generic public assertions and licensed-source witnesses do not authorize
+transmission. Targeted165tests passed; final changed-head full gate follows.
+
+## Round-1 review repairs
+
+The legacy direct OpenAlex proof now requires membership in the actual pool
+family, including on import. Persisted effective answers must pass the strict
+score/evidence schema and exactly reproduce the conservative guard from the
+native answer and stored source-empty/model-assessed origin; disposition,
+reasons and quality must match too. Three meaningful regressions first failed
+(legacy W999 under W1; effective finance0.7; valid0.5 inconsistent with native)
+and then passed within the169-test targeted suite. First-red log:
+/tmp/climate-finance-2010-reroll-first-red.log.
+
+Source attestations are operator-approved local artifacts. The CLI verifies
+field/hash/family consistency, not arbitrary proof truth or native-blob
+identity. Root reviewed the actual parent1654 producers: freeze-production-input.py,
+verify-public-members.py, build-member-proofs.py and verify-pending.py under
+operations/ and operations/repec-public-proof/ of the 2026-10-08 run archive.
+They compare the complete canonical fields against archived exact-member
+OpenAlex/ReDIF bodies before approving transmission. Approved parent frozen
+67344-record input SHA256:
+76651a67e52d3f03a40c65b7f0bdb170c978392b58b182cc8d1eba249b484973;
+proof artifact SHA256:
+4f6519d42f5d6e8db0dd3124aca8bd96e94cf7ca7b571e5dd736355b4f62de2b.
+These concrete artifacts live in operations/luna-stage2-production-input;
+47 incomplete proofs remain local. Approval evidence:
+/tmp/climate-finance-public-proof-producer-approval.md. This is parent-run
+provenance, not a claim that ticket2010 has dispatched or closed the corpus.
+
+The lexicon now points to the actual parent source-review archive; configured
+facet-table auto-loading is documented accurately. The permitted shared-I/O
+migration follow-up is ticket2024 (two named CLIs plus targeted ratchet),
+keeping the established CLI contract out of this scientific-instrument diff.

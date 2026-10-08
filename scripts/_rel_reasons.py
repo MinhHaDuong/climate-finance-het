@@ -18,8 +18,9 @@ facet values. Facets are evaluated in ``FACETS`` order, cheapest first:
 2. ``icf`` (stage-1 model, then Opus): by the work's ICF status, values in
    ``config/rel_screen.yaml`` ``membership.icf`` (proposed: icf 1, unsure 0.5,
    aux and out 0); ``unscreened`` and ``pending_stage2`` are not graded yet.
-   Planned (pending): ICF = min(international, climate, finance), three
-   facets in place of this one; the list form of ``FACETS`` takes them as is;
+   For an actual version-3.2 judgment of the deciding Stage2 run, ICF is the
+   minimum of the three quality-guarded international/climate/finance facets.
+   Historical aggregate labels never fabricate individual facet values;
 3. ``discipline`` (Opus v2 or the 1842 catch-up): the contribution test,
    ``membership.discipline`` (proposed: yes 1, unsure 0.5, no 0; ``na`` and
    ``unknown`` as unsure). Not graded while no dimension row exists.
@@ -79,7 +80,7 @@ VIEW_COLUMNS = ["contrib", "discipline_field", "contrib_type", "discipline_sourc
                 "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag",
                 "seriousness", "seriousness_flag", *[f"mu_{f}" for f in FACETS],
                 "mu", "mu_facet", "mu_complete", "rel_reason", "rel_reason_detail",
-                "rel_final", "rel_family_id", "abstract_flag", "rel_use"]
+                "rel_final", "rel_family_id", "abstract_flag", "rel_use", "rel_use_reason"]
 DISCIPLINE_NOTE = (
     "discipline_excluded leans toward over-excluding applied finance: on the 1840 gold "
     "set, Opus v2 excluded 4 of 59 gold includes, 3 of them applied finance with a "
@@ -190,6 +191,8 @@ def _tier(venue: dict, srule: dict) -> str:
 
 
 def icf_of(row: dict, mrule: dict) -> tuple[float | None, str]:
+    if row.get("icf_instrument") == "three_facets_v3.2":
+        return min(float(row["mu_" + f]) for f in ("international", "climate", "finance")), row["status"]
     if row["status"] in ICF_PENDING:
         return None, row["status"]
     return mrule["icf"][ICF_STATUS[row["status"]]], row["status"]
@@ -305,8 +308,13 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
         row["mu_complete"] = "true" if ev["mu_complete"] else "false"
         row["rel_final"] = "true" if ev["rel_reason"] == "included" else "false"
         row["abstract_flag"] = "" if (pool[i].get("abstract") or "").strip() else "no_abstract"
-        row["rel_use"] = (("bibliometric_only" if row["abstract_flag"] else "synthesis")
-                          if row["rel_final"] == "true" else "")
+        quality = row.get("icf_input_quality", "")
+        reason = ("no_abstract" if row["abstract_flag"] else
+                  f"{quality}_input" if quality in {"absent", "nonabstract", "truncated"} else
+                  "usable_abstract" if quality == "usable" else "legacy_abstract_unassessed")
+        row["rel_use_reason"] = reason if row["rel_final"] == "true" else ""
+        row["rel_use"] = (("bibliometric_only" if reason in {"no_abstract", "absent_input", "nonabstract_input", "truncated_input"}
+                           else "synthesis") if row["rel_final"] == "true" else "")
     assign_families(rows)
     return {"dimension_rows": len(dims),
             "dimension_rows_matched": sum(len(v) for v in by_work.values()),
@@ -384,6 +392,7 @@ def reason_counts(rows: list[dict]) -> dict:
         "included_no_venue_flagged_works": sum(r["seriousness_flag"] == "no_venue"
                                                for r in included),
         "included_by_use_works": _split(included, "rel_use"),
+        "included_by_use_reason_works": _split(included, "rel_use_reason"),
         "no_abstract_by_reason_works": _split(
             [r for r in rows if r["abstract_flag"]], "rel_reason"),
         "no_abstract_by_status_works": _split(

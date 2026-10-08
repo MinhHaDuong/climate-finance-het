@@ -89,6 +89,12 @@ discipline) and the tier values and alpha of ``config/rel_venue_tiers.yaml``.
 ``rel_use`` splits the REL set into ``synthesis`` and ``bibliometric_only``
 (author decision 2026-10-07); the flag never moves ``mu`` or the reason.
 
+The configured v3.2 facet table loads when present (``--facets`` overrides its path): the deciding run's
+native and quality-guarded memberships and input-quality provenance are exposed;
+unscored historical rows have blank facets and ``icf_instrument=legacy_aggregate``.
+Known nonabstract/truncated inputs use ``bibliometric_only`` with an explicit
+``rel_use_reason``; the raw-empty ``abstract_flag`` rule remains unchanged.
+
 Outputs (``--output-dir``, default ``data/rel_pool``): ``rel_view.csv`` (one row
 per pool work), ``rel_counts.json``, which records the exit rule it applied
 (``rule``), and ``rel_sensitivity.csv``, one row per seriousness setting (column ``scenario``:
@@ -108,6 +114,7 @@ import sys
 from collections import Counter, defaultdict
 
 import _icf_screen as ics
+import _rel_facet_io as fio
 import _rel_reasons as rr
 import _rel_venues as rvn
 import _rel_view as rv
@@ -128,7 +135,7 @@ VIEW_COLUMNS = ["work_key", "openalex_id", "doi", "title", "year", "in_catalogue
                 "stage2_label", "stage2_doc", "stage2_model", "stage2_run_id",
                 "n_audit", "n_labels", "conflict", "rel_disposition", "rel_year_status",
                 "rel_included", "rel_flag", "family_id", "family_first_year", "family_size",
-                *rr.VIEW_COLUMNS]
+                *rr.VIEW_COLUMNS, *fio.VIEW_COLUMNS]
 SENSITIVITY_COLUMNS = ["scenario", "exclude_registries", "tiers", "ngo_research_in_b",
                        "drop_publishers", "no_venue", "nonresearch", "included_works",
                        "included_families",
@@ -255,7 +262,7 @@ def _write_csv(path: str, columns: list[str], rows: list[dict]) -> None:
 
 def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: dict, *,
         dims_path: str | None, venues_path: str, seriousness_rule: dict,
-        membership: dict) -> dict:
+        membership: dict, facets_path: str | None = None) -> dict:
     ics.require_table(table_path)
     labels = ics.read_table(table_path)
     dims = read_dimensions(dims_path)
@@ -264,18 +271,23 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
     venues = rvn.load_work_venues(venues_path)
     pool = rv.read_pool(pool_path)
     rows, summary = rv.build_view(pool, labels, window_cfg, rule)
+    judgments = ics.read_table(facets_path, fio.SCHEMA) if facets_path and os.path.exists(facets_path) else []
+    facet_summary = fio.assign_view(rows, judgments)
     try:
         dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule, membership)
     except ValueError as exc:
         raise ics.IcfScreenError(str(exc)) from exc
     inputs = {"pool": _input(pool_path), "table": _input(table_path),
               "dimensions": _input(dims_path), "venues": _input(venues_path)}
+    if facets_path:
+        inputs["facets"] = _input(facets_path)
     counts = make_counts(rows, summary, window_cfg, inputs,
                          dict(rule, seriousness=seriousness_rule, membership=membership))
     counts["reasons"] = dict(rr.reason_counts(rows), dimension_rows=dim_summary,
                              included_research_in_window=_in_window(rows),
                              discipline_note=rr.DISCIPLINE_NOTE,
                              seriousness_note=rr.SERIOUSNESS_NOTE)
+    counts["facets"] = facet_summary
     counts["stage2_skip"] = rr.stage2_skip(rows)
     os.makedirs(out_dir, exist_ok=True)
     _write_csv(os.path.join(out_dir, "rel_view.csv"), VIEW_COLUMNS,
@@ -320,6 +332,7 @@ def main(argv=None):
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--pool", default=None, help="default: config pool")
     parser.add_argument("--table", default=None, help="default: config table")
+    parser.add_argument("--facets", default=None, help="optional actual facet judgments")
     parser.add_argument("--dimensions", default=None, help="default: config dimensions_table")
     parser.add_argument("--venues", default=None, help="default: config venues_table")
     parser.add_argument("--venue-registries", default=VENUE_REGISTRIES)
@@ -340,7 +353,8 @@ def main(argv=None):
         counts = run(args.pool or cfg["pool"], args.table or cfg["table"],
                      args.output_dir or cfg["view_dir"], load_rel_review_config(),
                      screen, dims_path=args.dimensions or cfg["dimensions_table"],
-                     venues_path=args.venues or cfg["venues_table"], seriousness_rule=srule, membership=mrule)
+                     venues_path=args.venues or cfg["venues_table"], seriousness_rule=srule, membership=mrule,
+                     facets_path=args.facets or cfg.get("facets_table"))
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1
