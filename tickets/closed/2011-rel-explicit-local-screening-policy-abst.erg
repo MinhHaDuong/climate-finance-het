@@ -1,0 +1,62 @@
+%erg 0.1
+Title: REL — explicit local screening policy abstentions
+Created: 2026-10-08
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1714
+
+--- log ---
+2026-10-08T21:16Z HDMX-coding-agent created
+
+2026-10-08T22:18Z HDMX-coding-agent note verify-reroll — round 1: live REL evidence-use contract omits policy and unusable-input restrictions.
+2026-10-08T22:24Z HDMX-coding-agent closed — autoclosed — PR #1714
+
+--- body ---
+
+## Context
+
+Scoped implementation child of1654, after the bounded local Qwen full-input calibration failed its preregistered structural/semantic controls.47 incremental records lack complete exact public-source proofs and cannot be sent remotely. First20 native answers recovered strictly after a harness iterable correction; the next20 have inconsistent score/evidence prefixes, and the retry allowance is exhausted. Native attempts, proof-gap roster and scientific decision are preserved in the parent run archive. No more model calls are required for this child.
+
+The scientific decision explicitly authorizes conservative policy abstention rather than invented model answers. Existing schema supports only llm/human labellers; neither is an honest identity for automated policy dispositions. Parent1654 retains production/citation-round/yield/closure ownership; this implementation child does not finish its scientific criteria.
+
+## Exit criteria
+
+- Normal pipeline CLI explicitly imports frozen local-only policy dispositions with a permitted policy labeller and method identity policy:local-evidence-abstention-v1. Native answer is absent; failed local attempts, decision hash/reference, concrete failure reason and proof gaps are preserved. No Qwen/Luna impersonation or fabricated reply.
+- Exactly international/climate/finance memberships0.5 and contribution unsure are assigned as policy values, not historical/model predictions. Field and contribution type other, document unknown, studied unknown unless an independently established value retains its own provenance. Existing source metadata and historical judgments remain unchanged.
+- Unassessed input quality is explicit and separate from model-assessed quality; actual empty abstract remains empty. All policy rows are bibliometric_only with rel_use_reason local_screen_abstention, including records with nonempty abstracts. Quality is not a fourth membership facet.
+- Append-only normal imports refuse changed duplicate run keys and resume identical imports safely. View aligns exact policy provenance with effective ICF/dimension judgments and preserves uncertainty in chaining seed routes. Separate model-screened/guarded/policy counts support reproducible methods; no confirmed relevance/novelty claim or narrative use from abstention.
+- Meaningful first-red tests verify honest policy identity, native absence, exact three scores, nonempty-abstract bibliometric restriction, source preservation, append guards and backward compatibility. Final populated padme full makecheck passes; diff≤14 content-bearing paths. No paid/model calls, prompt tuning, fresh audit or historical-waiver changes.
+
+## Relevant files
+
+scripts/_icf_screen.py, scripts/_rel_facets.py, scripts/_rel_facet_io.py, scripts/_rel_reasons.py, scripts/corpus_icf_stage2.py, scripts/corpus_rel_view.py and their existing focused tests. Depend on merged child2010 normal facet implementation before execution; rebase this isolated filing branch onto that merge first.
+
+Scientific authority: immutable parent operations/repec-public-proof/astra-local-remainder-decision.md (original /tmp/climate-finance-astra-local-remainder-decision.md). Actual proof gaps operations/repec-public-proof/remaining-unproven-input.jsonl and local-pending-route-plan.json. Native calibration operations/local-facet-replay60/failed-route-report.json plus full requests/replies. Public corpus text is not needed to implement this adapter; no unverified fields leave local execution.
+
+## Scientific scope release — 2026-10-08
+
+Astra explicitly approved the shared adapter for47 full-facet policy abstentions AND37 baseline dimension-only policy abstentions,84 distinct works with zero roster overlap. Decision archived in parent operations/repec-public-proof/astra-policy-disposition-release.md, SHA256 cfa5fe7418ebb5d3cdd61bed0569a47895801f1d7c3dbc28e85a22e90d88e9b8.
+
+- Full-facet47 roster operations/repec-public-proof/remaining-unproven-input.jsonl SHA256629faedc20d6e444eb8994d85a02726ce13c21bbd520e2a5099839b8dc7d30df. Existing exact-three policy criteria above apply.
+- Dimension-only37 roster operations/baseline-abstract-recovery-discipline/public-member-proof/proof-pending.jsonl SHA25692bf626e661ae6c4f4dc74edb29ace756f58d71366795bf948629d9ed0cb9884. These baseline finalICF/unsure works acquired abstracts but have no dimensions and no full public proof. Assign only contribution unsure/field other/ctype other through an honest policy dimension row. Write NO ICFscreen/facet rows, alter NO historical ICF judgments or scores, preserve source metadata. Native absent and input quality unassessed; reason remoteproofincomplete/localroutenotvalidated, NOT a claim that37 were Qwen-assessed.
+- View must derive bibliometric_only/local_screen_abstention from effective dimension-policy provenance even without a facet row and even with nonempty abstract. Before/after ICFscreen/facet invariance for37 is required test evidence.
+-153 proven-public baseline dimension catchup remains a separate original1654 normal catchup/model route. This child does not perform it or add an audit. No calls are required for84 policy dispositions; exact failed local60 archive supplies route failure provenance.
+
+## Implementation checkpoint — 2026-10-08
+
+Normal import is `uv run python scripts/corpus_rel_policy.py --input <approved-policy-scope-manifest.json> --output <rel_policy_dispositions.csv> --scope full_facets|discipline_only --archive-root <parent-run-root> --pool <pool.csv> --table <icf_screen.csv> --dimensions <rel_dimensions.csv> --run-id <stable-id> --labelled-at <stable-date>`. The versioned config registers the immutable approved manifest. It verifies the pool, both disjoint rosters, scientific decision, exact proof gaps, calibration failure and separate native attempt hashes before constructing policy rows. The compatibility prompt_sha256 field carries the deterministic policy method hash; no prompt, native answer or model-assessed quality is invented.
+
+A separate append-only policy table binds each canonical policy row to its exact source and scientific authority. Full-facet scope appends ICF unsure and dimensions; dimension-only appends catchup dimensions and no ICF/facet row. Views activate restriction from selected policy provenance and clear it when a later valid assessment is selected. Native facet counts and policy counts are separate.
+
+Scientific clarification: included selected-policy rows are bibliometric_only/local_screen_abstention. Excluded rows preserve rel_use empty, their exclusion reason and membership, while exposing local_screen_abstention=true and the exact selected policy restriction/provenance. Nonempty source abstracts are preserved and abstract_flag remains the existing raw-empty predicate. This supersedes the earlier blanket wording “all policy rows are bibliometric_only”.
+
+First red: /tmp/climate-finance-2011-first-red.log (missing policy module, before implementation). Focused integration: /tmp/climate-finance-2011-targeted.log, 190 passed. Actual frozen37 dimensions validated with zero ICF/native rows (/tmp/climate-finance-2011-dim37.log). Actual47 preflight correctly refused four historical assessments pending an exact scientific changed-family reconciliation extension; /tmp/climate-finance-2011-roster-conflicts.json preserves the finding. No parent ledger is modified.
+
+Existing followup2024 covers migration of the touched existing corpus_rel_view CLI to shared script_io_args; new corpus_rel_policy CLI already uses it. Global erg failure1183 referencing absent1182 predates this child and remains unchanged.
+
+## Final scientific roster reconciliation — 2026-10-08
+
+Astra/root preserves selected valid historical assessments: W3026574757, W2126416729 and W7127147576 retain aux; W7128082529 retains icf and its Opus catchup unsure/other/case. Changed-family registry or missing public proof alone cannot authorize replacement. The adapter's refusal remains mandatory and regression-tested. The revised immutable approved manifest SHA25641351d80108786810f124d4fc49490053323844f7475b556ddb2dedd94347b2d authorizes43 full-facet policy works plus37 dimension-only works,80 active policy works total, and separately records the four historical reuses. Original47/84 manifests and preflight conflict evidence remain archived. The registered full43 roster remaining-unproven-policy43.jsonl SHA25621c5eb1c972984c4a27022fd582a8dfd4bfac797b4bcf1610101f44f46d60836 supersedes the earlier47-policy count; native calibration attempts still concern the separate failed60 calibration, not these43/37 works.
+
+Actual offline imported-ledger validation passes: /tmp/climate-finance-2011-actual80.log.43 full-facet dispositions append43 ICF and43 dimensions;37 dimension-only dispositions append37 dimensions with ICF bytes unchanged. Exact repeated imports skip all80 policy keys without byte changes. Both original parent tables remain unchanged and no facet table is created. Subsequent manifest-message fix gives policy appends their explicit policy method instead of the native faceted-stage2 message; unit regression verifies it. Final focused suite: /tmp/climate-finance-2011-targeted-final.log,192 passed. Final clean populated-padme full gate is run through raid-gate.py with timeout1800 at /tmp/climate-finance-2011-full-gate.log; the PR records its exact result/head.
+
+First full gate passes at0b16724a7b5da0508173c81027891ce3a0db0f1e:3189 passed,33 skipped, exit0, /tmp/climate-finance-2011-full-gate.log. During that frozen gate, the parent appended the actual dated Astra four-conflict decision. Final approved manifest is now SHA256397b0a6c33d9dfc448b2846d656af7c606b2e25ad1771a194ed681f2a3ca45c0; authority SHA25648ecfe04ec89ff65376f5a18cae76a8b70798dc9010e0adb8f8a59be7996d5b3. Pool,43/37 rosters, gaps and native artifacts are unchanged. The registry admission hash update is executable behavior, so a new clean full gate is required and justified at /tmp/climate-finance-2011-full-gate-final.log. First-gate evidence remains valid only for its exact earlier head. Parent freezes this final authority and manifest; subsequent annotations must remain separate from this approved snapshot. Final copied-ledger validation uses /tmp/climate-finance-2011-actual80-final.log.

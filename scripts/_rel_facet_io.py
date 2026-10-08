@@ -19,7 +19,7 @@ COLUMNS = ["facet_id", *ics.KEY, "labeller", "prompt_sha256", "machine", "labell
            "proof_sha256", "native_answer", "effective_answer", "input_quality",
            "guard_disposition", "guard_reasons", "quality_origin"]
 SCHEMA = ics.Schema(COLUMNS, "facet_id", [c for c in COLUMNS if c != "facet_id"],
-                    (("stage", {"2", "audit"}), ("labeller", ics.LABELLERS),
+                    (("stage", {"2", "audit"}), ("labeller", ics.MODEL_LABELLERS),
                      ("input_quality", {"usable", "absent", "nonabstract", "truncated"}),
                      ("guard_disposition", {"accepted", "unresolved"})))
 VIEW_COLUMNS = [*[f"mu_{f}" for f in facets.FACETS], "icf_instrument",
@@ -270,7 +270,8 @@ def parse_chunks(chunk_dir: str, suffix: str, metadata: dict) -> tuple[list, lis
     return raw_rows, labels, dims, report
 
 
-def append_batches(batches: list[tuple[str, list, ics.Schema, bool]]) -> list[tuple[int, int]]:
+def append_batches(batches: list[tuple[str, list, ics.Schema, bool]],
+                   message: str = "faceted Stage2 v3.2") -> list[tuple[int, int]]:
     """Preflight every table before writing; identical repeats are idempotent.
 
     A changed response under an existing run key is refused, never silently
@@ -291,7 +292,7 @@ def append_batches(batches: list[tuple[str, list, ics.Schema, bool]]) -> list[tu
                 faults.append("existing run key has different payload")
             if faults:
                 raise ics.IcfScreenError(f"{path}: {faults}; nothing written")
-    return [ics.append_new(path, rows, "faceted Stage2 v3.2", new, schema)
+    return [ics.append_new(path, rows, message, new, schema)
             for path, rows, schema, new in batches]
 
 

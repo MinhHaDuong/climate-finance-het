@@ -115,6 +115,7 @@ from collections import Counter, defaultdict
 
 import _icf_screen as ics
 import _rel_facet_io as fio
+import _rel_policy as policy
 import _rel_reasons as rr
 import _rel_venues as rvn
 import _rel_view as rv
@@ -262,7 +263,7 @@ def _write_csv(path: str, columns: list[str], rows: list[dict]) -> None:
 
 def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: dict, *,
         dims_path: str | None, venues_path: str, seriousness_rule: dict,
-        membership: dict, facets_path: str | None = None) -> dict:
+        membership: dict, facets_path: str | None = None, policies_path: str | None = None) -> dict:
     ics.require_table(table_path)
     labels = ics.read_table(table_path)
     dims = read_dimensions(dims_path)
@@ -273,14 +274,17 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
     rows, summary = rv.build_view(pool, labels, window_cfg, rule)
     judgments = ics.read_table(facets_path, fio.SCHEMA) if facets_path and os.path.exists(facets_path) else []
     facet_summary = fio.assign_view(rows, judgments)
+    policies = ics.read_table(policies_path, policy.SCHEMA) if policies_path and os.path.exists(policies_path) else []
     try:
-        dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule, membership)
+        dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule, membership, policies)
     except ValueError as exc:
         raise ics.IcfScreenError(str(exc)) from exc
     inputs = {"pool": _input(pool_path), "table": _input(table_path),
               "dimensions": _input(dims_path), "venues": _input(venues_path)}
     if facets_path:
         inputs["facets"] = _input(facets_path)
+    if policies_path:
+        inputs["policies"] = _input(policies_path)
     counts = make_counts(rows, summary, window_cfg, inputs,
                          dict(rule, seriousness=seriousness_rule, membership=membership))
     counts["reasons"] = dict(rr.reason_counts(rows), dimension_rows=dim_summary,
@@ -288,6 +292,9 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
                              discipline_note=rr.DISCIPLINE_NOTE,
                              seriousness_note=rr.SERIOUSNESS_NOTE)
     counts["facets"] = facet_summary
+    counts["policies"] = {"disposition_rows": len(policies),
+                          "selected_by_scope": dim_summary["policy_abstention_selected_by_scope"],
+                          "native_model_answers": 0}
     counts["stage2_skip"] = rr.stage2_skip(rows)
     os.makedirs(out_dir, exist_ok=True)
     _write_csv(os.path.join(out_dir, "rel_view.csv"), VIEW_COLUMNS,
@@ -332,6 +339,7 @@ def main(argv=None):
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--pool", default=None, help="default: config pool")
     parser.add_argument("--table", default=None, help="default: config table")
+    parser.add_argument("--policies", default=None, help="override configured policy provenance table")
     parser.add_argument("--facets", default=None, help="optional actual facet judgments")
     parser.add_argument("--dimensions", default=None, help="default: config dimensions_table")
     parser.add_argument("--venues", default=None, help="default: config venues_table")
@@ -354,7 +362,8 @@ def main(argv=None):
                      args.output_dir or cfg["view_dir"], load_rel_review_config(),
                      screen, dims_path=args.dimensions or cfg["dimensions_table"],
                      venues_path=args.venues or cfg["venues_table"], seriousness_rule=srule, membership=mrule,
-                     facets_path=args.facets or cfg.get("facets_table"))
+                     facets_path=args.facets or cfg.get("facets_table"),
+                     policies_path=args.policies or cfg.get("policies_table"))
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1
