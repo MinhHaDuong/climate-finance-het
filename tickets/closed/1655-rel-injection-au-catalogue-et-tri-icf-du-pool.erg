@@ -2,6 +2,7 @@
 Title: REL — catalogue injection and ICF screen of the whole pool
 Created: 2026-09-29
 Author: haduong
+Closed: autoclosed — PR #1710
 
 --- log ---
 2026-09-29T15:00Z haduong created
@@ -16,6 +17,8 @@ Author: haduong
 2026-10-01T09:14Z HDMX-coding-agent note stage 1 status 2026-10-01 wind-down. DONE: design-B run 2026-10-02-designB-stage1-rest stopped at a clean point (09:09Z), 23,110 works labelled by both labellers imported (46,220 rows; 10,042 stage1_out, 13,068 pending_stage2); ledger USD 1.10 of its USD 10 cap. REMAINING unscreened: 137,727 works (t1650 137,720, t1790 5, t1652 2) plus 59 title-less catalogue works (accepted residue) and 48 re-screen works of 1755 appended to that run's input, not yet labelled
 2026-10-01T09:14Z HDMX-coding-agent note RESUME (padme, from a main checkout with pool sha256 3e07852b, PYTHONPATH=scripts:libs/openalex-corpus/src): uv run --env-file .env python scripts/corpus_icf_stage1_designb.py --input ~/rel_pool_runs/2026-10-02-designB-stage1-rest/screen_input.jsonl --output-dir ~/rel_pool_runs/2026-10-02-designB-stage1-rest --budget-usd 10 (cap cumulative over the run dir: USD 8.90 left). IMPORT after it: uv run --env-file .env python scripts/corpus_icf_import.py --output data/rel_screen/icf_screen.csv stage1-designb --run-dir ~/rel_pool_runs/2026-10-02-designB-stage1-rest --pool data/rel_pool/pool.csv [--stopped REASON if stopped again]; idempotent, appends only the new pairs. Stage 2 on hold
 2026-10-08T15:45Z HDMX-coding-agent note Astra high-effort plan review: baseline closure only; 1654 owns chaining additions and their screen. Final audit waived by author on 2026-10-07, not measured. Integration evidence: docs/rel-corpus-completion-2026-10-08.md and docs/rel-corpus-baseline-2026-10-08.json.
+2026-10-08T16:13Z HDMX-coding-agent closed — autoclosed — PR #1710
+
 --- body ---
 ## Context
 
