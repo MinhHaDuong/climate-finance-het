@@ -5,7 +5,7 @@ Last updated: 2026-10-07T20:49Z
 ## Current goal
 
 **REL literature review — the only work on a clock, due ~2026-12-06.** 0700 tracks it; the research plan is approved (#1558).
-Stage-2 screening and the discipline catch-up are done and the REL view is final for now (7,499 included); the next step is the review itself (see below). 0701 (article outline, revisable) and 0705 (Œconomia non-overlap) remain open.
+Stage-2 screening and the discipline catch-up are done: the baseline REL view has 7,499 included works (7,484 observed families), of which 5,354 research works (5,339 families) are in the complete-year window. Citation chaining and the final freeze remain. 0701 (article outline, revisable) and 0705 (Œconomia non-overlap) remain open.
 
 ## REL workstream
 
@@ -14,12 +14,12 @@ The analytic corpus is unfrozen, with merged/refined views pinned at 33,344 work
 annual series stop at 2025, while 2026 is partial.
 Two-stage ICF screening of the pool (1733): stage 1 (design B) finished with the joint drop threshold at 0.90; stage 2 done for 158,636 works (judges: Opus for the t1530 works; Sol, then Fable and Opus on the unsure, for the rest), labels imported into `icf_screen` (1995).
 Pool-wide ICF labels: icf 14,452, aux 94,060, out 49,683, unsure 5,400, pending stage 2 296 (accepted residue), unscreened 59.
-Works without an abstract (8,207 icf or unsure) count in the bibliometric analysis only and are never deleted.
+Works without an abstract (8,207 icf or unsure) are retained for bibliometric use by policy; 5,894 remain discipline-pending, outside the fully graded included set.
 Discipline catch-up (1842): `rel_dimensions.csv` holds 11,645 works (all icf or unsure with an abstract); gold-set contribution kappa 0.790 unweighted; cost about USD 12.3 plus an unexplained USD 0.54 key-usage rise (may rise if an abandoned Batch bills).
-REL view (1843), 389,291 works: seriousness_excluded 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 5,894 (all without abstract), discipline_excluded 780 (upper bound: Opus v2 over-excludes applied finance), included 7,499.
+REL view (1843), 389,291 works: seriousness_excluded 39,115, icf_excluded 335,652, icf_pending 351, discipline_pending 5,894 (all without abstract), discipline_excluded 780 (automated exclusions with an observed risk of over-excluding applied finance), included 7,499.
 The Fable audit of a stage-2 sample is set aside by author decision (1733), not measured.
-Open: 1830 and 1733 (closing).
-Then: Gavard/Schoch; DAG and independent EconLit/OpenAlex searches; 61-journal contents pilot, South/languages (including BRICS), versions and PRISMA; then map and synthesis.
+1733 and 1830 are closed; 1655 baseline integration is reconciled (docs/rel-corpus-completion-2026-10-08.md). Gavard/Schoch, causal searches, journal contents and Southern-source deliveries are complete with documented gaps; EconLit was unavailable, with ECONIS/RePEc used instead.
+Next: 1654 citation chaining and incremental screening; 1656 family/date/coverage reconciliation, final PRISMA and reproducible freeze; then map and synthesis.
 
 ## JETP migration
 

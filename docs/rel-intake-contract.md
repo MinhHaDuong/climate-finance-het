@@ -15,13 +15,17 @@ any other exit lists every violation.
 ## The one rule
 
 **A lane delivers everything it retrieved, unscreened for relevance.** The ICF
-rule is applied once, by 1655, to the whole pool (protocol
+rule is applied to the whole baseline pool by 1655, then incrementally to
+citation-chaining additions by 1654 using the same screening procedures (protocol
 `conception/rel-audit-finalisation-corpus.md`, § Criblage ICF du pool). A lane
 does not drop a record because it looks off-topic, because it is already in the
 corpus, or because it falls outside the publication window: the pool merge
 counts overlap per source (that is each lane's marginal yield), and the REL view
 applies the window. A lane may still record its own opinion in `lane_status`
 and `lane_note`; those columns are carried as information and never filter.
+Ticket 1654 owns delivery, pool merge, screening and reconciliation of its
+additions before measuring each round's eligible yield; closing the baseline
+tracker 1655 does not exempt those additions from screening.
 
 The only records a lane may leave out are listed, with a reason from this
 closed list, in `excluded.csv`:

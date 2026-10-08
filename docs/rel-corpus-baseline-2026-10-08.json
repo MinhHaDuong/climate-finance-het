@@ -1,0 +1,828 @@
+{
+  "measured_at": "2026-10-08",
+  "machine": "padme",
+  "code_sha": "83af92b3",
+  "counts": {
+    "inputs": {
+      "pool": {
+        "path": "pool.csv",
+        "sha256": "3e07852be556a58e0006c6a76770c64432fae39c63d3359c861867c5b2627353"
+      },
+      "table": {
+        "path": "icf_screen.csv",
+        "sha256": "c6fae914ed04aed92c4f817fe47d93d289864315954976208c5af1f8d445f86b",
+        "dvc_md5": "97806aa2b6365b5c814e60199a0fa7af.dir"
+      },
+      "dimensions": {
+        "path": "rel_dimensions.csv",
+        "sha256": "73e2b4529d71061ada63860e1868a41aa95b73b3747b7b188c294407644aa37c",
+        "dvc_md5": "97806aa2b6365b5c814e60199a0fa7af.dir"
+      },
+      "venues": {
+        "path": "rel_work_venues.csv",
+        "sha256": "34bffd3c14eae13e0e7ed3173f413d8d4f4792e8e0da8b281814d1c1e2b707d2"
+      }
+    },
+    "rule": {
+      "stage1_exit_labels": [
+        "out"
+      ],
+      "stage2_labels": [
+        "aux",
+        "icf",
+        "unsure"
+      ],
+      "stage2_unsure_in_rel": true,
+      "stage1_joint": {
+        "llm_models": [
+          "google/gemma-4-26b-a4b-it"
+        ],
+        "classifier_models": [
+          "typesafe/jev-1.13-20260917"
+        ],
+        "classifier_p_out_min": 0.9
+      },
+      "seriousness": {
+        "exclude": [
+          "hijacked"
+        ],
+        "ngo_research_in_b": true,
+        "no_venue": "keep_flagged",
+        "nonresearch": "to_c",
+        "tier_mu": {
+          "A": 1.0,
+          "B": 1.0,
+          "C": 0.0,
+          "unknown": 0.5
+        },
+        "alpha": 0.5,
+        "tiers": [
+          "A",
+          "B"
+        ],
+        "drop_publishers": []
+      },
+      "membership": {
+        "status": "proposed",
+        "icf": {
+          "icf": 1.0,
+          "unsure": 0.5,
+          "aux": 0.0,
+          "out": 0.0
+        },
+        "discipline": {
+          "yes": 1.0,
+          "unsure": 0.5,
+          "no": 0.0
+        },
+        "family": "max"
+      }
+    },
+    "window": {
+      "search_date": "2026-09-28",
+      "year_min": "1990",
+      "last_complete_year": "2025",
+      "partial_year": "2026",
+      "require_full_date_for_partial_year": "True"
+    },
+    "pool_works": 389291,
+    "status": {
+      "unscreened": 59,
+      "stage1_out": 225341,
+      "stage1_aux": 0,
+      "pending_stage2": 296,
+      "icf": 14452,
+      "aux": 94060,
+      "out": 49683,
+      "unsure_unresolved": 5400
+    },
+    "status_by_window": {
+      "unscreened": {
+        "exclude_outside_year_window": 59
+      },
+      "stage1_out": {
+        "exclude_missing_title": 78,
+        "exclude_outside_year_window": 1246,
+        "include": 211028,
+        "quarantine_unverified_partial_date": 12989
+      },
+      "stage1_aux": {},
+      "pending_stage2": {
+        "include": 296
+      },
+      "icf": {
+        "exclude_missing_title": 8,
+        "exclude_outside_year_window": 151,
+        "include": 13518,
+        "quarantine_unverified_partial_date": 775
+      },
+      "aux": {
+        "exclude_missing_title": 17,
+        "exclude_outside_year_window": 503,
+        "include": 83791,
+        "quarantine_unverified_partial_date": 9749
+      },
+      "out": {
+        "exclude_missing_title": 37,
+        "exclude_outside_year_window": 645,
+        "include": 46131,
+        "quarantine_unverified_partial_date": 2870
+      },
+      "unsure_unresolved": {
+        "exclude_missing_title": 28,
+        "exclude_outside_year_window": 92,
+        "include": 4953,
+        "quarantine_unverified_partial_date": 327
+      }
+    },
+    "rel": {
+      "icf_total": 14452,
+      "icf_research_in_window": 10459,
+      "icf_research_in_window_families": 10441,
+      "included_works": 19852,
+      "included_families": 19833,
+      "included_unsure_flagged_works": 5400,
+      "included_research_in_window_works": 12909,
+      "included_research_in_window_families": 12891,
+      "included_research_in_window_unsure_flagged": 2450,
+      "icf_institutional_in_window": 2377,
+      "icf_other_in_window": 682,
+      "icf_partial_year_by_doc": {
+        "institutional": 49,
+        "other": 71,
+        "research": 655
+      },
+      "icf_by_disposition": {
+        "exclude_missing_title": 8,
+        "exclude_outside_year_window": 151,
+        "include": 13518,
+        "quarantine_unverified_partial_date": 775
+      },
+      "icf_research_in_window_with_version_hint": 53,
+      "icf_with_version_hint": 54,
+      "unsure_unresolved": 5400,
+      "pending_stage2": 296,
+      "unscreened": 59
+    },
+    "labels": {
+      "rows": 816039,
+      "matched_rows": 814883,
+      "matched_by": {
+        "work_key": 814834,
+        "openalex_id": 48,
+        "doi": 1
+      },
+      "unmatched_rows": 1156,
+      "labelled_not_in_pool_works": {
+        "no_title": 277,
+        "not_in_pool": 818
+      },
+      "rows_by_stage": {
+        "1": 616838,
+        "2": 199201
+      },
+      "rows_by_stage_model": {
+        "1|google/gemma-4-26b-a4b-it": 226492,
+        "1|openrouter/anthropic/claude-haiku-4.5": 12491,
+        "1|qwen3.8-27b": 151363,
+        "1|typesafe/jev-1.13-20260917": 226492,
+        "2|anthropic/claude-fable-5.1": 539,
+        "2|author-decision": 72,
+        "2|claude-code-subagent:opus": 4952,
+        "2|gpt-6.1-sol": 193402,
+        "2|rule:fable-opus-agree": 236
+      }
+    },
+    "families": {
+      "families": 389261,
+      "multi_work_families": 30,
+      "works_in_multi_work_families": 60,
+      "families_with_mixed_final_labels": 3,
+      "version_hints_unresolved": 549,
+      "version_hints_unresolved_by_cause": {
+        "doi_not_in_pool": 549
+      }
+    },
+    "stage1_joint": {
+      "works": 226491,
+      "stage1_out": 121165,
+      "pending_stage2": 0
+    },
+    "conflicts": {
+      "stage1": 53,
+      "stage2": 2719
+    },
+    "notes": "status: stage 1 exits only when every stage-1 verdict exits (a design-B pair is one verdict); stage 2: latest label wins, final. included: final icf, plus unsure_unresolved flagged when rule.stage2_unsure_in_rel. *_in_window: rel_disposition include, complete year, per work. The partial year is counted apart by document type. *_families: distinct family_id (version_hint links; representative: an included member, then a published article) among the works counted.",
+    "reasons": {
+      "facet_order": [
+        "seriousness",
+        "icf",
+        "discipline"
+      ],
+      "works": {
+        "seriousness_excluded": 39115,
+        "seriousness_pending": 0,
+        "icf_excluded": 335652,
+        "icf_pending": 351,
+        "discipline_excluded": 780,
+        "discipline_pending": 5894,
+        "included": 7499
+      },
+      "families": {
+        "seriousness_excluded": 39114,
+        "seriousness_pending": 0,
+        "icf_excluded": 335642,
+        "icf_pending": 350,
+        "discipline_excluded": 779,
+        "discipline_pending": 5892,
+        "included": 7484
+      },
+      "seriousness_excluded_by_detail_works": {
+        "registry:hijacked": 2,
+        "tier_c": 39113
+      },
+      "icf_excluded_by_status_works": {
+        "aux": 80569,
+        "out": 47067,
+        "stage1_out": 208016
+      },
+      "icf_pending_by_status_works": {
+        "pending_stage2": 292,
+        "unscreened": 59
+      },
+      "icf_pending_by_tier_works": {
+        "A": 287,
+        "B": 2,
+        "unknown": 62
+      },
+      "discipline_excluded_by_field_works": {
+        "data_science": 42,
+        "economics": 13,
+        "finance": 125,
+        "law": 16,
+        "management": 233,
+        "natural_science": 316,
+        "other": 35
+      },
+      "discipline_excluded_by_source_works": {
+        "catchup": 780
+      },
+      "discipline_pending_by_tier_works": {
+        "A": 4256,
+        "B": 566,
+        "unknown": 1072
+      },
+      "discipline_pending_by_mu_works": {
+        "0.5": 4552,
+        "1": 1342
+      },
+      "included_by_mu_works": {
+        "0.5": 1135,
+        "1": 6364
+      },
+      "included_mu_weighted_works": 6931.5,
+      "included_by_tier_works": {
+        "A": 4983,
+        "B": 1454,
+        "unknown": 1062
+      },
+      "included_by_publisher_flag_works": {
+        "frontiers": 37,
+        "hindawi": 11,
+        "mdpi": 207
+      },
+      "included_discipline_flagged_works": {
+        "unsure": 69
+      },
+      "included_icf_unsure_flagged_works": 55,
+      "included_no_venue_flagged_works": 1062,
+      "included_by_use_works": {
+        "synthesis": 7499
+      },
+      "no_abstract_by_reason_works": {
+        "discipline_pending": 5894,
+        "icf_excluded": 143212,
+        "icf_pending": 209,
+        "seriousness_excluded": 7997
+      },
+      "no_abstract_by_status_works": {
+        "aux": 30414,
+        "icf": 2945,
+        "out": 34666,
+        "pending_stage2": 151,
+        "stage1_out": 83815,
+        "unscreened": 59,
+        "unsure_unresolved": 5262
+      },
+      "no_abstract_note": "no_abstract works (blank abstract after trimming) count in the bibliometric analysis only, outside the synthesis tier (author decision 2026-10-07, tickets 1733 and 1843). The 1842 catch-up leaves them out, so a no_abstract work in discipline_pending stays there unless a stage-2 answer grades it.",
+      "dimension_rows": {
+        "dimension_rows": 11645,
+        "dimension_rows_matched": 11645,
+        "dimension_rows_unused": 0,
+        "works_with_disagreeing_dimension_rows": 0
+      },
+      "included_research_in_window": {
+        "included_works": 5354,
+        "included_families": 5339,
+        "discipline_pending_works": 2788,
+        "discipline_pending_families": 2786,
+        "discipline_pending_works_by_mu": {
+          "0.5": 1940,
+          "1": 848
+        }
+      },
+      "discipline_note": "discipline_excluded leans toward over-excluding applied finance: on the 1840 gold set, Opus v2 excluded 4 of 59 gold includes, 3 of them applied finance with a policy question (W3122424672, W4399863925, W7212372846), against 3 extra includes (ticket 1843 note, PR 1652). Read this count as an upper bound on the discipline exclusions of applied finance.",
+      "seriousness_note": "seriousness_excluded is overstated: some journal articles reachable only through aggregators (DOAJ, Dialnet, ORBi) fall to tier C as repository copies, about 5 of 20 in the ticket 1841 sample."
+    },
+    "stage2_skip": {
+      "pending_stage2": {
+        "by_tier": {
+          "A": 287,
+          "B": 2,
+          "C": 4,
+          "unknown": 3
+        },
+        "skippable_seriousness_0": 4,
+        "to_screen": 292
+      },
+      "unscreened": {
+        "by_tier": {
+          "unknown": 59
+        },
+        "skippable_seriousness_0": 0,
+        "to_screen": 59
+      }
+    }
+  },
+  "output_sha256": {
+    "data/rel_pool/pool.csv": "3e07852be556a58e0006c6a76770c64432fae39c63d3359c861867c5b2627353",
+    "data/rel_pool/merge_report.json": "82480963cffeb34a59aeaae1ce583821076e2b3a1bbc67faf2fd372b1e7e42e1",
+    "data/rel_pool/rel_work_venues.csv": "34bffd3c14eae13e0e7ed3173f413d8d4f4792e8e0da8b281814d1c1e2b707d2",
+    "data/rel_pool/rel_counts.json": "394ce00248c7a8642c5ff545e6b959a13f7eb05a3f77dafdfed1479a2dbd1334",
+    "data/rel_pool/rel_view.csv": "bb47532ebda166c57c39ce8ab1f3f1b845430ae8b9fcd6f8ebb7a59011df5f9f",
+    "data/rel_pool/rel_sensitivity.csv": "5d96e5ff4ab81e2dc70f9bbb9d3fe87783d6dc005a9b94cc75ac13bf1c375357",
+    "data/rel_screen/icf_screen.csv": "c6fae914ed04aed92c4f817fe47d93d289864315954976208c5af1f8d445f86b",
+    "data/rel_screen/icf_screen.manifest.jsonl": "95a331325a1159778516c11e09ab38197af8da0f12e14299a590eb4c796d0b54",
+    "data/rel_screen/rel_dimensions.csv": "73e2b4529d71061ada63860e1868a41aa95b73b3747b7b188c294407644aa37c",
+    "data/rel_screen/rel_dimensions.manifest.jsonl": "6aecc9a3a827ec210cb31001b5e07a65a8c2af518f1f5c1648040689c4b8f024"
+  },
+  "merge_report": {
+    "catalogue": {
+      "path": "data/catalogs/unified_works_rel_pin.csv",
+      "md5": "3633ad9f4517c02618a0ecab722a8051",
+      "rows": 43179,
+      "run": "20260729T161924Z"
+    },
+    "deliveries": {
+      "t1530-sud-openalex/2026-09-29": {
+        "lane": "t1530-sud-openalex",
+        "coverage": "incomplete",
+        "records": 34207,
+        "excluded": {
+          "duplicate_in_lane": 15748,
+          "not_retrievable": 280
+        },
+        "with_doi": 28956,
+        "doi_malformed": 0,
+        "with_openalex_id": 34207,
+        "with_handle": 0,
+        "title_year_only": 0,
+        "title_only_from_excluded": 0,
+        "title_only_joined": 0,
+        "dup_within_delivery": 20,
+        "works": 34187,
+        "in_catalogue": {
+          "total": 4482,
+          "by_doi": 3921,
+          "by_openalex_id": 558,
+          "by_handle": 0,
+          "by_title_year": 3,
+          "by_title_only": 0,
+          "via_other_lane": 0
+        },
+        "in_other_lane_only": 5948,
+        "new_to_pool": 23757,
+        "already_screened": null
+      },
+      "t1650-sommaires/2026-09-30": {
+        "lane": "t1650-sommaires",
+        "coverage": "incomplete",
+        "records": 214863,
+        "excluded": {
+          "duplicate_in_lane": 54,
+          "front_matter": 9989,
+          "not_retrievable": 241
+        },
+        "with_doi": 211177,
+        "doi_malformed": 0,
+        "with_openalex_id": 214261,
+        "with_handle": 0,
+        "title_year_only": 0,
+        "title_only_from_excluded": 0,
+        "title_only_joined": 0,
+        "dup_within_delivery": 0,
+        "works": 214863,
+        "in_catalogue": {
+          "total": 2237,
+          "by_doi": 2232,
+          "by_openalex_id": 5,
+          "by_handle": 0,
+          "by_title_year": 0,
+          "by_title_only": 0,
+          "via_other_lane": 0
+        },
+        "in_other_lane_only": 6296,
+        "new_to_pool": 206330,
+        "already_screened": null
+      },
+      "t1651-gavard-schoch/2026-09-30": {
+        "lane": "t1651-gavard-schoch",
+        "coverage": "complete",
+        "records": 29,
+        "excluded": {
+          "front_matter": 1
+        },
+        "with_doi": 29,
+        "doi_malformed": 0,
+        "with_openalex_id": 14,
+        "with_handle": 0,
+        "title_year_only": 0,
+        "title_only_from_excluded": 0,
+        "title_only_joined": 0,
+        "dup_within_delivery": 0,
+        "works": 29,
+        "in_catalogue": {
+          "total": 15,
+          "by_doi": 15,
+          "by_openalex_id": 0,
+          "by_handle": 0,
+          "by_title_year": 0,
+          "by_title_only": 0,
+          "via_other_lane": 0
+        },
+        "in_other_lane_only": 8,
+        "new_to_pool": 6,
+        "already_screened": null
+      },
+      "t1652-causal-econlit/2026-09-30b": {
+        "lane": "t1652-causal-econlit",
+        "coverage": "incomplete",
+        "records": 34788,
+        "excluded": {
+          "duplicate_in_lane": 18638,
+          "not_retrievable": 16
+        },
+        "with_doi": 25462,
+        "doi_malformed": 0,
+        "with_openalex_id": 30145,
+        "with_handle": 0,
+        "title_year_only": 4558,
+        "title_only_from_excluded": 0,
+        "title_only_joined": 0,
+        "dup_within_delivery": 377,
+        "works": 34411,
+        "in_catalogue": {
+          "total": 6147,
+          "by_doi": 5094,
+          "by_openalex_id": 773,
+          "by_handle": 0,
+          "by_title_year": 250,
+          "by_title_only": 0,
+          "via_other_lane": 30
+        },
+        "in_other_lane_only": 7256,
+        "new_to_pool": 21008,
+        "already_screened": null
+      },
+      "t1653-sud-hors-openalex/2026-10-01": {
+        "lane": "t1653-sud-hors-openalex",
+        "coverage": "incomplete",
+        "records": 18268,
+        "excluded": {
+          "duplicate_in_lane": 9914,
+          "no_dedup_key": 2
+        },
+        "with_doi": 12574,
+        "doi_malformed": 0,
+        "with_openalex_id": 0,
+        "with_handle": 127,
+        "title_year_only": 5577,
+        "title_only_from_excluded": 2,
+        "title_only_joined": 0,
+        "dup_within_delivery": 1345,
+        "works": 16925,
+        "in_catalogue": {
+          "total": 330,
+          "by_doi": 253,
+          "by_openalex_id": 0,
+          "by_handle": 0,
+          "by_title_year": 76,
+          "by_title_only": 0,
+          "via_other_lane": 1
+        },
+        "in_other_lane_only": 895,
+        "new_to_pool": 15700,
+        "already_screened": null
+      },
+      "t1790-reader-reruns/2026-09-30": {
+        "lane": "t1790-reader-reruns",
+        "coverage": "incomplete",
+        "records": 642,
+        "excluded": {
+          "not_retrievable": 9
+        },
+        "with_doi": 552,
+        "doi_malformed": 0,
+        "with_openalex_id": 642,
+        "with_handle": 0,
+        "title_year_only": 0,
+        "title_only_from_excluded": 0,
+        "title_only_joined": 0,
+        "dup_within_delivery": 0,
+        "works": 642,
+        "in_catalogue": {
+          "total": 29,
+          "by_doi": 29,
+          "by_openalex_id": 0,
+          "by_handle": 0,
+          "by_title_year": 0,
+          "by_title_only": 0,
+          "via_other_lane": 0
+        },
+        "in_other_lane_only": 608,
+        "new_to_pool": 5,
+        "already_screened": null
+      },
+      "t1790-sud-playwright/2026-09-30": {
+        "lane": "t1790-sud-playwright",
+        "coverage": "incomplete",
+        "records": 219,
+        "excluded": {
+          "duplicate_in_lane": 10,
+          "no_dedup_key": 2
+        },
+        "with_doi": 96,
+        "doi_malformed": 0,
+        "with_openalex_id": 67,
+        "with_handle": 0,
+        "title_year_only": 97,
+        "title_only_from_excluded": 2,
+        "title_only_joined": 0,
+        "dup_within_delivery": 12,
+        "works": 209,
+        "in_catalogue": {
+          "total": 34,
+          "by_doi": 20,
+          "by_openalex_id": 7,
+          "by_handle": 0,
+          "by_title_year": 7,
+          "by_title_only": 0,
+          "via_other_lane": 0
+        },
+        "in_other_lane_only": 102,
+        "new_to_pool": 73,
+        "already_screened": null
+      },
+      "t1810-repec-local/2026-10-01": {
+        "lane": "t1810-repec-local",
+        "coverage": "complete",
+        "records": 79522,
+        "excluded": {
+          "no_dedup_key": 915,
+          "not_retrievable": 1
+        },
+        "with_doi": 19767,
+        "doi_malformed": 0,
+        "with_openalex_id": 0,
+        "with_handle": 0,
+        "title_year_only": 59755,
+        "title_only_from_excluded": 915,
+        "title_only_joined": 279,
+        "dup_within_delivery": 2950,
+        "works": 77487,
+        "in_catalogue": {
+          "total": 2905,
+          "by_doi": 1636,
+          "by_openalex_id": 0,
+          "by_handle": 0,
+          "by_title_year": 1200,
+          "by_title_only": 18,
+          "via_other_lane": 51
+        },
+        "in_other_lane_only": 9602,
+        "new_to_pool": 64980,
+        "already_screened": null
+      }
+    },
+    "superseded_deliveries": [
+      "t1652-causal-econlit/2026-09-30",
+      "t1653-sud-hors-openalex/2026-09-30"
+    ],
+    "pool": {
+      "works": 389291,
+      "in_catalogue": 43138,
+      "lane_only": 346153,
+      "works_per_n_sources": {
+        "1": 363929,
+        "2": 19665,
+        "3": 4376,
+        "4": 1104,
+        "5": 214,
+        "6": 3
+      },
+      "still_to_screen": null
+    },
+    "reconciliation": {
+      "pool_works": 389291,
+      "catalogue_rows": 43179,
+      "catalogue_works": 43138,
+      "catalogue_rows_joined": 41,
+      "lane_only_works": 346153,
+      "lane_only_works_single_delivery": 331859,
+      "lane_only_works_several_deliveries": 14294,
+      "works_with_several_dois": 25,
+      "ambiguous_title_groups": 5269,
+      "ambiguous_title_only": 132,
+      "generic_title_only": 2,
+      "catalogue_doi_malformed": 0,
+      "checks": {
+        "pool = catalogue works + lane-only works": "ok",
+        "sum of new_to_pool = lane-only works from a single delivery": "ok",
+        "works per n_sources sum to the pool": "ok",
+        "t1530-sud-openalex/2026-09-29: records + title_only_from_excluded - dup_within_delivery = works": "ok",
+        "t1530-sud-openalex/2026-09-29: works = in_catalogue + in_other_lane_only + new_to_pool": "ok",
+        "t1650-sommaires/2026-09-30: records + title_only_from_excluded - dup_within_delivery = works": "ok",
+        "t1650-sommaires/2026-09-30: works = in_catalogue + in_other_lane_only + new_to_pool": "ok",
+        "t1651-gavard-schoch/2026-09-30: records + title_only_from_excluded - dup_within_delivery = works": "ok",
+        "t1651-gavard-schoch/2026-09-30: works = in_catalogue + in_other_lane_only + new_to_pool": "ok",
+        "t1652-causal-econlit/2026-09-30b: records + title_only_from_excluded - dup_within_delivery = works": "ok",
+        "t1652-causal-econlit/2026-09-30b: works = in_catalogue + in_other_lane_only + new_to_pool": "ok",
+        "t1653-sud-hors-openalex/2026-10-01: records + title_only_from_excluded - dup_within_delivery = works": "ok",
+        "t1653-sud-hors-openalex/2026-10-01: works = in_catalogue + in_other_lane_only + new_to_pool": "ok",
+        "t1790-reader-reruns/2026-09-30: records + title_only_from_excluded - dup_within_delivery = works": "ok",
+        "t1790-reader-reruns/2026-09-30: works = in_catalogue + in_other_lane_only + new_to_pool": "ok",
+        "t1790-sud-playwright/2026-09-30: records + title_only_from_excluded - dup_within_delivery = works": "ok",
+        "t1790-sud-playwright/2026-09-30: works = in_catalogue + in_other_lane_only + new_to_pool": "ok",
+        "t1810-repec-local/2026-10-01: records + title_only_from_excluded - dup_within_delivery = works": "ok",
+        "t1810-repec-local/2026-10-01: works = in_catalogue + in_other_lane_only + new_to_pool": "ok"
+      }
+    },
+    "notes": "Per-delivery counts are per source, before cross-source deduplication: a work two lanes found counts in both. in_catalogue.by_title_only: a no_dedup_key row joined a catalogue work on its title alone (any year). in_catalogue.via_other_lane: the delivery's work joins a catalogue work only through another lane's record. already_screened and still_to_screen wait for the icf_screen table (ticket 1732)."
+  },
+  "sensitivity": [
+    {
+      "scenario": "default",
+      "exclude_registries": "hijacked",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "7499",
+      "included_families": "7484",
+      "included_mu_weighted": "6931.5",
+      "discipline_pending_works": "5894",
+      "discipline_pending_families": "5892"
+    },
+    {
+      "scenario": "publishers_dropped",
+      "exclude_registries": "hijacked",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "mdpi;frontiers;hindawi",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "7244",
+      "included_families": "7229",
+      "included_mu_weighted": "6678",
+      "discipline_pending_works": "5893",
+      "discipline_pending_families": "5891"
+    },
+    {
+      "scenario": "drop_mdpi",
+      "exclude_registries": "hijacked",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "mdpi",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "7292",
+      "included_families": "7277",
+      "included_mu_weighted": "6725",
+      "discipline_pending_works": "5893",
+      "discipline_pending_families": "5891"
+    },
+    {
+      "scenario": "drop_frontiers",
+      "exclude_registries": "hijacked",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "frontiers",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "7462",
+      "included_families": "7447",
+      "included_mu_weighted": "6895.5",
+      "discipline_pending_works": "5894",
+      "discipline_pending_families": "5892"
+    },
+    {
+      "scenario": "drop_hindawi",
+      "exclude_registries": "hijacked",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "hindawi",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "7488",
+      "included_families": "7473",
+      "included_mu_weighted": "6920.5",
+      "discipline_pending_works": "5894",
+      "discipline_pending_families": "5892"
+    },
+    {
+      "scenario": "tier_a_only",
+      "exclude_registries": "hijacked",
+      "tiers": "A",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "6045",
+      "included_families": "6030",
+      "included_mu_weighted": "5487.5",
+      "discipline_pending_works": "5328",
+      "discipline_pending_families": "5326"
+    },
+    {
+      "scenario": "kanalregisteret_flipped",
+      "exclude_registries": "hijacked;kanalregisteret",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "7496",
+      "included_families": "7481",
+      "included_mu_weighted": "6928.5",
+      "discipline_pending_works": "5894",
+      "discipline_pending_families": "5892"
+    },
+    {
+      "scenario": "registries_plus_scopus_doaj",
+      "exclude_registries": "doaj_withdrawn;hijacked;scopus_discontinued",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "7184",
+      "included_families": "7169",
+      "included_mu_weighted": "6617",
+      "discipline_pending_works": "5881",
+      "discipline_pending_families": "5879"
+    },
+    {
+      "scenario": "ngo_research_flipped",
+      "exclude_registries": "hijacked",
+      "tiers": "A+B",
+      "ngo_research_in_b": "false",
+      "drop_publishers": "",
+      "no_venue": "keep_flagged",
+      "nonresearch": "to_c",
+      "included_works": "7499",
+      "included_families": "7484",
+      "included_mu_weighted": "6928.5",
+      "discipline_pending_works": "5894",
+      "discipline_pending_families": "5892"
+    },
+    {
+      "scenario": "no_venue_flipped",
+      "exclude_registries": "hijacked",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "",
+      "no_venue": "exclude",
+      "nonresearch": "to_c",
+      "included_works": "6437",
+      "included_families": "6422",
+      "included_mu_weighted": "6400.5",
+      "discipline_pending_works": "4822",
+      "discipline_pending_families": "4820"
+    },
+    {
+      "scenario": "nonresearch_flipped",
+      "exclude_registries": "hijacked",
+      "tiers": "A+B",
+      "ngo_research_in_b": "true",
+      "drop_publishers": "",
+      "no_venue": "keep_flagged",
+      "nonresearch": "off",
+      "included_works": "7500",
+      "included_families": "7485",
+      "included_mu_weighted": "6932.5",
+      "discipline_pending_works": "5949",
+      "discipline_pending_families": "5947"
+    }
+  ]
+}
