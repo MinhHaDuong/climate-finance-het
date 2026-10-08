@@ -189,7 +189,9 @@ def init_seeds(store, pool, view, sentinel_paths, budget):
 
 def oa_request(store, params, get=requests.get):
     public = dict(params)
-    bound = .001 if any(k.startswith("search") for k in params) else .0001
+    # Field-specific title filters are charged as search, too. Reserve the
+    # search ceiling for every request; settle list calls at their lower cost.
+    bound = .001
     call = store.reserve("openalex", bound, public)
     params = {**params, "api_key": read_credential("openalex", "OPENALEX_API_KEY"), "mailto": MAILTO}
     try:
