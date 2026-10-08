@@ -29,20 +29,27 @@ from utils import get_logger
 log = get_logger("rel_chaining_screen")
 
 
-def build_stage2(pool_path, table_path, baseline_pool, baseline_view, config_path, output_dir):
+def build_stage2(pool_path, table_path, baseline_pool, baseline_view, config_path, output_dir, correction_keys=()):
     cfg = yaml.safe_load(Path(config_path).read_text())
     pool, graded = chunks.view(pool_path, table_path, view.screen_rule(cfg))
     mapping, unresolved = exact_rekey_map(list(rows(baseline_pool)), pool)
-    if unresolved:
-        raise ChainError("baseline identity migration unresolved; refuse incremental stage2 build")
-    accepted = {mapping.get(r["work_key"], r["work_key"]) for r in rows(baseline_view)
-                if r["status"] in {"pending_stage2", "unscreened"}}
+    accepted_old = {r["work_key"] for r in rows(baseline_view)
+                    if r["status"] in {"pending_stage2", "unscreened"}}
+    if accepted_old & {r["old_key"] for r in unresolved}:
+        raise ChainError("accepted baseline residue identity unresolved; refuse to reopen it")
+    accepted = {mapping.get(key, key) for key in accepted_old}
     eligible = {r["work_key"] for r in graded if r["status"] == "pending_stage2" and r["work_key"] not in accepted}
+    correction_keys = set(correction_keys)
+    if correction_keys & accepted:
+        raise ChainError("correction queue overlaps accepted baseline residues")
+    eligible.update(correction_keys)
     picked = sorted((r for r in pool if r["work_key"] in eligible), key=lambda r: r["work_key"])
     no_abstract = sorted(r["work_key"] for r in pool if r["work_key"] in eligible and not r["abstract"].strip())
     manifest = {"kind": "incremental-chaining", "pool_sha256": sha(pool_path), "table_sha256": sha(table_path),
                 "baseline_view_sha256": sha(baseline_view), "accepted_baseline_pending_not_reopened": len(accepted),
-                "no_abstract_title_adjudication": no_abstract}
+                "no_abstract_title_adjudication": no_abstract,
+                "changed_family_correction_keys": sorted(correction_keys),
+                "historical_unresolved_identity_rows": unresolved}
     chunks.write_chunks(str(output_dir), picked, cfg["stage2"], manifest)
     log.info("incremental stage2: %d works, %d title adjudications without abstracts", len(picked), len(no_abstract))
 
@@ -155,13 +162,15 @@ def main():
     parser.add_argument("--table")
     parser.add_argument("--baseline-view")
     parser.add_argument("--baseline-pool")
+    parser.add_argument("--correction-keys", help="archived changed-family relations JSON, correction_keys field")
     parser.add_argument("--config", default="config/rel_screen.yaml")
     args = parser.parse_args()
     store = Store(args.output_dir, args.budget_ledger)
     store.bind("budget_usd", 20)
     try:
         if args.action == "build":
-            build_stage2(args.pool, args.table, args.baseline_pool, args.baseline_view, args.config, args.output_dir)
+            corrections = json.loads(Path(args.correction_keys).read_text())["correction_keys"] if args.correction_keys else []
+            build_stage2(args.pool, args.table, args.baseline_pool, args.baseline_view, args.config, args.output_dir, corrections)
         else:
             stage2(store, args.chunk_dir, args.output_dir, args.prompt, args.model,
                    args.input_price, args.output_price, args.max_tokens, args.effort, args.tier)

@@ -112,6 +112,15 @@ def test_rekey_requires_unique_identity_and_refuses_many_to_one_history():
     assert not mapping and len(unresolved) == 2
 
 
+def test_rekey_preserves_unique_original_source_member_when_preferred_metadata_changes():
+    old = [{"work_key": "title:the economics of climate change|2007",
+            "member_record_ids": "scispace:original-source-record", "title": "The Economics of Climate Change"}]
+    new = [{"work_key": "openalex:W1", "member_record_ids": "scispace:original-source-record;t1654:W1",
+            "title": "The Economics of Climate Change: The Stern Review"}]
+    mapping, unresolved = exact_rekey_map(old, new)
+    assert mapping == {old[0]["work_key"]: "openalex:W1"} and not unresolved
+
+
 def test_raw_response_replay_avoids_recharging_after_cursor_commit_interruption(tmp_path):
     store = Store(tmp_path / "round1")
     store.bind("budget_usd", 20)

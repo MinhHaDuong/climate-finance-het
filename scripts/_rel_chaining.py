@@ -108,28 +108,35 @@ def bounded_screen_post(root, ledger, pricing, key, post=requests.post):
     def send(url, body, timeout):
         store = Store(root, ledger)
         store.bind("budget_usd", 20)
+        store.db.execute("CREATE TABLE IF NOT EXISTS screen_http(call INTEGER PRIMARY KEY,request BLOB,reply BLOB)")
+        store.db.commit()
         model = body["model"]
         price = pricing[model]
         payload = json.loads(json.dumps(body))
+        payload["provider"] = {"max_price": {"prompt": str(price["prompt"] * 1e6),
+                                            "completion": str(price["completion"] * 1e6),
+                                            "request": str(price.get("request", 0))}}
         if "max_tokens" in body:
-            payload["provider"] = {"max_price": {"prompt": price["prompt"] * 1e6,
-                                                "completion": price["completion"] * 1e6},
-                                   "require_parameters": True}
+            payload["provider"]["require_parameters"] = True
         bound = (len(json.dumps(payload, ensure_ascii=False).encode()) + 2048) * price["prompt"]
         bound += body.get("max_tokens", price.get("max_completion_tokens", 0)) * price["completion"]
         bound += price.get("request", 0)
         call = store.reserve("openrouter-designb", max(bound, 1e-9), {"model": model})
-        path = Path(root) / "http" / f"call{call:08d}"
-        path.parent.mkdir(exist_ok=True)
-        dump(path.with_suffix(".request.json"), {"url": url, "body": payload, "call": call,
-                                                "pricing": price, "reserved_usd": bound, "at": now()})
+        request = {"url": url, "body": payload, "call": call,
+                   "pricing": price, "reserved_usd": bound, "at": now()}
+        store.db.execute("INSERT INTO screen_http(call,request) VALUES(?,?)",
+                         (call, gzip.compress(json.dumps(request, ensure_ascii=False).encode(), mtime=0)))
+        store.db.commit()
         try:
             response = post(url, headers={"Authorization": "Bearer " + key}, json=payload, timeout=timeout)
             data = response.json()
         except (requests.RequestException, ValueError) as exc:
             store.db.close()
             raise ChainError("ambiguous stage1 request; liability retained; no automatic retry") from exc
-        dump(path.with_suffix(".reply.json"), {"status": response.status_code, "body": data, "at": now()})
+        reply = {"status": response.status_code, "body": data, "at": now()}
+        store.db.execute("UPDATE screen_http SET reply=? WHERE call=?",
+                         (gzip.compress(json.dumps(reply, ensure_ascii=False).encode(), mtime=0), call))
+        store.db.commit()
         cost = (data.get("usage") or {}).get("cost")
         if cost is None:
             if response.status_code == 429:
@@ -138,7 +145,7 @@ def bounded_screen_post(root, ledger, pricing, key, post=requests.post):
                 store.db.close()
                 raise ChainError("stage1 charge unknown; liability retained; reconcile native reply")
         store.settle(call, float(cost), {"model": model, "http": response.status_code,
-                                      "usage": data.get("usage"), "reply": str(path.with_suffix(".reply.json"))})
+                                      "usage": data.get("usage"), "reply": f"{store.root}/checkpoint.sqlite#screen_http:{call}"})
         store.db.close()
         return response.status_code, data, None if response.status_code == 200 else f"http {response.status_code}"
     return send
@@ -576,27 +583,39 @@ def export_delivery(store, output):
     output.mkdir(parents=True, exist_ok=True)
     if (output / "manifest.json").exists():
         raise ChainError("delivery already exported; choose a new immutable directory")
+    # Identity searches are diagnostic routes, not citation discoveries. Their
+    # complete native payloads remain in the checkpoint and raw archive.
+    citation_queries = {r["k"] for r in store.db.execute("SELECT k FROM queries WHERE kind<>'resolution'")}
+    provenance = {}
+    for row in store.db.execute("SELECT q,w FROM discoveries ORDER BY q,w"):
+        if row["q"] in citation_queries:
+            provenance.setdefault(row["w"], row["q"])
     excluded = []
     def records():
         for row in store.db.execute("SELECT * FROM works ORDER BY k"):
-            record = intake_record(json.loads(row["body"]), row["query"], row["date"])
+            if row["k"] not in provenance:
+                continue
+            source_query = provenance[row["k"]]
+            record = intake_record(json.loads(row["body"]), source_query, row["date"])
             if record["title"].strip():
                 yield record
             else:
-                excluded.append({"record_id": row["k"], "query_id": row["query"], "reason": "not_retrievable",
+                excluded.append({"record_id": row["k"], "query_id": source_query, "reason": "not_retrievable",
                                  "title": "", "note": "OpenAlex returned no title"})
     csv_write(output / "records.csv", contract.RECORD_COLUMNS + ["cited_by_count"], records())
-    for row in store.db.execute("SELECT d.q,d.w FROM discoveries d JOIN works w ON d.w=w.k WHERE d.q<>w.query ORDER BY d.q,d.w"):
+    for row in store.db.execute("SELECT q,w FROM discoveries ORDER BY q,w"):
+        if row["q"] not in citation_queries or row["q"] == provenance.get(row["w"]):
+            continue
         excluded.append({"record_id": row["w"], "query_id": row["q"], "reason": "duplicate_in_lane",
                          "title": "", "note": "same OpenAlex ID; all routes preserved in edges.csv"})
     csv_write(output / "excluded.csv", contract.EXCLUDED_COLUMNS, excluded)
     incomplete = [{"unit": r["k"], "reason": r["stop"] or "query not completed"}
-                  for r in store.db.execute("SELECT * FROM queries WHERE completed=0")]
+                  for r in store.db.execute("SELECT * FROM queries WHERE completed=0 AND kind<>'resolution'")]
     incomplete += [{"unit": r["k"], "reason": r["note"]} for r in store.db.execute("SELECT * FROM unresolved")]
     registry = [{"query_id": r["k"], "platform": "openalex", "query": r["filter"],
                  "run_at": r["run_at"] or now(), "n_received": r["received"], "n_expected": r["expected"],
                  "completed": "true" if r["completed"] else "false", "stop_reason": r["stop"] or ("not run" if not r["completed"] else ""),
-                 "pages": r["pages"], "direction": r["kind"]} for r in store.db.execute("SELECT * FROM queries ORDER BY k")]
+                 "pages": r["pages"], "direction": r["kind"]} for r in store.db.execute("SELECT * FROM queries WHERE kind<>'resolution' ORDER BY k")]
     csv_write(output / "registry.csv", contract.REGISTRY_REQUIRED + ["n_expected", "stop_reason", "pages", "direction"], registry)
     csv_write(output / "edges.csv", ["seed", "candidate", "direction", "query_id"],
               ({"seed": r["seed"], "candidate": r["candidate"], "direction": r["direction"], "query_id": r["q"]}
@@ -633,7 +652,6 @@ def exact_rekey_map(old_rows, new_rows):
     new_keys = {r["work_key"] for r in new_rows}
     result, unresolved = {}, []
     old_member_counts = Counter(m for r in old_rows for m in (r.get("member_record_ids") or "").split(";") if m)
-    new_lookup = {r["work_key"]: r for r in new_rows}
     for old in old_rows:
         key = old["work_key"]
         if key in new_keys:
@@ -647,8 +665,8 @@ def exact_rekey_map(old_rows, new_rows):
         if not candidates and members and all(old_member_counts[m] == 1 for m in members):
             member_sets = [by_member.get(m, set()) for m in members]
             candidates = set.intersection(*member_sets)
-            candidates = {c for c in candidates if normalize_title(new_lookup[c]["title"]) == normalize_title(old["title"])
-                          and new_lookup[c]["year"] == old["year"]}
+            # These are unchanged source-record identities, not title guesses.
+            # A newly preferred title/year must not erase the exact membership.
         if len(candidates) == 1:
             result[key] = candidates.pop()
         else:
