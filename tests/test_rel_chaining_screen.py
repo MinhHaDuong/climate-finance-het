@@ -213,8 +213,12 @@ def test_family_facet_registry_refuses_stale_arbitrary_or_waived_keys(tmp_path, 
     baseline_view.write_text("work_key,status\nold,out\n")
     table = tmp_path / "labels.csv"
     table.write_text("unchanged labels")
-    monkeypatch.setattr("corpus_rel_chaining_screen.chunks.view", lambda *args: ([current], [{"work_key": "current", "status": "out"}]))
+    monkeypatch.setattr("corpus_rel_chaining_screen.chunks.view", lambda *args: ([current], [{"work_key": "current", "status": "unscreened"}]))
     registry = {"pool_sha256": sha(pool), "baseline_pool_sha256": sha(baseline), "baseline_view_sha256": sha(baseline_view), "old_rows": {"old": old}, "relations": {"old": ["current"]}, "correction_keys": ["current"]}
+    authority = tmp_path / "scientific-disposition.md"
+    authority.write_text("specific unassessed-family release")
+    registry["scientific_disposition"] = {"path": str(authority), "sha256": sha(authority)}
+    registry["scientifically_unassessed_keys"] = ["current"]
     registry_path = tmp_path / "registry.json"
     registry_path.write_text(json.dumps(registry))
     input_path, proof_path = tmp_path / "input.jsonl", tmp_path / "proof.jsonl"

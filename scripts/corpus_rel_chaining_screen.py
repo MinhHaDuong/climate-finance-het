@@ -69,12 +69,17 @@ def build_family_facets(pool_path, table_path, baseline_pool, baseline_view, con
                         ("baseline_view_sha256", baseline_view)):
         if registry.get(field) != sha(path):
             raise ChainError(f"changed-family registry {field} hash mismatch")
-    old_records = registry["old_rows"]
+    authority = registry.get("scientific_disposition", {})
+    if not authority.get("path") or sha(authority["path"]) != authority.get("sha256"):
+        raise ChainError("changed-family scientific disposition hash mismatch")
+    approved_keys = set(registry.get("scientifically_unassessed_keys", []))
+    archived_records = registry["old_rows"]
+    old_records = {key: archived_records[key] for key in registry["relations"]}
     accepted_keys = {r["work_key"] for r in rows(baseline_view)
                      if r["status"] in {"pending_stage2", "unscreened"}}
     baseline = {r["work_key"]: r for r in rows(baseline_pool)
-                if r["work_key"] in set(old_records) | accepted_keys}
-    if any(baseline.get(key) != record for key, record in old_records.items()):
+                if r["work_key"] in set(archived_records) | accepted_keys}
+    if any(baseline.get(key) != record for key, record in archived_records.items()):
         raise ChainError("changed-family registry differs from exact baseline rows")
     members = lambda r: {m for m in r.get("member_record_ids", "").split(";") if m}
     target_members = set().union(*(members(r) for r in baseline.values()))
@@ -103,6 +108,12 @@ def build_family_facets(pool_path, table_path, baseline_pool, baseline_view, con
     keys = {r["work_key"] for r in records}
     if not records or len(keys) != len(records) or not keys <= set(registry["correction_keys"]):
         raise ChainError("facet reconciliation requires an exact declared changed family")
+    if not keys <= approved_keys:
+        raise ChainError("changed-family inputs lack specific scientific disposition")
+    _, graded = chunks.view(pool_path, table_path, view.screen_rule(yaml.safe_load(Path(config_path).read_text())))
+    status = {r["work_key"]: r["status"] for r in graded}
+    if any(status.get(key) not in {"unscreened", "pending_stage2"} for key in keys):
+        raise ChainError("changed-family input already has a selected historical assessment")
     if keys & accepted_current:
         raise ChainError("correction queue overlaps accepted baseline residues")
     for record in records:
