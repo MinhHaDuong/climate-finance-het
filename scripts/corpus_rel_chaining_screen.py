@@ -12,9 +12,19 @@ import subprocess
 import sys
 from pathlib import Path
 
+import _icf_chunks as chunks
+import _rel_view as view
 import requests
 import yaml
-from catalog_rel_citation_chaining import ChainError, Store, dump, now
+from catalog_rel_citation_chaining import (
+    ChainError,
+    Store,
+    dump,
+    exact_rekey_map,
+    now,
+    rows,
+    sha,
+)
 from pipeline_keystore import read_credential
 from utils import get_logger
 
@@ -22,20 +32,42 @@ log = get_logger("rel_chaining_screen")
 
 
 def stage1(store, input_path, output_dir, max_usd):
-    call = store.reserve("openrouter-stage1-designb", max_usd, {"input": str(input_path)})
+    summary = Path(output_dir) / "summary.json"
+    previous = float(json.loads(summary.read_text())["spent_usd"]) if summary.exists() else 0
+    call = store.reserve("openrouter-stage1-designb", max_usd - previous, {"input": str(input_path)})
+    started = now()
     proc = subprocess.run([sys.executable, "scripts/corpus_icf_stage1_designb.py", "--input", str(input_path),
                            "--output-dir", str(output_dir), "--budget-usd", str(max_usd)], check=False)
-    summary = Path(output_dir) / "summary.json"
     if not summary.exists():
         raise ChainError("stage1 outcome unknown; full cap remains reserved")
     report = json.loads(summary.read_text())
-    spent = float(report["spent_usd"])
+    if report.get("finished", "") < started:
+        raise ChainError("stage1 summary predates this invocation; liability retained")
+    spent = float(report["spent_usd"]) - previous
     delta = report.get("key_usage_delta_usd_this_invocation")
     if delta is not None:
         spent = max(spent, float(delta))
     store.settle(call, spent, {"summary": str(summary), "exit_code": proc.returncode})
     if proc.returncode:
         raise ChainError(f"stage1 exit {proc.returncode}; charges settled, outputs preserved")
+
+
+def build_stage2(pool_path, table_path, baseline_pool, baseline_view, config_path, output_dir):
+    cfg = yaml.safe_load(Path(config_path).read_text())
+    pool, graded = chunks.view(pool_path, table_path, view.screen_rule(cfg))
+    mapping, unresolved = exact_rekey_map(list(rows(baseline_pool)), pool)
+    if unresolved:
+        raise ChainError("baseline identity migration unresolved; refuse incremental stage2 build")
+    accepted = {mapping.get(r["work_key"], r["work_key"]) for r in rows(baseline_view)
+                if r["status"] in {"pending_stage2", "unscreened"}}
+    eligible = {r["work_key"] for r in graded if r["status"] == "pending_stage2" and r["work_key"] not in accepted}
+    picked = sorted((r for r in pool if r["work_key"] in eligible and r["abstract"].strip()), key=lambda r: r["work_key"])
+    no_abstract = sorted(r["work_key"] for r in pool if r["work_key"] in eligible and not r["abstract"].strip())
+    manifest = {"kind": "incremental-chaining", "pool_sha256": sha(pool_path), "table_sha256": sha(table_path),
+                "baseline_view_sha256": sha(baseline_view), "accepted_baseline_pending_not_reopened": len(accepted),
+                "no_abstract_bibliometric_only": no_abstract}
+    chunks.write_chunks(str(output_dir), picked, cfg["stage2"], manifest)
+    log.info("incremental stage2: %d works, %d bibliometric-only without abstracts", len(picked), len(no_abstract))
 
 
 def prompt_for(wrapper, rule, record_text):
@@ -128,7 +160,7 @@ def stage2(store, chunk_dir, output_dir, prompt_path, model, input_price, output
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["stage1", "stage2"])
+    parser.add_argument("action", choices=["build", "stage1", "stage2"])
     parser.add_argument("--output-dir", required=True, help="multi-output execution archive")
     parser.add_argument("--budget-ledger", required=True)
     parser.add_argument("--input")
@@ -141,11 +173,18 @@ def main():
     parser.add_argument("--max-tokens", type=int, default=12000)
     parser.add_argument("--effort", default="low")
     parser.add_argument("--tier", default="flex")
+    parser.add_argument("--pool")
+    parser.add_argument("--table")
+    parser.add_argument("--baseline-view")
+    parser.add_argument("--baseline-pool")
+    parser.add_argument("--config", default="config/rel_screen.yaml")
     args = parser.parse_args()
     store = Store(args.output_dir, args.budget_ledger)
     store.bind("budget_usd", 20)
     try:
-        if args.action == "stage1":
+        if args.action == "build":
+            build_stage2(args.pool, args.table, args.baseline_pool, args.baseline_view, args.config, args.output_dir)
+        elif args.action == "stage1":
             stage1(store, args.input, args.output_dir, args.max_usd)
         else:
             stage2(store, args.chunk_dir, args.output_dir, args.prompt, args.model,
