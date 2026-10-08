@@ -126,3 +126,16 @@ audit:
     aux: 60
     out: 30
     unsure: 30
+
+# Explicit opt-in commands build-facets / parse-facets. Historical build/parse
+# continue to use the frozen v2 instrument above.
+facets_table: data/rel_screen/rel_facets.csv
+stage2_facets:
+  version: icf-three-facets-v3.2
+  prompt: config/rel_stage2_prompt_v3.md
+  lexicon: config/rel_mechanism_lexicon_v3.md
+  max_records: 20
+  max_request_bytes: 100000
+  # UTF-8 bytes bound tokens conservatively; reserve output separately.
+  max_input_tokens: 100000
+  reserved_output_tokens: 8192

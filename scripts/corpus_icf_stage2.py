@@ -1,5 +1,14 @@
 """Stage-2 and audit tables of the ICF screen, and their answers (ticket 1732).
 
+Explicit version-3.2 commands ``build-facets`` and ``parse-facets`` use the
+versioned ``stage2_facets`` configuration. Build requires complete public JSONL
+records and exact six-field public-source proofs, packs complete requests to byte
+and conservative token bounds, and saves local-only ordinal maps. Parse preserves
+native responses and method/request/proof hashes in the append-only facet table;
+quality-guarded scores derive canonical ICF labels and separate discipline rows.
+Every absent/nonabstract/truncated-input zero stays unresolved automatically;
+raw responses are retained. Historical ``build`` and ``parse`` defaults stay v2.
+
 Dispatcher over the REL view (``corpus_rel_view.build_view``, computed in
 memory from the pool and the ``icf_screen`` table, so it is never stale):
 
@@ -60,6 +69,7 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
 import _icf_screen as ics
+import _rel_facet_io as fio
 import _rel_view as rv
 import yaml
 from _icf_chunks import FINAL_STAGE2, Stage2Error, write_chunks
@@ -230,6 +240,55 @@ def agreement(pool: list[dict], labels: list[dict], audit_run_id: str) -> dict:
             "note": "stratified sample: kappa describes the sample, not the pool"}
 
 
+
+def _facet_parsers(sub) -> None:
+    # Multi-output frozen requests, private ordinal maps and build manifest.
+    pf = sub.add_parser("build-facets", help="explicit full-public-input v3.2 instrument")
+    pf.add_argument("--input", required=True, help="JSONL complete public bibliographic records")
+    pf.add_argument("--public-proofs", required=True, help="JSONL complete six-field source proofs")
+    pf.add_argument("--output-dir", required=True)
+    pf = sub.add_parser("parse-facets", help="strict v3.2 native/effective append-only import")
+    pf.add_argument("--chunk-dir", required=True)
+    pf.add_argument("--suffix", default="luna")
+    pf.add_argument("--model", required=True)
+    pf.add_argument("--run-id", required=True)
+    pf.add_argument("--machine", required=True)
+    pf.add_argument("--stage", choices=["2", "audit"], default="2")
+    pf.add_argument("--labeller", choices=sorted(ics.LABELLERS), default="llm")
+    pf.add_argument("--labelled-at", required=True, help="stable run timestamp for resumable imports")
+    pf.add_argument("--new-table", action="store_true")
+
+
+
+def _run_facets(args, cfg: dict, pool_path: str, table: str) -> None:
+    if args.cmd == "build-facets":
+        _, view = _view(pool_path, table, rv.screen_rule(cfg))
+        pending = set(select_pending(view))
+        with open(args.input, encoding="utf-8") as fh:
+            records = [json.loads(line) for line in fh if line.strip()]
+        if any(r["work_key"] not in pending for r in records):
+            raise ValueError("facet input contains a work outside the pending Stage2 queue")
+        with open(args.public_proofs, encoding="utf-8") as fh:
+            proofs = [json.loads(line) for line in fh if line.strip()]
+        manifest = fio.write_chunks(args.output_dir, records, proofs, cfg["stage2_facets"])
+        log.info("facets: %d proven, %d unproven, %d chunks", manifest["proven"],
+                 len(manifest["unproven"]), len(manifest["chunks"]))
+    else:
+        metadata = {"stage": args.stage, "model": args.model, "run_id": args.run_id,
+                    "machine": args.machine, "labeller": args.labeller,
+                    "labelled_at": args.labelled_at}
+        raw, rows, dims, report = fio.parse_chunks(args.chunk_dir, args.suffix, metadata)
+        facets_table = args.facets_table or cfg["facets_table"]
+        dims_table = args.dimensions_table or cfg["dimensions_table"]
+        prompt_sha = raw[0]["prompt_sha256"] if raw else ""
+        facets_new = _dims_table_is_new(table, facets_table, args.new_table, prompt_sha) if raw else args.new_table
+        dims_new = _dims_table_is_new(table, dims_table, args.new_table, prompt_sha) if dims else args.new_table
+        result = fio.append_batches([(facets_table, raw, fio.SCHEMA, facets_new),
+                                     (table, rows, ics.ICF, args.new_table),
+                                     (dims_table, dims, ics.DIMENSIONS, dims_new)])
+        log.info("facets/labels/dimensions appended/skipped %s; chunks %s", result, report)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -238,7 +297,9 @@ def main(argv=None):
     parser.add_argument("--table", default=None, help="default: config table")
     parser.add_argument("--dimensions-table", default=None,
                         help="default: config dimensions_table")
+    parser.add_argument("--facets-table", default=None, help="default: config facets_table")
     sub = parser.add_subparsers(dest="cmd", required=True)
+    _facet_parsers(sub)
     # Multi-output: chunk files, ids, works.csv and build.json in one directory.
     for name in ("build", "audit-sample"):
         sub.add_parser(name).add_argument("--output-dir", required=True)
@@ -263,9 +324,11 @@ def main(argv=None):
         cfg = yaml.safe_load(fh)
     pool_path, table = args.pool or cfg["pool"], args.table or cfg["table"]
     try:
-        if args.cmd != "parse":
+        if args.cmd not in ("parse", "parse-facets"):
             ics.require_table(table)
-        if args.cmd in ("build", "audit-sample"):
+        if args.cmd in ("build-facets", "parse-facets"):
+            _run_facets(args, cfg, pool_path, table)
+        elif args.cmd in ("build", "audit-sample"):
             rule = rv.screen_rule(cfg)
             pool, view = _view(pool_path, table, rule)
             if args.cmd == "build":
@@ -314,7 +377,7 @@ def main(argv=None):
                 json.dump(res, fh, indent=2)
                 fh.write("\n")
             log.info("agreement n=%d kappa=%s", res["n"], res["kappa"])
-    except (Stage2Error, ics.IcfScreenError) as exc:
+    except (Stage2Error, ics.IcfScreenError, ValueError) as exc:
         log.error("%s", exc)
         return 1
     return 0

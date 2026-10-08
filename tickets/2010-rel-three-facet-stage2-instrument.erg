@@ -34,3 +34,23 @@ First red test: strict facet parser must preserve a topic-positive/discipline-ne
 ## Implementation scope
 
 Fork currentorigin/main independently of1654parentbranch so reviewed child diff does not inherit its scientificdelivery paths. Proposed≤10paths: newversionedprompt; existingrel_screen; newprivatefacetmodule; existingStage2CLI/view; newfacet tests; affectedStage2/viewtests; thischildticket; optionalmethod note. No Makefile/shareddependency/testselection change. Fullgate because helper used by Stage2andview is sharedpipelineinfrastructure.
+
+## Implementation checkpoint
+
+2026-10-08: Explicit build-facets/parse-facets CLI freezes the v3.2 prompt,
+mechanism lexicon, full proven-public source strings, byte/token bounds and
+private ordinal maps. Frozen historical v2 and Stage1 remain unchanged.
+Append-only native/effective facets preflight alongside derived ICF labels and
+independent discipline rows; changed existing run keys refuse the entire batch.
+Automatic poor-input negatives remain unresolved even with title quotations
+(latest author/Astra decision); native answers remain immutable. Actual and
+native facets/provenance are exposed in the view; historical facets stay blank.
+Known unusable substantive evidence uses bibliometric_only with a reason while
+raw-empty abstract_flag and membership rules remain unchanged.
+
+Targeted regression: 160 passed before final CLI/absence additions; those two
+additional tests passed with all 52 facet tests. Offline deterministic replay
+of all 60 v32 native answers: 4 quality-guarded records, 3 contribution overrides,
+zero surviving poor-input zero facets. Indonesian causal case finance=1,
+contrib=yes; Portuguese frontmatter finance=0.5, contrib=unsure. This reuses
+frozen calibration evidence, not a new accuracy estimate; no API replay.
