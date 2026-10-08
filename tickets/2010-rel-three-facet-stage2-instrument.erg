@@ -1,0 +1,36 @@
+%erg 0.1
+Title: REL — three-facet Stage2 instrument and append-only provenance
+Created: 2026-10-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-08T20:26Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Scoped implementation child of1654, created before its projected content-bearing diff exceeds14paths. Parent1654 retains actual scientific screening, native production archives, citation-round closure and yield reconciliation; this child does not claim those scientific criteria. Author2026-10-08 requested exactly three independently scored ICF facets and mechanism synonyms, with mass processing using Luna/Haiku Batch after valid instrument testing. Frozenv2 and completedStage1 are preserved.
+
+Current scientific draft/native tuning evidence live in the1654 isolated run archive, operations/stage2-clarification-20261008[-v31]. Root scientific review must disposition the second60pilot before production method adoption; no arbitrary overallagreement threshold or historical-label-as-gold claim.
+
+## Exit criteria
+
+- Versioned Stage2 instrument scores exactly international,climate,finance with0/0.5/1 memberships and separate evidence for the same main studied object. Mechanism fullnames/acronyms/historical/multilingual variants include source-backed carbon/fund/development/forest/riskfinance families. Single-country implementation retains identified international mechanism identity; incidental mentions and nonclimate/mixedpurpose institutions are guarded.0requires affirmative contrary evidence,missing information remains0.5; discipline remains separate and sparse contribution unsure.
+- Normal corpus Stage2 CLI explicitly renders this instrument and parses its response, without relying on /tmp or opaque alternate production harnesses. Prompt/lexicon/config/source/native hashes distinguish method/run and are reproducible. Record text is data rather than prompt instructions.
+- Strict parser rejects malformed/nonfinite/out-of-vocabulary scores, ambiguous/duplicate/missing ordinals and inconsistent evidence prefixes without coercion or first-wins. Valid decisions are keyed to exact original work identifiers; invalid decisions remain pending.
+- Append-only facet judgments keyed(work_key,stage,model,run_id) preserve native provenance and evidence. Deterministic membership=min(threefacets), legacylabel mapping and guarded ICF/dimension import remain explicit. Docunknown is preserved,notinvented research/institutional.
+- View exposes independent scored facets and provenance for scored rows; historical unscored facets remain blank/explicitlegacy, never fabricated from combined labels. Existing seriousness/discipline/familyunion/alpha and noabstract bibliometric-only rules remain intact. Missing judgments remain pending.
+- Meaningful parser/mapping/routing/provenance/appendguard/viewbackwardcompatibility tests pass; final clean populatedpadme makecheck passes. Diff≤14contentbearingpaths; no productionbatch or corpusclosure claim in child.
+
+## Relevant files
+
+config/rel_stage2_prompt_v2.md (frozen), config/rel_screen.yaml, scripts/_icf_screen.py, scripts/corpus_icf_stage2.py, scripts/corpus_rel_view.py, scripts/_rel_reasons.py, existing Stage2/view tests. New privatefacet module/versionedprompt/test paths as needed within scope.
+
+## Test
+
+First red test: strict facet parser must preserve a topic-positive/discipline-negative record, derive membership from exactlythree independent scores, retain uncertain sparse fields, and quarantine duplicate/missing ordinals rather than importing first answers. Extend through all27scorecombinations, finite/vocabulary/evidenceguards, appendonly conflicts, methodhash separation and historicalviewcompatibility.
+
+## Implementation scope
+
+Fork currentorigin/main independently of1654parentbranch so reviewed child diff does not inherit its scientificdelivery paths. Proposed≤10paths: newversionedprompt; existingrel_screen; newprivatefacetmodule; existingStage2CLI/view; newfacet tests; affectedStage2/viewtests; thischildticket; optionalmethod note. No Makefile/shareddependency/testselection change. Fullgate because helper used by Stage2andview is sharedpipelineinfrastructure.
