@@ -366,3 +366,38 @@ def test_redif_mixed_field_proof_carries_archive_on_source_witness():
     assert fio.valid_public_proof(r, proof, family)
     proof["field_evidence"]["abstract"]["sources"][0]["source_manifest_sha256"] = ""
     assert not fio.valid_public_proof(r, proof, family)
+
+
+def test_legacy_proof_must_belong_to_actual_pool_family():
+    import _rel_facet_io as fio
+    r = _record(openalex_id="W999")
+    proof = _proof(r)
+    assert not fio.valid_public_proof(r, proof, {"openalex:W1"})
+    assert fio.valid_public_proof(r, proof, {"openalex:W1", "openalex:W999"})
+    genuine = _record()
+    assert fio.valid_public_proof(genuine, _proof(genuine), {"openalex:W1"})
+
+
+@pytest.mark.parametrize("score", [.7, .5])
+def test_persisted_effective_score_schema_and_guard_relation_rechecked(tmp_path, score):
+    import _rel_facet_io as fio
+    import _rel_view as rv
+    from test_corpus_rel_view import RULE, WINDOW, _work
+    raw, labels, _, _ = _parsed(tmp_path, [_record()], [answer(scores=(0, 1, 1))])
+    a = json.loads(raw[0]["effective_answer"])
+    a["finance"] = score
+    a["finance_evidence"] = "insufficient: altered persisted judgment"
+    raw[0]["effective_answer"] = fio.encoded(a)
+    rows, _ = rv.build_view([_work("openalex:W1")], labels, WINDOW, RULE)
+    with pytest.raises(ValueError, match="persisted effective|guard derivation"):
+        fio.assign_view(rows, raw)
+
+
+
+def test_explicit_empty_family_map_never_uses_canonical_fallback(tmp_path):
+    import _rel_facet_io as fio
+    r = _record()
+    denied = fio.write_chunks(str(tmp_path / "denied"), [r], [_proof(r)], _config(), {})
+    assert denied["proven"] == 0 and denied["unproven"] == [r["work_key"]]
+    approved = fio.write_chunks(str(tmp_path / "standalone"), [r], [_proof(r)], _config())
+    assert approved["proven"] == 1

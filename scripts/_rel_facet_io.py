@@ -88,11 +88,18 @@ def valid_public_proof(record: dict, proof: dict | None, family_sources: set[str
     Legacy direct OpenAlex proofs remain accepted for their original record.
     Fieldwise proofs additionally freeze source-native hashes and value hashes;
     the caller supplies exact pool membership, never inferred alias matches.
+
+    Trust boundary: inputs are operator-approved local producer attestations.
+    These checks establish field/hash/family consistency, not authentication of
+    arbitrary proof JSON or independent verification of archived native blobs.
+    The public-source producer must verify complete fields against native source
+    bodies before approving a proof for transmission; record text stays data.
     """
     if not proof or proof.get("work_key") != record["work_key"] or proof.get("full_sixfield_sha256") != proof_hash(record):
         return False
     if proof.get("source_type") != "public_fieldwise":
         return (bool(proof.get("native_openalex_id")) and proof["native_openalex_id"] == record.get("openalex_id")
+                and f"openalex:{proof['native_openalex_id']}" in family_sources
                 and not proof.get("source_type"))
     declared = proof.get("declared_source_ids")
     evidence = proof.get("field_evidence")
@@ -160,7 +167,10 @@ def write_chunks(out_dir: str, records: list[dict], proofs: list[dict], config: 
                 or not isinstance(values["countries"], list)
                 or any(not isinstance(c, str) for c in values["countries"])):
             raise ValueError("public fields must be strings and countries a string list")
-        declared_family = (family_sources or {}).get(r["work_key"], set())
+        # Without a pool supplied by the CLI, only the exact canonical OA key
+        # can anchor a legacy proof; an input's asserted OA id is not membership.
+        fallback = {r["work_key"]} if r["work_key"].startswith("openalex:") else set()
+        declared_family = family_sources.get(r["work_key"], set()) if family_sources is not None else fallback
         if not valid_public_proof(r, p, declared_family):
             pending.append(r["work_key"])
         else:
@@ -235,7 +245,10 @@ def parse_chunks(chunk_dir: str, suffix: str, metadata: dict) -> tuple[list, lis
             if key not in answers:
                 continue
             answer = answers[key]
-            effective, disposition, reasons = facets.effective_answer(answer, r)
+            # This formatter sends complete source fields, never a transport prefix.
+            # Only transmitted source absence and native model quality govern;
+            # unsent extra input keys cannot become transport-quality evidence.
+            effective, disposition, reasons = facets.effective_answer(answer, public_record(r))
             common = dict(metadata, work_key=key, prompt_sha256=sha(frozen["prompt_text"]),
                           source=f"{os.path.basename(chunk_dir)}/{name}.{suffix}.txt")
             raw_rows.append(dict(common, method_sha256=manifest["method_sha256"],
@@ -282,6 +295,29 @@ def append_batches(batches: list[tuple[str, list, ics.Schema, bool]]) -> list[tu
             for path, rows, schema, new in batches]
 
 
+
+def validated_judgment(judgment: dict) -> tuple[dict, dict]:
+    """Revalidate persisted schemas and the deterministic native-to-effective guard."""
+    native = json.loads(judgment["native_answer"], object_pairs_hook=facets._unique_object)
+    effective = json.loads(judgment["effective_answer"], object_pairs_hook=facets._unique_object)
+    for name, answer in (("native", native), ("effective", effective)):
+        if not isinstance(answer, dict) or type(answer.get("n")) is not int or answer["n"] < 1:
+            raise ValueError(f"invalid persisted {name} facet answer")
+        checked, faults = facets.parse_answers([encoded(dict(answer, n=1))], [judgment["work_key"]])
+        if not checked or faults:
+            raise ValueError(f"invalid persisted {name} facet answer: {faults}")
+    origin = judgment["quality_origin"]
+    if origin not in {"source_empty", "model_assessed"}:
+        raise ValueError("invalid persisted effective quality origin")
+    expected, disposition, reasons = facets.effective_answer(
+        native, {"abstract": "" if origin == "source_empty" else "nonempty source field"})
+    if (effective != expected or judgment["input_quality"] != expected["input_quality"]
+            or judgment["guard_disposition"] != disposition
+            or json.loads(judgment["guard_reasons"]) != reasons):
+        raise ValueError("persisted guard derivation disagrees with native answer")
+    return native, effective
+
+
 def assign_view(rows: list[dict], judgments: list[dict]) -> dict:
     """Expose only actual facets of the deciding Stage2 run; legacy stays blank."""
     index = {ics.key_of(j): j for j in judgments}
@@ -293,12 +329,7 @@ def assign_view(rows: list[dict], judgments: list[dict]) -> dict:
         if key not in index:
             continue
         j = index[key]
-        a = json.loads(j["effective_answer"])
-        native = json.loads(j["native_answer"])
-        native["n"] = 1
-        parsed, faults = facets.parse_answers([encoded(native)], [row["work_key"]])
-        if not parsed or any("line" in f for f in faults):
-            raise ValueError("invalid persisted native facet answer")
+        native, a = validated_judgment(j)
         if facets.legacy_label(a) != row["stage2_label"]:
             raise ValueError("facet-derived label disagrees with deciding canonical label")
         for f in facets.FACETS:

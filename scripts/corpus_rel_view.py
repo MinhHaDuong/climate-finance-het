@@ -89,7 +89,7 @@ discipline) and the tier values and alpha of ``config/rel_venue_tiers.yaml``.
 ``rel_use`` splits the REL set into ``synthesis`` and ``bibliometric_only``
 (author decision 2026-10-07); the flag never moves ``mu`` or the reason.
 
-Actual v3.2 facet judgments are optional (``--facets``): the deciding run's
+The configured v3.2 facet table loads when present (``--facets`` overrides its path): the deciding run's
 native and quality-guarded memberships and input-quality provenance are exposed;
 unscored historical rows have blank facets and ``icf_instrument=legacy_aggregate``.
 Known nonabstract/truncated inputs use ``bibliometric_only`` with an explicit

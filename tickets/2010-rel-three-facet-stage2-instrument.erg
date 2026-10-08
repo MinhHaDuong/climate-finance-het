@@ -5,6 +5,7 @@ Author: HDMX-coding-agent
 
 --- log ---
 2026-10-08T20:26Z HDMX-coding-agent created
+2026-10-08T21:20Z HDMX-coding-agent note verify-reroll — round 1: legacy public proof bypasses exact pool-family membership.
 
 --- body ---
 
@@ -64,3 +65,35 @@ require exact six-field and per-field hashes, native source hashes, approved
 OpenAlex/ReDIF origins, and exact source membership from the actual pool.
 Generic public assertions and licensed-source witnesses do not authorize
 transmission. Targeted165tests passed; final changed-head full gate follows.
+
+## Round-1 review repairs
+
+The legacy direct OpenAlex proof now requires membership in the actual pool
+family, including on import. Persisted effective answers must pass the strict
+score/evidence schema and exactly reproduce the conservative guard from the
+native answer and stored source-empty/model-assessed origin; disposition,
+reasons and quality must match too. Three meaningful regressions first failed
+(legacy W999 under W1; effective finance0.7; valid0.5 inconsistent with native)
+and then passed within the169-test targeted suite. First-red log:
+/tmp/climate-finance-2010-reroll-first-red.log.
+
+Source attestations are operator-approved local artifacts. The CLI verifies
+field/hash/family consistency, not arbitrary proof truth or native-blob
+identity. Root reviewed the actual parent1654 producers: freeze-production-input.py,
+verify-public-members.py, build-member-proofs.py and verify-pending.py under
+operations/ and operations/repec-public-proof/ of the 2026-10-08 run archive.
+They compare the complete canonical fields against archived exact-member
+OpenAlex/ReDIF bodies before approving transmission. Approved parent frozen
+67344-record input SHA256:
+76651a67e52d3f03a40c65b7f0bdb170c978392b58b182cc8d1eba249b484973;
+proof artifact SHA256:
+4f6519d42f5d6e8db0dd3124aca8bd96e94cf7ca7b571e5dd736355b4f62de2b.
+These concrete artifacts live in operations/luna-stage2-production-input;
+47 incomplete proofs remain local. Approval evidence:
+/tmp/climate-finance-public-proof-producer-approval.md. This is parent-run
+provenance, not a claim that ticket2010 has dispatched or closed the corpus.
+
+The lexicon now points to the actual parent source-review archive; configured
+facet-table auto-loading is documented accurately. The permitted shared-I/O
+migration follow-up is ticket2024 (two named CLIs plus targeted ratchet),
+keeping the established CLI contract out of this scientific-instrument diff.

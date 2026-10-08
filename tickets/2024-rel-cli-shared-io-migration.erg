@@ -1,0 +1,35 @@
+%erg 0.1
+Title: Stage2 and REL view — migrate shared I/O parser with a ratchet
+Created: 2026-10-08
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-08T21:19Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+PR1713 touches scripts/corpus_icf_stage2.py and scripts/corpus_rel_view.py,
+which retain bespoke argument parsers. The scoped script-I/O rule requires
+parse_io_args/validate_io and explicitly permits a follow-up when migrating
+an existing multi-output dispatcher is not small. Both commands have several
+established input/output options; changing that public API would widen ticket2010.
+This narrow follow-up is authorized by the root review and preserves current
+behavior until the migration is reviewed.
+
+## Exit criteria
+
+- Migrate both named CLI parsers to the shared script_io_args parser and
+  validation helpers while preserving their established dispatch commands,
+  multi-output directory contract and append-only table options.
+- Add a targeted ratchet that fails if either named CLI again bypasses the
+  shared parser/validation entry points; cover representative historical and
+  faceted invocation behavior with meaningful argument-routing tests.
+- Keep Stage1/frozen v2 scientific prompts, source proofs and membership rules
+  unchanged; run the required gate for the shared script-I/O boundary change.
+
+## Scope
+
+Only the two named CLIs and their focused parser/ratchet tests. No new remote
+transport or generic API rewrite. Reference ticket2010 and PR1713 for provenance.

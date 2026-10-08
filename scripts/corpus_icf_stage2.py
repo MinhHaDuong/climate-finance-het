@@ -1,5 +1,11 @@
 """Stage-2 and audit tables of the ICF screen, and their answers (ticket 1732).
 
+Public-proof JSONL files are operator-approved local attestations produced by
+native-source verification. The CLI checks field/hash/family consistency; it does
+not independently authenticate source blobs or arbitrary caller-supplied proofs.
+Approval must precede remote transmission. The parent1654 archive contains the
+native sources and frozen producer scripts; unsupported records remain local.
+
 Explicit version-3.2 commands ``build-facets`` and ``parse-facets`` use the
 versioned ``stage2_facets`` configuration. Build requires complete public JSONL
 records and exact six-field public-source proofs, packs complete requests to byte
