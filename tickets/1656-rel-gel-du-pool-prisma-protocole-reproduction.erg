@@ -45,3 +45,28 @@ figures of the diagram in `conception/rel-prisma-flux-provisoire.md`, annex
 
 Freeze the post-chaining corpus with one inventory-driven script and one DVC package. Preserve accepted limitations rather than reopen prior decisions. Reuse pool/view/QA, archive actual external production history, and derive counts from authoritative registries/tables. Do not regenerate pinned catalogue or duplicate facet logic. Records, works and observed families are distinct units.
 
+
+## Raid checkpoint — 1656 — Phase 3 Actions and first test
+
+1. Require1654 completion. Add fixed config/rel_freeze_inventory.yaml enumerating logical artifacts/root/path/provenance/required status. Collect exact production artifacts, never whole home directories or credentials.
+2. Add scripts/corpus_rel_freeze.py to validate inventory/nested manifests, package artifacts, record hashes/codeSHA/DVC lock and pointers/models/prompts, generate source/query/date PRISMA counts and reconciliation reports. Reject missing required evidence/corruption; refuse dirty source checkout as frozen code identity.
+3. Disposition549 unresolved DOI version hints and1156 unmatched label rows (baseline818 titled+277 title-less historical works): explicit matching, safely migrated append-only labels where warranted, unresolved/ambiguous/absent explanations. Do not silently add unmatched historical works or fuzzy-transfer labels. Record first dissemination/publication-version evidence and observed-family limits.
+4. Keep REL pin unified_works_rel_pin.csv,43179rows,md5 3633ad9f4517c02618a0ecab722a8051. Explain separately current dvc.lock's distinct catalogue output; archive both contracts without regenerating pin/rewriting unrelated outputs.
+5. Set final rel_review.search_date from latest completed identification query/retrieval including chaining/non-OA routes; preserve per-source dates, distinguish freeze/screen timestamps. Report complete1990–2025 research versus partial2026/full-date quarantine, institutional documents and other types separately.
+6. Generate identification/dedup/screening/reason counts using merge report and final view at consistent units. Distinguish fully graded research/synthesis, bibliometric designation and pending inventories; check partition sums. Archive actual heterogeneous models/versions/routes/prompt hashes, agreements at their true pre/postcorrection revisions; final sample audit waived, not passed.
+7. Update protocol against origin/main, final PRISMA, method paragraph, sensitivity/reconstruction note, BRICS coverage and source gaps. Reserve/tuning sentinels separately; disclose tuning-driven gap-fill contamination. Preserve1790 author nonblocker,296stage2+59title-less accepted residues, no-abstract policy; baseline5894 pending is remeasured after chaining. Discipline exclusions carry over-exclusion risk, not proven numerical upper bound.
+8. DVC-add/push one dated data/rel_freeze package. In separate clean populated padme checkout restore recorded code/data and run make data, make rel-pool-data, make rel-pool, make rel-venues, make rel-view plus freeze counts. Require byte-identical deterministic outputs on repeated rebuild. Keep manifest timestamp envelope separate; fresh API/model responses are historical-execution evidence, not byte-reproducibility promise. Run required gates, review/merge.
+
+Required archive roots (presence checked):
+- ~/rel_pool_runs, especially2026-10-07-code-snapshot:65immediatefiles=63payloads+README.txt+MANIFEST.sha256;50.pyfiles. Preserve exact manifest/map, call them63actual-run/audit files, not63Python scripts.
+- ~/data/projets/climate-finance-het/rel_sud/2026-09-29 with adhoc-scripts, advisor-reports, padme-rel_sud_runs.
+- ~/data/projets/climate-finance-het/rel_discipline_test/2026-10-01.
+- ~/data/projets/climate-finance-het/rel_discipline_catchup/{2026-10-01,2026-10-07,2026-10-07-gold-na,2026-10-07-full,2026-10-07-rerun152}.
+- Correct Jev path ~/data/projets/climate-finance-het/rel_jev_pilot/2026-09-30 (~/rel_jev_pilot absent).
+- Repository configs/prompts/sentinels/code/lock, data/rel_intake, pin, rel_screen, rel_venues, deterministic outputs, dated venue registries and1654archive.
+Presence is not integrity: execution must verify required content/hashes.
+
+First red test: synthetic overlapping sources with two query dates, one work in both, working-paper/article family, institutional item, year-only2026item. Assert distinct records/works/families, proper research exclusion/quarantine and cutoff based on completed identification, not freeze timestamp. Mutated packaged file and missing required production snapshot must fail verification by named path.
+
+Verified helpers: corpus_rel_view.run(pool_path,table_path,out_dir,window_cfg,rule,*,dims_path,venues_path,seriousness_rule,membership); pipeline_loaders.classify_rel_review_works(works,config=None); pool/report builders and make rel-pool-data restore exact frozen pin without catalogue regeneration. Use pathlib/shutil/hashlib/CSV/JSON/YAML+DVC; no archive framework/service.
+
