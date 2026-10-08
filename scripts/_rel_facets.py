@@ -152,4 +152,3 @@ def effective_answer(answer: dict, record: dict) -> tuple[dict, str, list[str]]:
             reasons.append(f"contrib: unsupported {quality} negative")
     effective["input_quality"] = quality
     return effective, "unresolved" if reasons else "accepted", reasons
-
