@@ -29,3 +29,8 @@ REL set alone is not the discovery universe. Execution plan and baseline evidenc
 - [ ] Two rounds run, counts per round (references and citations, duplicates, new works)
 - [ ] Third round triggered or dropped, with the measurement that decides it
 - [ ] New works delivered under the intake contract with provenance, merged and screened incrementally within 1654; venue/discipline data and counts reconciled before each round's yield is measured
+
+## Raid checkpoint — 1654 — Phase 2 Imagine
+
+The baseline is complete but chaining has not run. Simplest path: a narrow resumable OpenAlex collector plus existing intake/pool/screen/venue/view procedures. Discovery seeds are final ICF icf/unsure and sentinels, not the fully graded REL population: baseline 19,852 seeds, 17,641 OA identities, 2,211 missing OA identities, 6,433 without DOI. Resolve missing IDs or document unresolved routes. Do not replace this discovery population with 7,499 inclusions. Avoid a new harvest framework. Existing metadata resolvers are lossy and existing cursor search is not resumable; reuse HTTP/text/keystore helpers, not their filtered outputs. Archive complete raw payloads and separate seed–candidate edges.
+
