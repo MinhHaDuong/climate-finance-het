@@ -103,6 +103,7 @@ from datetime import datetime, timezone
 
 import _icf_chunks as ch
 import _icf_screen as ics
+import _rel_selection as selection
 import _rel_view as rv
 import requests
 import yaml
@@ -173,7 +174,7 @@ def dimension_rows(table: str, dims_table: str, v2_prompt: str) -> list[dict]:
         if any(r["prompt_sha256"] == sha for r in ics.read_table(table)):
             raise CatchupError(f"{dims_table} is missing but {table} holds version-2 stage-2 "
                                "rows: fetch it (make rel-pool-data) first; nothing built")
-    return ics.read_table(dims_table, ics.DIMENSIONS)
+    return selection.read_effective_table(dims_table, ics.DIMENSIONS)
 
 
 # ── prompts ──────────────────────────────────────────────
@@ -621,7 +622,9 @@ def _build(args, cfg: dict, prompt: str, dims_table: str) -> None:
 
 def _parse(args, dims_table: str) -> None:
     with open(os.path.join(args.chunk_dir, "build.json"), encoding="utf-8") as fh:
-        kind = json.load(fh).get("kind")
+        build = json.load(fh)
+        selection.require_binding(build.get("assessment_selection"), allow_append=True)
+        kind = build.get("kind")
     if kind == "keys" and not args.dimensions_table:
         raise CatchupError(f"{args.chunk_dir} was built with --keys (kind keys, validation): "
                            "give --dimensions-table explicitly, the default is the production "
@@ -633,7 +636,7 @@ def _parse(args, dims_table: str) -> None:
     bad = [e for r in dims for e in ics.validate_row(r, ics.DIMENSIONS)]
     if bad:
         raise CatchupError(f"dimension rows refused, nothing written: {bad[:5]}")
-    dims, dropped = drop_already_dimensioned(dims, ics.read_table(dims_table, ics.DIMENSIONS))
+    dims, dropped = drop_already_dimensioned(dims, selection.read_effective_table(dims_table, ics.DIMENSIONS))
     added, skipped = ics.append_new(dims_table, dims, f"parse catchup {args.run_id}",
                                     args.new_table, ics.DIMENSIONS)
     log.info("chunks %s", report)

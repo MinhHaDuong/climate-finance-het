@@ -14,6 +14,7 @@ from pathlib import Path
 import _icf_screen as ics
 import _rel_facet_io as fio
 import _rel_policy as policy
+import _rel_selection as selection
 import yaml
 from script_io_args import parse_io_args, validate_io
 from utils import get_logger
@@ -26,18 +27,20 @@ def import_dispositions(records: list[dict], context: dict, *, table: str, dimen
                         output: str, run_id: str, labelled_at: str, machine: str,
                         new_table: bool = False) -> dict:
     """Preflight all append batches; never replace an assessed selected judgment."""
-    labels = ics.read_table(table)
-    dims = ics.read_table(dimensions, ics.DIMENSIONS)
+    raw_labels = ics.read_table(table)
+    raw_dims = ics.read_table(dimensions, ics.DIMENSIONS)
+    labels = selection.effective_rows(table, raw_labels)
+    dims = selection.effective_rows(dimensions, raw_dims)
     dispositions, icf_rows, dim_rows = policy.build_rows(records, context, labels, dims, run_id, labelled_at, machine)
     fresh_policy = not Path(output).exists()
-    if fresh_policy and not new_table and any(r["labeller"] == "policy" for r in labels + dims):
+    if fresh_policy and not new_table and any(r["labeller"] == "policy" for r in raw_labels + raw_dims):
         raise ValueError("policy table missing although canonical policy judgments exist; fetch it before importing")
     batches = [(output, dispositions, policy.SCHEMA, new_table or fresh_policy),
                (dimensions, dim_rows, ics.DIMENSIONS, new_table)]
     if icf_rows:
         batches.append((table, icf_rows, ics.ICF, new_table))
     result = fio.append_batches(batches, policy.METHOD)
-    return {"scope": context["scope"], "dispositions": len(dispositions),
+    return {"assessment_selection": selection.binding(), "scope": context["scope"], "dispositions": len(dispositions),
             "icf_rows": len(icf_rows), "dimension_rows": len(dim_rows),
             "appended_skipped": result, "native_model_answers": 0,
             **({"basis": context["basis"], "assessed_facets": 0} if context.get("basis") else {})}

@@ -393,3 +393,59 @@ while the titleless record remains outside the review window; exclusion on the
 existing membership/venue/discipline rules keeps evidence use blank. Later valid
 selected assessments clear the policy restriction. No titleless seed entitlement,
 partial-2026 override, scientific closure or new retrieval license follows.
+
+### Occurrence eligibility after proven historical migration
+
+Scientific readers use `_rel_selection.read_effective_table` (or its explicit
+`effective_rows` adapter for the historical Opus dataframe reader). This is a
+reader restriction on an **attributed appended occurrence**, not a correction
+to its substantive native judgment. The underlying ICF, dimension, facet and
+policy ledgers stay append-only. Their raw `read_table`, manifest verification,
+append duplicate checks and import idempotence continue to see every raw row.
+
+`assessment_selection` in `config/rel_screen.yaml` defaults to a null registry.
+Enabling it requires an operator-approved local registry with exact registry
+and selector-code SHA256 pins. The schema is versioned
+`rel-occurrence-quarantine-v1`; serialization is
+`utf8-csv-raw-and-canonical-json-v1`. The registry binds local evidence,
+approval, mapping and independent historical migration records by artifact
+hash, and each table declares its schema and immutable CSV/append-manifest
+prefix. Source baselines bind both original table bytes and manifests.
+
+Each exclusion names a source and target **one-based CSV data-row ordinal**,
+full raw CSV-row byte hashes, canonical full-field hashes, work keys, baseline
+and prefix multiplicities, exact append-event and migration-record ordinals
+and hashes, reason and disposition. Raw row hashing includes actual UTF-8
+quoting/newline bytes. Canonical field hashing uses the complete string-valued
+row, sorted JSON keys, compact separators and `ensure_ascii=False`. A copy may
+change only `work_key` and the table's normal deterministically recomputed ID;
+all scores, evidence, model/run/source metadata and chronology must match.
+The baseline raw bytes remain the prefix of the current ledger. CSV parsing
+preserves quoted newlines and treats Unicode U+2028/U+2029 as field data.
+
+Only the declared target ordinal becomes ineligible. Originals, unlisted
+native rows, independently authorized one-to-one copies and identical-content
+occurrences at other positions remain available to the unchanged matching,
+chronology, joint-decision, facet and quality-guard rules. Registry enumeration
+order is immaterial; the native assessment history is not reordered. An
+unresolved disposition, ambiguous source multiplicity, changed artifact,
+wrong ordinal/event, field difference or stale prefix refuses selection.
+Manifest-recorded later appends can extend the immutable prefix.
+
+Derived view/count and request manifests bind the selection method, code,
+registry and approval/evidence hashes and reconcile raw, eligible and excluded
+occurrences separately from matched/unmatched rows. Cached selections require
+an exact current binding through `require_binding`. Native import/resume may
+permit later raw appends while still requiring the same immutable method,
+registry and exclusion basis, so an imported reply does not invalidate its own
+raw append idempotence. Newly generated Stage1 summaries bind the same basis.
+
+These are consistency and occurrence-attribution checks against **trusted,
+operator-approved local artifacts**. Hashes establish integrity, not historical
+causation or semantic authority. The API does not authenticate an arbitrary
+provider blob, approve a supplied roster, classify a native answer as wrong,
+or activate a real remedy. A separately released exact local disposition and
+a complete source-derived before/after selection/membership audit are required
+before publishing an active registry in the existing `rel_screen` DVC package.
+Native failed attempts, frozen instruments and original judgments remain
+unchanged and auditable.

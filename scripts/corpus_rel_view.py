@@ -117,6 +117,7 @@ import _icf_screen as ics
 import _rel_facet_io as fio
 import _rel_policy as policy
 import _rel_reasons as rr
+import _rel_selection as selection
 import _rel_venues as rvn
 import _rel_view as rv
 import yaml
@@ -250,7 +251,7 @@ def read_dimensions(dims_path: str | None) -> list[dict]:
     """
     if not dims_path or not os.path.exists(dims_path):
         return []
-    return ics.read_table(dims_path, ics.DIMENSIONS)
+    return selection.read_effective_table(dims_path, ics.DIMENSIONS)
 
 
 def _write_csv(path: str, columns: list[str], rows: list[dict]) -> None:
@@ -265,16 +266,16 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
         dims_path: str | None, venues_path: str, seriousness_rule: dict,
         membership: dict, facets_path: str | None = None, policies_path: str | None = None) -> dict:
     ics.require_table(table_path)
-    labels = ics.read_table(table_path)
+    labels = selection.read_effective_table(table_path)
     dims = read_dimensions(dims_path)
     if not os.path.exists(venues_path):
         raise ics.IcfScreenError(f"{venues_path} is missing: build it with `make rel-venues`")
     venues = rvn.load_work_venues(venues_path)
     pool = rv.read_pool(pool_path)
     rows, summary = rv.build_view(pool, labels, window_cfg, rule)
-    judgments = ics.read_table(facets_path, fio.SCHEMA) if facets_path and os.path.exists(facets_path) else []
+    judgments = selection.read_effective_table(facets_path, fio.SCHEMA) if facets_path and os.path.exists(facets_path) else []
     facet_summary = fio.assign_view(rows, judgments)
-    policies = ics.read_table(policies_path, policy.SCHEMA) if policies_path and os.path.exists(policies_path) else []
+    policies = selection.read_effective_table(policies_path, policy.SCHEMA) if policies_path and os.path.exists(policies_path) else []
     try:
         dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule, membership, policies)
     except ValueError as exc:
@@ -291,6 +292,7 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
                              included_research_in_window=_in_window(rows),
                              discipline_note=rr.DISCIPLINE_NOTE,
                              seriousness_note=rr.SERIOUSNESS_NOTE)
+    counts["assessment_selection"] = selection.binding()
     counts["facets"] = facet_summary
     counts["policies"] = {"disposition_rows": len(policies),
                           "selected_by_scope": dim_summary["policy_abstention_selected_by_scope"],

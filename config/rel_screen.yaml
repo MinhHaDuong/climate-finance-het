@@ -142,3 +142,11 @@ stage2_facets:
 
 # Deterministic, scientifically scoped dispositions with no native model answer.
 policies_table: data/rel_screen/rel_policy_dispositions.csv
+
+# Only a separately released, occurrence-proven migration registry may enable
+# this reader-side restriction. Raw append tables are never rewritten/filtered.
+assessment_selection:
+  method: rel-occurrence-quarantine-v1
+  registry: null
+  registry_sha256: null
+  method_sha256: null

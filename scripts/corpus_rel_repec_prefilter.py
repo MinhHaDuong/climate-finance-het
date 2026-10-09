@@ -53,6 +53,7 @@ import time
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
+import _rel_selection as selection
 from utils import get_logger
 
 log = get_logger('rel_repec_prefilter')
@@ -84,6 +85,7 @@ def screen_opus_labels(screen_csv: str) -> dict[str, dict]:
     """Last Opus stage-2 label per work_key of ``icf_screen`` (read-only)."""
     import pandas as pd
     s = pd.read_csv(screen_csv, dtype=str, low_memory=False).fillna("")
+    s = pd.DataFrame(selection.effective_rows(screen_csv, s.to_dict("records")), columns=s.columns)
     s = s[(s.stage == "2") & s.model.str.contains("opus", case=False)]
     s = s.sort_values("labelled_at")
     out = {}
@@ -573,9 +575,12 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if a.cmd == "texts":
         rows = build_texts(a.pool, a.screen, a.labels, a.delivery, a.sentinels, a.recall_sentinels)
+        basis = selection.binding()
         with open(a.output, "w", encoding="utf-8") as fh:
             for r in rows:
                 fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+        with open(os.path.splitext(a.output)[0] + ".summary.json", "w", encoding="utf-8") as fh:
+            json.dump({"assessment_selection": basis, "rows": len(rows)}, fh, indent=2)
         log.info(json.dumps(Counter((r["role"], r["label"]) for r in rows).most_common(), ensure_ascii=False))
     elif a.cmd == "embed":
         log.info(json.dumps(embed(a.texts, a.output_dir, a.limit, a.threads,

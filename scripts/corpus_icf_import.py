@@ -96,6 +96,7 @@ import re
 import sys
 
 import _icf_screen as ics
+import _rel_selection as selection
 import _rel_view as rv
 import yaml
 from utils import get_logger, normalize_doi, normalize_title
@@ -251,6 +252,7 @@ def check_input_basis(input_path: str, pool_path: str, table_path: str) -> None:
     _require(os.path.exists(summary_path),
              f"{summary_path} is missing: the pool and table the input was built on are unknown")
     summary = _json(summary_path)
+    selection.require_binding(summary.get("assessment_selection"), allow_append=True)
     _require(os.path.exists(pool_path) and _sha256(pool_path) == summary["pool_sha256"],
              f"{pool_path} is not the pool the run input was built on "
              f"(sha256 {summary['pool_sha256'][:12]}…): rebuild that pool first")
@@ -635,12 +637,12 @@ def _stage2_rows(args, cfg: dict, table: str) -> tuple[list[dict], str]:
                       f"labelled_at order (pool sha256 {rv.sha256_file(pool_path)[:12]}; "
                       f"superseded repeats within a run: {report['superseded_in_run']})")
     if args.cmd == "stage2-relabel":
-        rows = relabel_rows(args.run_dir, ics.read_table(table), pool_by_key(pool_path),
+        rows = relabel_rows(args.run_dir, selection.read_effective_table(table), pool_by_key(pool_path),
                             args.run_id, _sha256(args.prompt_template), args.labelled_at,
                             args.machine)
         return rows, f"import stage-2 relabelling {args.run_id} of unsure works"
     if args.cmd == "stage2-agree-rule":
-        rows = agree_rule_rows(args.checks, args.check_model, ics.read_table(table),
+        rows = agree_rule_rows(args.checks, args.check_model, selection.read_effective_table(table),
                                args.relabel_run_id, args.run_id, args.labelled_at)
         return rows, (f"agreement rule {args.run_id}: {args.relabel_run_id} icf kept only "
                       f"when {args.check_model} agrees")

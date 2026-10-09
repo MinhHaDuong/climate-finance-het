@@ -76,6 +76,7 @@ from datetime import datetime, timezone
 
 import _icf_screen as ics
 import _rel_facet_io as fio
+import _rel_selection as selection
 import _rel_view as rv
 import yaml
 from _icf_chunks import FINAL_STAGE2, Stage2Error, write_chunks
@@ -278,9 +279,15 @@ def _run_facets(args, cfg: dict, pool_path: str, table: str) -> None:
             proofs = [json.loads(line) for line in fh if line.strip()]
         manifest = fio.write_chunks(args.output_dir, records, proofs, cfg["stage2_facets"],
                                     {r["work_key"]: fio.family_source_ids(r) for r in pool})
+        manifest["assessment_selection"] = selection.binding()
+        with open(os.path.join(args.output_dir, "build.json"), "w", encoding="utf-8") as stream:
+            json.dump(manifest, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
         log.info("facets: %d proven, %d unproven, %d chunks", manifest["proven"],
                  len(manifest["unproven"]), len(manifest["chunks"]))
     else:
+        with open(os.path.join(args.chunk_dir, "build.json"), encoding="utf-8") as stream:
+            selection.require_binding(json.load(stream).get("assessment_selection"), allow_append=True)
         metadata = {"stage": args.stage, "model": args.model, "run_id": args.run_id,
                     "machine": args.machine, "labeller": args.labeller,
                     "labelled_at": args.labelled_at}
@@ -356,6 +363,8 @@ def main(argv=None):
             log.info("%s: %d works in %d chunks under %s", args.cmd, len(keys), len(names),
                      args.output_dir)
         elif args.cmd == "parse":
+            with open(os.path.join(args.chunk_dir, "build.json"), encoding="utf-8") as stream:
+                selection.require_binding(json.load(stream).get("assessment_selection"), allow_append=True)
             labelled_at = args.labelled_at or datetime.now(timezone.utc).date().isoformat()
             prompt = args.prompt or cfg["stage2"]["prompt"]
             rows, dims, report = parse_answers(
@@ -379,7 +388,8 @@ def main(argv=None):
                 log.info("%d dimension rows appended, %d already in %s", d_added, d_skipped,
                          dims_table)
         else:
-            res = agreement(rv.read_pool(pool_path), ics.read_table(table), args.audit_run_id)
+            res = agreement(rv.read_pool(pool_path), selection.read_effective_table(table), args.audit_run_id)
+            res["assessment_selection"] = selection.binding()
             with open(args.output, "w", encoding="utf-8") as fh:
                 json.dump(res, fh, indent=2)
                 fh.write("\n")

@@ -12,6 +12,7 @@ import json
 import os
 
 import _icf_screen as ics
+import _rel_selection as selection
 import _rel_view as rv
 from pipeline_loaders import load_rel_review_config
 from utils import normalize_title
@@ -28,7 +29,7 @@ class Stage2Error(Exception):
 def view(pool_path: str, table_path: str, rule: dict) -> tuple[list[dict], list[dict]]:
     """The pool and the REL view rows, computed from the pool and ``icf_screen``."""
     pool = rv.read_pool(pool_path)
-    rows, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config(), rule)
+    rows, _ = rv.build_view(pool, selection.read_effective_table(table_path), load_rel_review_config(), rule)
     return pool, rows
 
 
@@ -40,6 +41,7 @@ def _record(p: dict) -> dict:
 
 def write_chunks(out_dir: str, works: list[dict], s2cfg: dict, manifest: dict) -> list[str]:
     """Chunk files, ids and works.csv for ``works`` (pool rows, in order)."""
+    manifest = dict(manifest, assessment_selection=selection.binding())
     if os.path.isdir(out_dir) and glob.glob(os.path.join(out_dir, "chunk*")):
         raise Stage2Error(f"{out_dir} already holds chunk files; choose a new directory")
     os.makedirs(out_dir, exist_ok=True)

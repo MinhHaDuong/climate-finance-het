@@ -41,6 +41,7 @@ import sys
 from collections import Counter, defaultdict
 
 import _icf_screen as ics
+import _rel_selection as selection
 import _rel_view as rv
 import yaml
 from pipeline_loaders import load_rel_review_config
@@ -137,7 +138,7 @@ def run(pool_path: str, table_path: str, output: str, priority: list[str],
     ics.require_table(table_path)
     from _rel_titleless_intake import read_pool
     pool = read_pool(pool_path)
-    view, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config(), rule)
+    view, _ = rv.build_view(pool, selection.read_effective_table(table_path), load_rel_review_config(), rule)
     picked, per_lane, skipped = select(pool, view, priority, intake_root=intake_root)
     index = exclusion_index(exclude_inputs or [])
     excluded: dict = defaultdict(Counter)
@@ -159,6 +160,7 @@ def run(pool_path: str, table_path: str, output: str, priority: list[str],
                             and not p["title"].strip() and not p["abstract"].strip()
                             and p.get("native_titleless_provenance"))
     summary = {
+        "assessment_selection": selection.binding(),
         "pool": os.path.basename(pool_path), "pool_sha256": rv.sha256_file(pool_path),
         "table": os.path.basename(table_path), "table_sha256": rv.sha256_file(table_path),
         "lane_priority": priority,
