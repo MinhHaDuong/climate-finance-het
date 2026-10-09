@@ -347,3 +347,25 @@ def test_manifest_is_frozen_with_ranks_and_six_thematic_titles():
     by = {r["journal_key"]: r for r in rows}
     assert by["aer"]["cnrs37_2020_rank"] == "1e"
     assert by["aer"]["abdc_2025_rating"] == "A*"
+
+
+def test_merge_toc_alias_separator_can_reproduce_the_first_delivery():
+    recs = toc.merge_toc([_crrec()], [_oa(doi="10.3763/alias"), _oa(doi="10.3763/other")],
+                         alias_sep=" ")
+    assert recs[0]["alias_dois"] == "10.3763/alias 10.3763/other"
+
+
+def test_deliver_row_fills_only_blank_cells_from_the_backfill():
+    import _rel_toc_deliver as deliver
+    rec = {**_crrec(openalex_id="W9", authors=""), "first_author": "", "issn": "1111-2222",
+           "alias_dois": "", "toc_source": "crossref"}
+    bf = {"W9": {"openalex_id": "W9", "first_author": "Filled, A.", "all_authors": ["Filled, A."],
+                 "host_org_name": "Wiley", "source_type": "journal", "issn": ["9999-9999"],
+                 "issn_l": "9999-9999", "landing_page": "https://doi.org/10.1/a"}}
+    row = deliver.record_row(rec, "Q", "2026-09-30", "full", bf)
+    assert (row["first_author"], row["all_authors"]) == ("Filled, A.", "Filled, A.")
+    assert (row["host_org_name"], row["source_type"]) == ("Wiley", "journal")
+    assert row["issn"] == "1111-2222", "a delivered ISSN is never overwritten"
+    assert row["landing_page"] == "https://doi.org/10.1/a"
+    plain = deliver.record_row(rec, "Q", "2026-09-30", "full")
+    assert plain["first_author"] == "" and "host_org_name" not in plain
