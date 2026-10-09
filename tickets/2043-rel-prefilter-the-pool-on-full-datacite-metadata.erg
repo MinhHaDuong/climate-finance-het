@@ -13,6 +13,7 @@ Author: HDMX-coding-agent
 2026-10-09T09:49Z HDMX-coding-agent note blocker 2040 closed — Blocked-by removed.
 2026-10-09T09:49Z HDMX-coding-agent note blocker 2041 closed — Blocked-by removed.
 
+2026-10-09T10:14Z HDMX-coding-agent note profile counts on the regenerated pool (ticket 2049, scratch pool, six fields, venue identity rule; measured 2026-10-09): 48,810 works excluded (12.5%), first act 9.5%; creator 9,873, venue 8,395, resource type about 26,000 to 27,000 (mostly the catalogue lane, ticket 2050 recovers about 31,100 of 32,744), identifier 2,597; venue optional 43,823 (11.3%); creator ignored and venue optional 35,361 (9.1%). Switching the profile on waits for 2050 (resource types) and the enrichment join 2052; creator is no longer the main gap
 --- body ---
 
 ## Context
