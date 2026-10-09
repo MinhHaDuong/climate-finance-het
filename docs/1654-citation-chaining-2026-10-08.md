@@ -139,3 +139,21 @@ changes to prior cache fields. Two previously accepted Luna jobs still run;
 round1 closure, additional screened dispositions and citation rounds remain
 unfinished. The historical59 waiver is dated evidence, not a current blanket
 waiver for records whose metadata have changed.
+
+2026-10-09 native47 completion checkpoint: the finite local five-record
+completion attempt failed on its first reply, preserving all47 as pending
+and all80 earlier canonical decisions. One separately authorized native
+Haiku5.5 Batch attempt completed three requests. Its original whole-text JSON
+contract failed because all three native replies used Markdown fences. An
+explicit retrospective exact-fence-v1 amendment, frozen before amended
+acceptance, permits only that complete envelope and unchanged strict interior
+JSON/schema/source/native guards. All47 passed as one cohort:9aux,32out,6unsure.
+Normal isolated and canonical imports append47 once and repeat0/47, preserving
+all previous ledger prefixes and the other six ledger files byte-for-byte.
+The original format failure, complete native replies, rejected fixtures and
+retrospective method identity remain archived; no inference or semantic repair
+was repeated. Native usage gives a conservative USD0.001215885 upper accounting
+charge, not an invoice. The unique extra-job exception has ended permanently.
+Wave04 is accepted under a separately reviewed serialized three-job ceiling;
+three Luna main jobs remain active. No round1 closure or citation-round
+activation follows from these screening and metadata checkpoints.
