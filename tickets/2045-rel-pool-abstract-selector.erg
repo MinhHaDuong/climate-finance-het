@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-10-09T15:00Z HDMX-coding-agent created
 2026-10-09T15:00Z HDMX-coding-agent note author decision 2026-10-09: file the abstract selector fix
 
+2026-10-09T08:57Z HDMX-coding-agent note closed after PR 1729 (author decision 2026-10-09). Known weaknesses recorded, none ticketed (below the severity floor, flag intact): a longer copy with an appended copyright line, an HTML wrapper or an 'Abstract:' label can beat the clean copy; a title repeated twice is not caught by is_boilerplate_abstract (exact-title match only); a raw 1,500-character cut ending in whitespace normalises to 1,499 and is flagged ok; 1,520 of the 3,968 changes are near-ties (a different text at most 5% longer), applied literally as the ticket says; the abstract can come from a lane in another language than the language column; the pool-level abstract_flag shares its name with the view-level abstract_flag (different vocabulary). Follow-up only if the near-tie share of decorated copies proves large
 --- body ---
 
 ## Context
