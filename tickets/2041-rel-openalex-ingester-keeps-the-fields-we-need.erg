@@ -1,0 +1,35 @@
+%erg 0.1
+Title: REL OpenAlex ingesters keep the fields the pool needs
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T12:00Z HDMX-coding-agent created
+2026-10-09T12:00Z HDMX-coding-agent note author decision 2026-10-09: the current ingesters were a first try and may be redone; one ticket per ingester (this one: the older OpenAlex lanes; 2040: EDS)
+
+--- body ---
+
+## Context
+
+Child of 0700. Read-only inspection on 2026-10-09 of `slim()` in `scripts/catalog_rel_sud_search.py`, used by the t1530, t1652 and t1790 OpenAlex lanes.
+
+The request already selects `primary_location` and `authorships` (`OA_SELECT`), so the data arrives and `slim()` discards it. It keeps: id, DOI, title, year, date, language, type, cited_by_count, `journal` (source display name), affiliation countries, the abstract cut to 1,500 characters. It drops author names (the delivery writes `first_author` and `all_authors` empty in every row of these lanes), the host organization (publisher), source type, ISSN and landing page. The stored `results.jsonl.gz` holds only the slim records, so already-harvested works need a re-fetch.
+
+Counts on the lane deliveries (record-level, not distinct works; lanes overlap, and t1652 is two runs): authors empty on 100% of the t1530, t1650, t1652 and t1790-rerun rows; OpenAlex records without a journal or ISSN: t1530 3,949 and t1652 4,502 per run (book chapters, conference papers, dissertations, reports, preprints, books; e.g. Routledge 10.4324, World Bank 10.1596 and IDB 10.18235 items). Not yet measured on the real pool.
+
+The 1654 chaining collector (`_rel_chaining.py`, branch `t1654-citation-chaining`, unmerged) already keeps `authorships`; this ticket brings the older lanes level with it.
+
+`enrich_rel_venues_openalex.py` already fetches by OpenAlex id (batches up to 200) the source id and name, source type, ISSN-L, host organization id, name and lineage, DOAJ flag and landing URL into the venue table (`rel_work_venues.csv`). A work whose primary location has no source gets no host organization from OpenAlex.
+
+## Exit criteria
+
+- [ ] `slim()` keeps author names (first and all), host organization name and id, source type, ISSN and ISSN-L, landing page, and the full abstract; the three lanes use one shared definition rather than copies.
+- [ ] Positive control: a known work with authors and a Routledge/World Bank chapter without a source are checked first, and the sources of each returned field are quoted.
+- [ ] For works already harvested, the missing authors and host organizations are backfilled by id-batched re-fetch. The call count and its cost against the OpenAlex daily budget are derived and shown to the author before any live call; no live call is made without the author's go.
+- [ ] Coverage after backfill is reported per lane, period and language: share of works with authors, with a host organization, and the residue with neither (to be handled by the DOI-prefix fallback of 2043).
+- [ ] Backfilled fields are appended, never overwriting delivered values; `qa_rel_intake.py` passes on a regenerated sample.
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+The pool is larger than the lane deliveries: 389,291 works on 2026-10-01 plus 1654 round 1 (208,181 incremental works; the sum, about 597k, is derived and assumes no overlap). Coverage numbers must be recomputed on the real pool table after `make rel-pool-data`, not on the lane CSVs.
