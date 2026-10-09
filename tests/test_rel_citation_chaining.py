@@ -264,7 +264,7 @@ def test_explicit_frontier_does_not_expand_historical_icf_and_binds_closure(tmp_
         w = csv.DictWriter(f, fieldnames=['work_key', 'status']);w.writeheader()
         w.writerows([{'work_key': 'new', 'status': 'unsure_unresolved'}, {'work_key': 'historical', 'status': 'icf'}])
     closure = tmp_path / 'closure.json'
-    closure.write_text(json.dumps({'round_dispositions_reconciled': True, 'venue_dimensions_reconciled': True, 'yield_reconciled': True}))
+    closure.write_text(json.dumps({'round_dispositions_reconciled': True, 'venue_dimensions_reconciled': True, 'yield_reconciled': True, 'pool_sha256': chain.sha(pool), 'view_sha256': chain.sha(view)}))
     frontier = tmp_path / 'frontier.json'
     frontier.write_text(json.dumps({'version': '1654-final-frontier-v1', 'pool_sha256': chain.sha(pool),
         'view_sha256': chain.sha(view), 'closure_artifact': str(closure), 'closure_sha256': chain.sha(closure),
@@ -357,3 +357,103 @@ def test_reuse_rejects_seed_list_not_bound_to_exact_direction_filter(tmp_path):
     query = {'kind': 'forward', 'seeds': '["W1"]', 'filter': 'cites:W2'}
     with pytest.raises(ChainError, match='seed/filter'):
         chain._completed_direction_evidence(prior.db, prior.root, query, {'pages': {}})
+
+@pytest.mark.parametrize('invalid', [-1.0, float('nan'), float('inf'), -float('inf')])
+def test_budget_rejects_invalid_settlement_without_changing_liability(tmp_path, invalid):
+    store = Store(tmp_path / 'round')
+    store.bind('budget_usd', 1)
+    call = store.reserve('offline', .5, {})
+    with pytest.raises(ChainError, match='finite|nonnegative'):
+        store.settle(call, invalid, {})
+    row = store.db.execute('SELECT cost,status FROM budget.calls WHERE k=?', (call,)).fetchone()
+    assert row['cost'] is None and row['status'] == 'reserved'
+    with pytest.raises(ChainError, match='budget'):
+        store.reserve('offline', .6, {})
+
+@pytest.mark.parametrize('invalid', [float('nan'), float('inf'), -1.0, 0.0])
+def test_budget_bind_rejects_nonfinite_nonpositive_cap(tmp_path, invalid):
+    store = Store(tmp_path / 'round')
+    with pytest.raises(ChainError, match='finite|positive'):
+        store.bind('budget_usd', invalid)
+    assert store.db.execute('SELECT COUNT(*) FROM config').fetchone()[0] == 0
+
+@pytest.mark.parametrize('field,value', [('cost', -1.0), ('reserve', -1.0), ('reserve', float('inf'))])
+def test_budget_refuses_corrupt_existing_meter_without_new_admission(tmp_path, field, value):
+    store = Store(tmp_path / 'round')
+    store.bind('budget_usd', 10)
+    call = store.reserve('offline', 1, {})
+    store.db.execute(f'UPDATE budget.calls SET {field}=? WHERE k=?', (value, call))
+    store.db.commit()
+    with pytest.raises(ChainError, match='finite|nonnegative'):
+        store.reserve('new', 1, {})
+    assert store.db.execute('SELECT COUNT(*) FROM budget.calls').fetchone()[0] == 1
+
+@pytest.mark.parametrize('mutation', ['version', 'closure_pool', 'closure_view', 'closure_source'])
+def test_frontier_rejects_unrecognized_version_and_mismatched_closure(tmp_path, mutation):
+    import json
+
+    import _rel_chaining as chain
+    pool, view = tmp_path / 'pool.csv', tmp_path / 'view.csv'
+    pool.write_text('work_key,openalex_id,title\nnew,W1,New\n')
+    view.write_text('work_key,status\nnew,icf\n')
+    closure = tmp_path / 'closure.json'
+    body = {'round_dispositions_reconciled': True, 'venue_dimensions_reconciled': True,
+            'yield_reconciled': True, 'pool_sha256': chain.sha(pool), 'view_sha256': chain.sha(view)}
+    if mutation == 'closure_pool': body['pool_sha256'] = '0' * 64
+    if mutation == 'closure_view': body['view_sha256'] = '0' * 64
+    closure.write_text(json.dumps(body))
+    frontier = tmp_path / 'frontier.json'
+    specification = {'version': 'unknown' if mutation == 'version' else '1654-final-frontier-v1',
+        'pool_sha256': chain.sha(pool), 'view_sha256': chain.sha(view), 'closure_artifact': str(closure),
+        'closure_sha256': chain.sha(closure), 'records': [{'work_key': 'new', 'selection_reason': 'confirmed', 'stratum': 'confirmed'}]}
+    if mutation == 'closure_source':
+        specification['previous_round'] = {'snapshot_sha256': '0' * 64, 'native_index_sha256': '1' * 64}
+    frontier.write_text(json.dumps(specification))
+    store = Store(tmp_path / 'round')
+    with pytest.raises(ChainError, match='version|closure'):
+        chain.init_seeds(store, pool, view, [], 30, frontier_path=frontier)
+    assert store.db.execute('SELECT COUNT(*) FROM seeds').fetchone()[0] == 0
+
+def test_forward_reuse_preserves_native_relationship_gap(tmp_path):
+    import gzip
+    import json
+    import sqlite3
+
+    import _rel_chaining as chain
+    prior = Store(tmp_path / 'prior')
+    prior.add_query('forward', 'forward', 'cites:W1', ['W1'])
+    params = {'filter': 'cites:W1', 'per_page': 100, 'cursor': '*'}
+    request = chain.hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()
+    path = prior.root / 'raw/forward.json.gz'
+    with gzip.open(path, 'wt') as f:
+        json.dump({'query': params, 'status': 200, 'retrieved_at': '2026-10-08T00:00:00Z',
+            'body': {'meta': {'count': 1, 'next_cursor': None}, 'results': [{'id': 'https://openalex.org/W9', 'referenced_works': []}]}}, f)
+    prior.db.execute('INSERT INTO api_pages VALUES(?,?,?)', (request, 'raw/forward.json.gz', 1))
+    prior.db.execute("UPDATE queries SET completed=1,received=1,expected=1,pages=1,cursor=''")
+    prior.db.execute("INSERT INTO unresolved VALUES('forward:W9','edge','forward result has no returned seed reference')")
+    prior.db.commit()
+    snapshot = tmp_path / 'prior.sqlite'
+    with sqlite3.connect(snapshot) as target: prior.db.backup(target)
+    routing = tmp_path / 'routing.py';routing.write_text('OA public collector')
+    index = tmp_path / 'index.json'
+    index.write_text(json.dumps({'snapshot_sha256': chain.sha(snapshot), 'pages': {'raw/forward.json.gz': {'sha256': chain.sha(path), 'request_sha256': request}}, 'acquisition_source': {'artifact': str(routing), 'artifact_sha256': chain.sha(routing), 'recorded_revision': 'a'*40, 'method': 'GET', 'endpoint': chain.OA}}))
+    current = Store(tmp_path / 'current');current.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')");current.db.commit()
+    chain.reuse_completed_directions(current, snapshot, prior.root, chain.sha(snapshot), native_index_path=index, native_index_sha256=chain.sha(index))
+    evidence = json.loads(current.db.execute('SELECT evidence FROM direction_reuse').fetchone()[0])
+    assert evidence['source_unresolved'] == [{'k': 'forward:W9', 'kind': 'edge', 'note': 'forward result has no returned seed reference'}]
+    assert evidence['source_edge_count'] == 0
+    assert current.db.execute("SELECT kind,note FROM unresolved WHERE k='forward:W9'").fetchone()[:] == ('edge', 'forward result has no returned seed reference')
+    chain.plan_citation_queries(current)
+    assert current.db.execute("SELECT COUNT(*) FROM queries WHERE kind='forward'").fetchone()[0] == 0
+    assert current.db.execute('SELECT COUNT(*) FROM edges').fetchone()[0] == 0
+
+def test_budget_overflow_meter_rolls_back_and_refuses_new_call(tmp_path):
+    store = Store(tmp_path / 'round')
+    store.bind('budget_usd', 10)
+    for _ in range(2):
+        store.db.execute("INSERT INTO budget.calls(round,provider,reserve,status,details,date) VALUES('offline','corrupt',1e308,'reserved','{}','offline')")
+    store.db.commit()
+    with pytest.raises(ChainError, match='finite'):
+        store.reserve('new', 1, {})
+    assert not store.db.in_transaction
+    assert store.db.execute('SELECT COUNT(*) FROM budget.calls').fetchone()[0] == 2

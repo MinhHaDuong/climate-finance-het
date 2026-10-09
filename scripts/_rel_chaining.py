@@ -266,6 +266,25 @@ class Store:
               PRIMARY KEY(seed,direction));
         """)
 
+    def budget_exposure(self):
+        values = []
+        for row in self.db.execute("SELECT reserve,cost FROM budget.calls"):
+            reserve, cost = row
+            if reserve is None or not math.isfinite(reserve) or reserve <= 0 or (cost is not None and
+                    (not math.isfinite(cost) or cost < 0)):
+                self.db.rollback()
+                raise ChainError("positive finite reserve and nonnegative finite cost required")
+            values.append(reserve if cost is None else cost)
+        try:
+            total = math.fsum(values)
+        except OverflowError as error:
+            self.db.rollback()
+            raise ChainError("finite budget exposure required") from error
+        if not math.isfinite(total):
+            self.db.rollback()
+            raise ChainError("finite budget exposure required")
+        return total
+
     def authorize_budget(self, cap, authorization):
         """Record an explicit steering change in the shared ledger atomically."""
         if not math.isfinite(cap) or cap <= 0 or not authorization.strip():
@@ -275,7 +294,7 @@ class Store:
         self.db.execute("BEGIN IMMEDIATE")
         old = self.db.execute("SELECT v FROM budget.policy WHERE k='cap_usd'").fetchone()
         previous = float(old[0]) if old else self.config("budget_usd")
-        spent = self.db.execute("SELECT COALESCE(SUM(COALESCE(cost,reserve)),0) FROM budget.calls").fetchone()[0]
+        spent = self.budget_exposure()
         if spent > cap:
             self.db.rollback()
             raise ChainError("authorized cap below existing liabilities")
@@ -284,6 +303,8 @@ class Store:
         self.db.commit()
 
     def bind(self, name, value):
+        if name == "budget_usd" and (not math.isfinite(value) or value <= 0):
+            raise ChainError("positive finite budget cap required")
         value = json.dumps(value, sort_keys=True)
         old = self.db.execute("SELECT v FROM config WHERE k=?", (name,)).fetchone()
         if old and old[0] != value:
@@ -315,10 +336,13 @@ class Store:
         if admission_ceiling is not None and (not math.isfinite(admission_ceiling) or admission_ceiling <= 0):
             raise ChainError("positive finite admission ceiling required")
         self.db.execute("BEGIN IMMEDIATE")
-        spent = self.db.execute("SELECT COALESCE(SUM(COALESCE(cost,reserve)),0) FROM budget.calls").fetchone()[0]
+        spent = self.budget_exposure()
         policy_exists = self.db.execute("SELECT 1 FROM budget.sqlite_master WHERE type='table' AND name='policy'").fetchone()
         policy = self.db.execute("SELECT v FROM budget.policy WHERE k='cap_usd'").fetchone() if policy_exists else None
         cap = float(policy[0]) if policy else self.config("budget_usd")
+        if not math.isfinite(cap) or cap <= 0 or not math.isfinite(spent) or spent < 0:
+            self.db.rollback()
+            raise ChainError("positive finite cap and nonnegative finite budget exposure required")
         if admission_ceiling is not None:
             cap = min(cap, admission_ceiling)
         if spent + bound > cap:
@@ -330,6 +354,8 @@ class Store:
         return call
 
     def settle(self, call, cost, details):
+        if not math.isfinite(cost) or cost < 0:
+            raise ChainError("nonnegative finite actual cost required")
         reserve = self.db.execute("SELECT reserve FROM budget.calls WHERE k=?", (call,)).fetchone()[0]
         self.db.execute("UPDATE budget.calls SET cost=?,status='settled',details=? WHERE k=?",
                         (cost, json.dumps(details), call))
@@ -344,6 +370,8 @@ def init_seeds(store, pool, view, sentinel_paths, budget, *, frontier_path=None)
     frontier_basis = None
     if frontier_path is not None:
         frontier = json.loads(Path(frontier_path).read_text())
+        if frontier.get("version") != "1654-final-frontier-v1":
+            raise ChainError("unsupported frontier version")
         closure_path = Path(frontier["closure_artifact"])
         if sha(closure_path) != frontier["closure_sha256"]:
             raise ChainError("frontier closure artifact changed")
@@ -353,6 +381,10 @@ def init_seeds(store, pool, view, sentinel_paths, budget, *, frontier_path=None)
             raise ChainError("frontier closure is not fully reconciled")
         if frontier["pool_sha256"] != sha(pool) or frontier["view_sha256"] != sha(view):
             raise ChainError("frontier final pool/view basis changed")
+        if any(closure.get(name) != frontier[name] for name in ("pool_sha256", "view_sha256")):
+            raise ChainError("frontier closure pool/view basis mismatch")
+        if frontier.get("previous_round") and closure.get("previous_round") != frontier["previous_round"]:
+            raise ChainError("frontier closure final source-proof binding mismatch")
         selected = {}
         for record in frontier["records"]:
             key = record["work_key"]
@@ -785,6 +817,11 @@ def reuse_completed_directions(store, snapshot, native_root, expected_sha256, *,
             evidence, returned = _completed_direction_evidence(source, native_root, query, native_index)
             if query["kind"] == "backward":
                 identities.intersection_update(returned)
+            source_edges = [dict(row) for row in source.execute("SELECT * FROM edges WHERE q=? ORDER BY seed,candidate,direction", (query["k"],))]
+            source_gaps = [dict(row) for row in source.execute("SELECT * FROM unresolved ORDER BY k")
+                           if row["k"].startswith(query["k"] + ":")]
+            evidence.update(source_unresolved=source_gaps, source_edge_count=len(source_edges),
+                            source_edges_sha256=hashlib.sha256(json.dumps(source_edges, sort_keys=True).encode()).hexdigest())
             evidence.update(source_snapshot=str(snapshot.resolve()), source_snapshot_sha256=expected_sha256,
                             native_index=str(Path(native_index_path).resolve()), native_index_sha256=native_index_sha256,
                             acquisition_source=routing,
@@ -798,6 +835,14 @@ def reuse_completed_directions(store, snapshot, native_root, expected_sha256, *,
         old = store.db.execute("SELECT evidence FROM direction_reuse WHERE seed=? AND direction=?", (identity, direction)).fetchone()
         if old and old[0] != evidence:
             raise ChainError("changed completed direction reuse evidence")
+    gaps = {row["k"]: row for evidence in prepared.values()
+            for row in json.loads(evidence)["source_unresolved"]}
+    for key, row in gaps.items():
+        old = store.db.execute("SELECT kind,note FROM unresolved WHERE k=?", (key,)).fetchone()
+        if old and tuple(old) != (row["kind"], row["note"]):
+            raise ChainError("changed reused source diagnostic")
+    store.db.executemany("INSERT OR IGNORE INTO unresolved VALUES(?,?,?)",
+                         [(key, row["kind"], row["note"]) for key, row in gaps.items()])
     store.db.executemany("INSERT OR IGNORE INTO direction_reuse VALUES(?,?,?)",
                          [(identity, direction, evidence) for (identity, direction), evidence in prepared.items()])
     store.db.commit()
