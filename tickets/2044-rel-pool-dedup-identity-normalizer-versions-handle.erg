@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-10-09T15:00Z HDMX-coding-agent created
 2026-10-09T15:00Z HDMX-coding-agent note author decision 2026-10-09: a working paper and its published article are one work; fix the dedup docstring to say so; file the title normalizer and pool key fixes
+2026-10-09T18:00Z HDMX-coding-agent note author decision 2026-10-09: split into the safe part (2047) and the coordinating part (2048); this ticket is now the tracker
 
 --- body ---
 
@@ -20,16 +21,18 @@ Child of 0700. Read-only audit of 2026-10-09: the pool rebuilt from the pinned c
 
 Labels are keyed by `work_key` and are append-only (ICF screen table, stage-1 and stage-2 labels). A change to the normalizer or the keys re-keys `title:` and `url:` works. It must not silently relabel, and it meets the 1656 freeze and 1654 incremental screening.
 
+## Tracker
+
+Split by what can go wrong, so the safe part can land first.
+
+- **2047, the safe part.** Machinery behind a `dedup_version` switch whose default keeps the pool byte-identical: the new title normalizer, the RePEc handle join key, a dry-run report and migration table for version 2, accurate docstrings. No label touched, no key changed, no other branch involved.
+- **2048, the coordinating part** (blocked by 2047). The working-paper-and-published rule with its window (an author decision) and a cross-vendor panel precision estimate (a paid call, priced first, no call without the author's go); the label migration; coordination with the 1656 freeze and the 1654 incremental screening; the flip of the default to version 2.
+
 ## Exit criteria
 
-- [ ] A new title normalizer (own module, tested): HTML entities unescaped, tags stripped, NFKC, hyphens and dashes to space, casefold, whitespace collapsed; no ASCII folding that collides non-Latin scripts. Accent folding is decided by measurement on the 1,034 clean candidate groups and stated; default none. Every string in Context item 1 is a test, and a script-collision test (distinct CJK, Cyrillic and Arabic titles never share a key).
-- [ ] A working paper and its published article join into one work (author decision). The rule is designed from the `version_hint` column and measured: identical normalized title, years within a stated window, at most one published version, DOIs that differ allowed only when one side is a recognised working-paper or preprint prefix (SSRN 10.2139, Research Square 10.21203, repository handles, RePEc series) or carries a `version_hint`. Precision is estimated on a stratified sample read by a cross-vendor panel (never the author), recall by the 365 and 59 existing multi-version works.
-- [ ] `repec_handle` and the RePEc handle in `record_id` become an exact-equality join key, joining only components whose DOIs and OpenAlex ids do not disagree, with the same chain protection as the Handle step (2b).
-- [ ] `_rel_pool_dedup.py` and `_rel_pool_keys.py` docstrings state the decided rule (working paper and published as one) and the new normalizer; no sentence contradicts the code.
-- [ ] Re-key safety: an append-only migration table `old work_key to new work_key` is written for every work whose key changes; no label is dropped, duplicated or silently reassigned; byte comparison of the pool for works whose key does not change; order independence test kept with a positive control (a deliberately order-dependent variant fails it).
-- [ ] Counts before and after by lane, period (1990-2006, 2007-2014, 2015-2025) and language: works merged by each change, works re-keyed, multi-DOI and multi-OpenAlex works, title-only works remaining.
-- [ ] Coordinated with 1656 (freeze) and 1654 (incremental screening) before the first re-keyed pool is built; nothing is merged that changes `work_key` of a labelled work without the migration table.
-- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+- [ ] 2047 and 2048 are closed, each with its exit criteria met.
+- [ ] Integration review after the last child: re-read the child diffs, rebuild the pool with version 2 and byte-compare against the 2047 report; the counts of works merged equal the migration table; no label table row is missing, duplicated or reassigned; the dedup docstrings contradict nothing; repo-wide grep for the old normalizer call sites in the pool path.
+- [ ] This tracker is closed only after that review, never on the bare event of the last child merging.
 
 ## Notes
 
