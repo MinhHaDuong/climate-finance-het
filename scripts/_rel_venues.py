@@ -482,15 +482,21 @@ def mu_venue(tier, tier_rule, indexes_hit, hijacked, params):
     2. ``tier_ab``  tier A or B: 1;
     3. ``index``  listed in an enabled trusted index at the publication year,
        and not tier C: 1;
-    4. ``tier_c_in_index``  tier C and listed: ``conflict`` (the open switch,
-       1 when a listing index is in ``promote``);
+    4. ``tier_c_in_index``  tier C and listed: ``conflict`` (1 when a listing
+       index is in ``promote``);
     5. ``tier_c``  tier C by a rule in ``negative_c_rules`` (repository,
        non-research page) with no index: 0;
     6. ``unlisted``  tier C by the catch-all rule ``other`` with no index:
-       ``other_c`` (0.5);
+       ``other_c``;
     7. ``unknown``  no resolvable venue: 0.5.
 
-    Absence from every index is never negative evidence: 0.5, or 1 by tier.
+    Shipped defaults: ``conflict`` 0 and ``other_c`` 0, so every score equals
+    the tier score of 2026-10-01 (C the rest, excluded). Both are open
+    switches (``status: open``, MOE option, not author-decided) that reopen
+    that decision: ``conflict`` 0.5 or 1 gives a listed tier C 0.5 or 1;
+    ``other_c`` 0.5 gives an unlisted tier C by ``other`` 0.5. Absence from
+    every index is never negative for the venue types the 2026-10-01 rules
+    already put at 0.5 or 1 (tier A or B, no venue).
     """
     if hijacked:
         return 0.0, "hijacked"
