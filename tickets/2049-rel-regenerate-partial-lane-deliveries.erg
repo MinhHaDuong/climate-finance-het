@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-10-09T19:00Z HDMX-coding-agent created
 2026-10-09T19:00Z HDMX-coding-agent note author decision 2026-10-09: regenerate the partial deliveries
 
+2026-10-09T09:57Z HDMX-coding-agent stage A (scratch, no DVC): four new deliveries regenerated (t1530 2026-09-29, t1650 2026-09-30, t1652 2026-09-30b, t1790-reader-reruns 2026-09-30 -> 2026-10-09), qa_rel_intake passes on each; record sets identical, only blank cells filled, no delivered cell overwritten; scratch pool: 389,291 works, work_key set identical, only first_author and all_authors filled (46,220 works; pool precedence also swaps the name form of 3,570 first_author and 3,956 all_authors values to the OpenAlex form); t1651, t1653, t1790-sud-playwright, t1810 not touched (not OpenAlex lanes). Stage B (dvc add and push) pending.
 --- body ---
 
 ## Context
