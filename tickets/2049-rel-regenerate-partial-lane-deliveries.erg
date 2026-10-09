@@ -1,0 +1,39 @@
+%erg 0.1
+Title: REL regenerate the partial lane deliveries with the recovered fields
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T19:00Z HDMX-coding-agent created
+2026-10-09T19:00Z HDMX-coding-agent note author decision 2026-10-09: regenerate the partial deliveries
+
+--- body ---
+
+## Context
+
+Child of 0700. Tickets 2040 and 2041 fixed the ingesters and ran the recovery, but the deliveries under `data/rel_intake/` still hold the old, partial records. The pool is built from them, so the missing fields stay missing until new deliveries replace the old ones (a correction is a new delivery that says what it supersedes, `manifest.json` field `supersedes`; `docs/rel-intake-contract.md`).
+
+What is available (all outside the repo, runs of 2026-10-09):
+- OpenAlex backfill of the lane ids: `~/data/projets/climate-finance-het/rel_openalex_backfill/2026-10-09-lanes/` (60,350 ids, 58,953 found; authors on 98.2%, host organization 74.2%, source type 91.1%, ISSN 68.4%; 252 works have neither; spend USD 0.0604 measured). Stage 2 for the rest of the pool writes `.../2026-10-09-pool/` (the run was approved on 2026-10-09; this ticket starts after it ends or states what it used).
+- EDS re-query: `~/data/projets/climate-finance-het/rel_causal/2026-10-09-eds-requery/` (11,213 records; authors on 95.5%; verified RePEc handle for 4,125 of 4,402 distinct `edsrep` numbers; the API returns no abstract and no ISSN). The decoder output is `handles/eds_repec_handles.csv`.
+
+What is missing in the live deliveries (read-only counts of 2026-10-09 on the record-level lane files; lanes overlap): `first_author` and `all_authors` blank in every row of the OpenAlex lanes t1530, t1650, t1652 and the t1790 reruns (t1650 7,259, t1530 34,207, t1652 34,725 and 34,788 per run, t1790 reruns 642); host organization, source type, ISSN-L and landing page absent as columns; the abstract cut at 1,500 characters in t1530 and t1652 (new OpenAlex records keep the full text through `slim()` of 2041); `repec_handle` absent for the EDS rows of t1652.
+
+Consequences until fixed: the ticket 2043 prefilter must stay switched off (creator is blank for a third of the pool, a harvest gap and not a property of the works); the venue facet has no publisher or source type for those lanes; the abstract selector of 2045 picks among truncated copies.
+
+Generators already in the repo: `scripts/catalog_rel_1530_delivery.py` (`--backfill`), `scripts/corpus_rel_causal_yield.py` (`--backfill`, `--eds-handles`), and the lane-specific scripts for t1650 (`scripts/catalog_rel_toc.py`) and the t1790 reruns; confirm each lane's generator before starting and list any lane without one.
+
+## Exit criteria
+
+- [ ] For each live delivery of the lanes t1530, t1650, t1652 (every live delivery of the lane) and the t1790 reruns, a NEW delivery directory is generated from the archived inputs plus the 2041 backfill and, for t1652, the 2040 EDS re-query and handle table. Its manifest names the delivery it supersedes; `qa_rel_intake.py` passes on it. The lanes without a generator are listed with the reason and left alone.
+- [ ] Record identity is preserved: every `record_id` of the old delivery is present in the new one, the set of records is identical (no record added or dropped), and the only changed cells are blank cells that are now filled; no non-blank delivered value is overwritten (count of changed cells by column and lane).
+- [ ] Pool check: rebuild the pool from the old and from the new deliveries in a scratch directory on the same inputs (`SOURCE_DATE_EPOCH` set). The set of `work_key` is identical, every pool column except the newly filled ones is byte-identical; the filled columns are listed with counts. Any work whose key changes stops the ticket and is reported.
+- [ ] Coverage report by lane, period (1990-2006, 2007-2014, 2015-2025) and language: share of works with authors, host organization, source type and ISSN before and after, with the first act shown separately; the residue (works still without authors and host organization, 252 in the lane archives) is listed.
+- [ ] The ticket 2043 profile counts are re-run on the new pool (profile switched on in a scratch copy) and the result is attached to the 2043 ticket log, so the author can decide whether and how to switch it on.
+- [ ] Each new delivery is tracked in DVC (`dvc add`, push to the project remote from padme only; never `dvc gc`), the `.dvc` pointers and `dvc.lock` diff land in the same PR, and the md5 of every pushed output is checked against the pointer. Data flows padme to doudou only.
+- [ ] Coordinated before the push: the open PR #1718 and the 1654 incremental screening both read the pool; their ticket logs name the delivery date, and nothing is pushed that changes a `work_key`.
+- [ ] Diff at most 14 content-bearing paths per PR (the DVC pointers count); scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Severity: science lane (a live defect that reaches the pool: authors are blank for most OpenAlex works). The abstract recovery from ISTEX (2046) is a separate delivery and does not belong here. The 62,868 ids quoted in 2041's first report were a loose count; the measured union of the lane runs is 60,350.
