@@ -82,7 +82,7 @@ def _missing_columns(header, wanted, name):
     return [f"{name}: missing column(s) {', '.join(missing)}"] if missing else []
 
 
-def check_records(header, rows, query_ids):
+def check_records(header, rows, query_ids, titleless_ids=()):
     """Return the violations of records.csv."""
     errors = _missing_columns(header, RECORD_COLUMNS, "records.csv")
     if errors:
@@ -94,7 +94,7 @@ def check_records(header, rows, query_ids):
     for i, r in enumerate(rows, start=2):
         where = f"records.csv line {i}"
         for col in RECORD_REQUIRED:
-            if not (r.get(col) or "").strip():
+            if not (r.get(col) or "").strip() and not (col == "title" and r.get("record_id") in titleless_ids):
                 errors.append(f"{where}: {col} is empty")
         if query_ids is not None and r["query_id"] and r["query_id"] not in query_ids:
             errors.append(f"{where}: query_id {r['query_id']!r} not in registry.csv")
@@ -259,7 +259,16 @@ def check_delivery(delivery_dir):
         errors += reg_errors
     rec_header, rec_rows = _read_csv(os.path.join(delivery_dir, "records.csv"), errors)
     if rec_header is not None:
-        errors += check_records(rec_header, rec_rows, query_ids)
+        titleless_ids = ()
+        try:
+            with open(os.path.join(delivery_dir, "manifest.json"), encoding="utf-8") as fh:
+                admission_manifest = json.load(fh)
+            if admission_manifest.get("native_titleless"):
+                from _rel_titleless_intake import validate_admission
+                titleless_ids = validate_admission(delivery_dir, admission_manifest, rec_rows)
+        except (ValueError, OSError, KeyError, TypeError) as exc:
+            errors.append(f"native titleless admission: {exc}")
+        errors += check_records(rec_header, rec_rows, query_ids, titleless_ids)
     exc_header, exc_rows = _read_csv(os.path.join(delivery_dir, "excluded.csv"), errors)
     if exc_header is not None:
         record_ids = {r.get("record_id") for r in rec_rows}
@@ -284,6 +293,7 @@ def check_delivery(delivery_dir):
 
 
 def main(argv=None):
+    # Read-only validator: no output file is produced, so no --output parser applies.
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("delivery", help="data/rel_intake/<lane>/<delivery>")

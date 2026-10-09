@@ -1,0 +1,11 @@
+{
+  "approved_manifest_sha256": "1b53906da5081093f8dedcdaf79ca6a9ad8d462f76bac7966e1e9e513423b2f7",
+  "basis": "native_titleless_absent_abstract",
+  "intake": {
+    "approved_manifest_sha256": "efda6352613089a1d3519a13c26ef72c2fe7082fe4529bab5b6763ce52e569e8",
+    "authority_sha256": "004b13319d100772b3cf543599b110d40dd319ca7861ccaea5ab55cc16f47525",
+    "records": 177
+  },
+  "method": "policy:local-evidence-abstention-v1",
+  "version": "native-titleless-absence-v1"
+}

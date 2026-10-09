@@ -54,7 +54,7 @@ DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_pool.yaml")
 NO_DEDUP_KEY = "no_dedup_key"
 
 # Pool metadata columns, filled from the first non-empty member.
-META_COLUMNS = ["doi", "openalex_id", "title", "first_author", "all_authors",
+META_COLUMNS = ["native_titleless_provenance", "is_paratext", "doi", "openalex_id", "title", "first_author", "all_authors",
                 "year", "journal", "abstract", "language", "doc_type",
                 "affiliation_countries", "affiliations", "cited_by_count"]
 POOL_COLUMNS = (["work_key"] + META_COLUMNS
@@ -193,10 +193,14 @@ def check_deliveries(deliveries):
 
 
 def load_delivery(did, path):
+    from _rel_titleless_intake import validate_admission
+    with open(os.path.join(path, "manifest.json"), encoding="utf-8") as fh:
+        admission = validate_admission(path, json.load(fh), _read_csv(os.path.join(path, "records.csv")))
     rows = []
     for r in _read_csv(os.path.join(path, "records.csv")):
         rows.append({
             "origin": did.split("/")[0], "delivery": did,
+            "native_titleless_provenance": admission.get(r["record_id"], ""), "is_paratext": r.get("is_paratext") or "",
             "record_id": f"{did}:{r['record_id']}",
             **_ids(r, r.get("openalex_id")),
             **{c: r.get(c) or "" for c in ("title", "first_author", "all_authors",
@@ -251,7 +255,7 @@ def build_pool(rows, roots, lane_rank):
     for root in sorted(members):
         idx = sorted(members[root], key=rank)
         mem = [rows[i] for i in idx]
-        merged = {c: next((m[c] for m in mem if m[c]), "") for c in META_COLUMNS}
+        merged = {c: next((m.get(c, "") for m in mem if m.get(c)), "") for c in META_COLUMNS}
         origins = list(dict.fromkeys(m["origin"] for m in mem))
         merged.update({
             "version_hint": ";".join(dict.fromkeys(m["version_hint"] for m in mem if m["version_hint"])),
@@ -329,7 +333,7 @@ def main(argv=None):
     parser.add_argument("--catalogue", default=None, help="default: config catalogue.path")
     parser.add_argument("--intake-dir", default=None, help="default: config intake_dir")
     # Multi-output: pool.csv, merge_report.json and merge_report.md in one directory.
-    parser.add_argument("--output-dir", default=os.path.join("data", "rel_pool"))
+    parser.add_argument("--output-dir", required=True)
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)

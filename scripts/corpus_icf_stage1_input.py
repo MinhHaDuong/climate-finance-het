@@ -15,7 +15,7 @@ so that small, complete lanes finish before the long ones, then by
 ``sources``; an entry ``t1650`` matches the lane directories ``t1650`` and
 ``t1650-<slug>``. A lane the list does not name ranks after it, by name, with a
 warning; a work without sources is lane ``unknown``. Works without a title are
-not written: the rule cannot be applied to an empty record. They are accepted
+not written unless exact native admission proves a nonempty source abstract. They are accepted
 residue, not unscreened work: the summary names them (count per lane and
 work keys), so a completeness check of stage 1 subtracts them by name.
 
@@ -44,6 +44,7 @@ import _icf_screen as ics
 import _rel_view as rv
 import yaml
 from pipeline_loaders import load_rel_review_config
+from script_io_args import parse_io_args, validate_io
 from utils import get_logger
 
 log = get_logger("corpus_icf_stage1_input")
@@ -78,7 +79,7 @@ def record(p: dict) -> dict:
             "abstract": p["abstract"]}
 
 
-def select(pool: list[dict], view_rows: list[dict], priority: list[str]
+def select(pool: list[dict], view_rows: list[dict], priority: list[str], *, intake_root=None
            ) -> tuple[list[tuple[str, dict]], Counter, Counter]:
     """``[(lane, record)]`` in screening order, works per lane, and the
     ``{lane: [work_key]}`` of title-less works left out."""
@@ -89,9 +90,14 @@ def select(pool: list[dict], view_rows: list[dict], priority: list[str]
         if p["work_key"] not in unscreened:
             continue
         lane = lane_of(p["sources"], priority)
+        from _rel_titleless_intake import pool_admission
         if not p["title"].strip():
-            skipped[lane].append(p["work_key"])
-            continue
+            approved = pool_admission(p, intake_root)
+            if approved and not p.get("abstract", "").strip():
+                continue  # Explicit new source-absence policy, not the historical titleless residue.
+            if not approved:
+                skipped[lane].append(p["work_key"])
+                continue
         picked.append((lane, record(p)))
     unknown = sorted({lane for lane, _ in picked} - set(priority))
     if unknown:
@@ -126,12 +132,13 @@ def excluded_by(rec: dict, index: dict[str, set[str]]) -> str:
 
 
 def run(pool_path: str, table_path: str, output: str, priority: list[str],
-        rule: dict, exclude_inputs: list[str] | None = None) -> dict:
+        rule: dict, exclude_inputs: list[str] | None = None, *, intake_root=None) -> dict:
     """``rule``: ``_rel_view.screen_rule``; unscreened works do not depend on it."""
     ics.require_table(table_path)
-    pool = rv.read_pool(pool_path)
+    from _rel_titleless_intake import read_pool
+    pool = read_pool(pool_path)
     view, _ = rv.build_view(pool, ics.read_table(table_path), load_rel_review_config(), rule)
-    picked, per_lane, skipped = select(pool, view, priority)
+    picked, per_lane, skipped = select(pool, view, priority, intake_root=intake_root)
     index = exclusion_index(exclude_inputs or [])
     excluded: dict = defaultdict(Counter)
     kept = []
@@ -147,6 +154,10 @@ def run(pool_path: str, table_path: str, output: str, priority: list[str],
         for _, rec in picked:
             fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
     lanes = list(dict.fromkeys([lane for lane, _ in picked] + sorted(skipped)))
+    unscreened = {r["work_key"] for r in view if r["status"] == "unscreened"}
+    source_absence = sorted(p["work_key"] for p in pool if p["work_key"] in unscreened
+                            and not p["title"].strip() and not p["abstract"].strip()
+                            and p.get("native_titleless_provenance"))
     summary = {
         "pool": os.path.basename(pool_path), "pool_sha256": rv.sha256_file(pool_path),
         "table": os.path.basename(table_path), "table_sha256": rv.sha256_file(table_path),
@@ -157,8 +168,10 @@ def run(pool_path: str, table_path: str, output: str, priority: list[str],
             "inputs": [{"path": p, "sha256": rv.sha256_file(p)} for p in exclude_inputs or []],
             "works": sum(sum(c.values()) for c in excluded.values()),
             "per_lane": {lane: dict(sorted(c.items())) for lane, c in excluded.items()}},
+        "source_absence_policy_pending": {
+            "works": len(source_absence), "work_keys": source_absence},
         "residue_no_title": {
-            "note": "not screened: no title to apply the rule to; accepted residue of stage 1, "
+            "note": "not screened: no title to apply the rule to; ordinary legacy residue of stage 1; newly admitted source-absence policy is separate, "
                     "not unscreened work",
             "works": sum(len(v) for v in skipped.values()),
             "per_lane": {lane: len(skipped[lane]) for lane in lanes if lane in skipped},
@@ -171,22 +184,25 @@ def run(pool_path: str, table_path: str, output: str, priority: list[str],
 
 
 def main(argv=None):
+    io, extra = parse_io_args(argv)
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--config", default=DEFAULT_CONFIG)
     parser.add_argument("--pool", default=None, help="default: config pool")
     parser.add_argument("--table", default=None, help="default: config table")
-    parser.add_argument("--output", required=True, help="stage-1 input JSONL")
+    parser.add_argument("--titleless-intake-root", help="explicit source intake root for portable admission verification")
     parser.add_argument("--exclude-input", action="append", default=[],
                         help="another stage-1 run's input JSONL whose works are left out "
                              "(repeatable)")
-    args = parser.parse_args(argv)
+    args = parser.parse_args(extra)
+    args.output = io.output
+    validate_io(args.output)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
     try:
         summary = run(args.pool or cfg["pool"], args.table or cfg["table"], args.output,
                       list(cfg["stage1"]["lane_priority"]), rv.screen_rule(cfg),
-                      args.exclude_input)
+                      args.exclude_input, intake_root=args.titleless_intake_root)
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1

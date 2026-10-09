@@ -134,3 +134,36 @@ def test_works_in_another_runs_input_are_excluded_by_key_openalex_or_doi(tmp_pat
         "catalogue": {"work_key": 1}, "t1652": {"openalex_id": 1}, "t1810": {"doi": 1}}
     assert ex["inputs"][0]["sha256"] == rv.sha256_file(str(other))
     assert summary["per_lane"] == {"t1790": 1, "t1810": 1}
+
+
+def test_approved_titleless_stage1_preserves_window_and_not_legacy_residue(tmp_path, monkeypatch):
+    import corpus_rel_pool as cp
+    from _rel_pool_dedup import cluster
+    from test_qa_rel_intake import _native_titleless_delivery
+    d, _ = _native_titleless_delivery(tmp_path, monkeypatch)
+    records, _ = cp.load_delivery("t1650-sommaires/2026-10-01", str(d))
+    pool = cp.build_pool(records, cluster(records), {"t1650-sommaires": 0})
+    view, _ = rv.build_view(pool, [], {"year_min": 1900, "partial_year": 2026, "last_complete_year": 2025,
+                                      "search_date": "2026-10-08", "require_full_date_for_partial_year": True}, RULE)
+    picked, _, skipped = si.select(pool, view, PRIORITY)
+    assert len(picked) == 1 and skipped == {}
+    assert picked[0][1]["title"] == "" and picked[0][1]["abstract"] == "Substantive evidence"
+    assert view[0]["rel_disposition"] == "exclude_missing_title"
+    # No Stage1 answer has been manufactured, so no pendingStage2 transition.
+    assert view[0]["status"] == "unscreened"
+    pool[0]["native_titleless_provenance"] = ""
+    assert si.select(pool, view, PRIORITY)[0] == []
+
+
+def test_source_absence_is_separate_from_legacy_titleless_residue(tmp_path, monkeypatch):
+    import corpus_rel_pool as cp
+    from _rel_pool_dedup import cluster
+    from test_qa_rel_intake import _native_titleless_delivery
+    d, _ = _native_titleless_delivery(tmp_path, monkeypatch, abstract=False)
+    records, _ = cp.load_delivery("t1650-sommaires/2026-10-01", str(d))
+    pool = cp.build_pool(records, cluster(records), {"t1650-sommaires": 0})
+    view = [{"work_key": pool[0]["work_key"], "status": "unscreened"}]
+    picked, _, skipped = si.select(pool, view, PRIORITY)
+    assert picked == [] and skipped == {}
+    pool[0]["native_titleless_provenance"] = ""
+    assert si.select(pool, view, PRIORITY)[2] == {"t1650": [pool[0]["work_key"]]}

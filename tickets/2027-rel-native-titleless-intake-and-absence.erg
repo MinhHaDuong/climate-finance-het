@@ -1,0 +1,47 @@
+%erg 0.1
+Title: REL native titleless intake and absence policy
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T00:53Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Child of1654. Root adopted Astra native-titleless intake and source-absence
+policy designs. Exact native177 matched OA/DOI records remain genuinely
+titleless:110 nonempty reconstructed abstracts,67 absent;135 native paratext
+flags preserved. Abstract presence is not evidence usability. This necessary
+child does not close1654 or1656, activate round2, authorize paid screening,
+extend the historical59 waiver or expand the legacy43/37 policy authority.
+
+## Scope
+
+Exactly14 content paths: this ticket; qa_rel_intake.py; _rel_titleless_intake.py;
+corpus_rel_pool.py; test_qa_rel_intake.py; test_corpus_rel_pool.py;
+docs/rel-intake-contract.md; corpus_icf_stage1_input.py;
+test_corpus_icf_stage1_input.py; config/rel_titleless_policy.json;
+test_rel_titleless_policy.py; _rel_policy.py; _icf_screen.py;
+corpus_rel_policy.py (scripts/ and tests/ prefixes apply).
+Parent owns native retrieval/delivery production and actual post-admission pool.
+
+## Exit criteria
+- [ ] Approved exact native titleless admission verifies authority/roster/identity/full-fields/native response hashes; ordinary title requirement and missing-evidence rejection remain.
+- [ ] Pool preserves portable immutable source provenance, exact stable identities, native types/paratext flags and full public-field correspondence without empty-title collisions or fabricated metadata.
+- [ ] Approved110 nonempty abstracts follow normal Stage1 selection and actual outcome-dependent Stage2 eligibility, with frozen instruments and ordinary legacy titleless behavior preserved.
+- [ ] Exact67 source-absence policy binds actual post-admission pool and native evidence; normal CLI construction/append/read/view is idempotent and rejects unsupported bases, missing/tampered evidence, assessed overrides and present abstracts.
+- [ ] Policy native_answer/icf_values/actual facets remain blank; failed-model/proof-gap/native-attempt fields stay honestly empty for new basis only; legacy80 serialized output remains identical.
+- [ ] Window/seed/date eligibility, historical59 waiver, old judgments and native/effective quality separation remain unchanged; portable source and same-family country tamper regressions pass.
+- [ ] Clean populated padme full makecheck, actual177/110/67 offline validation and reviewable PR evidence recorded.
+
+## Test
+
+First red: exact native titleless fixture is rejected without the new validator;
+new source-absence profile wrongly requires fabricated legacy proof gaps.
+Recorded /tmp/climate-finance-2027-first-red.log before implementation (2 failures).
+Meaningful regressions cover strictnative hashes/identities/fields, placeholder and
+ordinary blank title rejection, exact pool family/country binding, Stage1 route
+without invented transitions, strict full-field facets/quality guard, policy
+append/read/view and unchanged legacy43+37 contexts/output bytes.
