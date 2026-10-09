@@ -186,3 +186,38 @@ def test_counts_block_tallies_gaps_whatever_the_switch():
     c = rp.counts(rows, prof)
     assert c["missing_by_field_works"]["creator"] == 1 and c["missing_by_field_works"]["publisher"] == 1
     assert c["excluded_works"] == 0 and c["missing_any_works"] == 2
+
+
+# ── review fixes ─────────────────────────────────────────
+
+@pytest.mark.parametrize("org", ["Zenodo", "figshare", "SSRN Electronic Journal", "SSRN",
+                                 "arXiv", " JSTOR "])
+def test_platform_host_organization_is_not_a_publisher(org):
+    rec = _rec(doi="10.99999/x", host_org_name=org)
+    assert rp.publisher_of(rec, PROFILE) == ("", "unresolved")
+    assert rp.missing_fields(rec, PROFILE) == ["publisher"]
+
+
+def test_real_host_organization_still_resolves():
+    assert rp.publisher_of(_rec(doi="", host_org_name="Wiley"), PROFILE)[1] == "host_org"
+
+
+def test_osti_is_a_platform_not_a_publisher():
+    assert PROFILE["prefixes"]["10.2172"][1] == "platform"
+    assert rp.publisher_of(_rec(doi="10.2172/3018336"), PROFILE) == ("", "unresolved")
+
+
+def test_reason_code_follows_fixed_field_order_not_config_order():
+    cell = rp.codes(["creator", "publisher"])
+    shuffled = ["resourceType", "publisher", "creator"]
+    assert rp.first_required_code(cell, shuffled) == "profile_missing_creator"
+
+
+def test_platform_entries_are_not_covered_by_generic_forms():
+    """scielo, ajol, adb_ewp stay: without them their record ids are not identifiers."""
+    generic_only = dict(PROFILE, platforms={})
+    for ids in ("l/d:scielo:oai:scielo:S0185-013X2024000300573",
+                "l/d:ajol:oai:ajol.info:article/329316", "l/d:adb_ewp:RePEc:ris:adbewp:021837"):
+        rec = _rec(doi="", member_record_ids=ids)
+        assert rp.identifier_of(rec, generic_only) == ""
+        assert rp.identifier_of(rec, PROFILE) != ""

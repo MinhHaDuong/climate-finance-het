@@ -440,7 +440,8 @@ def stage2_skip(rows: list[dict]) -> dict:
         rs = [r for r in rows if r["status"] == status]
         out[status] = {"by_tier": _split(rs, "tier"),
                        "skippable_seriousness_0": sum(
-                           r["rel_reason"] == "seriousness_excluded" for r in rs),                       "to_screen": sum(r["rel_reason"] == "icf_pending" for r in rs)}
+                           r["rel_reason"] == "seriousness_excluded" for r in rs),
+                       "to_screen": sum(r["rel_reason"] == "icf_pending" for r in rs)}
     return out
 
 

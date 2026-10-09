@@ -78,3 +78,57 @@ def test_read_backfill_and_refuse_data_dir(tmp_path):
                              "host_org_name": "Elsevier"}) + "\n")
     assert crp.read_backfill(str(path)) == {"W9": ("X", "X ; Y", "Elsevier")}
     assert crp.main(["--pool", "x", "--output-dir", rp.ROOT + "/data/rel_pool/out"]) == 1
+
+
+# ── review fixes ─────────────────────────────────────────
+
+@pytest.mark.parametrize("kind", ["data", "data/", "./data", "data/../data", "data/rel_pool",
+                                  "symlink", "symlink/sub"])
+def test_output_dir_in_or_equal_to_data_is_refused(kind, tmp_path, monkeypatch):
+    """Each input wrote data/rel_profile_counts.json under the old prefix-only guard."""
+    monkeypatch.chdir(rp.ROOT)
+    out = kind
+    if kind.startswith("symlink"):
+        link = tmp_path / "link_to_data"
+        link.symlink_to(rp.ROOT + "/data", target_is_directory=True)
+        out = str(link) + kind[len("symlink"):]
+    assert crp.under_data(out)
+    assert crp.main(["--pool", "x", "--output-dir", out]) == 1
+
+
+def test_output_dir_outside_data_is_allowed(tmp_path, monkeypatch):
+    monkeypatch.chdir(rp.ROOT)
+    assert not crp.under_data(str(tmp_path / "out"))
+    assert not crp.under_data("data2")  # a sibling sharing the prefix is not data/
+
+
+def _report_of(tmp_path, rows):
+    path = tmp_path / "pool.csv"
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=COLUMNS, lineterminator="\n")
+        w.writeheader()
+        w.writerows(rows)
+    profile = rp.load_profile()
+    return crp.report(crp.count(str(path), {}, profile), profile, "p", None, 0)
+
+
+def test_empty_pool_reports_null_shares(tmp_path):
+    res = _report_of(tmp_path, [])
+    b = res["before_filter"]
+    assert b["works"] == 0 and b["first_act_1990_2006"]["share_of_pool"] is None
+    assert b["non_english"]["share_of_known_language"] is None
+    assert res["scenarios"]["six_fields"]["excluded_share"] is None
+    assert res["scenarios"]["six_fields"]["first_act_excluded_share"] is None
+
+
+def test_all_blank_language_reports_null_not_zero(tmp_path):
+    res = _report_of(tmp_path, [_row("a", doi="10.1016/x"), _row("b", doi="10.1016/y")])
+    ne = res["before_filter"]["non_english"]
+    assert ne["language_known_works"] == 0 and ne["share_of_known_language"] is None
+    assert ne["share_of_pool"] == 0.0  # defined: 0 of 2
+
+
+def test_no_first_act_work_reports_null_exclusion_share(tmp_path):
+    res = _report_of(tmp_path, [_row("a", doi="10.1016/x", year="2020")])
+    assert res["before_filter"]["first_act_1990_2006"] == {"works": 0, "share_of_pool": 0.0}
+    assert res["scenarios"]["six_fields"]["first_act_excluded_share"] is None

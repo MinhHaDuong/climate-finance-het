@@ -47,7 +47,6 @@ prefix,registrant,kind,source
 10.22617,Asian Development Bank,publisher,hand
 10.2991,Atlantis Press,publisher,hand
 10.4018,IGI Global,publisher,hand
-10.2172,OSTI (US Department of Energy),publisher,hand
 10.3386,National Bureau of Economic Research,publisher,hand
 10.9734,Science Domain International,publisher,hand
 10.5539,Canadian Center of Science and Education,publisher,hand
@@ -73,6 +72,7 @@ prefix,registrant,kind,source
 10.3790,Duncker & Humblot,publisher,hand
 10.17645,Cogitatio,publisher,hand
 10.3233,IOS Press,publisher,hand
+10.2172,OSTI (US Department of Energy),platform,hand
 10.2139,SSRN,platform,hand
 10.5281,Zenodo,platform,hand
 10.6084,Figshare,platform,hand

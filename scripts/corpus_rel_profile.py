@@ -64,6 +64,12 @@ COST_STAGE2 = 5.9 / 34766
 LANG_ALIASES = {"eng": "en", "spa": "es", "fra": "fr", "por": "pt", "deu": "de", "zho": "zh"}
 
 
+def ratio(num: int, den: int) -> float | None:
+    """``num / den`` rounded, or ``None`` (never 0) when the denominator is 0: the share is
+    undefined there, e.g. no language known, an empty pool, no first-act work."""
+    return round(num / den, 4) if den else None
+
+
 def period_of(year: str) -> str:
     y = int(year) if re.fullmatch(r"\d{4}", year or "") else 0
     return next((name for name, lo, hi in PERIODS if lo <= y <= hi), "other_years")
@@ -72,6 +78,13 @@ def period_of(year: str) -> str:
 def language_of(code: str) -> str:
     c = (code or "").strip().lower().split("-")[0]
     return LANG_ALIASES.get(c, c) or "unknown"
+
+
+def under_data(path: str) -> bool:
+    """True when ``path`` is ``<root>/data`` or inside it, after resolving symlinks and ``..``."""
+    data = os.path.realpath(os.path.join(rp.ROOT, "data"))
+    out = os.path.realpath(path)
+    return out == data or out.startswith(data + os.sep)
 
 
 def read_backfill(path: str | None) -> dict:
@@ -177,7 +190,7 @@ def report(m: dict, profile: dict, pool_path: str, backfill_path: str | None, n_
     by = m["by_dim"]
 
     def share(dim, val):
-        return round(by[(dim, val)] / n, 4)
+        return ratio(by[(dim, val)], n)
 
     known = sum(v for (d, k), v in by.items() if d == "language" and k != "unknown")
     non_en = sum(v for (d, k), v in by.items() if d == "language" and k not in ("unknown", "en"))
@@ -202,10 +215,12 @@ def report(m: dict, profile: dict, pool_path: str, backfill_path: str | None, n_
             "by_language": {k: v for (d, k), v in by.most_common() if d == "language"},
             "by_doc_type": {k: v for (d, k), v in by.most_common(60) if d == "doc_type"},
             "first_act_1990_2006": {"works": first_act_n, "share_of_pool": share("period", "1990-2006")},
-            "non_english": {"works": non_en, "share_of_known_language": round(non_en / known, 4),
-                            "share_of_pool": round(non_en / n, 4),
+            "non_english": {"works": non_en, "share_of_known_language": ratio(non_en, known),
+                            "share_of_pool": ratio(non_en, n),
                             "language_known_works": known, "language_unknown_works": by[("language", "unknown")],
-                            "note": "language is blank for most OpenAlex-lane works; the share of known language is a lower bound of unknown reliability"},
+                            "note": ("language is blank for most OpenAlex-lane works, so the share of known language "
+                                     "describes the labelled part only; a share is null when its "
+                                     "denominator is 0 (undefined, not zero)")},
         },
         "missing_by_field_works": {f: {d_v: c for (ff, (d, d_v)), c in m["miss_any"].items()
                                        if ff == f and d == "period"} | {"all": sum(
@@ -227,14 +242,14 @@ def report(m: dict, profile: dict, pool_path: str, backfill_path: str | None, n_
         ex = e["works"]
         out["scenarios"][scen] = {
             "required": [f for f in profile["required"] if f not in ignored],
-            "excluded_works": ex, "excluded_share": round(ex / n, 4),
+            "excluded_works": ex, "excluded_share": ratio(ex, n),
             "kept_works": n - ex,
             "first_failing_property": dict(m["waterfall"][scen].most_common()),
             "by_lane": _table(e, by, "lane"), "by_period": _table(e, by, "period"),
             "by_language": _table(e, by, "language"),
             "by_doc_type": dict(list(_table(e, by, "doc_type").items())[:25]),
             "first_act_kept": by[("period", "1990-2006")] - e[("period", "1990-2006")],
-            "first_act_excluded_share": round(e[("period", "1990-2006")] / first_act_n, 4),
+            "first_act_excluded_share": ratio(e[("period", "1990-2006")], first_act_n),
             "non_english_kept": sum(by[("language", k)] - e[("language", k)] for (d, k) in list(by)
                                     if d == "language" and k not in ("unknown", "en")),
             "spend_avoided_derived_usd": {
@@ -254,8 +269,8 @@ def main(argv=None):
     ap.add_argument("--profile-config", default=rp.DEFAULT_CONFIG)
     ap.add_argument("--output-dir", required=True)
     args = ap.parse_args(argv)
-    if os.path.abspath(args.output_dir).startswith(os.path.join(rp.ROOT, "data") + os.sep):
-        log.error("refusing to write under data/: %s", args.output_dir)
+    if under_data(args.output_dir):
+        log.error("refusing to write into data/ (DVC-tracked): %s", args.output_dir)
         return 1
     profile = rp.load_profile(args.profile_config)
     backfill = read_backfill(args.backfill)

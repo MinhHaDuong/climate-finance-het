@@ -19,6 +19,9 @@ version: 1
 enabled: false
 
 # Required fields, DataCite names. Remove `publisher` to drop that requirement.
+# The order here does not matter: the reason code of an excluded work is the first
+# missing required property in the fixed order of _rel_profile.FIELDS (identifier,
+# creator, title, publisher, publicationYear, resourceType).
 required: [identifier, creator, title, publisher, publicationYear, resourceType]
 
 # Accepted identifier forms, besides a DOI or an OpenAlex id (always accepted).
@@ -29,7 +32,11 @@ identifier:
   # Registered repository platforms: an id of this platform is persistent and
   # resolves at `url`. Add a platform here to recover its records; a platform
   # absent here (ceew, south_centre, cpd, ersa in the 2026-10-01 pool) is not
-  # accepted. The record-id prefix is the key.
+  # accepted. The record-id prefix is the key. `url` is declared, not checked: the
+  # loader requires one, nothing resolves it, and only the ids with an `{id}` slot build
+  # one. scielo, ajol and adb_ewp keep their entries because their record ids start with
+  # the platform name (`scielo:oai:...`), which the generic forms do not match
+  # (tests/test_rel_profile.py::test_platform_entries_are_not_covered_by_generic_forms).
   platforms:
     redalyc: {id: '^\d+$', url: 'https://www.redalyc.org/articulo.oa?id={id}'}
     garuda: {id: '^\d+$', url: 'https://garuda.kemdikbud.go.id/documents/detail/{id}'}
@@ -49,3 +56,9 @@ identifier:
 publisher:
   order: [host_org, doi_prefix]
   prefix_table: config/rel_doi_prefixes.csv
+  # A host organization equal (case-folded) to a platform registrant of the prefix table, or to
+  # one of these names, is not a publisher either: OpenAlex lists repositories as host
+  # organizations of their records. Names are those OpenAlex uses for the platform rows.
+  platform_names: [Zenodo, Figshare, SSRN, SSRN Electronic Journal, arXiv, arXiv.org, Research Square,
+                   ResearchGate, OSF Preprints, Open Science Framework, SocArXiv, JSTOR,
+                   Harvard Dataverse, AgEcon Search, EconStor, OpenEdition, Cairn.info]

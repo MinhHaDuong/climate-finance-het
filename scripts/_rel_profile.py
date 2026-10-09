@@ -25,7 +25,11 @@ The six DataCite mandatory properties, as read on a pool work:
 
 ``missing_fields`` returns every missing property, whatever is required, so the
 view records the full picture (``profile_missing``) and the required subset
-decides the exclusion (``profile_missing_<field>``, first in declared order).
+decides the exclusion. The reason code ``profile_missing_<field>`` names the
+first missing required property in the fixed order of ``FIELDS`` (identifier,
+creator, title, publisher, publicationYear, resourceType), not the order of
+``required`` in the config. A host organization that is a platform (Zenodo,
+Figshare, SSRN...) is not a publisher either.
 """
 
 import csv
@@ -73,8 +77,13 @@ def load_profile(path: str = DEFAULT_CONFIG) -> dict:
         if not spec.get("url"):
             raise ValueError(f"rel_profile.identifier.platforms.{name}: a resolvable url is required")
         platforms[name] = re.compile(spec["id"])
+    # A host organization that is a platform is not a publisher either: the registrants of the
+    # platform prefix rows plus the names OpenAlex gives them (config publisher.platform_names).
+    names = {r.casefold() for r, k in prefixes.values() if k == "platform"}
+    names |= {str(n).casefold() for n in cfg["publisher"].get("platform_names") or []}
     return {"version": cfg["version"], "enabled": bool(cfg["enabled"]), "required": required,
-            "generic": generic, "platforms": platforms, "order": order, "prefixes": prefixes}
+            "generic": generic, "platforms": platforms, "order": order, "prefixes": prefixes,
+            "platform_names": names}
 
 
 def rule(profile: dict, enabled: bool | None = None, required: list | None = None) -> dict:
@@ -122,7 +131,7 @@ def publisher_of(rec: dict, profile: dict) -> tuple[str, str]:
     for step in profile["order"]:
         if step == "host_org":
             org = (rec.get("host_org_name") or "").strip()
-            if org:
+            if org and org.casefold() not in profile["platform_names"]:
                 return org, "host_org"
         else:
             dois = [rec.get("doi") or ""] + re.split(r"[;|\s]+", rec.get("all_dois") or "")

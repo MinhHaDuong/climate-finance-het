@@ -8,6 +8,7 @@ Blocked-by: 2041
 --- log ---
 2026-10-09T12:00Z HDMX-coding-agent created
 2026-10-09T12:00Z HDMX-coding-agent note author decisions 2026-10-09: the gate is the full DataCite mandatory set; works without author, title, year and a handle are not worth spending time on; the handle definition is widened to registered repository ids
+2026-10-09T13:00Z HDMX-coding-agent note PR 1728 (no close claim): the profile is a counting view. Enabling it changes rel_reason in rel_view.csv and the counts only; no consumer of corpus_icf_stage1_input.py reads it, so it does not yet gate model calls and exit criterion 7 is not met by construction. The spend-avoided figures are what a gate would avoid.
 
 --- body ---
 
