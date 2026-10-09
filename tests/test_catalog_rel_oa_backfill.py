@@ -118,7 +118,9 @@ def test_lane_cap_stops_before_the_next_call(tmp_path, monkeypatch):
 def test_a_page_shorter_than_the_announced_count_is_not_recorded_as_done(tmp_path, monkeypatch):
     _patch_get(monkeypatch, [_Resp(results=[_work(1)], count=2)], [])
     bf.run(_args(tmp_path, _src(tmp_path, [1, 2])), "k")
-    assert bf.read_done(str(tmp_path / "out")) == {}
+    out = str(tmp_path / "out")
+    assert bf.read_done(out) == {}
+    assert bf.read_backfill(out) == {}  # records of a short page are not kept either
 
 
 def test_max_batches_makes_a_one_batch_probe(tmp_path, monkeypatch):
@@ -137,3 +139,35 @@ def test_coverage_counts_authors_host_organization_and_neither_per_stratum(tmp_p
     ((key, row),) = bf.coverage(ids, meta, done, recs).items()
     assert key == ("lane1", "2015-2025", "fr")
     assert (row["n"], row["done"], row["authors"], row["host_org"], row["neither"]) == (3, 3, 2, 1, 1)
+
+
+def test_insufficient_budget_answer_stops_the_run_and_marks_nothing_done(tmp_path, monkeypatch):
+    resp = _Resp(results=[_work(1), _work(2)])
+    resp._body["meta"]["error"] = "Insufficient budget"
+    seen = []
+    _patch_get(monkeypatch, [resp, _Resp(results=[_work(3), _work(4)])], seen)
+    bf.run(_args(tmp_path, _src(tmp_path, [1, 2, 3, 4])), "k")
+    out = str(tmp_path / "out")
+    assert len(seen) == 1 and bf.read_done(out) == {} and bf.read_backfill(out) == {}
+    spend = json.loads((tmp_path / "out" / "spend.jsonl").read_text().splitlines()[-1])
+    assert "insufficient" in spend["stopped"]
+
+
+def test_a_truncated_backfill_file_is_read_up_to_the_cut_and_the_run_resumes(tmp_path, monkeypatch):
+    src = _src(tmp_path, [1, 2, 3, 4])
+    _patch_get(monkeypatch, [_Resp(results=[_work(1), _work(2)]), _Resp(status=429)], [])
+    bf.run(_args(tmp_path, src), "k")
+    out = tmp_path / "out"
+    path = out / "backfill.jsonl.gz"
+    # a crash while writing the second batch: its member is cut, its ids are not in done.csv
+    with gzip.open(path, "ab") as fh:
+        fh.write(json.dumps(bf.backfill_record(_work(3))).encode() + b"\n")
+    path.write_bytes(path.read_bytes()[:-30])
+    (out / "done.csv").write_text((out / "done.csv").read_text() + "W3\n")  # row cut short too
+    assert set(bf.read_backfill(str(out))) == {"W1", "W2"}  # no EOFError
+    seen = []
+    _patch_get(monkeypatch, [_Resp(results=[_work(3), _work(4)])], seen)
+    bf.run(_args(tmp_path, src), "k")
+    assert seen[0]["filter"] == "ids.openalex:W3|W4"
+    assert set(bf.read_backfill(str(out))) == {"W1", "W2", "W3", "W4"}
+    assert set(bf.read_done(str(out))) == {"W1", "W2", "W3", "W4"}

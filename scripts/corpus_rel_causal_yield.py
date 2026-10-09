@@ -53,7 +53,7 @@ from _rel_causal_keys import (  # noqa: F401  (re-exported for callers and tests
     title_key,
     valid_doi,
 )
-from catalog_rel_sud_search import intake_cells
+from catalog_rel_sud_search import fill_blank, intake_cells, read_backfill
 from utils import get_logger, normalize_doi
 
 log = get_logger("rel_causal_yield")
@@ -63,7 +63,6 @@ DELIVERY_FIELDS = [
     "archive_path", "manifest_sha256", "work_key", "openalex_id", "eds_an", "doi",
     "title", "year", "language", "type", "has_abstract", "family", "formulation",
     "family_relevance", "in_refined", "in_unified", "in_sud",
-    "host_org_name", "host_org_id", "source_type", "issn_l", "landing_page",
 ]
 
 
@@ -273,6 +272,7 @@ INTAKE_RECORD_FIELDS = [
     "abstract_provenance", "url", "affiliation_countries", "version_hint",
     "lane_status", "lane_note", "doi_eds_hint", "repec_handle", "families", "formulations", "all_query_ids",
     "family_relevance", "in_refined", "in_unified", "in_sud",
+    "host_org_name", "host_org_id", "source_type", "issn_l", "landing_page",
 ]
 INTAKE_REGISTRY_FIELDS = [
     "query_id", "platform", "query", "run_at", "n_received", "completed", "filter",
@@ -363,7 +363,7 @@ def intake_rows(records, registry_all, labels, handles=None):
         year = first.get("year")
         handle, id_note = _eds_identity(rs, handles or {})
         eds = next((r for r in rs if r.get("eds_an") and r.get("authors")), {})
-        out.append({
+        out.append(fill_blank({
             "record_id": f"1652:{wk}", "query_id": first["search_id"],
             "platform": _platform_code(first["platform"]),
             "retrieved_at": reg[first["search_id"]]["run_at"], "title": first.get("title") or "",
@@ -382,7 +382,6 @@ def intake_rows(records, registry_all, labels, handles=None):
             if len(first.get("language") or "") != 2 else first["language"],
             "abstract": first.get("abstract") or "",
             "affiliation_countries": "; ".join(first.get("countries") or []),
-            **intake_cells(first),
             "lane_status": "already_in_pool" if any(r["in_unified"] for r in rs) else "candidate",
             "lane_note": "family relevance is a cheap-model mechanism judgment, not the ICF screen"
                          + ("; doi is the EDS DOI: it disagrees with the DOI of a record with the "
@@ -395,7 +394,8 @@ def intake_rows(records, registry_all, labels, handles=None):
             "families": "|".join(rel), "formulations": "|".join(sorted({r["formulation"] for r in rs})),
             "all_query_ids": "|".join(r["search_id"] for r in rs),
             "family_relevance": "|".join(f"{q}={lab or 'unlabelled'}" for q, lab in rel.items()),
-            **{k: _flag(any(r[k] for r in rs)) for k in ("in_refined", "in_unified", "in_sud")}})
+            **{k: _flag(any(r[k] for r in rs)) for k in ("in_refined", "in_unified", "in_sud")}},
+            intake_cells(first)))
         for r in rs[1:]:
             excluded.append({"record_id": f"1652:{wk}", "query_id": r["search_id"],
                              "reason": "duplicate_in_lane", "title": r.get("title") or "",
@@ -614,6 +614,16 @@ def write_delivery(path, records, registry, labels, archive_path, manifest_sha25
                 "in_refined": r["in_refined"], "in_unified": r["in_unified"], "in_sud": r["in_sud"]})
 
 
+def apply_backfill(records, backfill):
+    """Fill the author, ISSN and host-organization cells of OpenAlex records from
+    a ticket 2041 backfill; a value the record already has is never overwritten."""
+    for r in records:
+        extra = backfill.get(r.get("openalex_id") or "")
+        if extra:
+            r.update(fill_blank(intake_cells(r), intake_cells(extra)))
+    return records
+
+
 def run(args):
     with open(args.families, encoding="utf-8") as fh:
         fam_cfg = yaml.safe_load(fh)
@@ -622,6 +632,8 @@ def run(args):
     dirs = [d for d in run_dirs + [args.eds_dir] if d]
     registry, registry_all, records = load_runs(dirs)
     assign_work_keys(records, DoiChecks(args.doi_checks) if args.doi_checks else None)
+    if getattr(args, "backfill", None):
+        apply_backfill(records, read_backfill(args.backfill))
     refined, unified, sud = load_catalog(args.refined), load_catalog(args.unified), load_sud(args.sud_results)
     for r in records:
         r.update(in_refined=r in refined, in_unified=r in unified, in_sud=r in sud)
@@ -707,6 +719,8 @@ def main(argv=None):
                     "would split a title group; without it no EDS DOI is promoted to doi")
     ap.add_argument("--eds-handles", help="eds_repec_handles.csv of catalog_rel_eds_repec_handles: "
                     "the RePEc handles of edsrep records, checked against the mirror")
+    ap.add_argument("--backfill", help="catalog_rel_oa_backfill.py directory: fills the authors, "
+                    "ISSN and host organization the OpenAlex records lack (ticket 2041)")
     ap.add_argument("--manifest-base", help="JSON with lane, ticket, delivery, delivered_at, "
                     "producer, needs_human, supersedes, notes (counts and coverage are added)")
     # Multi-output script (yields, recall, judge input, delivery): --output-dir.

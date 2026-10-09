@@ -24,6 +24,7 @@ import os
 import re
 import sys
 import unicodedata
+import zlib
 from datetime import datetime, timezone
 
 import yaml
@@ -241,18 +242,30 @@ def fill_blank(row, extra):
 BACKFILL_FILE = "backfill.jsonl.gz"
 
 
-def read_backfill(out_dir):
-    """{openalex_id: record} of a ``catalog_rel_oa_backfill.py`` directory;
-    a later record of the same id wins."""
-    out = {}
-    path = os.path.join(out_dir, BACKFILL_FILE)
-    if os.path.exists(path):
+def read_backfill_records(path):
+    """(records, truncated) of a backfill file. A run killed while writing leaves
+    a truncated gzip member: the complete lines before it are kept and
+    ``truncated`` says the tail was lost."""
+    recs, truncated = [], False
+    try:
         with gzip.open(path, "rt", encoding="utf-8") as fh:
             for line in fh:
-                if line.strip():
-                    rec = json.loads(line)
-                    out[rec["openalex_id"]] = rec
-    return out
+                if not line.endswith("\n"):
+                    truncated = True
+                    break
+                recs.append(json.loads(line))
+    except (EOFError, OSError, zlib.error):
+        truncated = True
+    return recs, truncated
+
+
+def read_backfill(out_dir):
+    """{openalex_id: record} of a ``catalog_rel_oa_backfill.py`` directory;
+    a later record of the same id wins, a truncated tail is ignored."""
+    path = os.path.join(out_dir, BACKFILL_FILE)
+    if not os.path.exists(path):
+        return {}
+    return {r["openalex_id"]: r for r in read_backfill_records(path)[0]}
 
 
 def load_corpus_keys(path):

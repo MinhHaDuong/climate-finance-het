@@ -2,7 +2,7 @@
 
 The older REL lanes (t1530, t1650, t1652, t1790) stored slim records that
 dropped the authors, the host organization, the source type, the ISSNs and the
-landing page. This script re-fetches those works by OpenAlex id, up to 200 per
+landing page. This script re-fetches those works by OpenAlex id, up to 100 per
 call (``filter=ids.openalex:W1|W2|...``), and keeps the fields the shared
 ``slim()`` keeps now. Nothing is written into the lane deliveries: the
 delivery scripts read the backfill and fill only blank cells.
@@ -38,6 +38,7 @@ from catalog_rel_sud_search import (
     OA_API,
     author_names,
     read_backfill,
+    read_backfill_records,
     venue_fields,
 )
 from pipeline_keystore import read_credential
@@ -45,7 +46,7 @@ from utils import MAILTO, get_logger, polite_get
 
 log = get_logger("rel_oa_backfill")
 
-BATCH = 200
+BATCH = 100  # 200 ids in one filter answered HTTPError on 2026-10-09; 100 works (ticket 2041 log)
 SELECT = "id,authorships,primary_location,locations"
 DATA_FILE = BACKFILL_FILE
 DONE_FILE = "done.csv"
@@ -116,7 +117,26 @@ def read_done(out_dir):
     if not os.path.exists(path):
         return {}
     with open(path, encoding="utf-8", newline="") as fh:
-        return {r["openalex_id"]: r["status"] for r in csv.DictReader(fh)}
+        # a row cut short by a crash has no status: that id is still pending
+        return {r["openalex_id"]: r["status"] for r in csv.DictReader(fh)
+                if r.get("status") in ("found", "absent")}
+
+
+def repair(out_dir):
+    """Rewrite a backfill file whose last gzip member a crash truncated, keeping
+    the complete records (temporary file, then rename). True when it repaired."""
+    path = os.path.join(out_dir, DATA_FILE)
+    if not os.path.exists(path):
+        return False
+    recs, truncated = read_backfill_records(path)
+    if not truncated:
+        return False
+    tmp = path + ".tmp"
+    with gzip.open(tmp, "wt", encoding="utf-8") as fh:
+        for r in recs:
+            fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    os.replace(tmp, path)
+    return True
 
 
 def batches(ids, size=BATCH):
@@ -152,7 +172,8 @@ def fetch_batch(batch, api_key, delay, meter):
     try:
         resp = polite_get(OA_API, params=params, delay=delay)
     except Exception as exc:  # network failure after retries
-        return [], f"error: {type(exc).__name__}", 0.0
+        status = getattr(getattr(exc, "response", None), "status_code", "")
+        return [], f"error: {type(exc).__name__} {status}".strip(), 0.0
     meter.observe(resp.headers)
     cost = meter.spent - before
     if resp.status_code == 429:
@@ -193,6 +214,8 @@ def run(args, api_key, fetch=fetch_batch):
         log.error("OPENALEX_API_KEY is unavailable: refusing the unauthenticated pool")
         return 2
     os.makedirs(args.output_dir, exist_ok=True)
+    if repair(args.output_dir):
+        log.warning("truncated tail of %s dropped; its batch is refetched", DATA_FILE)
     meter = Meter(args.lane_cap, args.daily_floor)
     started = datetime.now(timezone.utc).isoformat(timespec="seconds")
     costs, stop, n_found = [], "", 0
