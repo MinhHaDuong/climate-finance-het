@@ -490,11 +490,12 @@ def mu_venue(tier, tier_rule, indexes_hit, hijacked, params):
        ``other_c``;
     7. ``unknown``  no resolvable venue: 0.5.
 
-    Shipped defaults: ``conflict`` 0 and ``other_c`` 0, so every score equals
-    the tier score of 2026-10-01 (C the rest, excluded). Both are open
-    switches (``status: open``, MOE option, not author-decided) that reopen
-    that decision: ``conflict`` 0.5 or 1 gives a listed tier C 0.5 or 1;
-    ``other_c`` 0.5 gives an unlisted tier C by ``other`` 0.5. Absence from
+    Shipped defaults: ``conflict`` 0.5 (author decision 2026-10-09: a listed
+    tier C neither outranks nor is outranked; 0 restores the tier score of
+    2026-10-01, 1 lets the index outrank) and ``other_c`` 0, so every other
+    score equals the tier score of 2026-10-01 (C the rest, excluded).
+    ``other_c`` stays an open switch (``status: open``, MOE option, not
+    author-decided): 0.5 gives an unlisted tier C by ``other`` 0.5. Absence from
     every index is never negative for the venue types the 2026-10-01 rules
     already put at 0.5 or 1 (tier A or B, no venue).
     """

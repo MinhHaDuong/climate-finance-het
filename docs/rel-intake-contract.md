@@ -334,6 +334,14 @@ score by period (first act 1990-2006 apart) and language; the view takes
 `mu_venue` as the seriousness facet and exposes `tier`, `index_hits` and the
 reason (`rel_reason_detail`), with the same scenarios in `rel_sensitivity.csv`.
 
+**Decision 2026-10-09 on `conflict_c_in_index`.** The author decided that a tier C
+venue listed in a trusted index scores 0.5: the shipped value is 0.5 and the
+status line reads `author decision`, superseding the "open", "MOE option" and "0 by
+default" wording above for this switch only. `tier_c_other_mu` stays 0 (open).
+Against the archived pool of 389,291 works the change moves 2,008 works from 0
+to 0.5; every other work scores as under `tier_membership`. Revert: set the
+value back to 0 and rebuild.
+
 `make rel-view` (ticket 1843) then grades every work as a member of a fuzzy
 set: its membership `mu` is the minimum over the facets seriousness, ICF and
 discipline, evaluated in that order (cheapest first) and stopped at the first

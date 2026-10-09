@@ -316,7 +316,7 @@ def test_seriousness_rule_reads_the_decided_configs():
     srule = rr.seriousness_rule(load("rel_venue_registries.yaml"), load("rel_venue_tiers.yaml"))
     evidence = srule.pop("evidence")  # ticket 2042; its own tests: test_rel_venue_evidence.py
     assert srule == SRULE
-    assert evidence["conflict"] == 0.0 and evidence["other_c"] == 0.0
+    assert evidence["conflict"] == 0.5 and evidence["other_c"] == 0.0  # conflict: author decision 2026-10-09
 
 
 def test_membership_rule_checks_values_and_the_unsure_exit():
