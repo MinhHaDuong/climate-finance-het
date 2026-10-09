@@ -195,7 +195,9 @@ def fetch_openalex(kind, keys, api_key, meter, get=oa_get):
         return [], reason, 0.0
     values = keys if kind == "ids.openalex" else [f"https://doi.org/{k}" for k in keys]
     params = {"filter": f"{kind}:" + "|".join(values), "select": SELECT,
-              "per_page": len(keys), "mailto": MAILTO, "api_key": api_key}
+              # room for two works per key: one DOI can match two OpenAlex works (batch 313 of
+              # the bulk run returned 101 for 100 DOIs and stopped on the short-page guard)
+              "per_page": min(200, 2 * len(keys)), "mailto": MAILTO, "api_key": api_key}
     before = meter.spent
     try:
         resp = get(params)
@@ -222,16 +224,23 @@ def fetch_openalex(kind, keys, api_key, meter, get=oa_get):
 def oa_records(kind, keys, works, by_key):
     """(records, statuses): one record per requested key, found or absent."""
     ids = {(w.get("id") or "").rsplit("/", 1)[-1]: w for w in works}
-    dois = {normalize_doi(w.get("doi")): w for w in works if w.get("doi")}
+    dois = {}
+    for w in works:  # a DOI shared by two works keeps the first listed, with its match count
+        if w.get("doi"):
+            dois.setdefault(normalize_doi(w["doi"]), []).append(w)
     records, statuses = [], []
     for k in keys:
         t = by_key[k]
-        w = ids.get(t["openalex_id"]) or (dois.get(t["doi"]) if t["doi"] else None)
+        w = ids.get(t["openalex_id"])
+        matches = 1
+        if w is None and t["doi"] and dois.get(t["doi"]):
+            w, matches = dois[t["doi"]][0], len(dois[t["doi"]])
         if w is None:
             statuses.append((k, "absent"))
             continue
         records.append({"key": k, "openalex_id": (w.get("id") or "").rsplit("/", 1)[-1],
-                        "doi": normalize_doi(w.get("doi")), "type": w.get("type") or ""})
+                        "doi": normalize_doi(w.get("doi")), "type": w.get("type") or "",
+                        "matches": matches})
         statuses.append((k, "found"))
     return records, statuses
 

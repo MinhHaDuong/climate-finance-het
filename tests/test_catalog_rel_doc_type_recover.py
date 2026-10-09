@@ -93,7 +93,7 @@ def test_the_request_asks_by_id_or_by_doi_with_the_ticket_select():
     dt.fetch_openalex("ids.openalex", ["W1", "W2"], "K", meter, get=get)
     dt.fetch_openalex("doi", ["10.1/c"], "K", meter, get=get)
     assert seen[0]["filter"] == "ids.openalex:W1|W2" and seen[0]["select"] == "id,doi,type"
-    assert seen[0]["per_page"] == 2
+    assert seen[0]["per_page"] == 4  # room for a DOI that matches two works
     assert seen[1]["filter"] == "doi:https://doi.org/10.1/c"
 
 
