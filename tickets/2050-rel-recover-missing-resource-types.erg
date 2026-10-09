@@ -7,6 +7,8 @@ Author: HDMX-coding-agent
 2026-10-09T20:00Z HDMX-coding-agent created
 2026-10-09T20:00Z HDMX-coding-agent note author decision 2026-10-09: resource type stays REQUIRED in the metadata profile (2043); recover the missing types before the filter is switched on, do not waive them
 
+2026-10-09T10:09Z HDMX-coding-agent note stage A probe 2026-10-09 (299 stratified blank works; 4 OpenAlex calls = 0.0004 USD; 240 Crossref requests): OpenAlex type 282/299 = 94.3% (ids.openalex 157/161, doi 125/138); Crossref type 209/240 DOIs = 87.1%, and 0/17 on the 17 works OpenAlex missed (13 bibcnrs Chinese/Taiwanese DOIs, 4 without a usable DOI); where both answer (209), 194 equivalent after mapping, 15 differ. CLI scripts/catalog_rel_doc_type_recover.py; bulk fetch of 31,556 works = 316 calls, derived 0.0316 USD, NOT run: waits for the author's go and the delivery-route choice
+2026-10-09T10:14Z HDMX-coding-agent note stage B fetch 2026-10-09 (OpenAlex only, Crossref skipped): 31,556 ids requested (30,494 by OpenAlex id, 1,062 by DOI), 30,726 found (all with a type), 830 absent (776 W ids not returned, 54 DOIs); 317 requests, measured spend 0.0317 USD (sum of x-ratelimit-cost-usd, 0.0001 per call), ~2.5 min. Blank set 32,744: recovered 30,726 (93.8%), residue 2,018 = 1,188 no identifier + 830 id not returned. Archive /home/haduong/data/projets/climate-finance-het/rel_doc_types/2026-10-09/ (MANIFEST.sha256; doc_types.csv is the enrichment table, to be joined by 2052). Not delivered into the pool; ticket stays open until the join delivers the types
 --- body ---
 
 ## Context
