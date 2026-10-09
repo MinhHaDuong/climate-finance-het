@@ -178,3 +178,63 @@ def test_term_flag_needs_word_boundaries_for_latin_terms_only():
     pattern = rs.icf_flag_pattern(_cfg())
     assert pattern.search("Norway REDD+ payments") and pattern.search("气候融资的研究")
     assert not pattern.search("shredded paper and redden")
+
+
+# --- ticket 2041: one shared slim() that keeps what the request selects -------
+
+_ARTICLE = {
+    "id": "https://openalex.org/W2971398159", "doi": "https://doi.org/10.1111/rec.13035",
+    "display_name": "Principles", "publication_year": 2019, "type": "article",
+    "authorships": [
+        {"author": {"display_name": "Gann, G."}, "institutions": [{"country_code": "US"}]},
+        {"author": {"display_name": None}, "raw_author_name": "McDonald T."},
+        {"author": {"display_name": "Aronson, J."}, "institutions": []}],
+    "primary_location": {
+        "landing_page_url": "https://onlinelibrary.wiley.com/doi/10.1111/rec.13035",
+        "source": {"display_name": "Restoration Ecology", "type": "journal",
+                   "issn_l": "1061-2971", "issn": ["1061-2971", "1526-100X"],
+                   "host_organization": "https://openalex.org/P4310320595",
+                   "host_organization_name": "Wiley"}},
+    "abstract_inverted_index": {"w%d" % i: [i] for i in range(400)},  # > 1500 characters
+}
+_CHAPTER = {  # a book chapter whose primary_location has no source (Routledge)
+    "id": "https://openalex.org/W4411036258", "doi": "https://doi.org/10.4324/9781003470632-13",
+    "display_name": "Conclusion", "type": "book-chapter",
+    "authorships": [{"author": {"display_name": "Ghosh, A."}}],
+    "primary_location": {"landing_page_url": "https://doi.org/10.4324/9781003470632-13",
+                         "source": None}}
+
+
+def test_slim_keeps_authors_host_organization_issn_landing_page_and_full_abstract():
+    s = rs.slim(_ARTICLE)
+    assert (s["first_author"], s["all_authors"]) == (
+        "Gann, G.", ["Gann, G.", "McDonald T.", "Aronson, J."])
+    assert (s["host_org_name"], s["host_org_id"]) == ("Wiley", "P4310320595")
+    assert (s["source_type"], s["issn"], s["issn_l"]) == (
+        "journal", ["1061-2971", "1526-100X"], "1061-2971")
+    assert s["landing_page"].startswith("https://onlinelibrary.wiley.com/")
+    assert len(s["abstract"]) > 1500 and s["abstract"].endswith("w399")
+    assert (s["journal"], s["countries"]) == ("Restoration Ecology", ["US"])
+
+
+def test_slim_of_a_chapter_without_source_keeps_authors_and_leaves_venue_blank():
+    s = rs.slim(_CHAPTER)
+    assert s["all_authors"] == ["Ghosh, A."]
+    assert (s["host_org_name"], s["host_org_id"], s["source_type"], s["issn"], s["issn_l"]) \
+        == ("", "", "", [], "")
+    assert s["journal"] is None and s["landing_page"].startswith("https://doi.org/")
+
+
+def test_fill_blank_never_overwrites_a_delivered_value():
+    row = {"first_author": "Delivered, A.", "issn": "", "host_org_name": None}
+    out = rs.fill_blank(row, {"first_author": "Other, B.", "issn": "1234-5678",
+                              "host_org_name": "Wiley", "source_type": "journal"})
+    assert out == {"first_author": "Delivered, A.", "issn": "1234-5678",
+                   "host_org_name": "Wiley", "source_type": "journal"}
+
+
+def test_intake_cells_join_lists_and_fall_back_to_the_issn_l():
+    c = rs.intake_cells(rs.slim(_ARTICLE))
+    assert c["all_authors"] == "Gann, G.; McDonald T.; Aronson, J."
+    assert c["issn"] == "1061-2971; 1526-100X"
+    assert rs.intake_cells({"issn_l": "1111-2222"})["issn"] == "1111-2222"

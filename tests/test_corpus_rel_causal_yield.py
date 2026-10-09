@@ -282,6 +282,22 @@ def test_truncated_dois_are_dropped_and_untitled_works_are_not_retrievable():
     assert [(e["record_id"], e["reason"]) for e in excluded] == [("1652:oa:W1", "not_retrievable")]
 
 
+def test_intake_row_carries_the_authors_and_host_organization_of_the_slim_record():
+    """Ticket 2041: the intake columns come from the record, not from a constant blank."""
+    reg = [{"search_id": "S1", "platform": "openalex", "run_at": "2026-09-30T10:00:00+00:00",
+            "query_string": "q", "n_received": 1, "completed": "True"}]
+    recs = cy.assign_work_keys([
+        {"search_id": "S1", "platform": "openalex", "openalex_id": "W2", "doi": "", "title": "T",
+         "year": 2021, "question": "grid", "formulation": "IM", "in_refined": False,
+         "in_unified": False, "in_sud": False, "first_author": "Ledec, G.",
+         "all_authors": ["Ledec, G.", "Rapp, K."], "host_org_name": "Routledge",
+         "issn": ["1111-2222"], "source_type": "ebook platform"}])
+    (row,), _, _, _ = cy.intake_rows(recs, reg, {})
+    assert (row["first_author"], row["all_authors"]) == ("Ledec, G.", "Ledec, G.; Rapp, K.")
+    assert (row["issn"], row["host_org_name"], row["source_type"]) == (
+        "1111-2222", "Routledge", "ebook platform")
+
+
 # --- ticket 1755: the corrections of the replacement delivery
 
 SURVEY = "Survey of Recent Developments"

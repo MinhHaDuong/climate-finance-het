@@ -53,6 +53,7 @@ from _rel_causal_keys import (  # noqa: F401  (re-exported for callers and tests
     title_key,
     valid_doi,
 )
+from catalog_rel_sud_search import intake_cells
 from utils import get_logger, normalize_doi
 
 log = get_logger("rel_causal_yield")
@@ -62,6 +63,7 @@ DELIVERY_FIELDS = [
     "archive_path", "manifest_sha256", "work_key", "openalex_id", "eds_an", "doi",
     "title", "year", "language", "type", "has_abstract", "family", "formulation",
     "family_relevance", "in_refined", "in_unified", "in_sud",
+    "host_org_name", "host_org_id", "source_type", "issn_l", "landing_page",
 ]
 
 
@@ -380,6 +382,7 @@ def intake_rows(records, registry_all, labels, handles=None):
             if len(first.get("language") or "") != 2 else first["language"],
             "abstract": first.get("abstract") or "",
             "affiliation_countries": "; ".join(first.get("countries") or []),
+            **intake_cells(first),
             "lane_status": "already_in_pool" if any(r["in_unified"] for r in rs) else "candidate",
             "lane_note": "family relevance is a cheap-model mechanism judgment, not the ICF screen"
                          + ("; doi is the EDS DOI: it disagrees with the DOI of a record with the "
