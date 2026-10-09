@@ -18,6 +18,13 @@ Handle or a resolvable id:
 
 URLs are canonicalised first: query and fragment dropped, ``http`` read as
 ``https``, host lowercased without ``www.``, trailing slash dropped.
+
+Dedup version 2 (``dedup_version``, ticket 2047; version 1 is the default)
+adds one key, the RePEc handle (``repec_key``): a lane's ``repec_handle``
+column (ticket 2040, verified against the RePEc mirror) or a ``record_id``
+that is itself a handle (the RePEc mirror lane, t1810). RePEc handles are
+case-insensitive, so the key is the handle lowercased, ``repec:<archive>:
+<series>:<item>``; two rows share it only when the handles are equal.
 """
 
 import re
@@ -30,6 +37,8 @@ HANDLE_RESOLVERS = {"hdl.handle.net", "handle.net"}
 # A Handle is <prefix>/<suffix>, the prefix dotted digits (e.g. 10568/1234).
 HANDLE = re.compile(r"^\d+(?:\.\d+)*/\S+$")
 _HANDLE_PATH = re.compile(r"^/handle/(.+)$")
+# RePEc:<archive>:<series>:<item>, the shape qa_rel_intake checks.
+REPEC_HANDLE = re.compile(r"^repec:[a-z0-9]{3}:[a-z0-9_-]+:\S+$", re.IGNORECASE)
 
 # Step-4 guard: a title-only row joins on its title alone, so a generic title
 # ("Introduction", "Book reviews") would join an unrelated work.
@@ -80,6 +89,12 @@ def handle_key(v):
     if m and HANDLE.match(m.group(1)):
         return f"{host}:hdl:{m.group(1)}"
     return ""
+
+
+def repec_key(v):
+    """``repec:<archive>:<series>:<item>`` (lowercased) for a RePEc handle, else ``""``."""
+    s = str(v or "").strip()
+    return s.lower() if REPEC_HANDLE.match(s) else ""
 
 
 def url_ids(raw):

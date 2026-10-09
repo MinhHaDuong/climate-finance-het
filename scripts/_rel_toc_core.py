@@ -6,10 +6,9 @@ files: ``catalog_rel_toc.py`` does the I/O.
 """
 
 import collections
-import html
 import re
-import unicodedata
 
+from _rel_title_key import title_words
 from utils import normalize_doi, reconstruct_abstract
 
 FROM_DATE = "1990-01-01"
@@ -34,16 +33,12 @@ def crossref_filter(journal):
 _TAG = re.compile(r"<[^>]+>")
 
 
-def normalize_title(title):
-    """Casefold, strip markup and accents, keep letters and digits."""
-    if not isinstance(title, str) or not title:
-        return ""
-    t = html.unescape(_TAG.sub("", title))
-    t = unicodedata.normalize("NFKD", t)
-    t = "".join(c for c in t if not unicodedata.combining(c)).casefold()
-    t = re.sub(r"[\u2019\u2018'`]", "", t)  # "Editor's" -> "editors", not "editor s"
-    t = re.sub(r"[^\w\s]|_", " ", t)
-    return re.sub(r"\s+", " ", t).strip()
+# The REL title words, shared with the pool dedup (ticket 2047). On the pool
+# titles of 2026-10-09 an earlier form grouped as the former local copy did
+# except for about 20 titles (19 of 376,430 distinct work titles; 23 of
+# 379,364 row titles by the PR 1735 review), escaped tags and apostrophe
+# variants; ``Editor?s Note`` no longer groups with ``Editor′s Note``.
+normalize_title = title_words
 
 
 def surname_key(name):
