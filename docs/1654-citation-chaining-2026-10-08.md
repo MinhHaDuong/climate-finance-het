@@ -157,3 +157,13 @@ charge, not an invoice. The unique extra-job exception has ended permanently.
 Wave04 is accepted under a separately reviewed serialized three-job ceiling;
 three Luna main jobs remain active. No round1 closure or citation-round
 activation follows from these screening and metadata checkpoints.
+
+2026-10-09 collector contract hardening: reject nonfinite or negative native
+costs, invalid caps and corrupt liability meters before any new admission;
+retain the actual historical ledger unchanged. Final frontier admission now
+binds its declared version and closure pool/view/source-proof basis. Reused
+complete source-as-of direction queries preserve original unresolved
+relationship diagnostics and source-edge count/hash; query completion never
+means a valid citation relationship, known-zero references or saturation.
+Focused numerical, closure, native-gap and interrupted-import checks pass;
+final full gate and scientific closure remain pending.
