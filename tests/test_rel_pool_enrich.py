@@ -181,3 +181,31 @@ def test_highlights_without_a_colon_are_flagged_but_a_sentence_starting_with_the
     got = _by_doi(_build(rows, [t]))
     assert got["10.1/a"]["abstract_flag"] == "highlights"
     assert got["10.1/b"]["abstract_flag"] == "ok"
+
+
+@pytest.mark.parametrize("lead", ["Highlights\u25ba", "Highlights \u25aa", "Highlights - ", "Research highlights:",
+                                  "HIGHLIGHTS:"])
+def test_other_highlights_bullet_forms_are_flagged(lead):
+    text = lead + "We assess the economic impacts of climate metrics. " + "Results hold broadly. " * 12
+    t = _table("istex", {"abstract": "abstract"}, [{"doi": "10.1/a", "abstract": text}])
+    assert _build([_row("a", doi="10.1/a")], [t])[0]["abstract_flag"] == "highlights"
+
+
+def test_counters_start_at_zero_and_conflicts_are_counted():
+    rows = [_row("a", doi="10.1/a")]
+    t1 = _table("t1", {"doc_type": "t"}, [{"doi": "10.1/a", "t": "book"}])
+    t2 = _table("t2", {"doc_type": "t"}, [{"doi": "10.1/a", "t": "article"}])
+    enrich = en.Enrichment([t1, t2])
+    from _rel_pool_dedup import cluster
+    p = rp.build_pool(rows, cluster(rows, {}), LANES, enrich=enrich)[0]
+    assert (p["doc_type"], p["doc_type_source"]) == ("book", "t1")
+    rep = enrich.report()
+    assert rep["t1"]["unmatched"] == rep["t1"]["ambiguous"] == rep["t1"]["no_key"] == 0
+    assert rep["t1"]["doc_type_conflict"] == 1
+
+
+@pytest.mark.parametrize("label", ["catalogue", "lane-a"])
+def test_label_equal_to_catalogue_or_a_lane_is_refused(tmp_path, label):
+    path = _csv(tmp_path / "t.csv", [{"doi": "10.1/a", "abstract": REAL}])
+    with pytest.raises(RelPoolError, match="lane"):
+        en.load_tables([_config_entry(path, source=label)], "/", reserved={"lane-a"})

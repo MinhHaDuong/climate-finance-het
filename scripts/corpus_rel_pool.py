@@ -384,13 +384,14 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
         cfg, catalogue_path, intake_dir)
     stats = {}
     roots = cluster(rows, stats)
-    tables = load_tables(cfg.get("enrichment"), ROOT)
+    tables = load_tables(cfg.get("enrichment"), ROOT, reserved=set(lane_rank))
     enrich = Enrichment(tables) if tables else None
     pool = build_pool(rows, roots, lane_rank, enrich=enrich)
     if version == 2:
         stats2, pairs = {}, []
         roots2 = cluster(rows, stats2, version=2, pairs=pairs)
-        pool2 = build_pool(rows, roots2, lane_rank, version=2)
+        pool2 = build_pool(rows, roots2, lane_rank, version=2,
+                           enrich=Enrichment(tables) if tables else None)
         return write_migration(rows, (roots, pool, stats), (roots2, pool2, stats2), migration_dir,
                                pairs)
     meta = {"path": os.path.relpath(catalogue_path, ROOT) if os.path.isabs(catalogue_path)
@@ -398,7 +399,7 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
     report = make_report(rows, roots, deliveries, excluded, meta, superseded, stats)
 
     if enrich:
-        report["enrichment"] = enrich.report()
+        report["enrichment"] = enrich.report()   # the version-1 build, the pool written
     os.makedirs(out_dir, exist_ok=True)
     _write_pool(os.path.join(out_dir, "pool.csv"), pool,
                 POOL_COLUMNS + EXTRA_COLUMNS if enrich else POOL_COLUMNS)
