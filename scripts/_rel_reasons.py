@@ -450,8 +450,11 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
         for i in ev["indexes"]:
             out.append((f"index_dropped_{i}", dict(base, evidence=dict(ev, indexes=[x for x in ev["indexes"] if x != i]))))
             out.append((f"index_promoted_{i}", dict(base, evidence=dict(ev, promote=sorted(set(ev["promote"]) | {i})))))
-        out.append(("conflict_c_in_index_flipped",
-                    dict(base, evidence=dict(ev, conflict=0.0 if ev["conflict"] else 1.0))))
+        for v in (0.0, 0.5, 1.0):
+            if v != ev["conflict"]:
+                out.append((f"conflict_c_in_index_{v:g}", dict(base, evidence=dict(ev, conflict=v))))
+            if v != ev["other_c"]:
+                out.append((f"tier_c_other_mu_{v:g}", dict(base, evidence=dict(ev, other_c=v))))
     if base.get("nonresearch") == "to_c":  # the table cannot show "to_c" if built "off"
         out.append(("nonresearch_flipped", dict(base, nonresearch="off")))
     else:  # tier_without_nonresearch exists for the configured switch (b) only

@@ -13,6 +13,7 @@ import yaml
 pytestmark = pytest.mark.domain_corpus
 
 PARAMS = rv.evidence_params(tv.TIERS_CFG)
+PARAMS_HALF = dict(PARAMS, other_c=0.5)  # the open option: an unlisted C `other` is unknown
 SCOPUS_HEAD = ["Sourcerecord ID", "Source Title", "ISSN", "EISSN", "Active or Inactive", "Coverage", "Source Type"]
 SCOPUS_SOURCES = [
     ["1", "Revista Listada", "24681357", "", "Active", "2015-2025", "Journal"],
@@ -67,14 +68,15 @@ def test_hits_are_evaluated_at_the_publication_year():
 
 def test_absence_from_every_index_is_never_zero_unless_positively_unserious():
     for tier, rule, expected in [("A", "journal", 1), ("B", "b_series", 1), ("unknown", "no_venue", 0.5),
-                                 ("C", "other", 0.5), ("C", "repository", 0), ("C", "nonresearch", 0)]:
+                                 ("C", "other", 0), ("C", "repository", 0), ("C", "nonresearch", 0)]:
         assert rv.mu_venue(tier, rule, [], False, PARAMS)[0] == expected, (tier, rule)
 
 
 def test_index_is_positive_evidence_and_or_combined():
     assert rv.mu_venue("unknown", "no_venue", ["scopus"], False, PARAMS) == (1.0, "index")
     assert rv.mu_venue("A", "journal", ["doaj", "scopus"], False, PARAMS) == (1.0, "tier_ab")
-    assert rv.mu_venue("C", "other", ["scopus"], False, dict(PARAMS, indexes=[])) == (0.5, "unlisted")  # dropped
+    assert rv.mu_venue("C", "other", ["scopus"], False, dict(PARAMS, indexes=[])) == (0.0, "unlisted")  # dropped
+    assert rv.mu_venue("C", "other", [], False, PARAMS_HALF) == (0.5, "unlisted")
 
 
 def test_conflict_switch_is_the_moe_default_and_flips_without_code():
@@ -115,12 +117,13 @@ def _pool(oid, year):
 
 
 EXTRA_OA = [
-    _oa("W7", "S70", "Cuadernos de Economia Critica", "1234-5678"),      # serious, Spanish, in no index
+    {**_oa("W7", "S70", "Cuadernos de Economia Critica", "1234-5678"), "source_type": "journal"},  # serious, Spanish, in no index
+    _oa("W12", "S90", "Boletin sin tipo", "1357-2468"),                   # type unknown: tier C by rule other
     _oa("W8", "S80", "Revista Listada", "2468-1357"),                     # in Scopus 2015-2025
     {**_oa("W11", "S40", "Academy of Management Annals", "1941-6520", "https://aomannals.com/b"),
      "source_type": "journal"},                                            # clone domain, ISSN in Scopus
 ]
-EXTRA_POOL = [_pool("W7", 2020), _pool("W8", 2020), dict(_pool("W9", 2010), work_key="k:old"),
+EXTRA_POOL = [_pool("W7", 2020), _pool("W12", 2020), _pool("W8", 2020), dict(_pool("W9", 2010), work_key="k:old"),
               _pool("W11", 2020)]
 EXTRA_OA.append(_oa("W9", "S80", "Revista Listada", "2468-1357"))  # the same venue, an older work
 
@@ -146,8 +149,33 @@ def assert_hijacked_listed_in_an_index_stays_zero(rows):
 
 def test_serious_unindexed_journal_scores_half_not_zero(tmp_path):
     rows = _mu_rows(tmp_path)
-    assert rows["openalex:W7"] == ("0.5", "unlisted", "", "C")  # the old tier score was 0
+    assert rows["openalex:W7"] == ("1", "tier_ab", "", "A")  # typed journal: tier A, no index needed
     assert_serious_unindexed_journal_not_dropped(rows)
+
+
+def test_tier_c_other_is_zero_by_default_and_half_when_the_switch_is_flipped(tmp_path):
+    sw = tv.TIERS_CFG["venue_evidence"]["tier_c_other_mu"]
+    assert sw["value"] == 0 and sw["status"].startswith("open") and "author decision" not in sw["status"]
+    base = _mu_rows(tmp_path / "a")
+    assert base["openalex:W12"][:2] == ("0", "unlisted")
+    path = tv._cfg_copy(tmp_path, "rel_venue_tiers.yaml",
+                        lambda c: c["venue_evidence"]["tier_c_other_mu"].update(value=0.5))
+    flipped = _mu_rows(tmp_path / "b", tiers=path)
+    assert flipped["openalex:W12"][0] == "0.5"
+    assert {k for k in base if base[k][0] != flipped[k][0]} >= {"openalex:W12", "k:old"}
+    assert flipped["openalex:W7"] == base["openalex:W7"]
+
+
+def test_a_withdrawn_and_relisted_journal_keeps_its_later_years(tmp_path):
+    p = str(tmp_path / "d.xlsx")
+    tv.write_xlsx(p, {
+        "Added": [["Journal Title", "ISSN", "Date Added"], ["J", "1010-1014", "41800"], ["J", "1010-1014", "43600"]],
+        "Withdrawn": [["Journal Title", "ISSN", "Date Removed (dd/mm/yyyy)", "Reason"],
+                      ["J", "1010-1014", "42500", "Ceased publishing"]]})
+    _, entries = rvr.parse_doaj_listed([p], 2026)
+    ev = rv.IndexEvidence(entries)
+    got = lambda y: bool(rv.hits_at(ev.venue_entries(["1010-1014"]), -1, y))
+    assert [got(y) for y in (2014, 2016, 2017, 2019, 2021)] == [True, False, False, True, True]
 
 
 def test_hijacked_domain_listed_in_an_index_stays_zero(tmp_path):
@@ -159,8 +187,8 @@ def test_hijacked_domain_listed_in_an_index_stays_zero(tmp_path):
 def test_the_red_tests_fail_on_their_defective_variants(tmp_path, monkeypatch):
     real = rv.mu_venue
 
-    def legacy_c_is_zero(tier, rule, hit, hijacked, params):  # the defect: C by `other` scores 0
-        return real(tier, rule, hit, hijacked, dict(params, other_c=0.0))
+    def legacy_c_is_zero(tier, rule, hit, hijacked, params):  # the defect: a journal in no index is treated as C
+        return real("C" if tier == "A" and not hit else tier, rule, hit, hijacked, params)
 
     def index_before_hijack(tier, rule, hit, hijacked, params):  # the defect: an index outranks the clone flag
         return real(tier, rule, hit, hijacked and not set(hit) & set(params["indexes"]), params)
@@ -194,7 +222,7 @@ def test_flipping_the_conflict_switch_changes_only_the_conflict_works(tmp_path):
 
 
 def _row(key, year, language, tier, rule, idx, hijacked=False, excluded=False):
-    mu, why = rv.mu_venue(tier, rule, idx, hijacked, PARAMS)
+    mu, why = rv.mu_venue(tier, rule, idx, hijacked, PARAMS_HALF)
     return {"work_key": key, "year": str(year), "language": language, "tier": tier, "tier_rule": rule,
             "_idx": idx, "_hijacked": hijacked, "excluded": "true" if excluded else "false",
             "mu_venue": f"{mu:g}", "mu_rule": why, "mu_rule_version": "v", "index_hits": "", "tier": tier}
@@ -203,7 +231,7 @@ def _row(key, year, language, tier, rule, idx, hijacked=False, excluded=False):
 def test_counts_report_movement_by_period_and_language_and_each_index():
     rows = [_row("a", 1995, "es", "C", "other", []), _row("b", 1995, "en", "A", "journal", []),
             _row("c", 2020, "fr", "C", "other", ["doaj"]), _row("d", 2020, "en", "C", "repository", [])]
-    ev = crv.evidence_counts(rows, PARAMS, rv.tier_membership(tv.TIERS_CFG))
+    ev = crv.evidence_counts(rows, PARAMS_HALF, rv.tier_membership(tv.TIERS_CFG))
     assert ev["movement_vs_tier_score"]["1990-2006"]["es"]["moved"] == {"0->0.5": 1}
     assert ev["movement_vs_tier_score"]["1990-2006"]["(all)"] == {"works": 2, "moved": {"0->0.5": 1}}
     assert ev["movement_vs_tier_score"]["2015-2025"]["fr"]["moved"] == {"0->0.5": 1}
@@ -229,6 +257,10 @@ def test_rule_version_names_every_setting():
     assert a != rv.evidence_version(dict(PARAMS, conflict=1.0), "2026-10-01")
     assert a != rv.evidence_version(dict(PARAMS, indexes=["scopus"]), "2026-10-01")
     assert a != rv.evidence_version(PARAMS, "2026-11-01")
+    assert a != rv.evidence_version(dict(PARAMS, promote=["doaj"]), "2026-10-01")
+    assert a != rv.evidence_version(dict(PARAMS, negative_c_rules=[]), "2026-10-01")
+    assert a != rv.evidence_version(dict(PARAMS, presses=["x"]), "2026-10-01")
+    assert a != rv.evidence_version(PARAMS, "2026-10-01", "3")
 
 
 def test_config_lists_every_trusted_index_with_source_and_caveat():

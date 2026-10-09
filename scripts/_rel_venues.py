@@ -50,6 +50,7 @@ the value, the rule that fired and the rule version.
 """
 
 import csv
+import hashlib
 import re
 import unicodedata
 from collections import Counter
@@ -402,10 +403,13 @@ def evidence_params(cfg):
     return out
 
 
-def evidence_version(params, pull_date):
+def evidence_version(params, pull_date, tiers_version=""):
     """The rule version stamped on every ``mu_venue``: any setting change makes a new one."""
+    presses = hashlib.sha256("\n".join(params.get("presses") or []).encode()).hexdigest()[:8]
     return (f"v{params['version']};conflict={params['conflict']:g};other_c={params['other_c']:g};"
-            f"indexes={'+'.join(sorted(params['indexes']))};pull={pull_date}")
+            f"indexes={'+'.join(sorted(params['indexes']))};promote={'+'.join(sorted(params['promote']))};"
+            f"negc={'+'.join(sorted(params['negative_c_rules']))};presses={presses};"
+            f"tiers=v{tiers_version};pull={pull_date}")
 
 
 class IndexEvidence:
@@ -419,11 +423,15 @@ class IndexEvidence:
                 self.by_issn.setdefault(i, []).append(e)
 
     def venue_entries(self, issns):
-        """Entries listing any of ``issns``, sorted, one per (index, entry id)."""
+        """Entries listing any of ``issns``, sorted, one per (index, entry id).
+
+        Rows sharing an id (a journal withdrawn and re-listed) merge their spans.
+        """
         out = {}
         for i in sorted(issns):
             for e in self.by_issn.get(i, []):
-                out.setdefault((e["registry"], e["entry_id"]), e)
+                k = (e["registry"], e["entry_id"])
+                out[k] = dict(e, spans=tuple(sorted(set(out[k]["spans"]) | set(e["spans"])))) if k in out else e
         return [out[k] for k in sorted(out)]
 
     def press_hit(self, hosts):
@@ -522,6 +530,8 @@ def load_work_venues(path, no_venue="keep_flagged"):
             r["excluded"] = r["excluded"] == "true"
             r["unknown"] = r["tier"] == "unknown"
             r["tier_included"] = r["tier"] in ("A", "B") or (r["unknown"] and no_venue == "keep_flagged")
+            if r.get("mu_venue", "") != "" and not r["unknown"]:  # ticket 2042: the score decides
+                r["tier_included"] = float(r["mu_venue"]) >= 0.5
             r["included"] = r["tier_included"] and not r["excluded"]
             out[r["work_key"]] = r
     return out

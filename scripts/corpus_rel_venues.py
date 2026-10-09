@@ -318,7 +318,7 @@ def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
     tiers_no_ngo = rv.without_categories(tiers, [NGO_CATEGORY])
     params = rv.evidence_params(tiers_cfg)
     evidence = rv.IndexEvidence(getattr(registries, "positive", []), params["presses"])
-    version = rv.evidence_version(params, registries.pull_date)
+    version = rv.evidence_version(params, registries.pull_date, tiers_cfg["version"])
     works, by_venue = [], defaultdict(list)
     for w in pool:
         key, how, ev = resolver.resolve(w)
@@ -443,8 +443,11 @@ def evidence_counts(work_rows, params, tier_mu):
     for i in params["indexes"]:
         scenarios[f"drop:{i}"] = dict(params, indexes=[x for x in params["indexes"] if x != i])
         scenarios[f"promote:{i}"] = dict(params, promote=sorted(set(params["promote"]) | {i}))
-    scenarios["conflict_c_in_index=0"] = dict(params, conflict=0.0)
-    scenarios["conflict_c_in_index=1"] = dict(params, conflict=1.0)
+    for v in (0.0, 0.5, 1.0):
+        if v != params["conflict"]:
+            scenarios[f"conflict_c_in_index={v:g}"] = dict(params, conflict=v)
+        if v != params["other_c"]:
+            scenarios[f"tier_c_other_mu={v:g}"] = dict(params, other_c=v)
     sens = {}
     for name, p in scenarios.items():
         vals = [_scenario_mu(r, p) for r in work_rows]
