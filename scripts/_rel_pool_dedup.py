@@ -43,10 +43,18 @@ stripped, apostrophes deleted, NFKC, Latin accents folded, then letters, marks,
 digits and currency signs only, no spaces; see that module). The generic-title
 test of step 4 reads ``title_words``, the same title with its spaces.
 
-Working papers and articles. In both versions a working paper and its article
-that carry their own DOIs stay two works, unless a shared OpenAlex record joins
-them (step 2). The author decided on 2026-10-09 that a working paper and its
-published article are ONE work; that rule is ticket 2048 and is not coded here.
+5. version 2 only: a working paper and its published article are ONE work
+   (author decision of 2026-10-09, ticket 2048; ``_rel_pool_versions``):
+   5a. a lane's ``version_hint`` that resolves to one component joins it;
+   5b. a working-paper-only component joins a published component with the
+   same title key when the article year minus the working-paper year is
+   between -1 and +5; a cluster that would hold two published components
+   joins nothing.
+
+Working papers and articles. In version 1 a working paper and its article that
+carry their own DOIs stay two works, unless a shared OpenAlex record joins
+them (step 2). Version 2 joins them by step 5; version 1 is still the default,
+so the pool keeps them apart until ticket 2048 switches the version.
 
 Every step decides on the components the previous steps left and applies its
 unions at once, so the result does not depend on row order.
@@ -55,6 +63,7 @@ unions at once, so the result does not depend on row order.
 from collections import defaultdict
 
 from _rel_pool_keys import is_generic_title
+from _rel_pool_versions import version_unions
 from _rel_title_key import title_key, title_words
 from utils import normalize_title
 
@@ -246,12 +255,13 @@ def cluster(rows, stats=None, version=1):
     ``stats`` (a dict) receives the step counts: ``ambiguous_title_groups``,
     ``ambiguous_title_only``, ``generic_title_only``."""
     v2 = version >= 2
-    return cluster_with(rows, stats, title_normalizer(version), repec=v2, guard=v2)
+    return cluster_with(rows, stats, title_normalizer(version), repec=v2, guard=v2, versions=v2)
 
 
-def cluster_with(rows, stats, norm, repec, guard=False):
-    """The cascade with a given title normalizer, with or without step 2c and
-    the component guard of steps 3 and 4.
+def cluster_with(rows, stats, norm, repec, guard=False, versions=False, pairs=None):
+    """The cascade with a given title normalizer, with or without step 2c,
+    the component guard of steps 3 and 4 and step 5 (``versions``; ``pairs``
+    receives its accepted title-and-window pairs, see ``version_unions``).
 
     ``cluster`` names the two versions; the version 2 report also runs each
     change alone on top of version 1 to tell which one causes a merge or a split."""
@@ -278,7 +288,10 @@ def cluster_with(rows, stats, norm, repec, guard=False):
     for i, j in pending:
         uf.union(i, j)
     ambiguous_title_only, generic = _title_only_unions(rows, uf, norm, guard)
+    vstats = version_unions(rows, uf, norm, WORDS.get(norm, norm), pairs=pairs) if versions else None
     if stats is not None:
         stats.update(ambiguous_title_groups=ambiguous, ambiguous_title_only=ambiguous_title_only,
                      generic_title_only=generic)
+        if vstats is not None:
+            stats["versions"] = vstats
     return [uf.find(i) for i in range(len(rows))]

@@ -14,7 +14,8 @@ Files written in the migration directory:
   ``merge;split``; ``cause`` names the version 2 changes that, each applied
   alone on top of version 1, already make the change: ``title_key`` (the new
   title normalizer), ``repec_handle`` (the RePEc handle key, step 2c),
-  ``component_guard`` (steps 3 and 4 judge whole components), several joined
+  ``component_guard`` (steps 3 and 4 judge whole components), ``versions``
+  (step 5, a working paper and its article are one work), several joined
   by ``|`` when each alone does it, or ``combined`` when only changes together
   do it. ``inputs_md5``
   fingerprints the rows (their record ids). A rerun appends the rows not
@@ -27,7 +28,8 @@ Files written in the migration directory:
   build; the only derived numbers are under ``derived``, with their arithmetic.
 
 Categories: ``merged`` (a version 2 work gathering two or more version 1
-works, by cause), ``split``, ``rekeyed`` (key changed, no merge or split),
+works, by cause), ``versions_merged`` (a version 2 work in which step 5 joined
+two or more components of version 2 without step 5; ticket 2048), ``split``, ``rekeyed`` (key changed, no merge or split),
 ``multi_doi`` and ``multi_openalex`` (version 2 works with two or more DOIs or
 OpenAlex ids), ``title_only`` (version 2 works named by their title alone).
 A work counts once per lane it draws from: lane counts add up to more than
@@ -38,10 +40,12 @@ import csv
 import hashlib
 import json
 import os
+import re
 from collections import Counter, defaultdict
 
-from _rel_pool_dedup import cluster_with
-from _rel_title_key import title_key
+from _rel_pool_dedup import UnionFind, cluster_with
+from _rel_pool_versions import recall_on_known
+from _rel_title_key import title_key, title_words
 from utils import normalize_title
 
 MIGRATION_FILE = "work_key_migration.csv"
@@ -51,7 +55,16 @@ WORK_COLUMNS = ["category", "cause", "work_key", "other_work_keys", "year", "per
                 "language", "sources", "n_dois", "n_openalex_ids", "title"]
 PERIODS = [("1990-2006", 1990, 2006), ("2007-2014", 2007, 2014), ("2015-2025", 2015, 2025)]
 FIRST_ACT = "1990-2006"
-CATEGORIES = ["merged", "split", "rekeyed", "multi_doi", "multi_openalex", "title_only"]
+CATEGORIES = ["merged", "versions_merged", "split", "rekeyed", "multi_doi", "multi_openalex",
+              "title_only"]
+
+
+def dois_of(all_dois):
+    """The DOIs of an ``all_dois`` cell. The cell joins DOIs with ``;``, and a
+    SICI DOI holds one itself (``10.1002/(sici)…co;2-d``): split only before
+    a ``10.`` prefix. Splitting on every ``;`` counted 365 multi-DOI works on
+    the pool of 2026-10-09, of which 340 carry one SICI DOI (ticket 2048)."""
+    return [d for d in re.split(r";(?=10\.)", all_dois or "") if d]
 
 
 def period(year):
@@ -79,9 +92,12 @@ def _root_keys(rows, roots, pool):
     return {root: p["work_key"] for root, p in pairs}
 
 
-# Each version 2 change alone on top of version 1: (name, normalizer, step 2c, guard).
-CHANGES = [("title_key", title_key, False, False), ("repec_handle", normalize_title, True, False),
-           ("component_guard", normalize_title, False, True)]
+# Each version 2 change alone on top of version 1:
+# (name, normalizer, step 2c, guard, step 5).
+CHANGES = [("title_key", title_key, False, False, False),
+           ("repec_handle", normalize_title, True, False, False),
+           ("component_guard", normalize_title, False, True, False),
+           ("versions", normalize_title, False, False, True)]
 
 
 def _cause(hits):
@@ -102,8 +118,8 @@ def compare(rows, v1, v2):
         to_new[o].add(n)
         to_old[n].add(o)
     # The cascade with one change at a time tells which change does it.
-    alone = [cluster_with(rows, None, norm, repec=repec, guard=guard)
-             for _, norm, repec, guard in CHANGES]
+    alone = [cluster_with(rows, None, norm, repec=repec, guard=guard, versions=versions)
+             for _, norm, repec, guard, versions in CHANGES]
 
     def one(idx, roots):
         return len({roots[i] for i in idx}) == 1
@@ -150,9 +166,12 @@ def _append_migration(path, pairs, inputs_md5):
     return len(new)
 
 
-def _work_rows(diff, pool1, pool2):
-    """(category, cause, work, other keys) for every counted work."""
+def _work_rows(diff, pool1, pool2, by_versions=None):
+    """(category, cause, work, other keys) for every counted work.
+
+    ``by_versions``: work_key -> the version 2 works without step 5 it gathers."""
     p1 = {p["work_key"]: p for p in pool1}
+    by_versions = by_versions or {}
     out = []
     changed = set(diff["split"])
     for p in pool2:
@@ -160,7 +179,9 @@ def _work_rows(diff, pool1, pool2):
         if k in diff["merged"]:
             out.append(("merged", diff["merged"][k], p, sorted(diff["to_old"][k])))
             changed |= diff["to_old"][k]
-        if len(p["all_dois"].split(";")) > 1:
+        if k in by_versions:
+            out.append(("versions_merged", "", p, by_versions[k]))
+        if len(dois_of(p["all_dois"])) > 1:
             out.append(("multi_doi", "", p, []))
         if len(p["all_openalex_ids"].split(";")) > 1:
             out.append(("multi_openalex", "", p, []))
@@ -206,6 +227,17 @@ def _markdown(report):
              "lane it draws from.", "", "## Totals (measured)", ""]
     lines += [f"- {k}: {v:,}" for k, v in report["totals"].items()]
     lines += ["", "## Derived", ""] + [f"- {k}: {v}" for k, v in report["derived"].items()]
+    v = report.get("versions")
+    if v:
+        lines += ["", "## Step 5: working paper and published (ticket 2048, measured)", "",
+                  f"- works made by step 5: {v['works_made_by_step_5']:,} "
+                  f"(from {v['parts_joined_by_step_5']:,} components)",
+                  "- step counts: " + ", ".join(f"{k} {n:,}" for k, n in
+                                                report["stats"]["v2"].get("versions", {}).items())]
+        for name, rec in v["recall"].items():
+            lines.append(f"- recall on the {rec['works']:,} {name} works of version 2 without "
+                         f"step 5: {rec['rejoined']:,} rejoined; missed by reason "
+                         + ", ".join(f"{k} {n:,}" for k, n in rec["missed_by_reason"].items()))
     for title, block in (("All periods", report["counts"]), ("First act, 1990-2006", report["first_act"])):
         lines += ["", f"## {title}", ""]
         for cat in CATEGORIES:
@@ -218,15 +250,42 @@ def _markdown(report):
     return "\n".join(lines).rstrip() + "\n"
 
 
+def _versions(rows, roots2, pool2, diff):
+    """Step 5 (ticket 2048): the version 2 works it makes, and its recall.
+
+    Recall is measured on the works of version 2 without step 5 that already
+    hold two or more DOIs (or OpenAlex ids), joined by a shared record: cut
+    into one part per identifier, would step 5 alone rejoin them?"""
+    roots_nv = cluster_with(rows, None, title_key, repec=True, guard=True, versions=False)
+    k2 = dict(zip(sorted(set(roots2)), (p["work_key"] for p in pool2)))
+    parts = defaultdict(set)
+    members = defaultdict(list)
+    for i, (r2, rnv) in enumerate(zip(roots2, roots_nv)):
+        parts[k2[r2]].add(rnv)
+        members[rnv].append(i)
+    by_work = {k: sorted(diff["to_old"].get(k, ())) for k, ps in parts.items() if len(ps) > 1}
+
+    def multi(field):
+        return [m for m in members.values()
+                if len({rows[i][field] for i in m if rows[i][field]}) > 1]
+
+    recall = {name: recall_on_known(rows, multi(field), field, title_key, title_words, UnionFind)
+              for name, field in (("multi_doi", "doi"), ("multi_openalex", "openalex_id"))}
+    return {"by_work": by_work, "works_made_by_step_5": len(by_work),
+            "parts_joined_by_step_5": sum(len(parts[k]) for k in by_work),
+            "recall": recall}
+
+
 def write_migration(rows, v1, v2, out_dir):
     """Write the report, the works list and the migration table; return the report."""
     roots1, pool1, stats1 = v1
     roots2, pool2, stats2 = v2
     diff = compare(rows, v1, v2)
+    versions = _versions(rows, roots2, pool2, diff)
     inputs_md5 = hashlib.md5("\n".join(sorted(r["record_id"] for r in rows)).encode()).hexdigest()
     os.makedirs(out_dir, exist_ok=True)
     appended = _append_migration(os.path.join(out_dir, MIGRATION_FILE), diff["pairs"], inputs_md5)
-    work_rows = _work_rows(diff, pool1, pool2)
+    work_rows = _work_rows(diff, pool1, pool2, versions.pop("by_work"))
     with open(os.path.join(out_dir, "dedup_v2_works.csv"), "w", encoding="utf-8", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=WORK_COLUMNS, lineterminator="\n")
         w.writeheader()
@@ -235,7 +294,7 @@ def write_migration(rows, v1, v2, out_dir):
                         "other_work_keys": ";".join(others), "year": p["year"],
                         "period": period(p["year"]), "language": p["language"],
                         "sources": p["sources"],
-                        "n_dois": len([d for d in p["all_dois"].split(";") if d]),
+                        "n_dois": len(dois_of(p["all_dois"])),
                         "n_openalex_ids": len([d for d in p["all_openalex_ids"].split(";") if d]),
                         "title": p["title"]})
     counts, first = _counts(work_rows)
@@ -243,7 +302,7 @@ def write_migration(rows, v1, v2, out_dir):
               "migration_pairs": len(diff["pairs"]), "migration_rows_appended": appended,
               **{cat: counts[cat]["total"] for cat in CATEGORIES},
               "merged_v1_works": sum(len(diff["to_old"][k]) for k in diff["merged"]),
-              "multi_doi_v1": sum(len(p["all_dois"].split(";")) > 1 for p in pool1),
+              "multi_doi_v1": sum(len(dois_of(p["all_dois"])) > 1 for p in pool1),
               "multi_openalex_v1": sum(len(p["all_openalex_ids"].split(";")) > 1 for p in pool1),
               "title_only_v1": sum(p["work_key"].startswith("title:") for p in pool1)}
     report = {
@@ -251,7 +310,7 @@ def write_migration(rows, v1, v2, out_dir):
         "derived": {"works_removed": f"works_v1 - works_v2 = {len(pool1)} - {len(pool2)} "
                                      f"= {len(pool1) - len(pool2)}"},
         "stats": {"v1": stats1, "v2": stats2},
-        "counts": counts, "first_act": first,
+        "counts": counts, "first_act": first, "versions": versions,
     }
     with open(os.path.join(out_dir, "dedup_v2_report.json"), "w", encoding="utf-8") as fh:
         json.dump(report, fh, ensure_ascii=False, indent=2)
