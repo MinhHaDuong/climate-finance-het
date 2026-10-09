@@ -2,11 +2,14 @@
 Title: REL recover abstracts from the Semantic Scholar dataset snapshot
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Label: deferred
 
 --- log ---
 2026-10-09T21:00Z HDMX-coding-agent created
 2026-10-09T21:00Z HDMX-coding-agent note author decision 2026-10-09: file the Semantic Scholar snapshot pass for the abstracts ISTEX does not recover
 
+2026-10-09T18:18Z HDMX-coding-agent note parked 2026-10-09 (author go pending): the per-DOI and batch probes with the renewed key found abstracts for only 2% of the ICF and unsure residue (2 of 100, none before 2007) and 13% of works ISTEX proved have one, so Semantic Scholar withholds most publisher abstracts; the dataset snapshot draws on the same feeds and is unlikely to do better. Reopen only if the Scopus or ScienceDirect route is ruled out and the snapshot is wanted for reproducibility. Labelled deferred
+2026-10-09T18:18Z HDMX-coding-agent label deferred
 --- body ---
 
 ## Context
