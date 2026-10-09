@@ -1,0 +1,32 @@
+%erg 0.1
+Title: Trim local rules promoted to the harness (IDH 0375, 1073)
+Created: 2026-10-09
+Author: claude
+
+--- log ---
+2026-10-09T13:50Z claude created
+
+--- body ---
+## Context
+Harness tickets 0375 and 1073 (ImperialDragonHarness PRs 1300 and 1309) moved
+generalizable rules from this repo's `.claude/rules/` into the harness. Each
+rule should now be stated once, at harness level. Source:
+`~/.agents/docs/2026-10-09-t0375-project-rules-inventory.md` § Proposed trims.
+
+## Actions
+- `writing.md`: replace § Ghost mode with a one-line pointer to `/review-pr-prose`.
+  Replace § CI test polarity rule with a pointer to the harness
+  `rules/prose-adherence-tests.md`, keeping the local test path and the 0338/0590
+  evidence link. Drop the first two bullets of § Claims (now in harness
+  `doctype/article.md`). Drop § When to ask the author (harness escalation protocol).
+- `rules-editing.md`: delete. Harness `workflow.md` § Worktree paths covers it.
+- `coding.md`: drop the generic half of the `uv run` bullet and the generic test
+  tiers, but keep the cfh domain markers and `make check-domain-*`. Drop the
+  null-DOI/NaN and human-judgment bullets (now in harness `rules/coding-python.md`
+  § Data pitfalls).
+- `ticket-filing.md`: drop the ID-collision scan (covered by `erg integration`).
+  Keep the fast path.
+
+## Exit criteria
+- [ ] Each listed rule is removed or reduced to a pointer; nothing cfh-specific is lost
+- [ ] `make check-fast` passes
