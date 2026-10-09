@@ -7,7 +7,7 @@ import json
 import re
 
 import pytest
-import rel_dedup_panel as rp
+import qa_rel_dedup_panel as rp
 
 pytestmark = pytest.mark.domain_corpus
 
@@ -129,6 +129,38 @@ def test_two_failed_calls_stop_a_reader(tmp_path):
         return None, None, "HTTP 404"
     status = rp.run_panel(str(tmp_path), 10.0, ["openai"], workers=1, readers={"openai": broken})
     assert status["openai"].startswith("stopped: control CONTROL+ failed twice") and len(calls) == 2
+
+
+def test_sample_reads_the_report_pairs_and_finds_the_controls(tmp_path):
+    """The panel samples the step-5 pairs the v2 report wrote; the positive
+    control is the Gavard-Schoch link of the same file."""
+    import _rel_pool_dedup as rd
+    import _rel_pool_versions as rv
+    from test_rel_pool_versions import r as row
+    rows = [row(doi="10.2139/ssrn.1", year="2010", title="Carbon pricing in emerging economies"),
+            row(doi="10.1016/j.a", year="2012", title="Carbon pricing in emerging economies"),
+            row(doi="10.2139/ssrn.2", year="2014", title="Adaptation finance flows to Africa"),
+            row(doi="10.1016/j.b", year="2014", title="Adaptation finance flows to Africa"),
+            row(doi="10.2139/ssrn.3799872", year="2021", hint="1651-GS02", rid="1651-GS01",
+                origin="t1651-gavard-schoch", title="Climate finance and emission reductions"),
+            row(doi="10.1017/s1355770x26100679", year="2026", rid="1651-GS02",
+                origin="t1651-gavard-schoch", title="International climate finance")]
+    pairs = []
+    rd.cluster(rows, version=2, pairs=pairs)
+    path = tmp_path / "pairs.csv"
+    import csv
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=rv.PAIR_COLUMNS)
+        w.writeheader()
+        w.writerows(rv.pair_records(rows, pairs))
+    cands, links = rp.read_pairs(path)
+    assert sorted((c["pair_id"], c["gap"]) for c in cands) == [("P00000", 2), ("P00001", 0)]
+    assert [x["pair_id"] for x in links] == ["L00000"]
+    pos, neg = rp.controls(cands, links)
+    assert pos["expect"] == "same" and pos["wp"]["doi"] == "10.2139/ssrn.3799872"
+    assert neg["wp"]["title"] != neg["pub"]["title"]
+    rp.main(["sample", "--pairs", str(path), "--output-dir", str(tmp_path / "out"), "--n", "2"])
+    assert len((tmp_path / "out" / "sample.jsonl").read_text().splitlines()) == 2
 
 
 def test_the_cap_stops_before_the_call_that_would_cross_it(tmp_path):

@@ -22,6 +22,9 @@ Files written in the migration directory:
   already present and never rewrites one.
 - ``dedup_v2_works.csv``: the works behind every count, one row per
   (category, work).
+- ``dedup_v2_version_pairs.csv``: one row per union of step 5 (ticket 2048),
+  a lane link or a working paper and its article, both records side by side
+  (``_rel_pool_versions.pair_records``); the precision panel samples it.
 - ``dedup_v2_report.json`` / ``.md``: counts by category, then by lane, by
   period (1990-2006, 2007-2014, 2015-2025, and outside) and by language, with
   the first act (1990-2006) shown separately. Every count is measured on this
@@ -44,11 +47,12 @@ import re
 from collections import Counter, defaultdict
 
 from _rel_pool_dedup import UnionFind, cluster_with
-from _rel_pool_versions import recall_on_known
+from _rel_pool_versions import PAIR_COLUMNS, pair_records, recall_on_known
 from _rel_title_key import title_key, title_words
 from utils import normalize_title
 
 MIGRATION_FILE = "work_key_migration.csv"
+PAIRS_FILE = "dedup_v2_version_pairs.csv"
 MIGRATION_COLUMNS = ["from_version", "to_version", "inputs_md5", "old_work_key",
                      "new_work_key", "change", "cause"]
 WORK_COLUMNS = ["category", "cause", "work_key", "other_work_keys", "year", "period",
@@ -276,8 +280,9 @@ def _versions(rows, roots2, pool2, diff):
             "recall": recall}
 
 
-def write_migration(rows, v1, v2, out_dir):
-    """Write the report, the works list and the migration table; return the report."""
+def write_migration(rows, v1, v2, out_dir, pairs=None):
+    """Write the report, the works list, the migration table and, given the
+    step-5 ``pairs``, ``dedup_v2_version_pairs.csv``; return the report."""
     roots1, pool1, stats1 = v1
     roots2, pool2, stats2 = v2
     diff = compare(rows, v1, v2)
@@ -286,6 +291,11 @@ def write_migration(rows, v1, v2, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     appended = _append_migration(os.path.join(out_dir, MIGRATION_FILE), diff["pairs"], inputs_md5)
     work_rows = _work_rows(diff, pool1, pool2, versions.pop("by_work"))
+    if pairs is not None:
+        with open(os.path.join(out_dir, PAIRS_FILE), "w", encoding="utf-8", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=PAIR_COLUMNS, lineterminator="\n")
+            w.writeheader()
+            w.writerows(pair_records(rows, pairs))
     with open(os.path.join(out_dir, "dedup_v2_works.csv"), "w", encoding="utf-8", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=WORK_COLUMNS, lineterminator="\n")
         w.writeheader()

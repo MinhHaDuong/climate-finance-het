@@ -374,10 +374,11 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
     roots = cluster(rows, stats)
     pool = build_pool(rows, roots, lane_rank)
     if version == 2:
-        stats2 = {}
-        roots2 = cluster(rows, stats2, version=2)
+        stats2, pairs = {}, []
+        roots2 = cluster(rows, stats2, version=2, pairs=pairs)
         pool2 = build_pool(rows, roots2, lane_rank, version=2)
-        return write_migration(rows, (roots, pool, stats), (roots2, pool2, stats2), migration_dir)
+        return write_migration(rows, (roots, pool, stats), (roots2, pool2, stats2), migration_dir,
+                               pairs)
     meta = {"path": os.path.relpath(catalogue_path, ROOT) if os.path.isabs(catalogue_path)
             else catalogue_path, "md5": md5, "rows": len(cat_rows), "run": cat_cfg.get("run")}
     report = make_report(rows, roots, deliveries, excluded, meta, superseded, stats)

@@ -4,17 +4,17 @@ Three readers from three vendors, blind to each other and to the rule, read
 pairs of records that step 5 of dedup version 2 joins by title and window and
 say whether they are the same work. The author never checks an item.
 
-Subcommands (all files in ``--dir``, outside the repository):
+Subcommands (all files in ``--output-dir``, outside the repository):
 
-- ``sample``: rebuild the rows from the pinned catalogue and the archived
-  deliveries (``corpus_rel_pool.load_rows``), run version 2 and collect the
-  accepted title-and-window pairs of step 5 (``candidates.csv``); draw
+- ``sample``: read the step-5 unions the version 2 report wrote
+  (``dedup_v2_version_pairs.csv`` of ``corpus_rel_pool --dedup-version 2``),
+  keep the title-and-window pairs (``candidates.csv``); draw
   ``--n`` pairs stratified by year gap (-1..+5) and first-author agreement
   (agree, disagree, missing), equal allocation per cell, a short cell taken
   whole and its remainder spread over the others (``sample.jsonl``); add the
   controls (``controls.jsonl``): positive, the Gavard-Schoch pair (lane 1651,
-  ZEW 2021 and the 2026 article); negative, two candidate records of
-  different titles and fields.
+  ZEW 2021 and the 2026 article, a link pair of the same file); negative, two
+  candidate records with no title word of five letters in common.
 - ``run``: ask each reader each control, then each sampled pair. A positive
   control not read as ``same`` or a negative not read as ``different`` stops
   that reader. Every call is logged with its token usage and its cost at the
@@ -47,12 +47,17 @@ import unicodedata
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from utils import get_logger
+
+log = get_logger("qa_rel_dedup_panel")
+
 GAPS = list(range(-1, 6))
 AUTHOR_STRATA = ["agree", "disagree", "missing"]
 VERDICTS = ("same", "different", "cannot_tell")
 ABSTRACT_CHARS = 400
-GAVARD_SCHOCH = ("t1651-gavard-schoch", "1651-GS01", "1651-GS02")
+GAVARD_SCHOCH = ("t1651-gavard-schoch/", ":1651-GS01", ":1651-GS02")
+SIDE_FIELDS = ("record_id", "title", "year", "first_author", "journal", "doi", "openalex_id",
+               "doc_type", "abstract")
 
 # USD per million tokens (input, output), standard tier: the cost logged per
 # call. Assumed prices, rounded up (the OpenAI one is a guess on the high side
@@ -94,35 +99,21 @@ def author_stratum(a, b):
     return "agree" if sa & sb else "disagree"
 
 
-def _record(rows, i, by_id):
-    """The fields a reader sees for row ``i``, blanks filled from rows of the same DOI or OpenAlex id."""
-    r = rows[i]
-    same = sorted(set(by_id.get(("doi", r["doi"]), ())) | set(by_id.get(("oa", r["openalex_id"]), ()))) \
-        if (r["doi"] or r["openalex_id"]) else []
-
-    def field(name):
-        return r.get(name) or next((rows[j].get(name) for j in same if rows[j].get(name)), "")
-    return {"record_id": r["record_id"], "title": field("title"), "year": r["year"],
-            "first_author": field("first_author"), "journal": field("journal"), "doi": r["doi"],
-            "openalex_id": r["openalex_id"], "doc_type": r.get("doc_type", ""),
-            "abstract": (field("abstract") or "")[:ABSTRACT_CHARS]}
+def _item(rec):
+    """A panel item from a row of ``dedup_v2_version_pairs.csv``."""
+    wp = {f: rec[f"a_{f}"] for f in SIDE_FIELDS}
+    pub = {f: rec[f"b_{f}"] for f in SIDE_FIELDS}
+    return {"pair_id": rec["pair_id"], "gap": int(rec["gap"]) if rec["gap"] != "" else None,
+            "author": author_stratum(wp["first_author"], pub["first_author"]),
+            "wp": wp, "pub": pub}
 
 
-def candidate_pairs(rows, pairs):
-    by_id = defaultdict(list)
-    for i, r in enumerate(rows):
-        if r["doi"]:
-            by_id["doi", r["doi"]].append(i)
-        if r["openalex_id"]:
-            by_id["oa", r["openalex_id"]].append(i)
-    out = []
-    for k, p in enumerate(sorted(pairs, key=lambda p: (rows[p["wp_row"]]["record_id"],
-                                                       rows[p["pub_row"]]["record_id"]))):
-        wp, pub = _record(rows, p["wp_row"], by_id), _record(rows, p["pub_row"], by_id)
-        out.append({"pair_id": f"P{k:05d}", "gap": p["gap"],
-                    "author": author_stratum(wp["first_author"], pub["first_author"]),
-                    "wp": wp, "pub": pub})
-    return out
+def read_pairs(path):
+    """(title-and-window candidates, link pairs) of the version 2 report."""
+    with open(path, encoding="utf-8", newline="") as fh:
+        recs = list(csv.DictReader(fh))
+    return ([_item(r) for r in recs if r["kind"] == "window"],
+            [_item(r) for r in recs if r["kind"] == "link"])
 
 
 def allocate(sizes, n):
@@ -152,21 +143,22 @@ def draw(cands, n, seed=2048):
                     for g, a in sorted(cells)}
 
 
-def controls(rows, cands):
-    by_rid = {r["record_id"].split(":", 1)[-1]: i for i, r in enumerate(rows)
-              if r["origin"] == GAVARD_SCHOCH[0]}
-    by_id = defaultdict(list)
-    for i, r in enumerate(rows):
-        if r["doi"]:
-            by_id["doi", r["doi"]].append(i)
-    pos = {"pair_id": "CONTROL+", "expect": "same",
-           "wp": _record(rows, by_rid[GAVARD_SCHOCH[1]], by_id),
-           "pub": _record(rows, by_rid[GAVARD_SCHOCH[2]], by_id)}
+def _words(title):
+    return set(re.findall(r"\w{5,}", _fold(title)))
+
+
+def controls(cands, links):
+    """Positive: the Gavard-Schoch link; negative: the first candidate's working
+    paper against the first article sharing no title word with it."""
+    lane, a_id, b_id = GAVARD_SCHOCH
+    gs = next(p for p in links if p["wp"]["record_id"].startswith(lane)
+              and {p["wp"]["record_id"][-len(a_id):], p["pub"]["record_id"][-len(b_id):]}
+              <= {a_id, b_id})
     a = cands[0]
-    b = next(c for c in cands if not (set(re.findall(r"\w{5,}", _fold(c["pub"]["title"])))
-                                      & set(re.findall(r"\w{5,}", _fold(a["wp"]["title"])))))
-    neg = {"pair_id": "CONTROL-", "expect": "different", "wp": a["wp"], "pub": b["pub"]}
-    return [pos, neg]
+    b = next(c for c in cands if not _words(c["pub"]["title"]) & _words(a["wp"]["title"]))
+    return [{**gs, "pair_id": "CONTROL+", "expect": "same"},
+            {"pair_id": "CONTROL-", "expect": "different", "gap": None, "author": "",
+             "wp": a["wp"], "pub": b["pub"]}]
 
 
 # ── Prompt and readers ────────────────────────────────────
@@ -528,19 +520,10 @@ def summary_markdown(s):
 
 
 def cmd_sample(args):
-    import yaml
-    from _rel_pool_dedup import cluster_with
-    from _rel_title_key import title_key
-    from corpus_rel_pool import load_rows
-    with open(args.config, encoding="utf-8") as fh:
-        cfg = yaml.safe_load(fh)
-    rows = load_rows(cfg, args.catalogue or cfg["catalogue"]["path"],
-                     args.intake_dir or cfg["intake_dir"])[0]
-    pairs = []
-    cluster_with(rows, None, title_key, repec=True, guard=True, versions=True, pairs=pairs)
-    cands = candidate_pairs(rows, pairs)
-    os.makedirs(args.dir, exist_ok=True)
-    with open(os.path.join(args.dir, "candidates.csv"), "w", encoding="utf-8", newline="") as fh:
+    cands, links = read_pairs(args.pairs)
+    out = args.output_dir
+    os.makedirs(out, exist_ok=True)
+    with open(os.path.join(out, "candidates.csv"), "w", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh, lineterminator="\n")
         w.writerow(["pair_id", "gap", "author", "wp_record_id", "wp_doi", "wp_year", "wp_title",
                     "pub_record_id", "pub_doi", "pub_year", "pub_title"])
@@ -548,41 +531,38 @@ def cmd_sample(args):
             w.writerow([c["pair_id"], c["gap"], c["author"]]
                        + [c[s][k] for s in ("wp", "pub") for k in ("record_id", "doi", "year", "title")])
     sample, cells = draw(cands, args.n)
-    for name, objs in (("sample.jsonl", sample), ("controls.jsonl", controls(rows, cands))):
-        with open(os.path.join(args.dir, name), "w", encoding="utf-8") as fh:
+    for name, objs in (("sample.jsonl", sample), ("controls.jsonl", controls(cands, links))):
+        with open(os.path.join(out, name), "w", encoding="utf-8") as fh:
             for o in objs:
                 fh.write(json.dumps(o, ensure_ascii=False) + "\n")
-    with open(os.path.join(args.dir, "sample_meta.json"), "w", encoding="utf-8") as fh:
+    with open(os.path.join(out, "sample_meta.json"), "w", encoding="utf-8") as fh:
         json.dump({"candidates": len(cands), "sampled": len(sample), "seed": 2048, "cells": cells,
                    "by_gap": dict(sorted(Counter(c["gap"] for c in cands).items())),
                    "by_author": dict(Counter(c["author"] for c in cands))}, fh, indent=2)
-    print(json.dumps({"candidates": len(cands), "sampled": len(sample)}))
+    log.info("candidates %d, sampled %d", len(cands), len(sample))
 
 
 def main(argv=None):
-    sys.path.insert(0, os.path.join(ROOT, "scripts"))
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("sample")
-    s.add_argument("--dir", required=True)
-    s.add_argument("--config", default=os.path.join(ROOT, "config", "rel_pool.yaml"))
-    s.add_argument("--catalogue")
-    s.add_argument("--intake-dir")
+    s.add_argument("--output-dir", required=True)
+    s.add_argument("--pairs", required=True, help="dedup_v2_version_pairs.csv of the v2 report")
     s.add_argument("--n", type=int, default=400)
     r = sub.add_parser("run")
-    r.add_argument("--dir", required=True)
+    r.add_argument("--output-dir", required=True)
     r.add_argument("--cap-usd", type=float, default=10.0)
     r.add_argument("--readers", default="anthropic,openai,mistral")
     a = sub.add_parser("analyze")
-    a.add_argument("--dir", required=True)
+    a.add_argument("--output-dir", required=True)
     args = ap.parse_args(argv)
     if args.cmd == "sample":
         cmd_sample(args)
     elif args.cmd == "run":
-        print(json.dumps(run_panel(args.dir, args.cap_usd, args.readers.split(",")), indent=1))
+        status = run_panel(args.output_dir, args.cap_usd, args.readers.split(","))
+        log.info("run: %s", json.dumps(status))
     else:
-        s = analyze(args.dir)
-        print(summary_markdown(s))
+        log.info("\n%s", summary_markdown(analyze(args.output_dir)))
     return 0
 
 

@@ -249,19 +249,21 @@ def _index(rows, norm, repec):
     return by_doi, by_oa, by_handle, by_repec, by_title
 
 
-def cluster(rows, stats=None, version=1):
+def cluster(rows, stats=None, version=1, pairs=None):
     """Component root index per row under dedup ``version`` (default 1).
 
     ``stats`` (a dict) receives the step counts: ``ambiguous_title_groups``,
-    ``ambiguous_title_only``, ``generic_title_only``."""
+    ``ambiguous_title_only``, ``generic_title_only``, and in version 2
+    ``versions`` (step 5); ``pairs`` (a list) the unions of step 5."""
     v2 = version >= 2
-    return cluster_with(rows, stats, title_normalizer(version), repec=v2, guard=v2, versions=v2)
+    return cluster_with(rows, stats, title_normalizer(version), repec=v2, guard=v2, versions=v2,
+                        pairs=pairs)
 
 
 def cluster_with(rows, stats, norm, repec, guard=False, versions=False, pairs=None):
     """The cascade with a given title normalizer, with or without step 2c,
     the component guard of steps 3 and 4 and step 5 (``versions``; ``pairs``
-    receives its accepted title-and-window pairs, see ``version_unions``).
+    receives its unions, see ``version_unions``).
 
     ``cluster`` names the two versions; the version 2 report also runs each
     change alone on top of version 1 to tell which one causes a merge or a split."""

@@ -92,7 +92,7 @@ def _bare_record_id(row):
 
 
 def _hint_unions(rows, idx, uf):
-    """Step 5a: (unions, hints resolved, hints unresolved)."""
+    """Step 5a: ((hinting row, target row) pairs, hints resolved, unresolved)."""
     index = defaultdict(set)
     for i in idx:
         r = rows[i]
@@ -105,12 +105,12 @@ def _hint_unions(rows, idx, uf):
     unions, resolved, unresolved = [], 0, 0
     for i in idx:
         for hint in _hints(rows[i]):
-            targets = {uf.find(j) for j in index.get(hint, ())}
-            if len(targets) != 1:
+            hits = index.get(hint, ())
+            if len({uf.find(j) for j in hits}) != 1:
                 unresolved += 1
                 continue
             resolved += 1
-            unions.append((uf.find(i), targets.pop()))
+            unions.append((i, min(hits)))
     return unions, resolved, unresolved
 
 
@@ -145,7 +145,8 @@ def _window_edges(wp_only, published, by_key, stats):
                 if not WINDOW[0] <= py - wy <= WINDOW[1]:
                     stats["pairs_out_of_window"] += 1
                     continue
-                edges.setdefault((w, p), {"wp_row": wi, "pub_row": pi, "gap": py - wy, "key": key})
+                edges.setdefault((w, p), {"kind": "window", "a_row": wi, "b_row": pi,
+                                          "gap": py - wy, "key": key})
     return edges
 
 
@@ -172,8 +173,10 @@ def version_unions(rows, uf, norm, words, idx=None, pairs=None):
     """Step 5 on ``rows`` (those in ``idx``, default all) and union-find ``uf``.
 
     Applies the unions to ``uf`` and returns the step counts. ``pairs``, a
-    list, receives one dict per accepted title-and-window pair: the
-    working-paper row, the published row (their indices), the gap and the key.
+    list, receives one dict per union: ``kind`` ``link`` (5a; ``a_row`` the
+    hinting row, ``b_row`` the row it names, ``key`` the hint) or ``window``
+    (5b; ``a_row`` the working-paper row, ``b_row`` the published row, ``gap``
+    the article year minus the working-paper year, ``key`` the title key).
     """
     idx = range(len(rows)) if idx is None else list(idx)
     hint_edges, resolved, unresolved = _hint_unions(rows, idx, uf)
@@ -181,8 +184,12 @@ def version_unions(rows, uf, norm, words, idx=None, pairs=None):
              "pairs_in_window": 0, "pairs_out_of_window": 0, "pairs_refused": 0,
              "clusters_refused": 0, "pairs_accepted": 0}
     for a, b in hint_edges:
-        stats["hint_unions"] += uf.find(a) != uf.find(b)
+        if uf.find(a) == uf.find(b):
+            continue
+        stats["hint_unions"] += 1
         uf.union(a, b)
+        if pairs is not None:
+            pairs.append({"kind": "link", "a_row": a, "b_row": b, "gap": "", "key": ""})
     edges = _window_edges(*_kinds_by_key(rows, idx, uf, norm, words), stats)
     find, refused = _refused(edges)
     stats.update(pairs_in_window=len(edges), clusters_refused=len(refused))
@@ -235,4 +242,48 @@ def recall_on_known(rows, members, id_field, norm, words, union_find):
         out["missed"].append({"reason": why, "record_ids": [r["record_id"] for r in sub]})
     out["missed_by_reason"] = dict(sorted(out["missed_by_reason"].items()))
     out["recall"] = out["rejoined"] / out["works"] if out["works"] else None
+    return out
+
+
+PAIR_SIDE_FIELDS = ("record_id", "title", "year", "first_author", "journal", "doi",
+                    "openalex_id", "doc_type", "abstract")
+PAIR_COLUMNS = (["pair_id", "kind", "gap", "key"]
+                + [f"{side}_{f}" for side in ("a", "b") for f in PAIR_SIDE_FIELDS])
+ABSTRACT_CHARS = 400
+
+
+def pair_records(rows, pairs):
+    """One flat record per step-5 union, for the report and the precision panel.
+
+    Each side is its row, blanks filled from the rows that share its DOI or
+    OpenAlex id (the same record seen by several sources); the abstract is cut
+    to ``ABSTRACT_CHARS``. Pair ids, ``L`` for a link and ``P`` for a window
+    pair, number each kind in the order of its sorted record ids."""
+    by_id = defaultdict(list)
+    for i, r in enumerate(rows):
+        if r.get("doi"):
+            by_id["doi", r["doi"]].append(i)
+        if r.get("openalex_id"):
+            by_id["oa", r["openalex_id"]].append(i)
+
+    def side(i):
+        r = rows[i]
+        same = sorted(set(by_id.get(("doi", r.get("doi")), ()))
+                      | set(by_id.get(("oa", r.get("openalex_id")), ())))
+        out = {f: r.get(f) or next((rows[j].get(f) for j in same if rows[j].get(f)), "")
+               for f in PAIR_SIDE_FIELDS}
+        out.update(record_id=r["record_id"], year=r.get("year", ""), doi=r.get("doi", ""),
+                   openalex_id=r.get("openalex_id", ""), abstract=out["abstract"][:ABSTRACT_CHARS])
+        return out
+
+    keyed = sorted(pairs, key=lambda p: (p["kind"], rows[p["a_row"]]["record_id"],
+                                         rows[p["b_row"]]["record_id"]))
+    out, n = [], defaultdict(int)
+    for p in keyed:
+        a, b = side(p["a_row"]), side(p["b_row"])
+        pid = f"{'L' if p['kind'] == 'link' else 'P'}{n[p['kind']]:05d}"
+        n[p["kind"]] += 1
+        out.append({"pair_id": pid, "kind": p["kind"], "gap": p["gap"], "key": p["key"],
+                    **{f"a_{f}": a[f] for f in PAIR_SIDE_FIELDS},
+                    **{f"b_{f}": b[f] for f in PAIR_SIDE_FIELDS}})
     return out

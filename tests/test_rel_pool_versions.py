@@ -5,7 +5,10 @@ year within -1..+5; an explicit lane link overrides the window; never two
 published versions in one work. Version 1 stays as it was.
 """
 
+import csv
+
 import _rel_pool_dedup as rd
+import _rel_pool_migration as rm
 import _rel_pool_versions as rv
 import pytest
 from _rel_title_key import title_key, title_words
@@ -153,9 +156,11 @@ def test_pairs_report_the_accepted_title_pairs():
     pairs = []
     rows = _version_rows()
     rd.cluster_with(rows, None, title_key, repec=True, guard=True, versions=True, pairs=pairs)
-    got = sorted((rows[p["wp_row"]]["doi"] or rows[p["wp_row"]]["record_id"],
-                  rows[p["pub_row"]]["doi"], p["gap"]) for p in pairs)
-    assert got == [("10.2139/ssrn.2", "10.1016/j.c", 2), ("l/1:wp-c", "10.1016/j.c", 1)]
+    got = sorted((p["kind"], rows[p["a_row"]]["doi"] or rows[p["a_row"]]["record_id"],
+                  rows[p["b_row"]]["doi"], p["gap"]) for p in pairs)
+    assert got == [("link", "10.21203/rs.3", "10.1016/j.e", ""),
+                   ("window", "10.2139/ssrn.2", "10.1016/j.c", 2),
+                   ("window", "l/1:wp-c", "10.1016/j.c", 1)]
 
 
 def test_recall_on_known_multi_doi_works():
@@ -183,6 +188,10 @@ def test_version_2_report_counts_step_5(tmp_path, monkeypatch):
     assert report["stats"]["v2"]["versions"]["hint_unions"] == 1
     assert any(t["change"] == "merge" and t["cause"] == "versions" for t in table)
     assert "## Step 5" in (mig / "dedup_v2_report.md").read_text(encoding="utf-8")
+    with open(mig / rm.PAIRS_FILE, encoding="utf-8", newline="") as fh:
+        pairs = list(csv.DictReader(fh))
+    assert [(p["pair_id"], p["kind"], p["b_doi"]) for p in pairs] == [
+        ("L00000", "link", "10.1017/s1355770x26100679")]
 
 
 def test_a_sici_doi_counts_as_one_doi():
