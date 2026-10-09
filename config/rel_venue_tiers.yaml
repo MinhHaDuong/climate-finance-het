@@ -72,12 +72,13 @@ venue_evidence:
   # `promote` to let it outrank a tier C.
   indexes: [kanal_level1, scopus, doaj, university_press]
   promote: []
-  # OPEN, NOT DECIDED: a tier C venue listed in a trusted index. 0.5 = neither
-  # evidence outranks the other (MOE default). 1 = the index outranks the tier,
-  # 0 = the tier outranks the index. Flip the value, rebuild: no code change.
+  # OPEN, NOT DECIDED: a tier C venue listed in a trusted index. 0 = the tier
+  # outranks the index (the decision of 2026-10-01 kept, the default). 0.5 =
+  # neither evidence outranks the other, 1 = the index outranks the tier.
+  # Flip the value, rebuild: no code change.
   conflict_c_in_index:
-    status: MOE default, not author-decided
-    value: 0.5
+    status: open — reopens the 2026-10-01 decision; MOE option, not author-decided
+    value: 0
   # A tier C venue by the catch-all rule `other` (type unknown: a serious journal
   # no source type calls a journal, an unlisted series or publisher). 0 keeps the
   # decision of 2026-10-01 (C, the rest, excluded). 0.5 would read it as unknown,

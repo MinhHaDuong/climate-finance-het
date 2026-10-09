@@ -323,9 +323,11 @@ a listing is never needed for tier A or B; tier C with no listing keeps the deci
 author-decided): 0.5 would read a tier C by the catch-all `other` (an unlisted
 series, publisher or journal of unknown type) as unknown, not unserious; it
 moves every such work from 0 to 0.5. Withdrawal and discontinuation stay flags. **Open switch**
-`venue_evidence.conflict_c_in_index` (`status: MOE default, not
-author-decided`): the value of a tier C venue listed in a trusted index, 0.5
-(1 if the index outranks the tier, 0 if the tier outranks it); change the
+`venue_evidence.conflict_c_in_index` (`status: open`, MOE option, not
+author-decided): the value of a tier C venue listed in a trusted index, 0 by
+default (the tier outranks the index; 0.5 neither, 1 the index outranks the
+tier). At the defaults of both switches every work scores as under
+`tier_membership`; change the
 value and rebuild, no code change. The counts file reports works under
 dropping or promoting each index and the works moved against the old tier
 score by period (first act 1990-2006 apart) and language; the view takes

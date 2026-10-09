@@ -182,7 +182,8 @@ def seriousness_of(venue: dict, srule: dict) -> tuple[float, str]:
         rule = venue["tier_rule"] if tier == venue["tier"] else "other"
         hijacked = any(f["registry"] == "hijacked" for f in parse_flags(venue["flags"]))
         value, why = rvn.mu_venue(tier, rule, rvn.hit_indexes(venue["index_hits"]), hijacked, ev)
-        return value, why if not value else ""
+        # An unlisted or listed tier C scoring 0 keeps the label `tier_c` of the tier score.
+        return value, ("tier_c" if why in ("unlisted", "tier_c_in_index") else why) if not value else ""
     value = float(srule["tier_mu"][tier])
     return value, "tier_c" if tier == "C" and not value else ""
 
