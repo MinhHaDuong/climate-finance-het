@@ -74,8 +74,9 @@ identifier:
 #   repec_archive : the archive code of a RePEc handle `RePEc:<archive>:<series>:...` (record
 #                   id or `repec_handle`). It stands for the ISSUING BODY of a working paper
 #                   or the publisher of a journal series. Only the archives listed in
-#                   config/rel_repec_archives.csv count: institutional archives with real
-#                   series; personal pages and open repositories (pra, hal) are not listed.
+#                   config/rel_repec_archives.csv count, a row naming a series only that
+#                   series: institutional archives with real series; personal pages, open
+#                   repositories (pra, hal) and aggregators (zbw/EconStor) are not listed.
 venue:
   order: [journal, host_org, doi_prefix, repec_archive]
   prefix_table: config/rel_doi_prefixes.csv
@@ -89,4 +90,10 @@ venue:
   # (tests/test_rel_profile.py::test_scielo_article_with_journal_name_passes_the_venue).
   platform_names: [Zenodo, Figshare, SSRN, SSRN Electronic Journal, arXiv, arXiv.org, Research Square,
                    ResearchGate, OSF Preprints, Open Science Framework, SocArXiv, JSTOR,
-                   Harvard Dataverse, AgEcon Search, EconStor, OpenEdition, Cairn.info]
+                   Harvard Dataverse, AgEcon Search, EconStor, OpenEdition, Cairn.info,
+                   Social Science Research Network (SSRN)]
+  # Placeholder values that fill an empty journal or host-organization cell in exports
+  # (pandas `nan`, `None`, `-`...) or name a document kind, not a venue. Compared
+  # case-insensitively after trimming; a value also needs at least one letter. Source: the
+  # strings the delta review of PR 1728 replayed (2026-10-09); extend when an export shows another.
+  placeholder_names: [Preprint, Working Paper, arXiv preprint, Unknown, None, n/a, "-", nan, "null"]

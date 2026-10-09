@@ -323,3 +323,49 @@ def test_view_records_how_the_venue_resolved():
     rows, _, _ = _view(False)
     assert {r["work_key"]: r["profile_venue_via"] for r in rows} == {
         "openalex:W1": "host_org", "openalex:W2": "host_org", "openalex:W3": "unresolved"}
+
+
+# ── placeholders, aggregators (review of 3759ecde) ───────
+
+PLACEHOLDERS = ["-", "nan", "NaN", "null", "None", "none", "n/a", "N/A", "Unknown", "unknown",
+                "Preprint", "Working Paper", "arXiv preprint", "  nan  ", "...", "123",
+                "Social Science Research Network (SSRN)"]
+
+
+@pytest.mark.parametrize("journal", PLACEHOLDERS)
+def test_placeholder_journal_is_not_a_venue(journal):
+    """Replays the strings that passed the venue as `journal` before the fix."""
+    rec = _rec(doi="10.2139/ssrn.1", journal=journal)
+    assert rp.venue_of(rec, PROFILE) == ("", "unresolved")
+    assert rp.missing_fields(rec, PROFILE) == ["venue"]
+
+
+@pytest.mark.parametrize("org", ["nan", "-", "Unknown"])
+def test_placeholder_host_organization_is_not_a_venue(org):
+    rec = _rec(doi="10.99999/x", host_org_name=org)
+    assert rp.venue_of(rec, PROFILE) == ("", "unresolved")
+
+
+@pytest.mark.parametrize("journal", ["Journal of Finance", "Nature", "Energy", "Science",
+                                     "Économie et statistique", "経済研究", "Журнал экономики",
+                                     "مجلة الدراسات التجارية المعاصرة"])
+def test_real_journals_still_pass(journal):
+    assert rp.venue_of(_rec(doi="", journal=journal), PROFILE) == (journal, "journal")
+
+
+def test_journal_is_trimmed_and_whitespace_normalised():
+    assert rp.venue_of(_rec(doi="", journal="  Energy   Policy "), PROFILE)[0] == "Energy Policy"
+
+
+def test_aggregator_archive_zbw_is_not_listed():
+    """EconStor is a platform (platform_names); its RePEc archive must not resolve a venue."""
+    assert "zbw" not in {a for a, _ in PROFILE["repec_archives"]}
+    rec = _rec(doi="", member_record_ids="t1810/d:RePEc:zbw:ifwkwp:331879")
+    assert rp.venue_of(rec, PROFILE) == ("", "unresolved")
+
+
+def test_lse_archive_is_restricted_to_its_series():
+    wp = _rec(doi="", member_record_ids="t1810/d:RePEc:ehl:wpaper:12345")
+    repo = _rec(doi="", member_record_ids="t1810/d:RePEc:ehl:lserod:129326")
+    assert rp.venue_of(wp, PROFILE)[1] == "repec_archive"
+    assert rp.venue_of(repo, PROFILE) == ("", "unresolved")

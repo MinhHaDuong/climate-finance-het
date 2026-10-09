@@ -15,7 +15,7 @@ Blocked-by: 2041
 
 ## Context
 
-Child of 0700. A deterministic prefilter, run before any model call, that considers only pool records carrying the DataCite mandatory metadata: identifier, creator, title, publisher, publicationYear, resourceType. Term of art: a minimum metadata profile (a Dublin Core application profile); the DataCite mandatory fields are the cited reference.
+Child of 0700. A deterministic prefilter, run before any model call, that considers only pool records carrying the DataCite mandatory metadata: identifier, creator, title, venue (stands for the DataCite publisher; see the amendment of 2026-10-09 in the log), publicationYear, resourceType. Term of art: a minimum metadata profile (a Dublin Core application profile); the DataCite mandatory fields are the cited reference.
 
 Author-decided: the full six-field set; works lacking author, title, year or a handle are not worth screening; Handle means a DOI, an OpenAlex id, a RePEc, OAI, HAL or hdl handle, or a persistent id on a registered repository platform with a resolvable URL (redalyc, garuda, clacso, ipea and similar). Excluded records stay in the pool with their reason (single-standard rule), counted in the PRISMA flow, never deleted.
 
@@ -24,13 +24,13 @@ Evidence from the read-only counts of 2026-10-09 (lane deliveries, record-level,
 - Across the nine lane deliveries (sum 417,263, overlapping): four fields (without author, unmeasurable there) 15,331; full set 28,414. The extra 13,083 are almost all a missing publisher proxy (journal or ISSN) on OpenAlex book chapters, conference papers, dissertations, reports, preprints and books, caused by the ingester (2041), not by the works.
 - Of the identifier drops, 2,231 per t1652 run are RePEc handles hidden in EDS accession numbers (2040) and t1653's 5.7k are repository ids and handles the first test did not recognise.
 
-MOE note, author decision stands: a mandatory publisher overlaps the venue facet (2042), where an unknown publisher scores 0.5 rather than excluding. The author chose the full set; this ticket therefore makes publisher resolution a real step (host organization from 2041, then the DOI-prefix registrant on a publisher list, platform prefixes such as SSRN, Zenodo and Figshare not counted as publishers) and reports what the requirement costs so the choice can be revisited by evidence.
+MOE note, author decision amended 2026-10-09 (see the log): the filter requires a venue identity, not a publisher string. A mandatory publisher string overlapped the venue facet (2042), where an unknown publisher scores 0.5 rather than excluding, and cost works that name a journal. Venue resolution is a real step (journal or series name, host organization from 2041, the DOI-prefix registrant on a publisher list, the RePEc archive code; platform names and prefixes such as SSRN, Zenodo and Figshare never count), and the ticket reports what the requirement costs so the choice can be revisited by evidence.
 
 ## Exit criteria
 
-- [ ] The profile is declared in one config block (mandatory fields, accepted identifier forms, registered platforms, publisher resolution order) with a version.
+- [ ] The profile is declared in one config block (mandatory fields, accepted identifier forms, registered platforms, venue resolution order) with a version.
 - [ ] Venue identity (amended by the author's decision of 2026-10-09; stands for the DataCite publisher): satisfied when the work names a journal or a series, or a publisher resolves by any route. Resolution order, first hit wins, recorded per work: the pool `journal` field (a platform name does not count); the OpenAlex host organization (platform names excluded); the DOI-prefix registrant if its prefix is on a publisher list (Crossref prefix lookup not available offline; platform prefixes never count); the RePEc archive code of a RePEc handle as the issuing body of a working paper (short sourced list of institutional archives). Else unresolved, reason `profile_missing_venue`.
-- [ ] Positive control before any count: known works with and without each field fail and pass as expected, including a chapter whose publisher comes only from the DOI prefix.
+- [ ] Positive control before any count: known works with and without each field fail and pass as expected, including a chapter whose venue comes only from the DOI prefix.
 - [ ] Counts on the real pool (after `make rel-pool-data` and with 1654 round 1 stated as merged or not), by lane, period (1990-2006, 2007-2014, 2015-2025), language and doc type, with the drop reason per field. The first act and non-English share are reported separately before the filter is applied.
 - [ ] Excluded records keep a reason code (`profile_missing_<field>`), stay in the pool and are tallied in `rel_counts.json`; no work is deleted.
 - [ ] The filter is a switch in the existing sensitivity machinery: counts are reported with the venue requirement on and off (scenario `profile_on_venue_optional`).

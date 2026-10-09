@@ -81,7 +81,9 @@ def load_profile(path: str = DEFAULT_CONFIG) -> dict:
     if any(k not in ("publisher", "platform") for _, k in prefixes.values()):
         raise ValueError(f"{table}: kind must be publisher or platform")
     with open(os.path.join(ROOT, venue["repec_archive_table"]), encoding="utf-8", newline="") as fh:
-        archives = {r["archive"].casefold(): r["body"] for r in csv.DictReader(fh)}
+        # key (archive, series): an empty series covers every series of the archive
+        archives = {(r["archive"].casefold(), r["series"].casefold()): r["body"]
+                    for r in csv.DictReader(fh)}
     platforms = {}
     for name, spec in cfg["identifier"]["platforms"].items():
         if not spec.get("url"):
@@ -91,9 +93,10 @@ def load_profile(path: str = DEFAULT_CONFIG) -> dict:
     # platform prefix rows plus the names OpenAlex gives them (config venue.platform_names).
     names = {r.casefold() for r, k in prefixes.values() if k == "platform"}
     names |= {str(n).casefold() for n in venue.get("platform_names") or []}
+    junk = {" ".join(str(n).split()).casefold() for n in venue.get("placeholder_names") or []}
     return {"version": cfg["version"], "enabled": bool(cfg["enabled"]), "required": required,
             "generic": generic, "platforms": platforms, "order": order, "prefixes": prefixes,
-            "platform_names": names, "repec_archives": archives}
+            "platform_names": names, "placeholder_names": junk, "repec_archives": archives}
 
 
 def rule(profile: dict, enabled: bool | None = None, required: list | None = None) -> dict:
@@ -142,9 +145,18 @@ def is_platform_name(name: str, profile: dict) -> bool:
     return n in profile["platform_names"] or any(n.startswith(p + " (") for p in profile["platform_names"])
 
 
+def usable_name(name: str, profile: dict) -> str:
+    """The trimmed ``name`` if it can name a venue, else ``""``: it needs at least one letter
+    (as ``title`` does), must not be a configured placeholder (``nan``, ``-``, ``Preprint``,
+    ``Unknown``...: pandas and exporter fillers) and must not be a platform name."""
+    name = " ".join((name or "").split())
+    if not re.search(r"[^\W\d_]", name) or name.casefold() in profile["placeholder_names"]:
+        return ""
+    return "" if is_platform_name(name, profile) else name
+
+
 def _host_org(rec: dict, profile: dict) -> str:
-    org = (rec.get("host_org_name") or "").strip()
-    return "" if not org or is_platform_name(org, profile) else org
+    return usable_name(rec.get("host_org_name") or "", profile)
 
 
 def _doi_registrant(rec: dict, profile: dict) -> str:
@@ -159,8 +171,11 @@ def _repec_body(rec: dict, profile: dict) -> str:
     cands = _record_ids(rec) + [(rec.get("repec_handle") or "").strip()]
     for part in cands:
         m = _REPEC.search(part)
-        if m and m.group(1).casefold() in profile["repec_archives"]:
-            return profile["repec_archives"][m.group(1).casefold()]
+        if m:
+            key = (m.group(1).casefold(), m.group(2).casefold())
+            body = profile["repec_archives"].get(key) or profile["repec_archives"].get((key[0], ""))
+            if body:
+                return body
     return ""
 
 
@@ -181,8 +196,7 @@ def venue_of(rec: dict, profile: dict) -> tuple[str, str]:
     ``("", "unresolved")`` when none."""
     for step in profile["order"]:
         if step == "journal":
-            name = (rec.get("journal") or "").strip()
-            name = "" if is_platform_name(name, profile) else name
+            name = usable_name(rec.get("journal") or "", profile)
         elif step == "host_org":
             name = _host_org(rec, profile)
         elif step == "doi_prefix":
