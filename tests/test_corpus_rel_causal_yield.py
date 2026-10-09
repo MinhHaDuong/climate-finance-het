@@ -282,6 +282,48 @@ def test_truncated_dois_are_dropped_and_untitled_works_are_not_retrievable():
     assert [(e["record_id"], e["reason"]) for e in excluded] == [("1652:oa:W1", "not_retrievable")]
 
 
+def _venue_records(**extra):
+    reg = [{"search_id": "S1", "platform": "openalex", "run_at": "2026-09-30T10:00:00+00:00",
+            "query_string": "q", "n_received": 1, "completed": "True"}]
+    recs = cy.assign_work_keys([
+        {"search_id": "S1", "platform": "openalex", "openalex_id": "W2", "doi": "", "title": "T",
+         "year": 2021, "question": "grid", "formulation": "IM", "in_refined": False,
+         "in_unified": False, "in_sud": False, **extra}])
+    return reg, recs
+
+
+def _written_row(tmp_path, reg, recs):
+    base = {"lane": "t1652-causal-econlit", "ticket": "1652", "delivery": "2026-09-30b"}
+    cy.write_intake(str(tmp_path / "d"), recs, reg, {}, base)
+    with open(tmp_path / "d" / "records.csv", encoding="utf-8", newline="") as fh:
+        (row,) = list(csv.DictReader(fh))
+    return row
+
+
+def test_records_csv_on_disk_carries_authors_and_host_organization(tmp_path):
+    """Ticket 2041: read back from the written file, not from the in-memory row."""
+    reg, recs = _venue_records(
+        first_author="Ledec, G.", all_authors=["Ledec, G.", "Rapp, K."],
+        host_org_name="Routledge", host_org_id="P4310319847", source_type="ebook platform",
+        issn=["1111-2222"], issn_l="1111-2222", landing_page="https://doi.org/10.4324/x")
+    row = _written_row(tmp_path, reg, recs)
+    assert (row["first_author"], row["all_authors"]) == ("Ledec, G.", "Ledec, G.; Rapp, K.")
+    assert (row["host_org_name"], row["host_org_id"], row["source_type"]) == (
+        "Routledge", "P4310319847", "ebook platform")
+    assert (row["issn"], row["issn_l"], row["landing_page"]) == (
+        "1111-2222", "1111-2222", "https://doi.org/10.4324/x")
+
+
+def test_backfill_fills_blank_cells_of_the_written_records_and_never_overwrites(tmp_path):
+    reg, recs = _venue_records(first_author="Kept, A.", all_authors=["Kept, A."])
+    cy.apply_backfill(recs, {"W2": {"openalex_id": "W2", "first_author": "Other, B.",
+                                    "all_authors": ["Other, B."], "host_org_name": "Wiley",
+                                    "issn": ["9999-9999"], "source_type": "journal"}})
+    row = _written_row(tmp_path, reg, recs)
+    assert (row["first_author"], row["all_authors"]) == ("Kept, A.", "Kept, A.")
+    assert (row["host_org_name"], row["issn"], row["source_type"]) == ("Wiley", "9999-9999", "journal")
+
+
 # --- ticket 1755: the corrections of the replacement delivery
 
 SURVEY = "Survey of Recent Developments"
