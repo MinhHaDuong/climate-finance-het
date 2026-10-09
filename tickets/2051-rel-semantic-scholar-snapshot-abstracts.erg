@@ -1,0 +1,36 @@
+%erg 0.1
+Title: REL recover abstracts from the Semantic Scholar dataset snapshot
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T21:00Z HDMX-coding-agent created
+2026-10-09T21:00Z HDMX-coding-agent note author decision 2026-10-09: file the Semantic Scholar snapshot pass for the abstracts ISTEX does not recover
+
+--- body ---
+
+## Context
+
+Child of 0700. After ISTEX (ticket 2046, stage A run of 2026-10-09: 81,051 abstracts accepted of 148,437 DOIs queried, 54.6%), 76,261 pool works still lack an abstract, of which 67,386 carry a DOI and 8,875 carry none. Crossref (0.5%) and Europe PMC (1.8%) add almost nothing; the EDS API has no abstract field. Semantic Scholar is the one independent source that showed hits where OpenAlex and Crossref had none: 22 of 100 big-journal works, unauthenticated, one batch (the other three were rate-limited), so a weak and unconditioned figure.
+
+Two ways to ask Semantic Scholar:
+- The Graph API (`POST /graph/v1/paper/batch`, `GET /graph/v1/paper/DOI:{doi}`): the author registered for a new key on 2026-10-09 (the registered one has returned 403 since 2026-10-06); the introductory rate limit is 1 request per second on all endpoints, so bulk work must use the batch endpoint.
+- The Datasets API (`api.semanticscholar.org/datasets/v1/release/`): monthly snapshots. From search results, not verified against the live release listing (the official page could not be opened in full): an `abstracts` dataset of about 100M records in about 30 gzipped JSON files of about 1.8 GB (about 54 GB), abstracts included only where licensing allows, linked to other datasets by corpus id; download links need an API key; the rate limit applies to listing and link requests, not to file downloads; the data are under ODC-BY 1.0 with a request to cite the Semantic Scholar Open Data Platform paper, a different licence from the API agreement. The mapping from DOI to corpus id needs the `papers` (or `paper-ids`) dataset, whose size is unknown.
+
+Why the snapshot is preferred for the bulk pass (the MOE's reasons): one pass over every DOI instead of 130 to 650 batch calls; coverage on the 67,386 residue comes out exact, so no separate probe is needed; a snapshot has a release id and checksums, so the recovery is reproducible, which a live API query is not; the licence may allow redistribution with attribution, which matters for a deposited dataset (to be read, not assumed). Disk: stream and filter, never store the full snapshot (70 GB free under `/home`, 406 GB under `/scratch`).
+
+## Exit criteria
+
+- [ ] The live release listing is read: dataset names, files and sizes of `abstracts` and the DOI-to-corpus-id dataset, the release id, the licence text and the attribution requirement, the exact meaning of "where allowed by licensing", and the rate limit; the summary is written into the ticket log before any download. If the snapshot route is not as described, the ticket is amended and the author told, and the batch endpoint at 1 request per second (one worker, at least 1.1 s between calls, stop on the first 429, no single lookups in bulk) is the fallback.
+- [ ] The key sits in the keystore (`~/.config/keys/semanticscholar.env`), is checked with a single request that prints only the status code, and is never printed or logged.
+- [ ] A streaming CLI (own script, `argparse`, `--output-dir`, no hardcoded paths) reads the mapping dataset and the abstracts files once, keeps only the rows whose DOI is among the abstract-less pool works that carry a DOI (the list of 67,386 residue DOIs, plus a run over all 148,437 so the overlap with ISTEX is measured), writes the matches to a new archive directory outside the repo with the release id, the file list, the sha256 of every input file read and a MANIFEST.sha256, resumes at file granularity, never overwrites an archive, stops on HTTP errors without a retry loop.
+- [ ] Positive and negative controls before any count: a known DOI with an abstract in the snapshot is found; an invented DOI is not; both asserted by the CLI.
+- [ ] Match safety as for ISTEX: Semantic Scholar title (from the `papers` dataset) is compared with the pool title (stated tolerance), year within one, stubs and boilerplate rejected, each cause counted; the abstract text is stored as delivered.
+- [ ] Counts by lane, period (1990-2006, 2007-2014, 2015-2025, 2026+) and language: DOIs queried, found in the mapping, with a non-null abstract, accepted, rejected by cause; the hit rate on the 67,386 residue; the overlap with the ISTEX abstracts (agreement on the texts where both exist, as a quality check); coverage before and after, with the first act shown separately; the residue left.
+- [ ] Delivery as one more abstract candidate in the pool, `abstract_source=semanticscholar`, through the same enrichment join as the ISTEX abstracts (ticket 2046 stage B) and the 2045 selector, without changing any `work_key` and with every other pool column byte-identical; the join itself is not built here if 2046 stage B has not landed.
+- [ ] Redistribution status of the recovered abstracts is stated (ODC-BY terms read, or unresolved) so the deposit decision can be taken; nothing is deposited here.
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Severity: science lane (the abstracts feed the screen and the reading; 76,261 works have none). External dependency: the new API key (registered by the author on 2026-10-09, not yet in the keystore at filing). Related: 2046 (ISTEX), 2045 (closed selector), 2049, 2050. Rejected routes with their measured rates are in the project memory note on abstract recovery.
