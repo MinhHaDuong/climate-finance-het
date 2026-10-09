@@ -2,12 +2,16 @@
 Title: REL pool dedup identity: title normalizer, working paper and published as one, RePEc handle key
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Superseded-by: 2047
+Superseded-by: 2048
+Closed: superseded by 2047 (machinery, now carrying the audit and the surface sweep) and 2048 (coordinating part); a tracker over two sequential children added no check their own exit criteria do not carry
 
 --- log ---
 2026-10-09T15:00Z HDMX-coding-agent created
 2026-10-09T15:00Z HDMX-coding-agent note author decision 2026-10-09: a working paper and its published article are one work; fix the dedup docstring to say so; file the title normalizer and pool key fixes
 2026-10-09T18:00Z HDMX-coding-agent note author decision 2026-10-09: split into the safe part (2047) and the coordinating part (2048); this ticket is now the tracker
 
+2026-10-09T08:49Z HDMX-coding-agent closed — superseded by 2047 (machinery, now carrying the audit and the surface sweep) and 2048 (coordinating part); a tracker over two sequential children added no check their own exit criteria do not carry
 --- body ---
 
 ## Context

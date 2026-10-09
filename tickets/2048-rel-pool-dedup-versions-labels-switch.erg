@@ -12,7 +12,7 @@ Blocked-by: 2047
 
 ## Context
 
-Child of tracker 2044 (read its Context for the audit and the numbers). The coordinating part: everything that changes which works exist, touches labels, depends on other branches or spends on model calls. It starts after 2047 has landed the machinery.
+Child of 0700 (the former tracker 2044 is closed as superseded by this ticket and 2047; the audit and numbers are in 2047's Context). The coordinating part: everything that changes which works exist, touches labels, depends on other branches or spends on model calls. It starts after 2047 has landed the machinery.
 
 Author decision 2026-10-09: a working paper and its published article are ONE work. The current cascade keeps two works when both have their own DOIs and no OpenAlex record links them; 365 pool works already carry 2 or more DOIs and 59 carry 2 or more OpenAlex ids through shared OpenAlex records (SSRN and Research Square preprints with the published article).
 
