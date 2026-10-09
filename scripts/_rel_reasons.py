@@ -9,6 +9,10 @@ the I/O.
 intersection of fuzzy facets. A work's membership ``mu`` is the minimum of its
 facet values. Facets are evaluated in ``FACETS`` order, cheapest first:
 
+0. ``profile`` (ticket 2043, deterministic, free): 0 for a work lacking a required
+   DataCite mandatory property (``_rel_profile``), detail ``profile_missing_<field>``.
+   Not evaluated at all while the switch ``config/rel_profile.yaml`` ``enabled`` is
+   off (``profile_missing`` is recorded either way, the sensitivity rows show it on);
 1. ``seriousness`` (deterministic, free: the venue table). Values per tier
    from ``_rel_venues.tier_membership`` (decided: A 1, B 1, unknown 0.5, C 0);
    0 for a registry exclusion (switches (a) and (a'), never on a title match)
@@ -66,10 +70,11 @@ import re
 from collections import Counter, defaultdict
 
 import _rel_policy as policy
+import _rel_profile as rp
 import _rel_venues as rvn
 import _rel_view as rv
 
-FACETS = ["seriousness", "icf", "discipline"]  # evaluation order, cheapest first
+FACETS = ["profile", "seriousness", "icf", "discipline"]  # evaluation order, cheapest first
 REASONS = [f"{f}_{k}" for f in FACETS for k in ("excluded", "pending")] + ["included"]
 ICF_STATUS = {"icf": "icf", "unsure_unresolved": "unsure", "aux": "aux", "out": "out",
               "stage1_out": "out", "stage1_aux": "aux"}
@@ -77,7 +82,7 @@ ICF_PENDING = {"unscreened", "pending_stage2"}
 DISCIPLINE_AS_UNSURE = {"na", "unknown"}
 PUBLISHERS = ["mdpi", "frontiers", "hindawi"]
 WIDE_REGISTRIES = ["doaj_withdrawn", "scopus_discontinued"]
-VIEW_COLUMNS = ["contrib", "discipline_field", "contrib_type", "discipline_source",
+VIEW_COLUMNS = ["profile_missing", "profile_venue_via", "contrib", "discipline_field", "contrib_type", "discipline_source",
                 "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag", "index_hits",
                 "seriousness", "seriousness_flag", *[f"mu_{f}" for f in FACETS],
                 "mu", "mu_facet", "mu_complete", "rel_reason", "rel_reason_detail",
@@ -275,12 +280,18 @@ def discipline_of(row: dict, dims: list[dict]) -> tuple[dict | None, int, bool]:
 def _facet_values(row: dict, venue: dict, srule: dict, mrule: dict) -> list:
     s_val, s_detail = seriousness_of(venue, srule)
     i_val, i_detail = icf_of(row, mrule)
-    return [("seriousness", s_val, s_detail), ("icf", i_val, i_detail),
-            ("discipline", discipline_value(row["contrib"], mrule), row["discipline_field"])]
+    out = [("seriousness", s_val, s_detail), ("icf", i_val, i_detail),
+           ("discipline", discipline_value(row["contrib"], mrule), row["discipline_field"])]
+    prof = srule.get("profile")
+    if prof and prof["enabled"]:  # ticket 2043: first and cheapest; off = not evaluated
+        code = rp.first_required_code(row["profile_missing"], prof["required"])
+        out.insert(0, ("profile", 0.0 if code else 1.0, code))
+    return out
 
 
 def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
-           srule: dict, mrule: dict, policies: list[dict] | None = None) -> dict:
+           srule: dict, mrule: dict, policies: list[dict] | None = None,
+           profile: dict | None = None) -> dict:
     """Add ``VIEW_COLUMNS`` to the view rows (pool order, as ``build_view`` returns
     them); return a summary. A pool work missing from ``venues`` is refused: the
     venue table is stale (``make rel-venues``).
@@ -311,10 +322,14 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
             "publisher_flag": venue.get("publisher_flag", ""),
             "index_hits": venue.get("index_hits", ""),
         })
+        row["profile_missing"] = rp.codes(rp.missing_fields(pool[i], profile)) if profile else ""
+        row["profile_venue_via"] = rp.venue_of(pool[i], profile)[1] if profile else ""
         values = _facet_values(row, venue, srule, mrule)
         ev = evaluate(values, srule["alpha"])
-        row["seriousness"] = values[0][2]
-        row["seriousness_flag"] = "no_venue" if row["tier"] == "unknown" and values[0][1] else ""
+        serious = next(v for v in values if v[0] == "seriousness")
+        row["seriousness"] = serious[2]
+        row["seriousness_flag"] = "no_venue" if row["tier"] == "unknown" and serious[1] else ""
+        row["mu_profile"] = ""
         for name, value, _ in values:
             row[f"mu_{name}"] = _fmt(value) if name in ev["graded"] else ""
         row.update({k: ev[k] for k in ("mu_facet", "rel_reason", "rel_reason_detail")})
@@ -437,6 +452,13 @@ def stage2_skip(rows: list[dict]) -> dict:
 def _scenarios(base: dict) -> list[tuple[str, dict]]:
     out = [("default", base),
            ("publishers_dropped", dict(base, drop_publishers=PUBLISHERS))]
+    prof = base.get("profile")
+    if prof:  # ticket 2043: the filter and its publisher requirement, each on and off
+        no_venue = [f for f in prof["required"] if f != "venue"]
+        out += [("profile_off", dict(base, profile=dict(prof, enabled=False))),
+                ("profile_on", dict(base, profile=dict(prof, enabled=True))),
+                ("profile_on_venue_optional",
+                 dict(base, profile=dict(prof, enabled=True, required=no_venue)))]
     out += [(f"drop_{p}", dict(base, drop_publishers=[p])) for p in PUBLISHERS]
     kanal = set(base["exclude"]) ^ {"kanalregisteret"}
     out += [("tier_a_only", dict(base, tiers=["A"])),
@@ -461,6 +483,11 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
     else:  # tier_without_nonresearch exists for the configured switch (b) only
         out = [o for o in out if o[0] != "ngo_research_flipped"]
     return out
+
+
+def _profile_cell(prof: dict | None) -> str:
+    """``off``, or the required DataCite fields joined by ``+``."""
+    return "+".join(prof["required"]) if prof and prof["enabled"] else "off"
 
 
 def sensitivity(rows: list[dict], venues: dict, base: dict, mrule: dict) -> list[dict]:
@@ -493,6 +520,7 @@ def sensitivity(rows: list[dict], venues: dict, base: dict, mrule: dict) -> list
             "drop_publishers": ";".join(srule["drop_publishers"]),
             "no_venue": srule["no_venue"],
             "nonresearch": srule.get("nonresearch", ""),
+            "profile": _profile_cell(srule.get("profile")),
             "included_works": len(inc),
             "included_families": len(inc_fams),
             "included_mu_weighted": _fmt(sum(mu for _, mu in inc)),

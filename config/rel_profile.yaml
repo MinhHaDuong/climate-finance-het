@@ -1,0 +1,99 @@
+# REL minimum metadata profile (ticket 2043, child of 0700). Read by
+# scripts/_rel_profile.py; applied by scripts/corpus_rel_view.py (first facet
+# of the REL membership) and counted by scripts/corpus_rel_profile.py.
+#
+# Reference: the DataCite mandatory properties. Author decisions of 2026-10-09:
+# the full six-field set; a work lacking author, title, year or a handle is not
+# worth screening; a handle may be a registered-repository persistent id.
+# Excluded works stay in the pool with `profile_missing_<field>` (single
+# standard: nothing is deleted); the counts are reported with the filter on and
+# off, and with the venue requirement on and off (sensitivity rows).
+version: 1
+
+# The switch. false: every work is graded as before and the view only records
+# `profile_missing`; the sensitivity table shows the filter on. true: works
+# missing a required field leave at the first facet, before any model call.
+# Left false until the pool carries authors for the OpenAlex lanes (ticket 2041
+# delivery regeneration): on the 2026-10-01 pool the author field is blank for
+# those lanes, so switching on would drop them for a harvest artifact.
+enabled: false
+
+# Required fields, DataCite names except `venue`, the field that stands for the DataCite
+# `publisher` (author decision of 2026-10-09: a venue identity, not a publisher string).
+# Remove `venue` to drop that requirement.
+# The order here does not matter: the reason code of an excluded work is the first
+# missing required property in the fixed order of _rel_profile.FIELDS (identifier,
+# creator, title, venue, publicationYear, resourceType).
+required: [identifier, creator, title, venue, publicationYear, resourceType]
+
+# Accepted identifier forms, besides a DOI or an OpenAlex id (always accepted).
+# A member record id (pool column member_record_ids, `lane/delivery:<id>`) or a
+# `repec_handle` counts when it is one of these persistent forms.
+identifier:
+  generic: [repec, hdl, oai, hal]
+  # Registered repository platforms: an id of this platform is persistent and
+  # resolves at `url`. Add a platform here to recover its records; a platform
+  # absent here (e.g. bibcnrs, scispace, oecd in the 2026-10-01 pool) is not
+  # accepted. The record-id prefix is the key. `url` is declared, not checked: the
+  # loader requires one, nothing resolves it, and only the ids with an `{id}` slot build
+  # one. scielo, ajol and adb_ewp keep their entries because their record ids start with
+  # the platform name (`scielo:oai:...`), which the generic forms do not match
+  # (tests/test_rel_profile.py::test_platform_entries_are_not_covered_by_generic_forms).
+  platforms:
+    redalyc: {id: '^\d+$', url: 'https://www.redalyc.org/articulo.oa?id={id}'}
+    garuda: {id: '^\d+$', url: 'https://garuda.kemdikbud.go.id/documents/detail/{id}'}
+    clacso: {id: '^hdl:\S+$', url: 'https://biblioteca-repositorio.clacso.edu.ar/handle/{id}'}
+    ipea: {id: '^hdl:\d+/\d+$', url: 'https://repositorio.ipea.gov.br/handle/{id}'}
+    uwi: {id: '^hdl:\S+$', url: 'https://hdl.handle.net/{id}'}
+    scielo: {id: '^oai:scielo:\S+$', url: 'https://www.scielo.org/'}
+    ajol: {id: '^oai:ajol\.info:\S+$', url: 'https://www.ajol.info/'}
+    adb_ewp: {id: '^RePEc:\S+$', url: 'https://ideas.repec.org/'}
+    # Registered by author decision of 2026-10-09 (ids as seen in the 2026-10-01 pool).
+    # CEEW: Council on Energy, Environment and Water; the id is the publication page.
+    ceew: {id: '^https://www\.ceew\.in/\S+$', url: '{id}'}
+    # CPD: Centre for Policy Dialogue, Dhaka; numeric site id.
+    cpd: {id: '^\d+$', url: 'https://cpd.org.bd/?p={id}'}
+    # ERSA: Economic Research Southern Africa; numeric working-paper id.
+    ersa: {id: '^\d+$', url: 'https://econrsa.org/?p={id}'}
+    # South Centre: policy think tank of developing countries; the id is the page URL.
+    south_centre: {id: '^https://www\.southcentre\.int/\S+$', url: '{id}'}
+    # UNFCCC: official negotiation documents; the id is the document symbol
+    # (FCCC/CP/2024/11/Add.2, AOSIS/NCQG/2024/REACTION).
+    unfccc: {id: '^(?=.*[A-Za-z0-9])[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)+$', url: 'https://unfccc.int/documents?search={id}'}
+
+# Venue identity (stands for the DataCite `publisher`). Satisfied when the work names a journal
+# or a series, or a publisher resolves by any route. First hit wins, recorded in the view
+# column `profile_venue_via`; none: unresolved, reason `profile_missing_venue`.
+#   journal       : the pool's `journal` field (journal or series name). A platform name
+#                   ("SSRN Electronic Journal", "Zenodo (CERN...)") does not count.
+#   host_org      : the OpenAlex host organization (ticket 2041 columns `host_org_name`,
+#                   `host_org_id`); a platform name does not count.
+#   doi_prefix    : the registrant of the DOI prefix, if the prefix is a publisher in the
+#                   table; platform prefixes (SSRN, Zenodo, Figshare, arXiv, JSTOR...) are
+#                   `platform` rows and never count.
+#   repec_archive : the archive code of a RePEc handle `RePEc:<archive>:<series>:...` (record
+#                   id or `repec_handle`). It stands for the ISSUING BODY of a working paper
+#                   or the publisher of a journal series. Only the archives listed in
+#                   config/rel_repec_archives.csv count, a row naming a series only that
+#                   series: institutional archives with real series; personal pages, open
+#                   repositories (pra, hal) and aggregators (zbw/EconStor) are not listed.
+venue:
+  order: [journal, host_org, doi_prefix, repec_archive]
+  prefix_table: config/rel_doi_prefixes.csv
+  repec_archive_table: config/rel_repec_archives.csv
+  # A name equal (case-folded) to a platform registrant of the prefix table, or to one of these
+  # names, does not count in the host_org or journal step: OpenAlex lists repositories as host
+  # organizations of their records. SciELO, African Journals Online, OpenEdition and Cairn.info
+  # are listed as platforms for the publisher-string step (host_org). They are publisher-like
+  # for humanities and Global South journals, so such an article still satisfies the venue
+  # through the journal name of step `journal`
+  # (tests/test_rel_profile.py::test_scielo_article_with_journal_name_passes_the_venue).
+  platform_names: [Zenodo, Figshare, SSRN, SSRN Electronic Journal, arXiv, arXiv.org, Research Square,
+                   ResearchGate, OSF Preprints, Open Science Framework, SocArXiv, JSTOR,
+                   Harvard Dataverse, AgEcon Search, EconStor, OpenEdition, Cairn.info,
+                   Social Science Research Network (SSRN)]
+  # Placeholder values that fill an empty journal or host-organization cell in exports
+  # (pandas `nan`, `None`, `-`...) or name a document kind, not a venue. Compared
+  # case-insensitively after trimming; a value also needs at least one letter. Source: the
+  # strings the delta review of PR 1728 replayed (2026-10-09); extend when an export shows another.
+  placeholder_names: [Preprint, Working Paper, arXiv preprint, Unknown, None, n/a, "-", nan, "null"]
