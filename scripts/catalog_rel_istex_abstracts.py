@@ -242,7 +242,13 @@ def http_get(url, timeout=60):
         return e.code, e.read()
 
 
-def _query(get, url):
+def is_truncated(data):
+    return data["total"] > len(data["hits"])
+
+
+def _query(get, url, allow_truncated=False):
+    """One GET. A truncated page is returned only when the caller handles it (a
+    malformed pool DOI such as ``10.1007/978-3-030-`` matches thousands of records)."""
     try:
         status, body = get(url)
     except (OSError, urllib.error.URLError) as e:  # timeouts, DNS, resets
@@ -255,7 +261,7 @@ def _query(get, url):
         raise StopRun("answer is not JSON")
     if not isinstance(data.get("hits"), list) or "total" not in data:
         raise StopRun("answer lacks hits/total")
-    if data["total"] > len(data["hits"]):
+    if is_truncated(data) and not allow_truncated:
         raise StopRun("truncated answer: total %s > hits %s" % (data["total"], len(data["hits"])))
     return body, data
 
@@ -343,6 +349,44 @@ def _ensure_pool_copy(args):
     return pool_copy
 
 
+class _Pacer:
+    def __init__(self, delay):
+        self.delay, self.n = delay, 0
+
+    def wait(self):
+        if self.n:
+            time.sleep(self.delay)
+        self.n += 1
+
+
+def _archive_new(out, name, body):
+    with open(os.path.join(out, "raw", name), "xb") as f:  # exclusive: never overwrites
+        f.write(body)
+
+
+def _fetch_batch(out, i, batch, base_url, get, pacer):
+    """Archive batch ``i``. A truncated answer (an over-matching malformed DOI)
+    is followed by one query per DOI of the batch, archived as ``b<i>.s<k>.json``;
+    that split is bounded (len(batch) requests) and is not a retry of an error."""
+    path = os.path.join(out, "raw", "b%06d.json" % i)
+    if os.path.exists(path):
+        data = json.loads(open(path, "rb").read())  # a corrupt archive file stops here
+    else:
+        pacer.wait()
+        body, data = _query(get, build_url(batch, base_url), allow_truncated=True)
+        _archive_new(out, "b%06d.json" % i, body)
+        _append(os.path.join(out, "requests.jsonl"),
+                {"batch": i, "n_dois": len(batch), "total": data["total"], "truncated": is_truncated(data),
+                 "sha256": hashlib.sha256(body).hexdigest(), "dois": batch})
+    if is_truncated(data) and len(batch) > 1:
+        for k, d in enumerate(batch, 1):
+            name = "b%06d.s%02d.json" % (i, k)
+            if not os.path.exists(os.path.join(out, "raw", name)):
+                pacer.wait()
+                body, _ = _query(get, build_url([d], base_url), allow_truncated=True)
+                _archive_new(out, name, body)
+
+
 def _fetch(args, get):
     out = args.output_dir
     pool_copy = _ensure_pool_copy(args)
@@ -368,27 +412,16 @@ def _fetch(args, get):
     if not (ctl["positive_ok"] and ctl["negative_ok"]):
         raise StopRun("controls failed before any batch")
 
+    pacer = _Pacer(args.delay)
     done = 0
-    limit = args.max_batches
     sent = 0
     for i, batch in enumerate(batches, 1):
-        raw_path = os.path.join(out, "raw", "b%06d.json" % i)
-        if os.path.exists(raw_path):
-            json.loads(open(raw_path, "rb").read())  # a corrupt archive file stops here
-            done += 1
-            continue
-        if limit is not None and sent >= limit:
-            break
-        if sent:
-            time.sleep(args.delay)
-        body, data = _query(get, build_url(batch, args.base_url))
-        with open(raw_path, "xb") as f:
-            f.write(body)
-        sent += 1
+        if not os.path.exists(os.path.join(out, "raw", "b%06d.json" % i)):
+            if args.max_batches is not None and sent >= args.max_batches:
+                break
+            sent += 1
+        _fetch_batch(out, i, batch, args.base_url, get, pacer)
         done += 1
-        _append(os.path.join(out, "requests.jsonl"),
-                {"batch": i, "n_dois": len(batch), "total": data["total"],
-                 "sha256": hashlib.sha256(body).hexdigest(), "dois": batch})
         if i % 200 == 0:
             log.info("batch %d/%d", i, len(batches))
     log.info("batches archived: %d of %d (%d new)", done, len(batches), sent)
@@ -420,18 +453,35 @@ def _check_controls(out):
 
 
 def _load_hits(out, dois):
-    """Map requested DOI -> list of ISTEX records; also diagnostics."""
-    by_doi, diag = {}, Counter()
-    for i, batch in enumerate(batches_of(dois), 1):
-        data = json.loads(open(os.path.join(out, "raw", "b%06d.json" % i), "rb").read())
-        req = set(batch)
+    """Map requested DOI -> ISTEX records; also diagnostics and the DOIs left unresolved
+    (their single-DOI query was still truncated)."""
+    by_doi, diag, unresolved = {}, Counter(), set()
+
+    def take(data, req):
         for h in data["hits"]:
             m = [d for d in hit_dois(h) if d in req]
             if not m:
                 diag["hit_not_requested"] += 1
             for d in m:
                 by_doi.setdefault(d, []).append(h)
-    return by_doi, diag
+
+    def load(name):
+        return json.loads(open(os.path.join(out, "raw", name), "rb").read())
+
+    for i, batch in enumerate(batches_of(dois), 1):
+        data = load("b%06d.json" % i)
+        if not is_truncated(data):
+            take(data, set(batch))
+            continue
+        diag["truncated_batches"] += 1
+        singles = enumerate(batch, 1) if len(batch) > 1 else [(0, batch[0])]
+        for k, d in singles:
+            one = load("b%06d.s%02d.json" % (i, k)) if k else data
+            if is_truncated(one):
+                unresolved.add(d)
+            else:
+                take(one, {d})
+    return by_doi, diag, unresolved
 
 
 def _write_new(path, rows, fields):
@@ -455,10 +505,11 @@ def _flags(g):
          "abstractless": int(g["blank"].sum()),
          "abstractless_no_doi": int((g["blank"] & (g["doi_n"] == "")).sum()),
          "queried": int((s != "").sum()), "accepted": int((s == "accepted").sum()),
-         "not_found": int((s == "not_found").sum())}
+         "not_found": int((s == "not_found").sum()),
+         "unresolved_truncated": int((s == "unresolved:truncated").sum())}
     for c in CAUSES:
         o["rejected_" + c] = int((s == "rejected:" + c).sum())
-    o["istex_record"] = o["queried"] - o["not_found"]
+    o["istex_record"] = o["queried"] - o["not_found"] - o["unresolved_truncated"]
     o["istex_abstract"] = o["istex_record"] - o["rejected_record_without_abstract"]
     o["with_abstract_after"] = o["with_abstract_before"] + o["accepted"]
     o["residue"] = o["abstractless"] - o["accepted"]
@@ -489,20 +540,22 @@ def _analyze(args):
     pool = load_pool(os.path.join(out, "pool_input.csv"))
     dois = todo_dois(pool)
     nb = len(batches_of(dois))
-    have = len([f for f in os.listdir(os.path.join(out, "raw")) if f.endswith(".json")])
+    have = len([f for f in os.listdir(os.path.join(out, "raw")) if re.fullmatch(r"b\d{6}\.json", f)])
     if have != nb and not args.allow_partial:
         raise StopRun("%d of %d batches archived; counts refused" % (have, nb))
     ana = os.path.join(out, args.analysis_dir)
     os.makedirs(ana)  # FileExistsError if the analysis exists: never overwritten
     cfg = {"year_tolerance": args.year_tolerance, "title_threshold": args.title_threshold,
            "min_chars": args.min_chars}
-    by_doi, diag = _load_hits(out, dois[:have * BATCH_SIZE])
+    by_doi, diag, unresolved = _load_hits(out, dois[:have * BATCH_SIZE])
     rows = {r.doi_n: r for r in pool[pool["blank"] & (pool["doi_n"] != "")].itertuples()}
     dec, accepted = [], []
     for d in dois[:have * BATCH_SIZE]:
         r = rows[d]
         pr = {"title": r.title, "year": r.year, "abstract": r.abstract}
         j = judge(pr, by_doi.get(d, []), d, cfg, is_boilerplate_abstract)
+        if d in unresolved:
+            j = {"status": "unresolved:truncated", "n_records": 0}
         dec.append({"doi": d, "work_key": r.work_key, "status": j["status"],
                     "n_records": j.get("n_records", 0), "istex_ark": j.get("istex_ark", ""),
                     "corpus": j.get("corpus", ""), "istex_language": j.get("istex_language", ""),

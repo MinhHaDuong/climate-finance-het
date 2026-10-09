@@ -30,8 +30,9 @@ def rec(doi, abstract=LONG, title="Wind turbine noise", year="2010", lang=("eng"
 class FakeIstex:
     """Answers the query the script builds: doi:("a" OR "b")."""
 
-    def __init__(self, archive, status=200, absent_returns_all=False):
+    def __init__(self, archive, status=200, absent_returns_all=False, overmatch=()):
         self.archive, self.status, self.calls = archive, status, 0
+        self.overmatch = set(overmatch)
         self.absent_returns_all = absent_returns_all
 
     def __call__(self, url):
@@ -41,6 +42,9 @@ class FakeIstex:
         q = urllib.parse.parse_qs(urllib.parse.urlparse(url).query)["q"][0]
         dois = re.findall(r'"([^"]+)"', q)
         hits = [self.archive[d] for d in dois if d in self.archive]
+        if self.overmatch & set(dois):  # a malformed DOI matching thousands of records
+            junk = [rec("10.9/junk%d" % k) for k in range(100)]
+            return 200, json.dumps({"total": 3669, "hits": junk}).encode()
         if self.absent_returns_all and not hits:
             hits = [next(iter(self.archive.values()))]
         return 200, json.dumps({"total": len(hits), "hits": hits}).encode()
@@ -188,3 +192,19 @@ def test_judge_red_guards():
     assert m.judge(row, [rec("d")], "d", cfg, bp)["status"] == "accepted"
     # several records on one DOI: the sound one wins over the wrong-year one
     assert m.judge(row, [rec("d", year="1999"), rec("d")], "d", cfg, bp)["status"] == "accepted"
+
+
+def test_overmatching_doi_is_split_per_doi_and_left_unresolved(tmp_path):
+    arch = archive_with_controls({"10.1/001": rec("10.1/001")})
+    pool = tmp_path / "pool.csv"
+    write_pool(pool, pool_rows(10))
+    api = FakeIstex(arch, overmatch=["10.1/005"])
+    assert m.cmd_fetch(fetch_args(tmp_path, pool), api) == 0
+    raw = sorted(os.listdir(tmp_path / "arch" / "raw"))
+    assert "b000001.json" in raw and "b000001.s10.json" in raw
+    assert m.cmd_analyze(analyze_args(tmp_path)) == 0
+    c = {(r["dimension"], r["value"], r["metric"]): int(r["n"])
+         for r in csv.DictReader(open(tmp_path / "arch" / "analysis" / "counts.csv"))}
+    assert c[("overall", "all", "unresolved_truncated")] == 1
+    assert c[("overall", "all", "accepted")] == 1  # 10.1/001 found through the split
+    assert c[("overall", "all", "not_found")] == 8
