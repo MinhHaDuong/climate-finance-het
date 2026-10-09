@@ -2,6 +2,7 @@
 Title: REL regenerate the partial lane deliveries with the recovered fields
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1743
 
 --- log ---
 2026-10-09T19:00Z HDMX-coding-agent created
@@ -10,6 +11,8 @@ Author: HDMX-coding-agent
 2026-10-09T09:57Z HDMX-coding-agent stage A (scratch, no DVC): four new deliveries regenerated (t1530 2026-09-29, t1650 2026-09-30, t1652 2026-09-30b, t1790-reader-reruns 2026-09-30 -> 2026-10-09), qa_rel_intake passes on each; record sets identical, only blank cells filled, no delivered cell overwritten; scratch pool: 389,291 works, work_key set identical, only first_author and all_authors filled (46,220 works; pool precedence also swaps the name form of 3,570 first_author and 3,956 all_authors values to the OpenAlex form); t1651, t1653, t1790-sud-playwright, t1810 not touched (not OpenAlex lanes). Stage B (dvc add and push) pending.
 2026-10-09T10:09Z HDMX-coding-agent pool-level author effect (review of PR 1740, accepted by the author 2026-10-09, below the severity floor): 3,570 first_author and 3,956 all_authors values change because a higher-ranked lane now supplies authors; of 820 first_author values that differ in token set, 475 are fuller or truncated subsets, 264 partly overlap and 81 share no token; worse cases seen: an institution replacing a person (Knack, Stephen to World Bank; Toan Phan to Federal Reserve Bank of Richmond), a truncation (Gajendra Singh Chauhan to Chauhan), U+FFFD corruptions (84 before, 86 after) and some different first authors for the same work whose truth is unknown. t1652 manifest now records inputs (merged backfill, EDS re-query results, handle table, with sha256), producer commit 550edba0; merged backfill archived at rel_openalex_backfill/2026-10-09-merged, rebuilt by scripts/catalog_rel_oa_backfill_merge.py
 2026-10-09T10:14Z HDMX-coding-agent note closing: all exit criteria met by PR 1740 and the stage A and B runs. Record identity: t1530 34,207, t1650 214,863, t1652 34,788 (2026-09-30b superseded by 2026-10-09), t1790 reruns 642; 0 non-blank cells overwritten; qa_rel_intake OK on all four. Pool: 389,291 works, work_key set and order identical before and after; first_author and all_authors filled for 46,220 works; 3,570 first_author and 3,956 all_authors values changed by lane-order precedence (author-accepted, logged above). Coverage in the union of the four lanes: authors 0.80 to 0.97, host organization 0 to 0.92, source type 0 to 0.96, ISSN 0.78 to 0.91; first act authors 0.84 to 0.94. DVC: four lane pointers (t1530 ee3f3064, t1650 c7ff41f4, t1652 c4f08a9d, t1790 910168c0), .dir objects and all files present in the remote with matching md5 (checked by the coder and independently by the MOE). The Makefile line 279 still names the 2026-09-29 t1530 output; reproducing the delivery through make is not done and is below the severity floor. Residue: 1,639 works with neither authors nor host organization (1,235 with OpenAlex ids the backfill did not return)
+2026-10-09T10:14Z HDMX-coding-agent closed — autoclosed — PR #1743
+
 --- body ---
 
 ## Context
