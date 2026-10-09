@@ -13,6 +13,8 @@ Login is Janus (Shibboleth SAML) with the credentials of
 ``~/.config/keys/janus.env``, read in-process only: nothing is printed,
 logged or written, and the session cookies stay in memory. Metadata only; raw
 results stay outside any public deposit (bibCNRS terms, docs/data-management-plan.md).
+The raw API records are kept next to the slim ones (``raw.jsonl.gz``) since ticket 2040.
+Returned fields and what is kept: see ``slim_eds``.
 
 Registry and provenance follow the OpenAlex run: search id, platform, exact
 string, provider filter, date, announced and received counts, completed flag,
@@ -33,7 +35,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from html.parser import HTMLParser
-from urllib.parse import urljoin
+from urllib.parse import parse_qs, urljoin, urlparse
 
 import requests
 from utils import get_logger, normalize_doi
@@ -48,6 +50,7 @@ REGISTRY_FIELDS = [
     "platform", "query_string", "filter", "run_at", "n_expected", "n_received",
     "pages", "cost_usd", "completed", "stop_reason",
 ]
+ISSN = re.compile(r"^\d{4}-?\d{3}[\dXx]$")
 _DATE = re.compile(r"\s+AND\s+DT\s+(\d{4})\d{2}-(\d{4})\d{2}\s*$")
 
 
@@ -80,9 +83,32 @@ def provider_filter(provider, year_from, year_to):
             + (f"; DT {year_from}-{year_to} in the query text" if year_from else ""))
 
 
+def _export_params(rec):
+    """The bibliographic fields EDS puts in the query string of its BibTeX
+    export link (ISBN, ISSN, volume, pages, document type), first value each."""
+    links = rec.get("exportLinks")
+    url = links.get("bibtex") if isinstance(links, dict) else None
+    q = parse_qs(urlparse(url).query) if url else {}
+    return {k: v[0] for k, v in q.items() if v and v[0]}
+
+
 def slim_eds(rec):
+    """The fields of one EDS result the REL pool needs, none truncated.
+
+    Fields returned by the API (probe 2026-10-09, one RePEc and one ECONIS
+    record): id, an, dbId, articleLinks {fullTextLinks, pdfLinks, html, urls},
+    exportLinks {bibtex, ris}, doi, title, source, authors (list or null),
+    publicationDate, languages, database, subjects, publicationType, abstract,
+    bibcheck. There is no publisher, no ISSN and no identifier field. The
+    BibTeX export link carries isbn, issn, volume, pages and doctype in its
+    query string; the RePEc ``issn`` there is the placeholder ``edsr-ep``, kept
+    out. ``authors`` is null on a RePEc chapter, a list on an ECONIS article.
+    ``urls`` holds the RePEc page (``ideas.repec.org/<kind>/<archive>/<series>/
+    <item>.html``) of an ``edsrep`` record."""
     date = rec.get("publicationDate") or ""
     langs = rec.get("languages") or []
+    exp = _export_params(rec)
+    links = rec.get("articleLinks") if isinstance(rec.get("articleLinks"), dict) else {}
     return {
         "eds_an": rec.get("an") or "",
         "db": rec.get("dbId") or "",
@@ -92,7 +118,15 @@ def slim_eds(rec):
         "language": langs[0] if langs else None,
         "type": rec.get("publicationType"),
         "journal": rec.get("source"),
-        "abstract": (rec.get("abstract") or "")[:1500],
+        "abstract": rec.get("abstract") or "",
+        "authors": [a for a in (rec.get("authors") or []) if a],
+        "issn": exp["issn"] if ISSN.match(exp.get("issn", "")) else "",
+        "isbn": exp.get("isbn", ""),
+        "volume": exp.get("volume", ""),
+        "pages": exp.get("pages", ""),
+        "doctype": exp.get("doctype", ""),
+        "subjects": rec.get("subjects"),
+        "urls": [u["url"] for u in (links.get("urls") or []) if isinstance(u, dict) and u.get("url")],
     }
 
 
@@ -219,7 +253,9 @@ def run(args, session=None):
     session = session or login()
     with open(reg_path, "w", encoding="utf-8", newline="") as reg_fh, \
             gzip.open(os.path.join(args.output_dir, "results.jsonl.gz"), "wt",
-                      encoding="utf-8") as res_fh:
+                      encoding="utf-8") as res_fh, \
+            gzip.open(os.path.join(args.output_dir, "raw.jsonl.gz"), "wt",
+                      encoding="utf-8") as raw_fh:
         reg = csv.DictWriter(reg_fh, REGISTRY_FIELDS, extrasaction="ignore")
         reg.writeheader()
         for provider in args.providers:
@@ -238,6 +274,10 @@ def run(args, session=None):
                     elif kind == "work":
                         rec = slim_eds(val)
                         rec.update(search_id=sid)
+                        # the API response as received, so a field added to slim_eds
+                        # later is re-read from the archive, not re-queried
+                        raw_fh.write(json.dumps({"search_id": sid, "record": val},
+                                                ensure_ascii=False) + "\n")
                         res_fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
                         n += 1
                     else:

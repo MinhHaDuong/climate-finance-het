@@ -47,3 +47,21 @@ def test_slim_record_keeps_provenance_fields():
 def test_working_paper_rows_are_not_replayed():
     rows = [{"econlit_string": "x", "formulation": f} for f in ("IM", "SI", "JEL", "WP")]
     assert [r["formulation"] for r in eds.eds_rows(rows)] == ["IM", "SI", "JEL"]
+
+
+def test_slim_record_keeps_authors_ids_urls_and_the_whole_abstract():
+    long_abstract = "word " * 600
+    rec = eds.slim_eds({
+        "an": "EDSZBW1", "dbId": "edszbw", "title": "T", "abstract": long_abstract,
+        "authors": ["Li, Zirong", "Li, Hong"], "subjects": ["a"],
+        "articleLinks": {"urls": [{"name": "Availability", "url": "https://ideas.repec.org/a/x/y/z.html"}]},
+        "exportLinks": {"bibtex": "https://w.example/c?issn=0305-750X&isbn=9789819628605&volume=106"
+                                  "&pages=1-14&doctype=Journal%20Article"}})
+    assert rec["abstract"] == long_abstract and rec["authors"] == ["Li, Zirong", "Li, Hong"]
+    assert rec["issn"] == "0305-750X" and rec["isbn"] == "9789819628605"
+    assert (rec["volume"], rec["pages"], rec["doctype"]) == ("106", "1-14", "Journal Article")
+    assert rec["urls"] == ["https://ideas.repec.org/a/x/y/z.html"]
+    # the RePEc placeholder is no ISSN; a null author list and missing links are tolerated
+    bare = eds.slim_eds({"an": "edsrep.p.a.b.c", "authors": None, "articleLinks": None,
+                         "exportLinks": {"bibtex": "https://w.example/c?issn=edsr-ep"}})
+    assert bare["issn"] == "" and bare["authors"] == [] and bare["urls"] == []

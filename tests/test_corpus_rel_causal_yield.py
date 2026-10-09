@@ -522,3 +522,39 @@ def test_judge_batches_one_mechanism_and_parses_labels(tmp_path):
         assert len(fh.readlines()) == 6
     with open(tmp_path / "j" / "judge_runs.jsonl", encoding="utf-8") as fh:
         assert "not the ICF inclusion screen" in fh.read()
+
+
+def test_intake_carries_the_checked_repec_handle_and_the_eds_fields_and_passes_the_record_check(lane):
+    import qa_rel_intake as qa
+    with gzip.open(lane / "eds" / "results.jsonl.gz", "wt", encoding="utf-8") as fh:
+        fh.write(json.dumps({
+            "search_id": "EDS-RePEc-grid-IM-en", "eds_an": "edsrep.p.nbr.nberwo.35497", "doi": "",
+            "title": "A paper only the mirror knows about", "year": 2020, "authors": ["Doe, Jane", "Roe, Rik"],
+            "issn": "1234-5678", "urls": ["https://ideas.repec.org/p/nbr/nberwo/35497.html"]}) + "\n")
+        fh.write(json.dumps({
+            "search_id": "EDS-RePEc-grid-IM-en", "eds_an": "edsrep.a.zzz.nope.v1y2020i1p1.2",
+            "doi": "", "title": "An article the mirror does not hold", "year": 2021}) + "\n")
+        fh.write(json.dumps({
+            "search_id": "EDS-RePEc-grid-IM-en", "eds_an": "EDSZBW1968531777", "doi": "",
+            "title": "A catalogue record without a DOI", "year": 2022}) + "\n")
+    table = lane / "handles.csv"
+    table.write_text("eds_an,status,handle\nedsrep.p.nbr.nberwo.35497,matched,RePEc:nbr:nberwo:35497\n"
+                     "edsrep.a.zzz.nope.v1y2020i1p1.2,no_series,\n")
+    base = lane / "base.json"
+    base.write_text(json.dumps({"lane": "t1652-causal-econlit", "ticket": "1652",
+                                "delivery": "2026-09-30", "needs_human": [], "supersedes": None}))
+    args = _args(lane)
+    args.intake_dir, args.manifest_base, args.eds_handles = str(lane / "intake"), str(base), str(table)
+    assert cy.run(args) == 0
+    recs = {r["platform_record_id"]: r for r in _csv(lane / "intake" / "records.csv")}
+    ok = recs["edsrep.p.nbr.nberwo.35497"]
+    assert ok["repec_handle"] == "RePEc:nbr:nberwo:35497" and ok["first_author"] == "Doe, Jane"
+    assert ok["all_authors"] == "Doe, Jane; Roe, Rik" and ok["issn"] == "1234-5678"
+    assert ok["url"].endswith("/p/nbr/nberwo/35497.html")
+    lost = recs["edsrep.a.zzz.nope.v1y2020i1p1.2"]
+    assert lost["repec_handle"] == "" and "no_series in the mirror" in lost["lane_note"]
+    assert "RePEc:zzz:nope:v1y2020i1p1.2" in lost["lane_note"]
+    assert "K10plus" in recs["EDSZBW1968531777"]["lane_note"]
+    # records.csv alone: the fixture's registry and manifest are not contract-shaped
+    header, rows = qa._read_csv(str(lane / "intake" / "records.csv"), [])
+    assert qa.check_records(header, rows, None) == []

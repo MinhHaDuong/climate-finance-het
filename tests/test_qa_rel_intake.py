@@ -52,6 +52,17 @@ def _delivery(tmp_path, records=None, registry=None, excluded=None, manifest=Non
     return d
 
 
+def test_optional_repec_handle_column_is_checked_when_present_and_not_required():
+    header = ric.RECORD_COLUMNS + ["repec_handle"]
+    full = {c: "" for c in header}
+    good = {**full, **_record("r1", repec_handle="RePEc:nbr:nberwo:35497")}
+    bad = {**full, **_record("r2", repec_handle="edsrep.p.nbr.nberwo.35497")}
+    errors = ric.check_records(header, [good, bad], {"q1"})
+    assert len(errors) == 1 and "line 3" in errors[0] and "repec_handle" in errors[0]
+    assert ric.check_records(ric.RECORD_COLUMNS, [{c: good[c] for c in ric.RECORD_COLUMNS}],
+                             {"q1"}) == []
+
+
 def test_valid_delivery_passes(tmp_path, capsys):
     d = _delivery(tmp_path)
     assert ric.check_delivery(str(d)) == []
