@@ -1,0 +1,31 @@
+%erg 0.1
+Title: REL pool dedup v2 machinery: title normalizer and RePEc handle key behind a version switch
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T18:00Z HDMX-coding-agent created
+2026-10-09T18:00Z HDMX-coding-agent note author decision 2026-10-09: split tracker 2044 into the safe part (this ticket) and the coordinating part (2048)
+
+--- body ---
+
+## Context
+
+Child of tracker 2044 (read its Context for the audit and the numbers). The safe part: build the improved dedup keys as machinery, with the production pool output unchanged until 2048 flips the switch.
+
+Safe means: with the default (`dedup_version` 1) the pool is byte-identical to today's, no `work_key` changes, no label is touched, nothing waits on another branch. With `--dedup-version 2` the build writes a report and a migration table but replaces nothing.
+
+## Exit criteria
+
+- [ ] A new title normalizer in its own tested module: HTML entities unescaped, tags stripped, NFKC, hyphens and dashes to space, casefold, whitespace collapsed; no ASCII folding that collides non-Latin scripts. Accent folding is decided by measurement on the clean candidate groups of 2044 (the 1,034 groups with no identifier conflict) and stated; default none. Every observed string of 2044 Context item 1 is a test, plus a script-collision test (distinct CJK, Cyrillic and Arabic titles never share a key).
+- [ ] `repec_handle` (ticket 2040) and the RePEc handle carried in `record_id` by the RePEc mirror lane become an exact-equality join key, joining only components whose DOIs and OpenAlex ids do not disagree, with the same chain protection as the Handle step (2b).
+- [ ] A `dedup_version` setting (config, default 1). Version 1 is the current cascade untouched; version 2 uses the new normalizer and the handle key. A test proves the pool built with version 1 is byte-identical to the pool built before this change on the same inputs (`SOURCE_DATE_EPOCH` set), including `work_key`.
+- [ ] `--dedup-version 2` also writes, outside the pool: a report of the works that would merge by cause (normalizer, handle key), the multi-DOI and multi-OpenAlex works, the title-only works remaining, and an append-only migration table `old work_key to new work_key` for every work whose key would change. Nothing in the production pool or any label table is rewritten.
+- [ ] Counts of the report by lane, period (1990-2006, 2007-2014, 2015-2025) and language, with the first act shown separately.
+- [ ] Order independence kept for both versions: a shuffle test with a positive control (a deliberately order-dependent variant fails it).
+- [ ] The docstrings of `_rel_pool_dedup.py` and `_rel_pool_keys.py` are accurate for both versions: they state the normalizer and the handle key of version 2, say that version 1 is still the default, and record the author decision of 2026-10-09 that a working paper and its published article are ONE work with the pointer that rule lands in 2048. No sentence contradicts the code.
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Severity: science lane (it builds the fix for a live defect that reaches the pool). Do not run in parallel with 2045 on `scripts/corpus_rel_pool.py`; 2045 goes first, rebase between them.

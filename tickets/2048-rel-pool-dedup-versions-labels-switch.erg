@@ -1,0 +1,33 @@
+%erg 0.1
+Title: REL pool dedup: working paper and published as one, label migration, switch to v2
+Created: 2026-10-09
+Author: HDMX-coding-agent
+Blocked-by: 2047
+
+--- log ---
+2026-10-09T18:00Z HDMX-coding-agent created
+2026-10-09T18:00Z HDMX-coding-agent note author decision 2026-10-09: split tracker 2044 into the safe part (2047) and the coordinating part (this ticket); a working paper and its published article are ONE work
+
+--- body ---
+
+## Context
+
+Child of tracker 2044 (read its Context for the audit and the numbers). The coordinating part: everything that changes which works exist, touches labels, depends on other branches or spends on model calls. It starts after 2047 has landed the machinery.
+
+Author decision 2026-10-09: a working paper and its published article are ONE work. The current cascade keeps two works when both have their own DOIs and no OpenAlex record links them; 365 pool works already carry 2 or more DOIs and 59 carry 2 or more OpenAlex ids through shared OpenAlex records (SSRN and Research Square preprints with the published article).
+
+Labels (ICF screen table, stage-1 and stage-2 labels, venue and discipline tables) are keyed by `work_key` and are append-only. The 1656 freeze and the unmerged 1654 incremental screening (branch `t1654-citation-chaining`) both read the pool; a re-keyed pool must not reach either without a plan.
+
+## Exit criteria
+
+- [ ] The working-paper-and-published rule is designed from the `version_hint` column and measured: identical normalized title (2047 normalizer), publication years within a stated window, at most one published version, DOIs that differ allowed only when one side is a recognised working-paper or preprint prefix (SSRN 10.2139, Research Square 10.21203, repository handles, RePEc series) or carries a `version_hint`. The window is an author decision: the ticket log records the options with the counts each admits and the author's choice before the rule is built.
+- [ ] Precision is estimated on a stratified sample read by a cross-vendor model panel (never the author), recall by the 365 and 59 existing multi-version works. The panel's price is derived and shown to the author before any paid call; no paid call without the author's go.
+- [ ] A migration of labels: the 2047 migration table is applied to every label table as appended rows keyed by the new `work_key`, with a `migrated_from` reference; no label is dropped, duplicated or silently reassigned; where two labelled works merge with different labels the conflict rule is stated (the more recent label per the 2026-10-07 duplicate decision) and every conflict is listed.
+- [ ] Coordination with 1656 and 1654 is recorded before the first re-keyed pool is built: their ticket logs name the switch date and the migration table; incremental screening of 1654 resumes only on the new keys.
+- [ ] The default `dedup_version` flips to 2 in one commit with the rule; a before and after byte comparison of the pool for every work whose key does not change; counts before and after by lane, period (1990-2006, 2007-2014, 2015-2025) and language; works merged by each cause; the multi-DOI works that stay two and why.
+- [ ] `_rel_pool_dedup.py` docstring states the final rule (working paper and published as one) and the window; no sentence contradicts the code.
+- [ ] Diff at most 14 content-bearing paths per PR; the label migration may be its own PR; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Severity: science lane. Blocked by 2047. The abstract effect: merged working papers and articles share one abstract through the 2045 selector (about 2,200 works have a same-title twin with an abstract within three years by a rough match, of which 542 are ICF or unsure; unverified as duplicates).
