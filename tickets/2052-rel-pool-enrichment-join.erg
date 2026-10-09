@@ -1,0 +1,40 @@
+%erg 0.1
+Title: REL pool build joins enrichment tables (abstracts, resource types)
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T22:00Z HDMX-coding-agent created
+2026-10-09T22:00Z HDMX-coding-agent note author decision 2026-10-09 (resource types: enrichment table, not a lane delivery) and the 2046 stage B proposal (ISTEX abstracts: enrichment table) both need the same mechanism; one ticket carries it
+
+--- body ---
+
+## Context
+
+Child of 0700. Three recoveries produce a value per work that the pool lacks, and none is a record of a lane:
+- ISTEX abstracts (ticket 2046, stage A merged): 81,051 accepted abstracts keyed by DOI, archive `~/data/projets/climate-finance-het/rel_istex_abstracts/2026-10-09/analysis/istex_abstracts_accepted.csv`.
+- Resource types (ticket 2050, stage A in PR 1741): about 31,000 recovered `doc_type` values keyed by OpenAlex id and DOI, archive `~/data/projets/climate-finance-het/rel_doc_types/2026-10-09/doc_types.csv` once the bulk fetch ends.
+- Semantic Scholar abstracts (ticket 2051), same shape.
+
+Why a join and not a lane delivery: a lane delivery adds its lane to `sources`, `n_sources` and `member_record_ids` for tens of thousands of works, which breaks the criterion that only the enriched columns change, and the intake contract would force invented provenance (`query_id`, `retrieved_at`, a title per record) for what is a patch of one field. The pool already fills each field from the first non-empty member in a fixed order (catalogue, then `lane_order`), and ticket 2045 chooses the abstract by quality among members; an enrichment table is one more candidate source, ranked after the members for fields they fill, and before blank.
+
+Reviewed facts to carry into the design:
+- The 2046 review: 5,000 of the ISTEX abstracts (6.2%, 4,999 Elsevier) are 'Highlights:' bullet lists, not abstracts; the title check returns None for non-Latin titles; 68 abstract texts are shared by 138 rows (Springer double-DOI articles, Elsevier 'Reprint of' republications).
+- The pool 'first non-empty member' rule means an enrichment value fills a blank only; it never replaces a non-blank delivered value.
+- The ISTEX abstract texts are for internal use (author decision, provisional): the join must record the source of each filled value so a deposit can exclude them.
+- Tables live outside git. They must be tracked in DVC (a `data/rel_enrich` directory with a pointer in git, fetched by `make rel-pool-data` like the venue tables), and pinned by sha256 in the pool config as the catalogue is, so the pool build refuses a table whose hash differs.
+
+## Exit criteria
+
+- [ ] A config block lists each enrichment table: path, sha256, key columns (DOI normalised, OpenAlex id), the columns it may fill, the source label, and the rule (fill blank only). The pool build refuses a table whose sha256 differs from the pin, as it does for the catalogue.
+- [ ] The join matches on exact normalised DOI or OpenAlex id against every member of a work; a key that maps to two different works is reported and joins none; keys that match no work are counted.
+- [ ] Filled columns get provenance: `abstract_source` already exists (2045) and takes the value `istex`; a `doc_type_source` column is added; the abstract candidate from the table enters the 2045 selector as an extra member so quality, truncation and stub flags apply; abstracts that are 'Highlights:' lists are flagged in `abstract_flag` (new value) and rank below a real abstract.
+- [ ] `work_key`, `sources`, `n_sources` and `member_record_ids` do not change. Byte comparison of the pool before and after on the same inputs (`SOURCE_DATE_EPOCH` set): every column other than the enriched ones, and the new provenance columns, is identical; the count of works whose value changes equals the count of values the tables deliver minus the ones that match nothing.
+- [ ] Counts by lane, period (1990-2006, 2007-2014, 2015-2025) and language: abstracts and resource types filled, coverage before and after, the first act shown separately; the 2043 profile counts re-run on the enriched pool and attached to the 2043 ticket log.
+- [ ] The tables sit in DVC (`dvc add`, push from padme, pointer in git, md5 checked); the redistribution status of each source is stated in the config (ISTEX: internal use, provisional).
+- [ ] Order independence and idempotence: running the build twice, or with the tables listed in another order, gives byte-identical pools.
+- [ ] Diff at most 14 content-bearing paths per PR (the DVC pointers count); scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Severity: science lane (the abstracts feed the screen; the resource type decides whether 32,744 works pass the metadata profile). Blocked in practice by nothing: the tables exist (ISTEX) or are being built (2050). Touches `scripts/corpus_rel_pool.py`; PR 1735 (merged) and ticket 2048 (dedup rule, open) edit the dedup modules: sequence so the two do not edit `build_pool` at the same time. Successor consumers: 2046 stage B closes with this ticket; 2050 closes when the types are delivered; 2051 delivers its abstracts through the same join.
