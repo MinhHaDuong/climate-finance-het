@@ -22,6 +22,11 @@ a weaker one or a blank only when it ranks in a strictly better class. A
 candidate that is a 'Highlights:' bullet list is classed ``highlights``,
 below a real abstract and above a stub, and the pool flags it so.
 
+Several values for one work: a ``doc_type`` the tables disagree on resolves to
+the alphabetically first (label, value) pair and is counted
+(``doc_type_conflict``). The report describes the version-1 build, the pool
+written; its counters ``unmatched``, ``ambiguous`` and ``no_key`` start at 0.
+
 The result does not depend on the order of the tables: candidates are sorted
 before they are chosen from, and counters are keyed by label.
 """
@@ -51,7 +56,7 @@ def _sha256(path):
     return h.hexdigest()
 
 
-def load_tables(entries, root):
+def load_tables(entries, root, reserved=()):
     """Validated, hash-checked tables from the config list ``entries``."""
     tables, seen = [], set()
     for e in entries or []:
@@ -62,6 +67,8 @@ def load_tables(entries, root):
         unknown = sorted(set(e) - _ENTRY_KEYS)
         if unknown:
             raise RelPoolError(f"enrichment {label}: unknown keys {unknown}")
+        if label == "catalogue" or label in reserved:
+            raise RelPoolError(f"enrichment source {label} is the name of the catalogue or a lane")
         if label in seen:
             raise RelPoolError(f"enrichment source {label} listed twice")
         seen.add(label)
@@ -119,7 +126,7 @@ class Enrichment:
                     if k in wanted:
                         works[k].add(root)
         self.cands = defaultdict(lambda: {c: set() for c in FILLABLE})
-        self.stats = {t["label"]: Counter(rows=len(t["rows"])) for t in self.tables}
+        self.stats = {t["label"]: Counter(rows=len(t["rows"]), unmatched=0, ambiguous=0, no_key=0, matched=0) for t in self.tables}
         amb_keys = {t["label"]: set() for t in self.tables}
         for t, r, ks in keyed:
             st = self.stats[t["label"]]

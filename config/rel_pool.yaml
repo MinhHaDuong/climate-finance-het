@@ -75,12 +75,25 @@ t1530_delivery:
 # abstract competes as one more candidate in the 2045 selector, never replaces
 # a usable one; a doc_type fills a blank only) and redistribution (the status
 # of the source). An empty list builds the pool exactly as without the block.
-# Stage B of 2052 adds the entries once the tables are in DVC, e.g.
-#   - source: istex
-#     path: data/rel_enrich/istex_abstracts_accepted.csv
-#     sha256: <64 hex>
-#     doi_column: doi
-#     fills: {abstract: abstract}
-#     rule: fill_blank
-#     redistribution: internal use only (provisional author decision 2026-10-09)
-enrichment: []
+# Redistribution: istex abstracts are for internal use (provisional author
+# decision 2026-10-09): do not deposit the texts; abstract_source=istex marks
+# them. rel_doc_types values come from OpenAlex and Crossref metadata (open).
+# A doc_type the tables disagree on resolves to the first (label, value) pair
+# in order and is counted (doc_type_conflict); the report describes the
+# version-1 build.
+enrichment:
+  - source: istex
+    path: data/rel_enrich/istex_abstracts_accepted.csv
+    sha256: 04502d3efd26ac983ee6460ab6c66e11f8a920e544498c7c96b6afb2d8955ae7
+    doi_column: doi
+    fills: {abstract: abstract}
+    rule: fill_blank
+    redistribution: internal use only (provisional author decision 2026-10-09)
+  - source: rel_doc_types
+    path: data/rel_enrich/doc_types.csv
+    sha256: 396ed355628b9bc9ca3de3b705698877586230dd084d2d1fe354eca3b7e69d24
+    doi_column: doi
+    openalex_column: openalex_id
+    fills: {doc_type: doc_type}
+    rule: fill_blank
+    redistribution: open (OpenAlex and Crossref metadata)

@@ -1,0 +1,6 @@
+outs:
+- md5: fcdc082c3c422a1d1a0e36369f228695.dir
+  size: 96992158
+  nfiles: 2
+  hash: md5
+  path: rel_enrich

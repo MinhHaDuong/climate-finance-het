@@ -41,7 +41,7 @@ _WS = re.compile(r"\s+")
 OK, TRUNCATED, STUB, NONE = "ok", "truncated_suspect", "stub", "no_abstract"
 HIGHLIGHTS = "highlights"
 CLASSES = ("usable", "truncated", "highlights", "stub", "boilerplate", "blank")
-_HIGHLIGHTS = re.compile(r"highlights\s*[:•·]", re.IGNORECASE)
+_HIGHLIGHTS = re.compile(r"(?:research\s+)?highlights\s*(?:[:•·►▪▶■●○*-])", re.IGNORECASE)
 
 
 def _norm(text):
