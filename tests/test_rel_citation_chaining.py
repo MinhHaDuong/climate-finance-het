@@ -336,3 +336,11 @@ def test_metadata_get_protects_completion_headroom_before_network(tmp_path):
         oa_request(store, {'filter': 'doi:https://doi.org/10.1/public', 'per_page': 100, 'cursor': '*'},
                    get=no_network, admission_ceiling=24)
     assert store.db.execute('SELECT COUNT(*) FROM budget.calls').fetchone()[0] == 1
+
+
+def test_reuse_rejects_seed_list_not_bound_to_exact_direction_filter(tmp_path):
+    import _rel_chaining as chain
+    prior = Store(tmp_path / 'prior')
+    query = {'kind': 'forward', 'seeds': '["W1"]', 'filter': 'cites:W2'}
+    with pytest.raises(ChainError, match='seed/filter'):
+        chain._completed_direction_evidence(prior.db, prior.root, query, {'pages': {}})

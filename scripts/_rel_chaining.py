@@ -698,6 +698,10 @@ def batches(values, size=100):
 
 def _completed_direction_evidence(source, native_root, query, native_index):
     """Verify every original native cursor page, without provider calls or source writes."""
+    seeds = json.loads(query["seeds"])
+    field = {"backward": "openalex_id", "forward": "cites"}.get(query["kind"])
+    if not field or not seeds or len(set(seeds)) != len(seeds) or query["filter"] != field + ":" + "|".join(seeds):
+        raise ChainError("native reuse seed/filter binding mismatch")
     cursor, seen, received, pages, returned, backward_usable = "*", set(), 0, [], set(), set()
     while cursor:
         if cursor in seen:
