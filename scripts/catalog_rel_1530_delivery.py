@@ -39,6 +39,12 @@ from datetime import datetime, timezone
 
 import qa_rel_intake as ric
 import yaml
+from catalog_rel_sud_search import (
+    BACKFILL_FILE,
+    fill_blank,
+    intake_cells,
+    read_backfill,
+)
 from utils import get_logger, normalize_doi
 
 log = get_logger("catalog_rel_1530_delivery")
@@ -48,7 +54,9 @@ DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_pool.yaml")
 
 # Columns carried beyond the contract: the 1530 search's own provenance.
 EXTRA_RECORD_COLUMNS = ["search_run", "query_ids_all", "kinds", "cited_by_count",
-                        "in_refined_v2", "icf_term"]
+                        "in_refined_v2", "icf_term",
+                        "host_org_name", "host_org_id", "source_type", "issn_l",
+                        "landing_page"]
 REGISTRY_COLUMNS = ric.REGISTRY_REQUIRED + [
     "filter", "n_expected", "stop_reason", "kind", "stratum", "language",
     "theme", "search_run"]
@@ -121,10 +129,15 @@ def _blank(v):
     return "" if v is None else str(v)
 
 
-def _record(w, run_at, retrievals):
-    """One contract row for OpenAlex work ``w`` (its first titled retrieval)."""
+def _record(w, run_at, retrievals, backfill=None):
+    """One contract row for OpenAlex work ``w`` (its first titled retrieval).
+
+    Authors, ISSN and host organization come from the search record, then from
+    the 2041 backfill where the search record has none: a value the search
+    delivered is never overwritten."""
     wid = w["openalex_id"]
-    return {
+    cells = fill_blank(intake_cells(w), intake_cells((backfill or {}).get(wid, {})))
+    return {**cells,
         "record_id": wid,
         "query_id": w["query_id"],
         "platform": "openalex",
@@ -134,12 +147,9 @@ def _record(w, run_at, retrievals):
         "doi": normalize_doi(w.get("doi")),
         "openalex_id": wid,
         "title_original": "",
-        "first_author": "",
-        "all_authors": "",
         "year": _blank(w.get("year")),
         "publication_date": _blank(w.get("date")),
         "journal": _blank(w.get("journal")),
-        "issn": "",
         "doc_type": _blank(w.get("type")),
         "language": _blank(w.get("language")),
         "abstract": _blank(w.get("abstract")),
@@ -158,7 +168,7 @@ def _record(w, run_at, retrievals):
     }
 
 
-def build_records(results, registry):
+def build_records(results, registry, backfill=None):
     """Split result rows into delivered records and excluded rows.
 
     A work retrieved several times is delivered once, from its first
@@ -184,7 +194,7 @@ def build_records(results, registry):
                          for w in rows[1:]]
             continue
         keep = titled[0]
-        records.append(_record(keep, run_at, rows))
+        records.append(_record(keep, run_at, rows, backfill))
         for w in rows:
             if w is keep:
                 continue
@@ -271,6 +281,9 @@ def main(argv=None):
     parser.add_argument("--output-dir", required=True,
                         help="data/rel_intake/<lane>/<delivery>")
     parser.add_argument("--config", default=DEFAULT_CONFIG)
+    parser.add_argument("--backfill", default=None,
+                        help="a catalog_rel_oa_backfill.py output directory: fills the authors, "
+                             "ISSN and host organization the search records lack (ticket 2041)")
     parser.add_argument("--delivered-at", default=None,
                         help="ISO datetime recorded in the manifest (default: now, UTC)")
     args = parser.parse_args(argv)
@@ -283,9 +296,16 @@ def main(argv=None):
 
     reg_rows, results = read_runs(args.run_dir)
     registry = build_registry(reg_rows)
-    records, excluded = build_records(results, registry)
+    backfill = None
+    if args.backfill:
+        backfill = read_backfill(args.backfill)
+    records, excluded = build_records(results, registry, backfill)
     inputs = [{"path": os.path.join(_run_name(d), f), "sha256": _sha256(os.path.join(d, f))}
               for d in args.run_dir for f in ("registry.csv", "results.jsonl.gz")]
+    if args.backfill:
+        bf = os.path.join(args.backfill, BACKFILL_FILE)
+        inputs.append({"path": os.path.join(_run_name(args.backfill), BACKFILL_FILE),
+                       "sha256": _sha256(bf)})
     delivered_at = args.delivered_at or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     delivery = os.path.basename(os.path.normpath(args.output_dir))
     manifest = build_manifest(cfg, records, excluded, registry, inputs, delivery, delivered_at)

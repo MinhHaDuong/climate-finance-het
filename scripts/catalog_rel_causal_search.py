@@ -30,6 +30,10 @@ from datetime import datetime, timezone
 
 import yaml
 from _rel_causal_query import expand_blocks, split_and_groups
+from _rel_meter import (  # noqa: F401  (re-exported for callers and tests)
+    MISSING_COST_USD,
+    Meter,
+)
 from catalog_rel_sud_search import (
     OA_API,
     OA_SELECT,
@@ -255,41 +259,7 @@ def write_matrix(rows, path):
         w.writerows(rows)
 
 
-# --- metered OpenAlex run ---------------------------------------------------
-
-MISSING_COST_USD = 0.001
-
-
-class Meter:
-    """Lane spend summed from ``x-ratelimit-cost-usd``; the day's remaining
-    budget from ``x-ratelimit-remaining-usd``."""
-
-    def __init__(self, lane_cap, daily_floor):
-        self.lane_cap, self.daily_floor = lane_cap, daily_floor
-        self.spent, self.remaining, self.prepaid, self.requests = 0.0, None, None, 0
-
-    def observe(self, headers):
-        h = {k.lower(): v for k, v in (headers or {}).items()}
-        self.requests += 1
-        try:
-            # a response without the header is charged a search page, so the cap still binds
-            self.spent += float(h.get("x-ratelimit-cost-usd") or MISSING_COST_USD)
-        except ValueError:
-            pass
-        for attr, key in (("remaining", "x-ratelimit-remaining-usd"),
-                          ("prepaid", "x-ratelimit-prepaid-remaining-usd")):
-            try:
-                setattr(self, attr, float(h[key]))
-            except (KeyError, ValueError):
-                pass
-
-    def stop_reason(self):
-        if self.spent >= self.lane_cap:
-            return f"budget: lane cap {self.lane_cap} USD reached"
-        if self.remaining is not None and self.remaining < self.daily_floor:
-            return f"budget: daily remaining below {self.daily_floor} USD"
-        return ""
-
+# --- metered OpenAlex run (Meter lives in _rel_meter) -------------------------
 
 def fetch_metered(spec, api_key, cap, delay, meter):
     """Yield ('meta', count), ('work', dict), ('page', cost); last ('end', reason)."""

@@ -1,0 +1,36 @@
+%erg 0.1
+Title: REL pool dedup identity: title normalizer, working paper and published as one, RePEc handle key
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T15:00Z HDMX-coding-agent created
+2026-10-09T15:00Z HDMX-coding-agent note author decision 2026-10-09: a working paper and its published article are one work; fix the dedup docstring to say so; file the title normalizer and pool key fixes
+
+--- body ---
+
+## Context
+
+Child of 0700. Read-only audit of 2026-10-09: the pool rebuilt from the pinned catalogue and the archived lane deliveries gives 389,291 works from 426,636 rows (matches the 2026-10-01 baseline). `_rel_pool_dedup.cluster` is order-independent (two shuffles, seeds 1 and 2, identical partitions). Defects found, all in the identity of a work:
+
+1. `utils.normalize_title` (pipeline_text.py) lower-cases and deletes `[^\w\s]` only. Observed: `Emerging markets&rsquo; carbon pricing` gives `emerging marketsrsquo carbon pricing`; `Post-Kyoto` gives `postkyoto` but `Post Kyoto` gives `post kyoto`; `<i>Climate</i> finance` gives `iclimatei finance`; the NFC and NFD forms of `légitimité` give different keys (`légitimité`, `legitimite`). It unescapes no HTML entity, strips no tag, folds no hyphen, does not normalize Unicode.
+2. Under a stricter title key used for the audit (unescape, strip tags, NFKD, drop combining marks, casefold, punctuation to space), 5,600 title and year groups hold 14,921 works. 1,034 of those groups involve a work with no DOI and no OpenAlex id, so no identifier conflicts: clean under-merge candidates. Another 4,566 groups have distinct DOIs (some are OpenAlex duplicate W ids, unverified). 1,357 adjacent-year pairs with an identifier-less side are not joined.
+3. The module docstring says "A working paper and its article with their own DOIs stay two works". In practice 365 works carry 2 or more DOIs and 59 carry 2 or more OpenAlex ids, joined through a shared OpenAlex record (SSRN and Research Square preprints with the published article). The author decided on 2026-10-09 that a working paper and its published article are ONE work.
+4. The RePEc handle is not a dedup key: 62,726 works have only a title key. Ticket 2040 now delivers a verified `repec_handle` column for EDS records; the RePEc mirror lane (t1810) carries the handle in `record_id`.
+
+Labels are keyed by `work_key` and are append-only (ICF screen table, stage-1 and stage-2 labels). A change to the normalizer or the keys re-keys `title:` and `url:` works. It must not silently relabel, and it meets the 1656 freeze and 1654 incremental screening.
+
+## Exit criteria
+
+- [ ] A new title normalizer (own module, tested): HTML entities unescaped, tags stripped, NFKC, hyphens and dashes to space, casefold, whitespace collapsed; no ASCII folding that collides non-Latin scripts. Accent folding is decided by measurement on the 1,034 clean candidate groups and stated; default none. Every string in Context item 1 is a test, and a script-collision test (distinct CJK, Cyrillic and Arabic titles never share a key).
+- [ ] A working paper and its published article join into one work (author decision). The rule is designed from the `version_hint` column and measured: identical normalized title, years within a stated window, at most one published version, DOIs that differ allowed only when one side is a recognised working-paper or preprint prefix (SSRN 10.2139, Research Square 10.21203, repository handles, RePEc series) or carries a `version_hint`. Precision is estimated on a stratified sample read by a cross-vendor panel (never the author), recall by the 365 and 59 existing multi-version works.
+- [ ] `repec_handle` and the RePEc handle in `record_id` become an exact-equality join key, joining only components whose DOIs and OpenAlex ids do not disagree, with the same chain protection as the Handle step (2b).
+- [ ] `_rel_pool_dedup.py` and `_rel_pool_keys.py` docstrings state the decided rule (working paper and published as one) and the new normalizer; no sentence contradicts the code.
+- [ ] Re-key safety: an append-only migration table `old work_key to new work_key` is written for every work whose key changes; no label is dropped, duplicated or silently reassigned; byte comparison of the pool for works whose key does not change; order independence test kept with a positive control (a deliberately order-dependent variant fails it).
+- [ ] Counts before and after by lane, period (1990-2006, 2007-2014, 2015-2025) and language: works merged by each change, works re-keyed, multi-DOI and multi-OpenAlex works, title-only works remaining.
+- [ ] Coordinated with 1656 (freeze) and 1654 (incremental screening) before the first re-keyed pool is built; nothing is merged that changes `work_key` of a labelled work without the migration table.
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Severity: science lane, a live defect that reaches the pool (duplicate works counted twice in the bibliometric analysis, unmerged versions screened and paid twice).

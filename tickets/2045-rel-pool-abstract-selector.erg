@@ -1,0 +1,31 @@
+%erg 0.1
+Title: REL pool abstract selector picks the best member, not the first
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T15:00Z HDMX-coding-agent created
+2026-10-09T15:00Z HDMX-coding-agent note author decision 2026-10-09: file the abstract selector fix
+
+--- body ---
+
+## Context
+
+Child of 0700. `corpus_rel_pool.build_pool` fills every metadata column from the first non-empty member, catalogue first and then lanes in `lane_order`. For the abstract this picks by rank, not by quality.
+
+Audit of 2026-10-09 on the rebuilt pool (389,291 works): 231,979 have an abstract; 14,865 have exactly 1,500 characters, the old `slim()` cut (6.4% of abstracts; equal length is evidence of truncation, not proof); 7,500 are under 250 characters and 2,533 under 100 (not inspected; likely stubs). A truncated or stub abstract from an earlier-ranked member wins over a full one from a later member. How often is not yet measured. 157,312 works (40.4%) have no abstract; 148,437 of those carry a DOI. A Crossref pilot on 400 of them found an abstract for 2 (0.5%), 0 of 200 in the ten largest sommaires journals, so recovery from Crossref is not worth a sweep; the gap is mostly publisher-side (Elsevier, Springer).
+
+Tickets 2040 (EDS) and 2041 (OpenAlex lanes) remove the 1,500-character cut for new harvests; the delivered abstracts stay cut until re-fetched.
+
+## Exit criteria
+
+- [ ] The selector chooses among member abstracts by quality: not a recognised boilerplate (`is_boilerplate_abstract`, openalex_corpus), not a stub below a stated length, and not truncated when a longer member that starts with the same text exists; then the longest; ties by the existing rank. A member with only a truncated or stub abstract still supplies it (never worse than today), flagged.
+- [ ] New pool columns: `abstract_source` (the member lane that supplied it), `abstract_flag` (`ok`, `truncated_suspect`, `stub`, `no_abstract`). The existing `no_abstract` semantics (author decision 2026-10-07: counted in bibliometrics only, not deleted) are unchanged and the flag agrees with them.
+- [ ] Counts of works whose abstract changes, by lane, period and cause (truncated replaced, stub replaced, longer chosen); the 14,865 and 7,500 figures re-measured with the selector's own definitions.
+- [ ] Byte comparison of every other pool column and of `work_key` before and after on the same inputs; the change touches only `abstract`, `abstract_source`, `abstract_flag`.
+- [ ] Tests that would fail on a wrong implementation: a truncated catalogue abstract and a full lane abstract of the same text; a boilerplate and a real abstract; a stub-only work stays flagged; first-non-empty behaviour is unchanged for every other column.
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Severity: science lane (a degraded abstract feeds the screen and the reading). Independent of 2044 in files except `corpus_rel_pool.py`; build 2044 and 2045 in separate PRs and rebase between them.

@@ -86,3 +86,32 @@ def test_failing_conversion_leaves_nothing_behind(tmp_path):
     assert rc == 1
     assert not out.exists() and not out.parent.exists()
     assert os.listdir(tmp_path / "intake") == []
+
+
+def test_delivery_carries_slim_authors_and_fills_only_blank_cells_from_the_backfill(tmp_path):
+    hits = [_hit("W1", "Q1", first_author="Kept, A.", all_authors=["Kept, A.", "Two, B."],
+                 host_org_name="Wiley", host_org_id="P1", issn=["1111-2222"]),
+            _hit("W2", "Q1")]
+    d = _run_dir(tmp_path, "20260929f", [_reg("Q1")], hits)
+    bf = tmp_path / "bf"
+    bf.mkdir()
+    with gzip.open(bf / "backfill.jsonl.gz", "wt", encoding="utf-8") as fh:
+        for rec in ({"openalex_id": "W1", "first_author": "Backfill, Z.",
+                     "all_authors": ["Backfill, Z."], "host_org_name": "Other",
+                     "issn": ["9999-9999"], "source_type": "journal"},
+                    {"openalex_id": "W2", "first_author": "Filled, C.",
+                     "all_authors": ["Filled, C."], "host_org_name": "Routledge",
+                     "host_org_id": "P2", "issn": []}):
+            fh.write(json.dumps(rec) + "\n")
+    out = tmp_path / "t1530-sud-openalex" / "2026-09-29"
+    rc = cd.main(["--run-dir", str(d), "--backfill", str(bf), "--output-dir", str(out),
+                  "--config", os.path.join(ROOT, "config", "rel_pool.yaml"),
+                  "--delivered-at", "2026-09-30T00:00:00Z"])
+    assert rc == 0 and ric.check_delivery(str(out)) == []
+    with open(out / "records.csv", encoding="utf-8") as fh:
+        recs = {r["record_id"]: r for r in csv.DictReader(fh)}
+    w1, w2 = recs["W1"], recs["W2"]
+    assert (w1["first_author"], w1["all_authors"]) == ("Kept, A.", "Kept, A.; Two, B.")
+    assert (w1["host_org_name"], w1["issn"], w1["source_type"]) == ("Wiley", "1111-2222", "journal")
+    assert (w2["first_author"], w2["host_org_name"], w2["host_org_id"]) == (
+        "Filled, C.", "Routledge", "P2")

@@ -24,6 +24,7 @@ import os
 import re
 import sys
 import unicodedata
+import zlib
 from datetime import datetime, timezone
 
 import yaml
@@ -156,14 +157,48 @@ def icf_flag_pattern(cfg):
                       re.IGNORECASE)
 
 
+def _bare_id(url):
+    return (url or "").rsplit("/", 1)[-1]
+
+
+def author_names(work):
+    """Author names in authorship order; the raw string when OpenAlex has no author record."""
+    names = []
+    for a in work.get("authorships") or []:
+        name = (a.get("author") or {}).get("display_name") or a.get("raw_author_name")
+        if name:
+            names.append(name)
+    return names
+
+
+def venue_fields(work):
+    """Host organization, source type, ISSNs and landing page of the primary
+    location. A work whose primary location has no source (book chapters,
+    reports, preprints) gets blanks here, never a guess: OpenAlex has no host
+    organization to give it."""
+    loc = work.get("primary_location") or {}
+    src = loc.get("source") or {}
+    return {
+        "host_org_id": _bare_id(src.get("host_organization")),
+        "host_org_name": src.get("host_organization_name") or "",
+        "source_type": src.get("type") or "",
+        "issn": list(src.get("issn") or []),
+        "issn_l": src.get("issn_l") or "",
+        "landing_page": loc.get("landing_page_url") or "",
+    }
+
+
 def slim(work):
+    """The one shared definition of what the REL OpenAlex lanes keep of a work
+    (ticket 2041): every field the request selects and the intake can use."""
     loc = work.get("primary_location") or {}
     src = loc.get("source") or {}
     countries = sorted({c for a in work.get("authorships") or []
                         for i in a.get("institutions") or []
                         if (c := i.get("country_code"))})
+    names = author_names(work)
     return {
-        "openalex_id": (work.get("id") or "").rsplit("/", 1)[-1],
+        "openalex_id": _bare_id(work.get("id")),
         "doi": normalize_doi(work.get("doi") or ""),
         "title": work.get("display_name") or "",
         "year": work.get("publication_year"),
@@ -173,8 +208,64 @@ def slim(work):
         "cited_by_count": work.get("cited_by_count"),
         "journal": src.get("display_name"),
         "countries": countries,
-        "abstract": (reconstruct_abstract(work.get("abstract_inverted_index")) or "")[:1500],
+        "abstract": reconstruct_abstract(work.get("abstract_inverted_index")) or "",
+        "first_author": names[0] if names else "",
+        "all_authors": names,
+        **venue_fields(work),
     }
+
+
+# Intake cells a slim record (or a backfill record, same keys) can fill.
+VENUE_CELLS = ("first_author", "all_authors", "issn", "host_org_name", "host_org_id",
+               "source_type", "issn_l", "landing_page")
+
+
+def intake_cells(rec):
+    """Flat ``; ``-joined intake cells of a slim or backfill record."""
+    def flat(v):
+        return "; ".join(v) if isinstance(v, (list, tuple)) else (v or "")
+    cells = {k: flat(rec.get(k)) for k in VENUE_CELLS}
+    cells["issn"] = cells["issn"] or cells["issn_l"]
+    return cells
+
+
+def fill_blank(row, extra):
+    """``row`` with the cells of ``extra`` where ``row`` has none: a delivered
+    value is never overwritten (ticket 2041)."""
+    out = dict(row)
+    for k, v in extra.items():
+        if out.get(k) in ("", None) and v not in ("", None):
+            out[k] = v
+    return out
+
+
+BACKFILL_FILE = "backfill.jsonl.gz"
+
+
+def read_backfill_records(path):
+    """(records, truncated) of a backfill file. A run killed while writing leaves
+    a truncated gzip member: the complete lines before it are kept and
+    ``truncated`` says the tail was lost."""
+    recs, truncated = [], False
+    try:
+        with gzip.open(path, "rt", encoding="utf-8") as fh:
+            for line in fh:
+                if not line.endswith("\n"):
+                    truncated = True
+                    break
+                recs.append(json.loads(line))
+    except (EOFError, OSError, zlib.error):
+        truncated = True
+    return recs, truncated
+
+
+def read_backfill(out_dir):
+    """{openalex_id: record} of a ``catalog_rel_oa_backfill.py`` directory;
+    a later record of the same id wins, a truncated tail is ignored."""
+    path = os.path.join(out_dir, BACKFILL_FILE)
+    if not os.path.exists(path):
+        return {}
+    return {r["openalex_id"]: r for r in read_backfill_records(path)[0]}
 
 
 def load_corpus_keys(path):
