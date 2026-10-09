@@ -110,7 +110,7 @@ def test_na_never_attains_the_minimum():
 def test_counts_sum_to_pool_and_order_is_fixed():
     rows, _ = _rows()
     counts = rr.reason_counts(rows)
-    assert counts["facet_order"] == ["seriousness", "icf", "discipline"]
+    assert counts["facet_order"] == ["profile", "seriousness", "icf", "discipline"]
     assert list(counts["works"]) == rr.REASONS
     assert sum(counts["works"].values()) == len(POOL)
     assert sum(counts["families"].values()) == len(POOL)

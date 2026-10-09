@@ -116,6 +116,7 @@ from collections import Counter, defaultdict
 import _icf_screen as ics
 import _rel_facet_io as fio
 import _rel_policy as policy
+import _rel_profile as rp
 import _rel_reasons as rr
 import _rel_venues as rvn
 import _rel_view as rv
@@ -129,6 +130,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_screen.yaml")
 VENUE_REGISTRIES = os.path.join(ROOT, "config", "rel_venue_registries.yaml")
 VENUE_TIERS = os.path.join(ROOT, "config", "rel_venue_tiers.yaml")
+PROFILE_CONFIG = rp.DEFAULT_CONFIG
 
 VIEW_COLUMNS = ["work_key", "openalex_id", "doi", "title", "year", "in_catalogue", "sources",
                 "version_hint", "status", "doc_type", "studied_country",
@@ -138,7 +140,7 @@ VIEW_COLUMNS = ["work_key", "openalex_id", "doi", "title", "year", "in_catalogue
                 "rel_included", "rel_flag", "family_id", "family_first_year", "family_size",
                 *rr.VIEW_COLUMNS, *fio.VIEW_COLUMNS]
 SENSITIVITY_COLUMNS = ["scenario", "exclude_registries", "tiers", "ngo_research_in_b",
-                       "drop_publishers", "no_venue", "nonresearch", "included_works",
+                       "drop_publishers", "no_venue", "nonresearch", "profile", "included_works",
                        "included_families",
                        "included_mu_weighted", "discipline_pending_works",
                        "discipline_pending_families"]
@@ -263,7 +265,8 @@ def _write_csv(path: str, columns: list[str], rows: list[dict]) -> None:
 
 def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: dict, *,
         dims_path: str | None, venues_path: str, seriousness_rule: dict,
-        membership: dict, facets_path: str | None = None, policies_path: str | None = None) -> dict:
+        membership: dict, facets_path: str | None = None, policies_path: str | None = None,
+        profile: dict | None = None) -> dict:
     ics.require_table(table_path)
     labels = ics.read_table(table_path)
     dims = read_dimensions(dims_path)
@@ -276,7 +279,8 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
     facet_summary = fio.assign_view(rows, judgments)
     policies = ics.read_table(policies_path, policy.SCHEMA) if policies_path and os.path.exists(policies_path) else []
     try:
-        dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule, membership, policies)
+        dim_summary = rr.assign(rows, pool, dims, venues, seriousness_rule, membership, policies,
+                                 profile=profile)
     except ValueError as exc:
         raise ics.IcfScreenError(str(exc)) from exc
     inputs = {"pool": _input(pool_path), "table": _input(table_path),
@@ -296,6 +300,7 @@ def run(pool_path: str, table_path: str, out_dir: str, window_cfg: dict, rule: d
                           "selected_by_scope": dim_summary["policy_abstention_selected_by_scope"],
                           "native_model_answers": 0}
     counts["stage2_skip"] = rr.stage2_skip(rows)
+    counts["profile"] = rp.counts(rows, seriousness_rule.get("profile"))
     os.makedirs(out_dir, exist_ok=True)
     _write_csv(os.path.join(out_dir, "rel_view.csv"), VIEW_COLUMNS,
                sorted(rows, key=lambda r: r["work_key"]))
@@ -345,12 +350,15 @@ def main(argv=None):
     parser.add_argument("--venues", default=None, help="default: config venues_table")
     parser.add_argument("--venue-registries", default=VENUE_REGISTRIES)
     parser.add_argument("--venue-tiers", default=VENUE_TIERS)
+    parser.add_argument("--profile-config", default=PROFILE_CONFIG)
     # Multi-output: rel_view.csv and rel_counts.json in one directory.
     parser.add_argument("--output-dir", default=None, help="default: config view_dir")
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
     srule = rr.seriousness_rule(_yaml(args.venue_registries), _yaml(args.venue_tiers))
+    profile = rp.load_profile(args.profile_config)
+    srule["profile"] = rp.rule(profile)
     try:
         screen = rv.screen_rule(cfg)
         mrule = rr.membership_rule(cfg, screen, srule["alpha"])
@@ -363,7 +371,7 @@ def main(argv=None):
                      screen, dims_path=args.dimensions or cfg["dimensions_table"],
                      venues_path=args.venues or cfg["venues_table"], seriousness_rule=srule, membership=mrule,
                      facets_path=args.facets or cfg.get("facets_table"),
-                     policies_path=args.policies or cfg.get("policies_table"))
+                     policies_path=args.policies or cfg.get("policies_table"), profile=profile)
     except ics.IcfScreenError as exc:
         log.error("%s", exc)
         return 1

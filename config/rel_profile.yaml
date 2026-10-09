@@ -1,0 +1,51 @@
+# REL minimum metadata profile (ticket 2043, child of 0700). Read by
+# scripts/_rel_profile.py; applied by scripts/corpus_rel_view.py (first facet
+# of the REL membership) and counted by scripts/corpus_rel_profile.py.
+#
+# Reference: the DataCite mandatory properties. Author decisions of 2026-10-09:
+# the full six-field set; a work lacking author, title, year or a handle is not
+# worth screening; a handle may be a registered-repository persistent id.
+# Excluded works stay in the pool with `profile_missing_<field>` (single
+# standard: nothing is deleted); the counts are reported with the filter on and
+# off, and with the publisher requirement on and off (sensitivity rows).
+version: 1
+
+# The switch. false: every work is graded as before and the view only records
+# `profile_missing`; the sensitivity table shows the filter on. true: works
+# missing a required field leave at the first facet, before any model call.
+# Left false until the pool carries authors for the OpenAlex lanes (ticket 2041
+# delivery regeneration): on the 2026-10-01 pool the author field is blank for
+# those lanes, so switching on would drop them for a harvest artifact.
+enabled: false
+
+# Required fields, DataCite names. Remove `publisher` to drop that requirement.
+required: [identifier, creator, title, publisher, publicationYear, resourceType]
+
+# Accepted identifier forms, besides a DOI or an OpenAlex id (always accepted).
+# A member record id (pool column member_record_ids, `lane/delivery:<id>`) or a
+# `repec_handle` counts when it is one of these persistent forms.
+identifier:
+  generic: [repec, hdl, oai, hal]
+  # Registered repository platforms: an id of this platform is persistent and
+  # resolves at `url`. Add a platform here to recover its records; a platform
+  # absent here (ceew, south_centre, cpd, ersa in the 2026-10-01 pool) is not
+  # accepted. The record-id prefix is the key.
+  platforms:
+    redalyc: {id: '^\d+$', url: 'https://www.redalyc.org/articulo.oa?id={id}'}
+    garuda: {id: '^\d+$', url: 'https://garuda.kemdikbud.go.id/documents/detail/{id}'}
+    clacso: {id: '^hdl:\S+$', url: 'https://biblioteca-repositorio.clacso.edu.ar/handle/{id}'}
+    ipea: {id: '^hdl:\d+/\d+$', url: 'https://repositorio.ipea.gov.br/handle/{id}'}
+    uwi: {id: '^hdl:\S+$', url: 'https://hdl.handle.net/{id}'}
+    scielo: {id: '^oai:scielo:\S+$', url: 'https://www.scielo.org/'}
+    ajol: {id: '^oai:ajol\.info:\S+$', url: 'https://www.ajol.info/'}
+    adb_ewp: {id: '^RePEc:\S+$', url: 'https://ideas.repec.org/'}
+
+# Publisher resolution, in this order; the first hit wins, else unresolved.
+#   host_org   : the OpenAlex host organization of the work's source (ticket
+#                2041 columns `host_org_name`, `host_org_id`)
+#   doi_prefix : the registrant of the DOI prefix, if the prefix is a
+#                publisher in the table; platform prefixes (SSRN, Zenodo,
+#                Figshare, arXiv, JSTOR...) are `platform` rows and stay unresolved.
+publisher:
+  order: [host_org, doi_prefix]
+  prefix_table: config/rel_doi_prefixes.csv

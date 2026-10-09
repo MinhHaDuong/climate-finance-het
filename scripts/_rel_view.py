@@ -16,7 +16,10 @@ from pipeline_loaders import classify_rel_review_works
 
 POOL_FIELDS = ["work_key", "openalex_id", "doi", "title", "year", "journal", "language",
                "abstract", "affiliation_countries", "doc_type", "version_hint",
-               "all_dois", "all_openalex_ids", "in_catalogue", "sources", "member_record_ids"]
+               "all_dois", "all_openalex_ids", "in_catalogue", "sources", "member_record_ids",
+               # ticket 2043, the minimum metadata profile; the last three are intake columns
+               # (tickets 2040, 2041) the pool merge does not carry yet: blank when absent
+               "first_author", "all_authors", "repec_handle", "host_org_name", "landing_page"]
 
 # Document types that mark the published version of a work (family representative).
 ARTICLE_TYPES = {"article", "journal-article", "journalarticle", "academic journal"}
