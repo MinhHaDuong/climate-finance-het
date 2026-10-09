@@ -1,0 +1,41 @@
+%erg 0.1
+Title: REL presence in a trusted index is evidence of seriousness
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T12:00Z HDMX-coding-agent created
+2026-10-09T12:00Z HDMX-coding-agent note author decision 2026-10-09: series and publishers are tiered like journals; presence in a trusted index is evidence in the venue score, not only a flag
+
+--- body ---
+
+## Context
+
+Child of 0700. Extends the venue code of closed ticket 1841 (`scripts/_rel_venues.py`, `corpus_rel_venues.py`, `catalog_rel_venue_registries.py`). Today the venue facet is a tier lookup, and Scopus, DOAJ and Kanalregisteret level X are flags only (`docs/rel-intake-contract.md`, author decisions of 2026-10-01: a title match never excludes; unknown venue mu = 0.5 with alpha = 0.5; MDPI, Frontiers and Hindawi kept and flagged; only hijacked domains exclude).
+
+Author decisions 2026-10-09: the serious-venue requirement covers journals, series and publishers (NBER, RePEc working-paper series, university presses and so on); presence in a trusted index counts as evidence of seriousness.
+
+MOE-recommended, not decided (the author may overrule):
+- Positive evidence combines by OR: tier A or B, or presence in at least one trusted index, gives mu_venue = 1.
+- Absence from every index is not negative evidence: it gives 0.5 (unknown), never 0.
+- Index membership is evaluated at the publication year, not today (Kanal is per year and provisional; DOAJ withdrawals cluster in 2014-2016; Scopus has discontinued titles).
+- Values stay in {0, 0.5, 1}, as in the facet scale of 2010; no invented graded values such as 0.75 (there is no reference to calibrate them).
+- Negative evidence is narrow: hijacked domain gives 0; tier C without any index gives 0; withdrawn or discontinued status is a flag, not a penalty.
+- Conflict, tier C but listed in a trusted index: 0.5 (default; open for the author: 1 if the index outranks the tier, 0 if the tier outranks the index).
+
+Related, not duplicated here: the publisher field itself (host organization, DOI-prefix registrant) is supplied by 2041 and 2043.
+
+## Exit criteria
+
+- [ ] The trusted indexes are listed with their source, coverage years and reliability caveat (Scopus, DOAJ, Kanalregisteret level at least 1, RePEc/NBER-class series, university-press lists for publishers), each with its registry archived and hashed.
+- [ ] Series and publishers receive a tier with the same structure as journals; an unlisted series or publisher scores 0.5.
+- [ ] mu_venue follows the rule above (or the author's amendments), computed deterministically with no model call, stored per work with tier, index hits and years, mu_venue and rule version, append-only.
+- [ ] The existing sensitivity switches (`docs/rel-intake-contract.md`) are reused: counts are reported under dropping or promoting each index, so no choice is silent.
+- [ ] The venue facet enters mu as one more facet of the min; the exclusion reason is the facet attaining the min, in evaluation order. The view exposes tier, index hits and the reason.
+- [ ] Red test: a replay of the motivating defect (a serious non-English journal in no index must not drop below 0.5; a hijacked domain listed in an index must still be 0).
+- [ ] Counts of works moving between 0, 0.5 and 1 versus the current venue score are reported by period and language, with the first act (1990-2006) shown separately.
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Not a gate: a venue score never removes a work by itself except through the min rule already decided. The metadata prefilter is 2043.

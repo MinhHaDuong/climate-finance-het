@@ -1,0 +1,37 @@
+%erg 0.1
+Title: REL EDS ingester keeps the fields the pool needs
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T12:00Z HDMX-coding-agent created
+2026-10-09T12:00Z HDMX-coding-agent note author decision 2026-10-09: the current ingesters were a first try and may be redone; one ticket per ingester (this one: EDS; 2041: OpenAlex lanes)
+
+--- body ---
+
+## Context
+
+Child of 0700. Read-only inspection on 2026-10-09 of the t1652 EDS lane (`scripts/catalog_rel_causal_eds.py`, `slim_eds`) and of its archived run (`runs/eds_20260930/results.jsonl.gz`, slim records only; the raw API response is not kept).
+
+`slim_eds` keeps the accession number, database id, DOI, title, year, first language, type, `source` (journal) and the abstract cut to 1,500 characters. It keeps no author, no publisher, no ISSN, and nothing else the EDS API may return (unknown: the raw response is not archived).
+
+Live defects reaching the pool (science lane):
+- 4,596 EDS records per t1652 run (bibcnrs_eds_econis 2,365; bibcnrs_eds_repec 2,231) carry no DOI, no URL, no abstract and a title-derived `record_id` (`1652:ty:<title>`). Sampled rows are real economics works (journal articles, books, reports, 2016-2026).
+- For the 2,231 RePEc rows the identifier is not lost: `platform_record_id` holds the EDS accession number, an encoded RePEc handle (`edsrep.p.nbr.nberwo.35497` is `RePEc:nbr:nberwo:35497`; `edsrep.a.eee.wdevel.v152y2022ics0305750x21003995` carries archive `eee`, series `wdevel`). Dots replace the colons and some punctuation of the item part, so the item decoding is lossy, the archive and series are exact.
+- The 2,365 ECONIS rows carry `EDSZBW<number>`, apparently a ZBW (EconBiz) record id. Unverified whether it resolves to a stable identifier.
+- Counts are record-level on the lane delivery, not distinct pool works.
+
+## Exit criteria
+
+- [ ] A live probe records which fields the EDS API returns for one RePEc-provider and one ECONIS-provider record (authors, publisher, ISSN, DOI, identifiers); the field list is written into the ticket log and the module docstring.
+- [ ] `slim_eds` keeps every returned field the pool needs: authors (first and all), publisher, ISSN, any identifier, and the full abstract; nothing silently truncated.
+- [ ] `edsrep.*` accession numbers decode to RePEc handles. The decoder is verified against the local RePEc mirror (`/data/mirrors/RePEc`): decoded archive and series must exist, and the item must match a mirror record or be reported unmatched. The match rate is stated, with unmatched rows kept and labelled, never dropped.
+- [ ] The ZBW identifier is resolved to a stable record id, or documented as not a recognised handle, with one sampled row each way.
+- [ ] The intake record carries the decoded handle in a registered identifier field (not only in the opaque `platform_record_id`); `qa_rel_intake.py` passes on a regenerated sample.
+- [ ] Positive control: a known `edsrep.` record decodes and matches before any count is reported; the count of formerly identifier-less rows now carrying a handle is reported by provider.
+- [ ] Re-ingest of the archived run is reproducible from the archive (the raw response is now kept, or its absence is stated and a re-query budget is priced and approved by the author before any live call).
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Independent of 1654 and 2028 in files, but the pool grew through 1654's citation chaining (round 1: 208,181 incremental works on branch `t1654-citation-chaining`, not merged). Counts here are on the EDS lane only.
