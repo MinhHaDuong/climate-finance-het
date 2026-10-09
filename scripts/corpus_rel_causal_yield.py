@@ -38,6 +38,7 @@ import re
 import sys
 from collections import Counter, defaultdict
 
+import _rel_eds_ids as _eds_ids
 import yaml
 from _rel_causal_keys import (  # noqa: F401  (re-exported for callers and tests)
     DOI_CHECK_FIELDS,
@@ -268,7 +269,7 @@ INTAKE_RECORD_FIELDS = [
     "doi", "openalex_id", "title_original", "first_author", "all_authors", "year",
     "publication_date", "journal", "issn", "doc_type", "language", "abstract",
     "abstract_provenance", "url", "affiliation_countries", "version_hint",
-    "lane_status", "lane_note", "doi_eds_hint", "families", "formulations", "all_query_ids",
+    "lane_status", "lane_note", "doi_eds_hint", "repec_handle", "families", "formulations", "all_query_ids",
     "family_relevance", "in_refined", "in_unified", "in_sud",
 ]
 INTAKE_REGISTRY_FIELDS = [
@@ -292,7 +293,40 @@ def _flag(v):
     return "true" if str(v).lower() == "true" else "false"
 
 
-def intake_rows(records, registry_all, labels):
+def load_eds_handles(path):
+    """``{eds_an: (status, handle)}`` from ``catalog_rel_eds_repec_handles``
+    (ticket 2040), or {} without a table: every edsrep record is then
+    delivered with its unverified candidate in the note."""
+    if not path:
+        return {}
+    with open(path, encoding="utf-8", newline="") as fh:
+        return {r["eds_an"]: (r["status"], r["handle"]) for r in csv.DictReader(fh)}
+
+
+def _eds_identity(rs, handles):
+    """``(repec_handle, note)`` of a work's EDS retrievals (ticket 2040).
+
+    The handle is set only when the mirror check matched it; a candidate that
+    did not match, or a ZBW catalogue number, is named in the note, never dropped."""
+    notes, handle = [], ""
+    for r in rs:
+        an = r.get("eds_an") or ""
+        if an.startswith("edsrep."):
+            status, h = handles.get(an, ("unchecked", ""))
+            cand = _eds_ids.decode_edsrep(an)
+            if h and not handle:
+                handle = h
+            elif not h:
+                notes.append(f"RePEc handle {status} in the mirror: "
+                             f"candidate {cand['candidate'] if cand else an}")
+        elif an.startswith("EDSZBW"):
+            notes.append(f"{an[3:]} is a "
+                         f"{'valid ' if _eds_ids.ppn_valid(an) else 'non-checking '}"
+                         "K10plus catalogue number (ZBW), not a persistent key")
+    return handle, "; ".join(dict.fromkeys(notes))
+
+
+def intake_rows(records, registry_all, labels, handles=None):
     """(records rows, registry rows, excluded rows, delivered raw ids) of the
     intake contract.
 
@@ -325,6 +359,8 @@ def intake_rows(records, registry_all, labels):
         # every EDS DOI of every retrieval of the work, not only the kept one's
         hints = list(dict.fromkeys(r["doi_eds"] for r in rs if r.get("doi_eds")))
         year = first.get("year")
+        handle, id_note = _eds_identity(rs, handles or {})
+        eds = next((r for r in rs if r.get("eds_an") and r.get("authors")), {})
         out.append({
             "record_id": f"1652:{wk}", "query_id": first["search_id"],
             "platform": _platform_code(first["platform"]),
@@ -335,6 +371,11 @@ def intake_rows(records, registry_all, labels):
             "year": str(year) if year and len(str(year)) == 4 else "",
             "publication_date": first.get("date") or "", "journal": first.get("journal") or "",
             "doc_type": first.get("type") or "",
+            "first_author": (eds.get("authors") or [""])[0],
+            "all_authors": "; ".join(eds.get("authors") or []),
+            "issn": next((r["issn"] for r in rs if r.get("eds_an") and r.get("issn")), ""),
+            "url": next((r["urls"][0] for r in rs if r.get("eds_an") and r.get("urls")), ""),
+            "repec_handle": handle,
             "language": _LANG.get(first.get("language") or "", first.get("language") or "")
             if len(first.get("language") or "") != 2 else first["language"],
             "abstract": first.get("abstract") or "",
@@ -345,7 +386,8 @@ def intake_rows(records, registry_all, labels):
                             "same title and year, so the two are different works"
                             if any(r.get("doi_promoted") for r in rs) else "")
                          + (f"; EDS DOI as returned, often truncated: {'; '.join(hints)}"
-                            if hints else ""),
+                            if hints else "")
+                         + (f"; {id_note}" if id_note else ""),
             "doi_eds_hint": "; ".join(hints),
             "families": "|".join(rel), "formulations": "|".join(sorted({r["formulation"] for r in rs})),
             "all_query_ids": "|".join(r["search_id"] for r in rs),
@@ -368,14 +410,14 @@ def intake_rows(records, registry_all, labels):
     return out, regs, excluded, delivered
 
 
-def write_intake(out_dir, records, registry_all, labels, manifest, force=False):
+def write_intake(out_dir, records, registry_all, labels, manifest, force=False, handles=None):
     """Write the four delivery files; a directory that already holds any of
     them is refused unless ``force`` (a delivery is immutable once merged)."""
     taken = [n for n in INTAKE_FILES if os.path.exists(os.path.join(out_dir, n))]
     if taken and not force:
         raise SystemExit(f"{out_dir} already holds a delivery ({', '.join(taken)}); "
                          "pass --force-intake to replace it")
-    rows, regs, excluded, _ = intake_rows(records, registry_all, labels)
+    rows, regs, excluded, _ = intake_rows(records, registry_all, labels, handles)
     os.makedirs(out_dir, exist_ok=True)
     for name, fields, data in (("records.csv", INTAKE_RECORD_FIELDS, rows),
                                ("registry.csv", INTAKE_REGISTRY_FIELDS, regs),
@@ -632,8 +674,9 @@ def run(args):
             raise SystemExit("--intake-dir needs --manifest-base")
         with open(args.manifest_base, encoding="utf-8") as fh:
             base = json.load(fh)
+        handles = load_eds_handles(getattr(args, "eds_handles", None))
         n, x = write_intake(args.intake_dir, records, registry_all, labels, base,
-                            force=args.force_intake)
+                            force=args.force_intake, handles=handles)
         log.info("intake delivery: %d records, %d excluded rows", n, x)
     return 0
 
@@ -659,6 +702,8 @@ def main(argv=None):
                     help="replace an existing, not yet merged delivery")
     ap.add_argument("--doi-checks", help="CSV cache of doi.org lookups of the EDS DOIs that "
                     "would split a title group; without it no EDS DOI is promoted to doi")
+    ap.add_argument("--eds-handles", help="eds_repec_handles.csv of catalog_rel_eds_repec_handles: "
+                    "the RePEc handles of edsrep records, checked against the mirror")
     ap.add_argument("--manifest-base", help="JSON with lane, ticket, delivery, delivered_at, "
                     "producer, needs_human, supersedes, notes (counts and coverage are added)")
     # Multi-output script (yields, recall, judge input, delivery): --output-dir.

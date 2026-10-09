@@ -110,6 +110,13 @@ empty.
 | `lane_status` | | the lane's own disposition, information only (`candidate`, `already_in_pool`, `unresolved`, …) |
 | `lane_note` | | free text |
 
+One further column is **optional** (it may be absent from the header; the
+check validates it when present): `repec_handle`, a RePEc handle
+`RePEc:<archive>:<series>:<item>` that the lane has verified against the RePEc
+mirror (ticket 2040). It is an identifier of the work, kept apart from
+`platform_record_id`, and is not yet a deduplication key: the pool merge does
+not join on it.
+
 At least one of `doi`, `openalex_id`, `year` or a persistent `url` must be
 non-empty on every row: a record with none of them cannot be deduplicated.
 Only three kinds of URL are persistent, and so keys:
