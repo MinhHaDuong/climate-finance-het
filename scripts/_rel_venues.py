@@ -41,6 +41,12 @@ sets ``excluded`` when it matched by ISSN or domain; the others, and title
 matches, only flag. ``ngo_research_in_b``
 (``rel_venue_tiers.yaml``) selects which of the two computed tiers,
 ``tier_ngo_in_b`` or ``tier_ngo_not_b``, is the ``tier``.
+
+**Index evidence and ``mu_venue``** (ticket 2042; rules in
+``rel-intake-contract.md``): presence in a trusted index at the work's
+publication year is positive evidence, evaluated deterministically in {0, 0.5, 1}
+by ``mu_venue``; the table keeps the tier, the index hits with their year spans,
+the value, the rule that fired and the rule version.
 """
 
 import csv
@@ -362,6 +368,137 @@ def work_venue_flags(venue_flags, year):
 def flags_text(flags):
     """Flags as one cell: ``registry:entry_id[match]`` joined by ``;``."""
     return ";".join(f"{f['registry']}:{f['entry_id']}[{f['match']}]" for f in flags)
+
+
+# ── Index evidence and mu_venue (ticket 2042) ────────────
+
+MU_VALUES = (0.0, 0.5, 1.0)
+INDEX_IDS = ("kanal_level1", "scopus", "doaj", "university_press")
+
+
+def evidence_params(cfg):
+    """The ``venue_evidence`` block of the tier configuration, checked.
+
+    ``indexes`` are the enabled trusted indexes, ``promote`` those that outrank
+    a tier C (sensitivity), ``conflict`` the value of a tier C listed in an
+    index (open switch ``conflict_c_in_index``), ``other_c`` the value of a tier
+    C by the catch-all rule ``other`` (an unlisted series, publisher or journal
+    of unknown type), ``negative_c_rules`` the C rules that are positive
+    evidence of non-seriousness (repository, non-research page).
+    """
+    e = cfg.get("venue_evidence") or {}
+    out = {"version": str(e["rule_version"]), "indexes": list(e.get("indexes") or []),
+           "promote": list(e.get("promote") or []),
+           "conflict": float(e["conflict_c_in_index"]["value"]),
+           "other_c": float(e["tier_c_other_mu"]["value"]),
+           "negative_c_rules": list(e.get("negative_c_rules") or [])}
+    for k in ("conflict", "other_c"):
+        if out[k] not in MU_VALUES:
+            raise ValueError(f"venue_evidence {k} must be one of {MU_VALUES}, not {out[k]}")
+    unknown = sorted((set(out["indexes"]) | set(out["promote"])) - set(INDEX_IDS))
+    if unknown:
+        raise ValueError(f"venue_evidence names unknown indexes {unknown}")
+    out["presses"] = list((e.get("university_presses") or {}).get("names") or [])
+    return out
+
+
+def evidence_version(params, pull_date):
+    """The rule version stamped on every ``mu_venue``: any setting change makes a new one."""
+    return (f"v{params['version']};conflict={params['conflict']:g};other_c={params['other_c']:g};"
+            f"indexes={'+'.join(sorted(params['indexes']))};pull={pull_date}")
+
+
+class IndexEvidence:
+    """ISSN index over the positive entries of the trusted indexes (one pull)."""
+
+    def __init__(self, entries, presses=()):
+        self.by_issn = {}
+        self.presses = [re.compile(p, re.I) for p in presses]
+        for e in entries:
+            for i in e["issns"]:
+                self.by_issn.setdefault(i, []).append(e)
+
+    def venue_entries(self, issns):
+        """Entries listing any of ``issns``, sorted, one per (index, entry id)."""
+        out = {}
+        for i in sorted(issns):
+            for e in self.by_issn.get(i, []):
+                out.setdefault((e["registry"], e["entry_id"]), e)
+        return [out[k] for k in sorted(out)]
+
+    def press_hit(self, hosts):
+        """Number of the first university-press pattern matching a host or publisher name, else ``-1``."""
+        names = [fold(h) for h in hosts or [] if h]
+        for n, rx in enumerate(self.presses):
+            if any(rx.search(x) for x in names):
+                return n
+        return -1
+
+
+def hits_at(entries, press, year):
+    """Index hits of a venue for a work of ``year``: ``[{index, entry_id, span}]``, sorted.
+
+    ``entries`` are the venue's ``IndexEvidence.venue_entries``; ``press`` the
+    matching university-press pattern number (``-1`` for none), which has no
+    year and holds at every date. An undated work gets no yearly hit.
+    """
+    out = []
+    for e in entries:
+        span = next(((a, b) for a, b in e["spans"] if year is not None and a <= year <= b), None)
+        if span:
+            out.append({"index": e["registry"], "entry_id": e["entry_id"], "span": span})
+    if press >= 0:
+        out.append({"index": "university_press", "entry_id": str(press), "span": None})
+    return sorted(out, key=lambda h: (h["index"], h["entry_id"]))
+
+
+def hits_text(hits):
+    """Hits as one cell: ``index:entry_id[first-last]`` (``[*]`` when always) joined by ``;``."""
+    def span(s):
+        return "*" if not s else (str(s[0]) if s[0] == s[1] else f"{s[0]}-{s[1]}")
+    return ";".join(f"{h['index']}:{h['entry_id']}[{span(h['span'])}]" for h in hits)
+
+
+def hit_indexes(text):
+    """Index ids of a ``hits_text`` cell, sorted and unique."""
+    return sorted({p.split(":", 1)[0] for p in (text or "").split(";") if p})
+
+
+def mu_venue(tier, tier_rule, indexes_hit, hijacked, params):
+    """``(mu, rule)`` of a work's venue: the value in {0, 0.5, 1} and the rule that fired.
+
+    Evaluated in this order:
+
+    1. ``hijacked``  the landing page is a clone domain of the Hijacked Journal
+       Checker: 0, whatever any index says;
+    2. ``tier_ab``  tier A or B: 1;
+    3. ``index``  listed in an enabled trusted index at the publication year,
+       and not tier C: 1;
+    4. ``tier_c_in_index``  tier C and listed: ``conflict`` (the open switch,
+       1 when a listing index is in ``promote``);
+    5. ``tier_c``  tier C by a rule in ``negative_c_rules`` (repository,
+       non-research page) with no index: 0;
+    6. ``unlisted``  tier C by the catch-all rule ``other`` with no index:
+       ``other_c`` (0.5);
+    7. ``unknown``  no resolvable venue: 0.5.
+
+    Absence from every index is never negative evidence: 0.5, or 1 by tier.
+    """
+    if hijacked:
+        return 0.0, "hijacked"
+    if tier in ("A", "B"):
+        return 1.0, "tier_ab"
+    listed = sorted(set(indexes_hit) & set(params["indexes"]))
+    if tier == "C" and listed:
+        promoted = set(listed) & set(params["promote"])
+        return (1.0 if promoted else params["conflict"]), "tier_c_in_index"
+    if listed:
+        return 1.0, "index"
+    if tier == "C":
+        if tier_rule in params["negative_c_rules"]:
+            return 0.0, "tier_c"
+        return params["other_c"], "unlisted"
+    return 0.5, "unknown"
 
 
 # ── Loader for the REL view (ticket 1843) ────────────────
