@@ -276,3 +276,63 @@ def test_explicit_frontier_does_not_expand_historical_icf_and_binds_closure(tmp_
     closure.write_text('{}')
     with pytest.raises(ChainError, match='closure'):
         chain.init_seeds(store, pool, view, [], 30, frontier_path=frontier)
+
+
+def test_completed_direction_reuse_requires_native_page_chain_and_preserves_edge_source(tmp_path):
+    import gzip
+    import json
+
+    import _rel_chaining as chain
+    prior = Store(tmp_path / 'prior')
+    prior.add_query('back', 'backward', 'openalex_id:W1', ['W1'])
+    prior.add_query('forward', 'forward', 'cites:W1', ['W1'])
+    for kind, filt in [('backward', 'openalex_id:W1'), ('forward', 'cites:W1')]:
+        params = {'filter': filt, 'per_page': 100, 'cursor': '*'}
+        key = chain.hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()
+        path = prior.root / 'raw' / (kind + '.json.gz')
+        with gzip.open(path, 'wt') as f:
+            json.dump({'query': params, 'status': 200, 'retrieved_at': '2026-10-08T00:00:00Z', 'body': {'meta': {'count': 1, 'next_cursor': None},
+                'results': [{'id': 'https://openalex.org/' + ('W1' if kind == 'backward' else 'W9'), 'referenced_works': ['https://openalex.org/W1']}] }}, f)
+        prior.db.execute('INSERT INTO api_pages VALUES(?,?,?)', (key, str(path.relative_to(prior.root)), 1))
+    prior.db.execute("UPDATE queries SET completed=1,received=1,expected=1,pages=1,cursor='' ")
+    prior.db.execute("INSERT INTO edges VALUES('W1','W9','forward','forward')")
+    prior.db.commit()
+    snapshot = tmp_path / 'prior.sqlite'
+    import sqlite3
+    with sqlite3.connect(snapshot) as target:
+        prior.db.backup(target)
+    native_index = tmp_path / 'native-index.json'
+    pages = {r['path']: {'sha256': chain.sha(prior.root / r['path']), 'request_sha256': r['k']}
+             for r in prior.db.execute('SELECT * FROM api_pages')}
+    native_index.write_text(json.dumps({'snapshot_sha256': chain.sha(snapshot), 'pages': pages}))
+    index_args = {'native_index_path': native_index, 'native_index_sha256': chain.sha(native_index)}
+    current = Store(tmp_path / 'next')
+    current.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")
+    current.db.commit()
+    chain.reuse_completed_directions(current, snapshot, prior.root, chain.sha(snapshot), **index_args)
+    chain.plan_citation_queries(current)
+    assert current.db.execute('SELECT COUNT(*) FROM queries').fetchone()[0] == 0
+    assert current.db.execute('SELECT COUNT(*) FROM direction_reuse').fetchone()[0] == 2
+    assert prior.db.execute('SELECT COUNT(*) FROM edges').fetchone()[0] == 1
+    def no_duplicate_singleton(*args, **kwargs):
+        raise AssertionError('reused exact source metadata must not cause another singleton request')
+    chain.resolve_seed_aliases(current, get=no_duplicate_singleton)
+    (prior.root / 'raw' / 'forward.json.gz').unlink()
+    failed = Store(tmp_path / 'fail')
+    failed.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")
+    failed.db.commit()
+    with pytest.raises(ChainError, match='native'):
+        chain.reuse_completed_directions(failed, snapshot, prior.root, chain.sha(snapshot), **index_args)
+    assert failed.db.execute('SELECT COUNT(*) FROM direction_reuse').fetchone()[0] == 0
+
+
+def test_metadata_get_protects_completion_headroom_before_network(tmp_path):
+    store = Store(tmp_path / 'metadata')
+    store.bind('budget_usd', 30)
+    store.reserve('other', 23.9995, {})
+    def no_network(*args, **kwargs):
+        raise AssertionError('protected ceiling must refuse before HTTP')
+    with pytest.raises(ChainError, match='cumulative budget'):
+        oa_request(store, {'filter': 'doi:https://doi.org/10.1/public', 'per_page': 100, 'cursor': '*'},
+                   get=no_network, admission_ceiling=24)
+    assert store.db.execute('SELECT COUNT(*) FROM budget.calls').fetchone()[0] == 1

@@ -262,6 +262,8 @@ class Store:
             CREATE TABLE IF NOT EXISTS unresolved(k TEXT PRIMARY KEY,kind TEXT,note TEXT);
             CREATE TABLE IF NOT EXISTS api_pages(k TEXT PRIMARY KEY,path TEXT,call INTEGER);
             CREATE TABLE IF NOT EXISTS seed_aliases(old TEXT PRIMARY KEY,new TEXT,status TEXT);
+            CREATE TABLE IF NOT EXISTS direction_reuse(seed TEXT,direction TEXT,evidence TEXT,
+              PRIMARY KEY(seed,direction));
         """)
 
     def authorize_budget(self, cap, authorization):
@@ -375,13 +377,18 @@ def init_seeds(store, pool, view, sentinel_paths, budget, *, frontier_path=None)
         store.db.execute("INSERT OR IGNORE INTO seeds VALUES(?,?,?,?,?)",
                          (key, oa, json.dumps(record), reason, "identified" if oa else "pending"))
     store.db.commit()
+    if frontier_path is not None and frontier.get("previous_round"):
+        previous = frontier["previous_round"]
+        reuse_completed_directions(store, previous["snapshot"], previous["native_root"], previous["snapshot_sha256"],
+                                  native_index_path=previous["native_index"],
+                                  native_index_sha256=previous["native_index_sha256"])
     csv_write(store.root / "seeds.csv", ["work_key", "openalex_id", "doi", "title", "year", "reason"],
               ({**json.loads(r["body"]), "work_key": r["k"], "reason": r["reason"]}
                for r in store.db.execute("SELECT * FROM seeds ORDER BY k")))
     log.info("seed roster: %d rows", len(seeds))
 
 
-def oa_request(store, params, get=requests.get):
+def oa_request(store, params, get=requests.get, *, admission_ceiling=None):
     public = dict(params)
     # Field-specific title filters are charged as search, too. Reserve the
     # search ceiling for every request; settle list calls at their lower cost.
@@ -396,7 +403,7 @@ def oa_request(store, params, get=requests.get):
             charge = reported_oa_cost(archived["headers"], archived["body"], bound)
             store.settle(cached["call"], charge, {"recovered_from": cached["path"], "query": public})
         return entity_result(archived["body"], public)
-    call = store.reserve("openalex", bound, public)
+    call = store.reserve("openalex", bound, public, admission_ceiling=admission_ceiling)
     entity = params.get("entity")
     params = {k: v for k, v in params.items() if k != "entity"}
     params = {**params, "api_key": read_credential("openalex", "OPENALEX_API_KEY"), "mailto": MAILTO}
@@ -404,7 +411,8 @@ def oa_request(store, params, get=requests.get):
         response = get(OA + ("/" + entity if entity else ""), params=params, timeout=90)
     except requests.RequestException as exc:
         raise ChainError(f"OpenAlex transport failed; reservation retained (call {call})") from exc
-    headers = {k: v for k, v in response.headers.items() if k.lower().startswith("x-ratelimit")}
+    headers = {k: v for k, v in response.headers.items()
+               if k.lower().startswith("x-ratelimit") or k.lower() == "retry-after"}
     try:
         body = response.json()
     except ValueError:
@@ -576,7 +584,7 @@ def resolve_seed_alias(root, ledger, old, get):
 
 
 def resolve_seed_aliases(store, get=requests.get, workers=8):
-    missing = [r[0] for r in store.db.execute("SELECT DISTINCT oa FROM seeds WHERE oa<>'' AND oa NOT IN (SELECT k FROM works) AND oa NOT IN (SELECT old FROM seed_aliases) ORDER BY oa")]
+    missing = [r[0] for r in store.db.execute("SELECT DISTINCT oa FROM seeds WHERE oa<>'' AND oa NOT IN (SELECT k FROM works) AND oa NOT IN (SELECT old FROM seed_aliases) AND oa NOT IN (SELECT seed FROM direction_reuse WHERE direction='backward') ORDER BY oa")]
     with ThreadPoolExecutor(max_workers=workers) as executor:
         for start in range(0, len(missing), workers):
             tasks = [executor.submit(resolve_seed_alias, store.root, store.budget_path, old, get)
@@ -688,12 +696,109 @@ def batches(values, size=100):
         yield start // size, values[start:start + size]
 
 
+def _completed_direction_evidence(source, native_root, query, native_index):
+    """Verify every original native cursor page, without provider calls or source writes."""
+    cursor, seen, received, pages, returned, backward_usable = "*", set(), 0, [], set(), set()
+    while cursor:
+        if cursor in seen:
+            raise ChainError("repeated native reuse cursor")
+        seen.add(cursor)
+        params = {"filter": query["filter"], "per_page": 100, "cursor": cursor}
+        key = hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()
+        indexed = source.execute("SELECT path FROM api_pages WHERE k=?", (key,)).fetchone()
+        if not indexed:
+            raise ChainError("native reuse page absent from source index")
+        path = (native_root / indexed["path"]).resolve()
+        if not path.is_relative_to(native_root.resolve()) or not path.is_file():
+            raise ChainError("native reuse page absent or outside original archive")
+        digest = sha(path)
+        indexed_proof = native_index["pages"].get(indexed["path"])
+        if not indexed_proof or indexed_proof.get("sha256") != digest or indexed_proof.get("request_sha256") != key:
+            raise ChainError("native reuse page/index hash binding mismatch")
+        with gzip.open(path, "rt", encoding="utf-8") as stream:
+            native = json.load(stream)
+        if native.get("status") != 200 or native.get("query") != params:
+            raise ChainError("native reuse page does not match exact query")
+        if not native.get("retrieved_at"):
+            raise ChainError("native reuse page lacks retrieval date")
+        body = native["body"]
+        results, meta = body["results"], body["meta"]
+        if not isinstance(results, list) or meta.get("count") != query["expected"]:
+            raise ChainError("native reuse count changed or invalid results")
+        page_ids = {oid(work["id"]) for work in results}
+        if len(page_ids) != len(results) or returned.intersection(page_ids) or not all(re.fullmatch(r"W\d+", key) for key in page_ids):
+            raise ChainError("native reuse duplicate or invalid work identities")
+        received += len(results)
+        returned.update(page_ids)
+        backward_usable.update(oid(work["id"]) for work in results
+                               if isinstance(work.get("referenced_works"), list)
+                               and all(isinstance(ref, str) and re.fullmatch(r"W\d+", oid(ref))
+                                       for ref in work["referenced_works"]))
+        pages.append({"path": str(path), "sha256": digest, "request_sha256": key,
+                      "request_method": "GET", "request_endpoint": OA,
+                      "endpoint_basis": "archived collector routing contract; public params preserved",
+                      "public_request": params, "cursor": cursor, "retrieved_at": native["retrieved_at"],
+                      "canonical_body_sha256": hashlib.sha256(json.dumps(body, ensure_ascii=False, sort_keys=True,
+                                                                          separators=(",", ":")).encode()).hexdigest(),
+                      "body_basis": "archived parsed provider JSON, not raw HTTP wire bytes"})
+        cursor = meta.get("next_cursor")
+    if received != query["received"] or received != query["expected"] or len(pages) != query["pages"]:
+        raise ChainError("native reuse full cursor/count coverage mismatch")
+    query_record = dict(query)
+    return {"source_query": query_record,
+            "source_query_sha256": hashlib.sha256(json.dumps(query_record, sort_keys=True).encode()).hexdigest(),
+            "native_pages": pages, "fresh_retrieval": False,
+            "source_query_as_of": max(page["retrieved_at"] for page in pages)}, backward_usable
+
+
+def reuse_completed_directions(store, snapshot, native_root, expected_sha256, *, native_index_path, native_index_sha256):
+    """Record exact proven reuse separately from newly retrieved queries and edges."""
+    snapshot, native_root = Path(snapshot), Path(native_root)
+    if sha(snapshot) != expected_sha256:
+        raise ChainError("previous round snapshot changed")
+    if sha(native_index_path) != native_index_sha256:
+        raise ChainError("previous native index changed")
+    native_index = json.loads(Path(native_index_path).read_text())
+    if native_index["snapshot_sha256"] != expected_sha256:
+        raise ChainError("previous native index belongs to another snapshot")
+    source = sqlite3.connect(snapshot.resolve().as_uri() + "?mode=ro", uri=True)
+    source.row_factory = sqlite3.Row
+    wanted = {r[0] for r in store.db.execute("SELECT DISTINCT oa FROM seeds WHERE oa<>''")}
+    prepared = {}
+    try:
+        for query in source.execute("SELECT * FROM queries WHERE kind IN ('backward','forward') AND completed=0"):
+            if wanted.intersection(json.loads(query["seeds"])):
+                raise ChainError("previous direction interrupted: resume original checkpoint before frontier activation")
+        for query in source.execute("SELECT * FROM queries WHERE kind IN ('backward','forward') AND completed=1 ORDER BY k"):
+            identities = wanted.intersection(json.loads(query["seeds"]))
+            if not identities:
+                continue
+            evidence, returned = _completed_direction_evidence(source, native_root, query, native_index)
+            if query["kind"] == "backward":
+                identities.intersection_update(returned)
+            evidence.update(source_snapshot=str(snapshot.resolve()), source_snapshot_sha256=expected_sha256,
+                            native_index=str(Path(native_index_path).resolve()), native_index_sha256=native_index_sha256)
+            for identity in sorted(identities):
+                prepared.setdefault((identity, query["kind"]), json.dumps(evidence, sort_keys=True))
+    finally:
+        source.close()
+    # All native pages validate before any reuse disposition is recorded.
+    for (identity, direction), evidence in prepared.items():
+        old = store.db.execute("SELECT evidence FROM direction_reuse WHERE seed=? AND direction=?", (identity, direction)).fetchone()
+        if old and old[0] != evidence:
+            raise ChainError("changed completed direction reuse evidence")
+    store.db.executemany("INSERT OR IGNORE INTO direction_reuse VALUES(?,?,?)",
+                         [(identity, direction, evidence) for (identity, direction), evidence in prepared.items()])
+    store.db.commit()
+
+
 def plan_citation_queries(store):
     """Plan missing directions independently; interrupted queries retain their cursor."""
     identities = [r[0] for r in store.db.execute("SELECT DISTINCT oa FROM seeds WHERE oa<>'' ORDER BY oa")]
     for direction, field in (("backward", "openalex_id"), ("forward", "cites")):
         planned = list(store.db.execute("SELECT seeds FROM queries WHERE kind=? ORDER BY k", (direction,)))
         planned_ids = {seed for r in planned for seed in json.loads(r[0])}
+        planned_ids.update(r[0] for r in store.db.execute("SELECT seed FROM direction_reuse WHERE direction=?", (direction,)))
         missing = [identity for identity in identities if identity not in planned_ids]
         for i, batch in batches(missing):
             suffix = hashlib.sha256("|".join(batch).encode()).hexdigest()[:20] if planned else f"{i:05d}"

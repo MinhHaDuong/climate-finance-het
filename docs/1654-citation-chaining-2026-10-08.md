@@ -103,3 +103,15 @@ artifacts and final pool/view hashes, and plans backward and forward directions
 separately without restarting interrupted cursors. Offline regression checks
 pass; completed-direction reuse across archived rounds and the final frontier
 still require their evidence review before retrieval.
+
+2026-10-09 exact-DOI metadata checkpoint: frozen177 titleless citation
+candidates queried through the authorized existing OpenAlex route. Three
+sequential requests matched all177 DOI identifiers; no titles recovered.
+Full parsed native responses and exact-match provenance retained privately.
+No pool, citation-edge or label writes; no extension of the historical59
+titleless waiver. A scoped titleless-intake dependency remains necessary.
+Archived-direction reuse validates cursor/page/source evidence and returned
+backward identities before reuse, preserving401 genuinely absent responses
+as unresolved rather than zero references. Atomic metadata admission protects
+the shared24 ceiling inside30;25 focused regressions pass. Two main Batch
+jobs continue; no round2 activation or scientific closure.
