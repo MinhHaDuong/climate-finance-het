@@ -1,6 +1,6 @@
 outs:
-- md5: 0654336d252a1e04650426f3241d71e2.dir
-  size: 196677238
-  nfiles: 4
+- md5: c7ff41f4b53ce962caf7301abaa3e0c8.dir
+  size: 412399330
+  nfiles: 8
   hash: md5
   path: t1650-sommaires
