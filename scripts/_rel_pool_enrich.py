@@ -98,6 +98,35 @@ def load_tables(entries, root, reserved=()):
     return tables
 
 
+def mark_doc_types(rows, tables):
+    """Dedup version 2, before clustering (ticket 2048): give a row whose
+    ``doc_type`` is blank the type the tables give its own DOI, else its
+    OpenAlex id, as ``enriched_doc_type``. Only the working-paper mark of step
+    5 reads it (``_rel_pool_versions.mark_type``); the pool's ``doc_type``
+    stays filled per work by ``Enrichment.fill``. Several values for one key:
+    the first (label, value) pair. Returns the number of rows marked."""
+    by_key = defaultdict(set)
+    for t in tables:
+        src = t["fills"].get("doc_type")
+        if not src:
+            continue
+        for r in t["rows"]:
+            v = (r.get(src) or "").strip()
+            if v:
+                for k in Enrichment._row_keys(t, r):
+                    by_key[k].add((t["label"], v))
+    n = 0
+    for r in rows:
+        if r.get("doc_type"):
+            continue
+        for k in (("d", r.get("doi")), ("o", r.get("openalex_id"))):
+            if k[1] and by_key.get(k):
+                r["enriched_doc_type"] = min(by_key[k])[1]
+                n += 1
+                break
+    return n
+
+
 class Enrichment:
     """The tables of one build and what they delivered (``stats``)."""
 

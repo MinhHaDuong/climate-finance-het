@@ -53,7 +53,11 @@ def test_prompt_is_blind_and_complete():
 
 @pytest.mark.parametrize("text, verdict", [
     ('{"verdict": "same", "reason": "r"}', "same"), ('ok\n{"verdict": "Cannot tell"}', "cannot_tell"),
-    ('{"verdict": "maybe"}', None), ("no json", None)])
+    ('{"verdict": "maybe"}', None), ("no json", None),
+    # Gemini through OpenRouter, stage B1: the reply cut inside its reason.
+    ('{"verdict": "same", "reason": "Both records describe the same 1990 CEPAL', "same"),
+    ('```json\n{"verdict": "cannot_tell", "reason": "Both records share a', "cannot_tell"),
+    ('{"verdict": "sa', None)])
 def test_parse_verdict(text, verdict):
     assert rp.parse_verdict(text)[0] == verdict
 
@@ -170,3 +174,49 @@ def test_the_cap_stops_before_the_call_that_would_cross_it(tmp_path):
     assert status["anthropic"].startswith("stopped at the cap")
     spent = sum(json.loads(x)["usd"] for x in (tmp_path / "calls.jsonl").read_text().splitlines())
     assert spent <= 0.5 and status["spent_usd"] <= 0.5
+
+
+def test_openalex_rule_is_sampled_by_kind_and_authors_and_two_readers_must_agree(tmp_path):
+    """Stage B1: the 5c pairs, stratified by kind and by an author on both
+    records; with two readers a pair is ``same`` only when both say so."""
+    import csv
+
+    import _rel_pool_dedup as rd
+    import _rel_pool_versions as rv
+    from test_rel_pool_versions import r as row
+    t1, t2 = "Green bonds and the cost of capital", "Carbon markets in emerging economies revisited"
+    rows = [row(oa="W1", title=t1, year="2019"), {**row(oa="W2", title=t1, year="2019"),
+                                                  "first_author": "Smith, J."},
+            row(doi="10.1016/j.a", title=t1, year="2019"),
+            row(oa="W3", title=t2, year="2015"), row(oa="W4", title=t2, year="2015"),
+            row(doi="10.2139/ssrn.3799872", year="2021", hint="1651-GS02", rid="1651-GS01",
+                origin="t1651-gavard-schoch", title="Climate finance and emission reductions"),
+            row(doi="10.1017/s1355770x26100679", year="2026", rid="1651-GS02",
+                origin="t1651-gavard-schoch", title="International climate finance")]
+    pairs = []
+    rd.cluster(rows, version=2, pairs=pairs, oa_dups=True)
+    path = tmp_path / "pairs.csv"
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=rv.PAIR_COLUMNS)
+        w.writeheader()
+        w.writerows(rv.pair_records(rows, pairs))
+    cands, _ = rp.read_pairs(path, "openalex")
+    assert sorted(rp.cell(c) for c in cands) == [
+        "openalex_doi|author_not_both", "openalex_doi|author_not_both",
+        "openalex|author_not_both", "openalex|author_not_both"]
+    assert rp.read_pairs(path)[0] == [], "the window rule has no pair here"
+    out = tmp_path / "out"
+    rp.main(["sample", "--kind", "openalex", "--pairs", str(path), "--output-dir", str(out),
+             "--n", "4"])
+    items = [json.loads(x) for x in (out / "sample.jsonl").read_text().splitlines()]
+    (out / "controls.jsonl").write_text("".join(json.dumps(c) + "\n" for c in [
+        {"pair_id": "CONTROL+", "expect": "same", "wp": _rec(), "pub": _rec()},
+        {"pair_id": "CONTROL-", "expect": "different", "wp": _rec(), "pub": _rec("Other", "1999")}]))
+    split = {"2015": "different"}
+    readers = {"anthropic": fake({}), "openai": fake(split)}
+    rp.run_panel(str(out), 10.0, list(readers), workers=1, readers=readers)
+    s = rp.analyze(str(out))
+    n_t2 = sum(i["wp"]["title"] == t2 for i in items)
+    assert s["overall_sample_share"]["same"] == len(items) - n_t2
+    assert len(s["false_merges"]) == 0 and s["overall_sample_share"]["cannot_tell_or_split"] == n_t2
+    assert "## By stratum" in (out / "summary.md").read_text()

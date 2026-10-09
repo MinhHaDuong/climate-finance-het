@@ -1,16 +1,28 @@
-"""Precision panel for dedup step 5, working paper and published as one work (ticket 2048).
+"""Precision panel for dedup step 5, versions of one work as one work (ticket 2048).
 
 Three readers from three vendors, blind to each other and to the rule, read
-pairs of records that step 5 of dedup version 2 joins by title and window and
-say whether they are the same work. The author never checks an item.
+pairs of records that step 5 of dedup version 2 joins and say whether they
+are the same work. The author never checks an item. Two rules are sampled
+apart (``--kind``): ``window`` (5b, a working paper and its article, stage A)
+and ``openalex`` (5c, duplicate OpenAlex records, stage B1). Mistral left the
+default readers after stage A (it read a differing DOI, year or venue as a
+different work: 111 against 5 and 6); the third vendor is a Gemini flash model
+through OpenRouter, else DeepSeek. With two readers the majority is both.
+The default readers are Anthropic, OpenAI and OpenRouter (Gemini). When a
+vendor cannot run (stage B1: the OpenAI key answered HTTP 429
+insufficient_quota, no credit), swap it with ``run --readers``, for instance
+``--readers anthropic,openrouter,deepseek``: the run is resumable and a
+stopped reader's answers are kept.
 
 Subcommands (all files in ``--output-dir``, outside the repository):
 
 - ``sample``: read the step-5 unions the version 2 report wrote
   (``dedup_v2_version_pairs.csv`` of ``corpus_rel_pool --dedup-version 2``),
-  keep the title-and-window pairs (``candidates.csv``); draw
-  ``--n`` pairs stratified by year gap (-1..+5) and first-author agreement
-  (agree, disagree, missing), equal allocation per cell, a short cell taken
+  keep the pairs of the rule (``candidates.csv``); draw ``--n`` pairs
+  stratified, for ``window``, by year gap (-1..+5) and first-author agreement
+  (agree, disagree, missing), for ``openalex``, by the pair's kind (two
+  OpenAlex-only records, or one beside a DOI record) and whether both records
+  name an author; equal allocation per cell, a short cell taken
   whole and its remainder spread over the others (``sample.jsonl``); add the
   controls (``controls.jsonl``): positive, the Gavard-Schoch pair (lane 1651,
   ZEW 2021 and the 2026 article, a link pair of the same file); negative, two
@@ -43,10 +55,10 @@ import re
 import sys
 import threading
 import time
-import unicodedata
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 
+from _rel_pool_versions import _fold, surnames
 from utils import get_logger
 
 log = get_logger("qa_rel_dedup_panel")
@@ -63,12 +75,22 @@ SIDE_FIELDS = ("record_id", "title", "year", "first_author", "journal", "doi", "
 # call. Assumed prices, rounded up (the OpenAI one is a guess on the high side
 # for GPT-6.1 Sol, whose flex tier costs half): the logged spend is an upper
 # bound, and the cap holds against it.
-PRICES = {"anthropic": (3.0, 15.0), "openai": (10.0, 40.0), "mistral": (0.4, 2.0)}
+# OpenRouter lists google/gemini-3.8-flash at 0.75/3.75 (2026-10-09); DeepSeek
+# is priced as high: both rounded up.
+PRICES = {"anthropic": (3.0, 15.0), "openai": (10.0, 40.0), "mistral": (0.4, 2.0),
+          "openrouter": (1.0, 4.0), "deepseek": (1.0, 4.0)}
 READERS = {
     "anthropic": {"model": "claude-sonnet-5-5", "keyfile": "anthropic", "key": "ANTHROPIC_API_KEY"},
     "openai": {"model": "gpt-6.1-sol", "keyfile": "openai", "key": "OPENAI_API_KEY"},
     "mistral": {"model": "mistral-medium-latest", "keyfile": "mistral", "key": "MISTRAL_API_KEY"},
+    "openrouter": {"model": "google/gemini-3.8-flash", "keyfile": "openrouter",
+                   "key": "OPENROUTER_API_KEY_CLIMATEFINANCE",
+                   "url": "https://openrouter.ai/api/v1/chat/completions"},
+    "deepseek": {"model": "deepseek-chat", "keyfile": "deepseek", "key": "DEEPSEEK_API_KEY",
+                 "url": "https://api.deepseek.com/chat/completions"},
 }
+DEFAULT_READERS = "anthropic,openai,openrouter"
+KINDS = {"window": ("window",), "openalex": ("openalex", "openalex_doi")}
 MAX_OUTPUT_TOKENS = 1024
 
 
@@ -79,19 +101,6 @@ class CapReached(Exception):
 # ── Pairs and sample ──────────────────────────────────────
 
 
-def _fold(s):
-    s = unicodedata.normalize("NFKD", s or "")
-    return "".join(c for c in s if not unicodedata.combining(c)).casefold()
-
-
-def surnames(first_author):
-    """Name tokens of a first author, initials dropped (``Gavard, C.`` -> {gavard})."""
-    s = _fold(first_author)
-    if "," in s:
-        s = s.split(",", 1)[0]
-    return {t for t in re.findall(r"[^\W\d_]+", s) if len(t) > 2}
-
-
 def author_stratum(a, b):
     sa, sb = surnames(a), surnames(b)
     if not sa or not sb:
@@ -100,19 +109,30 @@ def author_stratum(a, b):
 
 
 def _item(rec):
-    """A panel item from a row of ``dedup_v2_version_pairs.csv``."""
+    """A panel item from a row of ``dedup_v2_version_pairs.csv``; ``wp`` is
+    side a (the working paper, or an OpenAlex-only record), ``pub`` side b."""
     wp = {f: rec[f"a_{f}"] for f in SIDE_FIELDS}
     pub = {f: rec[f"b_{f}"] for f in SIDE_FIELDS}
-    return {"pair_id": rec["pair_id"], "gap": int(rec["gap"]) if rec["gap"] != "" else None,
+    item = {"pair_id": rec["pair_id"], "gap": int(rec["gap"]) if rec["gap"] != "" else None,
             "author": author_stratum(wp["first_author"], pub["first_author"]),
             "wp": wp, "pub": pub}
+    if rec["kind"] in KINDS["openalex"]:
+        both = "author_both" if wp["first_author"].strip() and pub["first_author"].strip() \
+            else "author_not_both"
+        item["cell"] = f"{rec['kind']}|{both}"
+    return item
 
 
-def read_pairs(path):
-    """(title-and-window candidates, link pairs) of the version 2 report."""
+def cell(item):
+    """The stratum of an item: ``gap|author`` (window), ``kind|authors`` (openalex)."""
+    return item.get("cell") or f"{item['gap']}|{item['author']}"
+
+
+def read_pairs(path, kind="window"):
+    """(candidates of the rule ``kind``, link pairs) of the version 2 report."""
     with open(path, encoding="utf-8", newline="") as fh:
         recs = list(csv.DictReader(fh))
-    return ([_item(r) for r in recs if r["kind"] == "window"],
+    return ([_item(r) for r in recs if r["kind"] in KINDS[kind]],
             [_item(r) for r in recs if r["kind"] == "link"])
 
 
@@ -133,14 +153,13 @@ def allocate(sizes, n):
 def draw(cands, n, seed=2048):
     cells = defaultdict(list)
     for c in cands:
-        cells[c["gap"], c["author"]].append(c)
+        cells[cell(c)].append(c)
     alloc = allocate({k: len(v) for k, v in cells.items()}, n)
     rng = random.Random(seed)
     sample = []
-    for cell in sorted(cells):
-        sample += rng.sample(cells[cell], alloc[cell])
-    return sample, {f"{g}|{a}": {"population": len(cells[g, a]), "sampled": alloc[g, a]}
-                    for g, a in sorted(cells)}
+    for k in sorted(cells):
+        sample += rng.sample(cells[k], alloc[k])
+    return sample, {k: {"population": len(cells[k]), "sampled": alloc[k]} for k in sorted(cells)}
 
 
 def _words(title):
@@ -191,14 +210,23 @@ def prompt(item):
     return PROMPT.format(a=_block(sides[0]), b=_block(sides[1]))
 
 
+TRUNCATED = re.compile(r'"verdict"\s*:\s*"([^"]+)"(?:\s*,\s*"reason"\s*:\s*"([^"]*))?')
+
+
 def parse_verdict(text):
+    """The verdict and reason of a reply. A reply cut inside its reason (a
+    thinking model spends its output budget first; Gemini through OpenRouter,
+    stage B1) keeps its verdict when the verdict field is complete."""
     m = re.search(r"\{.*\}", text or "", re.DOTALL)
-    if not m:
-        return None, ""
     try:
-        obj = json.loads(m.group(0))
+        obj = json.loads(m.group(0)) if m else None
     except json.JSONDecodeError:
-        return None, ""
+        obj = None
+    if obj is None:
+        t = TRUNCATED.search(text or "")
+        if not t:
+            return None, ""
+        obj = {"verdict": t.group(1), "reason": t.group(2) or ""}
     v = str(obj.get("verdict", "")).strip().lower().replace(" ", "_").replace("'", "")
     return (v if v in VERDICTS else None), str(obj.get("reason", ""))[:300]
 
@@ -269,8 +297,9 @@ def make_reader(vendor):
                  "output_tokens": int(u.get("completion_tokens") or 0),
                  "tier": body.get("service_tier") or payload.get("service_tier", "default")}, "")
 
-    def mistral(text):
-        body, err = _post("https://api.mistral.ai/v1/chat/completions",
+    def compatible(text):
+        """Mistral, OpenRouter, DeepSeek: the chat-completions shape."""
+        body, err = _post(spec.get("url", "https://api.mistral.ai/v1/chat/completions"),
                           {"Authorization": f"Bearer {key}"},
                           {"model": spec["model"], "max_tokens": MAX_OUTPUT_TOKENS, "temperature": 0,
                            "messages": [{"role": "user", "content": text}]})
@@ -281,7 +310,7 @@ def make_reader(vendor):
                 {"input_tokens": int(u.get("prompt_tokens") or 0),
                  "output_tokens": int(u.get("completion_tokens") or 0), "tier": "standard"}, "")
 
-    return {"anthropic": anthropic, "openai": openai, "mistral": mistral}[vendor]
+    return {"anthropic": anthropic, "openai": openai}.get(vendor, compatible)
 
 
 class Ledger:
@@ -425,6 +454,7 @@ def analyze(d):
         if a["verdict"]:
             answers[a["pair_id"]][a["reader"]] = a
     readers = sorted({r for v in answers.values() for r in v})
+    pop = {k: v["population"] for k, v in meta["cells"].items()}
     complete = [p for p in items if all(r in answers.get(p, {}) for r in readers)]
 
     def verdicts(p):
@@ -439,15 +469,15 @@ def analyze(d):
                 "cannot_tell_or_split": n - k - sum(maj[p] == "different" for p in ps),
                 "precision": k / n if n else None, "wilson95": [lo, hi]}
 
-    by_gap = {g: block([p for p in complete if items[p]["gap"] == g]) for g in GAPS}
+    by_gap = {g: block([p for p in complete if items[p]["gap"] == g and "cell" not in items[p]])
+              for g in GAPS}
     by_author = {a: block([p for p in complete if items[p]["author"] == a]) for a in AUTHOR_STRATA}
+    by_cell = {k: block([p for p in complete if cell(items[p]) == k]) for k in sorted(pop)}
     # Population-weighted: each cell's precision weighted by its share of all candidate pairs.
-    pop = {k: v["population"] for k, v in meta["cells"].items()}
     total = sum(pop.values())
     est, var = 0.0, 0.0
-    for cell, npop in pop.items():
-        g, a = cell.split("|")
-        ps = [p for p in complete if items[p]["gap"] == int(g) and items[p]["author"] == a]
+    for k, npop in pop.items():
+        ps = [p for p in complete if cell(items[p]) == k]
         if not ps:
             continue
         ph = sum(maj[p] == "same" for p in ps) / len(ps)
@@ -461,6 +491,7 @@ def analyze(d):
             pairwise[f"{a}~{b}"] = sum(answers[p][a]["verdict"] == answers[p][b]["verdict"]
                                        for p in both) / len(both) if both else None
     false_merges = [{"pair_id": p, "gap": items[p]["gap"], "author": items[p]["author"],
+                     "cell": cell(items[p]),
                      "wp": {k: items[p]["wp"][k] for k in ("record_id", "title", "year", "first_author",
                                                             "journal", "doi")},
                      "pub": {k: items[p]["pub"][k] for k in ("record_id", "title", "year",
@@ -473,7 +504,7 @@ def analyze(d):
         "overall_sample_share": block(complete),
         "overall_population_weighted": {"precision": est, "normal95": [est - 1.96 * math.sqrt(var),
                                                                        est + 1.96 * math.sqrt(var)]},
-        "by_gap": by_gap, "by_author": by_author,
+        "by_gap": by_gap, "by_author": by_author, "by_cell": by_cell,
         "agreement": {"pairwise": pairwise,
                       "fleiss_kappa": fleiss_kappa([verdicts(p) for p in complete]),
                       "unanimous": sum(len(set(verdicts(p))) == 1 for p in complete)},
@@ -502,15 +533,16 @@ def summary_markdown(s):
              "- overall, weighted by cell population: {:.3f} [{:.3f}, {:.3f}]".format(
                  s["overall_population_weighted"]["precision"],
                  *s["overall_population_weighted"]["normal95"]), "", "## By year gap", ""]
-    lines += [f"- {g:+d}: {_pct(b)}" for g, b in s["by_gap"].items()]
+    lines += [f"- {g:+d}: {_pct(b)}" for g, b in s["by_gap"].items() if b["n"]]
     lines += ["", "## By first-author agreement", ""]
     lines += [f"- {a}: {_pct(b)}" for a, b in s["by_author"].items()]
+    lines += ["", "## By stratum", ""] + [f"- {k}: {_pct(b)}" for k, b in s["by_cell"].items()]
     ag = s["agreement"]
     lines += ["", "## Agreement", "", f"- Fleiss kappa: {ag['fleiss_kappa']}",
               f"- unanimous: {ag['unanimous']}"] + [f"- {k}: {v:.3f}" for k, v in ag["pairwise"].items()]
     lines += ["", f"## False merges (majority different): {len(s['false_merges'])}", ""]
     for f in s["false_merges"]:
-        lines.append(f"- {f['pair_id']} gap {f['gap']:+d}, {f['author']}: \"{f['wp']['title']}\" "
+        lines.append(f"- {f['pair_id']} {f['cell']}: \"{f['wp']['title']}\" "
                      f"({f['wp']['year']}, {f['wp']['doi'] or f['wp']['record_id']}) vs "
                      f"\"{f['pub']['title']}\" ({f['pub']['year']}, {f['pub']['doi'] or f['pub']['record_id']})")
     return "\n".join(lines) + "\n"
@@ -520,7 +552,7 @@ def summary_markdown(s):
 
 
 def cmd_sample(args):
-    cands, links = read_pairs(args.pairs)
+    cands, links = read_pairs(args.pairs, args.kind)
     out = args.output_dir
     os.makedirs(out, exist_ok=True)
     with open(os.path.join(out, "candidates.csv"), "w", encoding="utf-8", newline="") as fh:
@@ -536,7 +568,8 @@ def cmd_sample(args):
             for o in objs:
                 fh.write(json.dumps(o, ensure_ascii=False) + "\n")
     with open(os.path.join(out, "sample_meta.json"), "w", encoding="utf-8") as fh:
-        json.dump({"candidates": len(cands), "sampled": len(sample), "seed": 2048, "cells": cells,
+        json.dump({"kind": args.kind, "candidates": len(cands), "sampled": len(sample), "seed": 2048,
+                   "cells": cells,
                    "by_gap": dict(sorted(Counter(c["gap"] for c in cands).items())),
                    "by_author": dict(Counter(c["author"] for c in cands))}, fh, indent=2)
     log.info("candidates %d, sampled %d", len(cands), len(sample))
@@ -549,10 +582,12 @@ def main(argv=None):
     s.add_argument("--output-dir", required=True)
     s.add_argument("--pairs", required=True, help="dedup_v2_version_pairs.csv of the v2 report")
     s.add_argument("--n", type=int, default=400)
+    s.add_argument("--kind", choices=sorted(KINDS), default="window",
+                   help="the rule sampled: window (5b) or openalex (5c)")
     r = sub.add_parser("run")
     r.add_argument("--output-dir", required=True)
     r.add_argument("--cap-usd", type=float, default=10.0)
-    r.add_argument("--readers", default="anthropic,openai,mistral")
+    r.add_argument("--readers", default=DEFAULT_READERS)
     a = sub.add_parser("analyze")
     a.add_argument("--output-dir", required=True)
     args = ap.parse_args(argv)
