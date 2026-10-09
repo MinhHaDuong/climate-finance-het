@@ -2,10 +2,14 @@
 Title: REL pool build joins enrichment tables (abstracts, resource types)
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1748
 
 --- log ---
 2026-10-09T22:00Z HDMX-coding-agent created
 2026-10-09T22:00Z HDMX-coding-agent note author decision 2026-10-09 (resource types: enrichment table, not a lane delivery) and the 2046 stage B proposal (ISTEX abstracts: enrichment table) both need the same mechanism; one ticket carries it
+
+2026-10-09T18:07Z HDMX-coding-agent note closing: all exit criteria met by PRs 1744 (join, stage A, independent opus review APPROVE) and 1747 (stage B). Pinned tables in DVC (pointer md5 fcdc082c..., remote and sha256 pins checked by the coder and independently by the MOE), no-table build byte-identical to main, with both tables only abstract, abstract_source, abstract_flag, doc_type and doc_type_source differ and work_key is unchanged; 81,051 abstracts and 30,726 doc types filled, 0 ambiguous, 0 unmatched. Dedup version 2 builds get their own Enrichment instance; the report describes the version-1 build. Deliberate limits: the enrichment is not yet applied before clustering, so recovered doc types do not reach the dedup working-paper mark (ticket 2048 stage B applies them)
+2026-10-09T18:07Z HDMX-coding-agent closed — autoclosed — PR #1748
 
 --- body ---
 

@@ -2,6 +2,7 @@
 Title: REL recover missing abstracts from ISTEX
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1748
 
 --- log ---
 2026-10-09T17:00Z HDMX-coding-agent created
@@ -14,6 +15,9 @@ Author: HDMX-coding-agent
 2026-10-09T09:32Z HDMX-coding-agent note PR 1734 (stage A) merged after an independent read-only review: APPROVE, 81,051 accepted rows all attached to their exact queried DOI (0 failures on all 7,442 raw files), counts match the archive. To handle in stage B or before delivery: (1) 5,000 accepted abstracts (6.2%, 4,999 Elsevier) are 'Highlights:' bullet lists, median 382 characters, not abstracts: flag them (abstract_flag) or exclude them in the join; (2) the title check returns None for non-Latin titles and then accepts without a title test (scripts/catalog_rel_istex_abstracts.py about lines 138-148 and 182); harmless in this run (3 accepted rows, all with an empty pool title and a correct DOI) but a latent hole: a non-Latin title must fail closed or fall back to the year and DOI evidence explicitly; (3) a kill during the write of a raw response leaves a truncated file the resume cannot read: write to .part and rename; (4) 68 abstract texts are shared by 138 rows (Springer double-DOI articles, Elsevier 'Reprint of' republications), a dedup question for 2047 and 2048; (5) one German abstract got through ('Kurzfassung:'), the ISTEX language tag was not checked against the text; (6) the abstract is not HTML-decoded (4 rows with entities, 7 with tag-like strings, 58 with a trailing copyright notice)
 2026-10-09T09:36Z HDMX-coding-agent note author decision 2026-10-09 (provisional, pending clarification from ISTEX): the abstract texts are for INTERNAL use; a deposit carries the DOI list and the script, not the texts
 2026-10-09T18:06Z HDMX-coding-agent delivered through the enrichment join (PR 1744 and this one): istex_abstracts_accepted.csv sha256 04502d3efd26ac983ee6460ab6c66e11f8a920e544498c7c96b6afb2d8955ae7, tracked in DVC as data/rel_enrich (md5 fcdc082c3c422a1d1a0e36369f228695.dir); 81,051 rows, all matched one work, 81,051 abstracts filled (blank before), abstract_source=istex, 5,009 flagged highlights; pool 389,291 works, work_key unchanged; internal use, not closed
+2026-10-09T18:07Z HDMX-coding-agent note closing: stage A (PR 1734) and stage B through the enrichment join (PRs 1744 and 1747, ticket 2052) are done: the pool takes 81,051 ISTEX abstracts as fill-blank candidates through the 2045 selector with abstract_source=istex, pinned by sha256 04502d3e... in config/rel_pool.yaml and tracked in DVC (data/rel_enrich.dvc). Abstract coverage 59.6% to 80.4% (79.1% without the 5,009 'Highlights:' lists, flagged); first act 40.1% to 75.4%. Redistribution of the texts stays unresolved: internal use, provisional author decision. Not done, below the severity floor: the non-Latin title hole in the ISTEX match check (harmless in this run), truncated raw files after a kill, the German abstract that got through, shared abstracts of Springer double-DOI articles and 'Reprint of' republications (a dedup question for 2048)
+2026-10-09T18:07Z HDMX-coding-agent closed — autoclosed — PR #1748
+
 --- body ---
 
 ## Context
