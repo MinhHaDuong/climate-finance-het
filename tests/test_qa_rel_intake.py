@@ -218,3 +218,72 @@ def test_non_persistent_url_is_not_a_dedup_key(tmp_path, url):
     d = _delivery(tmp_path, records=[rec, _record("r2")])
     errors = ric.check_delivery(str(d))
     assert len(errors) == 1 and repr(url) in errors[0] and "no_dedup_key" in errors[0]
+
+
+def _native_titleless_delivery(tmp_path, monkeypatch, abstract=True):
+    """An operator-approved fixture with an actual immutable provider page."""
+    import gzip
+    import hashlib
+
+    import _rel_titleless_intake as titleless
+    native = {"id": "https://openalex.org/W1", "doi": "https://doi.org/10.1234/native",
+              "title": "", "display_name": "", "publication_year": 2020,
+              "abstract_inverted_index": {"Substantive": [0], "evidence": [1]} if abstract else None,
+              "type": "paratext", "is_paratext": True}
+    record = _record("W1", platform="openalex", platform_record_id="W1", openalex_id="W1",
+                     doi="10.1234/native", title="", abstract="Substantive evidence" if abstract else "",
+                     doc_type="paratext", is_paratext="true")
+    d = _delivery(tmp_path, records=[record], excluded=[], registry=[{
+        "query_id": "q1", "platform": "openalex", "query": "exact DOI metadata",
+        "run_at": "2026-10-01", "n_received": "1", "completed": "true"}])
+    _write_csv(d / "records.csv", ric.RECORD_COLUMNS + ["is_paratext"], [record])
+    encoded = lambda v: json.dumps(v, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+    digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    params = {"filter": "doi:10.1234/native", "per_page": 100, "cursor": "*"}
+    body = {"results": [native], "meta": {"count": 1, "next_cursor": None}}
+    page = {"query": params, "body": body, "status": 200, "retrieved_at": record["retrieved_at"]}
+    (d / "native.json.gz").write_bytes(gzip.compress(json.dumps(page).encode(), mtime=0))
+    (d / "authority.md").write_text("Approved exact titleless intake fixture")
+    proof = dict(record_id="W1", query_id="q1", openalex_id="W1", doi=record["doi"],
+                 native_archive_path="native.json.gz", native_compressed_sha256=digest(d / "native.json.gz"),
+                 native_body_sha256=hashlib.sha256(encoded(body)).hexdigest(),
+                 native_work_sha256=hashlib.sha256(encoded(native)).hexdigest(),
+                 source_query_sha256=hashlib.sha256(encoded(params)).hexdigest(),
+                 retrieved_at=record["retrieved_at"], source_type="openalex", native_title_empty=True)
+    (d / "roster.json").write_text(json.dumps([proof]))
+    m = json.loads((d / "manifest.json").read_text())
+    m["native_titleless"] = {"version": 1, "basis": "native_titleless",
+        "roster": {"path": "roster.json", "sha256": digest(d / "roster.json")},
+        "authority": {"path": "authority.md", "sha256": digest(d / "authority.md")}}
+    (d / "manifest.json").write_text(json.dumps(m))
+    registry = {"approved_manifest_sha256": digest(d / "manifest.json"),
+                "authority_sha256": digest(d / "authority.md"), "records": 1}
+    monkeypatch.setattr(titleless, "intake_registry", lambda: registry)
+    monkeypatch.setattr(titleless, "INTAKE_ROOT", tmp_path)
+    return d, record
+
+
+def test_native_titleless_requires_exact_approved_proof(tmp_path, monkeypatch):
+    d, record = _native_titleless_delivery(tmp_path, monkeypatch)
+    assert ric.check_delivery(str(d)) == []
+    _write_csv(d / "records.csv", ric.RECORD_COLUMNS + ["is_paratext"], [dict(record, title="placeholder")])
+    assert ric.check_delivery(str(d))
+    _write_csv(d / "records.csv", ric.RECORD_COLUMNS + ["is_paratext"], [dict(record, doi="10.1234/wrong")])
+    assert ric.check_delivery(str(d))
+
+
+@pytest.mark.parametrize("change", [{"openalex_id": "W999"}, {"abstract": "changed source"},
+                                    {"year": "0"}, {"is_paratext": "false"}, {"doc_type": "article"}])
+def test_titleless_complete_fields_cannot_be_forged(tmp_path, monkeypatch, change):
+    d, record = _native_titleless_delivery(tmp_path, monkeypatch)
+    _write_csv(d / "records.csv", ric.RECORD_COLUMNS + ["is_paratext"], [dict(record, **change)])
+    assert ric.check_delivery(str(d))
+
+
+def test_titleless_native_tamper_and_unregistered_scope_fail(tmp_path, monkeypatch):
+    import _rel_titleless_intake as titleless
+    d, _ = _native_titleless_delivery(tmp_path, monkeypatch)
+    (d / "native.json.gz").write_bytes(b"tampered")
+    assert ric.check_delivery(str(d))
+    monkeypatch.setattr(titleless, "intake_registry", lambda: {"approved_manifest_sha256": "0" * 64})
+    assert ric.check_delivery(str(d))

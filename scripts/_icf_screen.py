@@ -206,6 +206,11 @@ def read_table(table_path: str, schema: Schema = ICF) -> list[dict]:
     if last is None:
         return []
     rows = _read_rows(table_path, schema)
+    if schema.id_column == "policy_id":
+        for row in rows:
+            faults = validate_row(row, schema)
+            if faults:
+                raise IcfScreenError(f"{table_path}: invalid persisted policy: {faults}")
     if len(rows) != last["rows_total"]:
         raise IcfScreenError(f"{table_path}: {len(rows)} rows, manifest records "
                              f"{last['rows_total']}")
@@ -216,14 +221,18 @@ def key_of(row: dict) -> tuple[str, ...]:
     return tuple(row[k] for k in KEY)
 
 
-def validate_row(row: dict, schema: Schema = ICF) -> list[str]:
+def validate_row(row: dict, schema: Schema = ICF, *, profile_checks: bool = True) -> list[str]:
     """Faults of one row (empty list when it may be appended)."""
     errors = []
     extra = set(row) - set(schema.columns)
     if extra:
         errors.append(f"unknown columns {sorted(extra)}")
+    absence_profile = (row.get("reason") == "native_titleless_absent_abstract"
+                       and row.get("scope") == "full_facets"
+                       and str(row.get("source", "")).startswith("policy:native_titleless_absent_abstract:"))
+    absence_optional = {"proof_gaps", "proof_gaps_sha256", "failed_route_ref", "failed_route_sha256", "native_attempts"}
     for col in schema.required:
-        if not (row.get(col) or "").strip():
+        if not (row.get(col) or "").strip() and not (absence_profile and col in absence_optional):
             errors.append(f"{col} is empty")
     for col, allowed in schema.enums:
         if row.get(col) and row[col] not in allowed:
@@ -240,6 +249,12 @@ def validate_row(row: dict, schema: Schema = ICF) -> list[str]:
     wk = row.get("work_key") or ""
     if wk and not wk.startswith(WORK_KEY_PREFIXES):
         errors.append(f"work_key {wk!r} lacks a prefix {WORK_KEY_PREFIXES}")
+    if schema.id_column == "policy_id" and profile_checks:
+        from _rel_policy import validate_policy
+        try:
+            validate_policy(row, schema_checks=False)
+        except ValueError as exc:
+            errors.append(str(exc))
     return errors
 
 

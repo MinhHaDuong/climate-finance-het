@@ -403,3 +403,38 @@ def _crow(doi="", url="", title="x", year="", openalex_id="", origin="l"):
     return {"origin": origin, "delivery": f"{origin}/1", "doi": doi,
             "openalex_id": openalex_id, "handle": rk.handle_key(url), "title": title,
             "year": year, "version_hint": ""}
+
+
+def test_native_titleless_pool_provenance_and_metadata(tmp_path, monkeypatch):
+    import _rel_pool_dedup as dedup
+    import _rel_titleless_intake as titleless
+    from test_qa_rel_intake import _native_titleless_delivery
+    d, _ = _native_titleless_delivery(tmp_path, monkeypatch)
+    records, _ = rp.load_delivery("t1650-sommaires/2026-10-01", str(d))
+    roots = dedup.cluster(records)
+    pool = rp.build_pool(records, roots, {"t1650-sommaires": 0})
+    assert len(pool) == 1
+    assert pool[0]["title"] == "" and pool[0]["is_paratext"] == "true"
+    assert pool[0]["doc_type"] == "paratext"
+    assert titleless.pool_admission(pool[0])
+    assert not json.loads(pool[0]["native_titleless_provenance"])["manifest"].startswith("/")
+
+
+def test_titleless_provenance_cannot_move_to_unrelated_family(tmp_path, monkeypatch):
+    import _rel_titleless_intake as titleless
+    from test_qa_rel_intake import _native_titleless_delivery
+    d, _ = _native_titleless_delivery(tmp_path, monkeypatch)
+    records, _ = rp.load_delivery("t1650-sommaires/2026-10-01", str(d))
+    pool = rp.build_pool(records, rd.cluster(records), {"t1650-sommaires": 0})
+    with pytest.raises(ValueError, match="family"):
+        titleless.pool_admission(dict(pool[0], member_record_ids="other/source:W1"))
+
+
+def test_titleless_pool_countries_must_match_complete_native_fields(tmp_path, monkeypatch):
+    import _rel_titleless_intake as titleless
+    from test_qa_rel_intake import _native_titleless_delivery
+    d, _ = _native_titleless_delivery(tmp_path, monkeypatch)
+    records, _ = rp.load_delivery("t1650-sommaires/2026-10-01", str(d))
+    pool = rp.build_pool(records, rd.cluster(records), {"t1650-sommaires": 0})
+    with pytest.raises(ValueError, match="correspondence"):
+        titleless.pool_admission(dict(pool[0], affiliation_countries="BR"))

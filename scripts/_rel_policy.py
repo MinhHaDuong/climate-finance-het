@@ -12,6 +12,8 @@ import _rel_facet_io as fio
 import _rel_view as rv
 
 METHOD = ics.POLICY_METHOD
+SOURCE_ABSENCE = "native_titleless_absent_abstract"
+ROOT = Path(__file__).resolve().parents[1]
 SCOPES = {"full_facets", "discipline_only"}
 REASONS = {"full_facets": "local_calibration_failed",
            "discipline_only": "remote_public_proof_incomplete/local_route_not_validated"}
@@ -40,11 +42,48 @@ def _verified_path(root: Path, reference: str, expected_sha: str) -> Path:
     return path
 
 
+def _source_absence_context(manifest: dict, rosters: dict, root: Path, pool_path: str,
+                            scope: str, registry: dict, decision: dict) -> tuple[list, dict]:
+    """Bind honest source absence to the complete admitted subset and actual pool."""
+    if manifest.get("basis") != SOURCE_ABSENCE or scope != "full_facets" or rosters["discipline_only"]:
+        raise ValueError("source-absence policy scope/basis mismatch")
+    from _rel_titleless_intake import digest, pool_admission, read_pool
+    admitted = manifest["intake_manifest"]
+    intake_path = _verified_path(root, admitted["path"], admitted["sha256"])
+    intake_root = intake_path.parent.parent.parent
+    pool_rows = read_pool(pool_path)
+    by_pool = {p["work_key"]: p for p in pool_rows}
+    exact_absent = {p["work_key"] for p in pool_rows if not p["title"].strip()
+                    and not p["abstract"].strip() and p.get("native_titleless_provenance")
+                    and pool_admission(p, intake_root)}
+    records = rosters[scope]
+    if set(r["work_key"] for r in records) != exact_absent:
+        raise ValueError("source-absence roster differs from complete admitted subset")
+    for record in records:
+        binding = json.loads(by_pool[record["work_key"]]["native_titleless_provenance"])
+        if binding["manifest_sha256"] != digest(intake_path):
+            raise ValueError("source-absence intake authority mismatch")
+    context = {"basis": SOURCE_ABSENCE, "scope": scope, "approved_keys": sorted(exact_absent),
+        "source_absence_keys": sorted(exact_absent), "pool_rows": pool_rows, "intake_root": str(intake_root),
+        "pool_sha256": manifest["pool_sha256"],
+        "input_sha256": manifest["scopes"][scope]["sha256"],
+        "roster_sha256": manifest["scopes"][scope]["sha256"],
+        "decision_ref": decision["path"], "decision_sha256": decision["sha256"],
+        "authority_sha256": registry["approved_manifest_sha256"],
+        "method_sha256": fio.sha(fio.encoded(registry)),
+        "proof_gaps": {key: [] for key in exact_absent}, "proof_gaps_sha256": "",
+        "failed_route_ref": "", "failed_route_sha256": "", "native_attempts": {}}
+    return records, context
+
+
 def load_context(manifest_path: str, archive_root: str, pool_path: str,
                  scope: str, registry: dict) -> tuple[list[dict], dict]:
     """Verify the approved scope registry and every local immutable input artifact."""
     if registry.get("method") != METHOD:
         raise ValueError("unregistered policy method")
+    basis = registry.get("basis")
+    if basis not in {None, SOURCE_ABSENCE}:
+        raise ValueError("unsupported policy authority basis")
     root = Path(archive_root)
     if rv.sha256_file(manifest_path) != registry["approved_manifest_sha256"]:
         raise ValueError("policy manifest is not registered approved authority")
@@ -67,6 +106,10 @@ def load_context(manifest_path: str, archive_root: str, pool_path: str,
         raise ValueError("policy scope rosters overlap")
     if sum(map(len, rosters.values())) != manifest["unique_union"] or manifest["overlap"] != 0:
         raise ValueError("approved union count mismatch")
+    if basis == SOURCE_ABSENCE:
+        return _source_absence_context(manifest, rosters, root, pool_path, scope, registry, decision)
+    if manifest.get("basis") is not None:
+        raise ValueError("unregistered policy authority basis")
     failure = registry["failed_route_ref"]
     _verified_path(root, failure, manifest["local_calibration_failure_sha256"])
     for reference, digest in manifest["local_native_attempt_sha256"].items():
@@ -100,6 +143,12 @@ def _check_record(record: dict, pool: dict, context: dict) -> None:
     fields = dict(pool, countries=[x.strip() for x in pool["affiliation_countries"].split(";") if x.strip()])
     if fio.public_record(record) != fio.public_record(fields):
         raise ValueError(f"{key}: source fields differ from approved pool snapshot")
+    if context.get("basis") == SOURCE_ABSENCE:
+        from _rel_titleless_intake import pool_admission
+        if (record["title"].strip() or record["abstract"].strip()
+                or key not in context["source_absence_keys"] or not pool_admission(pool, context.get("intake_root"))):
+            raise ValueError("source-absence policy lacks exact empty native evidence")
+        return
     gaps = context["proof_gaps"].get(key)
     if (not isinstance(gaps, list) or not gaps or len(set(gaps)) != len(gaps)
             or not set(gaps) <= set(fio.PUBLIC_FIELDS)):
@@ -125,6 +174,9 @@ def build_rows(records: list[dict], context: dict, labels: list[dict], dims: lis
                run_id: str, labelled_at: str, machine: str) -> tuple[list, list, list]:
     """Deterministic scoped plan; no files written and no source text changed."""
     scope = context["scope"]
+    basis = context.get("basis")
+    if basis not in {None, SOURCE_ABSENCE} or (basis and scope != "full_facets"):
+        raise ValueError("unsupported policy authority basis")
     keys = [r["work_key"] for r in records]
     if scope not in SCOPES or len(set(keys)) != len(keys) or set(keys) != set(context["approved_keys"]):
         raise ValueError("records do not exactly match approved policy roster")
@@ -147,15 +199,15 @@ def build_rows(records: list[dict], context: dict, labels: list[dict], dims: lis
                   # Historical compatibility field stores the deterministic method hash,
                   # not a nonexistent model prompt.
                   "prompt_sha256": context["method_sha256"],
-                  "source": f"policy:{context['authority_sha256']}/{scope}/{context['roster_sha256']}"}
+                  "source": f"policy:{(basis + ':') if basis else ''}{context['authority_sha256']}/{scope}/{context['roster_sha256']}"}
         policy = dict(common, scope=scope, method_sha256=context["method_sha256"],
                       **{k: context[k] for k in ("authority_sha256", "decision_ref", "decision_sha256",
                          "pool_sha256", "input_sha256", "roster_sha256", "proof_gaps_sha256",
                          "failed_route_ref", "failed_route_sha256")},
-                      input_record_sha256=fio.proof_hash(record), proof_gaps=fio.encoded(context["proof_gaps"][key]),
-                      native_attempts=fio.encoded(context["native_attempts"]), native_answer="",
-                      input_quality="unassessed", reason=REASONS[scope],
-                      icf_values=fio.encoded({f: .5 for f in ("international", "climate", "finance")}) if scope == "full_facets" else "",
+                      input_record_sha256=fio.proof_hash(record), proof_gaps="" if basis else fio.encoded(context["proof_gaps"][key]),
+                      native_attempts="" if basis else fio.encoded(context["native_attempts"]), native_answer="",
+                      input_quality="unassessed", reason=basis or REASONS[scope],
+                      icf_values=fio.encoded({f: .5 for f in ("international", "climate", "finance")}) if scope == "full_facets" and not basis else "",
                       contrib="unsure", field="other", contrib_type="other")
         validate_policy(policy)
         dispositions.append(policy)
@@ -163,28 +215,54 @@ def build_rows(records: list[dict], context: dict, labels: list[dict], dims: lis
         if scope == "full_facets":
             from utils import normalize_title
             icf_rows.append(dict(common, openalex_id=record["openalex_id"], doi=record["doi"],
-                                 title_norm_year=f"{normalize_title(record['title'])}|{record['year']}",
+                                 title_norm_year="" if basis else f"{normalize_title(record['title'])}|{record['year']}",
                                  label="unsure", doc_type="unknown", studied_country="?",
                                  why=f"policy abstention: {policy['reason']}; scientific scope unresolved"))
     return dispositions, icf_rows, dim_rows
 
 
-def validate_policy(row: dict) -> None:
+def absence_registry() -> dict:
+    """Frozen operator-approved authority and exact source-record commitments."""
+    return json.loads((ROOT / "config/rel_titleless_policy.json").read_text(encoding="utf-8"))
+
+
+def _validate_absence_authority(row: dict) -> None:
+    registry = absence_registry()
+    contract = dict(registry["disposition_contract"], authority_sha256=registry["approved_manifest_sha256"],
+                    method_sha256=fio.sha(fio.encoded(registry)))
+    binding = fio.sha(fio.encoded({"work_key": row.get("work_key"),
+                                  "input_record_sha256": row.get("input_record_sha256")}))
+    if (registry.get("basis") != SOURCE_ABSENCE or registry.get("method") != METHOD
+            or any(row.get(k) != v for k, v in contract.items())
+            or binding not in registry["approved_record_bindings"]):
+        raise ValueError("source-absence policy lacks registered authority/exact source record")
+
+
+def validate_policy(row: dict, *, schema_checks: bool = True) -> None:
     """Reject synthetic native replies, unapproved policy vectors or scope confusion."""
-    faults = ics.validate_row(row, SCHEMA)
+    faults = ics.validate_row(row, SCHEMA, profile_checks=False) if schema_checks else []
     scope = row.get("scope")
-    expected = fio.encoded({f: .5 for f in ("international", "climate", "finance")}) if scope == "full_facets" else ""
+    basis = SOURCE_ABSENCE if row.get("reason") == SOURCE_ABSENCE else None
+    expected = fio.encoded({f: .5 for f in ("international", "climate", "finance")}) if scope == "full_facets" and not basis else ""
     if (row.get("native_answer") != "" or row.get("icf_values") != expected
             or row.get("stage") != ("2" if scope == "full_facets" else "catchup")
-            or row.get("reason") != REASONS.get(scope)):
+            or row.get("reason") != (basis or REASONS.get(scope))
+            or (basis and scope != "full_facets")):
         faults.append("policy scope/native absence/value invariant")
     hashes = ("prompt_sha256", "method_sha256", "authority_sha256", "decision_sha256", "pool_sha256",
               "input_sha256", "roster_sha256", "input_record_sha256", "proof_gaps_sha256", "failed_route_sha256")
-    if any(not fio._is_sha(row.get(k)) for k in hashes):
+    if any(not fio._is_sha(row.get(k)) for k in hashes if not (basis and k in {"proof_gaps_sha256", "failed_route_sha256"})):
         faults.append("policy provenance hashes must be SHA256")
-    expected_source = f"policy:{row.get('authority_sha256')}/{scope}/{row.get('roster_sha256')}"
+    expected_source = f"policy:{(basis + ':') if basis else ''}{row.get('authority_sha256')}/{scope}/{row.get('roster_sha256')}"
     if row.get("source") != expected_source or row.get("prompt_sha256") != row.get("method_sha256"):
         faults.append("policy method/source provenance mismatch")
+    if basis:
+        _validate_absence_authority(row)
+        if any(row.get(k) != "" for k in ("proof_gaps", "proof_gaps_sha256", "failed_route_ref", "failed_route_sha256", "native_attempts")):
+            faults.append("source-absence policy must not fabricate failed routes/gaps/attempts")
+        if faults:
+            raise ValueError(f"invalid policy disposition: {faults}")
+        return
     try:
         gaps = json.loads(row.get("proof_gaps", ""))
         attempts = json.loads(row.get("native_attempts", ""))
@@ -217,11 +295,11 @@ def assign_full_view(rows: list[dict], policies: list[dict]) -> dict:
             raise ValueError("selected policy ICF judgment lacks aligned scoped provenance")
         p = index[key]
         _expose(row, p)
-        row.update(icf_instrument="policy_local_abstention_v1", icf_input_quality="unassessed",
+        row.update(icf_instrument="policy_native_titleless_absent_abstract_v1" if p["reason"] == SOURCE_ABSENCE else "policy_local_abstention_v1", icf_input_quality="unassessed",
                    icf_quality_origin="policy_unassessed", icf_method_sha256=p["method_sha256"],
                    icf_guard_disposition="policy_abstention")
         for facet in ("international", "climate", "finance"):
-            row["mu_" + facet] = "0.5"
+            row["mu_" + facet] = "" if p["reason"] == SOURCE_ABSENCE else "0.5"
     return index
 
 

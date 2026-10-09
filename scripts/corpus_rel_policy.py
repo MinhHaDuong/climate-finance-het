@@ -39,7 +39,8 @@ def import_dispositions(records: list[dict], context: dict, *, table: str, dimen
     result = fio.append_batches(batches, policy.METHOD)
     return {"scope": context["scope"], "dispositions": len(dispositions),
             "icf_rows": len(icf_rows), "dimension_rows": len(dim_rows),
-            "appended_skipped": result, "native_model_answers": 0}
+            "appended_skipped": result, "native_model_answers": 0,
+            **({"basis": context["basis"], "assessed_facets": 0} if context.get("basis") else {})}
 
 
 def main(argv=None):
@@ -67,7 +68,7 @@ def main(argv=None):
         result = import_dispositions(records, context, table=args.table, dimensions=args.dimensions,
                                      output=io.output, run_id=args.run_id, labelled_at=args.labelled_at,
                                      machine=args.machine, new_table=args.new_table)
-    except (ValueError, OSError, ics.IcfScreenError) as exc:
+    except (ValueError, OSError, KeyError, TypeError, ics.IcfScreenError) as exc:
         log.error("%s", exc)
         return 1
     log.info("policy import %s", json.dumps(result, sort_keys=True))

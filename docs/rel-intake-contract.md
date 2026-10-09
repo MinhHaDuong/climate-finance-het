@@ -348,3 +348,48 @@ not clear a dimension-policy restriction if that policy remains the winning
 catchup dimension row; a later valid selected dimension assessment replaces
 it under the normal selection rule.
 Final counts of 2026-10-07 (view rebuilt twice, byte-identical; measured, from the 1842 and 1843 logs): `seriousness_excluded` 39,115, `icf_excluded` 335,652, `icf_pending` 351, `discipline_pending` 5,894 (all without abstract), `discipline_excluded` 780 (an upper bound: Opus v2 tends to over-exclude applied finance), `included` 7,499; sum 389,291. `rel_dimensions.csv` holds 11,645 works.
+
+### Approved native-titleless intake (ticket 2027)
+
+Ordinary records still require a nonempty title. A separately approved exact
+OpenAlex/DOI roster may carry a genuinely empty native title through intake.
+The frozen `config/rel_titleless_policy.json` registers the intake manifest and
+scientific authority hashes. Its `native_titleless` declaration binds the exact
+roster and archived full provider pages. The checker validates the registered
+manifest before allowing the exception, then verifies page/query/work hashes,
+unique exact identities, native empty titles and complete source fields. Missing,
+altered or unlisted evidence fails; a placeholder title is not a repair.
+
+These are operator-approved local native archives. Hash checks establish source
+correspondence to those archives, not independent authentication of arbitrary
+provider JSON. No model answer, citation edge or document classification is
+created by intake. Native `doc_type` and `is_paratext` metadata remain recorded;
+these flags alone establish neither scientific irrelevance nor usable content.
+The pool carries `native_titleless_provenance`, a portable lane/delivery manifest
+locator and hash, so normal selection revalidates its exact source-family member.
+
+The approved 177-member cohort has 110 nonempty reconstructed abstracts and 67
+absent abstracts. Presence is not a usability assessment. The 110 can enter the
+normal Stage1 selector using unchanged frozen prompts and their existing clipping
+behavior. Only actual Stage1 outcomes establish pending Stage2 eligibility;
+Stage2 retains complete-field public proof, full input and separate native and
+quality-guarded judgments. Ordinary titleless records retain their existing
+handling, and the historical 59-titleless waiver is not extended.
+
+The exact 67-member source-absence subset has its own frozen policy authority,
+bound to the actual post-admission pool and complete native admission evidence.
+The method remains `policy:local-evidence-abstention-v1`; its basis and reason are
+`native_titleless_absent_abstract`. It records uncertainty with no native answer,
+assessed numerical ICF facets, failed-model attempt or invented public-proof gap.
+Actual facet columns and `icf_values` remain blank. Existing uncertainty sentinels
+are explicitly policy abstentions; the legacy 43/37 authority is unchanged.
+Source-absence routes are reported separately from legacy titleless residue.
+
+Window and seed eligibility are unchanged: `exclude_missing_title`, year/date
+rules and normal seed requirements still apply. Intake and screening are distinct
+from narrative eligibility. The existing evidence-use calculation is independent
+of window disposition: a selected policy abstention may permit bibliometric use
+while the titleless record remains outside the review window; exclusion on the
+existing membership/venue/discipline rules keeps evidence use blank. Later valid
+selected assessments clear the policy restriction. No titleless seed entitlement,
+partial-2026 override, scientific closure or new retrieval license follows.
