@@ -600,3 +600,44 @@ def test_intake_carries_the_checked_repec_handle_and_the_eds_fields_and_passes_t
     # records.csv alone: the fixture's registry and manifest are not contract-shaped
     header, rows = qa._read_csv(str(lane / "intake" / "records.csv"), [])
     assert qa.check_records(header, rows, None) == []
+
+
+def test_eds_requery_fills_blank_cells_only_and_the_identity_note_can_leave_lane_note_alone(lane):
+    first = [
+        {"search_id": "EDS-RePEc-grid-IM-en", "eds_an": "edsrep.a.zzz.nope.v1y2020i1p1.2",
+         "doi": "", "title": "An article the mirror does not hold", "year": 2021},
+        {"search_id": "EDS-RePEc-grid-IM-en", "eds_an": "EDSZBW1968531777", "doi": "",
+         "title": "Kept as delivered", "year": 2022, "authors": ["Kept, A."]}]
+    with gzip.open(lane / "eds" / "results.jsonl.gz", "wt", encoding="utf-8") as fh:
+        fh.writelines(json.dumps(r) + "\n" for r in first)
+    again = lane / "requery"
+    again.mkdir()
+    with gzip.open(again / "results.jsonl.gz", "wt", encoding="utf-8") as fh:
+        fh.write(json.dumps({**first[0], "title": "A different title", "authors": ["Doe, Jane"],
+                             "issn": "1234-5678", "urls": ["https://ideas.repec.org/a/zzz/nope.html"]}) + "\n")
+        fh.write(json.dumps({**first[1], "authors": ["Other, B."]}) + "\n")
+    base = lane / "base.json"
+    base.write_text(json.dumps({"lane": "t1652-causal-econlit", "ticket": "1652",
+                                "delivery": "2026-10-09", "needs_human": [], "supersedes": "2026-09-30b"}))
+    table = lane / "handles.csv"
+    table.write_text("eds_an,status,handle\nedsrep.a.zzz.nope.v1y2020i1p1.2,no_series,\n")
+
+    def deliver(name, **extra):
+        args = _args(lane)
+        args.intake_dir, args.manifest_base, args.eds_handles = str(lane / name), str(base), str(table)
+        args.eds_requery = str(again)
+        for k, v in extra.items():
+            setattr(args, k, v)
+        assert cy.run(args) == 0
+        return {r["platform_record_id"]: r for r in _csv(lane / name / "records.csv")}
+
+    recs = deliver("plain", identity_note_column=False)
+    a, k = recs["edsrep.a.zzz.nope.v1y2020i1p1.2"], recs["EDSZBW1968531777"]
+    assert (a["first_author"], a["issn"]) == ("Doe, Jane", "1234-5678")
+    assert a["title"] == "An article the mirror does not hold", "only authors, ISSN and URLs come from the re-query"
+    assert k["first_author"] == "Kept, A.", "a delivered author is never overwritten"
+    assert "no_series in the mirror" in a["lane_note"] and a["eds_identity_note"] == ""
+    kept = deliver("column", identity_note_column=True)
+    b = kept["edsrep.a.zzz.nope.v1y2020i1p1.2"]
+    assert "no_series" not in b["lane_note"] and "no_series in the mirror" in b["eds_identity_note"]
+    assert b["lane_note"] == a["lane_note"].split("; RePEc handle")[0]

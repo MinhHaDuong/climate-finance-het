@@ -270,7 +270,7 @@ INTAKE_RECORD_FIELDS = [
     "doi", "openalex_id", "title_original", "first_author", "all_authors", "year",
     "publication_date", "journal", "issn", "doc_type", "language", "abstract",
     "abstract_provenance", "url", "affiliation_countries", "version_hint",
-    "lane_status", "lane_note", "doi_eds_hint", "repec_handle", "families", "formulations", "all_query_ids",
+    "lane_status", "lane_note", "doi_eds_hint", "repec_handle", "eds_identity_note", "families", "formulations", "all_query_ids",
     "family_relevance", "in_refined", "in_unified", "in_sud",
     "host_org_name", "host_org_id", "source_type", "issn_l", "landing_page",
 ]
@@ -328,7 +328,7 @@ def _eds_identity(rs, handles):
     return handle, "; ".join(dict.fromkeys(notes))
 
 
-def intake_rows(records, registry_all, labels, handles=None):
+def intake_rows(records, registry_all, labels, handles=None, note_column=False):
     """(records rows, registry rows, excluded rows, delivered raw ids) of the
     intake contract.
 
@@ -378,6 +378,7 @@ def intake_rows(records, registry_all, labels, handles=None):
             "issn": next((r["issn"] for r in rs if r.get("eds_an") and r.get("issn")), ""),
             "url": next((r["urls"][0] for r in rs if r.get("eds_an") and r.get("urls")), ""),
             "repec_handle": handle,
+            "eds_identity_note": id_note if note_column else "",
             "language": _LANG.get(first.get("language") or "", first.get("language") or "")
             if len(first.get("language") or "") != 2 else first["language"],
             "abstract": first.get("abstract") or "",
@@ -389,7 +390,7 @@ def intake_rows(records, registry_all, labels, handles=None):
                             if any(r.get("doi_promoted") for r in rs) else "")
                          + (f"; EDS DOI as returned, often truncated: {'; '.join(hints)}"
                             if hints else "")
-                         + (f"; {id_note}" if id_note else ""),
+                         + (f"; {id_note}" if id_note and not note_column else ""),
             "doi_eds_hint": "; ".join(hints),
             "families": "|".join(rel), "formulations": "|".join(sorted({r["formulation"] for r in rs})),
             "all_query_ids": "|".join(r["search_id"] for r in rs),
@@ -413,14 +414,15 @@ def intake_rows(records, registry_all, labels, handles=None):
     return out, regs, excluded, delivered
 
 
-def write_intake(out_dir, records, registry_all, labels, manifest, force=False, handles=None):
+def write_intake(out_dir, records, registry_all, labels, manifest, force=False, handles=None,
+                 note_column=False):
     """Write the four delivery files; a directory that already holds any of
     them is refused unless ``force`` (a delivery is immutable once merged)."""
     taken = [n for n in INTAKE_FILES if os.path.exists(os.path.join(out_dir, n))]
     if taken and not force:
         raise SystemExit(f"{out_dir} already holds a delivery ({', '.join(taken)}); "
                          "pass --force-intake to replace it")
-    rows, regs, excluded, _ = intake_rows(records, registry_all, labels, handles)
+    rows, regs, excluded, _ = intake_rows(records, registry_all, labels, handles, note_column)
     os.makedirs(out_dir, exist_ok=True)
     for name, fields, data in (("records.csv", INTAKE_RECORD_FIELDS, rows),
                                ("registry.csv", INTAKE_REGISTRY_FIELDS, regs),
@@ -624,6 +626,25 @@ def apply_backfill(records, backfill):
     return records
 
 
+def apply_eds_requery(records, path):
+    """Fill the authors, ISSN and URLs the first EDS run did not keep from the
+    2026-10-09 re-query of the same strings (ticket 2040), matched on search id and
+    EDS accession number. The registry, the DOIs, the titles and every other
+    field stay those of the first run, so no record or work key moves; a value the
+    record already has is never overwritten. Returns the number of records filled."""
+    again = {(r["search_id"], r.get("eds_an") or ""): r
+             for r in read_jsonl_gz(os.path.join(path, "results.jsonl.gz"))}
+    n = 0
+    for r in records:
+        new = again.get((r["search_id"], r.get("eds_an") or "")) if r.get("eds_an") else None
+        if not new:
+            continue
+        got = {k: new[k] for k in ("authors", "issn", "urls") if not r.get(k) and new.get(k)}
+        r.update(got)
+        n += bool(got)
+    return n
+
+
 def run(args):
     with open(args.families, encoding="utf-8") as fh:
         fam_cfg = yaml.safe_load(fh)
@@ -632,6 +653,8 @@ def run(args):
     dirs = [d for d in run_dirs + [args.eds_dir] if d]
     registry, registry_all, records = load_runs(dirs)
     assign_work_keys(records, DoiChecks(args.doi_checks) if args.doi_checks else None)
+    if getattr(args, "eds_requery", None):
+        log.info("EDS re-query: %d records filled", apply_eds_requery(records, args.eds_requery))
     if getattr(args, "backfill", None):
         apply_backfill(records, read_backfill(args.backfill))
     refined, unified, sud = load_catalog(args.refined), load_catalog(args.unified), load_sud(args.sud_results)
@@ -691,7 +714,8 @@ def run(args):
             base = json.load(fh)
         handles = load_eds_handles(getattr(args, "eds_handles", None))
         n, x = write_intake(args.intake_dir, records, registry_all, labels, base,
-                            force=args.force_intake, handles=handles)
+                            force=args.force_intake, handles=handles,
+                            note_column=getattr(args, "identity_note_column", False))
         log.info("intake delivery: %d records, %d excluded rows", n, x)
     return 0
 
@@ -719,6 +743,11 @@ def main(argv=None):
                     "would split a title group; without it no EDS DOI is promoted to doi")
     ap.add_argument("--eds-handles", help="eds_repec_handles.csv of catalog_rel_eds_repec_handles: "
                     "the RePEc handles of edsrep records, checked against the mirror")
+    ap.add_argument("--identity-note-column", action="store_true",
+                    help="write the EDS identity note (unverified RePEc candidate, ZBW number) to "
+                    "its own column eds_identity_note and leave lane_note as delivered")
+    ap.add_argument("--eds-requery", help="directory with the results.jsonl.gz of the EDS re-query "
+                    "(ticket 2040): fills the authors, ISSN and URLs of EDS records, nothing else")
     ap.add_argument("--backfill", help="catalog_rel_oa_backfill.py directory: fills the authors, "
                     "ISSN and host organization the OpenAlex records lack (ticket 2041)")
     ap.add_argument("--manifest-base", help="JSON with lane, ticket, delivery, delivered_at, "

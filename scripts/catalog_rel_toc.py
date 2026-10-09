@@ -199,6 +199,14 @@ def main(argv=None):
                     help="glob of REL search results.jsonl.gz (repeatable)")
     ap.add_argument("--delivery-dir", help="data/rel_intake/t1650-sommaires/<date>")
     ap.add_argument("--summary", help="per-journal summary CSV (e.g. docs/rel-toc-1650-summary.csv)")
+    ap.add_argument("--backfill", help="catalog_rel_oa_backfill.py directory: fills the blank "
+                    "authors, host organization, source type and landing page of deliver (ticket 2049)")
+    ap.add_argument("--supersedes", help="deliver: the delivery of the lane this one replaces")
+    ap.add_argument("--legacy-alias-separator", action="store_true",
+                    help="deliver: join alias DOIs with a space as delivery 2026-09-30 did (commit "
+                    "aedec84f changed it to ';'), so a regeneration changes no delivered cell")
+    ap.add_argument("--note", default="", help="deliver: text appended to the manifest notes")
+    ap.add_argument("--delivered-at", help="deliver: ISO datetime of the manifest (default: now)")
     ap.add_argument("--machine", default=os.uname().nodename)
     args = ap.parse_args(argv)
     os.makedirs(args.run_dir, exist_ok=True)

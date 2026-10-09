@@ -8,6 +8,7 @@ Author: haduong
 2026-10-01T05:51Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 2026-10-08T16:13Z HDMX-coding-agent note blocker 1655 closed — Blocked-by removed.
 
+2026-10-09T10:13Z HDMX-coding-agent ticket 2049 regenerated the lane deliveries t1530, t1650, t1652 and the t1790 reruns as 2026-10-09 superseding the previous ones; work_key unchanged; member_record_ids and first_author/all_authors changed for those works; anything storing member_record_ids must be re-keyed to the new delivery ids
 --- body ---
 
 ## Context

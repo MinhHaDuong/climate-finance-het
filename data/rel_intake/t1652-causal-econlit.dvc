@@ -1,6 +1,6 @@
 outs:
-- md5: 98207e39eb3036028bc0ee5d9997d383.dir
-  size: 107455565
-  nfiles: 8
+- md5: c4f08a9d7a6d7b1926b5e11af2be86f4.dir
+  size: 167465355
+  nfiles: 12
   hash: md5
   path: t1652-causal-econlit

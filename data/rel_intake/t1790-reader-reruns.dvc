@@ -1,6 +1,6 @@
 outs:
-- md5: 44e3b3f80f42402598d8e38e5f3a1509.dir
-  size: 906191
-  nfiles: 4
+- md5: 910168c08d5495d10c61afa10e6f3fea.dir
+  size: 1890985
+  nfiles: 8
   hash: md5
   path: t1790-reader-reruns

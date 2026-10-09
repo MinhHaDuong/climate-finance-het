@@ -204,7 +204,8 @@ def build_records(results, registry, backfill=None):
     return records, excluded
 
 
-def build_manifest(cfg, records, excluded, registry, inputs, delivery, delivered_at):
+def build_manifest(cfg, records, excluded, registry, inputs, delivery, delivered_at,
+                   supersedes=None, extra_notes=""):
     incomplete = [{"unit": r["query_id"], "reason": r["stop_reason"]}
                   for r in registry if r["completed"] == "false"]
     incomplete += [dict(x) for x in cfg.get("incomplete", [])]
@@ -220,8 +221,8 @@ def build_manifest(cfg, records, excluded, registry, inputs, delivery, delivered
         "coverage": "incomplete" if incomplete else "complete",
         "incomplete": incomplete,
         "needs_human": [],
-        "supersedes": None,
-        "notes": cfg.get("notes", ""),
+        "supersedes": supersedes,
+        "notes": " ".join(x for x in (cfg.get("notes", ""), extra_notes) if x),
         "inputs": inputs,
     }
 
@@ -284,6 +285,11 @@ def main(argv=None):
     parser.add_argument("--backfill", default=None,
                         help="a catalog_rel_oa_backfill.py output directory: fills the authors, "
                              "ISSN and host organization the search records lack (ticket 2041)")
+    parser.add_argument("--supersedes", default=None,
+                        help="the delivery of this lane the new one replaces (e.g. 2026-09-29): "
+                             "a correction is a new delivery that says what it supersedes")
+    parser.add_argument("--note", default="",
+                        help="text appended to the manifest notes (what the correction changes)")
     parser.add_argument("--delivered-at", default=None,
                         help="ISO datetime recorded in the manifest (default: now, UTC)")
     args = parser.parse_args(argv)
@@ -308,7 +314,8 @@ def main(argv=None):
                        "sha256": _sha256(bf)})
     delivered_at = args.delivered_at or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     delivery = os.path.basename(os.path.normpath(args.output_dir))
-    manifest = build_manifest(cfg, records, excluded, registry, inputs, delivery, delivered_at)
+    manifest = build_manifest(cfg, records, excluded, registry, inputs, delivery, delivered_at,
+                              args.supersedes, args.note)
     errors = publish_delivery(args.output_dir, records, excluded, registry, manifest)
     for e in errors:
         log.error("%s", e)

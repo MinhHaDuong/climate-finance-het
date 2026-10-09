@@ -10,6 +10,7 @@ import collections
 import csv
 import glob
 import gzip
+import hashlib
 import json
 import os
 import subprocess
@@ -29,6 +30,12 @@ from _rel_toc_core import (
     unit_id,
 )
 from _rel_toc_plan import ROOT, _now, issns, openalex_filter, thematic_queries
+from catalog_rel_sud_search import (
+    BACKFILL_FILE,
+    fill_blank,
+    intake_cells,
+    read_backfill,
+)
 from utils import get_logger
 
 log = get_logger("rel_toc_deliver")
@@ -43,6 +50,8 @@ RECORD_FIELDS = [
     # extra columns, carried by the merge
     "journal_key", "sweep_mode", "volume", "issue", "online_first", "item_class",
     "toc_source", "year_source", "pool_match",
+    # filled from the OpenAlex backfill of ticket 2041 (blank without one)
+    "host_org_name", "host_org_id", "source_type", "issn_l", "landing_page",
 ]
 REGISTRY_FIELDS = [
     "query_id", "platform", "query", "filter", "run_at", "n_expected", "n_received",
@@ -106,13 +115,13 @@ def _step_status(run_dir):
     return status
 
 
-def journal_toc(journal, run_dir):
+def journal_toc(journal, run_dir, alias_sep=";"):
     key = journal["journal_key"]
     cr = [crossref_record(it, key, "; ".join(issns(journal))) for it in
           _read_jsonl(os.path.join(run_dir, f"crossref_{key}.jsonl.gz"))]
     oa = [openalex_record(w, key) for w in
           _read_jsonl(os.path.join(run_dir, f"openalex_{key}.jsonl.gz"))]
-    recs = merge_toc(cr, oa)
+    recs = merge_toc(cr, oa, alias_sep)
     for r in recs:
         r["issn"], r["journal"] = "; ".join(issns(journal)), r["journal"] or journal["title"]
     return recs
@@ -125,7 +134,7 @@ def _iso_date(value):
     return "-".join([parts[0]] + [p.zfill(2) for p in parts[1:3]])
 
 
-def record_row(rec, qid, retrieved_at, sweep_mode):
+def record_row(rec, qid, retrieved_at, sweep_mode, backfill=None):
     notes = []
     if rec.get("in_pool"):
         notes.append(f"in pool by {rec['in_pool']}")
@@ -139,7 +148,7 @@ def record_row(rec, qid, retrieved_at, sweep_mode):
     if rec.get("alias_dois"):
         notes.append(f"alias DOI {rec['alias_dois']}")
     platform = "crossref" if rec.get("toc_source") == "crossref" else "openalex"
-    return {
+    row = {
         "record_id": record_id(rec), "query_id": qid, "platform": platform,
         "retrieved_at": retrieved_at, "title": rec["title"],
         "platform_record_id": rec["doi"] if platform == "crossref" else rec["openalex_id"],
@@ -160,6 +169,9 @@ def record_row(rec, qid, retrieved_at, sweep_mode):
         "item_class": rec.get("item_class", ""), "toc_source": rec.get("toc_source", ""),
         "year_source": rec.get("year_source", ""), "pool_match": rec.get("in_pool", ""),
     }
+    # A value the sweep delivered is never overwritten (ticket 2041, 2049).
+    extra = (backfill or {}).get(row["openalex_id"])
+    return fill_blank(row, intake_cells(extra)) if extra else row
 
 
 def _write_csv(path, rows, fields):
@@ -167,6 +179,14 @@ def _write_csv(path, rows, fields):
         w = csv.DictWriter(fh, fields, extrasaction="ignore")
         w.writeheader()
         w.writerows(rows)
+
+
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def _git_head():
@@ -181,6 +201,7 @@ def deliver(args, manifest, steps):
     t0 = time.time()
     run_dir, out = args.run_dir, args.delivery_dir
     os.makedirs(out, exist_ok=True)
+    backfill = read_backfill(args.backfill) if getattr(args, "backfill", None) else {}
     pool_rows, sources = load_pool(args.pool, args.rel_results)
     pool = PoolIndex(pool_rows)
     steps.write(step="pool", sources=dict(sources), rows=pool.size)
@@ -201,7 +222,7 @@ def deliver(args, manifest, steps):
                              else rec.get("crossref_type") or rec.get("item_class", "")})
             return
         seen[rid] = qid
-        records.append(record_row(rec, qid, retrieved_at, sweep_mode))
+        records.append(record_row(rec, qid, retrieved_at, sweep_mode, backfill))
 
     for j in [m for m in manifest if m["sweep_mode"] == "full"]:
         key = j["journal_key"]
@@ -210,7 +231,7 @@ def deliver(args, manifest, steps):
         why = "; ".join(f"{name}: {s.get('stop_reason') or 'not run'}"
                         for name, s in (("crossref", cr_s), ("openalex", oa_s))
                         if not s.get("complete"))
-        recs = journal_toc(j, run_dir)
+        recs = journal_toc(j, run_dir, " " if getattr(args, "legacy_alias_separator", False) else ";")
         for r in recs:
             r["in_pool"] = pool.match(r)
         retrieved = {"crossref": cr_s.get("at", ""), "openalex-only": oa_s.get("at", "")}
@@ -291,17 +312,21 @@ def deliver(args, manifest, steps):
     incomplete += SCOPE_LIMITS
     man = {
         "lane": LANE, "ticket": "1650", "delivery": os.path.basename(out.rstrip("/")),
-        "delivered_at": _now(),
+        "delivered_at": getattr(args, "delivered_at", None) or _now(),
         "producer": {"script": "scripts/catalog_rel_toc.py deliver", "commit": _git_head(),
                      "machine": args.machine},
         "counts": {"records": len(records),
                    "excluded": dict(collections.Counter(e["reason"] for e in excluded))},
         "coverage": "incomplete", "incomplete": incomplete, "needs_human": NEEDS_HUMAN,
-        "supersedes": None,
+        "supersedes": getattr(args, "supersedes", None),
         "pool_matched": {"catalogue": args.pool, "rel_results": dict(sources),
                          "rows": pool.size},
-        "notes": NOTES,
+        "notes": " ".join(x for x in (NOTES, getattr(args, "note", "")) if x),
     }
+    if getattr(args, "backfill", None):
+        man["inputs"] = [{"path": os.path.join(os.path.basename(os.path.normpath(args.backfill)),
+                                               BACKFILL_FILE),
+                          "sha256": _sha256(os.path.join(args.backfill, BACKFILL_FILE))}]
     with open(os.path.join(out, "manifest.json"), "w", encoding="utf-8") as fh:
         json.dump(man, fh, indent=1, ensure_ascii=False)
         fh.write("\n")
