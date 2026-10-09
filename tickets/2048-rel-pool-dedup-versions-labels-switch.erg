@@ -8,6 +8,7 @@ Blocked-by: 2047
 2026-10-09T18:00Z HDMX-coding-agent created
 2026-10-09T18:00Z HDMX-coding-agent note author decision 2026-10-09: split tracker 2044 into the safe part (2047) and the coordinating part (this ticket); a working paper and its published article are ONE work
 
+2026-10-09T09:23Z HDMX-coding-agent note from 2047: sites that must flip with dedup_version 2, in the same change, because they compute title keys joined against the pool or the label tables (all on utils.normalize_title today): _rel_pool_report (catalogue match naming), _rel_causal_keys.norm_title (t1652 lane), _icf_chunks, corpus_icf_import, _rel_facet_io, _rel_policy (title_norm_year columns), _rel_view (label join on title_norm_year); docs/rel-intake-contract.md still says repec_handle is not a dedup key (true under v1). v2 re-keys 54,535 t1810 works from title: to repec: keys: the label migration must carry them.
 --- body ---
 
 ## Context
