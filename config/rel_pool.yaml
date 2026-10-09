@@ -23,6 +23,14 @@ intake_dir: data/rel_intake
 # old -> new work_key table outside data/rel_pool. Ticket 2048 switches to 2.
 dedup_version: 1
 
+# Version 2, step 5c (ticket 2048, author decision 2026-10-09): components
+# carrying OpenAlex ids and no DOI join one another, and the one DOI-bearing
+# component, on a title key of four words or more and the same year. Off:
+# its panel (stage B1, 300 of 366 pairs) read precision 0.900, Wilson 95 %
+# [0.861, 0.929], at the 0.90 bar; 0.646 where both first authors are known
+# and differ (distinct ': Comment' papers of one title). The author decides.
+openalex_duplicates: false
+
 # Metadata priority after the catalogue: a pooled work takes each field from
 # its first non-empty member, catalogue rows first, then lanes in this order.
 # A lane missing from this list is appended in name order, with a warning;

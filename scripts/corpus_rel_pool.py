@@ -34,18 +34,20 @@ Outputs (required explicit ``--output-dir``):
 Dedup version (``dedup_version`` in the config, ``--dedup-version`` on the
 command line; ticket 2047). Version 1, the default, builds the pool above.
 Version 2 (new title key, RePEc handle key, a working paper and its article
-as one work; ``_rel_pool_dedup``; its work keys add ``repec:<handle>`` after
-``url:`` and before ``title:``) builds no pool and writes nothing in
-``--output-dir``: it computes both versions on the
-same rows and writes, in ``--migration-dir`` (required, outside the output
-directory), the report of what version 2 would change and the append-only
-migration table ``old work_key -> new work_key`` (``_rel_pool_migration``).
-No label table is read or written. Ticket 2048 switches the pool.
+as one work, named by the article; duplicate OpenAlex records as one work when
+``openalex_duplicates`` is on; ``_rel_pool_dedup``; its work keys add
+``repec:<handle>`` after ``url:`` and before ``title:``) computes both
+versions on the same rows and writes, in ``--migration-dir`` (required,
+outside the output directory), the report of what version 2 would change and
+the append-only migration table ``old work_key -> new work_key``
+(``_rel_pool_migration``). It writes in ``--output-dir`` only with
+``--write-pool``: the version 2 pool, same columns as version 1, and its merge
+report. No label table is read or written. Ticket 2048 switches the pool.
 
 Usage:
     python scripts/corpus_rel_pool.py [--config config/rel_pool.yaml] \\
         [--catalogue PATH] [--intake-dir DIR] --output-dir data/rel_pool \\
-        [--dedup-version 2 --migration-dir DIR]
+        [--dedup-version 2 --migration-dir DIR [--write-pool]]
 """
 
 import argparse
@@ -60,10 +62,11 @@ import qa_rel_intake as ric
 import yaml
 from _rel_pool_abstract import select_abstract
 from _rel_pool_dedup import check_version, cluster, title_normalizer
-from _rel_pool_enrich import EXTRA_COLUMNS, Enrichment, load_tables
+from _rel_pool_enrich import EXTRA_COLUMNS, Enrichment, load_tables, mark_doc_types
 from _rel_pool_keys import norm_openalex, norm_year, repec_key, url_ids
 from _rel_pool_migration import write_migration
 from _rel_pool_report import CATALOGUE, RelPoolError, make_report, report_markdown
+from _rel_pool_versions import published_ids
 from utils import get_logger, normalize_doi, normalize_title
 
 log = get_logger("corpus_rel_pool")
@@ -274,7 +277,9 @@ def build_pool(rows, roots, lane_rank, version=1, enrich=None):
 
     Version 2 names a work with its RePEc handle after the Handle and before
     the title, and its title key with ``_rel_title_key``; version 1 has
-    neither (the pool's work keys).
+    neither (the pool's work keys). In version 2 a work holding a working
+    paper and a published row takes its ``openalex_id``, ``doi`` and so its
+    key from the published row (``published_ids``, ticket 2048).
 
     ``enrich`` (an ``Enrichment``, ticket 2052) fills abstract and doc_type
     from its tables after the members; it changes no key or provenance column."""
@@ -298,6 +303,9 @@ def build_pool(rows, roots, lane_rank, version=1, enrich=None):
             select_abstract(mem, merged["title"])
         if enrich:
             enrich.fill(merged, mem, root)
+        named = published_ids(mem) if version >= 2 else None
+        if named:
+            merged["openalex_id"], merged["doi"] = named[0], named[1] or merged["doi"]
         origins = list(dict.fromkeys(m["origin"] for m in mem))
         merged.update({
             "version_hint": ";".join(dict.fromkeys(m["version_hint"] for m in mem if m["version_hint"])),
@@ -371,7 +379,22 @@ def load_rows(cfg, catalogue_path, intake_dir):
     return rows, cat_rows, md5, deliveries, superseded, excluded, lane_rank
 
 
-def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_dir=None):
+def _write_outputs(out_dir, pool, report, enrich):
+    """``pool.csv`` (production columns) and the merge report in ``out_dir``."""
+    if enrich:
+        report["enrichment"] = enrich.report()
+    os.makedirs(out_dir, exist_ok=True)
+    _write_pool(os.path.join(out_dir, "pool.csv"), pool,
+                POOL_COLUMNS + EXTRA_COLUMNS if enrich else POOL_COLUMNS)
+    with open(os.path.join(out_dir, "merge_report.json"), "w", encoding="utf-8") as fh:
+        json.dump(report, fh, ensure_ascii=False, indent=2)
+        fh.write("\n")
+    with open(os.path.join(out_dir, "merge_report.md"), "w", encoding="utf-8") as fh:
+        fh.write(report_markdown(report))
+
+
+def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_dir=None,
+        write_pool=False):
     version = dedup_version if dedup_version is not None else cfg.get("dedup_version", 1)
     try:
         check_version(version)
@@ -387,27 +410,25 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
     tables = load_tables(cfg.get("enrichment"), ROOT, reserved=set(lane_rank))
     enrich = Enrichment(tables) if tables else None
     pool = build_pool(rows, roots, lane_rank, enrich=enrich)
-    if version == 2:
-        stats2, pairs = {}, []
-        roots2 = cluster(rows, stats2, version=2, pairs=pairs)
-        pool2 = build_pool(rows, roots2, lane_rank, version=2,
-                           enrich=Enrichment(tables) if tables else None)
-        return write_migration(rows, (roots, pool, stats), (roots2, pool2, stats2), migration_dir,
-                               pairs)
     meta = {"path": os.path.relpath(catalogue_path, ROOT) if os.path.isabs(catalogue_path)
             else catalogue_path, "md5": md5, "rows": len(cat_rows), "run": cat_cfg.get("run")}
+    if version == 2:
+        # The working-paper mark of step 5 reads the enriched types (ticket 2048).
+        marked = mark_doc_types(rows, tables) if tables else 0
+        oa_dups = bool(cfg.get("openalex_duplicates", False))
+        stats2, pairs = {}, []
+        roots2 = cluster(rows, stats2, version=2, pairs=pairs, oa_dups=oa_dups)
+        stats2["rows_typed_by_enrichment"] = marked
+        enrich2 = Enrichment(tables) if tables else None
+        pool2 = build_pool(rows, roots2, lane_rank, version=2, enrich=enrich2)
+        mig = write_migration(rows, (roots, pool, stats), (roots2, pool2, stats2), migration_dir,
+                              pairs, oa_dups=oa_dups)
+        if write_pool:
+            _write_outputs(out_dir, pool2, {"dedup_version": 2, **make_report(
+                rows, roots2, deliveries, excluded, meta, superseded, stats2)}, enrich2)
+        return mig
     report = make_report(rows, roots, deliveries, excluded, meta, superseded, stats)
-
-    if enrich:
-        report["enrichment"] = enrich.report()   # the version-1 build, the pool written
-    os.makedirs(out_dir, exist_ok=True)
-    _write_pool(os.path.join(out_dir, "pool.csv"), pool,
-                POOL_COLUMNS + EXTRA_COLUMNS if enrich else POOL_COLUMNS)
-    with open(os.path.join(out_dir, "merge_report.json"), "w", encoding="utf-8") as fh:
-        json.dump(report, fh, ensure_ascii=False, indent=2)
-        fh.write("\n")
-    with open(os.path.join(out_dir, "merge_report.md"), "w", encoding="utf-8") as fh:
-        fh.write(report_markdown(report))
+    _write_outputs(out_dir, pool, report, enrich)
     return report
 
 
@@ -423,18 +444,21 @@ def main(argv=None):
                         help="default: config dedup_version, else 1")
     parser.add_argument("--migration-dir", default=None,
                         help="version 2: report and migration table directory, outside the pool")
+    parser.add_argument("--write-pool", action="store_true",
+                        help="version 2: also write its pool and merge report in --output-dir")
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
     try:
         report = run(cfg, args.catalogue or cfg["catalogue"]["path"],
                      args.intake_dir or cfg["intake_dir"], args.output_dir,
-                     args.dedup_version, args.migration_dir)
+                     args.dedup_version, args.migration_dir, args.write_pool)
     except RelPoolError as exc:
         log.error("%s", exc)
         return 1
     if report.get("dedup_version") == 2:
-        log.info("dedup v2 (nothing written to the pool): %s", report["totals"])
+        log.info("dedup v2 (%s): %s", "pool written" if args.write_pool else
+                 "nothing written to the pool", report["totals"])
         return 0
     p = report["pool"]
     log.info("pool: %d works (%d with a catalogue row, %d lane-only); per n_sources %s",

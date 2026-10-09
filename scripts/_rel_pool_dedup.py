@@ -43,13 +43,19 @@ stripped, apostrophes deleted, NFKC, Latin accents folded, then letters, marks,
 digits and currency signs only, no spaces; see that module). The generic-title
 test of step 4 reads ``title_words``, the same title with its spaces.
 
-5. version 2 only: a working paper and its published article are ONE work
-   (author decision of 2026-10-09, ticket 2048; ``_rel_pool_versions``):
+5. version 2 only: versions of one work are ONE work (author decisions of
+   2026-10-09, ticket 2048; ``_rel_pool_versions``):
    5a. a lane's ``version_hint`` that resolves to one component joins it;
    5b. a working-paper-only component joins a published component with the
    same title key when the article year minus the working-paper year is
-   between -1 and +5; a cluster that would hold two published components
-   joins nothing.
+   between -1 and +5 (a title of three words or fewer also needs the first
+   authors to agree); a cluster that would hold two published components
+   joins nothing;
+   5c. with ``openalex_duplicates`` on: components carrying OpenAlex ids and
+   no DOI join one another, and the one DOI-bearing component, on a title
+   key of four words or more and the same year; never two DOIs in one work.
+   A work holding a working paper and a published row is named by the
+   published row (``_rel_pool_versions.published_ids``).
 
 Working papers and articles. In version 1 a working paper and its article that
 carry their own DOIs stay two works, unless a shared OpenAlex record joins
@@ -249,21 +255,23 @@ def _index(rows, norm, repec):
     return by_doi, by_oa, by_handle, by_repec, by_title
 
 
-def cluster(rows, stats=None, version=1, pairs=None):
+def cluster(rows, stats=None, version=1, pairs=None, oa_dups=False):
     """Component root index per row under dedup ``version`` (default 1).
 
     ``stats`` (a dict) receives the step counts: ``ambiguous_title_groups``,
     ``ambiguous_title_only``, ``generic_title_only``, and in version 2
-    ``versions`` (step 5); ``pairs`` (a list) the unions of step 5."""
+    ``versions`` (step 5); ``pairs`` (a list) the unions of step 5;
+    ``oa_dups`` turns step 5c on (version 2 only)."""
     v2 = version >= 2
     return cluster_with(rows, stats, title_normalizer(version), repec=v2, guard=v2, versions=v2,
-                        pairs=pairs)
+                        pairs=pairs, oa_dups=v2 and oa_dups)
 
 
-def cluster_with(rows, stats, norm, repec, guard=False, versions=False, pairs=None):
+def cluster_with(rows, stats, norm, repec, guard=False, versions=False, pairs=None,
+                 oa_dups=False):
     """The cascade with a given title normalizer, with or without step 2c,
-    the component guard of steps 3 and 4 and step 5 (``versions``; ``pairs``
-    receives its unions, see ``version_unions``).
+    the component guard of steps 3 and 4 and step 5 (``versions``, with step
+    5c if ``oa_dups``; ``pairs`` receives its unions, see ``version_unions``).
 
     ``cluster`` names the two versions; the version 2 report also runs each
     change alone on top of version 1 to tell which one causes a merge or a split."""
@@ -284,13 +292,14 @@ def cluster_with(rows, stats, norm, repec, guard=False, versions=False, pairs=No
     else:
         for group in by_title.values():
             if len(group) > 1:
-                pairs, amb = _title_unions(rows, uf, group)
-                pending += pairs
+                tpairs, amb = _title_unions(rows, uf, group)
+                pending += tpairs
                 ambiguous += amb
     for i, j in pending:
         uf.union(i, j)
     ambiguous_title_only, generic = _title_only_unions(rows, uf, norm, guard)
-    vstats = version_unions(rows, uf, norm, WORDS.get(norm, norm), pairs=pairs) if versions else None
+    vstats = (version_unions(rows, uf, norm, WORDS.get(norm, norm), pairs=pairs, oa_dups=oa_dups)
+              if versions else None)
     if stats is not None:
         stats.update(ambiguous_title_groups=ambiguous, ambiguous_title_only=ambiguous_title_only,
                      generic_title_only=generic)
