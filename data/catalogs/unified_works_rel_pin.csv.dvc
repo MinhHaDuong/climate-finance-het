@@ -1,7 +1,9 @@
 # REL pool catalogue (ticket 1731): catalog_merge run 20260729T161924Z,
 # 43,179 works, the count the REL protocol cites. Pinned by hash so the pool
-# never follows the catalog_merge stage, whose dvc.lock output differs
-# (recorded in commit 732c7f5e, superseded by 7cf4eee0).
+# never follows the catalog_merge stage. Its current dvc.lock output and live
+# dependencies match this pin; differing hashes remain in historical discover,
+# enrich and enrich_works stages absent from the current dvc.yaml. Preserve those
+# lock records and this independent pin; no catalogue regeneration is needed.
 outs:
 - md5: 3633ad9f4517c02618a0ecab722a8051
   size: 81934596

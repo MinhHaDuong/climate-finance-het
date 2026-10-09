@@ -35,9 +35,11 @@ the baseline integration of ticket 1655; it does not freeze the REL corpus.
 4. **1656 — freeze deliverables.** Rebuild final PRISMA counts from registries
    and tables at consistent units; update the protocol, methods and sensitivity
    results. Archive configurations, model routes, prompts, decisions and raw
-   outputs. Include the 63 actual-run/audit scripts in the dated external code
-   snapshot and its script-to-artifact map: committed input builders alone do
-   not reproduce the complete production history. Publish a manifest of file
+   outputs. Include the dated external code snapshot and its script-to-artifact
+   map: 63 payloads comprise 50 Python files, 6 shell files and 7 communications
+   files (56 code files; 65 total files including README and MANIFEST). These
+   inventory counts do not establish executed runs; committed input builders
+   alone do not reproduce the complete production history. Publish a manifest of file
    hashes, code revision and DVC pointers and verify reconstruction in a clean
    populated checkout.
 

@@ -1,0 +1,56 @@
+%erg 0.1
+Title: REL freeze provenance documentation
+Created: 2026-10-08
+Author: HDMX-coding-agent
+Closed: autoclosed — PR #1716
+
+--- log ---
+2026-10-08T23:56Z HDMX-coding-agent created
+2026-10-09T00:08Z HDMX-coding-agent closed — autoclosed — PR #1716
+
+--- body ---
+
+## Context
+
+Child of1656. Astra readiness review for1656 identified contradictory live catalogue-pin
+comments and an external-snapshot inventory misdescribed as executed scripts.
+This documentation dependency can complete before1654; it does not freeze the
+pool or close1656.
+
+## Scope
+
+Exactly this ticket, config/rel_pool.yaml, the standalone catalogue pin pointer,
+and docs/rel-corpus-completion-2026-10-08.md. No corpus, lock or hash rewrite.
+
+## Exit criteria
+- [x] Live pin comments distinguish matching current catalog_merge/live dependencies from differing orphan historical stages, preserving parsed YAML/DVC values and independent pin.
+- [x] Completion step4 reports63 payloads (50 Python,6 shell,7 communications),56 code files and65 total files without claiming executed runs.
+- [x] Scoped value/inventory checks, make check-fast, make lint and ticket validation/collision evidence recorded.
+
+## Test
+
+Compare parsed configuration and pin-pointer values and noncomment bytes against
+origin/main; check actual live and orphan lock-stage hashes. Verify the external
+snapshot MANIFEST inventory and all payload hashes. Preserve initial failing
+misleading-comment assertion before correction.
+
+## Validation evidence (2026-10-09)
+
+Base: ecd94704ee4da0e0790e2c8afad1c7366b86f462. Initial misleading-comment
+assertion failed before editing (/tmp/climate-finance-2026-first-red.log).
+Scoped checks independently verified all63 snapshot payload hashes, file/type
+counts, current DAG/lock correspondence, unchanged parsed YAML/DVC values and
+unchanged noncomment bytes; dvc.yaml/dvc.lock have no diff.
+
+make check-fast passed:25 library tests;2238 repository tests,10 skips.
+make lint (declared adherence runner) passed:347 tests,7 skips. Logs:
+/tmp/climate-finance-2026-check-fast.log and
+/tmp/climate-finance-2026-lint.log. Scoped evidence:
+/tmp/climate-finance-2026-scoped-check.log.
+
+Scoped erg validate passes. Global erg check retains the pre-existing1183
+Blocked-by1182 missing-reference failure, also present on origin/main; no
+unrelated ticket repaired. Open-PR collision scan enumerated all open PRs
+(none at allocation); no2026 path collision. Diff is exactly four paths.
+
+This dependency leaves1656 open and does not authorize its final freeze.
