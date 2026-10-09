@@ -266,7 +266,8 @@ REL_SUD_RUNS ?= $(HOME)/data/projets/climate-finance-het/rel_sud/2026-09-29/padm
 .PHONY: rel-pool rel-pool-data rel-intake-1530
 rel-pool-data:
 	$(UV_RUN) dvc pull data/catalogs/unified_works_rel_pin.csv.dvc $(wildcard data/rel_intake/*.dvc) \
-		$(wildcard data/rel_screen.dvc) $(wildcard data/rel_venues.dvc)
+		$(wildcard data/rel_screen.dvc) $(wildcard data/rel_venues.dvc) \
+		$(wildcard data/rel_enrich.dvc)
 
 rel-pool:
 	$(PYTHON) scripts/corpus_rel_pool.py --output-dir data/rel_pool

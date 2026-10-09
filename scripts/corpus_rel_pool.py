@@ -22,8 +22,12 @@ Outputs (required explicit ``--output-dir``):
   from the first non-empty member: catalogue rows first, then lanes in
   ``lane_order``; the abstract alone is chosen by quality (``_rel_pool_abstract``;
   ``abstract_source`` is the lane that supplied it, ``abstract_flag`` is ``ok``,
-  ``truncated_suspect``, ``stub`` or ``no_abstract``). Provenance: ``in_catalogue``, ``sources`` (``catalogue``
+  ``truncated_suspect``, ``highlights``, ``stub`` or ``no_abstract``). Provenance: ``in_catalogue``, ``sources`` (``catalogue``
   then lane ids), ``n_sources``, ``member_record_ids``.
+- Enrichment tables (``enrichment`` in the config; ticket 2052,
+  ``_rel_pool_enrich``) fill a blank abstract or resource type per work without
+  changing a key or a provenance column; with any table configured the pool
+  gains ``doc_type_source``, with none it is byte-identical to before.
 - ``merge_report.json`` / ``merge_report.md``: the per-delivery report
   (``_rel_pool_report``).
 
@@ -55,6 +59,7 @@ import qa_rel_intake as ric
 import yaml
 from _rel_pool_abstract import select_abstract
 from _rel_pool_dedup import check_version, cluster, title_normalizer
+from _rel_pool_enrich import EXTRA_COLUMNS, Enrichment, load_tables
 from _rel_pool_keys import norm_openalex, norm_year, repec_key, url_ids
 from _rel_pool_migration import write_migration
 from _rel_pool_report import CATALOGUE, RelPoolError, make_report, report_markdown
@@ -263,12 +268,15 @@ def _work_key(merged, handle="", repec="", norm=normalize_title):
     return f"title:{norm(merged['title'])}|{merged['year']}"
 
 
-def build_pool(rows, roots, lane_rank, version=1):
+def build_pool(rows, roots, lane_rank, version=1, enrich=None):
     """One pool row per component; members ordered catalogue first, then lanes.
 
     Version 2 names a work with its RePEc handle after the Handle and before
     the title, and its title key with ``_rel_title_key``; version 1 has
-    neither (the pool's work keys)."""
+    neither (the pool's work keys).
+
+    ``enrich`` (an ``Enrichment``, ticket 2052) fills abstract and doc_type
+    from its tables after the members; it changes no key or provenance column."""
     norm = title_normalizer(version)
     members = defaultdict(list)
     for i, root in enumerate(roots):
@@ -278,6 +286,8 @@ def build_pool(rows, roots, lane_rank, version=1):
         r = rows[i]
         return (0 if r["origin"] == CATALOGUE else 1 + lane_rank[r["origin"]], r["delivery"], i)
 
+    if enrich:
+        enrich.match(rows, members)
     pool = []
     for root in sorted(members):
         idx = sorted(members[root], key=rank)
@@ -285,6 +295,8 @@ def build_pool(rows, roots, lane_rank, version=1):
         merged = {c: next((m.get(c, "") for m in mem if m.get(c)), "") for c in META_COLUMNS}
         merged["abstract"], merged["abstract_source"], merged["abstract_flag"] = \
             select_abstract(mem, merged["title"])
+        if enrich:
+            enrich.fill(merged, mem, root)
         origins = list(dict.fromkeys(m["origin"] for m in mem))
         merged.update({
             "version_hint": ";".join(dict.fromkeys(m["version_hint"] for m in mem if m["version_hint"])),
@@ -313,9 +325,9 @@ def build_pool(rows, roots, lane_rank, version=1):
     return pool
 
 
-def _write_pool(path, pool):
+def _write_pool(path, pool, columns=POOL_COLUMNS):
     with open(path, "w", encoding="utf-8", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=POOL_COLUMNS, lineterminator="\n")
+        w = csv.DictWriter(fh, fieldnames=columns, lineterminator="\n")
         w.writeheader()
         for p in pool:
             w.writerow(p)
@@ -360,7 +372,9 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
         rows += drows
     stats = {}
     roots = cluster(rows, stats)
-    pool = build_pool(rows, roots, lane_rank)
+    tables = load_tables(cfg.get("enrichment"), ROOT)
+    enrich = Enrichment(tables) if tables else None
+    pool = build_pool(rows, roots, lane_rank, enrich=enrich)
     if version == 2:
         stats2 = {}
         roots2 = cluster(rows, stats2, version=2)
@@ -370,8 +384,11 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
             else catalogue_path, "md5": md5, "rows": len(cat_rows), "run": cat_cfg.get("run")}
     report = make_report(rows, roots, deliveries, excluded, meta, superseded, stats)
 
+    if enrich:
+        report["enrichment"] = enrich.report()
     os.makedirs(out_dir, exist_ok=True)
-    _write_pool(os.path.join(out_dir, "pool.csv"), pool)
+    _write_pool(os.path.join(out_dir, "pool.csv"), pool,
+                POOL_COLUMNS + EXTRA_COLUMNS if enrich else POOL_COLUMNS)
     with open(os.path.join(out_dir, "merge_report.json"), "w", encoding="utf-8") as fh:
         json.dump(report, fh, ensure_ascii=False, indent=2)
         fh.write("\n")
