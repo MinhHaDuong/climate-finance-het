@@ -301,6 +301,39 @@ Every flag, both NGO tiers, `tier_without_nonresearch` and the `unknown`
 state are written whatever the settings, so a sensitivity table can still
 show any other setting.
 
+**Index evidence, `mu_venue` (ticket 2042).** Author decisions of 2026-10-09:
+series and publishers are tiered like journals (a series or press is in the
+B list or a publisher pattern, else it is unlisted: tier C, see `tier_c_other_mu`); presence
+in a trusted index counts as evidence of seriousness. The trusted indexes,
+their coverage years and caveats are `trusted_indexes` in
+`config/rel_venue_registries.yaml`: Kanalregisteret level 1 or 2, the Scopus
+Sources sheet, DOAJ (from the change logs) and the university-press patterns
+of `venue_evidence`; RePEc and NBER-class series are the B list. All but the
+press patterns read the registry files already archived and hashed in the
+pull (no new download). Each work gets, in `rel_work_venues.csv`, `index_hits`
+(`index:entry_id[first-last]`, the span that holds the work's publication
+year), `mu_venue` in {0, 0.5, 1}, `mu_rule` and `mu_rule_version` (every
+setting and the pull); `--mu-log` appends the same to an append-only log
+keyed by (work, version), refusing a changed row under one version. Rule
+(`_rel_venues.mu_venue`), MOE-recommended and not yet confirmed by the author
+except where marked: a hijacked clone domain is 0 whatever an index says
+(decided 2026-10-01); tier A or B, or a listing at the publication year, is 1;
+a listing is never needed for tier A or B; tier C with no listing keeps the decision of
+2026-10-01 (0). Open switch `tier_c_other_mu` (`status: open`, MOE option, not
+author-decided): 0.5 would read a tier C by the catch-all `other` (an unlisted
+series, publisher or journal of unknown type) as unknown, not unserious; it
+moves every such work from 0 to 0.5. Withdrawal and discontinuation stay flags. **Open switch**
+`venue_evidence.conflict_c_in_index` (`status: open`, MOE option, not
+author-decided): the value of a tier C venue listed in a trusted index, 0 by
+default (the tier outranks the index; 0.5 neither, 1 the index outranks the
+tier). At the defaults of both switches every work scores as under
+`tier_membership`; change the
+value and rebuild, no code change. The counts file reports works under
+dropping or promoting each index and the works moved against the old tier
+score by period (first act 1990-2006 apart) and language; the view takes
+`mu_venue` as the seriousness facet and exposes `tier`, `index_hits` and the
+reason (`rel_reason_detail`), with the same scenarios in `rel_sensitivity.csv`.
+
 `make rel-view` (ticket 1843) then grades every work as a member of a fuzzy
 set: its membership `mu` is the minimum over the facets seriousness, ICF and
 discipline, evaluated in that order (cheapest first) and stopped at the first

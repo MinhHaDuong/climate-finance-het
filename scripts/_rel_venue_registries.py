@@ -252,3 +252,127 @@ def parse_hijacked(path, entry_url=""):
                                   reason=f"clone of {r[i_orig].strip()}",
                                   entry_url=entry_url))
     return rows, entries
+
+
+# ── Trusted indexes: positive evidence (ticket 2042) ─────
+#
+# The same archived files as the flags above, read the other way round: a
+# journal listed in an index at a given year is evidence of seriousness at that
+# year. Each entry also carries ``spans``, ``((first_year, last_year), ...)``,
+# the years the index lists the title; matching is by ISSN only.
+
+KANAL_LISTED_LEVELS = ("1", "2")
+SCOPUS_SOURCE_TYPES = ("journal", "book series")
+
+
+def year_runs(years):
+    """Sorted consecutive runs ``((first, last), ...)`` of a set of years."""
+    runs = []
+    for y in sorted(set(years)):
+        if runs and runs[-1][1] == y - 1:
+            runs[-1][1] = y
+        else:
+            runs.append([y, y])
+    return tuple((a, b) for a, b in runs)
+
+
+def coverage_spans(text):
+    """``((first, last), ...)`` of a Scopus coverage cell (``2026; 2019-2024``)."""
+    spans = []
+    for part in re.split(r"[;,]", str(text or "")):
+        m = re.fullmatch(r"\s*(\d{4})(?:\s*-\s*(\d{4}))?\s*", part)
+        if m:
+            spans.append((int(m.group(1)), int(m.group(2) or m.group(1))))
+    return tuple(sorted(spans))
+
+
+def parse_kanal_listed(path, entry_url="{id}"):
+    """Kanalregisteret journals approved (level 1 or 2) in at least one year.
+
+    The spans are the years of an approved level: no level is projected to a
+    year the register holds none for, and X or 0 years are not listed.
+    """
+    with open(path, encoding="utf-8", newline="") as fh:
+        reader = csv.DictReader(fh)
+        years = {int(c[-4:]): c for c in reader.fieldnames if re.fullmatch(r"Nivå \d{4}", c)}
+        if not years:
+            raise ValueError(f"{path}: no 'Nivå YYYY' column")
+        rows, entries = 0, []
+        for r in reader:
+            rows += 1
+            ok = [y for y, c in years.items() if r[c].strip().upper() in KANAL_LISTED_LEVELS]
+            if not ok:
+                continue
+            jid = r["Tidsskrift id"].strip()
+            e = _entry("kanal_level1", jid, r.get("Original tittel") or r.get("Internasjonal tittel") or "",
+                       issns_in(f"{r.get('Print ISSN', '')} {r.get('Online ISSN', '')}"),
+                       reason="level 1 or 2", entry_url=entry_url.format(id=jid))
+            e["spans"] = year_runs(ok)
+            entries.append(e)
+    return rows, entries
+
+
+def parse_scopus_listed(path, entry_url="{id}"):
+    """Scopus 'Scopus Sources' sheet: journals and book series with their coverage years.
+
+    Active and inactive titles alike: the coverage cell bounds the years.
+    """
+    sheet = next((n for n in sheet_names(path) if n.lower().startswith("scopus sources")), None)
+    if sheet is None:
+        raise ValueError(f"{path}: no 'Scopus Sources' sheet")
+    grid = read_sheet(path, sheet)
+    head_i = next(i for i, r in enumerate(grid) if r and r[0].strip().lower() == "sourcerecord id")
+    head = [h.strip().lower() for h in grid[head_i]]
+    need = ["source title", "issn", "eissn", "coverage", "source type"]
+    if not all(n in head for n in need):
+        return 0, []  # header-only sheet
+    col = {n: head.index(n) for n in need}
+    rows, entries = 0, []
+    for r in grid[head_i + 1:]:
+        r = r + [""] * (len(head) - len(r))
+        if not r[0].strip():
+            continue
+        rows += 1
+        if r[col["source type"]].strip().lower() not in SCOPUS_SOURCE_TYPES:
+            continue
+        spans = coverage_spans(r[col["coverage"]])
+        issns = issns_in(f"{r[col['issn']]} {r[col['eissn']]}")
+        if not spans or not issns:
+            continue
+        sid = r[0].strip()
+        e = _entry("scopus", sid, r[col["source title"]], issns,
+                   reason=f"coverage {r[col['coverage']].strip()}", entry_url=entry_url.format(id=sid))
+        e["spans"] = spans
+        entries.append(e)
+    return rows, entries
+
+
+def parse_doaj_listed(paths, pull_year, entry_url="{id}"):
+    """DOAJ listing spans from the change logs: added date to the year before withdrawal.
+
+    The logs start in 2014: a journal added earlier, and never withdrawn, is
+    absent here (the index is under-covered before 2014, never contradicted).
+    """
+    added, withdrawn = [], {}
+    for path in paths:
+        for sheet in sheet_names(path):
+            low = sheet.lower()
+            if low.startswith("withdrawn"):
+                for _, issns, d, _ in _doaj_table(path, sheet):
+                    for i in issns:
+                        if d:
+                            withdrawn.setdefault(i, []).append(d)
+            elif low.startswith("added"):
+                added.extend(row for row in _doaj_table(path, sheet) if row[2] and row[1])
+    entries = []
+    for title, issns, d, _ in added:
+        later = sorted(w for i in issns for w in withdrawn.get(i, []) if w > d)
+        end = later[0].year - 1 if later else pull_year
+        if end < d.year:
+            continue
+        e = _entry("doaj", issns[0], title, issns, reason=f"added {d.isoformat()}",
+                   entry_url=entry_url.format(id=issns[0]))
+        e["spans"] = ((d.year, end),)
+        entries.append(e)
+    return len(added), entries
+

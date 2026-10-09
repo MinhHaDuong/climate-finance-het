@@ -48,6 +48,7 @@ import os
 import sys
 from collections import Counter, defaultdict
 
+import _icf_screen as isc
 import _rel_venue_registries as rvr
 import _rel_venues as rv
 import yaml
@@ -67,7 +68,9 @@ VENUE_COLUMNS = ["venue_key", "openalex_source_id", "issn_l", "issns", "name", "
 WORK_COLUMNS = ["work_key", "year", "lanes", "venue_key", "venue_resolution", "tier", "tier_rule",
                 "b_id", "tier_ngo_in_b", "tier_ngo_not_b", "tier_without_nonresearch", "flags", "flagged",
                 "excluded",
-                "excluded_by", "publisher_flag"]
+                "excluded_by", "publisher_flag", "language", "index_hits", "mu_venue", "mu_rule", "mu_rule_version"]
+LOG_COLUMNS = ["work_key", "mu_rule_version", "year", "tier", "tier_rule", "index_hits", "mu_venue", "mu_rule"]
+PERIODS = [("1990-2006", 1990, 2006), ("2007-2014", 2007, 2014), ("2015-2025", 2015, 2025)]
 NGO_CATEGORY = "ngo_research"
 REPEC_LANE = "t1810-repec-local"
 TOC_LANE = "t1650-sommaires"
@@ -149,7 +152,16 @@ def load_registries(archive_root, reg_cfg):
                                         d["reason_pattern"], d["entry_url"])[1]
     entries += rvr.parse_hijacked(os.path.join(day, regs["hijacked"]["file"]),
                                   regs["hijacked"].get("page", ""))[1]
-    return rv.RegistryIndex(entries, pull)
+    idx = rv.RegistryIndex(entries, pull)
+    # The same archived files, read for positive evidence (ticket 2042).
+    pos = rvr.parse_kanal_listed(os.path.join(day, regs["kanalregisteret"]["file"]),
+                                 regs["kanalregisteret"]["entry_url"])[1]
+    pos += rvr.parse_scopus_listed(os.path.join(day, regs["scopus_discontinued"]["file"]),
+                                   (reg_cfg.get("trusted_indexes") or {}).get("scopus", {}).get("entry_url", "{id}"))[1]
+    pos += rvr.parse_doaj_listed([os.path.join(day, f) for f in d["files"]], int(pull[:4]),
+                                 (reg_cfg.get("trusted_indexes") or {}).get("doaj", {}).get("entry_url", "{id}"))[1]
+    idx.positive = pos
+    return idx
 
 
 # ── Per-work venue resolution ────────────────────────────
@@ -304,6 +316,9 @@ def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
     ngo_in_b = rv.ngo_switch(tiers_cfg)
     nonresearch_on = rv.nonresearch_switch(tiers_cfg) == "to_c"
     tiers_no_ngo = rv.without_categories(tiers, [NGO_CATEGORY])
+    params = rv.evidence_params(tiers_cfg)
+    evidence = rv.IndexEvidence(getattr(registries, "positive", []), params["presses"])
+    version = rv.evidence_version(params, registries.pull_date, tiers_cfg["version"])
     works, by_venue = [], defaultdict(list)
     for w in pool:
         key, how, ev = resolver.resolve(w)
@@ -352,6 +367,8 @@ def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
             "tier_ngo_in_b": with_ngo[0], "tier_ngo_not_b": without_ngo[0],
             "publisher_flag": rv.publisher_flag(v, tiers), "n_works": len(evs),
             "tiers_version": tiers_cfg["version"],
+            "_entries": evidence.venue_entries(v["issns"]),
+            "_press": evidence.press_hit(v["hosts"] + [v["publisher"]]) if key != "none" else -1,
         }
 
     work_rows = []
@@ -361,7 +378,13 @@ def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
         flags = rv.work_venue_flags(ven["_flags"], year) + registries.work_flags(ev["urls"])
         tier, rule, b_id, t_in, t_not, t_raw = _work_tier(ven, ev["urls"], tiers, tiers_no_ngo,
                                                           ngo_in_b, nonresearch_on)
+        hits = rv.hits_at(ven["_entries"], ven["_press"], year)
+        hijacked = any(f["registry"] == "hijacked" for f in flags)
+        mu, mu_rule = rv.mu_venue(tier, rule, {h["index"] for h in hits}, hijacked, params)
         work_rows.append({
+            "language": w.get("language") or "", "index_hits": rv.hits_text(hits),
+            "mu_venue": f"{mu:g}", "mu_rule": mu_rule, "mu_rule_version": version,
+            "_idx": sorted({h["index"] for h in hits}), "_hijacked": hijacked,
             "work_key": w["work_key"], "year": "" if year is None else str(year),
             "lanes": w.get("sources") or "", "venue_key": key,
             "venue_resolution": how, "tier": tier, "tier_rule": rule,
@@ -398,7 +421,118 @@ def build(pool, resolver, tiers, registries, tiers_cfg, exclude=()):
 # ── Counts ───────────────────────────────────────────────
 
 
-def make_counts(venue_rows, work_rows, registries_pull, tiers_version, switches=None):
+def _period(year):
+    y = int(year) if year else None
+    return next((n for n, a, b in PERIODS if y is not None and a <= y <= b), "other")
+
+
+def _legacy_mu(r, tier_mu):
+    """The venue score before ticket 2042: the tier's membership, 0 when excluded."""
+    return 0.0 if r["excluded"] == "true" else float(tier_mu[r["tier"]])
+
+
+def _scenario_mu(r, params):
+    return rv.mu_venue(r["tier"], r["tier_rule"], r["_idx"], r["_hijacked"], params)[0]
+
+
+def evidence_counts(work_rows, params, tier_mu):
+    """Counts of ticket 2042: mu_venue per value and rule, per index, under dropping or
+    promoting each index, and the works moved from the old tier score, by period and language."""
+    decided = [float(r["mu_venue"]) for r in work_rows]
+    scenarios = {"decided": params}
+    for i in params["indexes"]:
+        scenarios[f"drop:{i}"] = dict(params, indexes=[x for x in params["indexes"] if x != i])
+        scenarios[f"promote:{i}"] = dict(params, promote=sorted(set(params["promote"]) | {i}))
+    for v in (0.0, 0.5, 1.0):
+        if v != params["conflict"]:
+            scenarios[f"conflict_c_in_index={v:g}"] = dict(params, conflict=v)
+        if v != params["other_c"]:
+            scenarios[f"tier_c_other_mu={v:g}"] = dict(params, other_c=v)
+    sens = {}
+    for name, p in scenarios.items():
+        vals = [_scenario_mu(r, p) for r in work_rows]
+        sens[name] = {"mu": {f"{v:g}": n for v, n in sorted(Counter(vals).items())},
+                      "moved_vs_decided": sum(v != d for v, d in zip(vals, decided))}
+    langs = Counter(r["language"] or "(none)" for r in work_rows)
+    top = {l for l, _ in sorted(langs.items(), key=lambda x: (-x[1], x[0]))[:8]}
+    cells = defaultdict(lambda: {"works": 0, "moved": Counter()})
+    for r in work_rows:
+        lang = r["language"] or "(none)"
+        lang = lang if lang in top else "(other)"
+        old, new = _legacy_mu(r, tier_mu), float(r["mu_venue"])
+        for period in (_period(r["year"]), "(all)"):
+            for lg in (lang, "(all)"):
+                c = cells[(period, lg)]
+                c["works"] += 1
+                if old != new:
+                    c["moved"][f"{old:g}->{new:g}"] += 1
+    movement = {}
+    for (period, lg), c in sorted(cells.items()):
+        movement.setdefault(period, {})[lg] = {"works": c["works"], "moved": dict(sorted(c["moved"].items()))}
+    return {"mu_by_value": {f"{v:g}": n for v, n in sorted(Counter(decided).items())},
+            "mu_by_rule": dict(sorted(Counter(r["mu_rule"] for r in work_rows).items())),
+            "works_with_index_hit": {i: sum(i in r["_idx"] for r in work_rows) for i in rv.INDEX_IDS},
+            "sensitivity": sens, "movement_vs_tier_score": movement}
+
+
+def evidence_markdown(e):
+    lines = ["", "## Venue evidence, mu_venue (ticket 2042)", "",
+             "mu_venue by value: " + ", ".join(f"{k} {n}" for k, n in e["mu_by_value"].items())
+             + "; by rule: " + ", ".join(f"{k} {n}" for k, n in e["mu_by_rule"].items())
+             + "; works with a hit: " + ", ".join(f"{k} {n}" for k, n in e["works_with_index_hit"].items()) + ".",
+             "", "### Sensitivity: dropping or promoting each index", "",
+             "| scenario | mu 0 | mu 0.5 | mu 1 | works moved vs decided |", "|---|---|---|---|---|"]
+    for name, sc in e["sensitivity"].items():
+        lines.append(f"| {name} | " + " | ".join(str(sc["mu"].get(v, 0)) for v in ("0", "0.5", "1"))
+                     + f" | {sc['moved_vs_decided']} |")
+    keys = ["0->0.5", "0->1", "0.5->1", "1->0.5", "0.5->0", "1->0"]
+    lines += ["", "### Works moved from the old tier score (A, B 1; unknown 0.5; C 0; excluded 0) to mu_venue", "",
+              "| period | language | works | moved | " + " | ".join(keys) + " |",
+              "|---|---|---|---|" + "---|" * len(keys)]
+    for period in [n for n, _, _ in PERIODS] + ["other", "(all)"]:
+        for lg, c in e["movement_vs_tier_score"].get(period, {}).items():
+            lines.append(f"| {period} | {lg} | {c['works']} | {sum(c['moved'].values())} | "
+                         + " | ".join(str(c["moved"].get(k, 0)) for k in keys) + " |")
+    return lines
+
+
+def append_mu_log(path, work_rows, new_table=False):
+    """Append the ``(work_key, rule version)`` rows the log lacks; never rewrite one.
+
+    A key already present with a different value is a determinism failure
+    (the rule version names every setting), so it stops the run before a byte
+    is written. A missing log under a ``.dvc`` pointer is an unfetched one, not
+    a new one (``--new-mu-log`` to start it). Returns the rows appended.
+    """
+    exists = os.path.exists(path)
+    if not exists and not new_table and isc.dvc_pointer(path):
+        raise RuntimeError(f"{path} is missing but a .dvc pointer tracks it: dvc checkout first, "
+                           "or pass --new-mu-log to start the log")
+    old = {}
+    if exists:
+        for r in _read_csv(path):
+            old[(r["work_key"], r["mu_rule_version"])] = r
+    new = []
+    for r in work_rows:
+        row = {c: r.get(c, "") for c in LOG_COLUMNS}
+        prev = old.get((row["work_key"], row["mu_rule_version"]))
+        if prev is None:
+            new.append(row)
+        elif any(prev[c] != row[c] for c in LOG_COLUMNS):
+            raise RuntimeError(f"{path}: {row['work_key']} differs from its logged row under rule "
+                               f"{row['mu_rule_version']}: inputs changed without a new rule version")
+    if new:
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+        with open(path, "a", encoding="utf-8", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=LOG_COLUMNS, lineterminator="\n")
+            if not exists:
+                w.writeheader()
+            w.writerows(new)
+    return len(new)
+
+
+def make_counts(venue_rows, work_rows, registries_pull, tiers_version, switches=None,
+                params=None, tier_mu=None):
     def lanes(r):
         return [x for x in r["lanes"].split(";") if x] or ["(none)"]
 
@@ -442,7 +576,8 @@ def make_counts(venue_rows, work_rows, registries_pull, tiers_version, switches=
                     "no_venue": b["no_venue"]}
              for lane, b in sorted(by_lane.items())}
     resolution = dict(sorted(Counter(r["venue_resolution"] for r in work_rows).items()))
-    return {"tiers_version": tiers_version, "registries_pull": registries_pull,
+    evidence = evidence_counts(work_rows, params, tier_mu) if params else None
+    return {"venue_evidence": evidence, "tiers_version": tiers_version, "registries_pull": registries_pull,
             "switches": switches or {}, "venues": venues, "works_by_lane": works, "venue_resolution": resolution,
             "work_tier_rule": dict(sorted(Counter(r["tier_rule"] for r in work_rows).items()))}
 
@@ -483,6 +618,8 @@ def counts_markdown(c):
     lines += [f"- {k}: {n}" for k, n in c["work_tier_rule"].items()]
     lines += ["", "## Tier B works by B entry", ""]
     lines += [f"- {k}: {n}" for k, n in sorted(c["venues"]["b_id_works"].items(), key=lambda x: (-x[1], x[0]))]
+    if c.get("venue_evidence"):
+        lines += evidence_markdown(c["venue_evidence"])
     return "\n".join(lines) + "\n"
 
 
@@ -497,6 +634,10 @@ def main(argv=None):
     ap.add_argument("--registries", default=os.path.join(CFG, "rel_venue_registries.yaml"))
     ap.add_argument("--archive-root", required=True)
     ap.add_argument("--output-dir", default=os.path.join(ROOT, "data", "rel_pool"))
+    ap.add_argument("--mu-log", help="append-only log of mu_venue per (work, rule version), "
+                    "e.g. data/rel_screen/rel_venue_mu_log.csv; default: not written")
+    ap.add_argument("--new-mu-log", action="store_true",
+                    help="allow creating --mu-log although a .dvc pointer tracks its directory")
     args = ap.parse_args(argv)
 
     with open(args.tiers, encoding="utf-8") as fh:
@@ -521,8 +662,12 @@ def main(argv=None):
                          {"exclude": exclude, "ngo_research_in_b": rv.ngo_switch(tiers_cfg),
                           "no_venue": rv.unknown_switch(tiers_cfg),
                           "nonresearch": rv.nonresearch_switch(tiers_cfg),
-                          "kanal_x": rv.kanal_x_switch(reg_cfg)})
+                          "kanal_x": rv.kanal_x_switch(reg_cfg)},
+                         rv.evidence_params(tiers_cfg), rv.tier_membership(tiers_cfg))
 
+    if args.mu_log:
+        log.info("mu log: %d rows appended to %s", append_mu_log(args.mu_log, work_rows, args.new_mu_log),
+                 args.mu_log)
     os.makedirs(args.output_dir, exist_ok=True)
     _write_csv(os.path.join(args.output_dir, "rel_venues.csv"), VENUE_COLUMNS, venue_rows)
     _write_csv(os.path.join(args.output_dir, "rel_work_venues.csv"), WORK_COLUMNS, work_rows)

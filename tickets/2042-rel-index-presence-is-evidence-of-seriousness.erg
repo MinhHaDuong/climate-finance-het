@@ -6,6 +6,8 @@ Author: HDMX-coding-agent
 --- log ---
 2026-10-09T12:00Z HDMX-coding-agent created
 2026-10-09T12:00Z HDMX-coding-agent note author decision 2026-10-09: series and publishers are tiered like journals; presence in a trusted index is evidence in the venue score, not only a flag
+2026-10-09T15:00Z HDMX-coding-agent note branch t2042-rel-index-evidence: mu_venue in {0, 0.5, 1} with index hits at the publication year (Kanal 1-2, Scopus Sources, DOAJ log, press patterns), switch venue_evidence.conflict_c_in_index (MOE default 0.5, open), switch placed in config/rel_venue_tiers.yaml beside tier_membership (not rel_screen.yaml). At the defaults the indexes change no value (A/B already 1, unlisted C 0.5); the movement comes from tier C by rule other, 0 to 0.5. Per-work movement counts need the pool: make rel-pool-data then make rel-venues.
+2026-10-09T17:00Z HDMX-coding-agent note correction to the earlier note and to the body's MOE lines: at the defaults the PR changes no mu value (tier_c_other_mu 0 and conflict_c_in_index 0 keep the 2026-10-01 decision "C the rest, excluded"); indexes matter only when promoted or when either switch is set. The author has decided neither switch.
 
 --- body ---
 
@@ -17,18 +19,18 @@ Author decisions 2026-10-09: the serious-venue requirement covers journals, seri
 
 MOE-recommended, not decided (the author may overrule):
 - Positive evidence combines by OR: tier A or B, or presence in at least one trusted index, gives mu_venue = 1.
-- Absence from every index is not negative evidence: it gives 0.5 (unknown), never 0.
+- Absence from every index is never negative evidence for the venue types the 2026-10-01 rules already put at 0.5 or 1 (tier A or B, no venue). An unlisted tier C stays 0 by default; 0.5 is an open switch (`tier_c_other_mu`) that reopens the 2026-10-01 decision.
 - Index membership is evaluated at the publication year, not today (Kanal is per year and provisional; DOAJ withdrawals cluster in 2014-2016; Scopus has discontinued titles).
 - Values stay in {0, 0.5, 1}, as in the facet scale of 2010; no invented graded values such as 0.75 (there is no reference to calibrate them).
 - Negative evidence is narrow: hijacked domain gives 0; tier C without any index gives 0; withdrawn or discontinued status is a flag, not a penalty.
-- Conflict, tier C but listed in a trusted index: 0.5 (default; open for the author: 1 if the index outranks the tier, 0 if the tier outranks the index).
+- Conflict, tier C but listed in a trusted index: 0 by default (the 2026-10-01 decision kept); open switch `conflict_c_in_index` for the author, reopening that decision: 0.5, or 1 if the index outranks the tier.
 
 Related, not duplicated here: the publisher field itself (host organization, DOI-prefix registrant) is supplied by 2041 and 2043.
 
 ## Exit criteria
 
 - [ ] The trusted indexes are listed with their source, coverage years and reliability caveat (Scopus, DOAJ, Kanalregisteret level at least 1, RePEc/NBER-class series, university-press lists for publishers), each with its registry archived and hashed.
-- [ ] Series and publishers receive a tier with the same structure as journals; an unlisted series or publisher scores 0.5.
+- [ ] Series and publishers receive a tier with the same structure as journals; an unlisted series or publisher stays tier C (0 by default; 0.5 only through the open switch `tier_c_other_mu`).
 - [ ] mu_venue follows the rule above (or the author's amendments), computed deterministically with no model call, stored per work with tier, index hits and years, mu_venue and rule version, append-only.
 - [ ] The existing sensitivity switches (`docs/rel-intake-contract.md`) are reused: counts are reported under dropping or promoting each index, so no choice is silent.
 - [ ] The venue facet enters mu as one more facet of the min; the exclusion reason is the facet attaining the min, in evaluation order. The view exposes tier, index hits and the reason.

@@ -314,7 +314,9 @@ def test_seriousness_rule_reads_the_decided_configs():
         with open(f"{ROOT}/config/{name}", encoding="utf-8") as fh:
             return yaml.safe_load(fh)
     srule = rr.seriousness_rule(load("rel_venue_registries.yaml"), load("rel_venue_tiers.yaml"))
+    evidence = srule.pop("evidence")  # ticket 2042; its own tests: test_rel_venue_evidence.py
     assert srule == SRULE
+    assert evidence["conflict"] == 0.0 and evidence["other_c"] == 0.0
 
 
 def test_membership_rule_checks_values_and_the_unsure_exit():

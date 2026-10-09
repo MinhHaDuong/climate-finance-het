@@ -57,6 +57,56 @@ alpha:
   status: decided (author 2026-10-01)
   value: 0.5
 
+# Index evidence (ticket 2042, child of 0700). Presence in a trusted index at the
+# work's publication year is positive evidence of seriousness for journals, series
+# and publishers; mu_venue is then one of {0, 0.5, 1} (_rel_venues.mu_venue, order
+# of the rules in its docstring). Absence from every index is never negative
+# evidence. Index sources, coverage and caveats: rel_venue_registries.yaml
+# `trusted_indexes`. Author decisions 2026-10-09: series and publishers are tiered
+# like journals; presence in a trusted index counts as evidence. The rest is the
+# MOE's reading of the ticket, to be confirmed. Changing any value here changes the
+# rule version stamped on every mu_venue row (the log is append-only).
+venue_evidence:
+  rule_version: 1
+  # Enabled trusted indexes; remove one to drop it (sensitivity), or list it in
+  # `promote` to let it outrank a tier C.
+  indexes: [kanal_level1, scopus, doaj, university_press]
+  promote: []
+  # OPEN, NOT DECIDED: a tier C venue listed in a trusted index. 0 = the tier
+  # outranks the index (the decision of 2026-10-01 kept, the default). 0.5 =
+  # neither evidence outranks the other, 1 = the index outranks the tier.
+  # Flip the value, rebuild: no code change.
+  conflict_c_in_index:
+    status: open — reopens the 2026-10-01 decision; MOE option, not author-decided
+    value: 0
+  # A tier C venue by the catch-all rule `other` (type unknown: a serious journal
+  # no source type calls a journal, an unlisted series or publisher). 0 keeps the
+  # decision of 2026-10-01 (C, the rest, excluded). 0.5 would read it as unknown,
+  # not unserious (the 2026-10-09 line "an unlisted series or publisher scores
+  # 0.5, absence is never 0"); it moves every such work from 0 to 0.5.
+  tier_c_other_mu:
+    status: open — reopens the 2026-10-01 decision; MOE option, not author-decided
+    value: 0
+  # Tier C rules that are positive identification of a non-serious venue: 0
+  # unless an index lists it (then conflict_c_in_index).
+  negative_c_rules: [repository, nonresearch]
+  # Publisher evidence for books and series, matched on the folded host
+  # organization or publisher name of the venue. A curated pattern list, not a
+  # registry: no public machine-readable list of university presses is archived.
+  university_presses:
+    names:
+      - '\buniversity press(es)?\b'
+      - '^(oxford|cambridge|harvard|yale|princeton|stanford|chicago|columbia|cornell|duke|johns hopkins|manchester|edinburgh|toronto|mcgill|michigan|california|north carolina|pennsylvania|minnesota) university\b.*\bpress'
+      - '\bmit press\b'
+      - '\bpresses? universitaires?\b'
+      - '\bpresses? de (la |l )?universit'
+      - '\bpresses? de sciences po\b'
+      - '\buniversitatsverlag\b'
+      - '\beditorial universitaria\b'
+      - '\beditora (da |do )?(universidade|unicamp|ufrj|ufmg|usp)\b'
+      - '\buniversitetsforlaget\b'
+      - '\buniversitaire pers\b'
+
 # Switch (d): non-research pages of B institutions' own sites. A work made B
 # only by b_domains whose matching URL is a blog post, speech, homepage,
 # library guide, news issue or media compilation goes to C (rule

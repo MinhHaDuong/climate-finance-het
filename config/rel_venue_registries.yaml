@@ -68,6 +68,36 @@ registries:
     # A work is flagged when its landing-page host is a listed clone domain.
     filter: "work landing-page host == host of 'URL (Hijacked)'"
 
+# Trusted indexes (ticket 2042): positive evidence of seriousness at the
+# publication year, read from the SAME archived, hashed files as the flags above
+# (no new download). Matching is by ISSN only. `years` says what the index lists.
+# A journal is evidence-listed only for years its spans cover; absence is never
+# negative evidence. Rule and switches: rel_venue_tiers.yaml `venue_evidence`.
+trusted_indexes:
+  kanal_level1:
+    registry: kanalregisteret
+    years: "years whose own 'Nivå YYYY' is 1 or 2 (2004 to 2027); no year is projected"
+    caveat: "Norwegian national approval list: strong on humanities and social sciences and on journals Norway reads, thin on Southern and non-English-language venues; levels are re-set yearly and 2026-2027 are provisional. Journals only (table 851); the series and publisher tables are not ingested."
+  scopus:
+    registry: scopus_discontinued
+    sheet: "Scopus Sources"
+    entry_url: "https://www.scopus.com/sourceid/{id}"
+    years: "the 'Coverage' cell of the source (journals and book series, active and inactive)"
+    caveat: "Commercial selection by the Elsevier CSAB, not a quality certificate; under-covers Southern and non-English-language journals; a title later discontinued stays covered for the years it was indexed (the discontinuation is a flag, not a penalty)."
+  doaj:
+    registry: doaj_withdrawn
+    entry_url: "https://doaj.org/toc/{id}"
+    years: "from the year of the 'Added' log date to the year before a 'Withdrawn' date, or to the pull year"
+    caveat: "Open-access journals only. The change logs start in 2014: a journal added before and never withdrawn is not seen, so DOAJ under-covers 1990-2013 (absence there says nothing). The practice-based withdrawals (2014-2016) end the span the year before."
+  university_press:
+    registry: none
+    years: "all years (a publisher attribute, not dated)"
+    caveat: "Curated name patterns in rel_venue_tiers.yaml (venue_evidence.university_presses), versioned with the repository; depends on the venue's host organization or publisher field (tickets 2041 and 2043 supply more of it). Not an external registry."
+  repec_series:
+    registry: none
+    years: "not a separate index"
+    caveat: "RePEc and NBER-class series are the B list (rel_venue_tiers.yaml b_list, by RePEc code): tier B already gives 1. Presence in RePEc alone is not evidence: departmental series are listed there."
+
 # Switch (a): which registry hits exclude a work, which only flag it.
 # Author decision 2026-10-01, relayed by the MOE (ticket 1841): exclude
 # hijacked-journal clones only; Scopus discontinuation and DOAJ withdrawal are

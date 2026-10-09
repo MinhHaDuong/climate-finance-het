@@ -78,7 +78,7 @@ DISCIPLINE_AS_UNSURE = {"na", "unknown"}
 PUBLISHERS = ["mdpi", "frontiers", "hindawi"]
 WIDE_REGISTRIES = ["doaj_withdrawn", "scopus_discontinued"]
 VIEW_COLUMNS = ["contrib", "discipline_field", "contrib_type", "discipline_source",
-                "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag",
+                "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag", "index_hits",
                 "seriousness", "seriousness_flag", *[f"mu_{f}" for f in FACETS],
                 "mu", "mu_facet", "mu_complete", "rel_reason", "rel_reason_detail",
                 "rel_final", "rel_family_id", "abstract_flag", "rel_use", "rel_use_reason", *policy.VIEW_COLUMNS]
@@ -124,7 +124,8 @@ def seriousness_rule(registries_cfg: dict, tiers_cfg: dict) -> dict:
             "nonresearch": rvn.nonresearch_switch(tiers_cfg),
             "tier_mu": dict(sorted(rvn.tier_membership(tiers_cfg).items())),
             "alpha": rvn.alpha(tiers_cfg),
-            "tiers": ["A", "B"], "drop_publishers": []}
+            "tiers": ["A", "B"], "drop_publishers": [],
+            "evidence": rvn.evidence_params(tiers_cfg) if tiers_cfg.get("venue_evidence") else None}
 
 
 def membership_rule(cfg: dict, screen_rule: dict, alpha: float) -> dict:
@@ -170,10 +171,19 @@ def seriousness_of(venue: dict, srule: dict) -> tuple[float, str]:
     tier = _tier(venue, srule)
     if tier == "unknown" and srule["no_venue"] == "exclude":
         return 0.0, "tier_unknown"
-    if tier != "unknown" and tier not in srule["tiers"]:
+    narrowed = srule["tiers"] != ["A", "B"]  # sensitivity: only the listed tiers count
+    ev = srule.get("evidence")
+    if tier != "unknown" and (narrowed or not ev) and tier not in srule["tiers"]:
         return 0.0, f"tier_{tier.lower()}"
     if venue.get("publisher_flag") in srule["drop_publishers"]:
         return 0.0, "publisher:" + venue["publisher_flag"]
+    if ev and "index_hits" in venue:
+        # Ticket 2042: index evidence at the publication year (rule: _rel_venues.mu_venue).
+        rule = venue["tier_rule"] if tier == venue["tier"] else "other"
+        hijacked = any(f["registry"] == "hijacked" for f in parse_flags(venue["flags"]))
+        value, why = rvn.mu_venue(tier, rule, rvn.hit_indexes(venue["index_hits"]), hijacked, ev)
+        # An unlisted or listed tier C scoring 0 keeps the label `tier_c` of the tier score.
+        return value, ("tier_c" if why in ("unlisted", "tier_c_in_index") else why) if not value else ""
     value = float(srule["tier_mu"][tier])
     return value, "tier_c" if tier == "C" and not value else ""
 
@@ -299,6 +309,7 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
             "venue_key": venue.get("venue_key", ""),
             "tier": _tier(venue, srule),
             "publisher_flag": venue.get("publisher_flag", ""),
+            "index_hits": venue.get("index_hits", ""),
         })
         values = _facet_values(row, venue, srule, mrule)
         ev = evaluate(values, srule["alpha"])
@@ -435,6 +446,16 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
             ("ngo_research_flipped", dict(base, ngo_research_in_b=not base["ngo_research_in_b"])),
             ("no_venue_flipped", dict(base, no_venue="keep_flagged"
                                       if base["no_venue"] == "exclude" else "exclude"))]
+    ev = base.get("evidence")
+    if ev:  # ticket 2042: each trusted index dropped, or let to outrank a tier C
+        for i in ev["indexes"]:
+            out.append((f"index_dropped_{i}", dict(base, evidence=dict(ev, indexes=[x for x in ev["indexes"] if x != i]))))
+            out.append((f"index_promoted_{i}", dict(base, evidence=dict(ev, promote=sorted(set(ev["promote"]) | {i})))))
+        for v in (0.0, 0.5, 1.0):
+            if v != ev["conflict"]:
+                out.append((f"conflict_c_in_index_{v:g}", dict(base, evidence=dict(ev, conflict=v))))
+            if v != ev["other_c"]:
+                out.append((f"tier_c_other_mu_{v:g}", dict(base, evidence=dict(ev, other_c=v))))
     if base.get("nonresearch") == "to_c":  # the table cannot show "to_c" if built "off"
         out.append(("nonresearch_flipped", dict(base, nonresearch="off")))
     else:  # tier_without_nonresearch exists for the configured switch (b) only
