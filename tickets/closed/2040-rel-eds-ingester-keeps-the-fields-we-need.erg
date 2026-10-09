@@ -2,6 +2,7 @@
 Title: REL EDS ingester keeps the fields the pool needs
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1739
 
 --- log ---
 2026-10-09T12:00Z HDMX-coding-agent created
@@ -13,6 +14,9 @@ Author: HDMX-coding-agent
 2026-10-09T08:15Z HDMX-coding-agent note re-ingest: the archived run keeps only the old slim records (no authors, ISSN, urls, whole abstract), so those fields are NOT recoverable from the archive; handle decoding is. New runs keep raw.jsonl.gz next to results. Pricing a re-query for the missing fields: 308 searches, 474 pages (registry, derived), 11,352 rows received, 4 incomplete searches; Janus login, cost_usd 0, delay 1 s per page so about 8 to 15 minutes wall clock, about 0.3 author-hours to supervise, no USD. NOT run: needs the author's go.
 
 2026-10-09T08:22Z HDMX-coding-agent note author approved the EDS re-query on 2026-10-09; run launched by the MOE into a new archive outside the repo (no delivery regenerated, no DVC push). Separately: PR 1723 review suggests one sentence in scripts/_rel_eds_ids.py saying the ZBW catalogue number has unknown stability; and item_key strips punctuation so page ranges 1-2 and 12 can collide (below the severity floor, recorded here)
+2026-10-09T09:48Z HDMX-coding-agent note closing: every exit criterion of this ticket is met by PR 1723 and the re-query of 2026-10-09 (archive rel_causal/2026-10-09-eds-requery: 11,213 records, authors 95.5%, 4,125 of 4,402 edsrep numbers matched to a RePEc handle, ZBW ids documented as K10plus catalogue numbers; the API returns no abstract and no ISSN). Regenerating the delivery with these fields is ticket 2049. Review nits not done, below the severity floor: item_key strips punctuation so page ranges 1-2 and 12 can collide; one sentence on the unknown stability of the ZBW number
+2026-10-09T09:49Z HDMX-coding-agent closed — autoclosed — PR #1739
+
 --- body ---
 
 ## Context

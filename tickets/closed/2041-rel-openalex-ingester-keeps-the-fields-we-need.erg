@@ -2,12 +2,16 @@
 Title: REL OpenAlex ingesters keep the fields the pool needs
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1739
 
 --- log ---
 2026-10-09T12:00Z HDMX-coding-agent created
 2026-10-09T12:00Z HDMX-coding-agent note author decision 2026-10-09: the current ingesters were a first try and may be redone; one ticket per ingester (this one: the older OpenAlex lanes; 2040: EDS)
 2026-10-09T10:15Z HDMX-coding-agent note slim() extended in scripts/catalog_rel_sud_search.py (one shared definition; t1530 delivery and the 1652 yield intake carry the cells); backfill CLI scripts/catalog_rel_oa_backfill.py built and probed once live: 1 call of 4 ids cost 0.0001 USD (x-ratelimit-cost-usd), key accepted (prepaid 8.3071, daily remaining 0.9996 USD). Full backfill not launched. Coverage per lane/period/language awaits the run (--report).
 2026-10-09T10:25Z HDMX-coding-agent note review fixes: batch size probed live. 200 ids in one ids.openalex filter: the call raised HTTPError after retries (no cost recorded, no records); 100 ids: 98 of 100 found, cost 0.0001 USD per call, daily remaining 0.9995. BATCH set to 100 (as enrich_rel_venues_openalex.py). Re-derived price at 0.0001 USD per call (derived, 100-id calls only): lane archives 62,868 ids = 629 calls = 0.063 USD; pool about 597k ids = about 5,970 calls = 0.60 USD. The yield intake (corpus_rel_causal_yield.py) now writes the venue columns to records.csv and reads --backfill, filling blank cells only; EDS-delivered authors/ISSN win over OpenAlex backfill. Truncated backfill tail is tolerated and repaired on resume.
+
+2026-10-09T09:48Z HDMX-coding-agent note closing: code, controls and the metered backfill are done (PR 1721; stage 1 USD 0.0604 for 60,350 lane ids, stage 2 USD 0.2426 for 242,576 pool ids, total USD 0.303 measured; authors 97-98%, host organization 74% and 96%). The criterion 'coverage per lane, period and language' is delivered per lane here and per period and language by the coverage report of ticket 2049, which regenerates the deliveries; the live OpenAlex works still lacking authors and host organization (502 in stage 2, 252 in stage 1) are listed in the archives
+2026-10-09T09:49Z HDMX-coding-agent closed — autoclosed — PR #1739
 
 --- body ---
 

@@ -2,6 +2,7 @@
 Title: REL presence in a trusted index is evidence of seriousness
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1739
 
 --- log ---
 2026-10-09T12:00Z HDMX-coding-agent created
@@ -10,6 +11,9 @@ Author: HDMX-coding-agent
 2026-10-09T17:00Z HDMX-coding-agent note correction to the earlier note and to the body's MOE lines: at the defaults the PR changes no mu value (tier_c_other_mu 0 and conflict_c_in_index 0 keep the 2026-10-01 decision "C the rest, excluded"); indexes matter only when promoted or when either switch is set. The author has decided neither switch.
 
 2026-10-09T09:16Z HDMX-coding-agent 2026-10-09 author decision: conflict_c_in_index set to 0.5 (tier C listed in a trusted index); tier_c_other_mu stays 0. Measured 2,008 of 389,291 works move 0 to 0.5 (0.52%). Branch t2042-conflict-c-in-index-half.
+2026-10-09T09:48Z HDMX-coding-agent note closing: the machinery, the neutral defaults, the sensitivity rows and the author's decisions of 2026-10-09 are in (PRs 1722 and 1733): tier_c_other_mu stays 0, conflict_c_in_index is 0.5 (2,008 works move, 0.52%). Waived as below the severity floor (tooling): the Kanalregisteret series and publisher tables are not ingested, and movement counts by period and language exist for the conflict switch only; the 16,777-work figure for the other switch was measured by a reviewer on a 2026-10-01 build. Revisit only if tier_c_other_mu is reopened
+2026-10-09T09:49Z HDMX-coding-agent closed — autoclosed — PR #1739
+
 --- body ---
 
 ## Context

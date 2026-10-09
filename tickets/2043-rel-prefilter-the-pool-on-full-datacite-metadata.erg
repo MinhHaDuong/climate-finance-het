@@ -2,8 +2,6 @@
 Title: REL prefilter the pool on full DataCite metadata
 Created: 2026-10-09
 Author: HDMX-coding-agent
-Blocked-by: 2040
-Blocked-by: 2041
 
 --- log ---
 2026-10-09T12:00Z HDMX-coding-agent created
@@ -12,6 +10,9 @@ Blocked-by: 2041
 2026-10-09T14:00Z HDMX-coding-agent note author decision 2026-10-09 (via coordinator): the publisher requirement becomes a VENUE IDENTITY requirement. Satisfied by a journal or series name, or a publisher resolved by host organization, DOI-prefix registrant or RePEc archive code, first hit wins, recorded in the view; reason code `profile_missing_venue`, scenario `profile_on_venue_optional`. The body's exit criteria 2 and 6 are amended to match; the DataCite name publisher stays in the documentation as the field this stands for.
 
 2026-10-09T09:35Z HDMX-coding-agent note author decision 2026-10-09: a platform name in the journal field (SSRN Electronic Journal 2,908 works, Zenodo 2,105, EconStor 487, Research Square 440, Figshare 272, AgEcon Search 188, arXiv about 135, Harvard Dataverse 63, Cairn.info 52; 6,763 in all, 66 of them resolve a venue another way) does NOT count as a venue identity; consistent with the venue facet, which scores repositories and preprint servers at 0. The profile stays as merged in PR 1728. Real series behind an aggregator are to be recovered from the DOI or the RePEc handle, not by counting the aggregator
+2026-10-09T09:49Z HDMX-coding-agent note blocker 2040 closed — Blocked-by removed.
+2026-10-09T09:49Z HDMX-coding-agent note blocker 2041 closed — Blocked-by removed.
+
 --- body ---
 
 ## Context
