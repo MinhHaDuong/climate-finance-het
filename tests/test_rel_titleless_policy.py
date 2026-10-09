@@ -21,6 +21,14 @@ def _absence_fixture(tmp_path, monkeypatch):
     context.update(basis="native_titleless_absent_abstract", pool_rows=pool, approved_keys=[p["work_key"]],
                    source_absence_keys=[p["work_key"]], proof_gaps={p["work_key"]: []},
                    proof_gaps_sha256="", failed_route_ref="", failed_route_sha256="", native_attempts={})
+    import _rel_facet_io as fio
+    import _rel_policy as policy
+    registry = {"basis": policy.SOURCE_ABSENCE, "method": policy.METHOD,
+                "approved_manifest_sha256": context["authority_sha256"],
+                "disposition_contract": {k: context[k] for k in ("pool_sha256", "input_sha256", "roster_sha256", "decision_sha256", "decision_ref")},
+                "approved_record_bindings": [fio.sha(fio.encoded({"work_key": record["work_key"], "input_record_sha256": fio.proof_hash(record)}))]}
+    context["method_sha256"] = fio.sha(fio.encoded(registry))
+    monkeypatch.setattr(policy, "absence_registry", lambda: registry)
     return d, record, context
 
 
@@ -127,3 +135,55 @@ def test_true_stage1_outcomes_required_for_titleless_facet_queue(tmp_path, monke
     effective, disposition, _ = facets.effective_answer(native, record)
     assert (effective["international"], effective["finance"]) == (.5, .5)
     assert disposition == "unresolved" and native["international"] == 0
+
+
+def test_legacy_policy_cannot_masquerade_as_source_absence(tmp_path):
+    import _icf_screen as ics
+    import _rel_policy as policy
+    from test_rel_policy import _fixture
+    record, context, labels = _fixture()
+    row = policy.build_rows([record], context, labels, [], 'legacy', '2026-10-09', 'padme')[0][0]
+    row.update(reason=policy.SOURCE_ABSENCE, source=f"policy:{policy.SOURCE_ABSENCE}:{row['authority_sha256']}/full_facets/{row['roster_sha256']}",
+               icf_values='', proof_gaps='', proof_gaps_sha256='', failed_route_ref='', failed_route_sha256='', native_attempts='')
+    with pytest.raises(ValueError, match='registered'):
+        policy.validate_policy(row)
+    with pytest.raises(ics.IcfScreenError):
+        ics.append_rows(str(tmp_path/'forged.csv'), [row], policy.METHOD, schema=policy.SCHEMA, new_table=True)
+
+
+def test_absence_authority_binding_rejects_append_read_and_view(tmp_path, monkeypatch):
+    import csv
+    import hashlib
+    from pathlib import Path
+
+    import _icf_screen as ics
+    import _rel_policy as policy
+    _, record, context = _absence_fixture(tmp_path, monkeypatch)
+    row = policy.build_rows([record], context, [], [], 'approved', '2026-10-09', 'padme')[0][0]
+    import _rel_facet_io as fio
+    for change in ({'authority_sha256': '9'*64}, {'method_sha256': '9'*64},
+                   {'input_record_sha256': '9'*64}, {'work_key': 'openalex:W999'},
+                   {'input_record_sha256': fio.proof_hash(dict(record, abstract='present'))}):
+        forged = dict(row, **change)
+        forged['source'] = f"policy:{policy.SOURCE_ABSENCE}:{forged['authority_sha256']}/full_facets/{forged['roster_sha256']}"
+        forged['prompt_sha256'] = forged['method_sha256']
+        with pytest.raises(ValueError, match='registered'):
+            policy.validate_policy(forged)
+        path = str(tmp_path/'persisted.csv')
+        with pytest.raises(ics.IcfScreenError):
+            ics.append_rows(path, [forged], policy.METHOD, schema=policy.SCHEMA, new_table=True)
+        ics.append_rows(path, [row], policy.METHOD, schema=policy.SCHEMA, new_table=True)
+        with open(path, 'w', newline='') as fh:
+            writer = csv.DictWriter(fh, fieldnames=policy.COLUMNS)
+            writer.writeheader(); writer.writerow(forged)
+        manifest = Path(path).with_suffix('.manifest.jsonl')
+        entry = json.loads(manifest.read_text())
+        payload = Path(path).read_bytes()
+        entry.update(bytes=len(payload), sha256=hashlib.sha256(payload).hexdigest())
+        manifest.write_text(json.dumps(entry)+'\n')
+        with pytest.raises(ics.IcfScreenError, match='registered'):
+            ics.read_table(path, policy.SCHEMA)
+        with pytest.raises(ValueError, match='registered'):
+            policy.assign_full_view([{'work_key': forged['work_key'], 'stage2_model': policy.METHOD,
+                                      'stage2_run_id': forged['run_id'], 'stage2_label': 'unsure'}], [forged])
+        Path(path).unlink(); Path(path).with_suffix('.manifest.jsonl').unlink()

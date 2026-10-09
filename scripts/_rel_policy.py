@@ -13,6 +13,7 @@ import _rel_view as rv
 
 METHOD = ics.POLICY_METHOD
 SOURCE_ABSENCE = "native_titleless_absent_abstract"
+ROOT = Path(__file__).resolve().parents[1]
 SCOPES = {"full_facets", "discipline_only"}
 REASONS = {"full_facets": "local_calibration_failed",
            "discipline_only": "remote_public_proof_incomplete/local_route_not_validated"}
@@ -220,6 +221,23 @@ def build_rows(records: list[dict], context: dict, labels: list[dict], dims: lis
     return dispositions, icf_rows, dim_rows
 
 
+def absence_registry() -> dict:
+    """Frozen operator-approved authority and exact source-record commitments."""
+    return json.loads((ROOT / "config/rel_titleless_policy.json").read_text(encoding="utf-8"))
+
+
+def _validate_absence_authority(row: dict) -> None:
+    registry = absence_registry()
+    contract = dict(registry["disposition_contract"], authority_sha256=registry["approved_manifest_sha256"],
+                    method_sha256=fio.sha(fio.encoded(registry)))
+    binding = fio.sha(fio.encoded({"work_key": row.get("work_key"),
+                                  "input_record_sha256": row.get("input_record_sha256")}))
+    if (registry.get("basis") != SOURCE_ABSENCE or registry.get("method") != METHOD
+            or any(row.get(k) != v for k, v in contract.items())
+            or binding not in registry["approved_record_bindings"]):
+        raise ValueError("source-absence policy lacks registered authority/exact source record")
+
+
 def validate_policy(row: dict, *, schema_checks: bool = True) -> None:
     """Reject synthetic native replies, unapproved policy vectors or scope confusion."""
     faults = ics.validate_row(row, SCHEMA, profile_checks=False) if schema_checks else []
@@ -239,6 +257,7 @@ def validate_policy(row: dict, *, schema_checks: bool = True) -> None:
     if row.get("source") != expected_source or row.get("prompt_sha256") != row.get("method_sha256"):
         faults.append("policy method/source provenance mismatch")
     if basis:
+        _validate_absence_authority(row)
         if any(row.get(k) != "" for k in ("proof_gaps", "proof_gaps_sha256", "failed_route_ref", "failed_route_sha256", "native_attempts")):
             faults.append("source-absence policy must not fabricate failed routes/gaps/attempts")
         if faults:

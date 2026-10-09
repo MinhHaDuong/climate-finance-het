@@ -13,7 +13,7 @@ over all rows, catalogue and lanes alike; its module docstring gives the
 cascade. DOIs are compared as normalized strings, never resolved: a malformed
 DOI is kept and counted (``doi_malformed``).
 
-Outputs (``--output-dir``, default ``data/rel_pool``):
+Outputs (required explicit ``--output-dir``):
 
 - ``pool.csv``: one row per work. ``work_key`` is ``openalex:W…`` when a member
   carries an OpenAlex id, else ``doi:<doi>``, else ``url:<handle key>``, else
@@ -27,7 +27,7 @@ Outputs (``--output-dir``, default ``data/rel_pool``):
 
 Usage:
     python scripts/corpus_rel_pool.py [--config config/rel_pool.yaml] \\
-        [--catalogue PATH] [--intake-dir DIR] [--output-dir data/rel_pool]
+        [--catalogue PATH] [--intake-dir DIR] --output-dir data/rel_pool
 """
 
 import argparse
