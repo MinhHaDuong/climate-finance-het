@@ -1,0 +1,9 @@
+# REL metadata gate exploration
+
+An exploratory session compared the OpenAI Decisions endpoint (`POST /v1/decisions`, model `gpt-6-luna`, public beta, input-token pricing only, no documented batch tier) with the Jev classifier and with the three-facet Luna instrument of tickets 2010 and 1654, which was already in production wave 1 on branch `t1654-citation-chaining`. No paid call and no live API call was made.
+
+Counting the metadata gate on the lane deliveries gave 15,331 of 417,263 records failing a four-field test and 28,414 failing a six-field DataCite test. Both counts are record-level; lanes overlap and t1652 is two runs. The first author count read 100% empty on the OpenAlex lanes: `slim()` in `catalog_rel_sud_search.py` discards the `authorships` it requests. A first identifier test also flagged 2,231 EDS RePEc rows per t1652 run whose accession number (`edsrep.*`) encodes a RePEc handle, and 5.7k t1653 rows whose repository ids (`redalyc:`, `garuda:`, `ipea:hdl:`) it did not recognise. Inspection of the dropped rows replaced both readings with ingester and test gaps.
+
+Author decisions of 2026-10-09: the earlier ingesters were a first try and may be redone; the prefilter uses the full DataCite mandatory set; handle scope extends to registered repository ids; series and publishers are tiered like journals; presence in a trusted index is evidence of seriousness; four tickets, one per concern.
+
+Filed through PR 1719: tickets 2040 (EDS ingester), 2041 (OpenAlex ingesters, backfill priced from a measured probe), 2042 (index presence as seriousness evidence), 2043 (prefilter, blocked by 2040 and 2041). Open PR 1718 (tickets 2028 and 2029) edits files that 2043 will likely edit. The pool grew by 208,181 incremental works in 1654 round 1, which is unmerged; gate counts on the real pool are still to be made.
