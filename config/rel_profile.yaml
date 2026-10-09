@@ -31,7 +31,7 @@ identifier:
   generic: [repec, hdl, oai, hal]
   # Registered repository platforms: an id of this platform is persistent and
   # resolves at `url`. Add a platform here to recover its records; a platform
-  # absent here (ceew, south_centre, cpd, ersa in the 2026-10-01 pool) is not
+  # absent here (e.g. bibcnrs, scispace, oecd in the 2026-10-01 pool) is not
   # accepted. The record-id prefix is the key. `url` is declared, not checked: the
   # loader requires one, nothing resolves it, and only the ids with an `{id}` slot build
   # one. scielo, ajol and adb_ewp keep their entries because their record ids start with
@@ -46,6 +46,18 @@ identifier:
     scielo: {id: '^oai:scielo:\S+$', url: 'https://www.scielo.org/'}
     ajol: {id: '^oai:ajol\.info:\S+$', url: 'https://www.ajol.info/'}
     adb_ewp: {id: '^RePEc:\S+$', url: 'https://ideas.repec.org/'}
+    # Registered by author decision of 2026-10-09 (ids as seen in the 2026-10-01 pool).
+    # CEEW: Council on Energy, Environment and Water; the id is the publication page.
+    ceew: {id: '^https://www\.ceew\.in/\S+$', url: '{id}'}
+    # CPD: Centre for Policy Dialogue, Dhaka; numeric site id.
+    cpd: {id: '^\d+$', url: 'https://cpd.org.bd/?p={id}'}
+    # ERSA: Economic Research Southern Africa; numeric working-paper id.
+    ersa: {id: '^\d+$', url: 'https://econrsa.org/?p={id}'}
+    # South Centre: policy think tank of developing countries; the id is the page URL.
+    south_centre: {id: '^https://www\.southcentre\.int/\S+$', url: '{id}'}
+    # UNFCCC: official negotiation documents; the id is the document symbol
+    # (FCCC/CP/2024/11/Add.2, AOSIS/NCQG/2024/REACTION).
+    unfccc: {id: '^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)+$', url: 'https://unfccc.int/documents?search={id}'}
 
 # Publisher resolution, in this order; the first hit wins, else unresolved.
 #   host_org   : the OpenAlex host organization of the work's source (ticket

@@ -91,8 +91,8 @@ def test_identifier_forms(ids, kind):
 
 
 @pytest.mark.parametrize("ids", [
-    "t1653-sud-hors-openalex/2026-10-01:ceew:https://www.ceew.in/publications/x",  # unregistered
-    "t1653-sud-hors-openalex/2026-10-01:south_centre:https://www.southcentre.int/?p=1",
+    "t1653-sud-hors-openalex/2026-10-01:othertank:https://www.example.org/publications/x",  # unregistered
+    "t1653-sud-hors-openalex/2026-10-01:grey:https://www.example.org/?p=1",
     "t1652-causal-econlit/2026-09-30b:1652:ty:some title|2020",  # a title key
     "t1653-sud-hors-openalex/2026-10-01:redalyc:not-a-number",  # registered, malformed
     "bibcnrs:1A0C5D0DEE45BFB8",
@@ -221,3 +221,37 @@ def test_platform_entries_are_not_covered_by_generic_forms():
         rec = _rec(doi="", member_record_ids=ids)
         assert rp.identifier_of(rec, generic_only) == ""
         assert rp.identifier_of(rec, PROFILE) != ""
+
+
+# ── five platforms registered by author decision of 2026-10-09 ──
+
+FIVE = {
+    "ceew": ("https://www.ceew.in/publications/growing-clean-energy-markets-india-green-windows",
+             "http://elsewhere.org/x"),
+    "cpd": ("53898", "53898x"),
+    "ersa": ("7401", "seven"),
+    "south_centre": ("https://www.southcentre.int/?p=21392", "https://example.org/?p=1"),
+    "unfccc": ("FCCC/CP/2024/11/Add.2", "no-slash-symbol"),
+}
+
+
+@pytest.mark.parametrize("platform", sorted(FIVE))
+def test_registered_platform_id_passes_bare_and_malformed_fail(platform):
+    good, bad = FIVE[platform]
+    lane = "t1653-sud-hors-openalex/2026-10-01:"
+    assert rp.identifier_of(_rec(doi="", member_record_ids=f"{lane}{platform}:{good}"),
+                            PROFILE) == platform
+    # catalogue ids carry no lane prefix
+    assert rp.identifier_of(_rec(doi="", member_record_ids=f"{platform}:{good}"), PROFILE) == platform
+    # a bare id without the platform name is not an identifier
+    assert rp.identifier_of(_rec(doi="", member_record_ids=f"{lane}{good}"), PROFILE) == ""
+    assert rp.identifier_of(_rec(doi="", member_record_ids=good), PROFILE) == ""
+    # a malformed id on the platform is not either
+    assert rp.identifier_of(_rec(doi="", member_record_ids=f"{lane}{platform}:{bad}"), PROFILE) == ""
+
+
+@pytest.mark.parametrize("platform, good", [("redalyc", "655868327005"), ("garuda", "366430"),
+                                            ("ipea", "hdl:11058/9347")])
+def test_previously_registered_platforms_keep_passing(platform, good):
+    rec = _rec(doi="", member_record_ids=f"t1653-sud-hors-openalex/2026-10-01:{platform}:{good}")
+    assert rp.identifier_of(rec, PROFILE) == platform
