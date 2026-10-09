@@ -63,3 +63,24 @@ t1530_delivery:
       reason: "translated by the assistant and corrected by two advisors, not reviewed by a native reader"
     - unit: "tuning sentinels S23 (es) and S55 (fr)"
       reason: "not retrieved by any query of runs f and g"
+
+# Enrichment tables (ticket 2052; scripts/_rel_pool_enrich.py): a table fills a
+# value per work without being a lane, so it changes no work_key, sources,
+# n_sources or member_record_ids. Each entry: source (the label provenance
+# carries: abstract_source, doc_type_source), path (under data/rel_enrich/,
+# tracked in DVC and fetched by make rel-pool-data), sha256 (the build refuses
+# any other file), doi_column and/or openalex_column (exact normalized match
+# against every member of a work; a key reaching two works joins none), fills
+# (pool column -> table column; abstract and doc_type), rule (fill_blank: an
+# abstract competes as one more candidate in the 2045 selector, never replaces
+# a usable one; a doc_type fills a blank only) and redistribution (the status
+# of the source). An empty list builds the pool exactly as without the block.
+# Stage B of 2052 adds the entries once the tables are in DVC, e.g.
+#   - source: istex
+#     path: data/rel_enrich/istex_abstracts_accepted.csv
+#     sha256: <64 hex>
+#     doi_column: doi
+#     fills: {abstract: abstract}
+#     rule: fill_blank
+#     redistribution: internal use only (provisional author decision 2026-10-09)
+enrichment: []
