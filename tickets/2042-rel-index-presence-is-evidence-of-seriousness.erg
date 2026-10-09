@@ -9,6 +9,7 @@ Author: HDMX-coding-agent
 2026-10-09T15:00Z HDMX-coding-agent note branch t2042-rel-index-evidence: mu_venue in {0, 0.5, 1} with index hits at the publication year (Kanal 1-2, Scopus Sources, DOAJ log, press patterns), switch venue_evidence.conflict_c_in_index (MOE default 0.5, open), switch placed in config/rel_venue_tiers.yaml beside tier_membership (not rel_screen.yaml). At the defaults the indexes change no value (A/B already 1, unlisted C 0.5); the movement comes from tier C by rule other, 0 to 0.5. Per-work movement counts need the pool: make rel-pool-data then make rel-venues.
 2026-10-09T17:00Z HDMX-coding-agent note correction to the earlier note and to the body's MOE lines: at the defaults the PR changes no mu value (tier_c_other_mu 0 and conflict_c_in_index 0 keep the 2026-10-01 decision "C the rest, excluded"); indexes matter only when promoted or when either switch is set. The author has decided neither switch.
 
+2026-10-09T09:16Z HDMX-coding-agent 2026-10-09 author decision: conflict_c_in_index set to 0.5 (tier C listed in a trusted index); tier_c_other_mu stays 0. Measured 2,008 of 389,291 works move 0 to 0.5 (0.52%). Branch t2042-conflict-c-in-index-half.
 --- body ---
 
 ## Context

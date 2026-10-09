@@ -13,7 +13,7 @@ import yaml
 pytestmark = pytest.mark.domain_corpus
 
 PARAMS = rv.evidence_params(tv.TIERS_CFG)
-PARAMS_HALF = dict(PARAMS, other_c=0.5, conflict=0.5)  # the open option: an unlisted C `other` is unknown
+PARAMS_HALF = dict(PARAMS, other_c=0.5, conflict=0.5)  # the open option: an unlisted C `other` is unknown (conflict 0.5 is decided)
 SCOPUS_HEAD = ["Sourcerecord ID", "Source Title", "ISSN", "EISSN", "Active or Inactive", "Coverage", "Source Type"]
 SCOPUS_SOURCES = [
     ["1", "Revista Listada", "24681357", "", "Active", "2015-2025", "Journal"],
@@ -79,10 +79,11 @@ def test_index_is_positive_evidence_and_or_combined():
     assert rv.mu_venue("C", "other", [], False, PARAMS_HALF) == (0.5, "unlisted")
 
 
-def test_conflict_switch_is_the_moe_default_and_flips_without_code():
+def test_conflict_switch_is_the_author_decision_and_flips_without_code():
     sw = tv.TIERS_CFG["venue_evidence"]["conflict_c_in_index"]
-    assert sw["status"].startswith("open") and "author-decided" in sw["status"] and sw["value"] == 0
-    assert rv.mu_venue("C", "repository", ["scopus"], False, PARAMS) == (0.0, "tier_c_in_index")  # neutral default
+    assert sw["status"].startswith("author decision 2026-10-09") and sw["value"] == 0.5
+    assert tv.TIERS_CFG["venue_evidence"]["tier_c_other_mu"]["value"] == 0  # the other switch stays open at 0
+    assert rv.mu_venue("C", "repository", ["scopus"], False, PARAMS) == (0.5, "tier_c_in_index")  # the decision
     for value, expected in ((0.5, 0.5), (1.0, 1.0), (0.0, 0.0)):
         assert rv.mu_venue("C", "repository", ["scopus"], False, dict(PARAMS, conflict=value)) == (expected, "tier_c_in_index")
     assert rv.mu_venue("C", "repository", ["scopus"], False, dict(PARAMS, promote=["scopus"]))[0] == 1.0
@@ -206,7 +207,7 @@ def test_the_red_tests_fail_on_their_defective_variants(tmp_path, monkeypatch):
 
 def test_tier_c_listed_at_the_publication_year_only(tmp_path):
     rows = _mu_rows(tmp_path)
-    assert rows["openalex:W8"] == ("0", "tier_c_in_index", "scopus:1[2015-2025]", "C")  # default: the tier outranks
+    assert rows["openalex:W8"] == ("0.5", "tier_c_in_index", "scopus:1[2015-2025]", "C")  # default: neither outranks
     assert rows["k:old"][2] == "" and rows["k:old"][1] == "unlisted"                       # 2010: not yet covered
 
 
@@ -217,9 +218,9 @@ def test_flipping_the_conflict_switch_changes_only_the_conflict_works(tmp_path):
     flipped = _mu_rows(tmp_path / "b", tiers=path)
     assert {k for k in base if base[k][0] != flipped[k][0]} == {"openalex:W8"}
     assert flipped["openalex:W8"][0] == "1"
-    half = tv._cfg_copy(tmp_path, "rel_venue_tiers.yaml",
-                        lambda c: c["venue_evidence"]["conflict_c_in_index"].update(value=0.5))
-    assert _mu_rows(tmp_path / "c", tiers=half)["openalex:W8"][0] == "0.5"
+    zero = tv._cfg_copy(tmp_path, "rel_venue_tiers.yaml",
+                        lambda c: c["venue_evidence"]["conflict_c_in_index"].update(value=0))
+    assert _mu_rows(tmp_path / "c", tiers=zero)["openalex:W8"][0] == "0"  # the revert: the tier outranks
 
 
 # ── Counts, versions and the append-only log ─────────────
@@ -277,10 +278,11 @@ def test_config_lists_every_trusted_index_with_source_and_caveat():
 # ── Neutral at the defaults; the view's evidence branch and scenarios ──
 
 
-def test_default_mu_venue_equals_the_old_tier_score():
-    """At the defaults every work scores what main's tier_membership gave (clone domain = excluded = 0).
+def test_default_mu_venue_equals_the_old_tier_score_but_for_the_author_decision():
+    """Every work scores what main's tier_membership gave (clone domain = excluded = 0), but for two cases.
 
-    The one exception cannot occur: tier ``unknown`` has no venue, hence no ISSN and no index hit.
+    The author decision of 2026-10-09: a tier C listed in an index (not a clone) scores 0.5, not 0.
+    The other cannot occur: tier ``unknown`` has no venue, hence no ISSN and no index hit.
     """
     old_tier = rv.tier_membership(tv.TIERS_CFG)
     combos = [("A", "journal"), ("B", "b_series"), ("C", "other"), ("C", "repository"),
@@ -291,7 +293,15 @@ def test_default_mu_venue_equals_the_old_tier_score():
         new = rv.mu_venue(tier, rule, ["scopus"] if hit else [], clone, PARAMS)[0]
         if new != old:
             differ.append((tier, rule, hit, clone))
-    assert differ == [("unknown", "no_venue", True, False)]
+    assert differ == [("C", "other", True, False), ("C", "repository", True, False),
+                      ("C", "nonresearch", True, False), ("unknown", "no_venue", True, False)]
+    for tier, rule, hit, clone in differ[:3]:  # the decision itself, scored 0.5 and nothing else
+        assert rv.mu_venue(tier, rule, ["scopus"], clone, PARAMS) == (0.5, "tier_c_in_index")
+    # the revert (value 0) restores the old score everywhere but the unreachable case
+    reverted = [(t, r) for (t, r), h, j in ((c, h, j) for c in combos for h in (False, True) for j in (False, True))
+                if rv.mu_venue(t, r, ["scopus"] if h else [], j, dict(PARAMS, conflict=0.0))[0]
+                != (0.0 if j else float(old_tier[t]))]
+    assert reverted == [("unknown", "no_venue")]
 
 
 def _srule(**ev):
@@ -311,7 +321,8 @@ def check_seriousness_branch():
     listed = "scopus:1[2015-2025]"
     assert rr.seriousness_of(_view_venue(), _srule()) == (0.0, "tier_c")           # old label kept
     assert rr.seriousness_of(_view_venue(), _srule(other_c=0.5)) == (0.5, "")
-    assert rr.seriousness_of(_view_venue(hits=listed), _srule()) == (0.0, "tier_c")
+    assert rr.seriousness_of(_view_venue(hits=listed), _srule()) == (0.5, "")      # the 2026-10-09 decision
+    assert rr.seriousness_of(_view_venue(hits=listed), _srule(conflict=0.0)) == (0.0, "tier_c")  # the revert
     assert rr.seriousness_of(_view_venue(hits=listed), _srule(conflict=1.0)) == (1.0, "")
     assert rr.seriousness_of(_view_venue("A", "journal"), _srule()) == (1.0, "")
     clone = "hijacked:7[domain]"
@@ -325,10 +336,10 @@ def test_view_seriousness_uses_mu_venue_and_keeps_the_tier_c_label():
 def test_view_scenarios_list_each_index_and_switch_value():
     import _rel_reasons as rr
     sc = dict(rr._scenarios(_srule()))
-    for name in ("index_dropped_scopus", "index_promoted_doaj", "conflict_c_in_index_0.5", "conflict_c_in_index_1",
+    for name in ("index_dropped_scopus", "index_promoted_doaj", "conflict_c_in_index_0", "conflict_c_in_index_1",
                  "tier_c_other_mu_0.5", "tier_c_other_mu_1"):
         assert name in sc, name
-    assert "conflict_c_in_index_0" not in sc and "tier_c_other_mu_0" not in sc  # the default itself
+    assert "conflict_c_in_index_0.5" not in sc and "tier_c_other_mu_0" not in sc  # the defaults themselves
     assert "scopus" not in sc["index_dropped_scopus"]["evidence"]["indexes"]
     assert sc["index_promoted_doaj"]["evidence"]["promote"] == ["doaj"]
     assert sc["conflict_c_in_index_1"]["evidence"]["conflict"] == 1.0
