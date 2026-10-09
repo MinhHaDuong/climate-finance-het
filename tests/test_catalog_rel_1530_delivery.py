@@ -115,3 +115,17 @@ def test_delivery_carries_slim_authors_and_fills_only_blank_cells_from_the_backf
     assert (w1["host_org_name"], w1["issn"], w1["source_type"]) == ("Wiley", "1111-2222", "journal")
     assert (w2["first_author"], w2["host_org_name"], w2["host_org_id"]) == (
         "Filled, C.", "Routledge", "P2")
+
+
+def test_a_regenerated_delivery_names_what_it_supersedes_and_what_changed(tmp_path):
+    d = _run_dir(tmp_path, "20260929f", [_reg("Q1")], [_hit("W1", "Q1")])
+    out = tmp_path / "t1530-sud-openalex" / "2026-10-09"
+    rc = cd.main(["--run-dir", str(d), "--output-dir", str(out),
+                  "--config", os.path.join(ROOT, "config", "rel_pool.yaml"),
+                  "--supersedes", "2026-09-29", "--note", "Regenerated with the backfill.",
+                  "--delivered-at", "2026-10-09T00:00:00Z"])
+    assert rc == 0 and ric.check_delivery(str(out)) == []
+    manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["supersedes"] == "2026-09-29"
+    assert manifest["notes"].endswith(" Regenerated with the backfill.")
+    assert manifest["notes"].startswith("Final 1530 search")
