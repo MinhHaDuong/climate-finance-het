@@ -82,7 +82,7 @@ ICF_PENDING = {"unscreened", "pending_stage2"}
 DISCIPLINE_AS_UNSURE = {"na", "unknown"}
 PUBLISHERS = ["mdpi", "frontiers", "hindawi"]
 WIDE_REGISTRIES = ["doaj_withdrawn", "scopus_discontinued"]
-VIEW_COLUMNS = ["profile_missing", "contrib", "discipline_field", "contrib_type", "discipline_source",
+VIEW_COLUMNS = ["profile_missing", "profile_venue_via", "contrib", "discipline_field", "contrib_type", "discipline_source",
                 "discipline_run_id", "discipline_flag", "venue_key", "tier", "publisher_flag", "index_hits",
                 "seriousness", "seriousness_flag", *[f"mu_{f}" for f in FACETS],
                 "mu", "mu_facet", "mu_complete", "rel_reason", "rel_reason_detail",
@@ -323,6 +323,7 @@ def assign(rows: list[dict], pool: list[dict], dims: list[dict], venues: dict,
             "index_hits": venue.get("index_hits", ""),
         })
         row["profile_missing"] = rp.codes(rp.missing_fields(pool[i], profile)) if profile else ""
+        row["profile_venue_via"] = rp.venue_of(pool[i], profile)[1] if profile else ""
         values = _facet_values(row, venue, srule, mrule)
         ev = evaluate(values, srule["alpha"])
         serious = next(v for v in values if v[0] == "seriousness")
@@ -453,11 +454,11 @@ def _scenarios(base: dict) -> list[tuple[str, dict]]:
            ("publishers_dropped", dict(base, drop_publishers=PUBLISHERS))]
     prof = base.get("profile")
     if prof:  # ticket 2043: the filter and its publisher requirement, each on and off
-        no_pub = [f for f in prof["required"] if f != "publisher"]
+        no_venue = [f for f in prof["required"] if f != "venue"]
         out += [("profile_off", dict(base, profile=dict(prof, enabled=False))),
                 ("profile_on", dict(base, profile=dict(prof, enabled=True))),
-                ("profile_on_publisher_optional",
-                 dict(base, profile=dict(prof, enabled=True, required=no_pub)))]
+                ("profile_on_venue_optional",
+                 dict(base, profile=dict(prof, enabled=True, required=no_venue)))]
     out += [(f"drop_{p}", dict(base, drop_publishers=[p])) for p in PUBLISHERS]
     kanal = set(base["exclude"]) ^ {"kanalregisteret"}
     out += [("tier_a_only", dict(base, tiers=["A"])),

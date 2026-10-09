@@ -10,7 +10,7 @@ import pytest
 
 pytestmark = pytest.mark.domain_corpus
 
-COLUMNS = ["work_key", "doi", "openalex_id", "title", "first_author", "all_authors", "year",
+COLUMNS = ["work_key", "journal", "repec_handle", "doi", "openalex_id", "title", "first_author", "all_authors", "year",
            "language", "doc_type", "sources", "all_dois", "all_openalex_ids", "member_record_ids"]
 
 
@@ -49,10 +49,10 @@ def test_counts_and_waterfall(tmp_path):
     six = res["scenarios"]["six_fields"]
     assert res["inputs"]["pool_works"] == 5 and six["excluded_works"] == 4
     assert six["first_failing_property"] == {"profile_missing_creator": 1,
-                                             "profile_missing_publisher": 2,
+                                             "profile_missing_venue": 2,
                                              "profile_missing_resourceType": 1}
-    assert res["scenarios"]["publisher_optional"]["excluded_works"] == 2
-    assert res["scenarios"]["creator_ignored_publisher_optional"]["excluded_works"] == 1
+    assert res["scenarios"]["venue_optional"]["excluded_works"] == 2
+    assert res["scenarios"]["creator_ignored_venue_optional"]["excluded_works"] == 1
 
 
 def test_report_before_filter_and_first_act(tmp_path):
@@ -68,7 +68,7 @@ def test_backfill_joins_authors_and_host_org(tmp_path):
     res = _run(tmp_path, bf)
     # W4 now has a host organization: only the SSRN work and the no-creator, no-type works remain
     assert res["scenarios"]["six_fields"]["first_failing_property"].get(
-        "profile_missing_publisher") == 1
+        "profile_missing_venue") == 1
 
 
 def test_read_backfill_and_refuse_data_dir(tmp_path):
@@ -132,3 +132,20 @@ def test_no_first_act_work_reports_null_exclusion_share(tmp_path):
     res = _report_of(tmp_path, [_row("a", doi="10.1016/x", year="2020")])
     assert res["before_filter"]["first_act_1990_2006"] == {"works": 0, "share_of_pool": 0.0}
     assert res["scenarios"]["six_fields"]["first_act_excluded_share"] is None
+
+
+def test_venue_rescue_is_counted_by_step_and_sole_missing_scenario(tmp_path):
+    rows = [
+        _row("j", doi="10.2139/ssrn.1", journal="Some Journal"),            # journal rescues
+        _row("r", member_record_ids="t/d:RePEc:nbr:nberwo:1"),             # repec archive rescues
+        _row("h", doi="10.1016/x"),                                        # old rule already ok
+        _row("n", doi="10.2139/ssrn.2"),                                   # unresolved
+        _row("m", doi="10.2139/ssrn.3", doc_type=""),                      # venue and type missing
+    ]
+    v = _report_of(tmp_path, rows)["venue"]
+    assert v["rescued_from_old_publisher_string_exclusion_by_step"] == {"journal": 1, "repec_archive": 1}
+    assert v["rescued_total"] == 2 and v["old_publisher_string_unresolved"] == 4
+    res = _report_of(tmp_path, rows)["scenarios"]
+    assert res["venue_sole_missing"]["excluded_works"] == 1       # only "n"
+    assert res["venue_missing_any"]["excluded_works"] == 2        # "n" and "m"
+    assert res["six_fields"]["first_failing_property"] == {"profile_missing_venue": 2}

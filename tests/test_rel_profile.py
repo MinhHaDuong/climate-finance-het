@@ -28,7 +28,7 @@ def test_complete_record_passes():
     ({"first_author": "", "all_authors": ""}, "creator"),
     ({"title": "  "}, "title"),
     ({"title": "..."}, "title"),
-    ({"doi": "10.2139/ssrn.123"}, "publisher"),
+    ({"doi": "10.2139/ssrn.123"}, "venue"),
     ({"year": ""}, "publicationYear"),
     ({"year": "20x0"}, "publicationYear"),
     ({"doc_type": ""}, "resourceType"),
@@ -53,7 +53,7 @@ def test_platform_prefix_alone_is_not_a_publisher():
                 "10.2307/jj.18377014.8", "10.48550/arxiv.2502.07541"):
         rec = _rec(doi=doi)
         assert rp.publisher_of(rec, PROFILE) == ("", "unresolved"), doi
-        assert rp.missing_fields(rec, PROFILE) == ["publisher"], doi
+        assert rp.missing_fields(rec, PROFILE) == ["venue"], doi
 
 
 def test_unlisted_prefix_and_journal_name_are_not_a_publisher():
@@ -128,11 +128,11 @@ def test_bad_config_is_refused(tmp_path):
 
 def _view(prof_enabled, required=None):
     good = _work("openalex:W1", oas="W1")
-    good.update(first_author="A", doc_type="article", host_org_name="Elsevier")
+    good.update(first_author="A", doc_type="article", host_org_name="Elsevier", journal="")
     no_author = _work("openalex:W2", oas="W2")
-    no_author.update(doc_type="article", host_org_name="Elsevier")
+    no_author.update(doc_type="article", host_org_name="Elsevier", journal="")
     no_pub = _work("openalex:W3", oas="W3")
-    no_pub.update(first_author="A", doc_type="article")
+    no_pub.update(first_author="A", doc_type="article", journal="")
     pool = [good, no_author, no_pub]
     labels = [_lab(f"openalex:W{i}", "2", "icf") for i in (1, 2, 3)]
     dims = [_dim(f"openalex:W{i}", "yes") for i in (1, 2, 3)]
@@ -148,7 +148,7 @@ def test_filter_off_records_the_gap_but_excludes_nothing():
     by = _by(rows)
     assert {k: r["rel_reason"] for k, r in by.items()} == dict.fromkeys(by, "included")
     assert by["openalex:W2"]["profile_missing"] == "profile_missing_creator"
-    assert by["openalex:W3"]["profile_missing"] == "profile_missing_publisher"
+    assert by["openalex:W3"]["profile_missing"] == "profile_missing_venue"
     assert by["openalex:W1"]["profile_missing"] == "" and by["openalex:W1"]["mu_profile"] == ""
 
 
@@ -158,7 +158,7 @@ def test_filter_on_excludes_at_the_first_facet_with_a_reason_code():
     assert by["openalex:W1"]["rel_reason"] == "included"
     assert (by["openalex:W2"]["rel_reason"], by["openalex:W2"]["rel_reason_detail"]) == (
         "profile_excluded", "profile_missing_creator")
-    assert by["openalex:W3"]["rel_reason_detail"] == "profile_missing_publisher"
+    assert by["openalex:W3"]["rel_reason_detail"] == "profile_missing_venue"
     assert (by["openalex:W2"]["mu_facet"], by["openalex:W2"]["mu_profile"]) == ("profile", "0")
     # the excluded work stays a row, with later facets ungraded (no model call needed)
     assert by["openalex:W2"]["mu_icf"] == "" and len(rows) == 3
@@ -166,7 +166,7 @@ def test_filter_on_excludes_at_the_first_facet_with_a_reason_code():
 
 
 def test_publisher_requirement_is_a_switch():
-    rows, _, _ = _view(True, required=[f for f in rp.FIELDS if f != "publisher"])
+    rows, _, _ = _view(True, required=[f for f in rp.FIELDS if f != "venue"])
     assert _by(rows)["openalex:W3"]["rel_reason"] == "included"
     assert _by(rows)["openalex:W2"]["rel_reason"] == "profile_excluded"
 
@@ -176,15 +176,15 @@ def test_sensitivity_reports_the_filter_on_and_off():
     table = {r["scenario"]: r for r in rr.sensitivity(rows, venues, dict(SRULE, profile=prof), MRULE)}
     assert table["profile_off"]["included_works"] == 3 and table["profile_off"]["profile"] == "off"
     assert table["profile_on"]["included_works"] == 1
-    assert table["profile_on_publisher_optional"]["included_works"] == 2
-    assert "publisher" not in table["profile_on_publisher_optional"]["profile"]
+    assert table["profile_on_venue_optional"]["included_works"] == 2
+    assert "venue" not in table["profile_on_venue_optional"]["profile"]
     assert table["default"]["included_works"] == 3  # configured off: counts unchanged
 
 
 def test_counts_block_tallies_gaps_whatever_the_switch():
     rows, _, prof = _view(False)
     c = rp.counts(rows, prof)
-    assert c["missing_by_field_works"]["creator"] == 1 and c["missing_by_field_works"]["publisher"] == 1
+    assert c["missing_by_field_works"]["creator"] == 1 and c["missing_by_field_works"]["venue"] == 1
     assert c["excluded_works"] == 0 and c["missing_any_works"] == 2
 
 
@@ -195,7 +195,7 @@ def test_counts_block_tallies_gaps_whatever_the_switch():
 def test_platform_host_organization_is_not_a_publisher(org):
     rec = _rec(doi="10.99999/x", host_org_name=org)
     assert rp.publisher_of(rec, PROFILE) == ("", "unresolved")
-    assert rp.missing_fields(rec, PROFILE) == ["publisher"]
+    assert rp.missing_fields(rec, PROFILE) == ["venue"]
 
 
 def test_real_host_organization_still_resolves():
@@ -208,8 +208,8 @@ def test_osti_is_a_platform_not_a_publisher():
 
 
 def test_reason_code_follows_fixed_field_order_not_config_order():
-    cell = rp.codes(["creator", "publisher"])
-    shuffled = ["resourceType", "publisher", "creator"]
+    cell = rp.codes(["creator", "venue"])
+    shuffled = ["resourceType", "venue", "creator"]
     assert rp.first_required_code(cell, shuffled) == "profile_missing_creator"
 
 
@@ -255,3 +255,71 @@ def test_registered_platform_id_passes_bare_and_malformed_fail(platform):
 def test_previously_registered_platforms_keep_passing(platform, good):
     rec = _rec(doi="", member_record_ids=f"t1653-sud-hors-openalex/2026-10-01:{platform}:{good}")
     assert rp.identifier_of(rec, PROFILE) == platform
+
+
+# ── venue identity (author decision of 2026-10-09) ───────
+
+def test_journal_name_satisfies_the_venue_before_any_other_step():
+    rec = _rec(doi="10.2139/ssrn.1", journal="Journal of Climate Economics",
+               host_org_name="Some Press")
+    assert rp.venue_of(rec, PROFILE) == ("Journal of Climate Economics", "journal")
+    assert rp.missing_fields(rec, PROFILE) == []
+
+
+def test_resolution_order_journal_host_org_doi_prefix_repec_archive():
+    base = _rec(doi="", member_record_ids="t/d:RePEc:nbr:nberwo:1")
+    assert rp.venue_of(dict(base, journal="J", host_org_name="H"), PROFILE)[1] == "journal"
+    assert rp.venue_of(dict(base, host_org_name="H"), PROFILE)[1] == "host_org"
+    assert rp.venue_of(dict(base, doi="10.1016/x"), PROFILE)[1] == "doi_prefix"
+    assert rp.venue_of(base, PROFILE) == ("National Bureau of Economic Research", "repec_archive")
+    assert rp.venue_of(_rec(doi="10.2139/ssrn.1"), PROFILE) == ("", "unresolved")
+
+
+@pytest.mark.parametrize("journal", ["SSRN Electronic Journal",
+                                     "Zenodo (CERN European Organization for Nuclear Research)",
+                                     "ArXiv.org", "  "])
+def test_platform_or_blank_journal_is_not_a_venue(journal):
+    rec = _rec(doi="10.2139/ssrn.1", journal=journal)
+    assert rp.venue_of(rec, PROFILE) == ("", "unresolved")
+    assert rp.missing_fields(rec, PROFILE) == ["venue"]
+
+
+@pytest.mark.parametrize("ids, repec_handle, expected", [
+    ("t1810/d:RePEc:nbr:nberwo:35497", "", "National Bureau of Economic Research"),
+    ("t1810/d:excluded:RePEc:cpr:ceprdp:21330", "", "Centre for Economic Policy Research"),
+    ("t1653/d:adb_ewp:RePEc:wbk:wbpubs:1", "", "World Bank"),
+    ("", "RePEc:imf:imfwpa:2026/175", "International Monetary Fund"),
+    ("t1810/d:RePEc:pra:mprapa:128120", "", ""),   # a repository, not an issuing body
+    ("t1810/d:RePEc:sek:iefpro:15116716", "", ""),  # archive not on the list
+    ("t1810/d:RePEc:nbr:nberwo", "", ""),           # no item: not a handle
+])
+def test_repec_archive_stands_for_the_issuing_body(ids, repec_handle, expected):
+    rec = _rec(doi="", member_record_ids=ids, repec_handle=repec_handle)
+    assert rp.venue_of(rec, PROFILE)[0] == expected
+
+
+def test_scielo_article_with_journal_name_passes_the_venue():
+    art = _rec(doi="10.1590/1809-4422asoc", host_org_name="SciELO", journal="Ambiente & sociedade")
+    assert rp.venue_of(art, PROFILE) == ("Ambiente & sociedade", "journal")
+    assert rp.missing_fields(art, PROFILE) == []
+    # the host organization alone does not: SciELO is a platform for that step
+    assert rp.missing_fields(dict(art, journal=""), PROFILE) == ["venue"]
+    for host in ("African Journals Online", "OpenEdition", "Cairn.info"):
+        assert rp.missing_fields(dict(art, doi="10.99999/x", host_org_name=host, journal="J"),
+                                 PROFILE) == []
+
+
+@pytest.mark.parametrize("ident", ["unfccc:./.", "unfccc:-/-", "unfccc:../..", "unfccc:a"])
+def test_unfccc_id_needs_an_alphanumeric_character_and_a_slash(ident):
+    assert rp.identifier_of(_rec(doi="", member_record_ids=ident), PROFILE) == ""
+
+
+def test_unfccc_symbol_still_passes():
+    assert rp.identifier_of(_rec(doi="", member_record_ids="unfccc:FCCC/CP/2024/11/Add.2"),
+                            PROFILE) == "unfccc"
+
+
+def test_view_records_how_the_venue_resolved():
+    rows, _, _ = _view(False)
+    assert {r["work_key"]: r["profile_venue_via"] for r in rows} == {
+        "openalex:W1": "host_org", "openalex:W2": "host_org", "openalex:W3": "unresolved"}

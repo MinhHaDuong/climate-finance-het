@@ -7,7 +7,7 @@
 # worth screening; a handle may be a registered-repository persistent id.
 # Excluded works stay in the pool with `profile_missing_<field>` (single
 # standard: nothing is deleted); the counts are reported with the filter on and
-# off, and with the publisher requirement on and off (sensitivity rows).
+# off, and with the venue requirement on and off (sensitivity rows).
 version: 1
 
 # The switch. false: every work is graded as before and the view only records
@@ -18,11 +18,13 @@ version: 1
 # those lanes, so switching on would drop them for a harvest artifact.
 enabled: false
 
-# Required fields, DataCite names. Remove `publisher` to drop that requirement.
+# Required fields, DataCite names except `venue`, the field that stands for the DataCite
+# `publisher` (author decision of 2026-10-09: a venue identity, not a publisher string).
+# Remove `venue` to drop that requirement.
 # The order here does not matter: the reason code of an excluded work is the first
 # missing required property in the fixed order of _rel_profile.FIELDS (identifier,
-# creator, title, publisher, publicationYear, resourceType).
-required: [identifier, creator, title, publisher, publicationYear, resourceType]
+# creator, title, venue, publicationYear, resourceType).
+required: [identifier, creator, title, venue, publicationYear, resourceType]
 
 # Accepted identifier forms, besides a DOI or an OpenAlex id (always accepted).
 # A member record id (pool column member_record_ids, `lane/delivery:<id>`) or a
@@ -57,20 +59,34 @@ identifier:
     south_centre: {id: '^https://www\.southcentre\.int/\S+$', url: '{id}'}
     # UNFCCC: official negotiation documents; the id is the document symbol
     # (FCCC/CP/2024/11/Add.2, AOSIS/NCQG/2024/REACTION).
-    unfccc: {id: '^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)+$', url: 'https://unfccc.int/documents?search={id}'}
+    unfccc: {id: '^(?=.*[A-Za-z0-9])[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)+$', url: 'https://unfccc.int/documents?search={id}'}
 
-# Publisher resolution, in this order; the first hit wins, else unresolved.
-#   host_org   : the OpenAlex host organization of the work's source (ticket
-#                2041 columns `host_org_name`, `host_org_id`)
-#   doi_prefix : the registrant of the DOI prefix, if the prefix is a
-#                publisher in the table; platform prefixes (SSRN, Zenodo,
-#                Figshare, arXiv, JSTOR...) are `platform` rows and stay unresolved.
-publisher:
-  order: [host_org, doi_prefix]
+# Venue identity (stands for the DataCite `publisher`). Satisfied when the work names a journal
+# or a series, or a publisher resolves by any route. First hit wins, recorded in the view
+# column `profile_venue_via`; none: unresolved, reason `profile_missing_venue`.
+#   journal       : the pool's `journal` field (journal or series name). A platform name
+#                   ("SSRN Electronic Journal", "Zenodo (CERN...)") does not count.
+#   host_org      : the OpenAlex host organization (ticket 2041 columns `host_org_name`,
+#                   `host_org_id`); a platform name does not count.
+#   doi_prefix    : the registrant of the DOI prefix, if the prefix is a publisher in the
+#                   table; platform prefixes (SSRN, Zenodo, Figshare, arXiv, JSTOR...) are
+#                   `platform` rows and never count.
+#   repec_archive : the archive code of a RePEc handle `RePEc:<archive>:<series>:...` (record
+#                   id or `repec_handle`). It stands for the ISSUING BODY of a working paper
+#                   or the publisher of a journal series. Only the archives listed in
+#                   config/rel_repec_archives.csv count: institutional archives with real
+#                   series; personal pages and open repositories (pra, hal) are not listed.
+venue:
+  order: [journal, host_org, doi_prefix, repec_archive]
   prefix_table: config/rel_doi_prefixes.csv
-  # A host organization equal (case-folded) to a platform registrant of the prefix table, or to
-  # one of these names, is not a publisher either: OpenAlex lists repositories as host
-  # organizations of their records. Names are those OpenAlex uses for the platform rows.
+  repec_archive_table: config/rel_repec_archives.csv
+  # A name equal (case-folded) to a platform registrant of the prefix table, or to one of these
+  # names, does not count in the host_org or journal step: OpenAlex lists repositories as host
+  # organizations of their records. SciELO, African Journals Online, OpenEdition and Cairn.info
+  # are listed as platforms for the publisher-string step (host_org). They are publisher-like
+  # for humanities and Global South journals, so such an article still satisfies the venue
+  # through the journal name of step `journal`
+  # (tests/test_rel_profile.py::test_scielo_article_with_journal_name_passes_the_venue).
   platform_names: [Zenodo, Figshare, SSRN, SSRN Electronic Journal, arXiv, arXiv.org, Research Square,
                    ResearchGate, OSF Preprints, Open Science Framework, SocArXiv, JSTOR,
                    Harvard Dataverse, AgEcon Search, EconStor, OpenEdition, Cairn.info]

@@ -16,13 +16,16 @@ Reports, in this order:
    lanes overlap), period (1990-2006, 2007-2014, 2015-2025, other), language
    (blank is its own value, ``unknown``) and document type, with the first act
    and the non-English share stated apart. Printed before any scenario is applied.
-3. ``scenarios``: ``six_fields`` (the author decision), ``publisher_optional``,
+3. ``scenarios``: ``six_fields`` (the author decision), ``venue_optional``,
    ``creator_ignored`` (the author column is blank for the OpenAlex lanes) and
-   ``creator_ignored_publisher_optional``. Each gives the works it would exclude
+   ``creator_ignored_venue_optional``, plus ``venue_missing_any`` (the works that
+   lack a venue identity, whatever else they lack) and ``venue_sole_missing`` (the
+   works whose only gap is the venue: excluded by ``profile_missing_venue`` alone). Each gives the works it would exclude
    by first failing property (waterfall in ``FIELDS`` order) and by lane,
    period, language and document type, so each count can be compared with
    ``before_filter``.
-4. ``publisher``: how each work's publisher resolves, the DOI prefixes left
+4. ``venue``: how each work's venue identity resolves (first hit of the configured
+   order), what the venue rescues from the old publisher-string rule, the DOI prefixes left
    unresolved (the residue a longer prefix table would reduce), and the DOI-less
    works. ``identifier``: the kinds accepted and the platforms of the
    works lacking one.
@@ -53,9 +56,11 @@ log = get_logger("corpus_rel_profile")
 PERIODS = [("1990-2006", 1990, 2006), ("2007-2014", 2007, 2014), ("2015-2025", 2015, 2025)]
 SCENARIOS = {
     "six_fields": [],
-    "publisher_optional": ["publisher"],
+    "venue_optional": ["venue"],
     "creator_ignored": ["creator"],
-    "creator_ignored_publisher_optional": ["creator", "publisher"],
+    "creator_ignored_venue_optional": ["creator", "venue"],
+    "venue_missing_any": ["identifier", "creator", "title", "publicationYear", "resourceType"],
+    "venue_sole_missing": None,  # excluded iff the venue is the only missing property
 }
 # Per-work model cost, USD, derived from ticket 1733's log (stage 1: 1.10 / 23,110;
 # stage 2: 5.9 / 34,766).
@@ -108,6 +113,29 @@ def _dims(row: dict, lanes: list[str]) -> list[tuple]:
             ("doc_type", (row["doc_type"] or "").strip().lower() or "blank")])
 
 
+def _tally_venue(row: dict, profile: dict, counters: list[Counter]) -> None:
+    """Venue tallies of one work: old publisher-string resolution, venue first hit, what the
+    venue rescues from the old rule, platform-named journals, the DOI residue."""
+    how, venue_how, rescued, repec_available, journal_platform, residue, no_doi = counters
+    name, via = rp.publisher_of(row, profile)
+    how[via] += 1
+    vname, vvia = rp.venue_of(row, profile)
+    venue_how[vvia] += 1
+    if (row.get("journal") or "").strip() and rp.is_platform_name(row["journal"], profile):
+        journal_platform["journal_is_platform_name"] += 1
+    if not name:
+        if vname:
+            rescued[vvia] += 1
+        if rp._repec_body(row, profile):
+            repec_available["old_unresolved_with_repec_archive"] += 1
+    if not vname:
+        doi = (row["doi"] or "").strip()
+        if doi:
+            residue[doi.split("/", 1)[0]] += 1
+        else:
+            no_doi["no_doi"] += 1
+
+
 def count(pool_path: str, backfill: dict, profile: dict) -> dict:
     csv.field_size_limit(1 << 30)
     total = Counter()
@@ -118,6 +146,10 @@ def count(pool_path: str, backfill: dict, profile: dict) -> dict:
     excl = {s: Counter() for s in SCENARIOS}
     waterfall = {s: Counter() for s in SCENARIOS}
     how = Counter()
+    venue_how = Counter()
+    rescued = Counter()
+    repec_available = Counter()
+    journal_platform = Counter()
     residue = Counter()
     no_doi = Counter()
     ident = Counter()
@@ -155,16 +187,13 @@ def count(pool_path: str, backfill: dict, profile: dict) -> dict:
                 ident_lost[tuple(sorted(
                     {(m.split(":", 1)[1] if "/" in m.split(":", 1)[0] else m).split(":")[0]
                      for m in (row["member_record_ids"] or "none").split(";")}))] += 1
-            name, via = rp.publisher_of(row, profile)
-            how[via] += 1
-            if not name:
-                doi = (row["doi"] or "").strip()
-                if doi:
-                    residue[doi.split("/", 1)[0]] += 1
-                else:
-                    no_doi["no_doi"] += 1
+            _tally_venue(row, profile, [how, venue_how, rescued, repec_available,
+                                        journal_platform, residue, no_doi])
             for scen, ignored in SCENARIOS.items():
-                gone = [f for f in miss if f in profile["required"] and f not in ignored]
+                if ignored is None:
+                    gone = ["venue"] if miss == ["venue"] and "venue" in profile["required"] else []
+                else:
+                    gone = [f for f in miss if f in profile["required"] and f not in ignored]
                 if gone:
                     waterfall[scen][rp.CODE_PREFIX + gone[0]] += 1
                     excl[scen]["works"] += 1
@@ -172,7 +201,8 @@ def count(pool_path: str, backfill: dict, profile: dict) -> dict:
                         excl[scen][d] += 1
     return {"total": total, "by_dim": by_dim, "blank_input": blank_input, "lane_works": lane_works,
             "miss_any": miss_any, "excl": excl, "waterfall": waterfall, "how": how,
-            "residue": residue, "no_doi": no_doi, "ident": ident, "ident_lost": ident_lost,
+            "residue": residue, "no_doi": no_doi, "venue_how": venue_how, "rescued": rescued,
+            "repec_available": repec_available, "journal_platform": journal_platform, "ident": ident, "ident_lost": ident_lost,
             "joined": joined}
 
 
@@ -228,7 +258,19 @@ def report(m: dict, profile: dict, pool_path: str, backfill_path: str | None, n_
                                            if ff == f and d == "period")}
                                    for f in rp.FIELDS},
         "scenarios": {},
-        "publisher": {"resolved_by": dict(m["how"]),
+        "venue": {"resolved_by_first_hit": dict(m["venue_how"].most_common()),
+                  "rescued_from_old_publisher_string_exclusion_by_step": dict(m["rescued"].most_common()),
+                  "rescued_total": sum(m["rescued"].values()),
+                  "old_publisher_string_unresolved": m["how"]["unresolved"],
+                  "old_unresolved_with_a_repec_archive_whatever_the_journal": m["repec_available"][
+                      "old_unresolved_with_repec_archive"],
+                  "journal_field_is_a_platform_name_ignored": m["journal_platform"][
+                      "journal_is_platform_name"],
+                  "repec_archive_rows": len(profile["repec_archives"]),
+                  "note": ("rescued: works the old rule (host organization, then DOI prefix) left "
+                           "unresolved that a venue step now resolves; host_org and doi_prefix "
+                           "rescue none by construction. unresolved_* below describe the venue.")},
+        "publisher_string": {"resolved_by": dict(m["how"]),
                       "unresolved_with_doi_top_prefixes": dict(m["residue"].most_common(40)),
                       "unresolved_with_doi": sum(m["residue"].values()),
                       "unresolved_without_doi": m["no_doi"]["no_doi"],
@@ -241,7 +283,7 @@ def report(m: dict, profile: dict, pool_path: str, backfill_path: str | None, n_
         e = m["excl"][scen]
         ex = e["works"]
         out["scenarios"][scen] = {
-            "required": [f for f in profile["required"] if f not in ignored],
+            "required": ([f for f in profile["required"] if f not in ignored] if ignored is not None else ["venue (sole missing property)"]),
             "excluded_works": ex, "excluded_share": ratio(ex, n),
             "kept_works": n - ex,
             "first_failing_property": dict(m["waterfall"][scen].most_common()),

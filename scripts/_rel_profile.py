@@ -14,12 +14,18 @@ The six DataCite mandatory properties, as read on a pool work:
   unregistered site is not one;
 - ``creator``: ``first_author`` or ``all_authors`` not blank;
 - ``title``: at least one letter or digit;
-- ``publisher``: resolved in the configured order, else unresolved. First the
-  OpenAlex host organization of the work's source (``host_org_name``). Then the
-  registrant of the DOI prefix, when the prefix is a ``publisher`` row of
-  ``config/rel_doi_prefixes.csv``. A ``platform`` prefix (SSRN, Zenodo,
-  Figshare, JSTOR...) hosts other people's work and resolves nothing, and a
-  journal name is not a publisher;
+- ``venue`` (the field that stands for the DataCite ``publisher``; author decision
+  of 2026-10-09: the filter requires a venue identity, not a publisher string): the
+  work names a journal or a series, or a publisher resolves by any route. First
+  hit wins, recorded in ``profile_venue_via``: (1) ``journal``, the pool's
+  ``journal`` field (journal or series name; a platform name such as SSRN
+  Electronic Journal does not count); (2) ``host_org``, the OpenAlex host
+  organization (``host_org_name``; a platform name does not count); (3)
+  ``doi_prefix``, the registrant of a ``publisher`` row of
+  ``config/rel_doi_prefixes.csv`` (a ``platform`` prefix never counts); (4)
+  ``repec_archive``, the archive code of a RePEc handle read as the issuing body
+  of a working paper (``config/rel_repec_archives.csv``). Else ``unresolved``
+  and the reason code ``profile_missing_venue``;
 - ``publicationYear``: four digits;
 - ``resourceType``: ``doc_type`` not blank.
 
@@ -27,9 +33,8 @@ The six DataCite mandatory properties, as read on a pool work:
 view records the full picture (``profile_missing``) and the required subset
 decides the exclusion. The reason code ``profile_missing_<field>`` names the
 first missing required property in the fixed order of ``FIELDS`` (identifier,
-creator, title, publisher, publicationYear, resourceType), not the order of
-``required`` in the config. A host organization that is a platform (Zenodo,
-Figshare, SSRN...) is not a publisher either.
+creator, title, venue, publicationYear, resourceType), not the order of
+``required`` in the config.
 """
 
 import csv
@@ -40,7 +45,9 @@ import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_CONFIG = os.path.join(ROOT, "config", "rel_profile.yaml")
-FIELDS = ["identifier", "creator", "title", "publisher", "publicationYear", "resourceType"]
+FIELDS = ["identifier", "creator", "title", "venue", "publicationYear", "resourceType"]
+VENUE_STEPS = ("journal", "host_org", "doi_prefix", "repec_archive")
+_REPEC = re.compile(r"(?:^|:)RePEc:([^:\s]+):([^:\s]+):\S", re.IGNORECASE)
 CODE_PREFIX = "profile_missing_"
 
 _DOI = re.compile(r"^10\.\d{4,9}/\S+$")
@@ -64,26 +71,29 @@ def load_profile(path: str = DEFAULT_CONFIG) -> dict:
     generic = list(cfg["identifier"]["generic"])
     if any(g not in _GENERIC for g in generic):
         raise ValueError(f"rel_profile.identifier.generic: known forms {sorted(_GENERIC)}")
-    order = list(cfg["publisher"]["order"])
-    if any(o not in ("host_org", "doi_prefix") for o in order):
-        raise ValueError("rel_profile.publisher.order: host_org and doi_prefix only")
-    table = os.path.join(ROOT, cfg["publisher"]["prefix_table"])
+    venue = cfg["venue"]
+    order = list(venue["order"])
+    if any(o not in VENUE_STEPS for o in order):
+        raise ValueError(f"rel_profile.venue.order: known steps {VENUE_STEPS}")
+    table = os.path.join(ROOT, venue["prefix_table"])
     with open(table, encoding="utf-8", newline="") as fh:
         prefixes = {r["prefix"]: (r["registrant"], r["kind"]) for r in csv.DictReader(fh)}
     if any(k not in ("publisher", "platform") for _, k in prefixes.values()):
         raise ValueError(f"{table}: kind must be publisher or platform")
+    with open(os.path.join(ROOT, venue["repec_archive_table"]), encoding="utf-8", newline="") as fh:
+        archives = {r["archive"].casefold(): r["body"] for r in csv.DictReader(fh)}
     platforms = {}
     for name, spec in cfg["identifier"]["platforms"].items():
         if not spec.get("url"):
             raise ValueError(f"rel_profile.identifier.platforms.{name}: a resolvable url is required")
         platforms[name] = re.compile(spec["id"])
     # A host organization that is a platform is not a publisher either: the registrants of the
-    # platform prefix rows plus the names OpenAlex gives them (config publisher.platform_names).
+    # platform prefix rows plus the names OpenAlex gives them (config venue.platform_names).
     names = {r.casefold() for r, k in prefixes.values() if k == "platform"}
-    names |= {str(n).casefold() for n in cfg["publisher"].get("platform_names") or []}
+    names |= {str(n).casefold() for n in venue.get("platform_names") or []}
     return {"version": cfg["version"], "enabled": bool(cfg["enabled"]), "required": required,
             "generic": generic, "platforms": platforms, "order": order, "prefixes": prefixes,
-            "platform_names": names}
+            "platform_names": names, "repec_archives": archives}
 
 
 def rule(profile: dict, enabled: bool | None = None, required: list | None = None) -> dict:
@@ -126,20 +136,61 @@ def identifier_of(rec: dict, profile: dict) -> str:
     return ""
 
 
+def is_platform_name(name: str, profile: dict) -> bool:
+    """A platform name (exact, or the platform followed by a parenthesis: ``Zenodo (CERN...)``)."""
+    n = name.strip().casefold()
+    return n in profile["platform_names"] or any(n.startswith(p + " (") for p in profile["platform_names"])
+
+
+def _host_org(rec: dict, profile: dict) -> str:
+    org = (rec.get("host_org_name") or "").strip()
+    return "" if not org or is_platform_name(org, profile) else org
+
+
+def _doi_registrant(rec: dict, profile: dict) -> str:
+    for d in [rec.get("doi") or ""] + re.split(r"[;|\s]+", rec.get("all_dois") or ""):
+        registrant, kind = profile["prefixes"].get(d.strip().split("/", 1)[0], ("", ""))
+        if kind == "publisher" and _DOI.match(d.strip()):
+            return registrant
+    return ""
+
+
+def _repec_body(rec: dict, profile: dict) -> str:
+    cands = _record_ids(rec) + [(rec.get("repec_handle") or "").strip()]
+    for part in cands:
+        m = _REPEC.search(part)
+        if m and m.group(1).casefold() in profile["repec_archives"]:
+            return profile["repec_archives"][m.group(1).casefold()]
+    return ""
+
+
 def publisher_of(rec: dict, profile: dict) -> tuple[str, str]:
-    """``(name, how)`` of the publisher, ``("", "unresolved")`` when none."""
+    """``(name, how)`` of the publisher *string* (host organization, DOI-prefix registrant),
+    ``("", "unresolved")`` when none: the pre-decision rule of 2026-10-09, kept to count what
+    the venue identity rescues."""
     for step in profile["order"]:
-        if step == "host_org":
-            org = (rec.get("host_org_name") or "").strip()
-            if org and org.casefold() not in profile["platform_names"]:
-                return org, "host_org"
+        if step == "host_org" and _host_org(rec, profile):
+            return _host_org(rec, profile), "host_org"
+        if step == "doi_prefix" and _doi_registrant(rec, profile):
+            return _doi_registrant(rec, profile), "doi_prefix"
+    return "", "unresolved"
+
+
+def venue_of(rec: dict, profile: dict) -> tuple[str, str]:
+    """``(name, how)`` of the venue identity, first hit of ``venue.order`` wins;
+    ``("", "unresolved")`` when none."""
+    for step in profile["order"]:
+        if step == "journal":
+            name = (rec.get("journal") or "").strip()
+            name = "" if is_platform_name(name, profile) else name
+        elif step == "host_org":
+            name = _host_org(rec, profile)
+        elif step == "doi_prefix":
+            name = _doi_registrant(rec, profile)
         else:
-            dois = [rec.get("doi") or ""] + re.split(r"[;|\s]+", rec.get("all_dois") or "")
-            for d in dois:
-                prefix = d.strip().split("/", 1)[0]
-                registrant, kind = profile["prefixes"].get(prefix, ("", ""))
-                if kind == "publisher" and _DOI.match(d.strip()):
-                    return registrant, "doi_prefix"
+            name = _repec_body(rec, profile)
+        if name:
+            return name, step
     return "", "unresolved"
 
 
@@ -150,7 +201,7 @@ def missing_fields(rec: dict, profile: dict) -> list[str]:
         "creator": bool((rec.get("first_author") or "").strip()
                         or (rec.get("all_authors") or "").strip()),
         "title": bool(re.search(r"[^\W_]", rec.get("title") or "")),
-        "publisher": bool(publisher_of(rec, profile)[0]),
+        "venue": bool(venue_of(rec, profile)[0]),
         "publicationYear": bool(re.fullmatch(r"\d{4}", (rec.get("year") or "").strip())),
         "resourceType": bool((rec.get("doc_type") or "").strip()),
     }
@@ -175,7 +226,7 @@ def counts(rows: list[dict], prof: dict | None) -> dict:
         "note": ("missing_*: every mandatory property a work lacks, filter on or off; "
                  "excluded_works: removed by the filter at the first facet (zero while the "
                  "switch is off; the sensitivity rows profile_on and "
-                 "profile_on_publisher_optional show it on). Nothing is deleted."),
+                 "profile_on_venue_optional show it on). Nothing is deleted."),
     }
 
 
