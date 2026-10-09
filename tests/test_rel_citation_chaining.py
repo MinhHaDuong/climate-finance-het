@@ -304,7 +304,11 @@ def test_completed_direction_reuse_requires_native_page_chain_and_preserves_edge
     native_index = tmp_path / 'native-index.json'
     pages = {r['path']: {'sha256': chain.sha(prior.root / r['path']), 'request_sha256': r['k']}
              for r in prior.db.execute('SELECT * FROM api_pages')}
-    native_index.write_text(json.dumps({'snapshot_sha256': chain.sha(snapshot), 'pages': pages}))
+    routing_source = tmp_path / 'routing.py'
+    routing_source.write_text('OA = "https://api.openalex.org/works"\n')
+    native_index.write_text(json.dumps({'snapshot_sha256': chain.sha(snapshot), 'pages': pages,
+        'acquisition_source': {'artifact': str(routing_source), 'artifact_sha256': chain.sha(routing_source),
+            'recorded_revision': 'a' * 40, 'method': 'GET', 'endpoint': chain.OA}}))
     index_args = {'native_index_path': native_index, 'native_index_sha256': chain.sha(native_index)}
     current = Store(tmp_path / 'next')
     current.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")
@@ -317,6 +321,15 @@ def test_completed_direction_reuse_requires_native_page_chain_and_preserves_edge
     def no_duplicate_singleton(*args, **kwargs):
         raise AssertionError('reused exact source metadata must not cause another singleton request')
     chain.resolve_seed_aliases(current, get=no_duplicate_singleton)
+    original_routing = routing_source.read_bytes()
+    routing_source.write_text('OA = "https://unrelated.example/works"\n')
+    changed_source = Store(tmp_path / 'changed-source')
+    changed_source.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")
+    changed_source.db.commit()
+    with pytest.raises(ChainError, match='routing source binding'):
+        chain.reuse_completed_directions(changed_source, snapshot, prior.root, chain.sha(snapshot), **index_args)
+    assert changed_source.db.execute('SELECT COUNT(*) FROM direction_reuse').fetchone()[0] == 0
+    routing_source.write_bytes(original_routing)
     (prior.root / 'raw' / 'forward.json.gz').unlink()
     failed = Store(tmp_path / 'fail')
     failed.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")

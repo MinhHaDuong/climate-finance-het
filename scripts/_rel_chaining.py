@@ -765,6 +765,11 @@ def reuse_completed_directions(store, snapshot, native_root, expected_sha256, *,
     native_index = json.loads(Path(native_index_path).read_text())
     if native_index["snapshot_sha256"] != expected_sha256:
         raise ChainError("previous native index belongs to another snapshot")
+    routing = native_index.get("acquisition_source", {})
+    if (routing.get("endpoint") != OA or routing.get("method") != "GET"
+            or not re.fullmatch(r"[0-9a-f]{40}", routing.get("recorded_revision", ""))
+            or not routing.get("artifact") or sha(routing["artifact"]) != routing.get("artifact_sha256")):
+        raise ChainError("native reuse acquisition routing source binding mismatch")
     source = sqlite3.connect(snapshot.resolve().as_uri() + "?mode=ro", uri=True)
     source.row_factory = sqlite3.Row
     wanted = {r[0] for r in store.db.execute("SELECT DISTINCT oa FROM seeds WHERE oa<>''")}
@@ -781,7 +786,9 @@ def reuse_completed_directions(store, snapshot, native_root, expected_sha256, *,
             if query["kind"] == "backward":
                 identities.intersection_update(returned)
             evidence.update(source_snapshot=str(snapshot.resolve()), source_snapshot_sha256=expected_sha256,
-                            native_index=str(Path(native_index_path).resolve()), native_index_sha256=native_index_sha256)
+                            native_index=str(Path(native_index_path).resolve()), native_index_sha256=native_index_sha256,
+                            acquisition_source=routing,
+                            source_revision_basis="recorded operator source pointer, not per-response execution attestation")
             for identity in sorted(identities):
                 prepared.setdefault((identity, query["kind"]), json.dumps(evidence, sort_keys=True))
     finally:
