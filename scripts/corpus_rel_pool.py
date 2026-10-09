@@ -20,7 +20,9 @@ Outputs (required explicit ``--output-dir``):
   ``title:<title>|<year>``; title keys that two works share (generic
   title-only rows kept apart) get ``#<first member record id>``. Metadata come
   from the first non-empty member: catalogue rows first, then lanes in
-  ``lane_order``. Provenance: ``in_catalogue``, ``sources`` (``catalogue``
+  ``lane_order``; the abstract alone is chosen by quality (``_rel_pool_abstract``;
+  ``abstract_source`` is the lane that supplied it, ``abstract_flag`` is ``ok``,
+  ``truncated_suspect``, ``stub`` or ``no_abstract``). Provenance: ``in_catalogue``, ``sources`` (``catalogue``
   then lane ids), ``n_sources``, ``member_record_ids``.
 - ``merge_report.json`` / ``merge_report.md``: the per-delivery report
   (``_rel_pool_report``).
@@ -40,6 +42,7 @@ from collections import Counter, defaultdict
 
 import qa_rel_intake as ric
 import yaml
+from _rel_pool_abstract import select_abstract
 from _rel_pool_dedup import cluster
 from _rel_pool_keys import norm_openalex, norm_year, url_ids
 from _rel_pool_report import CATALOGUE, RelPoolError, make_report, report_markdown
@@ -59,7 +62,8 @@ META_COLUMNS = ["native_titleless_provenance", "is_paratext", "doi", "openalex_i
                 "affiliation_countries", "affiliations", "cited_by_count"]
 POOL_COLUMNS = (["work_key"] + META_COLUMNS
                 + ["version_hint", "all_dois", "all_openalex_ids", "in_catalogue",
-                   "catalogue_sources", "sources", "n_sources", "member_record_ids"])
+                   "catalogue_sources", "sources", "n_sources", "member_record_ids",
+                   "abstract_source", "abstract_flag"])
 
 
 # ── Inputs ───────────────────────────────────────────────
@@ -256,6 +260,8 @@ def build_pool(rows, roots, lane_rank):
         idx = sorted(members[root], key=rank)
         mem = [rows[i] for i in idx]
         merged = {c: next((m.get(c, "") for m in mem if m.get(c)), "") for c in META_COLUMNS}
+        merged["abstract"], merged["abstract_source"], merged["abstract_flag"] = \
+            select_abstract(mem, merged["title"])
         origins = list(dict.fromkeys(m["origin"] for m in mem))
         merged.update({
             "version_hint": ";".join(dict.fromkeys(m["version_hint"] for m in mem if m["version_hint"])),
