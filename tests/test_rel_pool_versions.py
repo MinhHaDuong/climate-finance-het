@@ -7,6 +7,7 @@ published versions in one work. Version 1 stays as it was.
 
 import csv
 import json
+import os
 
 import _rel_pool_dedup as rd
 import _rel_pool_migration as rm
@@ -361,7 +362,64 @@ def test_labels_keyed_by_either_version_1_key_map_to_the_article(tmp_path, monke
     assert {n for o, n in pairs if o == "openalex:W7212000826"} <= {"openalex:W7212000826"}, \
         "the article keeps its key"
     nb = report["versions"]["named_by_published"]
-    assert (nb["works"], nb["wp_key_rekeyed"], nb["unmapped_v1_keys"]) == (1, 1, 0)
+    assert (nb["works"], nb["wp_key_rekeyed"]) == (1, 1)
+    t = report["totals"]
+    assert t["v1_keys_gone"] > 0
+    assert (t["v1_keys_gone_not_in_table"], t["table_new_keys_not_in_v2"]) == (0, 0)
+
+
+def test_table_check_reads_the_written_file_and_sees_a_missing_key(tmp_path):
+    """Positive control: a table that lost the working paper's row is caught."""
+    path = tmp_path / rm.MIGRATION_FILE
+    pool1 = [{"work_key": "openalex:Wwp"}, {"work_key": "openalex:Wart"}]
+    pool2 = [{"work_key": "openalex:Wart"}]
+    rows = [{"from_version": "1", "to_version": "2", "inputs_md5": "m", "old_work_key": "openalex:Wwp",
+             "new_work_key": "openalex:Wart", "change": "merge", "cause": "versions"}]
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=rm.MIGRATION_COLUMNS)
+        w.writeheader()
+        w.writerows(rows)
+    assert rm.check_table(path, pool1, pool2, "m")["v1_keys_gone_not_in_table"] == 0
+    assert rm.check_table(path, pool1, pool2, "other build")["v1_keys_gone_not_in_table"] == 1
+
+
+@pytest.mark.parametrize("a, b, same", [
+    ("Wei Zhang", "Wei Li", False), ("Zhang, Wei", "Li, Wei", False),
+    ("Wei Zhang", "Zhang, W.", True), ("Marta Torre-Schaub", "Torre-Schaub, M.", True),
+    ("Claire Gavard", "C. Gavard", True), ("", "Gavard, C.", False)])
+def test_first_authors_agree_on_the_surname_never_the_given_name(a, b, same):
+    assert rv.same_first_author(a, b) is same
+
+
+def test_short_title_test_does_not_depend_on_row_order():
+    """One title key holds 'debt bonds' (4 words) and 'debtbonds' (3): the
+    test reads the fewest words of both sides, whichever row comes first."""
+    wp4 = r2("Acosta, A.", doi="10.2139/ssrn.7", title="Ecuadorian sovereign debt bonds", year="2010")
+    wp3 = r2("Acosta, A.", doi="10.2139/ssrn.7", title="Ecuadorian sovereign debtbonds", year="2010",
+             rid="alt")
+    art = r2("Borja, B.", doi="10.1016/j.e", title="Ecuadorian sovereign debt bonds", year="2011")
+    for rows in ([wp4, wp3, art], [wp3, wp4, art]):
+        roots = rd.cluster(rows, version=2)
+        assert roots[0] == roots[1] != roots[2], "three words on one side: authors must agree"
+
+
+def test_openalex_duplicates_switch_is_parsed_strictly(tmp_path, monkeypatch):
+    import corpus_rel_pool as cp
+    from _rel_pool_report import RelPoolError
+    cfg, cat, intake = _fixture(tmp_path)
+    with pytest.raises(RelPoolError, match="openalex_duplicates"):
+        cp.run({**cfg, "openalex_duplicates": "false"}, str(cat), str(intake),
+               str(tmp_path / "out"), 2, str(tmp_path / "mig"))
+
+
+def test_write_pool_refuses_the_production_pool_directory(tmp_path):
+    import corpus_rel_pool as cp
+    from _rel_pool_report import RelPoolError
+    cfg, cat, intake = _fixture(tmp_path)
+    for out in ("data/rel_pool", "data/rel_pool/v2"):
+        with pytest.raises(RelPoolError, match="production pool"):
+            cp.run(cfg, str(cat), str(intake), os.path.join(cp.ROOT, out), 2,
+                   str(tmp_path / "mig"), write_pool=True)
 
 
 def test_enriched_type_reaches_the_working_paper_mark_before_clustering():

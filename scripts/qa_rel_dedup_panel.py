@@ -8,6 +8,11 @@ and ``openalex`` (5c, duplicate OpenAlex records, stage B1). Mistral left the
 default readers after stage A (it read a differing DOI, year or venue as a
 different work: 111 against 5 and 6); the third vendor is a Gemini flash model
 through OpenRouter, else DeepSeek. With two readers the majority is both.
+The default readers are Anthropic, OpenAI and OpenRouter (Gemini). When a
+vendor cannot run (stage B1: the OpenAI key answered HTTP 429
+insufficient_quota, no credit), swap it with ``run --readers``, for instance
+``--readers anthropic,openrouter,deepseek``: the run is resumable and a
+stopped reader's answers are kept.
 
 Subcommands (all files in ``--output-dir``, outside the repository):
 

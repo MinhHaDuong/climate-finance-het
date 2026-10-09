@@ -33,9 +33,10 @@ only* when it holds working-paper rows and no published row.
     other share the title key of the version (not a generic title) and the
     article year minus the working-paper year, earliest against earliest, is
     in ``WINDOW`` (-1 to +5 years, author decision of 2026-10-09). A title of
-    ``SHORT_TITLE_WORDS`` words or fewer also needs the first authors to agree
-    (both known, a surname in common): 'Climate Change Governance', HAL 2022
-    and CUP 2021, was a false merge. Clusters of accepted pairs holding two
+    ``SHORT_TITLE_WORDS`` words or fewer (the fewest over the rows of both
+    sides) also needs the first authors to agree (both known, a surname in
+    common), or a lane link, 5a: 'Climate Change Governance', HAL 2022 and
+    CUP 2021, was a false merge. Clusters of accepted pairs holding two
     published components join nothing (chain veto).
 5c. **Duplicate OpenAlex records** (author decision of 2026-10-09; switch
     ``openalex_duplicates``). An *OpenAlex-only* component carries OpenAlex
@@ -127,11 +128,15 @@ def _fold(s):
 
 
 def surnames(first_author):
-    """Name tokens of a first author, initials dropped (``Gavard, C.`` -> {gavard})."""
+    """Surname tokens of a first author: the part before a comma
+    (``Torre-Schaub, M.`` -> {torre, schaub}), else the last token that is not
+    an initial (``Claire Gavard`` -> {gavard}, ``Wei Li`` -> {li}). A given
+    name is never compared: 'Wei Zhang' and 'Wei Li' do not agree."""
     s = _fold(first_author)
+    tokens = [t for t in re.findall(r"[^\W\d_]+", s.split(",", 1)[0]) if len(t) > 1]
     if "," in s:
-        s = s.split(",", 1)[0]
-    return {t for t in re.findall(r"[^\W\d_]+", s) if len(t) > 2}
+        return set(tokens)
+    return set(tokens[-1:])
 
 
 def same_first_author(a, b):
@@ -219,7 +224,11 @@ def _window_edges(rows, wp_only, published, by_key, words, stats):
                 if not WINDOW[0] <= py - wy <= WINDOW[1]:
                     stats["pairs_out_of_window"] += 1
                     continue
-                if _n_words(rows, wi, words) <= SHORT_TITLE_WORDS and not any(
+                # The fewest words over every row of both sides with this key: one
+                # key holds 'debt bonds' and 'debtbonds', so one row would depend on order.
+                n_words = min(_n_words(rows, i, words)
+                              for _, i in comps[w]["wp"] + comps[p]["pub"])
+                if n_words <= SHORT_TITLE_WORDS and not any(
                         same_first_author(rows[a].get("first_author"), rows[b].get("first_author"))
                         for _, a in comps[w]["wp"] for _, b in comps[p]["pub"]):
                     stats["pairs_short_title_refused"] += 1

@@ -1,9 +1,11 @@
 """What pool dedup version 2 would change, written beside the pool (ticket 2047).
 
 ``corpus_rel_pool --dedup-version 2`` builds the pool of both versions on the
-same rows (``_rel_pool_dedup``) and passes them here. Nothing is written in
-the pool directory and no label table is read or written: version 1 stays the
-pool until ticket 2048 switches it and migrates the labels.
+same rows (``_rel_pool_dedup``) and passes them here. This module writes only
+in the migration directory (``corpus_rel_pool --write-pool`` alone writes a
+version 2 pool, never in ``data/rel_pool``) and no label table is read or
+written: version 1 stays the pool until ticket 2048 switches it and migrates
+the labels.
 
 Files written in the migration directory:
 
@@ -18,7 +20,9 @@ Files written in the migration directory:
   (step 5: lane links, a working paper and its article, duplicate OpenAlex
   records when ``openalex_duplicates`` is on), several joined
   by ``|`` when each alone does it, or ``combined`` when only changes together
-  do it. ``inputs_md5``
+  do it; a rekey with no merge or split is ``title_key``, ``repec_handle`` or
+  ``published_name`` (a work holding a working paper, now named by its
+  article, ticket 2048). ``inputs_md5``
   fingerprints the rows (their record ids). A rerun appends the rows not
   already present and never rewrites one.
 - ``dedup_v2_works.csv``: the works behind every count, one row per
@@ -252,7 +256,7 @@ def _markdown(report):
                   "- unions by rule: " + ", ".join(f"{k} {n:,}" for k, n in v["unions_by_rule"].items()),
                   f"- named by the published article: {nb['works']:,} works, "
                   f"{nb['wp_key_rekeyed']:,} where a working paper's version 1 key now points to "
-                  f"the article's; version 1 keys not mapped: {nb['unmapped_v1_keys']:,}",
+                  "the article's",
                   "- step counts: " + ", ".join(f"{k} {n:,}" for k, n in
                                                 report["stats"]["v2"].get("versions", {}).items())]
         for name, rec in v["recall"].items():
@@ -279,10 +283,10 @@ def _versions(rows, roots1, roots2, pool1, pool2, diff, pairs=None, oa_dups=Fals
     hold two or more DOIs (or OpenAlex ids), joined by a shared record: cut
     into one part per identifier, would step 5 alone rejoin them?
 
-    Works named by the published article: every version 1 key of their rows
-    must map to the version 2 key (``unmapped_v1_keys`` counts failures), and
-    ``wp_key_rekeyed`` counts those where the key a working paper's version 1
-    work had now points to the article's."""
+    Works named by the published article: ``wp_key_rekeyed`` counts those
+    where the key a working paper's version 1 work had now points to the
+    article's. That the written table carries every version 1 key that
+    disappears is checked by ``check_table``, on the file itself."""
     roots_nv = cluster_with(rows, None, title_key, repec=True, guard=True, versions=False)
     k2 = dict(zip(sorted(set(roots2)), (p["work_key"] for p in pool2)))
     parts = defaultdict(set)
@@ -303,21 +307,18 @@ def _versions(rows, roots1, roots2, pool1, pool2, diff, pairs=None, oa_dups=Fals
     for p in pairs or ():
         rules[k2[roots2[p["a_row"]]]].add(p["kind"])
     k1 = dict(zip(sorted(set(roots1)), (p["work_key"] for p in pool1)))
-    named, unmapped, wp_rekeyed = 0, 0, 0
+    named, wp_rekeyed = 0, 0
     for k, idx in ((k2[r], i) for r, i in _members(roots2).items()):
         if not published_ids([rows[i] for i in idx]):
             continue
         named += 1
-        olds = {k1[roots1[i]] for i in idx}
-        unmapped += len(olds - diff["to_old"].get(k, set()) - {k})
         wp_rekeyed += any(k1[roots1[i]] != k for i in idx if is_working_paper(rows[i]))
     return {"by_work": by_work, "works_made_by_step_5": len(by_work),
             "parts_joined_by_step_5": sum(len(parts[k]) for k in by_work),
             "works_by_rule": dict(sorted(Counter("+".join(sorted(v)) for v in rules.values())
                                          .items())),
             "unions_by_rule": dict(sorted(Counter(p["kind"] for p in pairs or ()).items())),
-            "named_by_published": {"works": named, "wp_key_rekeyed": wp_rekeyed,
-                                   "unmapped_v1_keys": unmapped},
+            "named_by_published": {"works": named, "wp_key_rekeyed": wp_rekeyed},
             "recall": recall}
 
 
@@ -326,6 +327,19 @@ def _members(roots):
     for i, r in enumerate(roots):
         out[r].append(i)
     return out
+
+
+def check_table(path, pool1, pool2, inputs_md5):
+    """Read the written migration table back: every version 1 key absent from
+    version 2 must be an ``old_work_key`` of this build's rows (``inputs_md5``),
+    and every ``new_work_key`` of those rows a version 2 key."""
+    with open(path, encoding="utf-8", newline="") as fh:
+        table = [r for r in csv.DictReader(fh) if r["inputs_md5"] == inputs_md5]
+    keys1, keys2 = {p["work_key"] for p in pool1}, {p["work_key"] for p in pool2}
+    gone = keys1 - keys2
+    return {"v1_keys_gone": len(gone),
+            "v1_keys_gone_not_in_table": len(gone - {r["old_work_key"] for r in table}),
+            "table_new_keys_not_in_v2": len({r["new_work_key"] for r in table} - keys2)}
 
 
 def write_migration(rows, v1, v2, out_dir, pairs=None, oa_dups=False):
@@ -338,6 +352,7 @@ def write_migration(rows, v1, v2, out_dir, pairs=None, oa_dups=False):
     inputs_md5 = hashlib.md5("\n".join(sorted(r["record_id"] for r in rows)).encode()).hexdigest()
     os.makedirs(out_dir, exist_ok=True)
     appended = _append_migration(os.path.join(out_dir, MIGRATION_FILE), diff["pairs"], inputs_md5)
+    table_check = check_table(os.path.join(out_dir, MIGRATION_FILE), pool1, pool2, inputs_md5)
     work_rows = _work_rows(diff, pool1, pool2, versions.pop("by_work"))
     if pairs is not None:
         with open(os.path.join(out_dir, PAIRS_FILE), "w", encoding="utf-8", newline="") as fh:
@@ -358,6 +373,7 @@ def write_migration(rows, v1, v2, out_dir, pairs=None, oa_dups=False):
     counts, first = _counts(work_rows)
     totals = {"rows": len(rows), "works_v1": len(pool1), "works_v2": len(pool2),
               "migration_pairs": len(diff["pairs"]), "migration_rows_appended": appended,
+              **table_check,
               **{cat: counts[cat]["total"] for cat in CATEGORIES},
               "merged_v1_works": sum(len(diff["to_old"][k]) for k in diff["merged"]),
               "multi_doi_v1": sum(len(dois_of(p["all_dois"])) > 1 for p in pool1),

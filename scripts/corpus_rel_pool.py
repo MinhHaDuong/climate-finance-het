@@ -42,12 +42,14 @@ outside the output directory), the report of what version 2 would change and
 the append-only migration table ``old work_key -> new work_key``
 (``_rel_pool_migration``). It writes in ``--output-dir`` only with
 ``--write-pool``: the version 2 pool, same columns as version 1, and its merge
-report. No label table is read or written. Ticket 2048 switches the pool.
+report; it refuses an output directory in ``data/rel_pool`` until ticket 2048
+switches the pool. No label table is read or written.
 
 Usage:
     python scripts/corpus_rel_pool.py [--config config/rel_pool.yaml] \\
-        [--catalogue PATH] [--intake-dir DIR] --output-dir data/rel_pool \\
-        [--dedup-version 2 --migration-dir DIR [--write-pool]]
+        [--catalogue PATH] [--intake-dir DIR] --output-dir data/rel_pool
+    python scripts/corpus_rel_pool.py --dedup-version 2 --output-dir SCRATCH_DIR \\
+        --migration-dir DIR [--write-pool]
 """
 
 import argparse
@@ -342,16 +344,26 @@ def _write_pool(path, pool, columns=POOL_COLUMNS):
             w.writerow(p)
 
 
-def _check_migration_dir(migration_dir, out_dir):
-    """The migration directory exists apart from the pool: never in or above it."""
+def _overlaps(a, b):
+    a, b = os.path.realpath(a), os.path.realpath(b)
+    return os.path.commonpath([a, b]) in (a, b)
+
+
+def _check_migration_dir(migration_dir, out_dir, write_pool=False):
+    """The migration directory exists apart from the pool: never in or above
+    it. With ``write_pool``, the output directory is never in or above the
+    production pool directory ``data/rel_pool``."""
+    rel_pool = os.path.join(ROOT, "data", "rel_pool")
+    if write_pool and _overlaps(out_dir, rel_pool):
+        raise RelPoolError(f"--write-pool: --output-dir {out_dir} overlaps the production pool "
+                           f"{rel_pool}; version 2 does not replace it before ticket 2048 switches")
     if not migration_dir:
         raise RelPoolError("dedup_version 2 writes a report and a migration table: "
                            "--migration-dir is required")
-    mig, out = os.path.realpath(migration_dir), os.path.realpath(out_dir)
-    for pool_dir in (out, os.path.join(ROOT, "data", "rel_pool")):
-        if os.path.commonpath([mig, pool_dir]) in (mig, pool_dir):
+    for pool_dir in (out_dir, rel_pool):
+        if _overlaps(migration_dir, pool_dir):
             raise RelPoolError(f"--migration-dir {migration_dir} overlaps the pool directory "
-                               f"{pool_dir}; version 2 writes nothing there")
+                               f"{pool_dir}; the migration files stay apart from any pool")
 
 
 def load_rows(cfg, catalogue_path, intake_dir):
@@ -401,7 +413,10 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
     except ValueError as exc:
         raise RelPoolError(str(exc)) from exc
     if version == 2:
-        _check_migration_dir(migration_dir, out_dir)
+        _check_migration_dir(migration_dir, out_dir, write_pool)
+        oa_dups = cfg.get("openalex_duplicates", False)
+        if not isinstance(oa_dups, bool):
+            raise RelPoolError(f"openalex_duplicates must be true or false, got {oa_dups!r}")
     cat_cfg = cfg["catalogue"]
     rows, cat_rows, md5, deliveries, superseded, excluded, lane_rank = load_rows(
         cfg, catalogue_path, intake_dir)
@@ -415,7 +430,6 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
     if version == 2:
         # The working-paper mark of step 5 reads the enriched types (ticket 2048).
         marked = mark_doc_types(rows, tables) if tables else 0
-        oa_dups = bool(cfg.get("openalex_duplicates", False))
         stats2, pairs = {}, []
         roots2 = cluster(rows, stats2, version=2, pairs=pairs, oa_dups=oa_dups)
         stats2["rows_typed_by_enrichment"] = marked
