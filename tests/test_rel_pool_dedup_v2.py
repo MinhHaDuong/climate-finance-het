@@ -134,7 +134,8 @@ def test_version_2_writes_report_and_migration_and_nothing_in_the_pool(tmp_path,
     report, out, mig, table = _v2(tmp_path, monkeypatch)
     assert not out.exists(), "version 2 writes nothing in the pool directory"
     assert {p.name for p in mig.iterdir()} == {
-        "work_key_migration.csv", "dedup_v2_works.csv", "dedup_v2_report.json", "dedup_v2_report.md"}
+        "work_key_migration.csv", "dedup_v2_works.csv", "dedup_v2_report.json", "dedup_v2_report.md",
+        "dedup_v2_version_pairs.csv"}
     pairs = _pairs(table)
     # The new title key joins the id-less lane row to the catalogue work.
     assert pairs[("title:emerging markets carbon pricing|2015", "openalex:W1")]["cause"] \

@@ -29,9 +29,10 @@ Outputs (required explicit ``--output-dir``):
 
 Dedup version (``dedup_version`` in the config, ``--dedup-version`` on the
 command line; ticket 2047). Version 1, the default, builds the pool above.
-Version 2 (new title key, RePEc handle key; ``_rel_pool_dedup``; its work
-keys add ``repec:<handle>`` after ``url:`` and before ``title:``) builds no
-pool and writes nothing in ``--output-dir``: it computes both versions on the
+Version 2 (new title key, RePEc handle key, a working paper and its article
+as one work; ``_rel_pool_dedup``; its work keys add ``repec:<handle>`` after
+``url:`` and before ``title:``) builds no pool and writes nothing in
+``--output-dir``: it computes both versions on the
 same rows and writes, in ``--migration-dir`` (required, outside the output
 directory), the report of what version 2 would change and the append-only
 migration table ``old work_key -> new work_key`` (``_rel_pool_migration``).
@@ -333,14 +334,11 @@ def _check_migration_dir(migration_dir, out_dir):
                                f"{pool_dir}; version 2 writes nothing there")
 
 
-def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_dir=None):
-    version = dedup_version if dedup_version is not None else cfg.get("dedup_version", 1)
-    try:
-        check_version(version)
-    except ValueError as exc:
-        raise RelPoolError(str(exc)) from exc
-    if version == 2:
-        _check_migration_dir(migration_dir, out_dir)
+def load_rows(cfg, catalogue_path, intake_dir):
+    """Every input row, checked: the pinned catalogue then the live deliveries.
+
+    Returns (rows, catalogue rows, catalogue md5, deliveries, superseded,
+    excluded counts per delivery, lane rank)."""
     cat_cfg = cfg["catalogue"]
     cat_rows, md5 = load_catalogue(catalogue_path, cat_cfg["md5"], cat_cfg.get("rows"))
     deliveries, superseded = find_deliveries(intake_dir)
@@ -358,14 +356,29 @@ def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_
     for did, path, _ in deliveries:
         drows, excluded[did] = load_delivery(did, path)
         rows += drows
+    return rows, cat_rows, md5, deliveries, superseded, excluded, lane_rank
+
+
+def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_dir=None):
+    version = dedup_version if dedup_version is not None else cfg.get("dedup_version", 1)
+    try:
+        check_version(version)
+    except ValueError as exc:
+        raise RelPoolError(str(exc)) from exc
+    if version == 2:
+        _check_migration_dir(migration_dir, out_dir)
+    cat_cfg = cfg["catalogue"]
+    rows, cat_rows, md5, deliveries, superseded, excluded, lane_rank = load_rows(
+        cfg, catalogue_path, intake_dir)
     stats = {}
     roots = cluster(rows, stats)
     pool = build_pool(rows, roots, lane_rank)
     if version == 2:
-        stats2 = {}
-        roots2 = cluster(rows, stats2, version=2)
+        stats2, pairs = {}, []
+        roots2 = cluster(rows, stats2, version=2, pairs=pairs)
         pool2 = build_pool(rows, roots2, lane_rank, version=2)
-        return write_migration(rows, (roots, pool, stats), (roots2, pool2, stats2), migration_dir)
+        return write_migration(rows, (roots, pool, stats), (roots2, pool2, stats2), migration_dir,
+                               pairs)
     meta = {"path": os.path.relpath(catalogue_path, ROOT) if os.path.isabs(catalogue_path)
             else catalogue_path, "md5": md5, "rows": len(cat_rows), "run": cat_cfg.get("run")}
     report = make_report(rows, roots, deliveries, excluded, meta, superseded, stats)
