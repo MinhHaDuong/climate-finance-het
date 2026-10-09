@@ -8,7 +8,7 @@ files: ``catalog_rel_toc.py`` does the I/O.
 import collections
 import re
 
-from _rel_title_key import title_key
+from _rel_title_key import title_words
 from utils import normalize_doi, reconstruct_abstract
 
 FROM_DATE = "1990-01-01"
@@ -33,11 +33,12 @@ def crossref_filter(journal):
 _TAG = re.compile(r"<[^>]+>")
 
 
-# The REL title key, shared with the pool dedup (ticket 2047). On the pool
-# titles of 2026-10-09 it groups exactly as the former local copy did except
-# for 19 of 376,430 distinct titles, all escaped tags or apostrophe variants
-# (``&lt;tocheading&gt;``, ``Editor′s``), now grouped with their plain form.
-normalize_title = title_key
+# The REL title words, shared with the pool dedup (ticket 2047). On the pool
+# titles of 2026-10-09 an earlier form grouped as the former local copy did
+# except for about 20 titles (19 of 376,430 distinct work titles; 23 of
+# 379,364 row titles by the PR 1735 review), escaped tags and apostrophe
+# variants; ``Editor?s Note`` no longer groups with ``Editor′s Note``.
+normalize_title = title_words
 
 
 def surname_key(name):

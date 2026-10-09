@@ -26,11 +26,22 @@ The cascade:
    components: ambiguous, the row stays out. A generic title
    (``is_generic_title``) never joins: the row stays its own work.
 
+Which rows are free. In version 1, steps 3 and 4 look at each row's own
+identifiers: a row with no DOI and no OpenAlex id counts as free even when step
+2b already joined it to a component that carries one, so steps 2b then 3 can
+still gather two DOIs or two OpenAlex ids in one work. This is live: version 1
+joins OpenAlex W2065222064 with W3121726814, and W2217893324 with W3140695789.
+Version 2 judges whole components in steps 3 and 4 (a component is free only
+when none of its rows carries a DOI or an OpenAlex id; no two components that
+both carry DOIs, or both OpenAlex ids, join, even through a chain), so in
+version 2 no step after step 2 gathers two DOIs or two OpenAlex ids.
+
 The normalized title of steps 3 and 4 is ``utils.normalize_title`` in version
 1 (lower-case, every character but letters, digits, ``_`` and spaces deleted)
 and ``_rel_title_key.title_key`` in version 2 (entities unescaped, tags
-stripped, NFKC, Latin accents folded, apostrophes deleted, hyphens and other
-punctuation to space; see that module).
+stripped, apostrophes deleted, NFKC, Latin accents folded, then letters, marks,
+digits and currency signs only, no spaces; see that module). The generic-title
+test of step 4 reads ``title_words``, the same title with its spaces.
 
 Working papers and articles. In both versions a working paper and its article
 that carry their own DOIs stay two works, unless a shared OpenAlex record joins
@@ -44,10 +55,12 @@ unions at once, so the result does not depend on row order.
 from collections import defaultdict
 
 from _rel_pool_keys import is_generic_title
-from _rel_title_key import title_key
+from _rel_title_key import title_key, title_words
 from utils import normalize_title
 
 DEDUP_VERSIONS = (1, 2)
+# The words form of a spaceless title key, for the generic-title test of step 4.
+WORDS = {title_key: title_words}
 
 
 def title_normalizer(version):
@@ -91,15 +104,8 @@ class UnionFind:
             self.parent[max(ri, rj)] = min(ri, rj)
 
 
-def _handle_unions(rows, uf, groups):
-    """Steps 2b and 2c: Handle (or RePEc handle) unions that join no two DOIs and no two OpenAlex ids.
-
-    A group whose components carry at most one DOI and one OpenAlex id joins
-    whole; otherwise only its identifier-less components join one another.
-    The accepted edges are then taken as clusters: a cluster that would still
-    gather two DOIs (or two OpenAlex ids) through a chain keeps only its
-    identifier-less edges.
-    """
+def _component_ids(rows, uf):
+    """Root -> (DOIs, OpenAlex ids) of every row of the component."""
     ids = defaultdict(lambda: (set(), set()))
     for i, r in enumerate(rows):
         dois, oas = ids[uf.find(i)]
@@ -107,18 +113,39 @@ def _handle_unions(rows, uf, groups):
             dois.add(r["doi"])
         if r["openalex_id"]:
             oas.add(r["openalex_id"])
+    return ids
 
-    def consistent(comps):
-        return (len(set().union(*(ids[c][0] for c in comps))) <= 1
-                and len(set().union(*(ids[c][1] for c in comps))) <= 1)
+
+def _one_doi_one_openalex(ids, comps):
+    """Steps 2b and 2c: together the components carry at most one DOI and one OpenAlex id."""
+    return (len(set().union(*(ids[c][0] for c in comps))) <= 1
+            and len(set().union(*(ids[c][1] for c in comps))) <= 1)
+
+
+def _no_two_kinds(ids, comps):
+    """Version 2, steps 3 and 4: no two components both carry DOIs, nor both OpenAlex ids."""
+    return (sum(bool(ids[c][0]) for c in comps) <= 1
+            and sum(bool(ids[c][1]) for c in comps) <= 1)
+
+
+def _guarded_edges(rows, uf, groups, rule):
+    """Unions within groups that never gather what ``rule`` forbids; (edges, refused groups).
+
+    A group whose components pass ``rule`` joins whole; otherwise only its
+    identifier-less components join one another. The accepted edges are then
+    taken as clusters: a cluster that fails ``rule`` through a chain keeps only
+    its identifier-less edges.
+    """
+    ids = _component_ids(rows, uf)
 
     def idless(c):
         return not (ids[c][0] or ids[c][1])
 
-    edges = []
+    edges, refused = [], 0
     for group in groups:
         comps = sorted({uf.find(i) for i in group})
-        if not consistent(comps):
+        if not rule(ids, comps):
+            refused += 1
             comps = [c for c in comps if idless(c)]
         edges += [(comps[0], c) for c in comps[1:]]
     clusters = UnionFind(len(rows))
@@ -127,9 +154,15 @@ def _handle_unions(rows, uf, groups):
     members = defaultdict(set)
     for a, b in edges:
         members[clusters.find(a)].update((a, b))
-    ok = {root for root, comps in members.items() if consistent(comps)}
+    ok = {root for root, comps in members.items() if rule(ids, comps)}
     return [(a, b) for a, b in edges
-            if clusters.find(a) in ok or (idless(a) and idless(b))]
+            if clusters.find(a) in ok or (idless(a) and idless(b))], refused
+
+
+def _handle_unions(rows, uf, groups):
+    """Steps 2b and 2c: Handle (or RePEc handle) unions that join no two DOIs
+    and no two OpenAlex ids, even through a chain (``_guarded_edges``)."""
+    return _guarded_edges(rows, uf, groups, _one_doi_one_openalex)[0]
 
 
 def _title_unions(rows, uf, group):
@@ -151,8 +184,13 @@ def _title_unions(rows, uf, group):
     return [(members[0], j) for j in members[1:]], ambiguous
 
 
-def _title_only_unions(rows, uf, norm=normalize_title):
-    """Step 4; returns (ambiguous rows, generic-title rows kept apart)."""
+def _title_only_unions(rows, uf, norm=normalize_title, guard=False):
+    """Step 4; returns (ambiguous rows, generic-title rows kept apart).
+
+    With ``guard`` (version 2) the joins go through ``_guarded_edges``: a
+    title-only row whose component already carries a DOI or an OpenAlex id
+    (through its RePEc handle) never brings a second one into the target."""
+    words = WORDS.get(norm, norm)
     by_title = defaultdict(set)
     title_only = defaultdict(list)
     for i, r in enumerate(rows):
@@ -163,18 +201,22 @@ def _title_only_unions(rows, uf, norm=normalize_title):
             title_only[t].append(i)
         else:
             by_title[t].add(uf.find(i))
-    pending, ambiguous, generic = [], 0, 0
+    pending, groups, ambiguous, generic = [], [], 0, 0
     for t, idx in title_only.items():
-        if is_generic_title(t):
+        if is_generic_title(words(rows[idx[0]]["title"]) if words is not norm else t):
             generic += len(idx)
             continue
         comps = by_title.get(t, set())
         if len(comps) == 1:
             target = next(iter(comps))
             pending += [(target, i) for i in idx]
+            groups.append([target] + idx)
         else:
             ambiguous += len(idx) if comps else 0
             pending += [(idx[0], i) for i in idx[1:]]
+            groups.append(idx)
+    if guard:
+        pending = _guarded_edges(rows, uf, groups, _no_two_kinds)[0]
     for i, j in pending:
         uf.union(i, j)
     return ambiguous, generic
@@ -203,14 +245,16 @@ def cluster(rows, stats=None, version=1):
 
     ``stats`` (a dict) receives the step counts: ``ambiguous_title_groups``,
     ``ambiguous_title_only``, ``generic_title_only``."""
-    return cluster_with(rows, stats, title_normalizer(version), repec=version >= 2)
+    v2 = version >= 2
+    return cluster_with(rows, stats, title_normalizer(version), repec=v2, guard=v2)
 
 
-def cluster_with(rows, stats, norm, repec):
-    """The cascade with a given title normalizer, with or without step 2c.
+def cluster_with(rows, stats, norm, repec, guard=False):
+    """The cascade with a given title normalizer, with or without step 2c and
+    the component guard of steps 3 and 4.
 
-    ``cluster`` names the two versions; the version 2 report also runs the
-    mixed variants to tell which change causes a merge."""
+    ``cluster`` names the two versions; the version 2 report also runs each
+    change alone on top of version 1 to tell which one causes a merge or a split."""
     uf = UnionFind(len(rows))
     by_doi, by_oa, by_handle, by_repec, by_title = _index(rows, norm, repec)
     for group in list(by_doi.values()) + list(by_oa.values()):
@@ -222,14 +266,18 @@ def cluster_with(rows, stats, norm, repec):
         for i, j in _handle_unions(rows, uf, by_repec.values()):
             uf.union(i, j)
     pending, ambiguous = [], 0
-    for group in by_title.values():
-        if len(group) > 1:
-            pairs, amb = _title_unions(rows, uf, group)
-            pending += pairs
-            ambiguous += amb
+    if guard:
+        pending, ambiguous = _guarded_edges(
+            rows, uf, [g for g in by_title.values() if len(g) > 1], _no_two_kinds)
+    else:
+        for group in by_title.values():
+            if len(group) > 1:
+                pairs, amb = _title_unions(rows, uf, group)
+                pending += pairs
+                ambiguous += amb
     for i, j in pending:
         uf.union(i, j)
-    ambiguous_title_only, generic = _title_only_unions(rows, uf, norm)
+    ambiguous_title_only, generic = _title_only_unions(rows, uf, norm, guard)
     if stats is not None:
         stats.update(ambiguous_title_groups=ambiguous, ambiguous_title_only=ambiguous_title_only,
                      generic_title_only=generic)

@@ -11,9 +11,12 @@ Files written in the migration directory:
   ``old_work_key -> new_work_key`` of a version 1 work whose key changes, or
   that version 2 splits. ``change`` is ``rekey``, ``merge`` (several old
   works become one), ``split`` (one old work becomes several) or
-  ``merge;split``; ``cause`` is ``title_key`` (the new title normalizer),
-  ``repec_handle`` (the RePEc handle key), ``title_key|repec_handle`` (either
-  alone does it) or ``combined`` (only the two together). ``inputs_md5``
+  ``merge;split``; ``cause`` names the version 2 changes that, each applied
+  alone on top of version 1, already make the change: ``title_key`` (the new
+  title normalizer), ``repec_handle`` (the RePEc handle key, step 2c),
+  ``component_guard`` (steps 3 and 4 judge whole components), several joined
+  by ``|`` when each alone does it, or ``combined`` when only changes together
+  do it. ``inputs_md5``
   fingerprints the rows (their record ids). A rerun appends the rows not
   already present and never rewrites one.
 - ``dedup_v2_works.csv``: the works behind every count, one row per
@@ -63,25 +66,33 @@ def period(year):
     return "before 1990" if y < 1990 else "after 2025"
 
 
-def _root_keys(roots, pool):
-    """Root index -> work_key; ``build_pool`` emits one work per root, roots sorted."""
-    return dict(zip(sorted(set(roots)), (p["work_key"] for p in pool)))
+def _root_keys(rows, roots, pool):
+    """Root index -> work_key. ``build_pool`` emits one work per root in sorted
+    root order, and a root is a member row: checked, so a mismatch fails loudly
+    instead of mislabelling the migration table."""
+    pairs = list(zip(sorted(set(roots)), pool))
+    # Substring, not split(";"): a record id may itself contain ";".
+    bad = [(rows[root]["record_id"], p["work_key"]) for root, p in pairs
+           if rows[root]["record_id"] not in p["member_record_ids"]]
+    if len(pairs) != len(pool) or bad:
+        raise ValueError(f"pool works are not in sorted root order: {bad[:3]}")
+    return {root: p["work_key"] for root, p in pairs}
 
 
-def _cause(joined_by_title, joined_by_repec):
-    if joined_by_title and joined_by_repec:
-        return "title_key|repec_handle"
-    if joined_by_title:
-        return "title_key"
-    if joined_by_repec:
-        return "repec_handle"
-    return "combined"
+# Each version 2 change alone on top of version 1: (name, normalizer, step 2c, guard).
+CHANGES = [("title_key", title_key, False, False), ("repec_handle", normalize_title, True, False),
+           ("component_guard", normalize_title, False, True)]
+
+
+def _cause(hits):
+    """The changes that alone do it, ``|``-joined; ``combined`` if none alone does."""
+    return "|".join(name for (name, *_), hit in zip(CHANGES, hits) if hit) or "combined"
 
 
 def compare(rows, v1, v2):
     """Per-work changes from version 1 to version 2 and the migration pairs."""
     (roots1, pool1, _), (roots2, pool2, _) = v1, v2
-    k1, k2 = _root_keys(roots1, pool1), _root_keys(roots2, pool2)
+    k1, k2 = _root_keys(rows, roots1, pool1), _root_keys(rows, roots2, pool2)
     old_rows, new_rows = defaultdict(list), defaultdict(list)
     to_new, to_old = defaultdict(set), defaultdict(set)
     for i in range(len(rows)):
@@ -91,15 +102,15 @@ def compare(rows, v1, v2):
         to_new[o].add(n)
         to_old[n].add(o)
     # The cascade with one change at a time tells which change does it.
-    by_title = cluster_with(rows, None, title_key, repec=False)
-    by_repec = cluster_with(rows, None, normalize_title, repec=True)
+    alone = [cluster_with(rows, None, norm, repec=repec, guard=guard)
+             for _, norm, repec, guard in CHANGES]
 
     def one(idx, roots):
         return len({roots[i] for i in idx}) == 1
 
-    merged = {n: _cause(one(idx, by_title), one(idx, by_repec))
+    merged = {n: _cause([one(idx, r) for r in alone])
               for n, idx in new_rows.items() if len(to_old[n]) > 1}
-    split = {o: _cause(not one(idx, by_title), not one(idx, by_repec))
+    split = {o: _cause([not one(idx, r) for r in alone])
              for o, idx in old_rows.items() if len(to_new[o]) > 1}
     pairs = []
     for o in sorted(to_new):

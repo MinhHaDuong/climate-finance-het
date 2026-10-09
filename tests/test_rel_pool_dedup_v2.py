@@ -160,6 +160,30 @@ def test_repec_handle_never_joins_two_dois(tmp_path, monkeypatch):
     assert len(set(rd.cluster(rows, version=1))) == 3
 
 
+def _r(doi="", oa="", repec="", title="", year="", title_only=False):
+    return {"origin": "l", "delivery": "l/1", "doi": doi, "openalex_id": oa, "handle": "",
+            "repec": repec, "title": title, "year": year, "version_hint": "",
+            "title_only": title_only}
+
+
+@pytest.mark.parametrize("kind", ["doi", "oa", "title_only"])
+def test_handle_then_title_never_joins_two_identifiers(kind):
+    """Review of PR 1735: A and B share a RePEc handle (2c), B and C a title (3 or 4).
+    Version 2 must not make one work of A and C, which carry two DOIs (or two
+    OpenAlex ids); version 1 has no step 2c and keeps them apart."""
+    first, second = ({"doi": "10.1111/d1"}, {"doi": "10.1111/d2"}) if kind != "oa" \
+        else ({"oa": "W1"}, {"oa": "W2"})
+    rows = [_r(repec="repec:abc:wp:1", title="Working paper title", year="2003", **first),
+            _r(repec="repec:abc:wp:1", title="Published article title on climate finance",
+               year="" if kind == "title_only" else "2005", title_only=kind == "title_only"),
+            _r(title="Published article title on climate finance", year="2005", **second)]
+    for version in (1, 2):
+        roots = rd.cluster(rows, version=version)
+        assert roots[0] != roots[2], f"version {version} joined two identifiers"
+    roots = rd.cluster(rows, version=2)
+    assert roots[0] == roots[1], "the handle itself still joins"
+
+
 def test_repec_key_reads_handles_only():
     import _rel_pool_keys as rk
     assert rk.repec_key(" RePEc:NBR:nberwo:35497 ") == "repec:nbr:nberwo:35497"
