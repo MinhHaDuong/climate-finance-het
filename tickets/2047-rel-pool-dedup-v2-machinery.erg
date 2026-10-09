@@ -11,7 +11,16 @@ Author: HDMX-coding-agent
 
 ## Context
 
-Child of tracker 2044 (read its Context for the audit and the numbers). The safe part: build the improved dedup keys as machinery, with the production pool output unchanged until 2048 flips the switch.
+Child of 0700. Replaces the former tracker 2044 (closed as superseded by this ticket and 2048). The safe part: build the improved dedup keys as machinery, with the production pool output unchanged until 2048 flips the switch.
+
+Read-only audit of 2026-10-09: the pool rebuilt from the pinned catalogue and the archived lane deliveries gives 389,291 works from 426,636 rows (matches the 2026-10-01 baseline). `_rel_pool_dedup.cluster` is order-independent (two shuffles, seeds 1 and 2, identical partitions). Defects found, all in the identity of a work:
+
+1. `utils.normalize_title` (pipeline_text.py) lower-cases and deletes `[^\w\s]` only. Observed: `Emerging markets&rsquo; carbon pricing` gives `emerging marketsrsquo carbon pricing`; `Post-Kyoto` gives `postkyoto` but `Post Kyoto` gives `post kyoto`; `<i>Climate</i> finance` gives `iclimatei finance`; the NFC and NFD forms of `légitimité` give different keys (`légitimité`, `legitimite`). It unescapes no HTML entity, strips no tag, folds no hyphen, does not normalize Unicode.
+2. Under a stricter title key used for the audit (unescape, strip tags, NFKD, drop combining marks, casefold, punctuation to space), 5,600 title and year groups hold 14,921 works. 1,034 of those groups involve a work with no DOI and no OpenAlex id, so no identifier conflicts: clean under-merge candidates. Another 4,566 groups have distinct DOIs (some are OpenAlex duplicate W ids, unverified). 1,357 adjacent-year pairs with an identifier-less side are not joined.
+3. 365 works carry 2 or more DOIs and 59 carry 2 or more OpenAlex ids, joined through a shared OpenAlex record (SSRN and Research Square preprints with the published article). The module docstring says a working paper and its article with their own DOIs stay two works; the author decided on 2026-10-09 that they are ONE work (the rule itself is 2048).
+4. The RePEc handle is not a dedup key: 62,726 works have only a title key. Ticket 2040 now delivers a verified `repec_handle` column for EDS records; the RePEc mirror lane (t1810) carries the handle in `record_id`.
+
+Labels are keyed by `work_key` and are append-only (ICF screen table, stage-1 and stage-2 labels). A change to the normalizer or the keys re-keys `title:` and `url:` works; 2048 handles the labels.
 
 Safe means: with the default (`dedup_version` 1) the pool is byte-identical to today's, no `work_key` changes, no label is touched, nothing waits on another branch. With `--dedup-version 2` the build writes a report and a migration table but replaces nothing.
 
@@ -24,7 +33,8 @@ Safe means: with the default (`dedup_version` 1) the pool is byte-identical to t
 - [ ] Counts of the report by lane, period (1990-2006, 2007-2014, 2015-2025) and language, with the first act shown separately.
 - [ ] Order independence kept for both versions: a shuffle test with a positive control (a deliberately order-dependent variant fails it).
 - [ ] The docstrings of `_rel_pool_dedup.py` and `_rel_pool_keys.py` are accurate for both versions: they state the normalizer and the handle key of version 2, say that version 1 is still the default, and record the author decision of 2026-10-09 that a working paper and its published article are ONE work with the pointer that rule lands in 2048. No sentence contradicts the code.
-- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+- [ ] Surface sweep, from the repo and not from the diff: list every title-normalizing call site that feeds a dedup or a join (the repo has at least four `normalize_title` definitions: `scripts/pipeline_text.py`, `scripts/_rel_toc_core.py`, `scripts/qa/qa_bib_doi.py`, `scripts/qa/qa_metadata.py`), say for each whether it shares the weaknesses of Context item 1, and decide reuse, replace or leave, with the reason. The new normalizer must not become a fifth copy: the pool path and the TOC lane use one definition, or the ticket log states why not.
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`). If the sweep makes the diff exceed 14, the sweep's replacements go in a follow-up ticket and this ticket keeps the machinery and the list.
 
 ## Notes
 
