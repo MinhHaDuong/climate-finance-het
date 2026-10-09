@@ -27,9 +27,20 @@ Outputs (required explicit ``--output-dir``):
 - ``merge_report.json`` / ``merge_report.md``: the per-delivery report
   (``_rel_pool_report``).
 
+Dedup version (``dedup_version`` in the config, ``--dedup-version`` on the
+command line; ticket 2047). Version 1, the default, builds the pool above.
+Version 2 (new title key, RePEc handle key; ``_rel_pool_dedup``; its work
+keys add ``repec:<handle>`` after ``url:`` and before ``title:``) builds no
+pool and writes nothing in ``--output-dir``: it computes both versions on the
+same rows and writes, in ``--migration-dir`` (required, outside the output
+directory), the report of what version 2 would change and the append-only
+migration table ``old work_key -> new work_key`` (``_rel_pool_migration``).
+No label table is read or written. Ticket 2048 switches the pool.
+
 Usage:
     python scripts/corpus_rel_pool.py [--config config/rel_pool.yaml] \\
-        [--catalogue PATH] [--intake-dir DIR] --output-dir data/rel_pool
+        [--catalogue PATH] [--intake-dir DIR] --output-dir data/rel_pool \\
+        [--dedup-version 2 --migration-dir DIR]
 """
 
 import argparse
@@ -43,8 +54,9 @@ from collections import Counter, defaultdict
 import qa_rel_intake as ric
 import yaml
 from _rel_pool_abstract import select_abstract
-from _rel_pool_dedup import cluster
-from _rel_pool_keys import norm_openalex, norm_year, url_ids
+from _rel_pool_dedup import check_version, cluster, title_normalizer
+from _rel_pool_keys import norm_openalex, norm_year, repec_key, url_ids
+from _rel_pool_migration import write_migration
 from _rel_pool_report import CATALOGUE, RelPoolError, make_report, report_markdown
 from utils import get_logger, normalize_doi, normalize_title
 
@@ -207,6 +219,9 @@ def load_delivery(did, path):
             "native_titleless_provenance": admission.get(r["record_id"], ""), "is_paratext": r.get("is_paratext") or "",
             "record_id": f"{did}:{r['record_id']}",
             **_ids(r, r.get("openalex_id")),
+            # Dedup version 2 only (step 2c): the verified handle, else a
+            # record_id that is a handle (the RePEc mirror lane).
+            "repec": repec_key(r.get("repec_handle")) or repec_key(r["record_id"]),
             **{c: r.get(c) or "" for c in ("title", "first_author", "all_authors",
                                             "journal", "abstract", "language", "doc_type",
                                             "affiliation_countries", "version_hint")},
@@ -222,6 +237,7 @@ def load_delivery(did, path):
                 "origin": did.split("/")[0], "delivery": did,
                 "record_id": f"{did}:excluded:{r['record_id']}",
                 "doi": "", "openalex_id": "", "handle": "", "year": "", "title": r["title"],
+                "repec": repec_key(r["record_id"]),
                 **{c: "" for c in ("first_author", "all_authors", "journal", "abstract",
                                    "language", "doc_type", "affiliation_countries",
                                    "version_hint", "affiliations", "cited_by_count",
@@ -235,18 +251,25 @@ def load_delivery(did, path):
 # ── Pool ─────────────────────────────────────────────────
 
 
-def _work_key(merged, handle=""):
+def _work_key(merged, handle="", repec="", norm=normalize_title):
     if merged["openalex_id"]:
         return f"openalex:{merged['openalex_id']}"
     if merged["doi"]:
         return f"doi:{merged['doi']}"
     if handle:
         return f"url:{handle}"
-    return f"title:{normalize_title(merged['title'])}|{merged['year']}"
+    if repec:
+        return repec
+    return f"title:{norm(merged['title'])}|{merged['year']}"
 
 
-def build_pool(rows, roots, lane_rank):
-    """One pool row per component; members ordered catalogue first, then lanes."""
+def build_pool(rows, roots, lane_rank, version=1):
+    """One pool row per component; members ordered catalogue first, then lanes.
+
+    Version 2 names a work with its RePEc handle after the Handle and before
+    the title, and its title key with ``_rel_title_key``; version 1 has
+    neither (the pool's work keys)."""
+    norm = title_normalizer(version)
     members = defaultdict(list)
     for i, root in enumerate(roots):
         members[root].append(i)
@@ -274,8 +297,9 @@ def build_pool(rows, roots, lane_rank):
             "n_sources": len(origins),
             "member_record_ids": ";".join(m["record_id"] for m in mem),
         })
+        repec = next((m["repec"] for m in mem if m.get("repec")), "") if version >= 2 else ""
         merged["work_key"] = _work_key(merged, next((m["handle"] for m in mem
-                                                     if m.get("handle")), ""))
+                                                     if m.get("handle")), ""), repec, norm)
         pool.append(merged)
     keys = Counter(p["work_key"] for p in pool)
     for p in pool:
@@ -297,7 +321,26 @@ def _write_pool(path, pool):
             w.writerow(p)
 
 
-def run(cfg, catalogue_path, intake_dir, out_dir):
+def _check_migration_dir(migration_dir, out_dir):
+    """The migration directory exists apart from the pool: never in or above it."""
+    if not migration_dir:
+        raise RelPoolError("dedup_version 2 writes a report and a migration table: "
+                           "--migration-dir is required")
+    mig, out = os.path.realpath(migration_dir), os.path.realpath(out_dir)
+    for pool_dir in (out, os.path.join(ROOT, "data", "rel_pool")):
+        if os.path.commonpath([mig, pool_dir]) in (mig, pool_dir):
+            raise RelPoolError(f"--migration-dir {migration_dir} overlaps the pool directory "
+                               f"{pool_dir}; version 2 writes nothing there")
+
+
+def run(cfg, catalogue_path, intake_dir, out_dir, dedup_version=None, migration_dir=None):
+    version = dedup_version if dedup_version is not None else cfg.get("dedup_version", 1)
+    try:
+        check_version(version)
+    except ValueError as exc:
+        raise RelPoolError(str(exc)) from exc
+    if version == 2:
+        _check_migration_dir(migration_dir, out_dir)
     cat_cfg = cfg["catalogue"]
     cat_rows, md5 = load_catalogue(catalogue_path, cat_cfg["md5"], cat_cfg.get("rows"))
     deliveries, superseded = find_deliveries(intake_dir)
@@ -318,6 +361,11 @@ def run(cfg, catalogue_path, intake_dir, out_dir):
     stats = {}
     roots = cluster(rows, stats)
     pool = build_pool(rows, roots, lane_rank)
+    if version == 2:
+        stats2 = {}
+        roots2 = cluster(rows, stats2, version=2)
+        pool2 = build_pool(rows, roots2, lane_rank, version=2)
+        return write_migration(rows, (roots, pool, stats), (roots2, pool2, stats2), migration_dir)
     meta = {"path": os.path.relpath(catalogue_path, ROOT) if os.path.isabs(catalogue_path)
             else catalogue_path, "md5": md5, "rows": len(cat_rows), "run": cat_cfg.get("run")}
     report = make_report(rows, roots, deliveries, excluded, meta, superseded, stats)
@@ -340,15 +388,23 @@ def main(argv=None):
     parser.add_argument("--intake-dir", default=None, help="default: config intake_dir")
     # Multi-output: pool.csv, merge_report.json and merge_report.md in one directory.
     parser.add_argument("--output-dir", required=True)
+    parser.add_argument("--dedup-version", type=int, default=None,
+                        help="default: config dedup_version, else 1")
+    parser.add_argument("--migration-dir", default=None,
+                        help="version 2: report and migration table directory, outside the pool")
     args = parser.parse_args(argv)
     with open(args.config, encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh)
     try:
         report = run(cfg, args.catalogue or cfg["catalogue"]["path"],
-                     args.intake_dir or cfg["intake_dir"], args.output_dir)
+                     args.intake_dir or cfg["intake_dir"], args.output_dir,
+                     args.dedup_version, args.migration_dir)
     except RelPoolError as exc:
         log.error("%s", exc)
         return 1
+    if report.get("dedup_version") == 2:
+        log.info("dedup v2 (nothing written to the pool): %s", report["totals"])
+        return 0
     p = report["pool"]
     log.info("pool: %d works (%d with a catalogue row, %d lane-only); per n_sources %s",
              p["works"], p["in_catalogue"], p["lane_only"], p["works_per_n_sources"])

@@ -16,6 +16,12 @@ catalogue:
 
 intake_dir: data/rel_intake
 
+# Dedup cascade version (scripts/_rel_pool_dedup.py; ticket 2047). 1 builds the
+# pool and its work keys as before. 2 (new title key, RePEc handle key) builds
+# no pool: with --migration-dir it writes a report and an append-only
+# old -> new work_key table outside data/rel_pool. Ticket 2048 switches to 2.
+dedup_version: 1
+
 # Metadata priority after the catalogue: a pooled work takes each field from
 # its first non-empty member, catalogue rows first, then lanes in this order.
 # A lane missing from this list is appended in name order, with a warning;
