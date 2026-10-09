@@ -1,22 +1,41 @@
-"""The REL pool deduplication cascade: one union-find over all rows (1731, 1655).
+"""The REL pool deduplication cascade: one union-find over all rows (1731, 1655, 2047).
+
+Two versions, chosen by ``dedup_version`` (``config/rel_pool.yaml``,
+``corpus_rel_pool --dedup-version``). **Version 1 is the default** and the
+only one that builds the pool; version 2 is computed beside it for a report
+and a migration table (ticket 2047) until ticket 2048 switches the pool.
+
+The cascade:
 
 1. same normalized DOI;
 2. same OpenAlex id (transitive: a record whose DOI matches one work and whose
    OpenAlex id matches another joins the two);
 2b. same Handle key (``_rel_pool_keys.handle_key``), joining only components
    whose DOIs and OpenAlex ids do not disagree, even through a chain;
-3. same normalized title and same year, decided on the components steps 1-2b
+2c. version 2 only: same RePEc handle (``_rel_pool_keys.repec_key``, exact
+   equality of the lowercased handle), with the chain protection of 2b;
+3. same normalized title and same year, decided on the components steps 1-2c
    left: the rows join when their identifier-bearing rows form at most one
    component, or components that cannot disagree (one with DOIs only, one
    with OpenAlex ids only). When two components both carry DOIs (or both
    OpenAlex ids) the title is **ambiguous**: nothing joins them, and rows with
    neither join only one another. A URL never vetoes a join (one work often
-   has several). A working paper and its article with their own DOIs stay two
-   works, and a title never joins across years;
+   has several), and a title never joins across years;
 4. rows a lane listed as ``no_dedup_key`` (title only) join the one component
    whose rows carry the same normalized title, any year. Several such
    components: ambiguous, the row stays out. A generic title
    (``is_generic_title``) never joins: the row stays its own work.
+
+The normalized title of steps 3 and 4 is ``utils.normalize_title`` in version
+1 (lower-case, every character but letters, digits, ``_`` and spaces deleted)
+and ``_rel_title_key.title_key`` in version 2 (entities unescaped, tags
+stripped, NFKC, Latin accents folded, apostrophes deleted, hyphens and other
+punctuation to space; see that module).
+
+Working papers and articles. In both versions a working paper and its article
+that carry their own DOIs stay two works, unless a shared OpenAlex record joins
+them (step 2). The author decided on 2026-10-09 that a working paper and its
+published article are ONE work; that rule is ticket 2048 and is not coded here.
 
 Every step decides on the components the previous steps left and applies its
 unions at once, so the result does not depend on row order.
@@ -25,12 +44,26 @@ unions at once, so the result does not depend on row order.
 from collections import defaultdict
 
 from _rel_pool_keys import is_generic_title
+from _rel_title_key import title_key
 from utils import normalize_title
 
+DEDUP_VERSIONS = (1, 2)
 
-def keys_of(row):
+
+def title_normalizer(version):
+    """The title normalizer of a dedup version."""
+    check_version(version)
+    return normalize_title if version == 1 else title_key
+
+
+def check_version(version):
+    if version not in DEDUP_VERSIONS:
+        raise ValueError(f"dedup_version {version!r} is not one of {DEDUP_VERSIONS}")
+
+
+def keys_of(row, norm=normalize_title):
     """(doi, openalex_id, title|year) keys of a normalized row; blanks omitted."""
-    title = normalize_title(row["title"])
+    title = norm(row["title"])
     return (row["doi"], row["openalex_id"],
             f"{title}|{row['year']}" if title and row["year"] else "")
 
@@ -59,7 +92,7 @@ class UnionFind:
 
 
 def _handle_unions(rows, uf, groups):
-    """Step 2b: Handle unions that join no two DOIs and no two OpenAlex ids.
+    """Steps 2b and 2c: Handle (or RePEc handle) unions that join no two DOIs and no two OpenAlex ids.
 
     A group whose components carry at most one DOI and one OpenAlex id joins
     whole; otherwise only its identifier-less components join one another.
@@ -118,12 +151,12 @@ def _title_unions(rows, uf, group):
     return [(members[0], j) for j in members[1:]], ambiguous
 
 
-def _title_only_unions(rows, uf):
+def _title_only_unions(rows, uf, norm=normalize_title):
     """Step 4; returns (ambiguous rows, generic-title rows kept apart)."""
     by_title = defaultdict(set)
     title_only = defaultdict(list)
     for i, r in enumerate(rows):
-        t = normalize_title(r["title"])
+        t = norm(r["title"])
         if not t:
             continue
         if r.get("title_only"):
@@ -147,27 +180,47 @@ def _title_only_unions(rows, uf):
     return ambiguous, generic
 
 
-def cluster(rows, stats=None):
-    """Component root index per row. ``stats`` (a dict) receives the step counts:
-    ``ambiguous_title_groups``, ``ambiguous_title_only``, ``generic_title_only``."""
-    uf = UnionFind(len(rows))
-    by_doi, by_oa, by_handle, by_title = (defaultdict(list), defaultdict(list),
-                                          defaultdict(list), defaultdict(list))
+def _index(rows, norm, repec):
+    """Row indices by DOI, OpenAlex id, Handle, RePEc handle (if used) and title|year."""
+    by_doi, by_oa, by_handle, by_repec, by_title = (defaultdict(list) for _ in range(5))
     for i, r in enumerate(rows):
-        doi, oa, ty = keys_of(r)
+        doi, oa, ty = keys_of(r, norm)
         if doi:
             by_doi[doi].append(i)
         if oa:
             by_oa[oa].append(i)
         if r.get("handle"):
             by_handle[r["handle"]].append(i)
+        if repec and r.get("repec"):
+            by_repec[r["repec"]].append(i)
         if ty:
             by_title[ty].append(i)
+    return by_doi, by_oa, by_handle, by_repec, by_title
+
+
+def cluster(rows, stats=None, version=1):
+    """Component root index per row under dedup ``version`` (default 1).
+
+    ``stats`` (a dict) receives the step counts: ``ambiguous_title_groups``,
+    ``ambiguous_title_only``, ``generic_title_only``."""
+    return cluster_with(rows, stats, title_normalizer(version), repec=version >= 2)
+
+
+def cluster_with(rows, stats, norm, repec):
+    """The cascade with a given title normalizer, with or without step 2c.
+
+    ``cluster`` names the two versions; the version 2 report also runs the
+    mixed variants to tell which change causes a merge."""
+    uf = UnionFind(len(rows))
+    by_doi, by_oa, by_handle, by_repec, by_title = _index(rows, norm, repec)
     for group in list(by_doi.values()) + list(by_oa.values()):
         for j in group[1:]:
             uf.union(group[0], j)
     for i, j in _handle_unions(rows, uf, by_handle.values()):
         uf.union(i, j)
+    if repec:
+        for i, j in _handle_unions(rows, uf, by_repec.values()):
+            uf.union(i, j)
     pending, ambiguous = [], 0
     for group in by_title.values():
         if len(group) > 1:
@@ -176,7 +229,7 @@ def cluster(rows, stats=None):
             ambiguous += amb
     for i, j in pending:
         uf.union(i, j)
-    ambiguous_title_only, generic = _title_only_unions(rows, uf)
+    ambiguous_title_only, generic = _title_only_unions(rows, uf, norm)
     if stats is not None:
         stats.update(ambiguous_title_groups=ambiguous, ambiguous_title_only=ambiguous_title_only,
                      generic_title_only=generic)
