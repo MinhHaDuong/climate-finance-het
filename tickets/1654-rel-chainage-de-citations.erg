@@ -115,3 +115,27 @@ backward identities before reuse, preserving401 genuinely absent responses
 as unresolved rather than zero references. Atomic metadata admission protects
 the shared24 ceiling inside30;25 focused regressions pass. Two main Batch
 jobs continue; no round2 activation or scientific closure.
+
+
+2026-10-09 post-intake/local screening checkpoint: reviewed dependency2027
+(PR1717) merged. Normal merged-code REL pool rebuild exactly reproduces the
+approved post-admission snapshot:597494 works,177 additional intake identities;
+this is not scientific yield or seed entitlement. Every prior canonical ledger
+prefix remains unchanged. The source-absent67 receive explicitly unassessed
+policy dispositions with native answers and actual numerical facets blank;
+normal import/repeat is byte-idempotent and preserves the historical80 policies.
+The recovered18 currently titled historical records require ordinary Stage1,
+so the frozen local cohort is127=109 newly selected native titleless records
+plus18 metadata reassessments; one valid historical Stage1 aux remains pending
+Stage2 separately. Existing Qwen Stage1, with unchanged prompt/clipping, stopped
+on its fifth reply after three unsupported relevance labels. Four complete
+chunks supply80 exact native decisions (22aux,57out,1unsure), imported through
+the normal stopped-run guard with idempotence0/80 and prior-prefix invariance.
+Twenty failed-chunk records and27 unattempted records remain pending; no label
+coercion, salvage or automatic retry. Full public source proofs, native replies,
+failed launcher, source hashes and independent checks are privately archived.
+Native177 venue metadata updates the existing cache without network calls or
+changes to prior cache fields. Two previously accepted Luna jobs still run;
+round1 closure, additional screened dispositions and citation rounds remain
+unfinished. The historical59 waiver is dated evidence, not a current blanket
+waiver for records whose metadata have changed.
