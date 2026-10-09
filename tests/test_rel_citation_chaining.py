@@ -226,3 +226,53 @@ def test_atomic_admission_ceiling_preserves_completion_headroom(tmp_path):
         first.reserve('exceeds-global', 2, {}, admission_ceiling=100)
     with pytest.raises(ChainError, match='admission ceiling'):
         first.reserve('invalid-ceiling', 1, {}, admission_ceiling=float('nan'))
+
+
+def test_direction_delta_preserves_interrupted_forward_and_plans_missing_forward(tmp_path):
+    import _rel_chaining as chain
+    store = Store(tmp_path / "round2")
+    for identity in ("W1", "W2"):
+        store.db.execute("INSERT INTO seeds VALUES(?,?,?,?,?)", (identity, identity, "{}", "new-frontier", "identified"))
+    store.add_query("old-backward", "backward", "openalex_id:W1|W2", ["W1", "W2"])
+    store.add_query("old-forward", "forward", "cites:W1", ["W1"])
+    store.db.execute("UPDATE queries SET completed=1 WHERE k='old-backward'")
+    store.db.execute("UPDATE queries SET cursor='next-page',pages=1 WHERE k='old-forward'")
+    store.db.execute("INSERT INTO edges VALUES('W1','W9','forward','old-forward')")
+    store.db.commit()
+    chain.plan_citation_queries(store)
+    forward = list(store.db.execute("SELECT * FROM queries WHERE kind='forward' ORDER BY k"))
+    assert len(forward) == 2
+    assert next(r for r in forward if r['k'] == 'old-forward')['cursor'] == 'next-page'
+    assert next(r for r in forward if r['k'] != 'old-forward')['filter'] == 'cites:W2'
+    assert store.db.execute("SELECT COUNT(*) FROM queries WHERE kind='backward'").fetchone()[0] == 1
+    assert store.db.execute("SELECT COUNT(*) FROM edges").fetchone()[0] == 1
+    chain.plan_citation_queries(store)
+    assert store.db.execute("SELECT COUNT(*) FROM queries").fetchone()[0] == 3
+
+
+def test_explicit_frontier_does_not_expand_historical_icf_and_binds_closure(tmp_path):
+    import csv
+    import json
+
+    import _rel_chaining as chain
+    pool, view = tmp_path / 'pool.csv', tmp_path / 'view.csv'
+    with pool.open('w') as f:
+        w = csv.DictWriter(f, fieldnames=['work_key', 'openalex_id', 'title']);w.writeheader()
+        w.writerows([{'work_key': 'new', 'openalex_id': 'W1', 'title': 'New uncertain work'},
+                     {'work_key': 'historical', 'openalex_id': 'W2', 'title': 'Historical ICF'}])
+    with view.open('w') as f:
+        w = csv.DictWriter(f, fieldnames=['work_key', 'status']);w.writeheader()
+        w.writerows([{'work_key': 'new', 'status': 'unsure_unresolved'}, {'work_key': 'historical', 'status': 'icf'}])
+    closure = tmp_path / 'closure.json'
+    closure.write_text(json.dumps({'round_dispositions_reconciled': True, 'venue_dimensions_reconciled': True, 'yield_reconciled': True}))
+    frontier = tmp_path / 'frontier.json'
+    frontier.write_text(json.dumps({'version': '1654-final-frontier-v1', 'pool_sha256': chain.sha(pool),
+        'view_sha256': chain.sha(view), 'closure_artifact': str(closure), 'closure_sha256': chain.sha(closure),
+        'records': [{'work_key': 'new', 'selection_reason': 'genuinely_new_uncertain', 'stratum': 'new_round1'}]}))
+    store = Store(tmp_path / 'round2')
+    chain.init_seeds(store, pool, view, [], 30, frontier_path=frontier)
+    assert [r[0] for r in store.db.execute('SELECT k FROM seeds')] == ['new']
+    assert store.db.execute('SELECT reason FROM seeds').fetchone()[0] == 'frontier:new_round1:genuinely_new_uncertain'
+    closure.write_text('{}')
+    with pytest.raises(ChainError, match='closure'):
+        chain.init_seeds(store, pool, view, [], 30, frontier_path=frontier)

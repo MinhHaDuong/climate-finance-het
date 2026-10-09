@@ -32,6 +32,36 @@ log = get_logger("rel_citation_chaining")
 OA = "https://api.openalex.org/works"
 
 
+def _stage1_message_answers(message, keys, ident):
+    """Validate record ordinals independently without changing native messages."""
+    text = "\n".join(c.get("text", "") for c in message.get("content", []) if c.get("type") == "text")
+    try:
+        lo, hi = text.index("["), text.rindex("]")
+        answers = json.loads(text[lo:hi + 1])
+        if not isinstance(answers, list):
+            raise ValueError("not a list")
+    except (ValueError, TypeError):
+        return [], keys, "invalid JSON answer list"
+    numbers = Counter(a.get("n") for a in answers if isinstance(a, dict) and type(a.get("n")) is int)
+    valid, labels = set(), []
+    for answer in answers:
+        if not isinstance(answer, dict):
+            continue
+        n = answer.get("n")
+        if type(n) is not int or not 1 <= n <= len(keys) or numbers[n] != 1:
+            continue
+        label, doc = answer.get("label"), answer.get("doc")
+        if not isinstance(label, str) or not isinstance(doc, str):
+            continue
+        if label not in {"icf", "aux", "out", "unsure"} or doc not in {"research", "institutional", "other"}:
+            continue
+        key = keys[n - 1]
+        labels.append({"work_key": key, "label": label, "doc": doc,
+                       "why": str(answer.get("why", ""))[:160], "model": message["model"], "custom_id": ident})
+        valid.add(key)
+    return labels, [key for key in keys if key not in valid], "missing/invalid/duplicate record answers"
+
+
 def parse_stage1_batch_results(native_results, mapping, input_price=.05 / 1e6, output_price=.25 / 1e6):
     """Associate unordered native Batch results exactly; quarantine ambiguity.
 
@@ -70,35 +100,10 @@ def parse_stage1_batch_results(native_results, mapping, input_price=.05 / 1e6, o
         if message.get("stop_reason") != "end_turn":
             faults.append({"custom_id": ident, "fault": "truncated reply", "pending_keys": expected[ident]})
             continue
-        text = "\n".join(c.get("text", "") for c in message.get("content", []) if c.get("type") == "text")
-        try:
-            lo, hi = text.index("["), text.rindex("]")
-            answers = json.loads(text[lo:hi + 1])
-            if not isinstance(answers, list):
-                raise ValueError("not a list")
-        except (ValueError, TypeError):
-            faults.append({"custom_id": ident, "fault": "invalid JSON answer list", "pending_keys": expected[ident]})
-            continue
-        numbers = Counter(a.get("n") for a in answers if isinstance(a, dict) and type(a.get("n")) is int)
-        valid = set()
-        for answer in answers:
-            if not isinstance(answer, dict):
-                continue
-            n = answer.get("n")
-            if type(n) is not int or not 1 <= n <= len(expected[ident]) or numbers[n] != 1:
-                continue
-            label, doc = answer.get("label"), answer.get("doc")
-            if not isinstance(label, str) or not isinstance(doc, str):
-                continue
-            if label not in {"icf", "aux", "out", "unsure"} or doc not in {"research", "institutional", "other"}:
-                continue
-            key = expected[ident][n - 1]
-            labels.append({"work_key": key, "label": label, "doc": doc,
-                           "why": str(answer.get("why", ""))[:160], "model": message["model"], "custom_id": ident})
-            valid.add(key)
-        pending = [key for key in expected[ident] if key not in valid]
+        valid_labels, pending, fault = _stage1_message_answers(message, expected[ident], ident)
+        labels.extend(valid_labels)
         if pending:
-            faults.append({"custom_id": ident, "fault": "missing/invalid/duplicate record answers", "pending_keys": pending})
+            faults.append({"custom_id": ident, "fault": fault, "pending_keys": pending})
     missing = set(expected) - seen
     if missing:
         raise ChainError(f"incomplete native Batch result coverage: {len(missing)} requests missing")
@@ -331,13 +336,36 @@ class Store:
             raise ChainError("actual charge exceeded reserved bound; pause and reconcile")
 
 
-def init_seeds(store, pool, view, sentinel_paths, budget):
-    store.bind("basis", {"pool": sha(pool), "view": sha(view),
-                         "sentinels": {str(p): sha(p) for p in sentinel_paths}})
-    store.bind("budget_usd", budget)
+def init_seeds(store, pool, view, sentinel_paths, budget, *, frontier_path=None):
     desired = {r["work_key"]: "baseline:" + r["status"] for r in rows(view)
                if r["status"] in {"icf", "unsure_unresolved"}}
+    frontier_basis = None
+    if frontier_path is not None:
+        frontier = json.loads(Path(frontier_path).read_text())
+        closure_path = Path(frontier["closure_artifact"])
+        if sha(closure_path) != frontier["closure_sha256"]:
+            raise ChainError("frontier closure artifact changed")
+        closure = json.loads(closure_path.read_text())
+        if not all(closure.get(name) is True for name in
+                   ("round_dispositions_reconciled", "venue_dimensions_reconciled", "yield_reconciled")):
+            raise ChainError("frontier closure is not fully reconciled")
+        if frontier["pool_sha256"] != sha(pool) or frontier["view_sha256"] != sha(view):
+            raise ChainError("frontier final pool/view basis changed")
+        selected = {}
+        for record in frontier["records"]:
+            key = record["work_key"]
+            if key in selected or key not in desired or not record["selection_reason"] or not record["stratum"]:
+                raise ChainError("invalid or unretained frontier identity")
+            selected[key] = "frontier:" + record["stratum"] + ":" + record["selection_reason"]
+        desired = selected
+        frontier_basis = {"frontier_sha256": sha(frontier_path), "closure_sha256": frontier["closure_sha256"]}
+    store.bind("basis", {"pool": sha(pool), "view": sha(view),
+                         "sentinels": {str(p): sha(p) for p in sentinel_paths},
+                         **({"frontier": frontier_basis} if frontier_basis else {})})
+    store.bind("budget_usd", budget)
     seeds = {r["work_key"]: (r, desired[r["work_key"]]) for r in rows(pool) if r["work_key"] in desired}
+    if frontier_path is not None and set(seeds) != set(desired):
+        raise ChainError("frontier/view identity absent from exact pool")
     for path in sentinel_paths:
         for r in rows(path):
             key = "sentinel:" + Path(path).stem + ":" + r["sentinel"]
@@ -660,16 +688,22 @@ def batches(values, size=100):
         yield start // size, values[start:start + size]
 
 
+def plan_citation_queries(store):
+    """Plan missing directions independently; interrupted queries retain their cursor."""
+    identities = [r[0] for r in store.db.execute("SELECT DISTINCT oa FROM seeds WHERE oa<>'' ORDER BY oa")]
+    for direction, field in (("backward", "openalex_id"), ("forward", "cites")):
+        planned = list(store.db.execute("SELECT seeds FROM queries WHERE kind=? ORDER BY k", (direction,)))
+        planned_ids = {seed for r in planned for seed in json.loads(r[0])}
+        missing = [identity for identity in identities if identity not in planned_ids]
+        for i, batch in batches(missing):
+            suffix = hashlib.sha256("|".join(batch).encode()).hexdigest()[:20] if planned else f"{i:05d}"
+            store.add_query(direction + ":" + suffix, direction, field + ":" + "|".join(batch), batch)
+
+
 def harvest(store):
     index_raw_pages(store)
     resolve_seeds(store)
-    planned = list(store.db.execute("SELECT seeds FROM queries WHERE kind='backward' ORDER BY k"))
-    planned_ids = {seed for r in planned for seed in json.loads(r[0])}
-    seeds = [r[0] for r in store.db.execute("SELECT DISTINCT oa FROM seeds WHERE oa<>'' ORDER BY oa") if r[0] not in planned_ids]
-    for i, batch in batches(seeds):
-        suffix = hashlib.sha256("|".join(batch).encode()).hexdigest()[:20] if planned else f"{i:05d}"
-        store.add_query("backward:" + suffix, "backward", "openalex_id:" + "|".join(batch), batch)
-        store.add_query("forward:" + suffix, "forward", "cites:" + "|".join(batch), batch)
+    plan_citation_queries(store)
     traverse(store, ["backward"])
     resolve_seed_aliases(store)
     refs = [r[0] for r in store.db.execute("SELECT DISTINCT candidate FROM edges WHERE direction='backward' ORDER BY candidate")]

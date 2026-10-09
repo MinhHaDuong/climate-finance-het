@@ -84,3 +84,22 @@ three-facet method. Final included poor-input works remain bibliometric-only.
 Further submissions wait for the actual first-wave release review. Remaining
 production screening, citation rounds, yield reconciliation and final gate are
 incomplete; this checkpoint does not close 1654 or begin the 1656 freeze.
+
+### Completed incremental catch-up and remaining production
+
+The three genuinely unassessed changed-family groups now have native-backed
+facet decisions; the other ten groups retain their historical assessments.
+All 153 proven-public baseline records missing dimensions have received
+normal dimension-only catch-up rows. Their ICF judgments and the entire facet
+ledger remain unchanged. Repeated imports append no rows, and refreshed views
+select the new dimensions for all 153 records. Both completion routes retain
+full native evidence and exact before/after prefix checks in the run archive.
+
+Two further main production waves are active under the bounded rolling-job
+policy. Citation-round activation still waits for all first-round decisions,
+venue and dimension reconciliation, and duplicate-aware yield accounting.
+The collector now admits an explicit frontier bound to complete reconciliation
+artifacts and final pool/view hashes, and plans backward and forward directions
+separately without restarting interrupted cursors. Offline regression checks
+pass; completed-direction reuse across archived rounds and the final frontier
+still require their evidence review before retrieval.

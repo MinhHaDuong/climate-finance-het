@@ -26,6 +26,7 @@ def main():
     parser.add_argument("--pool")
     parser.add_argument("--view")
     parser.add_argument("--sentinel", action="append", default=[])
+    parser.add_argument("--frontier", help="exact retained frontier with frozen full-round closure and pool/view hashes")
     parser.add_argument("--budget-usd", type=float, default=20)
     parser.add_argument("--delivery")
     parser.add_argument("--budget-ledger", help="shared cumulative ledger across every round and screening route")
@@ -37,7 +38,7 @@ def main():
     store = Store(args.output_dir, args.budget_ledger)
     try:
         if args.action == "seeds":
-            init_seeds(store, args.pool, args.view, args.sentinel, args.budget_usd)
+            init_seeds(store, args.pool, args.view, args.sentinel, args.budget_usd, frontier_path=args.frontier)
         elif args.action == "harvest":
             harvest(store)
         elif args.action == "export":
