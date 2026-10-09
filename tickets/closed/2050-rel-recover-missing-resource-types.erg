@@ -2,6 +2,7 @@
 Title: REL recover the missing resource type of the catalogue-lane works
 Created: 2026-10-09
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1748
 
 --- log ---
 2026-10-09T20:00Z HDMX-coding-agent created
@@ -11,6 +12,8 @@ Author: HDMX-coding-agent
 2026-10-09T10:14Z HDMX-coding-agent note stage B fetch 2026-10-09 (OpenAlex only, Crossref skipped): 31,556 ids requested (30,494 by OpenAlex id, 1,062 by DOI), 30,726 found (all with a type), 830 absent (776 W ids not returned, 54 DOIs); 317 requests, measured spend 0.0317 USD (sum of x-ratelimit-cost-usd, 0.0001 per call), ~2.5 min. Blank set 32,744: recovered 30,726 (93.8%), residue 2,018 = 1,188 no identifier + 830 id not returned. Archive /home/haduong/data/projets/climate-finance-het/rel_doc_types/2026-10-09/ (MANIFEST.sha256; doc_types.csv is the enrichment table, to be joined by 2052). Not delivered into the pool; ticket stays open until the join delivers the types
 2026-10-09T18:06Z HDMX-coding-agent delivered through the enrichment join (PR 1744 and this one): doc_types.csv sha256 396ed355628b9bc9ca3de3b705698877586230dd084d2d1fe354eca3b7e69d24, tracked in DVC as data/rel_enrich (md5 fcdc082c3c422a1d1a0e36369f228695.dir); 30,726 rows, all matched one work, 30,726 doc_type values filled (blank before), doc_type_source=rel_doc_types; pool 389,291 works, work_key unchanged; not closed
 2026-10-09T18:07Z HDMX-coding-agent note closing: the types are delivered through the enrichment join (PRs 1741, 1744, 1747): 30,726 of the 32,744 blank doc_type values (93.8%) recovered from OpenAlex for USD 0.0317, pinned by sha256 396ed355... as the rel_doc_types table (data/rel_enrich.dvc); doc_type coverage 91.6% to 99.5%; first act 97.3% to 99.7%. Crossref fallback skipped (0 of 17 on the probe). Residue 2,018 works (1,188 with no identifier, 830 with an id OpenAlex did not return, including all 227 unfccc and 35 oecd works): the profile of ticket 2043 either excludes them or accepts an explicit unknown value, decided when it is switched on
+2026-10-09T18:07Z HDMX-coding-agent closed — autoclosed — PR #1748
+
 --- body ---
 
 ## Context
