@@ -1,0 +1,34 @@
+%erg 0.1
+Title: Migrate REL selection consumer CLI I/O
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T06:22Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Follow-up from [[2028]] required by .claude/rules/script-io.md Migration.
+The occurrence selector touches existing legacy CLI readers; rewriting their
+multi-command parsers would expand the scientific correction's scope.
+
+## Scope
+
+Migrate the shared-I/O contracts of corpus_rel_view.py, corpus_icf_stage2.py,
+corpus_rel_discipline_catchup.py, corpus_icf_import.py and
+corpus_rel_repec_prefilter.py without changing their scientific behavior.
+
+## Test
+
+Existing command/parser fixtures plus output argument contract checks.
+
+## Exit criteria
+
+- These five legacy CLIs use parse_io_args/validate_io as applicable and declare
+  required explicit output or documented multi-output directory arguments.
+- Preserve existing parser commands, file outputs, model/budget behavior and
+  ordinary scientific selection; no data regeneration or paid calls.
+- Meaningful parser tests and the required project gate pass; no new bypasses
+  in the I/O ratchet.

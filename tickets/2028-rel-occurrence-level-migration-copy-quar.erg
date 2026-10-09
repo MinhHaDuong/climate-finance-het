@@ -1,0 +1,71 @@
+%erg 0.1
+Title: REL occurrence-level migration-copy quarantine
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T06:20Z HDMX-coding-agent created
+
+--- body ---
+
+## Context
+
+Necessary child of [[1654]], following the conditional Astra migration-copy
+framework. A proven historical append occurrence may have gained unauthorized
+selection precedence; its substantive native judgment is not thereby wrong.
+Actual occurrence attribution and any active registry require a separate root
+release. This child never changes raw scientific ledgers or activates a remedy.
+
+## Scope
+
+Fourteen paths maximum: this ticket; scripts/_rel_selection.py;
+scripts/_icf_chunks.py; scripts/corpus_icf_stage1_input.py;
+scripts/corpus_rel_view.py; scripts/corpus_rel_policy.py;
+scripts/corpus_icf_stage2.py; scripts/corpus_rel_discipline_catchup.py;
+scripts/corpus_icf_import.py; scripts/corpus_rel_repec_prefilter.py;
+config/rel_screen.yaml; tests/test_rel_selection.py;
+docs/rel-intake-contract.md; linked script-I/O follow-up [[2029]].
+
+## Relevant files
+
+Raw append contracts: scripts/_icf_screen.py, scripts/_rel_facet_io.py.
+Native/effective scientific selection: scripts/_rel_view.py,
+scripts/_rel_reasons.py, scripts/_rel_policy.py. These in-memory and raw
+contracts must retain their established decision semantics.
+
+## Test
+
+Synthetic original A and original B plus a proven copied A-to-B occurrence:
+exclude only that occurrence before the unchanged matcher/selection rules.
+Prove duplicate contents at other ordinals remain eligible, raw ledgers and
+append idempotence are unchanged, and source/prefix/multiplicity/approval
+ambiguity refuses selection. No real exclusion roster or model request.
+
+## Exit criteria
+
+- Explicit shared effective-read API validates a versioned operator-approved
+  registry with method/registry/evidence/disposition bindings, source baseline,
+  immutable target CSV and append-manifest prefixes, source/target ordinals,
+  exact raw-row and declared-transform hashes, multiplicities and independent
+  migration provenance. Unresolved, malformed, stale or ambiguous evidence
+  stops before selected outputs. Only declared key plus normal derived-ID
+  substitution is permitted; all assessment fields remain identical.
+- Every actual ICF, dimension, facet and policy scientific file consumer uses
+  this eligibility boundary. Existing raw reads, manifest verification, raw
+  append uniqueness and idempotence remain raw. Originals, genuine one-to-one
+  copies, aliases, chronology, legacy membership and quality guards survive.
+- Normal derived selection/view/request evidence binds the selector method and
+  registry; stale binding checks fail closed. Raw/eligible/excluded occurrences
+  reconcile separately from matched/unmatched rows, preserving multiplicity.
+- Native-free meaningful regression tests cover A/B selection changed and
+  unchanged cases, identical-content distinct occurrences, authorized copy
+  preservation, original field bytes, alias/joint selection, registry ordering,
+  append-prefix continuation, wrong hashes/ordinals/source/provenance and all
+  routed consumers. No blanket many-to-one or label-based dropping.
+- Config defaults keep quarantine disabled. Actual scientific/native tables,
+  historic migration artifacts, jobs, model/profile and authority remain
+  untouched; a real registry inside the existing rel_screen DVC package needs
+  root's separate attribution release and downstream delta audit.
+- Full make check passes once in the final clean, populated padme worktree;
+  scoped ticket checks pass, branch pushed and PR reviewable. No merge or
+  actual-data remedy is authorized by this ticket.
