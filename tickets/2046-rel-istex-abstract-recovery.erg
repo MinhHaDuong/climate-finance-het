@@ -1,0 +1,42 @@
+%erg 0.1
+Title: REL recover missing abstracts from ISTEX
+Created: 2026-10-09
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-09T17:00Z HDMX-coding-agent created
+2026-10-09T17:00Z HDMX-coding-agent note author decision 2026-10-09: the ISTEX abstract recovery is worth doing; file it
+
+--- body ---
+
+## Context
+
+Child of 0700. The rebuilt pool (389,291 works) has 157,312 works without an abstract (40.4%), 148,437 of them with a DOI. Pre-2007 coverage is 40.0%, 2007-2014 51.3%, 2015-2025 66.2% (ticket 2045 context). Dropping these works would bias against the first act and against the large Elsevier and Springer journals, so recovery comes first.
+
+Probes of 2026-10-09 (free, no LLM call, abstract-less works with a DOI from the rebuilt pool):
+- Crossref: 2 of 400 (0.5%); 0 of 200 in the ten largest sommaires journals. Not worth a sweep.
+- Europe PMC: 7 of 400 (1.8%).
+- Semantic Scholar without a key: 22 of 100 on big-journal works; three of four batches were rate-limited (429) and the registered key returned 403 on 2026-10-06. Not measured on a random sample.
+- ISTEX (open API, `api.istex.fr/document/`, DOI query, 20 DOIs per request): 229 of 400 (57%) on the first sample (115/200 random, 114/200 in the big journals), and 341 of 600 (56.8%) on an independent random sample, by period 1990-2006 66% (97/148), 2007-2014 73% (105/144), 2015-2025 51% (139/273), 2026+ 0% (0/34). Abstract length median 1,028 characters (p10 551, p90 1,682), none under 100, none cut at 1,500; all hits carry an English language tag.
+
+Expected yield (derived): 148,437 x about 57% = about 84,000 to 88,000 abstracts (range about 78,000 to 90,000); coverage of the pool would rise from 59.6% to about 81% (derived). Cost USD 0 and no LLM call; about 7,400 requests, about 1 to 2 hours (derived; the rate limit is not yet measured). The existing step 3 of `scripts/harvest/enrich_abstracts.py` reads only locally downloaded ISTEX TEI files; this is a DOI lookup against the whole ISTEX archive, a different route.
+
+Not verified: ISTEX terms of reuse for the abstracts (the pool is internal, but a deposited dataset may not be allowed to redistribute them); the language of the recovered abstracts against the work's language; whether the API answers the same way off the padme network.
+
+Downstream, not in scope here: the author's decision of 2026-10-07 has Fable relabel the unsure works that have an abstract; recovered abstracts widen that set (5,141 unsure and 2,281 ICF works lacked one). A relabel pass is priced and decided separately.
+
+## Exit criteria
+
+- [ ] ISTEX terms of use for metadata and abstracts are read and summarised in the ticket log (what may be stored, used in analysis, and redistributed in a deposited dataset); the rate limit is measured from a short probe; credentials are used only if the API requires them and are never printed.
+- [ ] A fetch CLI (own script, `argparse`, `--output-dir`, no hardcoded paths) queries ISTEX by DOI in batches, resumable across interruptions, with the raw API responses archived outside the repo under a new directory with a MANIFEST.sha256, stops on errors or rate limiting without a retry loop, and never overwrites an existing archive or an existing abstract.
+- [ ] Positive and negative controls before any count: a known DOI returns its abstract; a DOI absent from ISTEX returns nothing; both are asserted by the CLI before it writes counts.
+- [ ] Match safety: ISTEX title and year are compared with the pool's; a DOI hit whose title or year disagrees beyond a stated tolerance is rejected and counted, not delivered. Boilerplate abstracts (`is_boilerplate_abstract`) and stubs below a stated length are rejected and counted.
+- [ ] Counts by lane, period (1990-2006, 2007-2014, 2015-2025, 2026+) and language: DOIs queried, abstracts found, rejected (by cause), and the resulting abstract coverage before and after, with the first act shown separately; the pilot rates above are compared with the full run.
+- [ ] Delivery into the pool without changing any `work_key`: either as a lane delivery under the intake contract (records keyed by DOI) or as an enrichment table the pool build joins; the choice is stated with its reason. The pool abstract keeps its provenance (ticket 2045 adds `abstract_source` and `abstract_flag`; until it lands, the source is recorded in the delivery manifest).
+- [ ] Byte comparison of every pool column except the abstract columns before and after; the count of works whose abstract changes equals the number delivered.
+- [ ] Residue reported: the works still without an abstract after ISTEX by lane and period, for a later second pass (Semantic Scholar needs a working key; Scopus or ScienceDirect via CNRS needs a key and a licence check; neither is in scope).
+- [ ] Diff at most 14 content-bearing paths; scoped gate quoted (`selected:` and `skipped:`).
+
+## Notes
+
+Severity: science lane (a live defect that reaches the pool and the screen: 40% of works lack the text the screen reads, with a bias against the first act). Related: 2045 (abstract selector), 2044 (dedup identity, separate PR). The re-screen of newly abstracted works is a separate decision.
