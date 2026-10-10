@@ -111,9 +111,25 @@ from the 100-byte SQLite header); sha256 `a95e0ba62b1dc511e742e7584671bc10971171
 `titleless177` tree, the stage-2 input variants,
 `candidate-superset-attempt2.sqlite` and `baseline/icf_screen.csv` are pushed.
 
-The DVC-level mechanism of the exclusion (separate `dvc add` of
-subdirectories, or the copy removed from the pushed set) is decided at push
-time and recorded in the second PR of this ticket.
+Mechanism, done 2026-10-10: the archive was reflinked (btrfs, no space used)
+into a worktree without `operations/round2-local-preparation/round1-as-of.sqlite`,
+then added with one plain `dvc add data/rel_chaining/2026-10-08` and pushed to
+remote `padme`: pointer `data/rel_chaining/2026-10-08.dvc`, md5
+`aa629e0f3e425b8bdd45c9ac16377e5e.dir`, 30,863 files, 14,601,070,257 bytes;
+`dvc status -c` in sync; a fresh `dvc get` restored 30,863 files, and
+`budget.sqlite` and `round1/checkpoint.sqlite` match the originals by sha256.
+`cmp -i 100` of the excluded copy against `round1/checkpoint.sqlite` was
+re-run just before the push and was identical after the header. The original
+copy stays in the `t1654-citation-chaining` worktree, untouched.
+
+Three tiny archived copies of repo pointers could not sit inside a DVC output
+(DVC refuses a directory that overlaps another tracked output) and were left
+out of the pushed set, in
+`operations/astra-parent-publication-packaging-decision/`:
+`reference-data__pool.dvc` (sha256 054e81e2...), `reference-data__rel_screen.dvc`
+(c76f7093...) and `reference-data__rel_venues.dvc` (f019c938...), 107 to 111
+bytes each. They point at pools already in DVC; they remain in the original
+worktree.
 
 Provenance: `producer/checkpoint.json` in the archive names producer head
 `9bbdfe2d1ee53d5481fa56b0caf424d68cd73e4b` ("Native raw pages and cursor
@@ -121,6 +137,3 @@ checkpoint are authoritative"). The archived `producer/_rel_chaining.py`
 differs from `scripts/_rel_chaining.py` both at `f10a71dd` and in the
 `t1654-citation-chaining` working tree (`cmp`, first difference at line 13), so
 the archive's own `producer/` copy, not the tag, is the code that produced it.
-
-Not done: no `dvc add`, `push`, `pull` or `commit` was run, and the DVC cache
-was not touched.
