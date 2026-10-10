@@ -81,8 +81,14 @@ scorer's calibration reported separately for works with and without one.
 
 ### 2.4 Scoring
 
-One structured-output pass per expert over about seven predicates (the predicate
-list is not yet written; see section 3). Experts: Haiku (Anthropic) and Luna
+One structured-output pass per expert with the existing three-facet instrument
+(`config/rel_stage2_prompt_v3.md`, ticket 2010): international, climate and
+finance facets at 0, 0.5 or 1 for the same studied object, plus contribution,
+document type, studied location, field and contribution type (eight output
+fields; the old view took the minimum of the facets). Seriousness is
+deterministic and free, so it is not a model predicate. The instrument is used
+unchanged; my reading of "about seven predicates" is these fields, to be
+corrected if the author means another list. Experts: Haiku (Anthropic) and Luna
 (OpenAI), two vendors, hence decorrelated. A third reader arbitrates:
 
 - Each model's probabilities are idiosyncratic, so scores are never averaged
@@ -106,7 +112,7 @@ many works it yields, is open (section 3).
 
 | Unknown | Why it matters | How it resolves | Estimate |
 |---|---|---|---|
-| The seven predicates are not written | the scorer has no spec; calibration is meaningless without it | author drafts, trial freezes | 2-3 author-hours |
+| Which fields count as the predicates | the cut is calibrated on the facets and contribution; the v3 instrument has eight output fields | MOE reading: v3 used unchanged; the author confirms in one line | minutes |
 | Does calibrating on the sealed sets give a usable cut? | the Gavard set is positive-only; recall can be set, false positives need the negatives | trial: recall and size at each model's cut on the test set | trial below |
 | Size of the output | the cut may give far more or fewer than 10k | count on the filtered pool after calibration; reference only: the old pipeline kept 7,499 fully graded works and labelled 11,982 `icf` before corrections | known after the trial |
 | Divergent share | sets the arbiter's volume and the rescore cost | measured on the sealed sets, extrapolated | guess 5-20% |
@@ -122,7 +128,7 @@ arbiter on the divergent cases with and without few-shots; report recall at the
 cut, divergent share and per-language results. Few-shots come from a separate
 shot set and never from a sealed set. The sealed files are hashed before any
 model run, one line per work giving the reason for the pick. Paid cost,
-estimate: a few USD. Author time: the shot set and the predicate list.
+estimate: a few USD. Author time: the shot set and the two sealed sets.
 
 ## 4. What changes in the current plan
 
@@ -182,7 +188,7 @@ estimate: a few USD. Author time: the shot set and the predicate list.
 | Step | Content | Author | Spend (estimate) |
 |---|---|---|---|
 | 0 | this note, reviewed | review | none |
-| 1 | predicates written, Gavard set verified and sealed, 50/50 set and shot set picked and hashed | 3-6 hours | none |
+| 1 | Gavard set verified and sealed, 50/50 set and shot set picked and hashed (instrument: v3, hash recorded) | 3-6 hours | none |
 | 2 | calibration trial | read the report | a few USD |
 | 3 | go or revise the design | decision | none |
 | 4 | scoring on the filtered pool; the lane for chaining round 1 delivered in parallel | go for paid calls | roughly USD 60-135 for two experts over about 400k works, central about USD 90 (derived, section 9; the first draft said USD 15-25 and omitted Luna's reasoning cost) |
@@ -273,7 +279,7 @@ baseline pool on 2026-10-09, so about 394,000, taken as 400,000.
 
 **Cost of the two experts over 400,000 works**
 
-| Expert | At measured per-work rate | Scaled for seven predicates and longer structured output (assumption: 2-4x Haiku, 1-2x Luna) |
+| Expert | At measured per-work rate | Scaled for longer structured output (assumption: 2-4x Haiku, 1-2x Luna) |
 |---|---|---|
 | Haiku | USD 9 | USD 18-37 |
 | Luna | USD 44-48 | USD 44-96 |
@@ -293,9 +299,9 @@ cap), about 40 hours one wave at a time. Haiku runs as batch within the provider
 **Budget and author time.** The USD 30 cap of the 1654 ledger is spent (USD 20.82,
 frozen) and does not carry over: the scale run needs a new authorization, about USD
 60-145 including the API-arbiter fallback. The 100-work calibration trial costs
-cents at these rates. Author hours to the cut: predicates 2-3, Gavard verification
+cents at these rates. Author hours to the cut: Gavard verification
 and the 50/50 and shot sets 3-6 (excluding the Gavard verification, unmeasured),
-trial review 1-2, alpha-cut review 2-3: about 10-15.
+trial review 1-2, alpha-cut review 2-3: about 6-11.
 
 **What would move these numbers.** The 19% of the pool without an abstract (76,261
 works) is scored on metadata and may need its own pass; a retry wave for format
