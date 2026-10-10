@@ -2,6 +2,7 @@
 Title: REL chaining: wind down the staged screening half
 Created: 2026-10-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1768
 
 --- log ---
 2026-10-10T10:00Z HDMX-coding-agent created
@@ -10,6 +11,8 @@ Author: HDMX-coding-agent
 2026-10-10T12:42Z HDMX-coding-agent note stage S1 of the staged plan (tracker 2070); scope unchanged.
 2026-10-10T15:00Z HDMX-coding-agent note disposition note docs/rel-screening-wind-down-2026-10-10.md; annotated tag archive/t1654-screening-half at f10a71dd; residues listed in 1656 as limitations. Archive DVC push pending the author's approval of scope (options A 20 GB, B ~13.6 GB, C ~9.3 GB in the note); ticket stays open until then.
 2026-10-10T14:43Z HDMX-coding-agent note archive pushed to DVC remote padme at scope (b): data/rel_chaining/2026-10-08.dvc md5 aa629e0f3e425b8bdd45c9ac16377e5e.dir, 30863 files, 14601070257 bytes, dvc status -c in sync, fresh get matches; round1-as-of.sqlite excluded (copy of round1/checkpoint.sqlite), 3 reference .dvc pointer copies left out; mechanism in docs/rel-screening-wind-down-2026-10-10.md
+2026-10-10T14:44Z HDMX-coding-agent closed — autoclosed — PR #1768
+
 --- body ---
 
 ## Context
