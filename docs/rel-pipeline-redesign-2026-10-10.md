@@ -41,6 +41,9 @@ of records had 426,636 rows on 2026-10-09. ISTEX recovered 81,051 abstracts of
 Citation chaining becomes one more lane, with no separate screening
 (**MOE-recommended**, section 4).
 
+The journal summaries lane (t1650, `sommaires`) is turned off (**author-decided**
+2026-10-10); section 7 gives the evidence.
+
 ### 2.2 Deduplicate to Pool of Works
 
 Dedup version 2 is merged but not the default (PR 1750, 2026-10-09). A working
@@ -131,9 +134,10 @@ estimate: a few USD. Author time: the shot set and the predicate list.
   round-1 records, delivered as a lane.
 - **Waits**: round 2 of chaining chooses its frontier from the new scores
   (**MOE-recommended**).
-- **Split of 1654** (**author-decided** in principle): a lane child for the
-  collector and delivery, a round-2 decision child after scoring. The earlier
-  A/B/C split is superseded.
+- **Split of 1654** (**author-decided** in principle): 1654 becomes a tracker.
+  Children: (a) finish and archive the round-1 merge on dedup version 1, without
+  the t1650 records; (b) wind down the screening half (section 8); (c) round 2
+  after scoring exists. The earlier A/B/C split is superseded.
 
 ## 5. Reuse and lessons
 
@@ -185,3 +189,59 @@ estimate: a few USD. Author time: the shot set and the predicate list.
 The deadline is about 2026-12-06 (ticket 0700). Steps 0 to 3 fit in the next
 week if step 1 does; the later steps scale with how many works the filter lets
 through.
+
+## 7. Lane analysis and the decision on journal summaries
+
+Measured on 2026-10-10, read-only, on the merged pool of the
+`t1654-citation-chaining` worktree (597,494 works, built 2026-10-09; baseline
+389,291). "Final" is `rel_final` in that branch's view. "Unique" means the lane is
+the work's only source. These labels come from the old staged screening, which
+this redesign replaces, and chaining's screening is incomplete (47,604 works
+`pending_stage2`, 14,272 `unsure_unresolved`); read the table as indicative.
+
+| Lane | Works | Final | Unique, chaining removed | Unique, chaining counted |
+|---|---|---|---|---|
+| catalogue | 43,115 | 3,912 | 1,341 | 95 |
+| t1530 Southern OpenAlex | 34,134 | 2,750 | 913 | 2 |
+| t1652 causal search | 34,356 | 3,340 | 682 | 1 |
+| t1810 RePEc | 77,501 | 1,959 | 433 | 278 |
+| t1650 journal summaries | 214,863 | 1,121 | 201 (51 before 2007) | 0 |
+| t1653 Southern, non-OpenAlex | 16,925 | 307 | 103 | 71 |
+| t1654 chaining | 270,483 | 12,614 | n/a | 5,687 (793 before 2007) |
+
+**Decision (author-decided, 2026-10-10): the journal summaries lane is turned off,
+because chaining subsumes it.** Its 179,106 sole-source works are 30% of the merged
+pool and 0.5% of its records reach final.
+
+Consequences, **MOE-recommended**:
+
+- The lane is withdrawn, not deleted. Its delivery stays in DVC and its counts
+  stay in the PRISMA flow as "harvested, withdrawn: subsumed by chaining" (1656
+  carries the line). The single-standard rule holds: no record is screened by a
+  different rule.
+- The pool build excludes t1650, which shrinks the merged pool by up to 179,106
+  works (derived; works also delivered by another lane stay).
+- Subsumption is measured on the old screening. 201 finals (51 before 2007) were
+  found only by the summaries when chaining is removed. The recall-probe use is
+  lost: 82% of the 1,121 summary finals were also found by another baseline lane
+  (derived), a coverage figure no other lane gives. Re-check on the new scorer's
+  output that those 201 are still reached by chaining or another lane. If not,
+  recover them from the archived delivery; the lane can be turned back on.
+- Only 34% of the sole-source summary works carry an abstract (60,545 of
+  179,106), and the old screening needed one. The 0.5% yield is a lower bound.
+
+## 8. Sequencing constraints and the fate of 1654
+
+1. The round-1 merge was built on dedup version 1. Finish and archive it before the
+   version-2 flip (ticket 2048, stage B2b), or the flip must carry a migration for
+   the chaining records. Do not run both on the same pool at once.
+2. Wind down the screening half before retiring it: list the native Batch jobs and
+   Luna waves still accepted, read their ledgers, and confirm none remains in
+   flight or reserves a liability. No new paid wave starts. Labels already
+   imported stay in the append-only tables and serve as a cross-check.
+3. 1654 keeps its scientific aim (two rounds, a third only if round two adds
+   admissible works) but its mechanism changes: new works are scored by the new
+   scorer, not screened by the staged runners. Its exit criteria are rewritten
+   when the author confirms, quoting the 29 September acceptance and this
+   decision.
+4. Round 2 waits for the scorer and the calibrated cut.
