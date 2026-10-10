@@ -11,6 +11,7 @@ Blocked-by: 2071
 2026-10-10T12:42Z HDMX-coding-agent note staged plan of 2026-10-10: round 2 also waits for the end-to-end run 2071, since its frontier is chosen by score. Blocked-by 2071 added.
 2026-10-10T14:00Z HDMX-coding-agent note blocker 2061 closed — Blocked-by removed.
 
+2026-10-10T14:53Z HDMX-coding-agent note author decision 2026-10-10, option A: round two stays after the end-to-end run 2071; its frontier is chosen by score, not by the retired labels.
 --- body ---
 
 ## Context

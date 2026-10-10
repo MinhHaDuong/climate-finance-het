@@ -423,8 +423,9 @@ M49 is assumed, not measured; the 2060 trial checks it on 20 abstracts.
 | S5 | Decide whether a second scorer and a referee on the band are worth buying | 2072 | the author decides, from the measured band width and recall |
 | After | Round 2 of chaining from the scored frontier, third-round decision, closure of 1654; then the freeze | 2063, 1656 | |
 
-The tracker for this sequence is ticket 2070. MOE-recommended, not yet decided:
-S2 and S3 run in parallel (the hand-pick waits only on the author), and round 2
-stays after S4 because its frontier is chosen by score, so 1654 closes after
-2063 and S1 closes the part that can be finished now. The deadline is about
+The tracker for this sequence is ticket 2070. Author-decided (option A, 2026-10-10):
+round 2 stays after S4 because its frontier is chosen by score, so 1654 closes after
+2063 and S1 closed the part that could be finished first (2061 and 2062 are closed).
+MOE-recommended, not yet decided: S2 and S3 run in parallel (the hand-pick waits only
+on the author). The deadline is about
 2026-12-06 (ticket 0700); S3 is the author-time item on the critical path.

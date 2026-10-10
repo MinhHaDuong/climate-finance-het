@@ -12,6 +12,7 @@ Author: haduong
 2026-10-10T09:47Z HDMX-coding-agent note author decision 2026-10-10 (interactive): the staged screening half is retired; scoring in the REL pipeline redesign replaces it (docs/rel-pipeline-redesign-2026-10-10.md). This ticket becomes a tracker; children 2061 (round-one merge and collector lane), 2062 (screening wind-down), 2060 (scoring calibration trial, under 0700), 2063 (round two and closure). The journal summaries lane (t1650) is withdrawn by the same decision. Note: the long log and the screening checkpoints of this ticket live on the unmerged branch t1654-citation-chaining; reconcile that file when the branch is merged or retired.
 2026-10-10T09:47Z HDMX-coding-agent note exit criteria rewritten for the decision above: screening is no longer done within 1654
 2026-10-10T12:42Z HDMX-coding-agent note staged plan of 2026-10-10 (author-decided, tracker 2070): S1 is 2061 and 2062, finished first; round 2 (2063) follows the end-to-end run 2071 because its frontier is chosen by score, so this tracker closes after 2063.
+2026-10-10T14:53Z HDMX-coding-agent note author decision 2026-10-10, option A: this tracker closes after 2063 (round two), which waits for the end-to-end run 2071; no proxy frontier is used.
 --- body ---
 
 ## Context
