@@ -47,6 +47,11 @@ lane_order:
   - t1653-sud-hors-openalex
   - t1790-reader-reruns
   - t1790-sud-playwright
+  # Citation chaining (1654, round one), placed before 1810 so that 1810 stays
+  # last. The archived merge (pool.csv 7a07da56...) was built with this lane
+  # unlisted, hence after 1810; this order differs from it in 8,021 works, in
+  # metadata columns only (work keys identical; measured 2026-10-10).
+  - t1654-citations
   # RePEc ReDIF mirror (1810): last, provisional (placement is the author's
   # call). Its metadata are publisher-supplied ReDIF, unchecked, and 80 % of
   # its records come from uncalibrated JEL rows.
