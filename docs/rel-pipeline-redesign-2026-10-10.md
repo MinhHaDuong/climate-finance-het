@@ -81,21 +81,35 @@ scorer's calibration reported separately for works with and without one.
 
 ### 2.4 Scoring
 
-One structured-output pass per expert with the existing three-facet instrument
-(`config/rel_stage2_prompt_v3.md`, ticket 2010): international, climate and
-finance facets at 0, 0.5 or 1 for the same studied object, plus contribution,
-document type, studied location, field and contribution type (eight output
-fields; the old view took the minimum of the facets). Seriousness is
-deterministic and free, so it is not a model predicate. The instrument is used
-unchanged; my reading of "about seven predicates" is these fields, to be
-corrected if the author means another list. Experts: Haiku (Anthropic) and Luna
-(OpenAI), two vendors, hence decorrelated. A third reader arbitrates:
+Before the cut, each expert answers one short question set per work. The
+predicates were set by the author on 2026-10-09 (session on OpenAI's Decisions
+endpoint; the transport is not yet tested):
+
+- five membership predicates, each asked about the work's main studied object:
+  `research` (from one `choice` question: research / institutional / other),
+  `economic` (the contribution bears on the economics, policy or governance of
+  climate finance, the contribution test of the old discipline facet),
+  `international`, `climate` and `finance`;
+- `venue`, computed from metadata (tier of journal, series or publisher, with
+  trusted-index evidence at the publication year), and the metadata gate
+  (ticket 2043); no model call;
+- certainty fields that widen an interval and never enter the minimum:
+  `input_quality`, and per facet the evidence type (supports / contradicts /
+  insufficient), as `choice` questions where the endpoint allows. They separate
+  "unknown" from "half true", which a bare 0.5 cannot.
+
+The work's membership is the minimum over the facets. `config/rel_stage2_prompt_v3.md`
+(ticket 2010) is the earlier three-facet design (0, 0.5, 1 with evidence strings)
+and the source of the contribution-test wording; it is not used unchanged.
+Descriptors (contribution type, mechanism, field, geography) are not asked here:
+section 10. Experts: Haiku (Anthropic) and Luna (OpenAI), two vendors, hence
+decorrelated. A third reader arbitrates:
 
 - Each model's probabilities are idiosyncratic, so scores are never averaged
   across models (**author-decided**). Each model gets its own cut, calibrated on
   the sealed sets.
 - A work is divergent when the two models fall on opposite sides of their own
-  cuts. Only divergent works are rescored (**author-decided**); a band around
+  cuts, which is a three-way decision (accept, reject, defer to the arbiter). Only divergent works are rescored (**author-decided**); a band around
   each cut is added only if the sealed sets show it is needed.
 - The arbiter is a local model constrained with llguidance, with an explicit
   prompt and positive and negative few-shots. Whether a local model reads
@@ -112,7 +126,7 @@ many works it yields, is open (section 3).
 
 | Unknown | Why it matters | How it resolves | Estimate |
 |---|---|---|---|
-| Which fields count as the predicates | the cut is calibrated on the facets and contribution; the v3 instrument has eight output fields | MOE reading: v3 used unchanged; the author confirms in one line | minutes |
+| Luna transport: Decisions endpoint or chat-completions batch | per-work cost differs about threefold (section 9); Decisions is public beta, input-token pricing, no batch tier, rate limits unknown | untested; a trial arm measures it | cents |
 | Does calibrating on the sealed sets give a usable cut? | the Gavard set is positive-only; recall can be set, false positives need the negatives | trial: recall and size at each model's cut on the test set | trial below |
 | Size of the output | the cut may give far more or fewer than 10k | count on the filtered pool after calibration; reference only: the old pipeline kept 7,499 fully graded works and labelled 11,982 `icf` before corrections | known after the trial |
 | Divergent share | sets the arbiter's volume and the rescore cost | measured on the sealed sets, extrapolated | guess 5-20% |
@@ -188,10 +202,10 @@ estimate: a few USD. Author time: the shot set and the two sealed sets.
 | Step | Content | Author | Spend (estimate) |
 |---|---|---|---|
 | 0 | this note, reviewed | review | none |
-| 1 | Gavard set verified and sealed, 50/50 set and shot set picked and hashed (instrument: v3, hash recorded) | 3-6 hours | none |
+| 1 | Gavard set verified and sealed, 50/50 set and shot set picked and hashed (question set frozen, hash recorded) | 3-6 hours | none |
 | 2 | calibration trial | read the report | a few USD |
 | 3 | go or revise the design | decision | none |
-| 4 | scoring on the filtered pool; the lane for chaining round 1 delivered in parallel | go for paid calls | roughly USD 60-135 for two experts over about 400k works, central about USD 90 (derived, section 9; the first draft said USD 15-25 and omitted Luna's reasoning cost) |
+| 4 | scoring on the filtered pool; the lane for chaining round 1 delivered in parallel | go for paid calls | USD 60-135 for two experts over about 400k works with Luna on chat completions, USD 25-77 with Luna on Decisions (derived, section 9; the first draft said USD 15-25 and omitted Luna's reasoning cost) |
 | 5 | arbiter on divergent works, alpha-cut, count | review the set | 5-20 hours local, or USD 2-10 (Luna-class) to 12-100 (frontier-class, assumed price ratio) with an API third vendor (section 9) |
 | 6 | chaining round 2 from the new frontier | decision | as step 4 |
 
@@ -285,6 +299,18 @@ baseline pool on 2026-10-09, so about 394,000, taken as 400,000.
 | Luna | USD 44-48 | USD 44-96 |
 | Both | USD 53-57 | USD 62-133, central about USD 90 |
 
+**If Luna runs on the Decisions endpoint.** The endpoint page, as read on
+2026-10-09 and not re-checked, bills input tokens only at USD 0.10 per 1M, with
+no output or cache charge. At 400 to 1,000 input tokens per work (questions plus
+title and abstract; an assumption, unmeasured) that is USD 16-40 over 400,000
+works. With Haiku (USD 9-37) the two experts cost about USD 25-77, central about
+USD 45. Evaluating `venue` first removes works before any call: 88,862 of
+418,388 carried the old seriousness exclusion (21%, to be recomputed on the new
+rule), so about USD 20-60. One trap: the alias lexicon (8,229 bytes) and the v3
+prompt (7,855 bytes) are about 4 to 5 thousand tokens, so sent with every work
+they would cost about USD 180 over 400,000 works; the aliases run as a free
+regex in code and the model sees only the hits.
+
 **Arbiter.** Divergent share d is unmeasured (guess 5-20%), so 20,000 to 80,000
 works. Local: 3.3 to 13.2 hours at 1.68 records per second, 5 to 20 hours with
 few-shots lengthening the prompt (assumption, 1.5x); no API cost. API third vendor,
@@ -308,3 +334,66 @@ works) is scored on metadata and may need its own pass; a retry wave for format
 faults adds about 0.5% of cost; a longer prompt or more reasoning raises Luna's
 cost linearly. The data steps (pool rebuild, dedup version 2) were not timed; one
 `make rel-pool` run in a populated worktree would measure them.
+
+## 10. Post-cut descriptors (author decisions of 2026-10-10; value lists are drafts)
+
+Asked only of the final set (at most 10,000 works), after the cut, never in the
+pre-cut pass. Every descriptor is multi-valued unless noted. Cost over 10,000
+works about USD 5-8, derived: the alias lexicon in the prompt is about 4,500
+tokens, so 45M tokens at USD 0.10 per 1M is about USD 4.5; the other descriptors
+add under USD 2. Unmeasured.
+
+| Descriptor | Referential | Values |
+|---|---|---|
+| `contribution_type` | REL coding grid, section 9.1 of `conception/carte-causale-icf-co2.md` | `concepts`, `data`, `evidence`, `models` (the grid's ontologie, donnees, preuves, modeles) and `review`, `policy` (from the v3 types; names set by the author) |
+| `result_type` | same grid, `type_resultat` | `description`, `association`, `identified_effect`, `simulation`; only where `evidence` or `models` |
+| `research_design` | same grid, `design`, and section 9.2 | `panel_FE`, `RDD`, `IV`, `SC`, `DiD`, `MSM`, `LCA`, `model`, `case_study`, `other`; only where `evidence` or `models` |
+| `unfccc_mechanism` | UNFCCC referential and `config/rel_mechanism_lexicon_v3.md` | atomic list below |
+| `spatial` | ISO 3166-1 and UN M49 | countries and regions; `001` for World; null for a conceptual work |
+| `field` | OECD FORD, two levels, and JEL where the record carries it | main field plus subfields from the model's category probabilities |
+
+`contribution_type` replaces the old `ctype` and is redetermined on the final
+set, as the author decided. The shortlist draws on the REL grid, with JEL
+method categories (C, B4, C8, Y1; from memory, unverified), the RePEc/NetEc
+document types (genre only, already covered by `resourceTypeGeneral`), OpenAlex
+`type` and PubMed publication types for `review`.
+
+`unfccc_mechanism` values (draft; family comes from a lookup, not from the
+model; combined lexicon entries are split):
+
+| Family | Values |
+|---|---|
+| Kyoto | `cdm`, `ji`, `iet` (candidate, not in the lexicon) |
+| Paris Article 6 | `art6_2`, `art6_4`, `art6_8` |
+| Financial mechanism | `gcf`, `gef` |
+| Funds | `adaptation_fund`, `ldcf`, `sccf`, `cif` (candidate, named in the lexicon) |
+| Loss and damage | `frld` |
+| Forest | `redd_plus`, `fcpf_readiness`, `fcpf_carbon`, `biocf_isfl`, `nicfi`, `un_redd`, `amazon_fund` |
+| Risk | `global_shield`, `insuresilience`, `arc`, `ccrif` |
+| Flows | `oda_mdb_climate`, `private_mobilisation` |
+| Goal | `ncqg` |
+| Country platform | `jetp` (author addition; the country comes from `spatial`) |
+| Escape | `other_international`, `none` |
+
+An alias hit is evidence, not membership, as in the lexicon. `none` never
+excludes: bilateral and multilateral-bank climate finance stays in scope. A
+free-form `main_object` is dropped from the model pass: objects are discovered
+afterwards from the embedding clusters of ticket 0702, whose test is that every
+cluster can be named.
+
+## 11. Dublin Core application profile (draft)
+
+| DC term | Pool field | Referential |
+|---|---|---|
+| `dcterms:identifier` | `doi`, `openalex_id`, handles | DOI, OpenAlex id, RePEc, OAI, HAL, hdl |
+| `dcterms:title`, `dcterms:creator`, `dcterms:date` | `title`, `first_author` / `all_authors`, `year` | ISO 8601 for dates |
+| `dcterms:source` / publisher | `journal`, venue identity | ISSN (ISO 3297), series, publisher |
+| `dcterms:type` | `doc_type` | DataCite `resourceTypeGeneral` |
+| `dcterms:language` | `language` | ISO 639-1, ISO 639-3 if none; metadata, local detector when blank (44.1% blank on 2026-10-10: 85% of t1650, 83% of RePEc; `eng` against `en`) |
+| `dcterms:abstract` | `abstract` | optional in the profile, with a `no_abstract` flag (MOE-recommended) |
+| `dcterms:spatial` | `spatial` | ISO 3166-1, UN M49 (the LDC, LLDC and SIDS groupings are codes 199, 432, 722, from memory) |
+| `dcterms:subject` | `field`, `unfccc_mechanism` | OECD FORD, JEL, UNFCCC list |
+| `dcterms:isVersionOf` | `version_hint` | DOI of the published version |
+
+The mandatory set is the DataCite set of ticket 2043. Models' command of FORD and
+M49 is assumed, not measured; the 2060 trial checks it on 20 abstracts.
