@@ -303,6 +303,8 @@ def init_seeds(store, pool, view, sentinel_paths, budget, *, frontier_path=None)
     store.db.commit()
     if frontier_path is not None and frontier.get("previous_round"):
         previous = frontier["previous_round"]
+        # Call-time import: _rel_chaining_reuse imports this module at load time.
+        from _rel_chaining_reuse import reuse_completed_directions
         reuse_completed_directions(store, previous["snapshot"], previous["native_root"], previous["snapshot_sha256"],
                                   native_index_path=previous["native_index"],
                                   native_index_sha256=previous["native_index_sha256"])
@@ -707,7 +709,3 @@ def export_delivery(store, output):
     if faults:
         raise ChainError(str(faults))
     log.info("exported %d records; %d incomplete units", n, len(incomplete))
-
-
-# Re-exported: archived-direction reuse lives in its own module (size cap).
-from _rel_chaining_reuse import _completed_direction_evidence, reuse_completed_directions  # noqa: F401, I001

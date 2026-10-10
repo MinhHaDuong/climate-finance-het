@@ -1,7 +1,7 @@
 """Reuse of completed citation directions from an archived round (t1654 lane).
 
-Split from ``_rel_chaining`` for the module size cap; imported there and
-re-exported, so callers keep using ``_rel_chaining``. Verifies archived native
+Split from ``_rel_chaining`` for the module size cap. The dependency is one-way:
+this module imports ``_rel_chaining``, never the reverse at load time. Verifies archived native
 cursor pages offline, without provider calls or source writes.
 """
 

@@ -16,8 +16,10 @@ retired (author decision of 2026-10-10, ticket 2062) and does not land.
 - `scripts/catalog_rel_citation_chaining.py`: CLI (`seeds`, `harvest`, `export`,
   `aliases`, `restore-cache`, `identities`).
 - `scripts/_rel_chaining_reuse.py`: offline reuse of completed directions from an
-  archived round (split for the module size cap; re-exported by `_rel_chaining`).
-- `tests/test_rel_citation_chaining.py`: offline tests; no network.
+  archived round (split for the module size cap; it imports `_rel_chaining`, not the reverse).
+- `tests/test_rel_citation_chaining.py`: 44 collected tests (26 test functions,
+  some parametrized). One is an `integration` import check run in a subprocess;
+  the rest are offline, with no network.
 
 The 1654 branch's screening and label-rekey code (Stage 1 batch parser, screening
 transport, label migration) does not land; nothing on the collector path used it.
@@ -60,6 +62,17 @@ Two deliveries, both passing `scripts/qa_rel_intake.py`:
 | Records delivered | 270,647 titled (incl. 10,080 seed metadata updates) | manifest |
 | Excluded | 119,242 duplicate in lane, 235 not retrievable (titleless) | manifest |
 | Unresolved | 14,171 = 12,434 `reference` + 1,657 `seed` + 80 `seed_metadata` | checkpoint `unresolved`; the manifest's `incomplete` list has the same 14,171 entries |
+
+The 235 titleless exclusions and the 177 titleless records of the 2026-10-09
+delivery are different counts:
+
+- The 1654 branch checkpoint doc splits the 235 into 199 citation candidates and
+  36 seed metadata records.
+- The 2026-10-09 delivery covers the frozen roster of 177 titleless candidates
+  that matched exactly by DOI (`titleless-roster.json`, 177 entries).
+- The other 22 candidates (199 - 177, derived) and the 36 seed records were not
+  delivered.
+- The 199/36 split is quoted from that doc, not re-measured here.
 
 The 10,080 seed metadata updates are the seeds' own works, returned by the
 backward, references and archive queries that read their reference lists. This

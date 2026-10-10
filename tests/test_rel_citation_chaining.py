@@ -2,6 +2,7 @@
 
 from concurrent.futures import ThreadPoolExecutor
 
+import _rel_chaining_reuse as reuse
 import pytest
 from _rel_chaining import (
     ChainError,
@@ -290,7 +291,7 @@ def test_completed_direction_reuse_requires_native_page_chain_and_preserves_edge
     current = Store(tmp_path / 'next')
     current.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")
     current.db.commit()
-    chain.reuse_completed_directions(current, snapshot, prior.root, chain.sha(snapshot), **index_args)
+    reuse.reuse_completed_directions(current, snapshot, prior.root, chain.sha(snapshot), **index_args)
     chain.plan_citation_queries(current)
     assert current.db.execute('SELECT COUNT(*) FROM queries').fetchone()[0] == 0
     assert current.db.execute('SELECT COUNT(*) FROM direction_reuse').fetchone()[0] == 2
@@ -304,7 +305,7 @@ def test_completed_direction_reuse_requires_native_page_chain_and_preserves_edge
     changed_source.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")
     changed_source.db.commit()
     with pytest.raises(ChainError, match='routing source binding'):
-        chain.reuse_completed_directions(changed_source, snapshot, prior.root, chain.sha(snapshot), **index_args)
+        reuse.reuse_completed_directions(changed_source, snapshot, prior.root, chain.sha(snapshot), **index_args)
     assert changed_source.db.execute('SELECT COUNT(*) FROM direction_reuse').fetchone()[0] == 0
     routing_source.write_bytes(original_routing)
     (prior.root / 'raw' / 'forward.json.gz').unlink()
@@ -312,7 +313,7 @@ def test_completed_direction_reuse_requires_native_page_chain_and_preserves_edge
     failed.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")
     failed.db.commit()
     with pytest.raises(ChainError, match='native'):
-        chain.reuse_completed_directions(failed, snapshot, prior.root, chain.sha(snapshot), **index_args)
+        reuse.reuse_completed_directions(failed, snapshot, prior.root, chain.sha(snapshot), **index_args)
     assert failed.db.execute('SELECT COUNT(*) FROM direction_reuse').fetchone()[0] == 0
 
 
@@ -329,11 +330,10 @@ def test_metadata_get_protects_completion_headroom_before_network(tmp_path):
 
 
 def test_reuse_rejects_seed_list_not_bound_to_exact_direction_filter(tmp_path):
-    import _rel_chaining as chain
     prior = Store(tmp_path / 'prior')
     query = {'kind': 'forward', 'seeds': '["W1"]', 'filter': 'cites:W2'}
     with pytest.raises(ChainError, match='seed/filter'):
-        chain._completed_direction_evidence(prior.db, prior.root, query, {'pages': {}})
+        reuse._completed_direction_evidence(prior.db, prior.root, query, {'pages': {}})
 
 @pytest.mark.parametrize('invalid', [-1.0, float('nan'), float('inf'), -float('inf')])
 def test_budget_rejects_invalid_settlement_without_changing_liability(tmp_path, invalid):
@@ -415,7 +415,7 @@ def test_forward_reuse_preserves_native_relationship_gap(tmp_path):
     index = tmp_path / 'index.json'
     index.write_text(json.dumps({'snapshot_sha256': chain.sha(snapshot), 'pages': {'raw/forward.json.gz': {'sha256': chain.sha(path), 'request_sha256': request}}, 'acquisition_source': {'artifact': str(routing), 'artifact_sha256': chain.sha(routing), 'recorded_revision': 'a'*40, 'method': 'GET', 'endpoint': chain.OA}}))
     current = Store(tmp_path / 'current');current.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')");current.db.commit()
-    chain.reuse_completed_directions(current, snapshot, prior.root, chain.sha(snapshot), native_index_path=index, native_index_sha256=chain.sha(index))
+    reuse.reuse_completed_directions(current, snapshot, prior.root, chain.sha(snapshot), native_index_path=index, native_index_sha256=chain.sha(index))
     evidence = json.loads(current.db.execute('SELECT evidence FROM direction_reuse').fetchone()[0])
     assert evidence['source_unresolved'] == [{'k': 'forward:W9', 'kind': 'edge', 'note': 'forward result has no returned seed reference'}]
     assert evidence['source_edge_count'] == 0
@@ -550,7 +550,7 @@ def test_backward_reuse_keeps_absent_reference_diagnostic_without_zero_claim(tmp
     current = Store(tmp_path / 'current')
     current.db.execute("INSERT INTO seeds VALUES('new','W1','{}','new','identified')")
     current.db.commit()
-    chain.reuse_completed_directions(current, snapshot, prior.root, chain.sha(snapshot),
+    reuse.reuse_completed_directions(current, snapshot, prior.root, chain.sha(snapshot),
                                      native_index_path=index, native_index_sha256=chain.sha(index))
     assert current.db.execute('SELECT COUNT(*) FROM direction_reuse').fetchone()[0] == 0
     gap = current.db.execute("SELECT * FROM unresolved WHERE kind='reference_evidence'").fetchone()
@@ -559,3 +559,12 @@ def test_backward_reuse_keeps_absent_reference_diagnostic_without_zero_claim(tmp
     assert prior.db.execute('SELECT completed FROM queries').fetchone()[0] == 1
     chain.plan_citation_queries(current)
     assert current.db.execute("SELECT COUNT(*) FROM queries WHERE kind='backward'").fetchone()[0] == 1
+
+
+@pytest.mark.integration
+def test_reuse_module_imports_first_in_fresh_interpreter():
+    import subprocess
+    import sys
+    from pathlib import Path
+    scripts = Path(__file__).resolve().parents[1] / "scripts"
+    subprocess.run([sys.executable, "-c", "import _rel_chaining_reuse"], cwd=scripts, check=True)
