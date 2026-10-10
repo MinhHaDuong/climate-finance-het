@@ -15,6 +15,8 @@ retired (author decision of 2026-10-10, ticket 2062) and does not land.
   `registry.csv`, `manifest.json`).
 - `scripts/catalog_rel_citation_chaining.py`: CLI (`seeds`, `harvest`, `export`,
   `aliases`, `restore-cache`, `identities`).
+- `scripts/_rel_chaining_reuse.py`: offline reuse of completed directions from an
+  archived round (split for the module size cap; re-exported by `_rel_chaining`).
 - `tests/test_rel_citation_chaining.py`: offline tests; no network.
 
 The 1654 branch's screening and label-rekey code (Stage 1 batch parser, screening
