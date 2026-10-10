@@ -79,7 +79,7 @@ c5940298 raid: phase 2 Imagine for 1654 then 1656
 The tag also preserves the collector commits interleaved with them; 2061 lands
 the collector on `main` separately.
 
-## Archive: location and DVC scope (author-decided 2026-10-10)
+## Archive: location and DVC scope (author choice relayed by the orchestrator, 2026-10-10)
 
 Location today: `data/rel_chaining/2026-10-08/` in the worktree
 `.claude/worktrees/t1654-citation-chaining` on padme, the only copy. Measured
@@ -99,7 +99,7 @@ Location today: `data/rel_chaining/2026-10-08/` in the worktree
 | `provider-pricing/` | 3.8 MB |
 | `producer/` | 136 KB |
 
-Scope (author-decided 2026-10-10): push everything in
+Scope (author choice relayed by the orchestrator, 2026-10-10): push everything in
 `data/rel_chaining/2026-10-08/` (about 14 GB expected after deduplication)
 except `operations/round2-local-preparation/round1-as-of.sqlite` (5.9 GB).
 That file is a copy of `round1/checkpoint.sqlite` made for round-2 preparation
