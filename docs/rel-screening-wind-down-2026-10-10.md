@@ -79,7 +79,7 @@ c5940298 raid: phase 2 Imagine for 1654 then 1656
 The tag also preserves the collector commits interleaved with them; 2061 lands
 the collector on `main` separately.
 
-## Archive: location and DVC scope (pending author approval)
+## Archive: location and DVC scope (author-decided 2026-10-10)
 
 Location today: `data/rel_chaining/2026-10-08/` in the worktree
 `.claude/worktrees/t1654-citation-chaining` on padme, the only copy. Measured
@@ -99,15 +99,28 @@ Location today: `data/rel_chaining/2026-10-08/` in the worktree
 | `provider-pricing/` | 3.8 MB |
 | `producer/` | 136 KB |
 
-Scope options (MOE-recommended: B):
+Scope (author-decided 2026-10-10): push everything in
+`data/rel_chaining/2026-10-08/` (about 14 GB expected after deduplication)
+except `operations/round2-local-preparation/round1-as-of.sqlite` (5.9 GB).
+That file is a copy of `round1/checkpoint.sqlite` made for round-2 preparation
+and is rebuilt by copying it: `cmp -i 100` of the two exits 0 (identical apart
+from the 100-byte SQLite header); sha256 `a95e0ba62b1dc511e742e7584671bc1097117126a8c782891c68b28adcdaeb6c`
+(copy) and `6a275485f2c0a489d57edc8d22e81b2de1b7edda16ef002d46cd0ca1ba8745ab`
+(`round1/checkpoint.sqlite`). Nothing else is excluded: `round1/raw`,
+`round1/checkpoint.sqlite`, `budget.sqlite`, the answers and ledgers, the
+`titleless177` tree, the stage-2 input variants,
+`candidate-superset-attempt2.sqlite` and `baseline/icf_screen.csv` are pushed.
 
-- **A, everything**: 20 GB. Complete, costs remote space and a long push.
-- **B, without the round-2 preparation**: about 13.6 GB (derived: 20 - 6.4).
-  Round 2 will be rebuilt from the scored frontier, so its old preparation is
-  not reused.
-- **C, ledger and round-one evidence only**: `budget.sqlite`,
-  `provider-pricing/`, `producer/`, `round1/` (8.3 GB) and `baseline/`, about
-  9.3 GB (derived). Loses batch answers and incident evidence under `operations/`.
+The DVC-level mechanism of the exclusion (separate `dvc add` of
+subdirectories, or the copy removed from the pushed set) is decided at push
+time and recorded in the second PR of this ticket.
+
+Provenance: `producer/checkpoint.json` in the archive names producer head
+`9bbdfe2d1ee53d5481fa56b0caf424d68cd73e4b` ("Native raw pages and cursor
+checkpoint are authoritative"). The archived `producer/_rel_chaining.py`
+differs from `scripts/_rel_chaining.py` both at `f10a71dd` and in the
+`t1654-citation-chaining` working tree (`cmp`, first difference at line 13), so
+the archive's own `producer/` copy, not the tag, is the code that produced it.
 
 Not done: no `dvc add`, `push`, `pull` or `commit` was run, and the DVC cache
 was not touched.
