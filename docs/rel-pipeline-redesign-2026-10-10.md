@@ -126,7 +126,7 @@ estimate: a few USD. Author time: the shot set and the predicate list.
 
 ## 4. What changes in the current plan
 
-- **Retired** (**MOE-recommended**, not yet confirmed): the staged screening of the
+- **Retired** (**author-decided** 2026-10-10): the staged screening of the
   `t1654-citation-chaining` branch (design B, Stage 2, Luna facet waves,
   correction and waiver chain) and the discipline catch-up as separate stages.
   Scoring replaces them.
@@ -134,10 +134,13 @@ estimate: a few USD. Author time: the shot set and the predicate list.
   round-1 records, delivered as a lane.
 - **Waits**: round 2 of chaining chooses its frontier from the new scores
   (**MOE-recommended**).
-- **Split of 1654** (**author-decided** in principle): 1654 becomes a tracker.
-  Children: (a) finish and archive the round-1 merge on dedup version 1, without
-  the t1650 records; (b) wind down the screening half (section 8); (c) round 2
-  after scoring exists. The earlier A/B/C split is superseded.
+- **Split of 1654** (**author-decided** 2026-10-10, tickets filed in PR 1754):
+  1654 is a tracker. Children: 2061 finish and archive the round-1 merge on
+  dedup version 1 and land the collector as a lane; 2062 wind down the screening
+  half (section 8); 2060 the scoring calibration trial (child of 0700); 2063
+  round 2 after scoring exists, blocked by 2060 and 2061. The earlier A/B/C split
+  is superseded. The staged screening half is retired (**author-decided**
+  2026-10-10); its ledger was frozen the same day.
 
 ## 5. Reuse and lessons
 
@@ -235,13 +238,14 @@ Consequences, **MOE-recommended**:
 1. The round-1 merge was built on dedup version 1. Finish and archive it before the
    version-2 flip (ticket 2048, stage B2b), or the flip must carry a migration for
    the chaining records. Do not run both on the same pool at once.
-2. Wind down the screening half before retiring it: list the native Batch jobs and
-   Luna waves still accepted, read their ledgers, and confirm none remains in
-   flight or reserves a liability. No new paid wave starts. Labels already
-   imported stay in the append-only tables and serve as a cross-check.
+2. Wind-down of the screening half (done on the ledger side, 2026-10-10): every
+   provider batch is terminal, and the budget ledger is frozen with 12,073 calls
+   all settled, USD 20.82 in total (usage-derived upper bound, not an invoice;
+   up to USD 0.56 of it is assumed spent without outcome evidence), cap USD 30.
+   No new paid wave starts. Labels already imported stay in the append-only
+   tables and serve as a cross-check. Ticket 2062 holds what remains.
 3. 1654 keeps its scientific aim (two rounds, a third only if round two adds
    admissible works) but its mechanism changes: new works are scored by the new
-   scorer, not screened by the staged runners. Its exit criteria are rewritten
-   when the author confirms, quoting the 29 September acceptance and this
-   decision.
+   scorer, not screened by the staged runners. Its exit criteria were rewritten
+   on 2026-10-10 (PR 1754).
 4. Round 2 waits for the scorer and the calibrated cut.
