@@ -604,8 +604,8 @@ def _analyze(args):
         json.dump(summary, f, indent=1, ensure_ascii=False)
     n = write_manifest(out)
     log.info("analysis written to %s (%d files in manifest)", ana, n)
-    print(json.dumps({k: summary[k] for k in ("overall", "found_rate_abstract_in_record", "accepted_rate",
-                                              "pilot_rate_overall", "sensitivity")}, indent=1))
+    log.info("%s", json.dumps({k: summary[k] for k in ("overall", "found_rate_abstract_in_record", "accepted_rate",
+                                                       "pilot_rate_overall", "sensitivity")}, indent=1))
     return 0
 
 

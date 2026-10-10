@@ -33,6 +33,9 @@ from collections import Counter, defaultdict
 
 import _redif
 import _rel_eds_ids as ids
+from utils import get_logger
+
+log = get_logger("rel_eds_repec_handles")
 
 CONTROL_AN = "edsrep.p.nbr.nberwo.35497"
 CONTROL_HANDLE = "RePEc:nbr:nberwo:35497"
@@ -110,7 +113,7 @@ def run(args):
     index, present = build_index(args.mirror, wanted)
     ok, ctl = controls(index, present)
     if not ok:
-        print("control failed, no count written:", json.dumps(ctl), file=sys.stderr)
+        log.error("control failed, no count written: %s", json.dumps(ctl))
         return 1
     resolved = resolve_all(rep, index, present)
     os.makedirs(args.output_dir, exist_ok=True)
@@ -136,7 +139,7 @@ def run(args):
     }
     with open(os.path.join(args.output_dir, "eds_repec_handles.json"), "w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=1, ensure_ascii=False)
-    print(json.dumps(summary, indent=1))
+    log.info("%s", json.dumps(summary, indent=1))
     return 0
 
 
