@@ -6,19 +6,20 @@ Author: HDMX-coding-agent
 --- log ---
 2026-10-10T10:00Z HDMX-coding-agent created
 2026-10-10T10:00Z HDMX-coding-agent note author decisions 2026-10-10 (interactive): scoring is two experts from two vendors (Haiku and Luna) with a local arbiter on divergence; model probabilities are never averaged, each model gets its own cut; a work is divergent when the two fall on opposite sides of their own cuts; the arbiter is a local model constrained with llguidance and an explicit prompt with positive and negative few-shots; whether it reads non-English well enough is measured, not assumed; the author hand-picks a sealed test set of 50 positives and 50 non-obvious negatives; the Gavard set is verified, sealed and calibrates the cut.
+2026-10-10T12:02Z HDMX-coding-agent note correction: the first filing asked the author to write the predicates; they already exist as the three-facet instrument config/rel_stage2_prompt_v3.md (ticket 2010), discussed twice with the author. Inputs and the first exit criterion are rewritten; the author supplies only the Gavard set, the 50/50 test set and the shot set.
 --- body ---
 
 ## Context
 
 Child of 0700. First step of the redesign in `docs/rel-pipeline-redesign-2026-10-10.md`: it settles whether the scoring design works before any pool-scale scoring or paid run. It also fixes which cut and which arbiter the alpha-cut (at most 10,000 works) uses.
 
-Inputs the author supplies: the written predicates (about seven), the verified Gavard set, the 50/50 test set, and a small shot set (a few positives and negatives, outside both sealed sets).
+Inputs the author supplies: the verified Gavard set, the 50/50 test set, and a small shot set (a few positives and negatives, outside both sealed sets). The predicates are not an input: they are the existing three-facet instrument, `config/rel_stage2_prompt_v3.md` (ticket 2010), used unchanged for both experts unless the author amends it in the log.
 
 Reuse of earlier paid work (reference only, never truth, never in a prompt for a sealed set): clear `out` works (6 of 51,602 stage-1 `out` works became `icf`) as extra negatives for calibration; stage-1/stage-2 disagreements and the Opus and Fable corrections as a source of hard cases for the author to pick from. Same-vendor labels (Haiku, Sol, Luna) inflate any agreement with the new experts.
 
 ## Exit criteria
 
-- [ ] The predicates are written and frozen with definitions, and the sealed files (Gavard, 50/50 test, shot set) carry a SHA-256 recorded here before any model run, with one line per work giving the reason for the pick.
+- [ ] The instrument is frozen by the SHA-256 of `config/rel_stage2_prompt_v3.md` (and of the arbiter prompt with its few-shots), and the sealed files (Gavard, 50/50 test, shot set) carry a SHA-256 recorded here before any model run, with one line per work giving the reason for the pick.
 - [ ] Price derived and shown to the author before any paid call; no paid call without the author's go.
 - [ ] Positive control: a known positive and a known negative behave as expected for each model and for the arbiter before any count is reported.
 - [ ] Per model, a cut calibrated on the Gavard set plus a draw of clear negatives, with recall at the cut reported with a Wilson 95% interval on the 50/50 test set, by act (1990-2006, 2007-2014, 2015-2025) and by language.
