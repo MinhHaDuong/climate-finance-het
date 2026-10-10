@@ -109,9 +109,14 @@ and the source of the contribution-test wording; it is not used unchanged.
 Descriptors (contribution type, mechanism, field, geography) are not asked here:
 section 10.
 
-First run (S4, author-decided 2026-10-10): one cheap scorer, Haiku by structured
-output or Luna on the Decisions endpoint, whichever the trial finds cheaper at
-adequate recall. Its cut is calibrated on the sealed sets. A second scorer and a
+First run (S4, author-decided 2026-10-10): one cheap scorer, the cheaper and
+faster of two candidates: Haiku by structured output in the batch API (verbalized
+probabilities; no logprobs field in the Messages API reference, as read on
+2026-10-10) or Luna on the Decisions endpoint (OpenAI, public beta, the only model
+it serves is `gpt-6-luna`; endpoint probabilities; input-only pricing). The trial
+compares them at equal recall: both cuts are calibrated to the same recall target
+on the sealed sets, then price and wall-clock decide (MOE-recommended reading of
+"cheaper and faster"). Its cut is calibrated on the sealed sets. A second scorer and a
 referee on the band are adopted only if the first run shows they are needed (S5).
 If adopted, the design is: Haiku (Anthropic) and Luna (OpenAI), two vendors,
 hence decorrelated, and a third reader arbitrates:
