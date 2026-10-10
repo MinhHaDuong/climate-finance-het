@@ -2,11 +2,15 @@
 Title: REL chaining: finish and archive the round-one merge, land the collector as a lane
 Created: 2026-10-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1767
 
 --- log ---
 2026-10-10T10:00Z HDMX-coding-agent created
 2026-10-10T10:00Z HDMX-coding-agent note child of 1654 after the author's decision of 2026-10-10 to retire the staged screening half of the 1654 branch and keep the collector; the journal summaries lane (t1650) is withdrawn by the author's decision of the same day, but not as a precondition here: measured on the merged pool, dropping it removes 85 of 64,492 unresolved works, so it does not speed this ticket; withdraw it in the next pool build.
 2026-10-10T12:42Z HDMX-coding-agent note stage S1 of the staged plan (tracker 2070, docs/rel-pipeline-redesign-2026-10-10.md section 12); scope unchanged.
+2026-10-10T14:00Z HDMX-coding-agent note lane t1654-citations pushed to DVC remote padme (md5 50e66c21e09e230def2b7621c457e09e.dir, 16 files, dvc status -c in sync, fresh get matches 16 sha256); collector landed by PRs 1764; counts, rebuilt pool hash 7a07da56 and key mapping in docs/rel-chaining-lane.md
+2026-10-10T14:00Z HDMX-coding-agent closed — autoclosed — PR #1767
+
 --- body ---
 
 ## Context
@@ -17,8 +21,8 @@ Sequencing: finish and archive on dedup version 1 before the version-2 flip (tic
 
 ## Exit criteria
 
-- [ ] Counts for round one, from the archive: references and citations retrieved, duplicates, genuinely new works, unresolved references; the arithmetic shown.
-- [ ] The collector lands as a lane (`scripts/_rel_chaining.py`, `scripts/catalog_rel_citation_chaining.py`, `tests/test_rel_citation_chaining.py`, a short doc); the screening-only code (`scripts/corpus_rel_chaining_screen.py`, `tests/test_rel_chaining_screen.py`) does not land; diff at most 14 content-bearing paths.
-- [ ] The round-one delivery is under the intake contract with provenance, pushed to DVC as immutable, and the pool merge rebuilt from it reproduces the archived merge (hashes quoted).
-- [ ] Records are left unscored; no label is created or changed by this ticket.
-- [ ] Scoped gate quoted (`selected:` and `skipped:`).
+- [x] Counts for round one, from the archive: references and citations retrieved, duplicates, genuinely new works, unresolved references; the arithmetic shown.
+- [x] The collector lands as a lane (`scripts/_rel_chaining.py`, `scripts/catalog_rel_citation_chaining.py`, `tests/test_rel_citation_chaining.py`, a short doc); the screening-only code (`scripts/corpus_rel_chaining_screen.py`, `tests/test_rel_chaining_screen.py`) does not land; diff at most 14 content-bearing paths.
+- [x] The round-one delivery is under the intake contract with provenance, pushed to DVC as immutable, and the pool merge rebuilt from it reproduces the archived merge (hashes quoted).
+- [x] Records are left unscored; no label is created or changed by this ticket.
+- [x] Scoped gate quoted (`selected:` and `skipped:`).
