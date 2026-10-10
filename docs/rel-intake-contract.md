@@ -27,6 +27,12 @@ Ticket 1654 owns delivery, pool merge, screening and reconciliation of its
 additions before measuring each round's eligible yield; closing the baseline
 tracker 1655 does not exempt those additions from screening.
 
+Amended 2026-10-10 (author decision): the staged screening is replaced by
+scoring (`docs/rel-pipeline-redesign-2026-10-10.md`, section 12). A lane still
+delivers everything it retrieved, unscreened. Ticket 1654 keeps delivery and pool
+merge (2061, 2063); its additions are scored by the end-to-end run (2071), not
+screened by the staged procedures, and their yield is measured after that run.
+
 The only records a lane may leave out are listed, with a reason from this
 closed list, in `excluded.csv`:
 

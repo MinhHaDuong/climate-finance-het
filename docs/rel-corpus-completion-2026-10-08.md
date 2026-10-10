@@ -3,6 +3,16 @@
 Reviewed by GPT-6 Astra at high effort on 8 October 2026. This document closes
 the baseline integration of ticket 1655; it does not freeze the REL corpus.
 
+## Amendment of 2026-10-10
+
+The sequence below was rescoped by the author on 2026-10-10. Step 2 (citation
+chaining and incremental screening) no longer includes screening: the staged
+screening is retired and new works are scored by the pipeline redesign. The order
+of work is now the staged plan in `docs/rel-pipeline-redesign-2026-10-10.md`,
+section 12 (tracker 2070). Steps 3 and 4 (reconciliation and freeze, ticket 1656)
+follow the end-to-end run and chaining round two. The text below is kept as the
+record of the baseline reconciliation of 2026-10-08.
+
 ## Corrected execution sequence
 
 1. **1655 — baseline integration.** Restore the pinned inputs on padme and
