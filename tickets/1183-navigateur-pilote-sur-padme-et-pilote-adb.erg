@@ -3,13 +3,13 @@ Title: Driven browser on padme, renamed collection methods, ADB pilot
 Created: 2026-09-25
 Author: HDMX-coding-agent
 Label: deferred
-Blocked-by: 1182
 
 --- log ---
 2026-09-25T09:00Z HDMX-coding-agent created Enfant de [[1180]].
 2026-09-25T09:10Z HDMX-coding-agent note Reporté à la semaine prochaine par l'auteur ; priorité du jour : finir la migration de l'ontologie (0870), main vert, republier le MVP.
 2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
+2026-10-10T13:09Z HDMX-coding-agent note Blocked-by 1182 removed: ticket 1182 (fichiers-de-site-memoire-du-scraping-par-diffuseur) was added in 2f78e906 and deleted in d2fabc88 (build: remove extracted JETP programme from source repository); no rename or successor exists in git history. Scope and deferred label unchanged.
 --- body ---
 ## Context
 

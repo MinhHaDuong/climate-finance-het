@@ -22,6 +22,9 @@ import os
 import sys
 
 from catalog_rel_sud_search import BACKFILL_FILE, read_backfill_records
+from utils import get_logger
+
+log = get_logger("rel_oa_backfill_merge")
 
 
 def _sha256(path):
@@ -72,7 +75,7 @@ def main(argv=None):
     ap.add_argument("--output-dir", required=True)
     args = ap.parse_args(argv)
     n, digest = merge(args.source_dir, args.output_dir)
-    print(f"{n} ids {digest}")
+    log.info("%d ids %s", n, digest)
     return 0
 
 

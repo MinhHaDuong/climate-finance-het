@@ -42,3 +42,19 @@ figures of the diagram in `conception/rel-prisma-flux-provisoire.md`, annex
 - [ ] Freeze manifest: file hashes, code SHA, DVC lock, model and prompt versions
 - [ ] Reproduction package: configurations, code, registries and outputs of each pass, prompts (including stage 2), sentinels, advisor outputs
 - [ ] Reserve sentinels reported apart from tuning ones
+
+## Freeze inputs: limitations from the retired staged screening (2062)
+
+Listed as limitations in the PRISMA and the method paragraph; not carried into
+the new pipeline. Disposition: `docs/rel-screening-wind-down-2026-10-10.md`.
+
+- The final stage-2 sample audit was waived by the author on 2026-10-07, not passed.
+- 296 accepted stage-2 residues (four already fail seriousness; 292 remain ICF-pending).
+- 59 accepted unscreened title-less works (historical waiver, not extended).
+- 47 native title-less records under the Astra fallback: policy abstention, bibliometric-only.
+- Prompts and judges differed across the sequence (design B, Opus, Sol, Fable and Opus corrections, Luna facets); Fable agreement applies to pre-correction labels.
+- 5,894 discipline-pending works without abstracts, outside the fully graded set; automated discipline exclusions carry an observed over-exclusion risk.
+- 1,156 historical label rows unmatched to the pool (818 titled, 277 title-less).
+- 549 unresolved version hints whose DOIs are absent from the pool.
+- Ledger: 25 calls settled at their whole reserve, assumed spent, not measured (up to USD 0.56).
+- 63,558 chaining works left unresolved by the old screening; they go to the new scorer.
