@@ -185,8 +185,8 @@ estimate: a few USD. Author time: the shot set and the predicate list.
 | 1 | predicates written, Gavard set verified and sealed, 50/50 set and shot set picked and hashed | 3-6 hours | none |
 | 2 | calibration trial | read the report | a few USD |
 | 3 | go or revise the design | decision | none |
-| 4 | scoring on the filtered pool; the lane for chaining round 1 delivered in parallel | go for paid calls | roughly USD 15-25 for two experts over about 400k works (scaled from the 205k-work Haiku batch at USD 4.73, a derived figure) |
-| 5 | arbiter on divergent works, alpha-cut, count | review the set | overnight local, or USD 20-80 with an API third vendor |
+| 4 | scoring on the filtered pool; the lane for chaining round 1 delivered in parallel | go for paid calls | roughly USD 60-135 for two experts over about 400k works, central about USD 90 (derived, section 9; the first draft said USD 15-25 and omitted Luna's reasoning cost) |
+| 5 | arbiter on divergent works, alpha-cut, count | review the set | 5-20 hours local, or USD 2-10 (Luna-class) to 12-100 (frontier-class, assumed price ratio) with an API third vendor (section 9) |
 | 6 | chaining round 2 from the new frontier | decision | as step 4 |
 
 The deadline is about 2026-12-06 (ticket 0700). Steps 0 to 3 fit in the next
@@ -249,3 +249,56 @@ Consequences, **MOE-recommended**:
    scorer, not screened by the staged runners. Its exit criteria were rewritten
    on 2026-10-10 (PR 1754).
 4. Round 2 waits for the scorer and the calibrated cut.
+
+## 9. Cost and performance assessment (derived, 2026-10-10)
+
+Nothing below is an invoice. Inputs are measurements from the 1654 archive; the
+scaling to the new scorer is an assumption and is labelled.
+
+**Measured inputs**
+
+| Quantity | Value | Source |
+|---|---|---|
+| Haiku 5.5 Stage 1 batch | 205,694 labels, 10,273 requests (20 per request), USD 4.73 | usage-derived, ledger |
+| Luna three-facet waves | 3,367 chunks for 67,331 records (20 per chunk); a wave of 500 requests used 3.49M input and 3.56M output tokens (2.13M reasoning), USD 1.11 at margin 1.0 and USD 1.17-1.24 at margin 1.1 | waves 01, 04, 06 |
+| Luna wave wall-clock | 58 minutes for wave 06 (created to completed) | provider batch state |
+| Local Qwen | 1.68 records per second on a 40-record pilot | 1654 log (small sample) |
+| Format faults in the last full Luna wave | 55 of 10,000 records pending | 1654 log |
+
+Per work, derived: Haiku Stage 1 USD 2.3e-5; Luna three-facet USD 1.1e-4 to 1.2e-4.
+
+**Scoring set (derived).** The merged pool has 597,494 works; without the 179,106
+works found only by t1650 it has 418,388; the DataCite profile excluded 5.7% of the
+baseline pool on 2026-10-09, so about 394,000, taken as 400,000.
+
+**Cost of the two experts over 400,000 works**
+
+| Expert | At measured per-work rate | Scaled for seven predicates and longer structured output (assumption: 2-4x Haiku, 1-2x Luna) |
+|---|---|---|
+| Haiku | USD 9 | USD 18-37 |
+| Luna | USD 44-48 | USD 44-96 |
+| Both | USD 53-57 | USD 62-133, central about USD 90 |
+
+**Arbiter.** Divergent share d is unmeasured (guess 5-20%), so 20,000 to 80,000
+works. Local: 3.3 to 13.2 hours at 1.68 records per second, 5 to 20 hours with
+few-shots lengthening the prompt (assumption, 1.5x); no API cost. API third vendor,
+Luna-class at the Luna rate: USD 2-10; frontier-class: USD 12-100 (assumption, 5 to
+10 times the Luna rate; not measured).
+
+**Wall-clock.** 400,000 works at 20 per request is 20,000 requests, 40 waves of 500.
+At 58 minutes a wave: about 13 hours with three waves in flight (the old scheduler's
+cap), about 40 hours one wave at a time. Haiku runs as batch within the provider's
+24-hour contract. Scoring plus arbiter: one to two days of machine time.
+
+**Budget and author time.** The USD 30 cap of the 1654 ledger is spent (USD 20.82,
+frozen) and does not carry over: the scale run needs a new authorization, about USD
+60-145 including the API-arbiter fallback. The 100-work calibration trial costs
+cents at these rates. Author hours to the cut: predicates 2-3, Gavard verification
+and the 50/50 and shot sets 3-6 (excluding the Gavard verification, unmeasured),
+trial review 1-2, alpha-cut review 2-3: about 10-15.
+
+**What would move these numbers.** The 19% of the pool without an abstract (76,261
+works) is scored on metadata and may need its own pass; a retry wave for format
+faults adds about 0.5% of cost; a longer prompt or more reasoning raises Luna's
+cost linearly. The data steps (pool rebuild, dedup version 2) were not timed; one
+`make rel-pool` run in a populated worktree would measure them.
