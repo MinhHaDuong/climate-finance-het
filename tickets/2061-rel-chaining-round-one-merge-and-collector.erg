@@ -1,0 +1,23 @@
+%erg 0.1
+Title: REL chaining: finish and archive the round-one merge, land the collector as a lane
+Created: 2026-10-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-10T10:00Z HDMX-coding-agent created
+2026-10-10T10:00Z HDMX-coding-agent note child of 1654 after the author's decision of 2026-10-10 to retire the staged screening half of the 1654 branch and keep the collector; the journal summaries lane (t1650) is withdrawn by the author's decision of the same day, but not as a precondition here: measured on the merged pool, dropping it removes 85 of 64,492 unresolved works, so it does not speed this ticket; withdraw it in the next pool build.
+--- body ---
+
+## Context
+
+Child of 1654. The round-one citation collection exists on the unmerged branch `t1654-citation-chaining` (archive root `data/rel_chaining/2026-10-08/`; merged pool of 597,494 works built 2026-10-09 on dedup version 1, baseline 389,291). This ticket lands the collector and the round-one delivery, and archives the merge. It does not screen anything: the staged screening is retired (ticket 2062) and new works are scored by the redesign (ticket 2060, then 2063).
+
+Sequencing: finish and archive on dedup version 1 before the version-2 flip (ticket 2048 stage B2b), or the flip must carry a migration for the chaining records.
+
+## Exit criteria
+
+- [ ] Counts for round one, from the archive: references and citations retrieved, duplicates, genuinely new works, unresolved references; the arithmetic shown.
+- [ ] The collector lands as a lane (`scripts/_rel_chaining.py`, `scripts/catalog_rel_citation_chaining.py`, `tests/test_rel_citation_chaining.py`, a short doc); the screening-only code (`scripts/corpus_rel_chaining_screen.py`, `tests/test_rel_chaining_screen.py`) does not land; diff at most 14 content-bearing paths.
+- [ ] The round-one delivery is under the intake contract with provenance, pushed to DVC as immutable, and the pool merge rebuilt from it reproduces the archived merge (hashes quoted).
+- [ ] Records are left unscored; no label is created or changed by this ticket.
+- [ ] Scoped gate quoted (`selected:` and `skipped:`).
