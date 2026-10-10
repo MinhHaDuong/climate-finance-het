@@ -10,6 +10,7 @@ Author: HDMX-coding-agent
 2026-10-10T12:33Z HDMX-coding-agent note second correction, author sessions of 2026-10-09 and 10: the predicates are the five set on 2026-10-09 (research, economic, international, climate, finance) plus the computed venue and gate, not the v3 instrument; descriptors move to the final set; Luna may run on the Decisions endpoint (untested); trial arms and a cost ceiling added to the exit criteria.
 2026-10-10T12:42Z HDMX-coding-agent note staged plan of 2026-10-10 (author-decided, tracker 2070): the hand-pick is 60 positives and 60 non-obvious negatives, not 50 and 50; scoring starts with one cheap scorer, and the second-scorer and referee arms only inform the later decision 2072. Body and exit criteria rewritten; earlier log lines kept as history.
 2026-10-10T13:09Z HDMX-coding-agent note first-scorer rule, author 2026-10-10: the first scorer is the cheaper and faster of the two candidates (Haiku structured output in the batch API; Luna on the Decisions endpoint, OpenAI, only gpt-6-luna). MOE reading: compare at equal recall, both cuts calibrated to the same recall target on the sealed sets, then price and wall-clock decide. Haiku has no logprobs field in the Messages API reference as read on 2026-10-10, so its probabilities are verbalized.
+2026-10-10T13:25Z HDMX-coding-agent note the old labels used as clear negatives or a cross-check are keyed on version-1 work keys; 3,550 of them changed with the chaining merge (docs/rel-chaining-key-mapping-v1.csv), so join them through that mapping.
 --- body ---
 
 ## Context
