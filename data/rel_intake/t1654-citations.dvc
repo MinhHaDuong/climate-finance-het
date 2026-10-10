@@ -1,0 +1,6 @@
+outs:
+- md5: 50e66c21e09e230def2b7621c457e09e.dir
+  size: 358335804
+  nfiles: 16
+  hash: md5
+  path: t1654-citations
