@@ -6,7 +6,6 @@ import pytest
 from _rel_chaining import (
     ChainError,
     Store,
-    exact_rekey_map,
     forward_edges,
     intake_record,
     oa_request,
@@ -97,28 +96,6 @@ def test_concurrent_reservations_cannot_overcommit_cap(tmp_path):
         results = list(executor.map(reserve, range(8)))
     assert sum(results) == 3
     assert store.db.execute("SELECT SUM(reserve) FROM budget.calls").fetchone()[0] == pytest.approx(.9)
-
-
-def test_rekey_requires_unique_identity_and_refuses_many_to_one_history():
-    old = [{"work_key": "doi:10.x/a", "all_dois": "10.x/a"}]
-    new = [{"work_key": "openalex:W1", "all_dois": "10.x/a", "all_openalex_ids": "W1"}]
-    mapping, unresolved = exact_rekey_map(old, new)
-    assert mapping == {"doi:10.x/a": "openalex:W1"} and not unresolved
-    ambiguous = new + [{"work_key": "openalex:W2", "all_dois": "10.x/a"}]
-    mapping, unresolved = exact_rekey_map(old, ambiguous)
-    assert not mapping and unresolved[0]["reason"] == "absent or ambiguous exact identity"
-    merged_history = old + [{"work_key": "title:old-a", "all_dois": "10.x/a"}]
-    mapping, unresolved = exact_rekey_map(merged_history, new)
-    assert not mapping and len(unresolved) == 2
-
-
-def test_rekey_preserves_unique_original_source_member_when_preferred_metadata_changes():
-    old = [{"work_key": "title:the economics of climate change|2007",
-            "member_record_ids": "scispace:original-source-record", "title": "The Economics of Climate Change"}]
-    new = [{"work_key": "openalex:W1", "member_record_ids": "scispace:original-source-record;t1654:W1",
-            "title": "The Economics of Climate Change: The Stern Review"}]
-    mapping, unresolved = exact_rekey_map(old, new)
-    assert mapping == {old[0]["work_key"]: "openalex:W1"} and not unresolved
 
 
 def test_raw_response_replay_avoids_recharging_after_cursor_commit_interruption(tmp_path):
@@ -482,17 +459,6 @@ def test_backward_reference_absence_remains_source_bound_uncertainty(tmp_path, m
     assert evidence['native_work_sha256'] == chain.hashlib.sha256(json.dumps(work, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 
-def test_rekey_refuses_merge_into_retained_historical_target():
-    old = [{'work_key': 'old-A', 'all_openalex_ids': 'W1'},
-           {'work_key': 'retained-B', 'all_openalex_ids': 'W2'}]
-    new = [{'work_key': 'retained-B', 'all_openalex_ids': 'W1;W2'}]
-    mapping, unresolved = exact_rekey_map(old, new)
-    assert mapping == {}
-    assert unresolved == [{'old_key': 'old-A', 'candidates': ['retained-B'],
-                           'reason': 'many-to-one historical identity',
-                           'historical_occupants': ['old-A', 'retained-B']}]
-
-
 def test_reference_gaps_preserve_cursor_coverage_native_empty_list_and_export(tmp_path, monkeypatch):
     import json
     from types import SimpleNamespace
@@ -593,27 +559,3 @@ def test_backward_reuse_keeps_absent_reference_diagnostic_without_zero_claim(tmp
     assert prior.db.execute('SELECT completed FROM queries').fetchone()[0] == 1
     chain.plan_citation_queries(current)
     assert current.db.execute("SELECT COUNT(*) FROM queries WHERE kind='backward'").fetchone()[0] == 1
-
-
-def test_rekey_retained_collision_transfers_no_affected_labels(tmp_path, monkeypatch):
-    import json
-
-    import _rel_chaining as chain
-
-    old = tmp_path / 'old.csv'
-    old.write_text('work_key,all_openalex_ids\nold-A,W1\nretained-B,W2\n')
-    new = tmp_path / 'new.csv'
-    new.write_text('work_key,all_openalex_ids\nretained-B,W1;W2\n')
-    additions = []
-    monkeypatch.setattr(chain.screens, 'read_table', lambda *args: [{'work_key': 'old-A', 'label': 'aux'}])
-    def append(path, entries, *args, **kwargs):
-        additions.extend(entries)
-        return len(entries), 0
-    monkeypatch.setattr(chain.screens, 'append_new', append)
-    store = Store(tmp_path / 'round')
-    with pytest.raises(ChainError, match='rekey identities remain unresolved'):
-        chain.migrate_labels(store, old, new, tmp_path / 'icf.csv', tmp_path / 'dimensions.csv')
-    assert additions == []
-    report = json.loads((store.root / 'key_migrations.jsonl').read_text())
-    assert report['mapping'] == {}
-    assert report['unresolved'][0]['historical_occupants'] == ['old-A', 'retained-B']

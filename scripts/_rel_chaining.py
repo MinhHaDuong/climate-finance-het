@@ -21,7 +21,6 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
-import _icf_screen as screens
 import qa_rel_intake as contract
 import requests
 from openalex_corpus.text import reconstruct_abstract
@@ -30,84 +29,6 @@ from utils import MAILTO, get_logger, normalize_doi, normalize_title
 
 log = get_logger("rel_citation_chaining")
 OA = "https://api.openalex.org/works"
-
-
-def _stage1_message_answers(message, keys, ident):
-    """Validate record ordinals independently without changing native messages."""
-    text = "\n".join(c.get("text", "") for c in message.get("content", []) if c.get("type") == "text")
-    try:
-        lo, hi = text.index("["), text.rindex("]")
-        answers = json.loads(text[lo:hi + 1])
-        if not isinstance(answers, list):
-            raise ValueError("not a list")
-    except (ValueError, TypeError):
-        return [], keys, "invalid JSON answer list"
-    numbers = Counter(a.get("n") for a in answers if isinstance(a, dict) and type(a.get("n")) is int)
-    valid, labels = set(), []
-    for answer in answers:
-        if not isinstance(answer, dict):
-            continue
-        n = answer.get("n")
-        if type(n) is not int or not 1 <= n <= len(keys) or numbers[n] != 1:
-            continue
-        label, doc = answer.get("label"), answer.get("doc")
-        if not isinstance(label, str) or not isinstance(doc, str):
-            continue
-        if label not in {"icf", "aux", "out", "unsure"} or doc not in {"research", "institutional", "other"}:
-            continue
-        key = keys[n - 1]
-        labels.append({"work_key": key, "label": label, "doc": doc,
-                       "why": str(answer.get("why", ""))[:160], "model": message["model"], "custom_id": ident})
-        valid.add(key)
-    return labels, [key for key in keys if key not in valid], "missing/invalid/duplicate record answers"
-
-
-def parse_stage1_batch_results(native_results, mapping, input_price=.05 / 1e6, output_price=.25 / 1e6):
-    """Associate unordered native Batch results exactly; quarantine ambiguity.
-
-    Returns valid labels, per-request cost/disposition evidence and faults.
-    Whole-request coverage is required before callers release the reservation.
-    No labels are invented for failed, partial or duplicated answers.
-    """
-    expected = dict(mapping)
-    work_keys = [key for keys in expected.values() for key in keys]
-    if len(work_keys) != len(set(work_keys)):
-        raise ChainError("duplicate work keys in Batch mapping")
-    seen, labels, receipts, faults = set(), [], [], []
-    for native in native_results:
-        ident = native.get("custom_id")
-        if ident not in expected or ident in seen:
-            raise ChainError("unknown or duplicate native Batch custom_id")
-        seen.add(ident)
-        result = native.get("result") or {}
-        kind = result.get("type")
-        if kind in {"errored", "canceled", "expired"}:
-            receipts.append({"custom_id": ident, "type": kind, "derived_cost": 0,
-                             "charge_basis": "documented terminal Batch result: no message created/billed"})
-            faults.append({"custom_id": ident, "fault": kind, "pending_keys": expected[ident]})
-            continue
-        if kind != "succeeded":
-            raise ChainError("unknown native Batch result type; liability retained")
-        message = result.get("message") or {}
-        if message.get("model") != "claude-haiku-5-5":
-            raise ChainError("unexpected Batch served model")
-        usage = message.get("usage") or {}
-        valid_usage = all(type(usage.get(k)) is int and usage[k] >= 0 for k in ["input_tokens", "output_tokens"])
-        cache = usage.get("cache_creation_input_tokens", 0) or usage.get("cache_read_input_tokens", 0)
-        cost = usage["input_tokens"] * input_price + usage["output_tokens"] * output_price if valid_usage and not cache else None
-        receipts.append({"custom_id": ident, "type": kind, "usage": usage, "derived_cost": cost,
-                         "model": message["model"], "stop_reason": message.get("stop_reason")})
-        if message.get("stop_reason") != "end_turn":
-            faults.append({"custom_id": ident, "fault": "truncated reply", "pending_keys": expected[ident]})
-            continue
-        valid_labels, pending, fault = _stage1_message_answers(message, expected[ident], ident)
-        labels.extend(valid_labels)
-        if pending:
-            faults.append({"custom_id": ident, "fault": fault, "pending_keys": pending})
-    missing = set(expected) - seen
-    if missing:
-        raise ChainError(f"incomplete native Batch result coverage: {len(missing)} requests missing")
-    return labels, receipts, faults
 
 
 def now():
@@ -208,68 +129,6 @@ def intake_record(work, query, date):
 
 class ChainError(Exception):
     """A route cannot safely advance."""
-
-
-def bounded_screen_post(root, ledger, pricing, key, post=requests.post):
-    """Injected DesignB transport: reserve every HTTP attempt, including retries.
-
-    Pricing is an archived current endpoint snapshot. Text bytes conservatively
-    bound tokens; native request/reply evidence belongs to the immutable run.
-    Unknown responses retain the liability and abort rather than retry blindly.
-    """
-    def send(url, body, timeout):
-        store = Store(root, ledger)
-        store.bind("budget_usd", 20)
-        store.db.execute("CREATE TABLE IF NOT EXISTS screen_http(call INTEGER PRIMARY KEY,request BLOB,reply BLOB)")
-        store.db.commit()
-        model = body["model"]
-        price = pricing[model]
-        payload = json.loads(json.dumps(body))
-        payload["provider"] = {"max_price": {"prompt": str(price["prompt"] * 1e6),
-                                            "completion": str(price["completion"] * 1e6),
-                                            "request": str(price.get("request", 0))}}
-        if "max_tokens" in body:
-            payload["provider"]["require_parameters"] = True
-        bound = (len(json.dumps(payload, ensure_ascii=False).encode()) + 2048) * price["prompt"]
-        bound += body.get("max_tokens", price.get("max_completion_tokens", 0)) * price["completion"]
-        bound += price.get("request", 0)
-        digest = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
-        call = store.reserve("openrouter-designb", max(bound, 1e-9), {"model": model, "request_sha256": digest})
-        request = {"url": url, "body": payload, "call": call,
-                   "pricing": price, "reserved_usd": bound, "at": now()}
-        store.db.execute("INSERT INTO screen_http(call,request) VALUES(?,?)",
-                         (call, gzip.compress(json.dumps(request, ensure_ascii=False).encode(), mtime=0)))
-        store.db.commit()
-        try:
-            response = post(url, headers={"Authorization": "Bearer " + key}, json=payload, timeout=timeout)
-            data = response.json()
-        except (requests.RequestException, ValueError) as exc:
-            store.db.close()
-            raise ChainError("ambiguous stage1 request; liability retained; no automatic retry") from exc
-        reply = {"status": response.status_code, "body": data, "at": now()}
-        store.db.execute("UPDATE screen_http SET reply=? WHERE call=?",
-                         (gzip.compress(json.dumps(reply, ensure_ascii=False).encode(), mtime=0), call))
-        store.db.commit()
-        cost = (data.get("usage") or {}).get("cost")
-        if cost is None:
-            if response.status_code == 529 and data.get("error") and not data.get("answers") and not data.get("choices"):
-                store.db.execute("UPDATE budget.calls SET details=? WHERE k=?", (json.dumps({
-                    "model": model, "request_sha256": digest, "http": 529,
-                    "disposition": "terminal overload, no valid decision; replacement allowed within established retry limit",
-                    "maximum_liability_retained": True}), call))
-                store.db.commit()
-                store.db.close()
-                return 529, data, "terminal overload; full unknown liability retained"
-            if response.status_code == 429:
-                cost = 0
-            else:
-                store.db.close()
-                raise ChainError("stage1 charge unknown; liability retained; reconcile native reply")
-        store.settle(call, float(cost), {"model": model, "http": response.status_code,
-                                      "usage": data.get("usage"), "reply": f"{store.root}/checkpoint.sqlite#screen_http:{call}"})
-        store.db.close()
-        return response.status_code, data, None if response.status_code == 200 else f"http {response.status_code}"
-    return send
 
 
 class Store:
@@ -971,69 +830,3 @@ def export_delivery(store, output):
     if faults:
         raise ChainError(str(faults))
     log.info("exported %d records; %d incomplete units", n, len(incomplete))
-
-
-def identity_indexes(new_rows):
-    by_identity = {}
-    by_member = {}
-    for row in new_rows:
-        for field in ("all_dois", "all_openalex_ids"):
-            for value in (row.get(field) or "").split(";"):
-                if value:
-                    by_identity.setdefault((field, value), set()).add(row["work_key"])
-        for member in (row.get("member_record_ids") or "").split(";"):
-            if member:
-                by_member.setdefault(member, set()).add(row["work_key"])
-    return by_identity, by_member
-
-
-def exact_rekey_map(old_rows, new_rows):
-    by_identity, by_member = identity_indexes(new_rows)
-    new_keys = {r["work_key"] for r in new_rows}
-    result, unresolved = {}, []
-    old_member_counts = Counter(m for r in old_rows for m in (r.get("member_record_ids") or "").split(";") if m)
-    for old in old_rows:
-        key = old["work_key"]
-        if key in new_keys:
-            continue
-        candidates = set()
-        for field in ("all_dois", "all_openalex_ids"):
-            for value in (old.get(field) or "").split(";"):
-                if value:
-                    candidates.update(by_identity.get((field, value), ()))
-        members = [m for m in (old.get("member_record_ids") or "").split(";") if m]
-        if not candidates and members and all(old_member_counts[m] == 1 for m in members):
-            member_sets = [by_member.get(m, set()) for m in members]
-            candidates = set.intersection(*member_sets)
-            # These are unchanged source-record identities, not title guesses.
-            # A newly preferred title/year must not erase the exact membership.
-        if len(candidates) == 1:
-            result[key] = candidates.pop()
-        else:
-            unresolved.append({"old_key": key, "candidates": sorted(candidates), "reason": "absent or ambiguous exact identity"})
-    old_keys = {row["work_key"] for row in old_rows}
-    occupants = {key: [key] for key in new_keys & old_keys}
-    for old, new in result.items():
-        occupants.setdefault(new, []).append(old)
-    for old, new in list(result.items()):
-        if len(occupants[new]) > 1:
-            unresolved.append({"old_key": old, "candidates": [new], "reason": "many-to-one historical identity",
-                               "historical_occupants": sorted(occupants[new])})
-            del result[old]
-    return result, unresolved
-
-
-def migrate_labels(store, old_pool, new_pool, table, dims_table):
-    mapping, unresolved = exact_rekey_map(list(rows(old_pool)), list(rows(new_pool)))
-    report = {"old_pool_sha256": sha(old_pool), "new_pool_sha256": sha(new_pool),
-              "mapping": mapping, "unresolved": unresolved, "tables": {}}
-    for path, schema in ((table, screens.ICF), (dims_table, screens.DIMENSIONS)):
-        entries = screens.read_table(path, schema)
-        additions = [{**row, "work_key": mapping[row["work_key"]]} for row in entries if row["work_key"] in mapping]
-        added, skipped = screens.append_new(path, additions, "t1654 exact identity migration", schema=schema)
-        report["tables"][str(path)] = {"appended": added, "skipped": skipped}
-    path = store.root / "key_migrations.jsonl"
-    with path.open("a", encoding="utf-8") as stream:
-        stream.write(json.dumps({"at": now(), **report}, ensure_ascii=False) + "\n")
-    if unresolved:
-        raise ChainError(f"{len(unresolved)} rekey identities remain unresolved; no labels transferred for them")
