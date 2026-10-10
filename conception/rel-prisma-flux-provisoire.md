@@ -22,6 +22,8 @@
 
 ## Sélection sur titre et résumé (deux étapes automatiques)
 
+*Amendement du 10 octobre 2026 : les comptes de cette section et des suivantes décrivent le criblage de la base de référence, conservé comme historique. Le criblage en étapes est remplacé par un scoreur unique (`docs/rel-pipeline-redesign-2026-10-10.md`, section 12) ; le diagramme final sera reconstruit sur ce scoreur, avec une ligne « moissonnée, retirée : couverte par le chaînage » pour la voie des sommaires (ticket 1656).*
+
 Les 25 693 œuvres de la recherche absentes du corpus raffiné sont triées ; 3 752 autres l'étaient à l'heure de la rédaction (passage Qwen en cours sur 4 787). Les ≈ 42 688 œuvres du pool brut hors recherche ne sont **pas encore triées**.
 
 | Case | Effectif | Source du chiffre |

@@ -6,6 +6,7 @@ Author: HDMX-coding-agent
 --- log ---
 2026-10-10T10:00Z HDMX-coding-agent created
 2026-10-10T10:00Z HDMX-coding-agent note child of 1654 after the author's decision of 2026-10-10 to retire the staged screening half of the 1654 branch and keep the collector; the journal summaries lane (t1650) is withdrawn by the author's decision of the same day, but not as a precondition here: measured on the merged pool, dropping it removes 85 of 64,492 unresolved works, so it does not speed this ticket; withdraw it in the next pool build.
+2026-10-10T12:42Z HDMX-coding-agent note stage S1 of the staged plan (tracker 2070, docs/rel-pipeline-redesign-2026-10-10.md section 12); scope unchanged.
 --- body ---
 
 ## Context

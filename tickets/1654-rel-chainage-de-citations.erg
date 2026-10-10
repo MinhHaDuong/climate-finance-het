@@ -11,6 +11,7 @@ Author: haduong
 2026-10-09T10:13Z HDMX-coding-agent ticket 2049 regenerated the lane deliveries t1530, t1650, t1652 and the t1790 reruns as 2026-10-09 superseding the previous ones; work_key unchanged; member_record_ids and first_author/all_authors changed for those works; anything storing member_record_ids must be re-keyed to the new delivery ids
 2026-10-10T09:47Z HDMX-coding-agent note author decision 2026-10-10 (interactive): the staged screening half is retired; scoring in the REL pipeline redesign replaces it (docs/rel-pipeline-redesign-2026-10-10.md). This ticket becomes a tracker; children 2061 (round-one merge and collector lane), 2062 (screening wind-down), 2060 (scoring calibration trial, under 0700), 2063 (round two and closure). The journal summaries lane (t1650) is withdrawn by the same decision. Note: the long log and the screening checkpoints of this ticket live on the unmerged branch t1654-citation-chaining; reconcile that file when the branch is merged or retired.
 2026-10-10T09:47Z HDMX-coding-agent note exit criteria rewritten for the decision above: screening is no longer done within 1654
+2026-10-10T12:42Z HDMX-coding-agent note staged plan of 2026-10-10 (author-decided, tracker 2070): S1 is 2061 and 2062, finished first; round 2 (2063) follows the end-to-end run 2071 because its frontier is chosen by score, so this tracker closes after 2063.
 --- body ---
 
 ## Context
@@ -32,8 +33,13 @@ redesign (`docs/rel-pipeline-redesign-2026-10-10.md`). Children:
 - 2060 scoring calibration trial on the sealed sets (child of 0700)
 - 2063 round two from the scored frontier, third-round decision and closure
 
+Staged plan (author decision 2026-10-10, tracker 2070): 1654 is finished first
+through 2061 and 2062 (stage S1). Round two (2063) follows the end-to-end run with
+one cheap scorer (2071), because its frontier is chosen by score; this tracker
+therefore closes after 2063.
+
 ## Exit criteria
 - [ ] Two rounds run, counts per round (references and citations, duplicates, new works): round one under 2061, round two under 2063
 - [ ] Third round triggered or dropped, with the measurement that decides it (2063)
-- [ ] New works delivered under the intake contract with provenance and merged (2061, 2063), then scored by the redesign (2060); venue data and counts reconciled before each round's yield is measured
+- [ ] New works delivered under the intake contract with provenance and merged (2061, 2063), then scored by the redesign (2060, 2071); venue data and counts reconciled before each round's yield is measured
 - [ ] Children 2060 to 2063 closed; this tracker closes only after the integration review

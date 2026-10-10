@@ -10,6 +10,7 @@ Label: deferred
 
 2026-10-09T18:18Z HDMX-coding-agent note parked 2026-10-09 (author go pending): the per-DOI and batch probes with the renewed key found abstracts for only 2% of the ICF and unsure residue (2 of 100, none before 2007) and 13% of works ISTEX proved have one, so Semantic Scholar withholds most publisher abstracts; the dataset snapshot draws on the same feeds and is unlikely to do better. Reopen only if the Scopus or ScienceDirect route is ruled out and the snapshot is wanted for reproducibility. Labelled deferred
 2026-10-09T18:18Z HDMX-coding-agent label deferred
+2026-10-10T12:42Z HDMX-coding-agent note stays deferred under the staged plan (tracker 2070); reopen only if the end-to-end run 2071 shows abstract-less works are the binding limit.
 --- body ---
 
 ## Context

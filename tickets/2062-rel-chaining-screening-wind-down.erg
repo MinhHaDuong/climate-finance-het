@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-10-10T10:00Z HDMX-coding-agent created
 2026-10-10T10:00Z HDMX-coding-agent note author decision 2026-10-10: retire the staged screening half of the 1654 branch (design B, stage 2 judges, Luna facet waves, correction and waiver chain, discipline catch-up as separate stages); scoring in the redesign replaces it.
 2026-10-10T10:00Z HDMX-coding-agent note ledger side done 2026-10-10 on the author's go (read-only provider status first, then offline settlement with the project's own reconcile script): every provider batch is terminal; wave 06 settled at USD 1.107; six stale review and pilot reservations settled or released by instruction; six repair duplicates settled at 0 on HTTP 429 evidence; the last 25 rows settled at their whole reserve as an upper bound, assumed spent, not measured. Result: 12,073 calls all settled, total USD 20.8215 usage-derived (not an invoice) against the USD 30 cap, integrity check ok, nothing open.
+2026-10-10T12:42Z HDMX-coding-agent note stage S1 of the staged plan (tracker 2070); scope unchanged.
 --- body ---
 
 ## Context

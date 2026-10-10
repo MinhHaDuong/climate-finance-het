@@ -1,0 +1,20 @@
+%erg 0.1
+Title: REL decision: second scorer and referee on the band
+Created: 2026-10-10
+Author: HDMX-coding-agent
+Blocked-by: 2071
+
+--- log ---
+2026-10-10T13:00Z HDMX-coding-agent created
+2026-10-10T13:00Z HDMX-coding-agent note stage S5 of the staged plan (tracker 2070). Author decision 2026-10-10: buy a second scorer and a referee only if the first run shows they are needed.
+--- body ---
+
+## Context
+
+Child of 0700 (tracker 2070). After the end-to-end run 2071, decide from measured band width and recall whether a second scorer (another vendor, own calibrated cut) and a referee on the band (local model with llguidance and positive and negative few-shots, or a third API vendor) are worth their cost. The design if adopted is in section 2.4 of `docs/rel-pipeline-redesign-2026-10-10.md`; price lines are in its section 9.
+
+## Exit criteria
+
+- [ ] Band width and recall at the cut quoted from 2071, by act and language.
+- [ ] Price of the second scorer and of the referee derived for the band only, not for the whole pool.
+- [ ] A recommendation with its evidence; the author's decision logged. If adopted, a build ticket is filed with the price as its ceiling; if not, the reason is recorded for the methods section of the review.

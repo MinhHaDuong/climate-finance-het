@@ -10,6 +10,7 @@ Author: haduong
 2026-09-25T09:01Z Codex note Le data paper est publie et son v2 reste archive ; le corpus de travail est degele pour v3 (STATE.md). Les references de l'audit Gavard & Schoch entrent dans la revue de couverture du corpus courant avant la mesure REL ; 0702 et 0704 mis a jour.
 2026-10-01T05:52Z HDMX-coding-agent note translated to English (author decision 2026-10-01, interactive); no change of scope
 
+2026-10-10T12:42Z HDMX-coding-agent note sequence tracker 2070 holds the staged plan S1 to S5 (author-decided 2026-10-10); children 2060 and 2070 to 2072 added; see docs/rel-pipeline-redesign-2026-10-10.md section 12.
 --- body ---
 ## Context
 
