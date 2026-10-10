@@ -1,0 +1,24 @@
+%erg 0.1
+Title: REL chaining: wind down the staged screening half
+Created: 2026-10-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-10T10:00Z HDMX-coding-agent created
+2026-10-10T10:00Z HDMX-coding-agent note author decision 2026-10-10: retire the staged screening half of the 1654 branch (design B, stage 2 judges, Luna facet waves, correction and waiver chain, discipline catch-up as separate stages); scoring in the redesign replaces it.
+2026-10-10T10:00Z HDMX-coding-agent note ledger side done 2026-10-10 on the author's go (read-only provider status first, then offline settlement with the project's own reconcile script): every provider batch is terminal; wave 06 settled at USD 1.107; six stale review and pilot reservations settled or released by instruction; six repair duplicates settled at 0 on HTTP 429 evidence; the last 25 rows settled at their whole reserve as an upper bound, assumed spent, not measured. Result: 12,073 calls all settled, total USD 20.8215 usage-derived (not an invoice) against the USD 30 cap, integrity check ok, nothing open.
+--- body ---
+
+## Context
+
+Child of 1654. The ledger is frozen (see the log); this ticket records the disposition so nothing is lost and no job is restarted by accident. The old labels stay in the append-only tables as a cross-check and as a source of clear negatives, never as truth.
+
+The 63,558 chaining works that were still unresolved under the old screening are not screened by it; they wait for the new scorer.
+
+## Exit criteria
+
+- [x] No provider batch is live: waves 02, 03, 05, 07 cancelled, waves 01, 04, 06 completed, Haiku batch ended (provider status read 2026-10-10).
+- [x] `data/rel_chaining/2026-10-08/budget.sqlite` has no open reservation; every row settled; totals quoted in the log.
+- [ ] A disposition note lists what is retired (runners, scripts, waivers) and what stays (labels, ledgers, archives), and the screening-half commits of branch `t1654-citation-chaining` are preserved by a tag before the branch is deleted.
+- [ ] The archive `data/rel_chaining/2026-10-08/` is pushed to DVC or its location stated, so the ledger and answers survive the worktree.
+- [ ] The waived or accepted residues of the old screening (296 stage-2 residues, 59 title-less works, the waived final audit) are listed in the 1656 freeze inputs as limitations, not carried into the new pipeline.

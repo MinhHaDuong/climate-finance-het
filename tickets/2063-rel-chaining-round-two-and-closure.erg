@@ -1,0 +1,22 @@
+%erg 0.1
+Title: REL chaining: round two from the scored frontier, third-round decision and closure
+Created: 2026-10-10
+Author: HDMX-coding-agent
+Blocked-by: 2060
+Blocked-by: 2061
+
+--- log ---
+2026-10-10T10:00Z HDMX-coding-agent created
+2026-10-10T10:00Z HDMX-coding-agent note MOE-recommended, awaiting the author: round two waits for the scorer and the calibrated cut, so the next frontier is chosen by score and not by the retired labels.
+--- body ---
+
+## Context
+
+Child of 1654 (tracker). Keeps the 29 September consultation: two rounds, a third only if the second brings admissible works. Rerun conditions: interrupted query, missed sentinel, external reference without decision, incomplete summary. Seeds keep uncertain works and sentinel routes; the fully graded set alone is not the discovery universe.
+
+## Exit criteria
+
+- [ ] Round two run with counts (references and citations, duplicates, new works), its frontier chosen from scored works under the calibrated cut (ticket 2060).
+- [ ] New works delivered under the intake contract, merged, and scored by the redesign; venue data refreshed; counts reconciled before the round's yield is measured.
+- [ ] Third round triggered or dropped, with the measurement that decides it.
+- [ ] Unresolved references and the evidence for stopping recorded, including any further chaining the protocol's closure rule requires; interrupted queries, missed sentinels and undecided external references do not support a saturation claim.
