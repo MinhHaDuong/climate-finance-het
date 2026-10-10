@@ -4,10 +4,12 @@ Created: 2026-10-10
 Author: HDMX-coding-agent
 Blocked-by: 2060
 Blocked-by: 2061
+Blocked-by: 2071
 
 --- log ---
 2026-10-10T10:00Z HDMX-coding-agent created
 2026-10-10T10:00Z HDMX-coding-agent note MOE-recommended, awaiting the author: round two waits for the scorer and the calibrated cut, so the next frontier is chosen by score and not by the retired labels.
+2026-10-10T12:42Z HDMX-coding-agent note staged plan of 2026-10-10: round 2 also waits for the end-to-end run 2071, since its frontier is chosen by score. Blocked-by 2071 added.
 --- body ---
 
 ## Context

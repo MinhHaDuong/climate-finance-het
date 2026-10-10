@@ -1,0 +1,33 @@
+%erg 0.1
+Title: REL pipeline redesign: staged plan S1 to S5 (tracker)
+Created: 2026-10-10
+Author: HDMX-coding-agent
+
+--- log ---
+2026-10-10T13:00Z HDMX-coding-agent created
+2026-10-10T13:00Z HDMX-coding-agent note author decision 2026-10-10 (interactive): finish 1654 first, then the corpus ticket train, then the 60 + 60 hand-pick, then run end to end with one cheap scorer, then decide whether a second scorer and a referee on the band are needed. This tracker lists the stages and their tickets; it never blocks them.
+--- body ---
+
+## Context
+
+Child of 0700. The plan is written in `docs/rel-pipeline-redesign-2026-10-10.md`, section 12. Pre-cut predicates, post-cut descriptors and the Dublin Core profile are in sections 2.4, 10 and 11 of the same note.
+
+| Stage | Content | Tickets |
+|---|---|---|
+| S1 | Finish 1654: archive the round-one merge, land the collector, wind down the staged screening | 2061, 2062 |
+| S2 | The corpus ticket train: dedup version 2 and its migration, the metadata profile switched on, t1650 withdrawn in the next pool build | 2043, 2048, 2051 (deferred) |
+| S3 | Hand-pick 60 positives and 60 non-obvious negatives, verify and seal the Gavard set, pick the shot set | 2060 |
+| S4 | End to end with one cheap scorer: calibrate, score the pool, alpha-cut | 2060, 2071 |
+| S5 | Decide whether a second scorer and a referee on the band are worth buying | 2072 |
+| After | Round 2 of chaining from the scored frontier, closure of 1654, then the freeze | 2063, 1654, 1656 |
+
+MOE-recommended, not yet decided: S2 and S3 run in parallel; round 2 stays after S4 because its frontier is chosen by score.
+
+## Exit criteria
+
+- [ ] S1 closed: 2061 and 2062 merged and closed
+- [ ] S2 closed: 2043 and 2048 closed, the pool of works frozen for scoring, counts reconciled
+- [ ] S3 closed: the sealed sets hashed before any model run (2060)
+- [ ] S4 closed: 2071 closed with the final set at most 10,000 works, cost within the author's ceiling
+- [ ] S5 closed: 2072 records the author's decision
+- [ ] 2063 and 1654 closed, then 1656; this tracker closes after the integration review

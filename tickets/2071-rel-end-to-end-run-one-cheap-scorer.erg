@@ -1,0 +1,28 @@
+%erg 0.1
+Title: REL end-to-end run with one cheap scorer: score the pool, alpha-cut
+Created: 2026-10-10
+Author: HDMX-coding-agent
+Blocked-by: 2043
+Blocked-by: 2048
+Blocked-by: 2060
+
+--- log ---
+2026-10-10T13:00Z HDMX-coding-agent created
+2026-10-10T13:00Z HDMX-coding-agent note stage S4 of the staged plan (tracker 2070). One cheap scorer only; a second scorer and a referee are decided in 2072 after this run.
+--- body ---
+
+## Context
+
+Child of 0700 (tracker 2070). Runs the scorer chosen in 2060 over the frozen pool of works and applies the calibrated cut to produce the final set of at most 10,000 works. The question set, the cut and the sealed-set hashes come from 2060. The pool comes from the corpus ticket train: the DataCite profile switched on (2043) and dedup version 2 (2048), with t1650 withdrawn in the pool build.
+
+Descriptors (section 10 of the note) are asked only of the final set, after the cut, at about USD 5-8 (derived, unmeasured).
+
+## Exit criteria
+
+- [ ] Price derived and shown to the author before any paid call; the author's cost ceiling set in 2060 is respected; no paid call without the author's go.
+- [ ] Counts with the arithmetic shown: works in the pool, excluded by the gate, removed by the venue-first order before any call, scored; derived against billed cost.
+- [ ] Output in an append-only table: per work the probabilities, the evidence types, the cut, the question-set hash and the run id; no label overwritten.
+- [ ] Final set at most 10,000 works, with the recall estimated on the sealed sets and reported by act and language.
+- [ ] Band width reported (share of works within the margin of the cut), the input to 2072.
+- [ ] Descriptors run on the final set only; `unfccc_mechanism` null outside it.
+- [ ] Archive pushed to DVC; counts feed the PRISMA of 1656.
