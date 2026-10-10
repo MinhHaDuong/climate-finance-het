@@ -6,6 +6,11 @@ the author's yes) or **default**. Counts are quoted from tickets and notes with
 their date; none was re-measured for this note. Estimated prices are marked
 "estimate".
 
+The staged plan of section 12 (author-decided 2026-10-10) governs the order of
+work: one cheap scorer first, and a second scorer and a referee only if that run
+shows they are needed. Where earlier sections describe two experts and an arbiter
+as the base design, read them as the conditional stage S5.
+
 ## 1. The pipeline
 
 ```
@@ -15,11 +20,11 @@ N upstream databases
    -> Deduplicate
    -> Pool of Works
    -> Filter on DataCite metadata completeness
-   -> Scoring: expert A, expert B, arbiter on divergence
+   -> Scoring: one cheap scorer (S4); a second scorer and a referee on the band only if S5 asks for them
    -> Alpha-cut: final set of at most 10,000 works
 
 Gavard set: hand-chosen, verified, sealed; calibrates the alpha-cut
-Test set: 50 positives, 50 non-obvious negatives, hand-picked, sealed
+Test set: 60 positives, 60 non-obvious negatives, hand-picked, sealed
 Shot set: a few positive and negative examples, outside both sealed sets
 ```
 
@@ -102,8 +107,14 @@ The work's membership is the minimum over the facets. `config/rel_stage2_prompt_
 (ticket 2010) is the earlier three-facet design (0, 0.5, 1 with evidence strings)
 and the source of the contribution-test wording; it is not used unchanged.
 Descriptors (contribution type, mechanism, field, geography) are not asked here:
-section 10. Experts: Haiku (Anthropic) and Luna (OpenAI), two vendors, hence
-decorrelated. A third reader arbitrates:
+section 10.
+
+First run (S4, author-decided 2026-10-10): one cheap scorer, Haiku by structured
+output or Luna on the Decisions endpoint, whichever the trial finds cheaper at
+adequate recall. Its cut is calibrated on the sealed sets. A second scorer and a
+referee on the band are adopted only if the first run shows they are needed (S5).
+If adopted, the design is: Haiku (Anthropic) and Luna (OpenAI), two vendors,
+hence decorrelated, and a third reader arbitrates:
 
 - Each model's probabilities are idiosyncratic, so scores are never averaged
   across models (**author-decided**). Each model gets its own cut, calibrated on
@@ -119,7 +130,7 @@ decorrelated. A third reader arbitrates:
 ### 2.5 Alpha-cut
 
 Keep at most 10,000 works. The Gavard set is verified, sealed, then used to fix
-the cut. The sealed 50/50 set tests it. Whether this calibration works, and how
+the cut. The sealed 60/60 set tests it. Whether this calibration works, and how
 many works it yields, is open (section 3).
 
 ## 3. Unknowns
@@ -127,22 +138,24 @@ many works it yields, is open (section 3).
 | Unknown | Why it matters | How it resolves | Estimate |
 |---|---|---|---|
 | Luna transport: Decisions endpoint or chat-completions batch | per-work cost differs about threefold (section 9); Decisions is public beta, input-token pricing, no batch tier, rate limits unknown | untested; a trial arm measures it | cents |
-| Does calibrating on the sealed sets give a usable cut? | the Gavard set is positive-only; recall can be set, false positives need the negatives | trial: recall and size at each model's cut on the test set | trial below |
+| Does calibrating on the sealed sets give a usable cut? | the Gavard set is positive-only; recall can be set, false positives need the negatives | trial: recall and size at the scorer's cut on the test set | trial below |
 | Size of the output | the cut may give far more or fewer than 10k | count on the filtered pool after calibration; reference only: the old pipeline kept 7,499 fully graded works and labelled 11,982 `icf` before corrections | known after the trial |
-| Divergent share | sets the arbiter's volume and the rescore cost | measured on the sealed sets, extrapolated | guess 5-20% |
-| Local arbiter on non-English | the hardest cases may be non-English and first act | trial, with and without few-shots | half a day |
-| Precision of the claims | 50 per class gives a Wilson interval of about 0.86 to 0.99 at 48 of 50 | stated in the report; small effects are noise | none |
+| Width of the band around the cut | decides whether a second scorer or a referee is worth buying (S5) | measured in S4 on the sealed sets and the run | guess 5-20% of works inside the band |
+| Local referee on non-English (only if S5 adopts one) | the hardest cases may be non-English and first act | trial arm, with and without few-shots | half a day |
+| Precision of the claims | 60 per class gives a Wilson interval of about 0.89 to 0.99 at 58 of 60 (0.87 to 0.99 at 48 of 50) | stated in the report; small effects are noise | none |
 | No-abstract works | 76,261 works; scoring on metadata only | separate calibration | in trial |
 | Chaining volume | round 1 added about 208k works; scoring cost scales with them | scoring is cheap; the cost is gating | see 5 |
 
 Trial design (**MOE-recommended**, trial itself accepted by the author): run
-Haiku and Luna on the Gavard set and the 100-work test set; calibrate each
-cut on the Gavard set plus a draw of clear old `out` works as negatives; run the
-arbiter on the divergent cases with and without few-shots; report recall at the
-cut, divergent share and per-language results. Few-shots come from a separate
-shot set and never from a sealed set. The sealed files are hashed before any
-model run, one line per work giving the reason for the pick. Paid cost,
-estimate: a few USD. Author time: the shot set and the two sealed sets.
+the cheap-scorer candidates (Haiku, Luna on Decisions) on the Gavard set and the
+120-work test set; calibrate the cut on the Gavard set plus a draw of clear old
+`out` works as negatives; report recall at the cut, the width of the band and
+per-language results. The second-scorer and referee arms (divergence, local
+arbiter with and without few-shots) run on the sealed sets only, to inform S5,
+not at scale. Few-shots come from a separate shot set and never from a sealed
+set. The sealed files are hashed before any model run, one line per work giving
+the reason for the pick. Paid cost, estimate: a few USD. Author time: the shot
+set and the two sealed sets.
 
 ## 4. What changes in the current plan
 
@@ -152,13 +165,14 @@ estimate: a few USD. Author time: the shot set and the two sealed sets.
   Scoring replaces them.
 - **Kept**: the 1654 collector (`scripts/_rel_chaining.py`), its seed roster and
   round-1 records, delivered as a lane.
-- **Waits**: round 2 of chaining chooses its frontier from the new scores
-  (**MOE-recommended**).
+- **Waits**: round 2 of chaining chooses its frontier from the new scores, so it
+  runs after the end-to-end run S4 (**MOE-recommended**).
 - **Split of 1654** (**author-decided** 2026-10-10, tickets filed in PR 1754):
   1654 is a tracker. Children: 2061 finish and archive the round-1 merge on
   dedup version 1 and land the collector as a lane; 2062 wind down the screening
   half (section 8); 2060 the scoring calibration trial (child of 0700); 2063
-  round 2 after scoring exists, blocked by 2060 and 2061. The earlier A/B/C split
+  round 2 after scoring exists, blocked by 2060 and 2061 and, since the staged plan,
+  by the end-to-end run 2071. The earlier A/B/C split
   is superseded. The staged screening half is retired (**author-decided**
   2026-10-10); its ledger was frozen the same day.
 
@@ -199,19 +213,8 @@ estimate: a few USD. Author time: the shot set and the two sealed sets.
 
 ## 6. Proposed sequence
 
-| Step | Content | Author | Spend (estimate) |
-|---|---|---|---|
-| 0 | this note, reviewed | review | none |
-| 1 | Gavard set verified and sealed, 50/50 set and shot set picked and hashed (question set frozen, hash recorded) | 3-6 hours | none |
-| 2 | calibration trial | read the report | a few USD |
-| 3 | go or revise the design | decision | none |
-| 4 | scoring on the filtered pool; the lane for chaining round 1 delivered in parallel | go for paid calls | USD 60-135 for two experts over about 400k works with Luna on chat completions, USD 25-77 with Luna on Decisions (derived, section 9; the first draft said USD 15-25 and omitted Luna's reasoning cost) |
-| 5 | arbiter on divergent works, alpha-cut, count | review the set | 5-20 hours local, or USD 2-10 (Luna-class) to 12-100 (frontier-class, assumed price ratio) with an API third vendor (section 9) |
-| 6 | chaining round 2 from the new frontier | decision | as step 4 |
-
-The deadline is about 2026-12-06 (ticket 0700). Steps 0 to 3 fit in the next
-week if step 1 does; the later steps scale with how many works the filter lets
-through.
+Superseded by the staged plan of section 12. The earlier six-step table assumed
+two experts and an arbiter from the start.
 
 ## 7. Lane analysis and the decision on journal summaries
 
@@ -291,7 +294,13 @@ Per work, derived: Haiku Stage 1 USD 2.3e-5; Luna three-facet USD 1.1e-4 to 1.2e
 works found only by t1650 it has 418,388; the DataCite profile excluded 5.7% of the
 baseline pool on 2026-10-09, so about 394,000, taken as 400,000.
 
-**Cost of the two experts over 400,000 works**
+**First run: one cheap scorer (S4).** Haiku by structured output, USD 9-37 over
+400,000 works; Luna on Decisions, USD 16-40 (derived, unmeasured). Evaluating
+`venue` first removes about 21% of works before any call, so about USD 7-29 for
+Haiku and USD 13-32 for Luna on Decisions. A second scorer would add the other
+figure. The author's ceiling for the run is still to be set (ticket 2060).
+
+**Cost of the two experts over 400,000 works (stage S5 only)**
 
 | Expert | At measured per-work rate | Scaled for longer structured output (assumption: 2-4x Haiku, 1-2x Luna) |
 |---|---|---|
@@ -324,10 +333,10 @@ cap), about 40 hours one wave at a time. Haiku runs as batch within the provider
 
 **Budget and author time.** The USD 30 cap of the 1654 ledger is spent (USD 20.82,
 frozen) and does not carry over: the scale run needs a new authorization, about USD
-60-145 including the API-arbiter fallback. The 100-work calibration trial costs
+60-145 including the API-arbiter fallback. The 120-work calibration trial costs
 cents at these rates. Author hours to the cut: Gavard verification
-and the 50/50 and shot sets 3-6 (excluding the Gavard verification, unmeasured),
-trial review 1-2, alpha-cut review 2-3: about 6-11.
+and the 60/60 and shot sets 4-7 (excluding the Gavard verification, unmeasured),
+trial review 1-2, alpha-cut review 2-3: about 7-12.
 
 **What would move these numbers.** The 19% of the pool without an abstract (76,261
 works) is scored on metadata and may need its own pass; a retry wave for format
@@ -397,3 +406,20 @@ cluster can be named.
 
 The mandatory set is the DataCite set of ticket 2043. Models' command of FORD and
 M49 is assumed, not measured; the 2060 trial checks it on 20 abstracts.
+
+## 12. Staged plan (author-decided 2026-10-10)
+
+| Stage | Content | Tickets | Leave the stage when |
+|---|---|---|---|
+| S1 | Finish 1654: archive the round-one merge and land the collector; wind down the staged screening | 2061, 2062 | merged and archived on dedup version 1; archive pushed to DVC |
+| S2 | The corpus ticket train: dedup version 2 and its migration, the metadata profile switched on, t1650 withdrawn in the next pool build | 2043, 2048, 2051 (deferred), a pool build | the pool of works is frozen for scoring and its counts reconciled |
+| S3 | Hand-pick 60 positives and 60 non-obvious negatives; verify and seal the Gavard set; pick the shot set; hash all | 2060 | hashes recorded before any model run |
+| S4 | End to end with one cheap scorer: calibrate on the sealed sets, score the pool, alpha-cut | 2060 (trial), 2071 (run) | the cut yields at most 10,000 works at a stated recall, within the author's cost ceiling |
+| S5 | Decide whether a second scorer and a referee on the band are worth buying | 2072 | the author decides, from the measured band width and recall |
+| After | Round 2 of chaining from the scored frontier, third-round decision, closure of 1654; then the freeze | 2063, 1656 | |
+
+The tracker for this sequence is ticket 2070. MOE-recommended, not yet decided:
+S2 and S3 run in parallel (the hand-pick waits only on the author), and round 2
+stays after S4 because its frontier is chosen by score, so 1654 closes after
+2063 and S1 closes the part that can be finished now. The deadline is about
+2026-12-06 (ticket 0700); S3 is the author-time item on the critical path.
