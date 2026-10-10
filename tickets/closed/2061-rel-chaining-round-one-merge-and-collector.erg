@@ -2,12 +2,15 @@
 Title: REL chaining: finish and archive the round-one merge, land the collector as a lane
 Created: 2026-10-10
 Author: HDMX-coding-agent
+Closed: autoclosed — PR #1767
 
 --- log ---
 2026-10-10T10:00Z HDMX-coding-agent created
 2026-10-10T10:00Z HDMX-coding-agent note child of 1654 after the author's decision of 2026-10-10 to retire the staged screening half of the 1654 branch and keep the collector; the journal summaries lane (t1650) is withdrawn by the author's decision of the same day, but not as a precondition here: measured on the merged pool, dropping it removes 85 of 64,492 unresolved works, so it does not speed this ticket; withdraw it in the next pool build.
 2026-10-10T12:42Z HDMX-coding-agent note stage S1 of the staged plan (tracker 2070, docs/rel-pipeline-redesign-2026-10-10.md section 12); scope unchanged.
 2026-10-10T14:00Z HDMX-coding-agent note lane t1654-citations pushed to DVC remote padme (md5 50e66c21e09e230def2b7621c457e09e.dir, 16 files, dvc status -c in sync, fresh get matches 16 sha256); collector landed by PRs 1764; counts, rebuilt pool hash 7a07da56 and key mapping in docs/rel-chaining-lane.md
+2026-10-10T14:00Z HDMX-coding-agent closed — autoclosed — PR #1767
+
 --- body ---
 
 ## Context
