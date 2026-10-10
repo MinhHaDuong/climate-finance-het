@@ -98,7 +98,20 @@ using the pool's own `work_key`):
     supplied an OpenAlex id that now keys the work;
   - 145 were merged into a surviving baseline key;
   - 13 had members split across two merged works.
-  Anything keyed on version-1 work keys (labels) needs this mapping. Net is not
-  "gross minus matches".
+  Net is not "gross minus matches".
+
+Mapping: `docs/rel-chaining-key-mapping-v1.csv`, sha256
+`9e291cf5b7219344a2351459cbb4124d80076347c31523b2b64a88f42be8df1d`.
+
+- One row per gone baseline key, 3,550 rows: 3,392 `renamed` + 145 `merged` +
+  13 `split` = 3,550.
+- Columns: `old_work_key`, `disposition`, `new_work_keys` (`;`-separated for
+  `split`), `old_member_record_ids`, `old_sources` and `members_not_found` (empty
+  in every row).
+- It was derived read-only from the two archived pools by following each
+  baseline member record to the merged work that holds it.
+
+**Labels keyed on version-1 work keys no longer join for these 3,550 works until
+this mapping is applied.**
 
 New works are not admissible works: none has been scored.
