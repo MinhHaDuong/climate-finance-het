@@ -137,3 +137,34 @@ checkpoint are authoritative"). The archived `producer/_rel_chaining.py`
 differs from `scripts/_rel_chaining.py` both at `f10a71dd` and in the
 `t1654-citation-chaining` working tree (`cmp`, first difference at line 13), so
 the archive's own `producer/` copy, not the tag, is the code that produced it.
+
+## Addendum: unique outputs preserved before the worktree is removed (2026-10-10)
+
+A read-only audit of `.claude/worktrees/t1654-citation-chaining` found content
+that neither the tag nor the archive pointer holds. It is preserved as follows.
+
+- **`data/rel_chaining_retired.dvc`** (md5 `df7515143e74c3d64f8d65b929d5e201.dir`,
+  10 files, 727,582,749 bytes; all 10 objects checked in the remote):
+  - `rel_screen/`: the screening tables as extended by the incremental
+    screening (`icf_screen.csv`, `rel_dimensions.csv`, `rel_facets.csv`,
+    `rel_policy_dispositions.csv` and their manifests). They differ from the
+    tables behind `data/rel_screen.dvc`. These are the labels and Luna facet
+    scores the retired screening paid for; they stay a cross-check and a source
+    of clear negatives, never truth, and are keyed on version-1 work keys (see
+    `docs/rel-chaining-key-mapping-v1.csv`).
+  - `rel_venues/openalex_work_venues.csv`.
+  - `t1654-uncommitted.patch` (sha256
+    `36ed858d3cc5ca70e1a7991595c3d9fb03978e12c1da24bbc4cf1f484f51516d`): the
+    uncommitted edits of four tracked files. Two of them
+    (`scripts/corpus_rel_chaining_screen.py`, `tests/test_rel_chaining_screen.py`)
+    belong to the retired screening and exist nowhere else.
+- **Annotated tag `archive/t1654-reflog-checkpoint`** (pushed) keeps the
+  reflog-only commit `c9063693`, "Checkpoint bounded Luna batch and guarded
+  family screening", which the first tag does not reach.
+- **Not preserved, regenerable**: the derived `data/rel_pool/` files (1.1 GB;
+  `pool.csv`, sha256 `7a07da56...`, is byte-identical to the archived copy under
+  `operations/titleless177-exact-doi-metadata/isolated-post-admission/`), and
+  `rel_view.csv`, `rel_work_venues.csv`, `rel_venues.csv` and the count files,
+  which `make rel-pool`, `make rel-view` and `make rel-venues` rebuild from
+  pushed inputs. The copy `round1-as-of.sqlite` and the three pointer copies stay
+  as described above.

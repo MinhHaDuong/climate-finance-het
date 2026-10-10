@@ -7,6 +7,7 @@ Author: HDMX-coding-agent
 2026-10-10T13:00Z HDMX-coding-agent created
 2026-10-10T13:00Z HDMX-coding-agent note author decision 2026-10-10 (interactive): finish 1654 first, then the corpus ticket train, then the 60 + 60 hand-pick, then run end to end with one cheap scorer, then decide whether a second scorer and a referee on the band are needed. This tracker lists the stages and their tickets; it never blocks them.
 2026-10-10T13:25Z HDMX-coding-agent note finding at S1 (PR 1764): the round-one chaining merge renamed, merged or split 3,550 version-1 work keys; the mapping docs/rel-chaining-key-mapping-v1.csv is an input of 2048 stage B2b and of any use of the old labels as a cross-check or a source of clear negatives (2060).
+2026-10-10T14:53Z HDMX-coding-agent note author decision 2026-10-10, option A: round two (2063) stays after the end-to-end run 2071, so 1654 closes after 2063 and the freeze 1656 waits for it; critical path 2043 + 2048 + 2060 -> 2071 -> 2063 -> 1654 -> 1656. The MOE-recommended flag in the note is now author-decided.
 --- body ---
 
 ## Context
